@@ -1,28 +1,23 @@
 // FILE: JavaBaseClass.java
 
 public class JavaBaseClass {
-    public String getMissingField() {
-        return "";
+    public int getMissingField() {
+        return 1;
     }
 
     public String publicField = "";
-    public String getPublicField() {
-        return "";
+    public int getPublicField() {
+        return 2;
     }
 
     private String privateField = "";
-    public String getPrivateField() {
-        return "";
+    public int getPrivateField() {
+        return 3;
     }
 
     protected String protectedField = "";
-    public String getProtectedField() {
-        return "";
-    }
-
-    public String publicFieldPrivateGetter = "";
-    private String getPublicFieldPrivateGetter() {
-        return "";
+    public int getProtectedField() {
+        return 4;
     }
 
     public Boolean isMissingBooleanField() { return true; }
@@ -45,32 +40,40 @@ public class EmptySubclass extends JavaBaseClass {
 // FILE: KotlinSubclassOfJavaSubclass.kt
 
 class KotlinSubclassOfJavaSubclass : EmptySubclass() {
+
+    fun consumeInt(x: Int) {}
+    fun consumeString(x: String) {}
+
+    fun testPublicField() {
+        consumeString(super.publicField)
+        consumeInt(<!TYPE_MISMATCH!>super.publicField<!>)
+    }
+
+    fun testProtectedField() {
+        consumeString(super.protectedField)
+        consumeInt(<!TYPE_MISMATCH!>super.protectedField<!>)
+    }
+
+    fun testPrivateField() {
+        consumeString(super.<!INVISIBLE_MEMBER!>privateField<!>)
+        consumeInt(<!TYPE_MISMATCH!>super.<!INVISIBLE_MEMBER!>privateField<!><!>)
+    }
+
     fun testMissingField() {
-        <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField
+        consumeString(<!TYPE_MISMATCH!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField<!>)
+        consumeInt(<!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField)
     }
 
     fun testMissingBooleanField() {
         <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.isMissingBooleanField
     }
 
-    fun testPublicField() {
-        super.publicField
-    }
-
     fun testPublicBooleanField() {
         <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.isPublicBooleanField
     }
 
-    fun testProtectedField() {
-        super.protectedField
-    }
-
     fun testProtectedBooleanField() {
         <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.isProtectedBooleanField
-    }
-
-    fun testPrivateField() {
-        super.<!INVISIBLE_MEMBER!>privateField<!>
     }
 
     fun testPrivateBooleanField() {

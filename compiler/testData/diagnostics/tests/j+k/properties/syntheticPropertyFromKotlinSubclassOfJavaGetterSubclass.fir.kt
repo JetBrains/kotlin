@@ -1,41 +1,48 @@
 // FILE: JavaBaseClassGetter.java
 
 public class JavaBaseClassGetter {
-    public String getPublicField() {
-        return "public field getter of the base class";
+    public int getPublicField() {
+        return 1;
     }
 
-    public String getProtectedField() {
-        return "protected field getter of the base class";
+    public int getProtectedField() {
+        return 2;
     }
 
-    public String getPrivateField() {
-        return "private field getter of the base class";
+    public int getPrivateField() {
+        return 3;
     }
 }
 
 // FILE: JavaSubclassOfGetter.java
 
 public class JavaSubclassOfGetter extends JavaBaseClassGetter {
-    public String publicField = "public field";
+    public String publicField = "";
 
-    protected String protectedField = "protected field";
+    protected String protectedField = "";
 
-    private String privateField = "private field";
+    private String privateField = "";
 }
 
 // FILE: KotlinSubclassOfJavaGetterSubclass.kt
 
 class KotlinSubclassOfJavaGetterSubclass : JavaSubclassOfGetter() {
+
+    fun consumeInt(x: Int) {}
+    fun consumeString(x: String) {}
+
     fun testPublicField() {
-        super.publicField;
+        consumeString(super.publicField)
+        consumeInt(<!TYPE_MISMATCH!>super.publicField<!>)
     }
 
     fun testProtectedField() {
-        super.protectedField;
+        consumeString(super.protectedField)
+        consumeInt(<!TYPE_MISMATCH!>super.protectedField<!>)
     }
 
     fun testPrivateField() {
-        super.privateField;
+        consumeString(<!TYPE_MISMATCH!>super.privateField<!>)
+        consumeInt(super.privateField)
     }
 }

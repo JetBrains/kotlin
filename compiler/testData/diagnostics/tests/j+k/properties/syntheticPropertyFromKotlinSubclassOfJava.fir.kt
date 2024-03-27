@@ -1,28 +1,23 @@
 // FILE: JavaBaseClass.java
 
 public class JavaBaseClass {
-    public String getMissingField() {
-        return "";
+    public int getMissingField() {
+        return 1;
     }
 
     public String publicField = "";
-    public String getPublicField() {
-        return "";
+    public int getPublicField() {
+        return 2;
     }
 
     private String privateField = "";
-    public String getPrivateField() {
-        return "";
+    public int getPrivateField() {
+        return 3;
     }
 
     protected String protectedField = "";
-    public String getProtectedField() {
-        return "";
-    }
-
-    public String publicFieldPrivateGetter = "";
-    private String getPublicFieldPrivateGetter() {
-        return "";
+    public int getProtectedField() {
+        return 4;
     }
 
     public Boolean isMissingBooleanField() { return true; }
@@ -42,32 +37,40 @@ public class JavaBaseClass {
 // FILE: KotlinSubclassOfJava.kt
 
 class KotlinSubclassOfJava : JavaBaseClass() {
+
+    fun consumeInt(x: Int) {}
+    fun consumeString(x: String) {}
+
+    fun testPublicField() {
+        consumeString(super.publicField)
+        consumeInt(<!TYPE_MISMATCH!>super.publicField<!>)
+    }
+
+    fun testProtectedField() {
+        consumeString(super.protectedField)
+        consumeInt(<!TYPE_MISMATCH!>super.protectedField<!>)
+    }
+
+    fun testPrivateField() {
+        consumeString(<!TYPE_MISMATCH!>super.privateField<!>)
+        consumeInt(super.privateField)
+    }
+
     fun testMissingField() {
-        super.missingField
+        consumeString(<!TYPE_MISMATCH!>super.missingField<!>)
+        consumeInt(super.missingField)
     }
 
     fun testMissingBooleanField() {
         super.isMissingBooleanField
     }
 
-    fun testPublicField() {
-        super.publicField
-    }
-
     fun testPublicBooleanField() {
         super.isPublicBooleanField
     }
 
-    fun testProtectedField() {
-        super.protectedField
-    }
-
     fun testProtectedBooleanField() {
         super.isProtectedBooleanField
-    }
-
-    fun testPrivateField() {
-        super.privateField
     }
 
     fun testPrivateBooleanField() {

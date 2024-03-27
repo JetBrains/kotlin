@@ -1,33 +1,33 @@
 // FILE: JavaInterfaceDefaultGetter.java
 
 public interface JavaInterfaceDefaultGetter {
-    default String getPublicField() {
-        return "public field from default interface getter";
-    };
+    default int getPublicField() {
+        return 1;
+    }
 
-    default String getProtectedField() {
-        return "protected field from default interface getter";
-    };
+    default int getProtectedField() {
+        return 2;
+    }
 
-    default String getPrivateField() {
-        return "private field from default interface getter";
-    };
+    default int getPrivateField() {
+        return 3;
+    }
 }
 
 // FILE: JavaClassImplementsInterfaceGetter.java
 
 public class JavaClassImplementsInterfaceGetter implements JavaInterfaceDefaultGetter {
-    public String publicField = "public field";
-    protected String protectedField = "protected field";
-    private String privateField = "private field";
+    public String publicField = "";
+    protected String protectedField = "";
+    private String privateField = "";
 }
 
 // FILE: JavaClassFields.java
 
 public class JavaClassFields {
-    public String publicField = "public field";
-    protected String protectedField = "protected field";
-    private String privateField = "private field";
+    public String publicField = "";
+    protected String protectedField = "";
+    private String privateField = "";
 }
 
 
@@ -35,29 +35,38 @@ public class JavaClassFields {
 
 class KotlinSubclassOfInterfaceGetter1 : JavaClassFields(), JavaInterfaceDefaultGetter {
     fun testPublicField() {
-        super.publicField
+        <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<JavaInterfaceDefaultGetter><!>.publicField
+        super<JavaClassFields>.publicField
     }
 
     fun testProtectedField() {
-        super.protectedField
+        <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<JavaInterfaceDefaultGetter><!>.protectedField
+        super<JavaClassFields>.protectedField
     }
 
     fun testInterfacePrivateField() {
         <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<JavaInterfaceDefaultGetter><!>.privateField
+        super<JavaClassFields>.<!INVISIBLE_MEMBER!>privateField<!>
     }
 }
 
-
 class KotlinSubclassOfInterfaceGetter2 : JavaClassImplementsInterfaceGetter() {
+
+    fun consumeInt(x: Int) {}
+    fun consumeString(x: String) {}
+
     fun testPublicField() {
-        super.publicField
+        consumeString(super.publicField)
+        consumeInt(<!TYPE_MISMATCH!>super.publicField<!>)
     }
 
     fun testProtectedField() {
-        super.protectedField
+        consumeString(super.protectedField)
+        consumeInt(<!TYPE_MISMATCH!>super.protectedField<!>)
     }
 
     fun testPrivateField() {
-        super.<!INVISIBLE_MEMBER!>privateField<!>
+        consumeString(super.<!INVISIBLE_MEMBER!>privateField<!>)
+        consumeInt(<!TYPE_MISMATCH!>super.<!INVISIBLE_MEMBER!>privateField<!><!>)
     }
 }
