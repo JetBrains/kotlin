@@ -6021,6 +6021,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
         public void testNotIsNullOrEmpty() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/notIsNullOrEmpty.kt");
         }
+
+        @Test
+        @TestMetadata("suspendCallsInPlace.kt")
+        public void testSuspendCallsInPlace() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary/suspendCallsInPlace.kt");
+        }
       }
 
       @Nested
