@@ -7026,6 +7026,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("clashWithInternalMapMethod.kt")
+    public void testClashWithInternalMapMethod() {
+      runTest("compiler/testData/codegen/box/collections/clashWithInternalMapMethod.kt");
+    }
+
+    @Test
     @TestMetadata("inSetWithSmartCast.kt")
     public void testInSetWithSmartCast() {
       runTest("compiler/testData/codegen/box/collections/inSetWithSmartCast.kt");
