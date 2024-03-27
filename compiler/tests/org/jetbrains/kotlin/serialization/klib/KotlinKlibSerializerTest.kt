@@ -57,7 +57,7 @@ class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
     }
 
     fun testNestedClassesAndObjects() {
-        doTest("builtinsSerializer/nestedClassesAndObjects.kt")
+        doTest("builtinsSerializer/nestedClassesAndObjects.kt", ".fir.txt")
     }
 
     fun testCompileTimeConstants() {
@@ -95,7 +95,7 @@ class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
     }
 
     fun testPropertyAccessorAnnotations() {
-        doTest("builtinsSerializer/propertyAccessorAnnotations.kt")
+        doTest("builtinsSerializer/propertyAccessorAnnotations.kt", ".fir.txt")
     }
 
     fun testReceiverAnnotations() {

@@ -1,34 +1,34 @@
 package test
 
-public val a: kotlin.Int = 10
-public val arrayConst: kotlin.Any = {1.toByte(), 2.toByte()}
+public val a: kotlin.Int
+public val arrayConst: kotlin.Any
 public val b: kotlin.Int
-public val booleanConst: kotlin.Boolean = true
-public val byteConst: kotlin.Byte = 10.toByte()
-public val charConst: kotlin.Char = \u0041 ('A')
-public val doubleConst: kotlin.Double = 3.0.toDouble()
-public val enumConst: test.Weapon? = Weapon.ROCK
-public val floatConst: kotlin.Float = 2.0.toFloat()
-public val intConst: kotlin.Int = 30
-public val longConst: kotlin.Long = 40.toLong()
-public val shortConst: kotlin.Short = 20.toShort()
-public val stringConst: kotlin.String = "abcd"
+public val booleanConst: kotlin.Boolean
+public val byteConst: kotlin.Byte
+public val charConst: kotlin.Char
+public val doubleConst: kotlin.Double
+public val enumConst: test.Weapon?
+public val floatConst: kotlin.Float
+public val intConst: kotlin.Int
+public val longConst: kotlin.Long
+public val shortConst: kotlin.Short
+public val stringConst: kotlin.String
 
 public final class Class {
     public constructor Class()
-    public final val a: kotlin.Int = 10
-    public final val arrayConst: kotlin.Any = {1.toByte(), 2.toByte()}
+    public final val a: kotlin.Int
+    public final val arrayConst: kotlin.Any
     public final val b: kotlin.Int
-    public final val booleanConst: kotlin.Boolean = true
-    public final val byteConst: kotlin.Byte = 10.toByte()
-    public final val charConst: kotlin.Char = \u0041 ('A')
-    public final val doubleConst: kotlin.Double = 3.0.toDouble()
-    public final val enumConst: test.Weapon? = Weapon.ROCK
-    public final val floatConst: kotlin.Float = 2.0.toFloat()
-    public final val intConst: kotlin.Int = 30
-    public final val longConst: kotlin.Long = 40.toLong()
-    public final val shortConst: kotlin.Short = 20.toShort()
-    public final val stringConst: kotlin.String = "abcd"
+    public final val booleanConst: kotlin.Boolean
+    public final val byteConst: kotlin.Byte
+    public final val charConst: kotlin.Char
+    public final val doubleConst: kotlin.Double
+    public final val enumConst: test.Weapon?
+    public final val floatConst: kotlin.Float
+    public final val intConst: kotlin.Int
+    public final val longConst: kotlin.Long
+    public final val shortConst: kotlin.Short
+    public final val stringConst: kotlin.String
 }
 
 public final enum class Weapon : kotlin.Enum<test.Weapon> {

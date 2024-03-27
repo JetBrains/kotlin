@@ -11,37 +11,37 @@ library {
 
       public constructor()
 
-      public final val arrayConst: kotlin/Any /* = [1.toByte(), 2.toByte()] */
+      public final val arrayConst: kotlin/Any /* = ... */
         public final get
 
-      public final val booleanConst: kotlin/Boolean /* = true */
+      public final val booleanConst: kotlin/Boolean /* = ... */
         public final get
 
-      public final val byteConst: kotlin/Byte /* = 10.toByte() */
+      public final val byteConst: kotlin/Byte /* = ... */
         public final get
 
-      public final val charConst: kotlin/Char /* = 'A' */
+      public final val charConst: kotlin/Char /* = ... */
         public final get
 
-      public final val doubleConst: kotlin/Double /* = 3.0 */
+      public final val doubleConst: kotlin/Double /* = ... */
         public final get
 
-      public final val enumConst: test/Weapon? /* = test/Weapon.ROCK */
+      public final val enumConst: test/Weapon? /* = ... */
         public final get
 
-      public final val floatConst: kotlin/Float /* = 2.0f */
+      public final val floatConst: kotlin/Float /* = ... */
         public final get
 
-      public final val intConst: kotlin/Int /* = 30 */
+      public final val intConst: kotlin/Int /* = ... */
         public final get
 
-      public final val longConst: kotlin/Long /* = 40L */
+      public final val longConst: kotlin/Long /* = ... */
         public final get
 
-      public final val shortConst: kotlin/Short /* = 20.toShort() */
+      public final val shortConst: kotlin/Short /* = ... */
         public final get
 
-      public final val stringConst: kotlin/String /* = "abcd" */
+      public final val stringConst: kotlin/String /* = ... */
         public final get
     }
 
@@ -60,37 +60,37 @@ library {
 
     package {
 
-      public final val arrayConst: kotlin/Any /* = [1.toByte(), 2.toByte()] */
+      public final val arrayConst: kotlin/Any /* = ... */
         public final get
 
-      public final val booleanConst: kotlin/Boolean /* = true */
+      public final val booleanConst: kotlin/Boolean /* = ... */
         public final get
 
-      public final val byteConst: kotlin/Byte /* = 10.toByte() */
+      public final val byteConst: kotlin/Byte /* = ... */
         public final get
 
-      public final val charConst: kotlin/Char /* = 'A' */
+      public final val charConst: kotlin/Char /* = ... */
         public final get
 
-      public final val doubleConst: kotlin/Double /* = 3.0 */
+      public final val doubleConst: kotlin/Double /* = ... */
         public final get
 
-      public final val enumConst: test/Weapon? /* = test/Weapon.ROCK */
+      public final val enumConst: test/Weapon? /* = ... */
         public final get
 
-      public final val floatConst: kotlin/Float /* = 2.0f */
+      public final val floatConst: kotlin/Float /* = ... */
         public final get
 
-      public final val intConst: kotlin/Int /* = 30 */
+      public final val intConst: kotlin/Int /* = ... */
         public final get
 
-      public final val longConst: kotlin/Long /* = 40L */
+      public final val longConst: kotlin/Long /* = ... */
         public final get
 
-      public final val shortConst: kotlin/Short /* = 20.toShort() */
+      public final val shortConst: kotlin/Short /* = ... */
         public final get
 
-      public final val stringConst: kotlin/String /* = "abcd" */
+      public final val stringConst: kotlin/String /* = ... */
         public final get
     }
   }
