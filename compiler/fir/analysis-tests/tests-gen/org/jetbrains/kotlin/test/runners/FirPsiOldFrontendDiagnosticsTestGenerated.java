@@ -16421,6 +16421,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("elvisWithNothingInRhs.kt")
+      public void testElvisWithNothingInRhs() {
+        runTest("compiler/testData/diagnostics/tests/inference/elvisWithNothingInRhs.kt");
+      }
+
+      @Test
       @TestMetadata("equalitySubstitutionInsideNonInvariantType.kt")
       public void testEqualitySubstitutionInsideNonInvariantType() {
         runTest("compiler/testData/diagnostics/tests/inference/equalitySubstitutionInsideNonInvariantType.kt");
