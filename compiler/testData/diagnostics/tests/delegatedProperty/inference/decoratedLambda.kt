@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-57814
 import kotlin.reflect.KProperty
 

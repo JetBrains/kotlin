@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 
 fun <T> T.test(block: (foo: T) -> Unit) {}

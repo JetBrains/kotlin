@@ -25,12 +25,12 @@ fun <T> foo(bar: () -> T) {
 annotation class Ann
 
 fun baz(): @Ann <!REPEATED_ANNOTATION!>@Ann<!> String = "12"
-fun qux() = <!REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION!>Some.foo()[0]<!>
+fun qux() = Some.foo()[0]
 
 fun test() {
-    foo(<!REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION!>{ Some.foo()[0] }<!>)
-    foo(<!REPEATED_ANNOTATION!>{ baz() }<!>)
-    foo(<!REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION!>{ qux() }<!>)
+    foo({ Some.foo()[0] })
+    foo({ baz() })
+    foo({ qux() })
     foo(fun(): @Ann <!REPEATED_ANNOTATION!>@Ann<!> String {
         return ""
     })
