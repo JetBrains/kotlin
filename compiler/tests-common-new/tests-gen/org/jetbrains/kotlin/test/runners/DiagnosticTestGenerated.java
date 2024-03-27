@@ -37556,6 +37556,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("unstableAliasing.kt")
+        public void testUnstableAliasing() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/unstableAliasing.kt");
+        }
+
+        @Test
         @TestMetadata("varAsUse.kt")
         public void testVarAsUse() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/varAsUse.kt");

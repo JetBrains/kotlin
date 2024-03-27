@@ -59,7 +59,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
     @OptIn(DfaInternals::class)
-    fun isAccessToUnstableLocalVariable(fir: FirExpression, targetType: ConeKotlinType?, session: FirSession): Boolean {
+    fun isAccessToUnstableLocalVariable(fir: FirElement, targetType: ConeKotlinType?, session: FirSession): Boolean {
         if (assignedLocalVariablesByDeclaration == null) return false
 
         val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
