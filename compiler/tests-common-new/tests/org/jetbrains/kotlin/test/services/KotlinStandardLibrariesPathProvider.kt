@@ -126,7 +126,7 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
 
     override fun fullJsStdlib(): File = extractFromPropertyFirst("kotlin.js.full.stdlib.path") { "kotlin-stdlib-js.klib".dist() }
     override fun defaultJsStdlib(): File = extractFromPropertyFirst("kotlin.js.reduced.stdlib.path") { "kotlin-stdlib-js.klib".dist() }
-    override fun kotlinTestJsKLib(): File = extractFromPropertyFirst("kotlin.js.kotlin.test.path") { "kotlin-test-js.klib".dist() }
+    override fun kotlinTestJsKLib(): File = extractFromPropertyFirst("kotlin.js.kotlin.test.klib.path") { "kotlin-test-js.klib".dist() }
 
     private inline fun extractFromPropertyFirst(prop: String, onMissingProperty: () -> String): File {
         val path = System.getProperty(prop, null) ?: onMissingProperty()
