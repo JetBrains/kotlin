@@ -19,14 +19,15 @@ package org.jetbrains.jps.builders.java.dependencyView
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet
 import org.jetbrains.jps.builders.java.dependencyView.TypeRepr.ClassType
 import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
-import org.jetbrains.kotlin.load.java.JAVAX_NONNULL_ANNOTATION
+import org.jetbrains.kotlin.load.java.JAVAX_NONNULL_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
 import java.util.*
 
 internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
     private val annotations =
-        (NULLABLE_ANNOTATIONS + JAVAX_NONNULL_ANNOTATION + NOT_NULL_ANNOTATIONS).mapTo(HashSet()) { it.internalNameWithoutInnerClasses }
+        (NOT_NULL_ANNOTATIONS + NULLABLE_ANNOTATIONS + JAVAX_NONNULL_ANNOTATION_FQ_NAME)
+            .mapTo(HashSet()) { it.internalNameWithoutInnerClasses }
             .toTypedArray()
 
     override fun methodAnnotationsChanged(
