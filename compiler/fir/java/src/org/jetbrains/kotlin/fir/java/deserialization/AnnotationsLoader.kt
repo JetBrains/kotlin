@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.utils.toMetadataVersion
 
 internal class AnnotationsLoader(private val session: FirSession, private val kotlinClassFinder: KotlinClassFinder) {
@@ -28,8 +27,6 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
         abstract fun visitExpression(name: Name?, expr: FirExpression)
 
         abstract val visitNullNames: Boolean
-
-        abstract fun guessArrayTypeIfNeeded(name: Name?, arrayOfElements: List<FirExpression>): FirTypeRef?
 
         override fun visit(name: Name?, value: Any?) {
             visitExpression(name, createConstant(value))
@@ -92,19 +89,15 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                     visitExpression(name, buildArrayLiteral {
                         @OptIn(UnresolvedExpressionTypeAccess::class)
                         // 1. Calculate array literal type using its element, if any
-                        // 2. If array literal is empty, try to "guess" type (works only for default values)
-                        // 3. If both ways don't work, use Array<Any> as an approximation; later FIR2IR will calculate more precise type
+                        // 2. If this way doesn't work, use Array<Any> as an approximation; later FIR2IR will calculate more precise type
                         // See KT-62598
                         // Note: we suppose that (1) can be dropped without real semantic changes;
                         // in this case array literal argument types will be always Array<Any> at FIR level (even for non-empty literals),
                         // but at IR level we will still have a real array type, like Array<String> or IntArray
-                        // Maybe we can drop also (2), see KT-62929, with the same consequences
                         // Anyway, FIR provides no guarantees on having exact type of deserialized array literals in annotations,
                         // including non-empty ones.
                         elements.firstOrNull()?.coneTypeOrNull?.createOutArrayType()?.let {
                             coneTypeOrNull = it
-                        } ?: guessArrayTypeIfNeeded(name, elements)?.let {
-                            coneTypeOrNull = it.coneTypeOrNull
                         } ?: run {
                             coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
                         }
@@ -148,12 +141,6 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
             override val visitNullNames: Boolean = false
 
-            override fun guessArrayTypeIfNeeded(name: Name?, arrayOfElements: List<FirExpression>): FirTypeRef? {
-                // Array<Any> will be created, later FIR2IR will use more precise type
-                // See KT-62598
-                return null
-            }
-
             override fun visitEnd() {
                 // Do not load the @java.lang.annotation.Repeatable annotation instance generated automatically by the compiler for
                 // Kotlin-repeatable annotation classes. Otherwise the reference to the implicit nested "Container" class cannot be
@@ -171,7 +158,6 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
     }
 
     internal fun loadAnnotationMethodDefaultValue(
-        methodSignature: MemberSignature,
         consumeResult: (FirExpression) -> Unit
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         return object : AnnotationsLoaderVisitorImpl() {
@@ -182,17 +168,6 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             }
 
             override val visitNullNames: Boolean = true
-
-            override fun guessArrayTypeIfNeeded(name: Name?, arrayOfElements: List<FirExpression>): FirTypeRef {
-                val descName = methodSignature.signature.substringAfterLast(')').removePrefix("[")
-                val targetClassId = JvmPrimitiveType.getByDesc(descName)?.primitiveType?.typeFqName?.let { ClassId.topLevel(it) }
-                    ?: FileBasedKotlinClass.resolveNameByInternalName(
-                        descName.removePrefix("L").removeSuffix(";"),
-                        // It seems that some inner classes info is required, but so far there are no problems with them (see six() in multimoduleCreation test)
-                        FileBasedKotlinClass.InnerClassesInfo()
-                    )
-                return targetClassId.toLookupTag().constructClassType(arrayOf(), false).createOutArrayType().toFirResolvedTypeRef()
-            }
 
             override fun visitEnd() {
                 defaultValue?.let(consumeResult)
