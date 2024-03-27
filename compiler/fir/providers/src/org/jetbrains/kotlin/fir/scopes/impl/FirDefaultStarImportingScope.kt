@@ -20,14 +20,27 @@ class FirDefaultStarImportingScope(
     val second: FirSingleLevelDefaultStarImportingScope,
 ) : FirScope(), DefaultStarImportingScopeMarker {
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(name) { symbol, substitutor ->
+            processor(symbol, substitutor)
+            true
+        }
+    }
+
+    /**
+     * Starts by querying [first] and calling [processor] with the results.
+     * If [processor] doesn't return `true` for any of them (or no symbols were found), also queries [second] and calls [processor].
+     */
+    fun processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(
+        name: Name,
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Boolean,
+    ) {
         var wasFoundAny = false
         first.processClassifiersByNameWithSubstitution(name) { symbol, substitutor ->
-            wasFoundAny = true
-            processor(symbol, substitutor)
+            wasFoundAny = processor(symbol, substitutor)
         }
 
         if (!wasFoundAny) {
-            second.processClassifiersByNameWithSubstitution(name, processor)
+            second.processClassifiersByNameWithSubstitution(name, processor::invoke)
         }
     }
 

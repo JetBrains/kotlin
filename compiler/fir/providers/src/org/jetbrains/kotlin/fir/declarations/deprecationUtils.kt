@@ -321,6 +321,7 @@ private fun FirAnnotation.getFirstArgumentStringIfNotNamed(): String? {
 fun FirBasedSymbol<*>.isDeprecationLevelHidden(languageVersionSettings: LanguageVersionSettings): Boolean =
     when (this) {
         is FirCallableSymbol<*> -> getDeprecation(languageVersionSettings)?.all?.deprecationLevel == DeprecationLevelValue.HIDDEN
+        is FirClassLikeSymbol<*> -> getOwnDeprecation(languageVersionSettings)?.all?.deprecationLevel == DeprecationLevelValue.HIDDEN
         else -> false
     }
 
