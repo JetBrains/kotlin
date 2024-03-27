@@ -153,7 +153,7 @@
 # UNKNOWN: /compiler/testData/integration/
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
 /compiler/testData/ir/interpreter/ "Kotlin Common Backend"
-/compiler/testData/ir/irText/ "Kotlin Compiler Core"
+/compiler/testData/ir/irText/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Compiler Core"
 /compiler/testData/javaModules/ "Kotlin JVM"
