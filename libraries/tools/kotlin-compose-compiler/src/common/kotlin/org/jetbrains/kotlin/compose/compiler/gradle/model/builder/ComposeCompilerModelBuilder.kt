@@ -23,7 +23,6 @@ class ComposeCompilerModelBuilder : ToolingModelBuilder {
 
     override fun buildAll(modelName: String, project: Project): Any {
         require(canBuild(modelName)) { "buildAll(\"$modelName\") has been called while canBeBuild is false" }
-        val extension = project.extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
-        return ComposeCompilerImpl(project.name, /*extension.myAnnotations, */extension.myPresets)
+        return ComposeCompilerImpl(project.name)
     }
 }

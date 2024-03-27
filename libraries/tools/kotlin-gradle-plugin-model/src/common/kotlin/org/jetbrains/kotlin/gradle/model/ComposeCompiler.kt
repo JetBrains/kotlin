@@ -25,11 +25,4 @@ interface ComposeCompiler {
      * @return the module name.
      */
     val name: String
-
-    /**
-     * Return the list of presets.
-     *
-     * @return the list of presets.
-     */
-    val presets: List<String>
 }
