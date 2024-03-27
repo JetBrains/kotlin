@@ -435,18 +435,28 @@ class TestProject(
     fun includeOtherProjectAsIncludedBuild(
         otherProjectName: String,
         pathPrefix: String,
+        newProjectName: String = otherProjectName,
     ) {
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
-        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+        otherProjectPath.copyRecursively(projectPath.resolve(newProjectName))
 
-        projectPath.resolve(otherProjectName).addDefaultSettingsToSettingsGradle(gradleVersion)
+        projectPath.resolve(newProjectName).addDefaultSettingsToSettingsGradle(gradleVersion)
 
-        settingsGradle.append(
-            """
-            
-            includeBuild '$otherProjectName'
-            """.trimIndent()
-        )
+        if (settingsGradle.exists()) {
+            settingsGradle.append(
+                """
+                
+                    includeBuild '$newProjectName'
+                """.trimIndent()
+            )
+        } else {
+            settingsGradleKts.append(
+                """
+                    
+                    includeBuild("$newProjectName")
+                """.trimIndent()
+            )
+        }
     }
 }
 
