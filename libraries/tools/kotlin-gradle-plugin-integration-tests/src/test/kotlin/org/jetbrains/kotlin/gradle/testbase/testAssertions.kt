@@ -64,14 +64,16 @@ internal fun readAndCleanupTestResults(
 
     fun cleanup(e: Element) {
         if (e.name in skipContentsOf) e.text = "..."
+
+        val browserTestRegex = "\\[(.*(, )?)browser,.*]".toRegex();
         e.attributes.forEach {
             if (it.name in skipAttrs) {
                 it.value = "..."
             } else if (it.name == "name" &&
                 e.name == "testcase" &&
-                it.value.contains("[browser")
+                it.value.contains(browserTestRegex)
             ) {
-                it.value = it.value.replace("\\[browser,.*]".toRegex(), "[browser]")
+                it.value = it.value.replace(browserTestRegex, "[$1browser]")
             }
         }
         if (e.name == "system-out") {
