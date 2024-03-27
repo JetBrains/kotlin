@@ -38,6 +38,8 @@ fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression): List
     return unrolled.asReversed()
 }
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 data class CallExpressionElement internal constructor(val qualified: KtQualifiedExpression) {
 
     val receiver: KtExpression
