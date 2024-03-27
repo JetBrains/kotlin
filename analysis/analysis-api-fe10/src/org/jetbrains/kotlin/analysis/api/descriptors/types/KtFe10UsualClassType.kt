@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtF
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeProjection
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.getAbbreviation
 
 internal class KtFe10UsualClassType(
     override val fe10Type: SimpleType,
@@ -69,4 +71,6 @@ internal class KtFe10UsualClassType(
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 
+    override val abbreviatedType: KtUsualClassType?
+        get() = withValidityAssertion { fe10Type.getAbbreviation()?.toKtType(analysisContext) as? KtUsualClassType }
 }

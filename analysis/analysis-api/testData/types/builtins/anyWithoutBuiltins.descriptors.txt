@@ -1,4 +1,5 @@
 KtUsualClassType:
+  abbreviatedType: null
   annotationsList: []
   classId: kotlin/Any
   classSymbol: KtNamedClassOrObjectSymbol(kotlin/Any)

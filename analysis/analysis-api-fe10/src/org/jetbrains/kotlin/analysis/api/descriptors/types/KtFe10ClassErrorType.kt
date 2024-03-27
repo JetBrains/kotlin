@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -14,8 +15,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.getAbbreviation
 
 internal class KtFe10ClassErrorType(
     override val fe10Type: ErrorType,
@@ -44,4 +47,7 @@ internal class KtFe10ClassErrorType(
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
+
+    override val abbreviatedType: KtUsualClassType?
+        get() = withValidityAssertion { fe10Type.getAbbreviation()?.toKtType(analysisContext) as? KtUsualClassType }
 }

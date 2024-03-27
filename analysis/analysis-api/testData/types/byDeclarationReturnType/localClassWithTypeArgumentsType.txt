@@ -1,10 +1,12 @@
 KtUsualClassType:
+  abbreviatedType: null
   annotationsList: []
   classId: <local>/B
   classSymbol: KtNamedClassOrObjectSymbol(<local>/B)
   nullability: NON_NULLABLE
   ownTypeArguments: [
     KtUsualClassType:
+      abbreviatedType: null
       annotationsList: []
       classId: kotlin/Int
       classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
@@ -23,6 +25,7 @@ KtUsualClassType:
       symbol: KtNamedClassOrObjectSymbol(<local>/B)
       typeArguments: [
         KtUsualClassType:
+          abbreviatedType: null
           annotationsList: []
           classId: kotlin/Int
           classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)

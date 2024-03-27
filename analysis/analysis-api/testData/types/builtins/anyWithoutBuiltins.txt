@@ -1,4 +1,5 @@
 KtClassErrorType:
+  abbreviatedType: null
   annotationsList: []
   candidateClassSymbols: []
   errorMessage: Symbol not found for kotlin/Any

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebug
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtTypeErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 
@@ -40,4 +41,7 @@ internal class KtFe10TypeErrorType(
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
+
+    override val abbreviatedType: KtUsualClassType?
+        get() = withValidityAssertion { null }
 }

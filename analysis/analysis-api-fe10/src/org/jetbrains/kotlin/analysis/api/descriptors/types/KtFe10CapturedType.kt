@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebug
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtCapturedType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 
 internal class KtFe10CapturedType(
@@ -27,4 +28,7 @@ internal class KtFe10CapturedType(
 
     override val projection: KtTypeProjection
         get() = withValidityAssertion { fe10Type.typeProjection.toKtTypeProjection(analysisContext) }
+
+    override val abbreviatedType: KtUsualClassType?
+        get() = withValidityAssertion { null }
 }

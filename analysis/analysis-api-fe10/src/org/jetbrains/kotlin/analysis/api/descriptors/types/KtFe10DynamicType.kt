@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebug
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtDynamicType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.types.DynamicType
 
 internal class KtFe10DynamicType(
@@ -22,4 +23,7 @@ internal class KtFe10DynamicType(
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
+
+    override val abbreviatedType: KtUsualClassType?
+        get() = withValidityAssertion { null }
 }

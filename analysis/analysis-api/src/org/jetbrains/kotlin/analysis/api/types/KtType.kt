@@ -17,6 +17,69 @@ import org.jetbrains.kotlin.name.Name
 
 public sealed interface KtType : KtLifetimeOwner, KtAnnotated {
     public val nullability: KtTypeNullability
+
+    /**
+     * The abbreviated type for this expanded [KtType], or `null` if this type has not been expanded from an abbreviated type or the
+     * abbreviated type cannot be resolved.
+     *
+     * An abbreviated type is a type alias application that has been expanded to some other Kotlin type. For example, if we have a type
+     * alias `typealias MyString = String` and its application `MyString`, `String` would be the type alias expansion and `MyString` its
+     * abbreviated type.
+     *
+     * The abbreviated type contains the type arguments of a specific type alias application. For example, if we have a
+     * `typealias MyList<A> = List<A>`, for an application `MyList<String>`, `MyList<String>` would be the abbreviated type for such a type
+     * alias application, not simply `MyList`.
+     *
+     * If this [KtType] is an unexpanded type alias application, [abbreviatedType] is `null`. Not all type alias applications are currently
+     * expanded right away and the Analysis API makes no guarantees about the specific circumstances.
+     *
+     * While [abbreviatedType] is available for all [KtType]s, it can currently only be present in [KtClassType]s. However, abbreviated
+     * types are a general concept and if the type system changes (e.g. with denotable union/intersection types), other kinds of types may
+     * also be expanded from a type alias. This would allow more kinds of types to carry an abbreviated type.
+     *
+     * The [abbreviatedType] itself is always a [KtUsualClassType], as the application of a type alias is always a class type. It cannot be
+     * a [KtClassErrorType] because [abbreviatedType] would then be `null`.
+     *
+     *
+     * ### Resolvability
+     *
+     * Even when this [KtType] is an expansion, the abbreviated type may be `null` if it is not resolvable from this type's use-site module.
+     * This can occur when the abbreviated type from a module `M1` was expanded at some declaration `D` in module `M2`, and the use-site
+     * module uses `D`, but only has a dependency on `M2`. Then the type alias of `M1` remains unresolved and [abbreviatedType] is `null`.
+     *
+     *
+     * ### Type arguments and nested abbreviated types
+     *
+     * The type arguments of an abbreviated type are not converted to abbreviated types automatically. That is, if a type argument is a type
+     * expansion, its [abbreviatedType] doesn't automatically replace the expanded type. For example:
+     *
+     * ```
+     * typealias MyString = String
+     * typealias MyList<A> = List<A>
+     *
+     * val list: MyList<MyString> = listOf()
+     * ```
+     *
+     * `MyList<MyString>` may be expanded to a type `List<String>` with an abbreviated type `MyList<String>`, where `String` also has the
+     * abbreviated type `MyString`. The abbreviated type is not `MyList<MyString>`, although it might be rendered as such.
+     *
+     *
+     * ### Transitive expansion
+     *
+     * Types are always expanded to their final form. That is, if we have a chain of type alias expansions, the [KtType] only represents the
+     * final expanded type, and its [abbreviatedType] the initial type alias application. For example:
+     *
+     * ```
+     * typealias Inner = String
+     * typealias Outer = Inner
+     *
+     * val outer: Outer = ""
+     * ```
+     *
+     * Here, `outer`'s type would be expanded to `String`, but its abbreviated type would be `Outer`. `Inner` would be lost.
+     */
+    public val abbreviatedType: KtUsualClassType?
+
     public fun asStringForDebugging(): String
 }
 
@@ -88,6 +151,9 @@ public abstract class KtDefinitelyNotNullType : KtType {
     override fun toString(): String = asStringForDebugging()
 }
 
+/**
+ * A flexible type's [abbreviatedType] is always `null`, as only [lowerBound] and [upperBound] may actually be expanded types.
+ */
 public abstract class KtFlexibleType : KtType {
     public abstract val lowerBound: KtType
     public abstract val upperBound: KtType

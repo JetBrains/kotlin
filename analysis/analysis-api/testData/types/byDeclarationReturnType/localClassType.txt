@@ -1,4 +1,5 @@
 KtUsualClassType:
+  abbreviatedType: null
   annotationsList: []
   classId: <local>/B
   classSymbol: KtNamedClassOrObjectSymbol(<local>/B)

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
@@ -39,6 +40,9 @@ internal class KtFe10FunctionalType(
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
+
+    override val abbreviatedType: KtUsualClassType?
+        get() = withValidityAssertion { null }
 
     override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier>
         get() = withValidityAssertion {

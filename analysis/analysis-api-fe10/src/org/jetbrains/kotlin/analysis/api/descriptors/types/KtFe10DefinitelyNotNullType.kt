@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebug
 import org.jetbrains.kotlin.analysis.api.types.KtDefinitelyNotNullType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.types.DefinitelyNotNullType
 
 internal class KtFe10DefinitelyNotNullType(
@@ -22,4 +23,7 @@ internal class KtFe10DefinitelyNotNullType(
 
     override val original: KtType
         get() = withValidityAssertion { fe10Type.original.toKtType(analysisContext) }
+
+    override val abbreviatedType: KtUsualClassType?
+        get() = withValidityAssertion { null }
 }
