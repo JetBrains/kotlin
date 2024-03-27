@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -241,9 +240,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         analyzer: PostponedAtomAnalyzer,
     ): Boolean {
         if (!completionMode.allLambdasShouldBeAnalyzed) return false
-
-        // If we use the builder inference anyway (if the annotation is presented), then we are already analysed builder inference lambdas
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)) return false
 
         val lambdaArguments = postponedArguments.filterIsInstance<ResolvedLambdaAtom>().takeIf { it.isNotEmpty() } ?: return false
 
