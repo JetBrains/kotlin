@@ -3,11 +3,11 @@ public final class C /* C*/ implements Tr {
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.Integer foo();//  foo()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer foo();//  foo()
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.Integer getV();//  getV()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getV();//  getV()
 
   public  C();//  .ctor()
 }

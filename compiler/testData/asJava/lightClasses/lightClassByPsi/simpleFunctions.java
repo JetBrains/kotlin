@@ -1,6 +1,6 @@
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Foo onString(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Object>);//  onString(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Object>)
+  public final @org.jetbrains.annotations.NotNull() Foo onString(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Object>);//  onString(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Object>)
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() Foo plus(int);//  plus(int)

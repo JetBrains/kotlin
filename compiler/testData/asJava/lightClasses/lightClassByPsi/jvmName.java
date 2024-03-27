@@ -1,6 +1,6 @@
 public final class C /* C*/ {
   @kotlin.jvm.JvmName(name = "fooInt")
-  public final void fooInt(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<java.lang.Integer>);//  fooInt(@org.jetbrains.annotations.NotNull() java.util.List<java.lang.Integer>)
+  public final void fooInt(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  fooInt(@org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @kotlin.jvm.JvmName(name = "get_rwProp")
   public final int get_rwProp();//  get_rwProp()

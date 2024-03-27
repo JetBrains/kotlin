@@ -23,12 +23,12 @@ public final class B /* B*/ {
 
 public final class ClassWithPrivateCtor /* ClassWithPrivateCtor*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.util.Set<java.lang.Integer> property;
+  private final @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> property;
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.util.Set<java.lang.Integer> getProperty();//  getProperty()
+  public final @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> getProperty();//  getProperty()
 
-  private  ClassWithPrivateCtor(@org.jetbrains.annotations.NotNull() java.util.Set<java.lang.Integer>);//  .ctor(@org.jetbrains.annotations.NotNull() java.util.Set<java.lang.Integer>)
+  private  ClassWithPrivateCtor(@org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  .ctor(@org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 }
 
 public final class Outer /* Outer*/ {

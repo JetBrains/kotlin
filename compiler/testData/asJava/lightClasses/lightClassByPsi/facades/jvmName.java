@@ -1,6 +1,6 @@
 public final class JvmNameKt /* JvmNameKt*/ {
   @kotlin.jvm.JvmName(name = "fooInt")
-  public static final void fooInt(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<java.lang.Integer>);//  fooInt(@org.jetbrains.annotations.NotNull() java.util.List<java.lang.Integer>)
+  public static final void fooInt(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  fooInt(@org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @kotlin.jvm.JvmName(name = "get_rwProp")
   public static final int get_rwProp();//  get_rwProp()
