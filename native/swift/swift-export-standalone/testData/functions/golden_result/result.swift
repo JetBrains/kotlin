@@ -1,16 +1,6 @@
 import KotlinBridges
 import KotlinRuntime
 
-public enum namespace1 {
-    public enum local_functions {
-    }
-    public enum main {
-    }
-}
-public enum namespace2 {
-}
-public enum overload {
-}
 public func foo() -> Swift.Int32 {
     return __root___foo()
 }
@@ -64,4 +54,14 @@ public extension main.overload {
     ) -> Swift.Int32 {
         return overload_foo__TypesOfArguments__double__(arg1)
     }
+}
+public enum namespace1 {
+    public enum local_functions {
+    }
+    public enum main {
+    }
+}
+public enum namespace2 {
+}
+public enum overload {
 }

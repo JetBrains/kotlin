@@ -1,10 +1,6 @@
 import KotlinBridges
 import KotlinRuntime
 
-public enum namespace {
-    public enum deeper {
-    }
-}
 /**
 * this is a sample comment for class without public constructor
 */
@@ -220,5 +216,9 @@ public extension main.namespace {
         public init() {
             fatalError()
         }
+    }
+}
+public enum namespace {
+    public enum deeper {
     }
 }

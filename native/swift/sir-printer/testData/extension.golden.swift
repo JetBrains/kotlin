@@ -1,5 +1,3 @@
-public enum my_enum {
-}
 public extension Swift.Int32 {
 }
 private extension Swift.Int32 {
@@ -29,4 +27,6 @@ public extension Test.my_enum {
 public extension MyDependencyModule.my_external_enum {
     public class Foo {
     }
+}
+public enum my_enum {
 }

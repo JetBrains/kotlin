@@ -25,15 +25,14 @@ public class SirAsSwiftSourcesPrinter(
     public fun SirModule.print() {
         printImports()
         printChildren()
-        printExtensions()
     }
 
     private fun SirModule.printImports() {
         val imports = allImports()
-        val lastImport = imports.last()
+        val lastImport = imports.lastOrNull()
         imports.forEach {
             it.print()
-            if (it != lastImport) {
+            if (it == lastImport) {
                 println()
             }
         }
@@ -75,6 +74,7 @@ public class SirAsSwiftSourcesPrinter(
         allCallables().forEach {
             it.print()
         }
+        (this as? SirModule)?.printExtensions()
         allPackageEnums().forEach {
             it.print()
         }
