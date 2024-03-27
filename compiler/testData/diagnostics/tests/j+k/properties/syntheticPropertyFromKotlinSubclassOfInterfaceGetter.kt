@@ -31,7 +31,7 @@ public class JavaClassFields {
 }
 
 
-// FILE: KotlinSubclassOfInterfaceGetter.kt
+// FILE: KotlinSubclassOfInterfaceGetter1.kt
 
 class KotlinSubclassOfInterfaceGetter1 : JavaClassFields(), JavaInterfaceDefaultGetter {
     fun testPublicField() {
@@ -49,6 +49,8 @@ class KotlinSubclassOfInterfaceGetter1 : JavaClassFields(), JavaInterfaceDefault
         super<JavaClassFields>.<!INVISIBLE_MEMBER!>privateField<!>
     }
 }
+
+// FILE: KotlinSubclassOfInterfaceGetter2.kt
 
 class KotlinSubclassOfInterfaceGetter2 : JavaClassImplementsInterfaceGetter() {
 
