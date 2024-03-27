@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class A {
     fun aFun() {}
     val aVal = 0

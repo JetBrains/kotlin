@@ -1,7 +1,7 @@
 public final val bar: R|kotlin/Int|
     public get(): R|kotlin/Int|
 
-@R|test/Anno|(t = <implicitArrayOf>()) @R|test/Anno2|() @R|test/Anno3|() @R|test/Anno4|(t = <implicitArrayOf>()) @R|test/Anno5|() @R|test/Anno6|() public final fun baz(): R|kotlin/Unit|
+@R|test/Anno|(t = <implicitArrayOf>()) @R|test/Anno2|(t = <implicitArrayOf>()) @R|test/Anno3|(t = <implicitArrayOf>()) @R|test/Anno4|(t = <implicitArrayOf>()) @R|test/Anno5|(t = <implicitArrayOf>()) @R|test/Anno6|(t = <implicitArrayOf>()) public final fun baz(): R|kotlin/Unit|
 
 @R|test/Anno|(t = <implicitArrayOf>(String(live), String(long))) public final fun foo(): R|kotlin/Unit|
 
