@@ -1,0 +1,100 @@
+FILE: exctlyOnceCallBetweenUnrelatedLambdas.kt
+    public final fun higherOrder(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_1(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(bar, EXACTLY_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/bar|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        R|<local>/bar|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|/higherOrder|(<L> = higherOrder@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@higherOrder Unit
+        }
+        )
+        when () {
+            R|<local>/b| ->  {
+                R|/higherOrder|(<L> = higherOrder@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    ^@higherOrder Unit
+                }
+                )
+            }
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_2(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(bar, EXACTLY_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/bar|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        R|/higherOrder|(<L> = higherOrder@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@higherOrder Unit
+        }
+        )
+        when () {
+            R|<local>/b| ->  {
+                R|/higherOrder|(<L> = higherOrder@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    ^@higherOrder Unit
+                }
+                )
+            }
+        }
+
+        R|<local>/bar|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_3(b: R|kotlin/Boolean|, bar: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(bar, EXACTLY_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/bar|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        R|/higherOrder|(<L> = higherOrder@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@higherOrder Unit
+        }
+        )
+        when () {
+            R|<local>/b| ->  {
+                R|/higherOrder|(<L> = higherOrder@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    ^@higherOrder Unit
+                }
+                )
+            }
+        }
+
+        R|<local>/bar|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|/higherOrder|(<L> = higherOrder@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@higherOrder Unit
+        }
+        )
+        when () {
+            R|<local>/b| ->  {
+                R|/higherOrder|(<L> = higherOrder@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    ^@higherOrder Unit
+                }
+                )
+            }
+        }
+
+    }
