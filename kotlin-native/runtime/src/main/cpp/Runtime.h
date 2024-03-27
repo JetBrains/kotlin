@@ -8,6 +8,7 @@
 
 #include "Porting.h"
 #include "Memory.h"
+#include "KString.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,6 +50,8 @@ namespace kotlin {
 
 // Returns `true` if initialized.
 bool initializeGlobalRuntimeIfNeeded() noexcept;
+
+extern const char* programName;
 
 }
 

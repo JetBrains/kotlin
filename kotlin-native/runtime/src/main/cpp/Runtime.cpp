@@ -176,6 +176,8 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
     return true;
 }
 
+const char* kotlin::programName = nullptr;
+
 extern "C" {
 
 RUNTIME_NOTHROW void AppendToInitializersTail(InitNode *next) {
@@ -333,6 +335,10 @@ KBoolean Konan_Platform_isDebugBinary() {
 
 KBoolean Konan_Platform_isFreezingEnabled() {
   return kotlin::compiler::freezingChecksEnabled();
+}
+
+OBJ_GETTER0(Konan_Platform_getProgramName) {
+  RETURN_RESULT_OF(CreateStringFromCString, kotlin::programName)
 }
 
 bool Kotlin_memoryLeakCheckerEnabled() {

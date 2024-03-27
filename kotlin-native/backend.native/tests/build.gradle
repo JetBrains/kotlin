@@ -380,6 +380,10 @@ standaloneTest("throw_from_except_constr") {
     source = "runtime/exceptions/throw_from_except_constr.kt"
 }
 
+standaloneTest("program_name") {
+    source = "runtime/program_name/runtime_program_name.kt"
+}
+
 tasks.register("vararg0", KonanLocalTest) {
     source = "lower/vararg.kt"
 }

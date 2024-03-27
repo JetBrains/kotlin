@@ -30,6 +30,8 @@ using namespace kotlin;
 //--- Setup args --------------------------------------------------------------//
 
 OBJ_GETTER(setupArgs, int argc, const char** argv) {
+  kotlin::programName = argv[0];
+
   // The count is one less, because we skip argv[0] which is the binary name.
   ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, argc - 1, OBJ_RESULT);
   ArrayHeader* array = result->array();
