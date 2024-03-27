@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.kapt4
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import com.intellij.lang.ASTNode
-import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtNodeTypes
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.utils.Printer
@@ -376,7 +376,7 @@ private class StubGenerator(
                     }
                 }
 
-                if (method.isAbstract) {
+                if (method.isAbstract || !jvmDefaultMode.isEnabled && psiClass.isInterface && !method.isStatic) {
                     printlnWithNoIndent(";")
                 } else {
                     printlnWithNoIndent(" {")
@@ -536,7 +536,8 @@ private class StubGenerator(
                         if (modifier == PsiModifier.PRIVATE && (modifierListOwner as? PsiMember)?.containingClass?.isInterface == true) continue
 
                         if (!jvmDefaultMode.isEnabled && modifier == PsiModifier.DEFAULT) {
-                            onError("Support for interface methods with bodies in Kapt requires -Xjvm-default=all or -Xjvm-default=all-compatibility compiler option")
+                            printWithNoIndent(PsiModifier.ABSTRACT, " ")
+                            continue
                         }
 
                         if (modifier == PsiModifier.FINAL && modifierListOwner is PsiClass && modifierListOwner.isRecord) continue
@@ -619,6 +620,13 @@ private class StubGenerator(
 
             private fun calculateMetadata(lightClass: PsiClass): Metadata? =
                 if (stripMetadata) null
+                else if (psiClass.name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && (psiClass as? SymbolLightClassForNamedClassLike)?.containingClass?.isInterface == true) {
+                    Metadata(
+                        kind = KotlinClassHeader.Kind.SYNTHETIC_CLASS.id,
+                        metadataVersion = LanguageVersion.KOTLIN_2_0.toMetadataVersion().toArray(),
+                        extraInt = METADATA_JVM_IR_FLAG or METADATA_JVM_IR_STABLE_ABI_FLAG
+                    )
+                }
                 else with(analysisSession) {
                     when (lightClass) {
                         is KtLightClassForFacade ->

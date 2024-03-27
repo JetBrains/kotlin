@@ -49,7 +49,17 @@ public abstract interface Intf {
     public abstract void foo(@org.jetbrains.annotations.NotNull() java.lang.String abc);
 
     @org.jetbrains.annotations.NotNull()
-    public default java.lang.String bar(int bcd) {
-        return null;
+    public abstract java.lang.String bar(int bcd);
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @org.jetbrains.annotations.NotNull()
+        public static java.lang.String bar(@org.jetbrains.annotations.NotNull() Intf $this, int bcd) {
+            return null;
+        }
     }
 }
