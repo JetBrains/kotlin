@@ -47,7 +47,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
                 }
                 return
             }
-            val type = argument.expression.resolvedType
+            val type = argument.expression.resolvedType.lowerBoundIfFlexible()
             if (type is ConeErrorType) return
             if (argument.expression is FirArrayLiteral) return
 
