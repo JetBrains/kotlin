@@ -211,6 +211,12 @@ public class SymbolLightClassesEqualityByFqNameForLibraryTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("InterfaceWithDefaultMethodAndCompanion.kt")
+  public void testInterfaceWithDefaultMethodAndCompanion() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InterfaceWithDefaultMethodAndCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
   public void testInvalidJavaIdentifierAsAnnotationArgument() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
