@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiType
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.types.KotlinType
@@ -32,8 +29,6 @@ fun computeNullabilityQualifier(kotlinType: KotlinType?, psiType: PsiType?): Str
     if (psiType == null || psiType is PsiPrimitiveType) return null
 
     val notErrorKotlinType = kotlinType?.takeUnless(KotlinType::isError) ?: return null
-    if (KotlinBuiltIns.isPrimitiveType(kotlinType)) return null
-
     if (notErrorKotlinType.isTypeParameter()) {
         if (!TypeUtils.hasNullableSuperType(notErrorKotlinType)) return JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString()
         if (!notErrorKotlinType.isMarkedNullable) return null
