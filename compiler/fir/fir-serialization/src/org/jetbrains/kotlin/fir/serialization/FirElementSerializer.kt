@@ -1162,7 +1162,7 @@ class FirElementSerializer private constructor(
     }
 
     private fun serializeVersionRequirementFromRequireKotlin(annotation: FirAnnotation): ProtoBuf.VersionRequirement.Builder? {
-        val convertedAnnotation = annotation.toConstantValue<AnnotationValue>(session, extension.constValueProvider) ?: return null
+        val convertedAnnotation = annotation.toConstantValue<AnnotationValue>(session, scopeSession, extension.constValueProvider) ?: return null
         val argumentMapping = convertedAnnotation.value.argumentsMapping
 
         val versionString = argumentMapping[RequireKotlinConstants.VERSION]?.value as String? ?: return null

@@ -115,7 +115,7 @@ abstract class FirSerializerExtensionBase(
 
         if (!Flags.HAS_CONSTANT.get(proto.flags)) return
         val evaluatedInitializer = (property.evaluatedInitializer as? FirEvaluatorResult.Evaluated)?.result as? FirExpression
-        evaluatedInitializer?.toConstantValue<ConstantValue<*>>(session, constValueProvider)?.let {
+        evaluatedInitializer?.toConstantValue<ConstantValue<*>>(session, scopeSession, constValueProvider)?.let {
             proto.setExtension(protocol.compileTimeValue, annotationSerializer.valueProto(it).build())
         }
     }
