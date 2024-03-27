@@ -1,4 +1,0 @@
-package
-
-public val barException: [Error type: Not found recorded type for kotlin.Exception("bar")]
-public val fooException: java.lang.Exception

@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -55,6 +57,14 @@ private fun FirScope.processConstructorsByName(
         processor,
         bodyResolveComponents
     )
+
+    // FirDefaultStarImportingScope works by returning results from `first` and if none are found, returning results from `second`.
+    // When using an API version X, we might exclusively encounter declarations with @SinceVersion(Y) (Y > X) from `first`.
+    // If that's the case, we should forcefully query `second`.
+    // See compiler/testData/diagnostics/testsWithStdLib/typealias/exceptionTypeAliasesInvisibleWithApiVersion1_0.kt
+    if (this is FirDefaultStarImportingScope && matchedClassifierSymbol.isDeprecationLevelHidden(session.languageVersionSettings)) {
+        second.processConstructorsByName(callInfo, session, bodyResolveComponents, constructorFilter, processor)
+    }
 }
 
 internal fun FirScope.processFunctionsAndConstructorsByName(

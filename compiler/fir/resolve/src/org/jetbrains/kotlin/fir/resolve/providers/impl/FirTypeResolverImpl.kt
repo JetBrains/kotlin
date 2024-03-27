@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -102,8 +103,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
 
             if (resolveDeprecations) {
-                val deprecation = symbol.getOwnDeprecation(session, useSiteFile)
-                if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
+                if (symbol.isDeprecationLevelHidden(session.languageVersionSettings)) {
                     symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
                     diagnostic = null
                 }
@@ -124,11 +124,22 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
         for (scope in scopes) {
             if (applicability == CandidateApplicability.RESOLVED) break
-            scope.processClassifiersByNameWithSubstitution(qualifier.first().name) { symbol, substitutorFromScope ->
+            val name = qualifier.first().name
+            val processor = { symbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor ->
                 val resolvedSymbol = resolveSymbol(symbol, qualifier, qualifierResolver)
-                    ?: return@processClassifiersByNameWithSubstitution
 
-                processCandidate(resolvedSymbol, substitutorFromScope)
+                if (resolvedSymbol != null) {
+                    processCandidate(resolvedSymbol, substitutorFromScope)
+                }
+            }
+            scope.processClassifiersByNameWithSubstitution(name, processor)
+
+            // FirDefaultStarImportingScope works by returning results from `first` and if none are found, returning results from `second`.
+            // When using an API version X, we might exclusively encounter declarations with @SinceVersion(Y) (Y > X) from `first`.
+            // If that's the case, we should forcefully query `second`.
+            // See compiler/testData/diagnostics/testsWithStdLib/typealias/exceptionTypeAliasesInvisibleWithApiVersion1_0.kt
+            if (scope is FirDefaultStarImportingScope && candidates.isNotEmpty() && candidates.all { it.applicability <= CandidateApplicability.HIDDEN }) {
+                scope.second.processClassifiersByNameWithSubstitution(name, processor)
             }
         }
 
