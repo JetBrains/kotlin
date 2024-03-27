@@ -29,8 +29,7 @@ public interface SirSession :
     SirEnumGenerator,
     SirTypeProvider,
     SirVisibilityChecker,
-    SirChildrenProvider,
-    SirTreeAccessor
+    SirChildrenProvider
 {
     public val sirSession: SirSession
         get() = this
@@ -42,8 +41,6 @@ public interface SirSession :
     public val typeProvider: SirTypeProvider
     public val visibilityChecker: SirVisibilityChecker
     public val childrenProvider: SirChildrenProvider
-
-    public val sirTreeAccessor: SirTreeAccessor
 
     public val bridgeModuleName: String
 
@@ -60,14 +57,6 @@ public interface SirSession :
     override fun KtSymbolWithVisibility.sirVisibility(): SirVisibility? = with(visibilityChecker) { this@sirVisibility.sirVisibility() }
 
     override fun KtScope.extractDeclarations(): Sequence<SirDeclaration> = with(childrenProvider) { this@extractDeclarations.extractDeclarations() }
-
-    override fun SirModule.allImports(): Sequence<SirImport> = with(sirTreeAccessor) { this@allImports.allImports() }
-    override fun SirDeclarationContainer.allCallables(): Sequence<SirCallable> = with(sirTreeAccessor) { this@allCallables.allCallables() }
-    override fun SirDeclarationContainer.allVariables(): Sequence<SirVariable> = with(sirTreeAccessor) { this@allVariables.allVariables() }
-    override fun SirDeclarationContainer.allClasses(): Sequence<SirClass> = with(sirTreeAccessor) { this@allClasses.allClasses() }
-    override fun SirDeclarationContainer.allNonPackageEnums(): Sequence<SirEnum> = with(sirTreeAccessor) { this@allNonPackageEnums.allNonPackageEnums() }
-    override fun SirDeclarationContainer.allPackageEnums(): Sequence<SirEnum> = with(sirTreeAccessor) { this@allPackageEnums.allPackageEnums() }
-    override fun SirModule.allExtensions(): Sequence<SirExtension> = with(sirTreeAccessor) { this@allExtensions.allExtensions() }
 }
 
 /**
@@ -120,14 +109,3 @@ public interface SirVisibilityChecker {
      */
     public fun KtSymbolWithVisibility.sirVisibility(): SirVisibility?
 }
-
-public interface SirTreeAccessor {
-    public fun SirModule.allImports(): Sequence<SirImport>
-    public fun SirDeclarationContainer.allCallables(): Sequence<SirCallable>
-    public fun SirDeclarationContainer.allVariables(): Sequence<SirVariable>
-    public fun SirDeclarationContainer.allClasses(): Sequence<SirClass>
-    public fun SirDeclarationContainer.allNonPackageEnums(): Sequence<SirEnum>
-    public fun SirDeclarationContainer.allPackageEnums(): Sequence<SirEnum>
-    public fun SirModule.allExtensions(): Sequence<SirExtension>
-}
-

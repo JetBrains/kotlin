@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.sir.printer
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
-import org.jetbrains.kotlin.sir.providers.impl.SirTreeAccessorImpl
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -861,12 +860,7 @@ class SirAsSwiftSourcesPrinterTests {
 
     private fun runTest(module: SirModule, goldenDataFile: String) {
         val expectedSwiftSrc = File(KtTestUtil.getHomeDirectory()).resolve("$goldenDataFile.golden.swift")
-
-        val printer = SirAsSwiftSourcesPrinter(
-            session = SirTreeAccessorImpl()
-        )
-        with(printer) { module.print() }
-        val actualSwiftSrc = printer.toString().trim()
+        val actualSwiftSrc = SirAsSwiftSourcesPrinter.print(module)
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
     }
 }

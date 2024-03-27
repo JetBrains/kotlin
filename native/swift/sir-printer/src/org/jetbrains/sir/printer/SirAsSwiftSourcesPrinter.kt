@@ -6,22 +6,18 @@
 package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.providers.SirTreeAccessor
-import org.jetbrains.kotlin.sir.providers.impl.SirTreeAccessorImpl
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
 public class SirAsSwiftSourcesPrinter(
-    private val printer: SmartPrinter = SmartPrinter(StringBuilder()),
-    private val session: SirTreeAccessor = SirTreeAccessorImpl(),
+    private val printer: SmartPrinter,
 ) : IndentingPrinter by printer {
 
     public companion object {
-        public fun print(module: SirModule, printer: SirAsSwiftSourcesPrinter = SirAsSwiftSourcesPrinter()): String {
-            with(printer) {
-                module.print()
-            }
+        public fun print(module: SirModule): String {
+            val printer = SirAsSwiftSourcesPrinter(SmartPrinter(StringBuilder()))
+            with(printer) { module.print() }
             return printer.toString().trimIndent()
         }
     }
@@ -32,19 +28,19 @@ public class SirAsSwiftSourcesPrinter(
         printExtensions()
     }
 
-    private fun SirModule.printImports() = with(session) {
-        val imports = allImports().toList()
+    private fun SirModule.printImports() {
+        val imports = allImports()
+        val lastImport = imports.last()
         imports.forEach {
             it.print()
-        }
-        if (imports.isNotEmpty()) {
-            println()
+            if (it != lastImport) {
+                println()
+            }
         }
     }
 
-    private fun SirModule.printExtensions() = with(session) {
-        val extensions = allExtensions().toList()
-        extensions.forEach {
+    private fun SirModule.printExtensions() {
+        allExtensions().forEach {
             it.print()
         }
     }
@@ -66,10 +62,7 @@ public class SirAsSwiftSourcesPrinter(
         println("}")
     }
 
-    private fun SirDeclarationContainer.printChildren() = with(session) {
-        allPackageEnums().forEach {
-            it.print()
-        }
+    private fun SirDeclarationContainer.printChildren() {
         allNonPackageEnums().forEach {
             it.print()
         }
@@ -80,6 +73,9 @@ public class SirAsSwiftSourcesPrinter(
             it.print()
         }
         allCallables().forEach {
+            it.print()
+        }
+        allPackageEnums().forEach {
             it.print()
         }
     }

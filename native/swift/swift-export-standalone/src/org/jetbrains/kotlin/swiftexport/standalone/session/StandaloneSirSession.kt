@@ -16,7 +16,6 @@ internal class StandaloneSirSession(
 
     override val declarationNamer = SirDeclarationNamerImpl()
     override val enumGenerator = SirEnumGeneratorImpl()
-    override val sirTreeAccessor = SirTreeAccessorImpl()
     override val moduleProvider = SirModuleProviderImpl(
         ktAnalysisSession = ktAnalysisSession,
         sirSession = sirSession,
