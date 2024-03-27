@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
-import org.jetbrains.kotlin.fir.resolve.isInvoke
+import org.jetbrains.kotlin.fir.resolve.isFunctionOrKFunctionInvoke
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.functionTypeKind
@@ -83,7 +83,7 @@ object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Com
 
         if (calleeFunction.isComposable(context.session)) {
             checkComposableCall(expression, calleeFunction, context, reporter)
-        } else if (calleeFunction.callableId.isInvoke()) {
+        } else if (calleeFunction.callableId.isFunctionOrKFunctionInvoke()) {
             checkInvoke(expression, context, reporter)
         }
     }

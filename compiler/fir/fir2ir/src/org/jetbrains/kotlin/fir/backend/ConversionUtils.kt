@@ -522,7 +522,7 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
     is FirResolvedNamedReference -> when (val symbol = resolvedSymbol) {
         is FirSyntheticPropertySymbol -> IrStatementOrigin.GET_PROPERTY
         is FirNamedFunctionSymbol -> when {
-            symbol.callableId.isInvoke() ->
+            symbol.callableId.isFunctionOrKFunctionInvoke() ->
                 IrStatementOrigin.INVOKE
 
             source?.kind == KtFakeSourceElementKind.DesugaredForLoop && symbol.callableId.isIteratorNext() ->
