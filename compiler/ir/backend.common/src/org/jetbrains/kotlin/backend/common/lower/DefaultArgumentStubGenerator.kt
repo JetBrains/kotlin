@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.isMovedReceiver
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -58,7 +59,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
         log { "$originalDeclaration -> $newIrFunction" }
 
         return context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            statements += builder.irBlockBody(newIrFunction) {
+            statements += builder.irBlockBody(UNDEFINED_OFFSET) {
                 val params = mutableListOf<IrValueDeclaration>()
                 val variables = mutableMapOf<IrValueSymbol, IrValueSymbol>()
 
@@ -191,7 +192,10 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
         //
         // This control flow limits us to an if-then (without an else), and this together with the
         // restriction on loading the parameter in the default case means we cannot create any temporaries.
-        +irIfThen(irNotEquals(defaultFlag, irInt(0)), irSet(parameter.symbol, default))
+        val iSet = irBlockBody(parameter.startOffset, parameter.endOffset) {
+            +irSet(parameter.symbol, default)
+        }.statements.first() as IrExpression
+        +irIfThen(irNotEquals(defaultFlag, irInt(0)), iSet)
         return parameter
     }
 
