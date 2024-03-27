@@ -29,7 +29,7 @@ FILE: unsafeAssignment_noReport.fir.kt
 
         }
         )
-        <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(R|<local>/value|.R|SubstitutionOverride</Foo.a: R|kotlin/Any?|>|?.{ $subj$.<Unresolved name: count>#(<L> = count@fun <anonymous>(): R|kotlin/Boolean| <inline=Unknown>  {
+        <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(R|<local>/value|.R|SubstitutionOverride</Foo.a: R|kotlin/Any?|>|?.{ $subj$.<Ambiguity: count, [kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/collections/count, kotlin/sequences/count, kotlin/sequences/count, kotlin/text/count, kotlin/text/count]>#(<L> = count@fun <anonymous>(): R|kotlin/Boolean| <inline=Unknown>  {
             ^ Char(l).R|kotlin/Char.rangeTo|(Char(q)).R|kotlin/ranges/CharRange.contains|(<Unresolved name: it>#)
         }
         ) })

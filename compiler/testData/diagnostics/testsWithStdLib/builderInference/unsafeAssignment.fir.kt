@@ -20,5 +20,5 @@ fun main(arg: Any) {
             a = arg
         }
     }
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value.a?.<!UNRESOLVED_REFERENCE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value.a?.<!NONE_APPLICABLE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
 }

@@ -438,21 +438,21 @@ fun poll76(): Flow<String> {
 fun poll8(): Flow<String> {
     return flow {
         val inv = ::bar in setOf(::foo)
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
 fun poll81(): Flow<String> {
     return flow {
         val inv = ::bar2 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(::foo2)
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
 fun poll82(): Flow<String> {
     return flow {
         val inv = ::bar3 in setOf(::foo3)
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 

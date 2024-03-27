@@ -5,7 +5,7 @@ fun test(): Array<Int> {
 
     foo(<!UNSUPPORTED!>[""]<!>)
 
-    val p = <!UNSUPPORTED!>[1, 2]<!> <!UNRESOLVED_REFERENCE!>+<!> <!UNSUPPORTED!>[3, 4]<!>
+    val p = <!UNSUPPORTED!>[1, 2]<!> <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> <!UNSUPPORTED!>[3, 4]<!>
 
     return <!UNSUPPORTED!>[1, 2]<!>
 }

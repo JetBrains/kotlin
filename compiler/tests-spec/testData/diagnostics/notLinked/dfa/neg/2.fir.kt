@@ -45,7 +45,7 @@ fun case_4(x: Any) {
 fun case_5(x: Any?) {
     if (!(x !is Nothing?)) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -69,7 +69,7 @@ fun case_7(x: Any) {
 fun case_8(x: Any?) {
     if (!(x is Nothing?)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -77,7 +77,7 @@ fun case_8(x: Any?) {
 fun case_9(x: Any?) {
     if (!!(x !is Nothing?)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -93,6 +93,6 @@ fun case_10(x: Any?) {
 fun case_11(x: Any?) {
     if (x is Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }

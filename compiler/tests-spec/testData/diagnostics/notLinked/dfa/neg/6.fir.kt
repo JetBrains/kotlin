@@ -15,7 +15,7 @@
 fun case_1(x: Any?) {
     if (x is Int || x !is Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -23,7 +23,7 @@ fun case_1(x: Any?) {
 fun case_2(x: Any) {
     if (x is Number || x !is Number || <!USELESS_IS_CHECK!>x is Number<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!NONE_APPLICABLE!>toByte<!>()
     }
 }
 
@@ -73,7 +73,7 @@ fun case_7(x: Any) {
 fun case_8(x: Any?) {
     if (x is Int? == x is Int?) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -82,7 +82,7 @@ fun case_9(x: Any?) {
     if (!!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
         if (!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>get<!>(0)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>get<!>(0)
         }
     }
 }

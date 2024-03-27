@@ -6,6 +6,6 @@ class Cell {
 
 fun box(): String {
     val c = Cell()
-    (<!UNRESOLVED_REFERENCE!>c[0]<!>)++
+    (<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>c[0]<!>)++
     return "OK"
 }

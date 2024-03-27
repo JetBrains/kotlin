@@ -2,13 +2,13 @@
 
 fun Int.with() {
     with("") {
-        this@with.<!UNRESOLVED_REFERENCE!>inc<!>()
+        this@with.<!NONE_APPLICABLE!>inc<!>()
     }
 }
 
 fun Int.bar() {
     with("") bar@{
-        this@bar.<!UNRESOLVED_REFERENCE!>inc<!>()
+        this@bar.<!NONE_APPLICABLE!>inc<!>()
     }
 }
 

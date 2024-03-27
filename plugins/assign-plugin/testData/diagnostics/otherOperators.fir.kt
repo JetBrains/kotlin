@@ -18,8 +18,8 @@ fun `should not effect error reporting for other operators`() {
     val nullTask: Task? = null
 
     // a.b += c
-    task.input <!UNRESOLVED_REFERENCE!>+=<!> StringProperty("Fail")
-    nullTask?.input <!UNRESOLVED_REFERENCE!>+=<!> StringProperty("Fail")
+    task.input <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> StringProperty("Fail")
+    nullTask?.input <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> StringProperty("Fail")
 
     // a.b <= c
     task.input <!UNRESOLVED_REFERENCE!><=<!> StringProperty("Fail")

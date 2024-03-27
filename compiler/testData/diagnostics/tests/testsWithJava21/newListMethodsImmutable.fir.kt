@@ -3,8 +3,8 @@
 fun bar(x: List<String>) {
     x.<!UNRESOLVED_REFERENCE!>addFirst<!>("")
     x.<!UNRESOLVED_REFERENCE!>addLast<!>("")
-    x.<!UNRESOLVED_REFERENCE!>removeFirst<!>()
-    x.<!UNRESOLVED_REFERENCE!>removeLast<!>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeFirst<!>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeLast<!>()
     x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
     x.<!UNRESOLVED_REFERENCE!>getLast<!>()
     x.<!FUNCTION_CALL_EXPECTED!>first<!>

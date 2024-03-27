@@ -148,48 +148,48 @@ fun poll73(): Flow<String> {
 fun poll8(): Flow<String> {
     return flow {
         val inv = {<!ARGUMENT_TYPE_MISMATCH!>1<!>} in setOf({1f})
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
 fun poll81(): Flow<String> {
     return flow {
         val inv = {} in setOf({})
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
 fun poll82(): Flow<String> {
     return flow {
         val inv = {{}} in setOf({{}})
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
 fun poll83(): Flow<String> {
     return flow {
         val inv = {({})} in setOf({({})})
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
 fun poll84(): Flow<String> {
     return flow {
         val inv = {<!ARGUMENT_TYPE_MISMATCH!>{1}<!>} in setOf({{1f}})
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
 fun poll85(): Flow<String> {
     return flow {
         val inv = {({"1"})} in setOf({({"1f"})})
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
 fun poll86(): Flow<String> {
     return flow {
         val inv = {({"1"})}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!> in setOf({({"1f"})}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>)
-        <!UNRESOLVED_REFERENCE!>inv<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }

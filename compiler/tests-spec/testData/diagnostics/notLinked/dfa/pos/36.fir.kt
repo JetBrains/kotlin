@@ -88,7 +88,7 @@ fun case_6(x: Any?) {
     while (false || y is Number) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!UNRESOLVED_REFERENCE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!NONE_APPLICABLE!>toByte<!>()
     }
 }
 

@@ -1,7 +1,7 @@
 fun foo() = withIntList {
     withStringSequence {
         forEach { line ->
-            line.<!UNRESOLVED_REFERENCE!>rem<!>(1)
+            line.<!NONE_APPLICABLE!>rem<!>(1)
             line.length
         }
     }
