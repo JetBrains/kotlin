@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 @file:Suppress("UNUSED_PARAMETER")
 
 typealias MyTransformer = (String) -> Int

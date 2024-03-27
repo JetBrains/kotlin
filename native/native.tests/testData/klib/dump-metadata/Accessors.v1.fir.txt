@@ -22,7 +22,7 @@ library {
 
       // signature: custom.pkg/Foo.annotated|4796959806228949141[0]
       @custom/pkg/A
-      public final val annotated: kotlin/Int /* = 0 */
+      public final val annotated: kotlin/Int /* = ... */
         // signature: custom.pkg/Foo.annotated.<get-annotated>|8560369092635518301[0]
         public final get
 
@@ -36,7 +36,7 @@ library {
         public final /* non-default */ set(value: kotlin/Int)
 
       // signature: custom.pkg/Foo.annotatedGetter|2662566077187940730[0]
-      public final val annotatedGetter: kotlin/Int /* = 0 */
+      public final val annotatedGetter: kotlin/Int /* = ... */
         // signature: custom.pkg/Foo.annotatedGetter.<get-annotatedGetter>|811214482955708703[0]
         @custom/pkg/A
         public final /* non-default */ get
@@ -57,17 +57,17 @@ library {
         private final /* non-default */ set(value: kotlin/Int)
 
       // signature: custom.pkg/Foo.privateSimple|-6462896533882242463[0]
-      private final val privateSimple: kotlin/Int /* = 0 */
+      private final val privateSimple: kotlin/Int /* = ... */
         // signature: custom.pkg/Foo.privateSimple.<get-privateSimple>|-7951279747362169535[0]
         private final get
 
       // signature: custom.pkg/Foo.protectedSimple|8596646478392887235[0]
-      protected final val protectedSimple: kotlin/Int /* = 0 */
+      protected final val protectedSimple: kotlin/Int /* = ... */
         // signature: custom.pkg/Foo.protectedSimple.<get-protectedSimple>|-7535435137848975023[0]
         protected final get
 
       // signature: custom.pkg/Foo.simple|1899398506587500007[0]
-      public final val simple: kotlin/Int /* = 0 */
+      public final val simple: kotlin/Int /* = ... */
         // signature: custom.pkg/Foo.simple.<get-simple>|-1948492533687709865[0]
         public final get
     }

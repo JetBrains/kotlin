@@ -17,7 +17,7 @@ library {
       public constructor()
 
       @custom/pkg/A
-      public final val annotated: kotlin/Int /* = 0 */
+      public final val annotated: kotlin/Int /* = ... */
         public final get
 
       public final var annotatedAccessors: kotlin/Int
@@ -26,7 +26,7 @@ library {
         @custom/pkg/A
         public final /* non-default */ set(value: kotlin/Int)
 
-      public final val annotatedGetter: kotlin/Int /* = 0 */
+      public final val annotatedGetter: kotlin/Int /* = ... */
         @custom/pkg/A
         public final /* non-default */ get
 
@@ -39,13 +39,13 @@ library {
         public final get
         private final /* non-default */ set(value: kotlin/Int)
 
-      private final val privateSimple: kotlin/Int /* = 0 */
+      private final val privateSimple: kotlin/Int /* = ... */
         private final get
 
-      protected final val protectedSimple: kotlin/Int /* = 0 */
+      protected final val protectedSimple: kotlin/Int /* = ... */
         protected final get
 
-      public final val simple: kotlin/Int /* = 0 */
+      public final val simple: kotlin/Int /* = ... */
         public final get
     }
   }

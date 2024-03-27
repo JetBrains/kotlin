@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 package test
 
 class ClassA {

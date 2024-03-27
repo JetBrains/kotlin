@@ -16,7 +16,7 @@ library {
       public open fun enumFun(): kotlin/Int
 
       // signature: /E.enumVal|{}enumVal[0]
-      public final val enumVal: kotlin/Int /* = 0 */
+      public final val enumVal: kotlin/Int /* = ... */
         // signature: /E.enumVal.<get-enumVal>|<get-enumVal>(){}[0]
         public final get
 
