@@ -2695,7 +2695,7 @@ public inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
 }
 
 /**
- * Splits the original sequence into pair of lists,
+ * Splits the original sequence into a pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
  *
