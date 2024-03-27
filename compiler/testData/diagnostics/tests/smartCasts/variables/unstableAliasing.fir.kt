@@ -8,7 +8,7 @@ fun testIs(x: Any?) {
     if (a is String) x.length
     if (b is String) x.length
     val f = {
-        if (a is String) x.length
+        if (a is String) x.<!UNRESOLVED_REFERENCE!>length<!>
         if (b is String) x.length
     }
     a = ""
@@ -21,7 +21,7 @@ fun testIsLambda(x: Any?) {
     if (a is String) x.length
     if (b is String) x.length
     callLambdaWithoutContract { a = "" }
-    if (a is String) x.length
+    if (a is String) x.<!UNRESOLVED_REFERENCE!>length<!>
     if (b is String) x.length
 }
 
@@ -30,8 +30,8 @@ fun testRequireIs(x: Any?) {
     val b = a
     val f: () -> Unit = {
         require(a is String)
-        x.length
-        require(<!USELESS_IS_CHECK!>b is String<!>)
+        x.<!UNRESOLVED_REFERENCE!>length<!>
+        require(b is String)
         x.length
     }
     a = ""
@@ -43,8 +43,8 @@ fun testRequireIsLambda(x: Any?) {
     val b = a
     callLambdaWithoutContract { a = "" }
     require(a is String)
-    x.length
-    require(<!USELESS_IS_CHECK!>b is String<!>)
+    x.<!UNRESOLVED_REFERENCE!>length<!>
+    require(b is String)
     x.length
 }
 
@@ -54,7 +54,7 @@ fun testNotNull(x: String?) {
     if (a != null) x.length
     if (b != null) x.length
     val f = {
-        if (a != null) x.length
+        if (a != null) x<!UNSAFE_CALL!>.<!>length
         if (b != null) x.length
     }
     a = ""
@@ -67,7 +67,7 @@ fun testNotNullLambda(x: String?) {
     if (a != null) x.length
     if (b != null) x.length
     callLambdaWithoutContract { a = "" }
-    if (a != null) x.length
+    if (a != null) x<!UNSAFE_CALL!>.<!>length
     if (b != null) x.length
 }
 
@@ -76,8 +76,8 @@ fun testRequireNotNull(x: String?) {
     val b = a
     val f: () -> Unit = {
         require(a != null)
-        x.length
-        require(<!SENSELESS_COMPARISON!>b != null<!>)
+        x<!UNSAFE_CALL!>.<!>length
+        require(b != null)
         x.length
     }
     a = ""
@@ -89,8 +89,8 @@ fun testRequireNotNullLambda(x: String?) {
     val b = a
     callLambdaWithoutContract { a = "" }
     require(a != null)
-    x.length
-    require(<!SENSELESS_COMPARISON!>b != null<!>)
+    x<!UNSAFE_CALL!>.<!>length
+    require(b != null)
     x.length
 }
 
@@ -101,7 +101,7 @@ fun testNotNullViaVariable(x: String?) {
     if (b) x.length
     if (c) x.length
     val f = {
-        if (b) x.length
+        if (b) x<!UNSAFE_CALL!>.<!>length
         if (c) x.length
     }
     b = true
@@ -115,7 +115,7 @@ fun testNotNullViaVariableLambda(x: String?) {
     if (b) x.length
     if (c) x.length
     callLambdaWithoutContract { b = true }
-    if (b) x.length
+    if (b) x<!UNSAFE_CALL!>.<!>length
     if (c) x.length
 }
 
@@ -125,7 +125,7 @@ fun testRequireNotNullViaVariable(x: String?) {
     val c = b
     val f: () -> Unit = {
         require(b)
-        x.length
+        x<!UNSAFE_CALL!>.<!>length
         require(c)
         x.length
     }
@@ -139,7 +139,7 @@ fun testRequireNotNullViaVariableLambda(x: String?) {
     val c = b
     callLambdaWithoutContract { b = true }
     require(b)
-    x.length
+    x<!UNSAFE_CALL!>.<!>length
     require(c)
     x.length
 }
