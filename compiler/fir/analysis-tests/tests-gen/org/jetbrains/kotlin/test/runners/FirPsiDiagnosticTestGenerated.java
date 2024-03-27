@@ -1678,6 +1678,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Test
+      @TestMetadata("exctlyOnceCallBetweenUnrelatedLambdas.kt")
+      public void testExctlyOnceCallBetweenUnrelatedLambdas() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contracts/exctlyOnceCallBetweenUnrelatedLambdas.kt");
+      }
+
+      @Test
       @TestMetadata("genericContract.kt")
       public void testGenericContract() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contracts/genericContract.kt");
