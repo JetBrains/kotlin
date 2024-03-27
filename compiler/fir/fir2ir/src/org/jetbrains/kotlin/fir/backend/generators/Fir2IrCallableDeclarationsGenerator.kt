@@ -975,8 +975,9 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
     }
 
     private fun FirAnnotationContainer.isDeclaredInFilesBeingCompiled(): Boolean {
+        val filesBeingCompiled = filesBeingCompiled
         if (filesBeingCompiled == null || this !is FirDeclaration) return false
-        return moduleData.session.firProvider.getContainingFile(symbol) !in filesBeingCompiled
+        return moduleData.session.firProvider.getContainingFile(symbol) !in filesBeingCompiled.orEmpty()
     }
 }
 
