@@ -10,7 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 
 internal fun Project.readSystemPropertyAtConfigurationTime(key: String): Provider<String> {
@@ -19,7 +19,7 @@ internal fun Project.readSystemPropertyAtConfigurationTime(key: String): Provide
 
 fun Task.notCompatibleWithConfigurationCacheCompat(reason: String) {
     val reportConfigurationCacheWarnings = try {
-        val requested = project.isConfigurationCacheRequested
+        val requested = project.isConfigurationCacheEnabled
         val startParameters = project.gradle.startParameter as? StartParameterInternal
         requested && (startParameters?.isConfigurationCacheQuiet ?: false)
     } catch (_: IncompatibleClassChangeError) { // for cases when gradle is way too old

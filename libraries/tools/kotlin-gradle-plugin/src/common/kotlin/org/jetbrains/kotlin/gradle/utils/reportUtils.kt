@@ -19,13 +19,12 @@ import org.jetbrains.kotlin.statistics.MetricValueValidationFailed
  */
 internal fun Project.addConfigurationMetrics(reportAction: (MetricContainer) -> Unit) {
     project.gradle.sharedServices.registrations.findByName(BuildFusService.serviceName)?.also {
-        with(it.parameters as BuildFusService.Parameters) {
-            configurationMetrics.add(project.provider {
-                val configurationTimeMetrics = MetricContainer()
-                reportAction(configurationTimeMetrics)
-                configurationTimeMetrics
-            })
-        }
+        val parameters = it.parameters as BuildFusService.Parameters
+        parameters.configurationMetrics.add(project.provider {
+            val configurationTimeMetrics = MetricContainer()
+            reportAction(configurationTimeMetrics)
+            configurationTimeMetrics
+        })
     }
 }
 

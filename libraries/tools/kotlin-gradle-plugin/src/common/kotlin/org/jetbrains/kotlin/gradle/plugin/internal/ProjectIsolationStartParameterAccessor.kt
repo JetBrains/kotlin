@@ -19,6 +19,7 @@ import javax.inject.Inject
  */
 interface ProjectIsolationStartParameterAccessor {
     val isProjectIsolationEnabled: Boolean
+    val isProjectIsolationRequested: Boolean
 
     interface Factory : VariantImplementationFactories.VariantImplementationFactory {
         fun getInstance(project: Project): ProjectIsolationStartParameterAccessor
@@ -29,6 +30,7 @@ internal abstract class DefaultProjectIsolationStartParameterAccessor @Inject co
     buildFeatures: BuildFeatures
 ) : ProjectIsolationStartParameterAccessor {
     override val isProjectIsolationEnabled: Boolean = buildFeatures.isolatedProjects.active.orElse(false).get()
+    override val isProjectIsolationRequested: Boolean = buildFeatures.isolatedProjects.requested.orElse(false).get()
 
     internal class Factory : ProjectIsolationStartParameterAccessor.Factory {
         override fun getInstance(project: Project): ProjectIsolationStartParameterAccessor = project
@@ -41,3 +43,8 @@ internal val Project.isProjectIsolationEnabled
     get() = variantImplementationFactory<ProjectIsolationStartParameterAccessor.Factory>()
         .getInstance(this)
         .isProjectIsolationEnabled
+
+internal val Project.isProjectIsolationRequested
+    get() = variantImplementationFactory<ProjectIsolationStartParameterAccessor.Factory>()
+        .getInstance(this)
+        .isProjectIsolationRequested

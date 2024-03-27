@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -90,6 +92,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
 
             val isProjectIsolationEnabled = project.isProjectIsolationEnabled
             val isConfigurationCacheRequested = project.isConfigurationCacheRequested
+            val isProjectIsolationRequested = project.isProjectIsolationRequested
 
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 (it.parameters as Parameters).configurationMetrics.add(
@@ -114,7 +117,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             // so there is a change that no VariantImplementationFactory will be found
             return gradle.sharedServices.registerIfAbsent(serviceName, BuildFusService::class.java) { spec ->
                 spec.parameters.configurationMetrics.add(project.provider {
-                    //isProjectIsolationEnabled and isConfigurationCacheRequested should be calculated beforehand
+                    //isProjectIsolationEnabled isConfigurationCacheRequested and isProjectIsolationRequested should be calculated beforehand
                     // because since Gradle 8.0 provider's calculation is made in BuildFinishFlowAction
                     // and VariantImplementationFactories is not initialized at that moment
                     collectGeneralConfigurationTimeMetrics(
@@ -124,6 +127,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                         useClasspathSnapshot,
                         pluginVersion,
                         isProjectIsolationEnabled,
+                        isProjectIsolationRequested,
                         isConfigurationCacheRequested
                     )
                 })
@@ -141,7 +145,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                 //Gradle throws an exception when Gradle version less than 7.4 with configuration cache enabled and buildSrc,
                 @Suppress("DEPRECATION")
                 if (GradleVersion.current().baseVersion >= GradleVersion.version("7.4")
-                    || !project.isConfigurationCacheRequested
+                    || !project.isConfigurationCacheEnabled
                     || project.currentBuildId().name != "buildSrc"
                 ) {
                     BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)

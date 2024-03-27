@@ -15,6 +15,8 @@ internal class ProjectIsolationStartParameterAccessorG80(
     override val isProjectIsolationEnabled: Boolean by lazy {
         (gradle.startParameter as StartParameterInternal).isolatedProjects.get()
     }
+    override val isProjectIsolationRequested: Boolean
+        get() = isProjectIsolationEnabled
 
     internal class Factory : ProjectIsolationStartParameterAccessor.Factory {
         override fun getInstance(project: Project): ProjectIsolationStartParameterAccessor {

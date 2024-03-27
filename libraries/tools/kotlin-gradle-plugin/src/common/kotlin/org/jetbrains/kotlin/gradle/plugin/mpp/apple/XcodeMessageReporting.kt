@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 
 internal val Project.useXcodeMessageStyle: Boolean
@@ -33,7 +33,7 @@ internal val AddBuildListenerForXCodeSetupAction = KotlinProjectSetupAction acti
         return@action
     }
 
-    if (isConfigurationCacheRequested) {
+    if (isConfigurationCacheEnabled) {
         // TODO https://youtrack.jetbrains.com/issue/KT-55832
         // Configuration cache case will be supported later
         return@action

@@ -10,6 +10,8 @@ import org.gradle.api.Project
 internal class ProjectIsolationStartParameterAccessorG70() : ProjectIsolationStartParameterAccessor {
     override val isProjectIsolationEnabled: Boolean
         get() = false
+    override val isProjectIsolationRequested: Boolean
+        get() = isProjectIsolationEnabled
 
     internal class Factory : ProjectIsolationStartParameterAccessor.Factory {
         override fun getInstance(project: Project): ProjectIsolationStartParameterAccessor {

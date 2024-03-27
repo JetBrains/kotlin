@@ -22,6 +22,7 @@ import javax.inject.Inject
  * As a replacement, Gradle provides [BuildFeatures.getConfigurationCache] service since Gradle 8.5.
  */
 internal interface ConfigurationCacheStartParameterAccessor {
+    val isConfigurationCacheEnabled: Boolean
     val isConfigurationCacheRequested: Boolean
 
     interface Factory : VariantImplementationFactories.VariantImplementationFactory {
@@ -39,8 +40,14 @@ internal class DefaultConfigurationCacheStartParameterAccessorVariantFactory :
 internal abstract class DefaultConfigurationCacheStartParameterAccessor @Inject constructor(
     buildFeatures: BuildFeatures,
 ) : ConfigurationCacheStartParameterAccessor {
-    override val isConfigurationCacheRequested: Boolean = buildFeatures.configurationCache.active.orElse(false).get()
+    override val isConfigurationCacheEnabled: Boolean = buildFeatures.configurationCache.active.orElse(false).get()
+    override val isConfigurationCacheRequested: Boolean = buildFeatures.configurationCache.requested.orElse(false).get()
 }
+
+internal val Project.isConfigurationCacheEnabled
+    get() = variantImplementationFactory<ConfigurationCacheStartParameterAccessor.Factory>()
+        .getInstance(this)
+        .isConfigurationCacheEnabled
 
 internal val Project.isConfigurationCacheRequested
     get() = variantImplementationFactory<ConfigurationCacheStartParameterAccessor.Factory>()

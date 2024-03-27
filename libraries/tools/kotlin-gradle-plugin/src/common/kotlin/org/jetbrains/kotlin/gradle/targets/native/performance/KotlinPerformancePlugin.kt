@@ -16,7 +16,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.TaskState
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.addExtension
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.tasks.NativePerformanceReport
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -69,7 +69,7 @@ open class KotlinPerformancePlugin : Plugin<Project> {
 
     private fun configureTasks(project: Project, performanceExtension: PerformanceExtension) {
         // Add time listener.
-        if (!project.isConfigurationCacheRequested) {
+        if (!project.isConfigurationCacheEnabled) {
             val timeListener = TaskTimerListener(project)
             project.gradle.addListener(timeListener)
             performanceExtension.trackedBinaries.forEach { binary ->
