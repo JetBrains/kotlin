@@ -17,11 +17,14 @@ abstract class SirVisitor<out R, in D> {
 
     abstract fun visitElement(element: SirElement, data: D): R
 
-    open fun visitModule(module: SirModule, data: D): R =
-        visitElement(module, data)
-
     open fun visitDeclarationContainer(declarationContainer: SirDeclarationContainer, data: D): R =
         visitElement(declarationContainer, data)
+
+    open fun visitMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer, data: D): R =
+        visitElement(mutableDeclarationContainer, data)
+
+    open fun visitModule(module: SirModule, data: D): R =
+        visitElement(module, data)
 
     open fun visitDeclaration(declaration: SirDeclaration, data: D): R =
         visitElement(declaration, data)

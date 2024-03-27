@@ -18,12 +18,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         kDoc = "The root interface of the Swift IR tree."
     }
 
-    val module by element {
-        customParentInVisitor = rootElement
-        parent(declarationContainer)
-        parent(named)
-    }
-
     val declarationParent by sealedElement()
 
     val declarationContainer by sealedElement {
@@ -31,6 +25,20 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = rootElement
 
         +listField("declarations", declaration)
+    }
+
+    val mutableDeclarationContainer by sealedElement {
+        parent(declarationParent)
+        parent(declarationContainer)
+        customParentInVisitor = rootElement
+
+        +listField("declarations", declaration, isMutableList = true)
+    }
+
+    val module by element {
+        customParentInVisitor = rootElement
+        parent(mutableDeclarationContainer)
+        parent(named)
     }
 
     val declaration by sealedElement {
@@ -46,7 +54,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val extension: Element by element {
         customParentInVisitor = declaration
         parent(declaration)
-        parent(declarationContainer)
+        parent(mutableDeclarationContainer)
 
         +field("extendedType", typeType)
     }
@@ -66,7 +74,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val enum: Element by element {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
-        parent(declarationContainer)
+        parent(mutableDeclarationContainer)
 
         +listField("cases", enumCaseType)
     }
@@ -80,7 +88,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val `class`: Element by element {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
-        parent(declarationContainer)
+        parent(mutableDeclarationContainer)
     }
 
     val callable by sealedElement {

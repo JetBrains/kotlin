@@ -24,6 +24,10 @@ internal class StandaloneSirSession(
         ktAnalysisSession = ktAnalysisSession,
         sirSession = sirSession,
     )
+    override val parentProvider = SirParentProviderImpl(
+        ktAnalysisSession = ktAnalysisSession,
+        sirSession = sirSession,
+    )
     override val typeProvider = SirTypeProviderImpl(
         ktAnalysisSession = ktAnalysisSession,
         sirSession = sirSession,

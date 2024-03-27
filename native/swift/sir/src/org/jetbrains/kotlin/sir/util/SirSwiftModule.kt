@@ -15,26 +15,6 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
  */
 object SirSwiftModule : SirModule() {
     override val name: String get() = "Swift"
-    override val declarations: List<SirDeclaration> by lazy {
-        listOf(
-            void,
-
-            bool,
-
-            int8,
-            int16,
-            int32,
-            int64,
-
-            uint8,
-            uint16,
-            uint32,
-            uint64,
-
-            double,
-            float,
-        )
-    }
 
     val bool = primitive("Bool")
 
@@ -56,6 +36,25 @@ object SirSwiftModule : SirModule() {
         visibility = SirVisibility.PUBLIC
         name = "Void"
     }.also { it.parent = SirSwiftModule }
+
+    override var declarations: MutableList<SirDeclaration> = mutableListOf(
+        void,
+
+        bool,
+
+        int8,
+        int16,
+        int32,
+        int64,
+
+        uint8,
+        uint16,
+        uint32,
+        uint64,
+
+        double,
+        float,
+    )
 
     override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }

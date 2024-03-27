@@ -39,3 +39,10 @@ val SirVariable.accessors: List<SirAccessor>
 val SirParameter.name: String? get() = parameterName ?: argumentName
 
 val SirType.isVoid: Boolean get() = this is SirNominalType && this.type == SirSwiftModule.void
+
+fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () -> T): T {
+    val child = producer()
+    child.parent = this
+    declarations += child
+    return child
+}

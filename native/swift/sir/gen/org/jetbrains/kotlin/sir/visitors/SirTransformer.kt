@@ -21,14 +21,6 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
         return transformElement(element, data)
     }
 
-    open fun transformModule(module: SirModule, data: D): SirModule {
-        return transformElement(module, data)
-    }
-
-    final override fun visitModule(module: SirModule, data: D): SirModule {
-        return transformModule(module, data)
-    }
-
 
     open fun transformDeclarationContainer(declarationContainer: SirDeclarationContainer, data: D): SirDeclarationContainer {
         return transformElement(declarationContainer, data)
@@ -36,6 +28,22 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
 
     final override fun visitDeclarationContainer(declarationContainer: SirDeclarationContainer, data: D): SirDeclarationContainer {
         return transformDeclarationContainer(declarationContainer, data)
+    }
+
+    open fun transformMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer, data: D): SirMutableDeclarationContainer {
+        return transformElement(mutableDeclarationContainer, data)
+    }
+
+    final override fun visitMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer, data: D): SirMutableDeclarationContainer {
+        return transformMutableDeclarationContainer(mutableDeclarationContainer, data)
+    }
+
+    open fun transformModule(module: SirModule, data: D): SirModule {
+        return transformElement(module, data)
+    }
+
+    final override fun visitModule(module: SirModule, data: D): SirModule {
+        return transformModule(module, data)
     }
 
     open fun transformDeclaration(declaration: SirDeclaration, data: D): SirDeclaration {
