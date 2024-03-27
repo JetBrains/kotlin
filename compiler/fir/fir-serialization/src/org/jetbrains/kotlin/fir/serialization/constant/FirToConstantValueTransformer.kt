@@ -8,21 +8,25 @@ package org.jetbrains.kotlin.fir.serialization.constant
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
@@ -33,13 +37,20 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 @OptIn(PrivateForInline::class)
 internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(
     session: FirSession,
+    scopeSession: ScopeSession,
     constValueProvider: ConstValueProvider?
 ): T? {
     return when (this) {
         // IR evaluator doesn't convert annotation calls to constant values, so we should immediately call the transformer
-        is FirAnnotation -> accept(FirToConstantValueTransformer, FirToConstantValueTransformerData(session, constValueProvider))
+        is FirAnnotation -> accept(
+            FirToConstantValueTransformer,
+            FirToConstantValueTransformerData(session, scopeSession, constValueProvider)
+        )
         else -> constValueProvider?.findConstantValueFor(this)
-            ?: accept(FirToConstantValueTransformer, FirToConstantValueTransformerData(session, constValueProvider))
+            ?: accept(
+                FirToConstantValueTransformer,
+                FirToConstantValueTransformerData(session, scopeSession, constValueProvider)
+            )
     } as? T
 }
 
@@ -52,6 +63,7 @@ internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
 @PrivateForInline
 internal data class FirToConstantValueTransformerData(
     val session: FirSession,
+    val scopeSession: ScopeSession,
     val constValueProvider: ConstValueProvider?,
 )
 
@@ -114,7 +126,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
     }
 
     private fun FirAnnotation.convertMapping(data: FirToConstantValueTransformerData): Map<Name, ConstantValue<*>> {
-        val (session, constValueProvider) = data
+        val (session, scopeSession, constValueProvider) = data
 
         var needsFirEvaluation = false
 
@@ -147,6 +159,20 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
                             }
                         result[name] = constantValue
                     }
+                }
+            }
+        }
+
+        // Fill empty array arguments
+        this.resolvedType.scope(
+            session,
+            scopeSession,
+            CallableCopyTypeCalculator.Forced,
+            requiredMembersPhase = FirResolvePhase.TYPES
+        )?.getDeclaredConstructors()?.firstOrNull()?.let {
+            for (parameterSymbol in it.valueParameterSymbols) {
+                if (result[parameterSymbol.name] == null && parameterSymbol.resolvedReturnTypeRef.coneType.isArrayType) {
+                    result[parameterSymbol.name] = ArrayValue(emptyList())
                 }
             }
         }
