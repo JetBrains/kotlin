@@ -1937,36 +1937,6 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     public void testValueClassWithInapplicableParameterType() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithInapplicableParameterType.kt");
     }
-
-    @Test
-    @TestMetadata("valueClassWithInefficientEquals.kt")
-    public void testValueClassWithInefficientEquals() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithInefficientEquals.kt");
-    }
-
-    @Test
-    @TestMetadata("valueClassWithInnerClass.kt")
-    public void testValueClassWithInnerClass() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithInnerClass.kt");
-    }
-
-    @Test
-    @TestMetadata("valueClassWithPropertyWithBackingField.kt")
-    public void testValueClassWithPropertyWithBackingField() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithPropertyWithBackingField.kt");
-    }
-
-    @Test
-    @TestMetadata("valueClassWithReservedMember.kt")
-    public void testValueClassWithReservedMember() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithReservedMember.kt");
-    }
-
-    @Test
-    @TestMetadata("valueClassWithTypedEquals.kt")
-    public void testValueClassWithTypedEquals() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/valueClassWithTypedEquals.kt");
-    }
   }
 
   @Nested
