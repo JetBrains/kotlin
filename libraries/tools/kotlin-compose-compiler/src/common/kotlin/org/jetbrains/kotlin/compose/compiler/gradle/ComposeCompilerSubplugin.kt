@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class ComposeCompilerGradleSubplugin
 @Inject internal constructor(
-    private val registry: ToolingModelBuilderRegistry
+    private val registry: ToolingModelBuilderRegistry,
 ) : KotlinCompilerPluginSupportPlugin {
 
     companion object {
@@ -25,6 +25,8 @@ class ComposeCompilerGradleSubplugin
         }
 
         private const val COMPOSE_COMPILER_ARTIFACT_NAME = "kotlin-compose-compiler-plugin-embeddable"
+
+        private val EMPTY_OPTION = SubpluginOption("", "")
     }
 
     override fun apply(target: Project) {
@@ -35,11 +37,11 @@ class ComposeCompilerGradleSubplugin
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
 
     override fun applyToCompilation(
-        kotlinCompilation: KotlinCompilation<*>
+        kotlinCompilation: KotlinCompilation<*>,
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
-        val composeCompilerExtension = project.extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
+        val composeCompilerExtension = getComposeCompilerGradlePluginExtension(project)
 
         val kotlinExtensionConfiguration = try {
             project.configurations.getByName("kotlin-extension")
@@ -61,23 +63,49 @@ class ComposeCompilerGradleSubplugin
             }
         }
 
-        return project.provider {
-            val options = mutableListOf<SubpluginOption>()
 
-            options += SubpluginOption("generateFunctionKeyMetaClasses", composeCompilerExtension.generateFunctionKeyMetaClasses.toString())
-            if(kotlinExtensionConfiguration == null) // TODO: Is there a better way to check if AGP already set the option?
-                options += SubpluginOption("sourceInformation", composeCompilerExtension.sourceInformation.toString())
-            if(composeCompilerExtension.metricsDestination != null) options += SubpluginOption("metricsDestination", composeCompilerExtension.metricsDestination!!.toString())
-            if(composeCompilerExtension.reportsDestination != null) options += SubpluginOption("reportsDestination", composeCompilerExtension.reportsDestination!!.toString())
-            options += SubpluginOption("intrinsicRemember", composeCompilerExtension.intrinsicRemember.toString())
-            options += SubpluginOption("nonSkippingGroupOptimization", composeCompilerExtension.nonSkippingGroupOptimization.toString())
-            options += SubpluginOption("suppressKotlinVersionCompatibilityCheck", composeCompilerExtension.suppressKotlinVersionCompatibilityCheck.toString())
-            options += SubpluginOption("experimentalStrongSkipping", composeCompilerExtension.experimentalStrongSkipping.toString())
-            options += SubpluginOption("stabilityConfigurationPath", composeCompilerExtension.stabilityConfigurationPath)
-            options += SubpluginOption("traceMarkersEnabled", composeCompilerExtension.traceMarkersEnabled.toString())
+        val allPluginProperties = project.objects
+            .listProperty(SubpluginOption::class.java)
+            .apply {
+                add(composeCompilerExtension.generateFunctionKeyMetaClasses.map {
+                    SubpluginOption("generateFunctionKeyMetaClasses", it.toString())
+                })
+                if (kotlinExtensionConfiguration == null) {
+                    add(composeCompilerExtension.includeSourceInformation.map {
+                        SubpluginOption("sourceInformation", it.toString())
+                    })
+                }
+                add(composeCompilerExtension.metricsDestination.map {
+                    SubpluginOption("metricsDestination", it.asFile.path)
+                }.orElse(EMPTY_OPTION))
+                add(composeCompilerExtension.reportsDestination.map {
+                    SubpluginOption("reportsDestination", it.asFile.path)
+                }.orElse(EMPTY_OPTION))
+                add(composeCompilerExtension.enableIntrinsicRemember.map {
+                    SubpluginOption("intrinsicRemember", it.toString())
+                })
+                add(composeCompilerExtension.enableNonSkippingGroupOptimization.map {
+                    SubpluginOption("nonSkippingGroupOptimization", it.toString())
+                })
+                add(composeCompilerExtension.suppressKotlinVersionCompatibilityCheck.map {
+                    SubpluginOption("suppressKotlinVersionCompatibilityCheck", it)
+                }.orElse(EMPTY_OPTION))
+                add(composeCompilerExtension.enableExperimentalStrongSkippingMode.map {
+                    SubpluginOption("experimentalStrongSkipping", it.toString())
+                })
+                add(composeCompilerExtension.stabilityConfigurationFile.map {
+                    SubpluginOption("stabilityConfigurationPath", it.asFile.path)
+                }.orElse(EMPTY_OPTION))
+                add(composeCompilerExtension.includeTraceMarkers.map {
+                    SubpluginOption("traceMarkersEnabled", it.toString())
+                })
+            }
 
-            options
-        }
+        return project.objects
+            .listProperty(SubpluginOption::class.java)
+            .value(allPluginProperties.map { pluginOptions ->
+                pluginOptions.filter { it != EMPTY_OPTION }
+            })
     }
 
     /** Get ID of the Kotlin Compiler plugin */
