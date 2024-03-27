@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -31,6 +32,8 @@ import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirJvmSessionFactory : FirAbstractSessionFactory() {
     fun createLibrarySession(
@@ -129,6 +132,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                     incrementalCompilationSymbolProviders?.symbolProviderForBinariesFromIncrementalCompilation,
                     generatedSymbolsProvider,
                     javaSymbolProvider,
+                    createJvmActualizingBuiltinSymbolProviderIfNeeded(languageVersionSettings, moduleData, dependencies),
                     *dependencies.toTypedArray(),
                     incrementalCompilationSymbolProviders?.optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                 )
@@ -139,5 +143,16 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             }
         }
     }
+
+    private fun createJvmActualizingBuiltinSymbolProviderIfNeeded(
+        languageVersionSettings: LanguageVersionSettings,
+        moduleData: FirModuleData,
+        dependencies: List<FirSymbolProvider>,
+    ): FirJvmActualizingBuiltinSymbolProvider? =
+        runIf(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !moduleData.isCommon) {
+            val dependentSymbolProviders = dependencies.filter { it.session.kind == FirSession.Kind.Source }
+            val builtinSymbolProvider = dependencies.firstIsInstance<FirBuiltinSymbolProvider>()
+            FirJvmActualizingBuiltinSymbolProvider(dependentSymbolProviders, builtinSymbolProvider)
+        }
 }
 
