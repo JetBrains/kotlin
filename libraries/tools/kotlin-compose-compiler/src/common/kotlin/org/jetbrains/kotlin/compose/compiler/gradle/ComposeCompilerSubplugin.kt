@@ -28,7 +28,7 @@ class ComposeCompilerGradleSubplugin
     }
 
     override fun apply(target: Project) {
-        target.extensions.create("compose_compiler", ComposeCompilerGradlePluginExtension::class.java)
+        target.extensions.create("composeCompiler", ComposeCompilerGradlePluginExtension::class.java)
         registry.register(ComposeCompilerModelBuilder())
     }
 
