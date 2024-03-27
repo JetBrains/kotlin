@@ -29,14 +29,6 @@ optInToObsoleteDescriptorBasedAPI()
 
 kotlin {
     jvmToolchain(11)
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_1_8)
-    }
-}
-
-java {
-    targetCompatibility = JavaVersion.VERSION_1_8
-    sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks.withType<Test> {
