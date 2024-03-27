@@ -724,6 +724,7 @@ class Fir2IrConverter(
             commonMemberStorage: Fir2IrCommonMemberStorage,
             initializedIrBuiltIns: IrBuiltInsOverFir?,
             typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
+            firProviderWithGeneratedFiles: FirProviderWithGeneratedFiles,
         ): Fir2IrComponentsStorage {
             return Fir2IrComponentsStorage(
                 session,
@@ -748,14 +749,11 @@ class Fir2IrConverter(
                 irMangler,
                 specialSymbolProvider,
                 initializedIrBuiltIns,
+                firProviderWithGeneratedFiles,
             )
         }
 
-        fun generateIrModuleFragment(
-            components: Fir2IrComponentsStorage,
-            firFiles: List<FirFile>,
-            commonMemberStorage: Fir2IrCommonMemberStorage,
-        ): Fir2IrResult {
+        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): Fir2IrResult {
             val session = components.session
 
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
@@ -770,8 +768,6 @@ class Fir2IrConverter(
             }
 
             components.converter.runSourcesConversion(allFirFiles, irModuleFragment, components.fir2IrVisitor)
-
-            commonMemberStorage.registerFirProvider(session.moduleData, components.firProvider)
 
             return Fir2IrResult(irModuleFragment, components, components.moduleDescriptor)
         }
