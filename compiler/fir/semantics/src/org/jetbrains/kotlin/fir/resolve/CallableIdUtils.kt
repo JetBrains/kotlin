@@ -18,6 +18,14 @@ import org.jetbrains.kotlin.name.StandardClassIds
 fun CallableId.isInvoke(): Boolean =
     isFunctionInvoke() || isKFunctionInvoke()
 
+fun CallableId.isFunctionOrSuspendFunctionInvoke(): Boolean =
+    isFunctionInvoke() || isSuspendFunctionInvoke()
+
+fun CallableId.isSuspendFunctionInvoke(): Boolean =
+    callableName.asString() == "invoke"
+            && className?.asString()?.startsWith("SuspendFunction") == true
+            && packageName == StandardClassIds.BASE_COROUTINES_PACKAGE
+
 fun CallableId.isFunctionInvoke(): Boolean =
     callableName.asString() == "invoke"
             && className?.asString()?.startsWith("Function") == true
