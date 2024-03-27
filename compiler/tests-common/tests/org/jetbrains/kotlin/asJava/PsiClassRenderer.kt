@@ -88,9 +88,37 @@ class PsiClassRenderer private constructor(
     private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
 
     private fun PsiType.renderType(sb: StringBuffer) {
-        if (annotations.isNotEmpty()) {
-            sb.append(annotations.joinToString(" ", postfix = " ") { it.renderAnnotation() })
+        fun renderAnnotations(leadingAnnotations: Boolean) {
+            annotations.ifNotEmpty {
+                joinTo(
+                    buffer = sb,
+                    separator = " ",
+                    postfix = " ",
+                    prefix = if (leadingAnnotations) "" else " ",
+                ) { it.renderAnnotation() }
+            }
         }
+
+        when (this) {
+            is PsiEllipsisType -> {
+                componentType.renderType(sb)
+                renderAnnotations(leadingAnnotations = false)
+                sb.append("...")
+
+                return
+            }
+
+            is PsiArrayType -> {
+                componentType.renderType(sb)
+                renderAnnotations(leadingAnnotations = false)
+                sb.append("[]")
+
+                return
+            }
+        }
+
+        renderAnnotations(leadingAnnotations = true)
+
         when (this) {
             is PsiClassType -> {
                 sb.append(PsiNameHelper.getQualifiedClassName(canonicalText, false))
@@ -102,14 +130,6 @@ class PsiClassRenderer private constructor(
                     }
                     sb.append(">")
                 }
-            }
-            is PsiEllipsisType -> {
-                componentType.renderType(sb)
-                sb.append("...")
-            }
-            is PsiArrayType -> {
-                componentType.renderType(sb)
-                sb.append("[]")
             }
             is PsiWildcardType -> {
                 if (!isBounded) {
