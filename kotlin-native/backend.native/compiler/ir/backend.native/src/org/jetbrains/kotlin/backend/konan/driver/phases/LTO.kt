@@ -29,14 +29,13 @@ internal val BuildDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationStat
         description = "Data flow graph building",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
-        outputIfNotEnabled = { _, _, generationState, irModule ->
+        outputIfNotEnabled = { _, _, generationState, _ ->
             val context = generationState.context
             val symbolTable = DataFlowIR.SymbolTable(context, DataFlowIR.Module())
-            ModuleDFG(emptyMap(), symbolTable)
+            ModuleDFG(mutableMapOf(), symbolTable)
         },
         op = { generationState, irModule ->
-            val context = generationState.context
-            ModuleDFGBuilder(context, irModule).build()
+            ModuleDFGBuilder(generationState, irModule).build()
         }
 )
 

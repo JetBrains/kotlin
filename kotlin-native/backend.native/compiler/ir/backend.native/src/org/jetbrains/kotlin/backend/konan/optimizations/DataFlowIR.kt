@@ -444,6 +444,7 @@ internal object DataFlowIR {
         val classMap = mutableMapOf<IrClass, Type>()
         val primitiveMap = mutableMapOf<PrimitiveBinaryType, Type>()
         val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
+        val fieldMap = mutableMapOf<IrField, Field>()
 
         private val NAME_ESCAPES = Name.identifier("Escapes")
         private val NAME_POINTS_TO = Name.identifier("PointsTo")
@@ -482,6 +483,15 @@ internal object DataFlowIR {
                     mapClassReferenceType(declaration)
                 }
             }, data = null)
+        }
+
+        fun mapField(field: IrField): Field = fieldMap.getOrPut(field) {
+            val name = field.name.asString()
+            Field(
+                    mapType(field.type),
+                    1 + fieldMap.size,
+                    takeName { name }
+            )
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
