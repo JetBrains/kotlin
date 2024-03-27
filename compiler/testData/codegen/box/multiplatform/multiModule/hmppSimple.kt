@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM_IR
 // !LANGUAGE: +MultiPlatformProjects
-// JVM_ABI_K1_K2_DIFF: KT-63903
-
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt
