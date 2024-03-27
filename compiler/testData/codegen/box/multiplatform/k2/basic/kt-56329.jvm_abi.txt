@@ -1,7 +1,0 @@
-MODULE jvm
-	CLASS CommonKt.class
-		PACKAGE METADATA
-			K1
-				---
-			K2
-				foo
