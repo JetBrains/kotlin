@@ -46,21 +46,21 @@ class KotlinSubclassOfJavaSubclass : EmptySubclass() {
 
     fun testPublicField() {
         consumeString(super.publicField)
-        consumeInt(<!TYPE_MISMATCH!>super.publicField<!>)
+        consumeInt(<!ARGUMENT_TYPE_MISMATCH!>super.publicField<!>)
     }
 
     fun testProtectedField() {
         consumeString(super.protectedField)
-        consumeInt(<!TYPE_MISMATCH!>super.protectedField<!>)
+        consumeInt(<!ARGUMENT_TYPE_MISMATCH!>super.protectedField<!>)
     }
 
     fun testPrivateField() {
-        consumeString(<!TYPE_MISMATCH!>super.privateField<!>)
+        consumeString(<!ARGUMENT_TYPE_MISMATCH!>super.privateField<!>)
         consumeInt(super.privateField)
     }
 
     fun testMissingField() {
-        consumeString(<!TYPE_MISMATCH!>super.missingField<!>)
+        consumeString(<!ARGUMENT_TYPE_MISMATCH!>super.missingField<!>)
         consumeInt(super.missingField)
     }
 

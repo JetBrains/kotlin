@@ -46,7 +46,7 @@ class KotlinSubclassOfInterfaceGetter1 : JavaClassFields(), JavaInterfaceDefault
 
     fun testInterfacePrivateField() {
         super<JavaInterfaceDefaultGetter>.privateField
-        super<JavaClassFields>.privateField
+        super<JavaClassFields>.[<!INVISIBLE_REFERENCE!>privateField<!>privateField<!>
     }
 }
 
@@ -57,16 +57,16 @@ class KotlinSubclassOfInterfaceGetter2 : JavaClassImplementsInterfaceGetter() {
 
     fun testPublicField() {
         consumeString(super.publicField)
-        consumeInt(<!TYPE_MISMATCH!>super.publicField<!>)
+        consumeInt(<!ARGUMENT_TYPE_MISMATCH!>super.publicField<!>)
     }
 
     fun testProtectedField() {
         consumeString(super.protectedField)
-        consumeInt(<!TYPE_MISMATCH!>super.protectedField<!>)
+        consumeInt(<!ARGUMENT_TYPE_MISMATCH!>super.protectedField<!>)
     }
 
     fun testPrivateField() {
-        consumeString(<!TYPE_MISMATCH!>super.privateField<!>)
+        consumeString(<!ARGUMENT_TYPE_MISMATCH!>super.privateField<!>)
         consumeInt(super.privateField)
     }
 }
