@@ -16451,6 +16451,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("elvisWithNothingInRhs.kt")
+      public void testElvisWithNothingInRhs() {
+        runTest("compiler/testData/diagnostics/tests/inference/elvisWithNothingInRhs.kt");
+      }
+
+      @Test
       @TestMetadata("equalitySubstitutionInsideNonInvariantType.kt")
       public void testEqualitySubstitutionInsideNonInvariantType() {
         runTest("compiler/testData/diagnostics/tests/inference/equalitySubstitutionInsideNonInvariantType.kt");
