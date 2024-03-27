@@ -70,7 +70,7 @@ abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
          * 4 - actual targets
          */
         private val KLIB_RESOLVER_TARGET_DOESNT_MATCH_DIAGNOSTIC_REGEX = """
-            warning: KLIB resolver: Skipping '(.*)/dist/klib/common/(.*)'\. The target doesn't match. Expected '(.*)', found \[(.*)]\.
+            warning: KLIB resolver: Skipping '(.*)/klib/common/(.*)'\. The target doesn't match. Expected '(.*)', found \[(.*)]\.
         """.trimIndent().toRegex()
 
         /**
