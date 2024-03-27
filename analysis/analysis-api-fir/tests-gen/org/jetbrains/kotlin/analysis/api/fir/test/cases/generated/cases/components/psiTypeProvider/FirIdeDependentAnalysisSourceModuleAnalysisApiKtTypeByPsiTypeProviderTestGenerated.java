@@ -100,6 +100,42 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiKtTypeByPsiTypeProvid
   }
 
   @Test
+  @TestMetadata("primitiveArrayWithComplexType.kt")
+  public void testPrimitiveArrayWithComplexType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitiveArrayWithComplexType.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveArrayWithComplexTypeAndTypeAnnotations.kt")
+  public void testPrimitiveArrayWithComplexTypeAndTypeAnnotations() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitiveArrayWithComplexTypeAndTypeAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveArrayWithNonPrimitiveType.kt")
+  public void testPrimitiveArrayWithNonPrimitiveType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitiveArrayWithNonPrimitiveType.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveArrayWithNonPrimitiveTypeAndTypeAnnotations.kt")
+  public void testPrimitiveArrayWithNonPrimitiveTypeAndTypeAnnotations() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitiveArrayWithNonPrimitiveTypeAndTypeAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveArrayWithPrimitiveType.kt")
+  public void testPrimitiveArrayWithPrimitiveType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitiveArrayWithPrimitiveType.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveArrayWithPrimitiveTypeAndAnnotation.kt")
+  public void testPrimitiveArrayWithPrimitiveTypeAndAnnotation() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/primitiveArrayWithPrimitiveTypeAndAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("typeAnnotation.kt")
   public void testTypeAnnotation() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/asKtType/typeAnnotation.kt");
