@@ -53,7 +53,7 @@ internal abstract class SymbolLightParameterCommon(
         // true only if this is "last" `vararg`
         containingMethod.parameterList.parameters.lastOrNull() == this && isDeclaredAsVararg()
 
-    protected open fun nullabilityType(): KtTypeNullability {
+    protected open fun typeNullability(): KtTypeNullability {
         if (isDeclaredAsVararg()) return KtTypeNullability.NON_NULLABLE
 
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
