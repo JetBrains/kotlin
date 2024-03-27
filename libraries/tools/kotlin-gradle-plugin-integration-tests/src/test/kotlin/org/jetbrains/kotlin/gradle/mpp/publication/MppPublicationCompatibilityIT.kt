@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.gradle.mpp.publication
 
 import org.gradle.api.JavaVersion
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.cartesianProductOf
 import org.jetbrains.kotlin.gradle.util.x
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.runners.model.MultipleFailureException
 import java.io.File
@@ -24,7 +21,7 @@ import kotlin.io.path.readText
 
 class MppPublicationCompatibilityIT : KGPBaseTest() {
     private val gradleVersions = listOf(
-        TestVersions.Gradle.G_7_1,
+        TestVersions.Gradle.MIN_SUPPORTED,
         TestVersions.Gradle.MAX_SUPPORTED,
     )
 
@@ -33,14 +30,14 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
         TestVersions.AGP.MAX_SUPPORTED,
     )
 
-    private val agpSupportedGradleVersions = mapOf(
-        TestVersions.AGP.MIN_SUPPORTED to TestVersions.Gradle.G_7_4,
-        TestVersions.AGP.MAX_SUPPORTED to TestVersions.Gradle.MAX_SUPPORTED,
-    )
+    private val agpSupportedGradleVersions = agpVersions.associateWith { agpVersion ->
+        val compatibilityEntry = TestVersions.AgpCompatibilityMatrix.entries.single { it.version == agpVersion }
+        compatibilityEntry.minSupportedGradleVersion.version
+    }
 
     private val kgpSupportedGradleVersions = mapOf(
-        TestVersions.Kotlin.MPP_MIN_SUPPORTED to listOf(TestVersions.Gradle.G_7_1),
-        TestVersions.Kotlin.CURRENT to gradleVersions + TestVersions.Gradle.G_7_4
+        TestVersions.Kotlin.MPP_MIN_SUPPORTED to listOf(TestVersions.Gradle.MIN_SUPPORTED),
+        TestVersions.Kotlin.CURRENT to gradleVersions + agpSupportedGradleVersions.values
     )
 
     private val kotlinVersions = listOf(
@@ -94,8 +91,9 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
         return scenarios
     }
 
+    @DisplayName("test compatibility between published libraries by kotlin multiplatform, java and android")
     @Test
-    @Tag("MppKGP")
+    @MppGradlePluginTests
     fun testKmpPublication() {
         val scenarios = generateScenarios()
         val producers = scenarios.map { it.producer }.toSet()
