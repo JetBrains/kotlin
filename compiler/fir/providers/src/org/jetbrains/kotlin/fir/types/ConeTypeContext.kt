@@ -462,7 +462,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun SimpleTypeMarker.isStubTypeForBuilderInference(): Boolean {
-        return this is ConeStubTypeForChainInference
+        return false
     }
 
     override fun TypeConstructorMarker.unwrapStubTypeVariableConstructor(): TypeConstructorMarker {

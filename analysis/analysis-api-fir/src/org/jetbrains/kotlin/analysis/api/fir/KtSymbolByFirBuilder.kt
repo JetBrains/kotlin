@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
-import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
-import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -468,14 +466,6 @@ internal class KtSymbolByFirBuilder(
                 is ConeCapturedType -> KtFirCapturedType(coneType, this@KtSymbolByFirBuilder)
                 is ConeIntegerLiteralConstantType -> KtFirIntegerLiteralType(coneType, this@KtSymbolByFirBuilder)
                 is ConeIntegerConstantOperatorType -> buildKtType(coneType.getApproximatedType())
-                is ConeStubTypeForChainInference -> {
-                    // TODO this is a temporary hack to prevent FIR IDE from crashing on builder inference, see KT-50916
-                    val typeVariable = coneType.constructor.variable as? ConeTypeParameterBasedTypeVariable
-                    val typeParameterSymbol = typeVariable?.typeParameterSymbol ?: throwUnexpectedElementError(coneType)
-                    val coneTypeParameterType = typeParameterSymbol.toConeType(coneType.nullability.isNullable)
-
-                    KtFirTypeParameterType(coneTypeParameterType, this@KtSymbolByFirBuilder)
-                }
 
                 is ConeTypeVariableType -> {
                     val diagnostic = when ( val typeParameter = coneType.typeConstructor.originalTypeParameter) {

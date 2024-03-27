@@ -175,13 +175,7 @@ object CheckDispatchReceiver : ResolutionStage() {
 
         val dispatchReceiverValueType = candidate.dispatchReceiver?.resolvedType ?: return
 
-        // TODO (KT-63959): Actually, we should treat stub types as non-nullable for the isReceiverNullable check
-        // Otherwise, we won't able to resolve to member toString/hashCode due to UnsafeCall error
-        // It was possible in K1, due to the fact that K1 doesn't use AbstractNullabilityChecker directly
-        // But, AbstractNullabilityChecker.isSubtypeOfAny doesn't respect stubTypeEqualToAnything
-        val isStubType = dispatchReceiverValueType is ConeStubTypeForChainInference
-        val isReceiverNullable =
-            !AbstractNullabilityChecker.isSubtypeOfAny(context.session.typeContext, dispatchReceiverValueType) && !isStubType
+        val isReceiverNullable = !AbstractNullabilityChecker.isSubtypeOfAny(context.session.typeContext, dispatchReceiverValueType)
 
 
         val isCandidateFromUnstableSmartcast =

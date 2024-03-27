@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.builder.buildTypeOperatorCall
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -28,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -232,15 +228,6 @@ class MemberScopeTowerLevel(
                 val dispatchReceiver = when {
                     isFromOriginalTypeInPresenceOfSmartCast ->
                         getOriginalReceiverExpressionIfStableSmartCast()
-                    // For a chain inference stub in dispatch receiver, we have to provide an explicit cast to Any
-                    // See KT-63932
-                    dispatchReceiverValue.type is ConeStubTypeForChainInference -> buildTypeOperatorCall {
-                        source = dispatchReceiverValue.receiverExpression.source?.fakeElement(KtFakeSourceElementKind.CastToAnyForStubTypes)
-                        operation = FirOperation.AS
-                        conversionTypeRef = FirImplicitAnyTypeRef(source)
-                        argumentList = buildUnaryArgumentList(dispatchReceiverValue.receiverExpression)
-                        coneTypeOrNull = session.builtinTypes.anyType.coneType
-                    }
                     else -> dispatchReceiverValue.receiverExpression
                 }
 
