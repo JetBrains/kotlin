@@ -1,5 +1,5 @@
 // !LANGUAGE: +TypeAliases
 // !API_VERSION: 1.0
 // FILE: test.kt
-val fooException = <!API_NOT_AVAILABLE!>Exception<!>("foo")
-val barException = kotlin.<!API_NOT_AVAILABLE!>Exception<!>("bar")
+val fooException = <!NONE_APPLICABLE!>Exception<!>("foo")
+val barException = kotlin.<!NONE_APPLICABLE!>Exception<!>("bar")

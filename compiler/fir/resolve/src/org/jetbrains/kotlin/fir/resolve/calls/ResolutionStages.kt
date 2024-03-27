@@ -748,10 +748,17 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         val symbol = candidate.symbol as? FirCallableSymbol<*> ?: return
         /** Actual declarations are checked by [FirDeprecationChecker] */
         if (symbol.isActual) return
-        val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
-        if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate, context.session, sink)) {
+        if (symbol.isDeprecatedHidden(context, callInfo) ||
+            (symbol is FirConstructorSymbol && symbol.typeAliasForConstructor?.isDeprecatedHidden(context, callInfo) == true) ||
+            isHiddenForThisCallSite(symbol, callInfo, candidate, context.session, sink)
+        ) {
             sink.yieldDiagnostic(HiddenCandidate)
         }
+    }
+
+    private fun FirBasedSymbol<*>.isDeprecatedHidden(context: ResolutionContext, callInfo: CallInfo): Boolean {
+        val deprecation = getDeprecation(context.session, callInfo.callSite)
+        return deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN
     }
 
     private fun isHiddenForThisCallSite(
