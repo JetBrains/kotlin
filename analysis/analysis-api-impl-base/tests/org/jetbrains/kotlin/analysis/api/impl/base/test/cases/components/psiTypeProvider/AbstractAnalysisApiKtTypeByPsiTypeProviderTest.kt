@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractAnalysisApiKtTypeByPsiTypeProviderTest : AbstractAnalysisApiBasedTest() {
@@ -36,7 +37,7 @@ abstract class AbstractAnalysisApiKtTypeByPsiTypeProviderTest : AbstractAnalysis
                     testServices.assertions.assertNotNull(psiType)
                     val ktType = psiType!!.asKtType(useSitePosition ?: psiDeclaration)!!
                     appendLine("PsiType: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")
-                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(ktType, Variance.OUT_VARIANCE)}")
+                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(ktType)}")
                 }
             }
         }

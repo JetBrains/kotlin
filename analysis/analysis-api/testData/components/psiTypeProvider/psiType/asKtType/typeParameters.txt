@@ -1,2 +1,2 @@
 PsiType: T
-KtType: T?
+KtType: T!
