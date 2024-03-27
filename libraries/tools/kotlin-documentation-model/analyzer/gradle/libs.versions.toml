@@ -87,7 +87,6 @@ gradlePlugin-androidApi-dokkatoo = { module = "com.android.tools.build:gradle-ap
 gradlePlugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "gradlePlugin-dokka" }
 gradlePlugin-shadow = { module = "com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
 gradlePlugin-gradlePublish = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
-
 gradlePlugin-gradle-customUserData = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradlePlugin-gradle-customUserData" }
 gradlePlugin-gradle-enterprise = { module = "com.gradle:gradle-enterprise-gradle-plugin", version.ref = "gradlePlugin-gradle-enterprise" }
 
