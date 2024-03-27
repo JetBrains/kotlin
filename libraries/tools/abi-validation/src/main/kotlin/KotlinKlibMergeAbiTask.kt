@@ -54,7 +54,10 @@ internal abstract class KotlinKlibMergeAbiTask : DefaultTask() {
     internal fun merge() {
         KlibDump().apply {
             targetToFile.forEach { (targetName, dumpDir) ->
-                merge(dumpDir.resolve(dumpFileName), targetName)
+                val dumpFile = dumpDir.resolve(dumpFileName)
+                if (dumpFile.exists()) {
+                    merge(dumpFile, targetName)
+                }
             }
         }.saveTo(mergedFile)
     }

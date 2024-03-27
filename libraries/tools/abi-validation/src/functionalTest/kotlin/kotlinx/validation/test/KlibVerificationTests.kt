@@ -18,6 +18,7 @@ import org.junit.Test
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal const val BANNED_TARGETS_PROPERTY_NAME = "binary.compatibility.validator.klib.targets.disabled.for.testing"
@@ -632,5 +633,40 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
                         "androidNativeX86, linuxArm64.linux, linuxX64, mingwX64]"
             )
         }
+    }
+
+    @Test
+    fun `apiDump should not fail for empty project`() {
+        val runner = test {
+            baseProjectSetting()
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "commonTest")
+            runApiDump()
+        }
+
+        runner.build().apply {
+            assertTaskSkipped(":klibApiDump")
+        }
+        assertFalse(runner.projectDir.resolve("api").exists())
+    }
+
+    @Test
+    fun `apiDump should not fail if there is only one target`() {
+        val runner = test {
+            baseProjectSetting()
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "commonTest")
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "linuxX64Main")
+            runApiDump()
+        }
+        checkKlibDump(runner.build(), "/examples/classes/AnotherBuildConfig.klib.linuxX64Only.dump")
+    }
+
+    @Test
+    fun `apiCheck should not fail for empty project`() {
+        val runner = test {
+            baseProjectSetting()
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "commonTest")
+            runApiCheck()
+        }
+        runner.build()
     }
 }
