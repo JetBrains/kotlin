@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -20,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 private operator fun <T> Pair<T, *>?.component1(): T? = this?.first
 private operator fun <T> Pair<*, T>?.component2(): T? = this?.second
@@ -116,8 +117,7 @@ private fun FirDeclaration.isInvisibleOrHidden(session: FirSession, bodyResolveC
         }
     }
 
-    val deprecation = symbol.getDeprecationForCallSite(session)
-    return deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN
+    return symbol.isDeprecationLevelHidden(session.languageVersionSettings)
 }
 
 private fun FirScope.getFirstClassifierOrNull(
@@ -129,7 +129,8 @@ private fun FirScope.getFirstClassifierOrNull(
     var isSuccessResult = false
     var isAmbiguousResult = false
     var result: SymbolWithSubstitutor? = null
-    processClassifiersByNameWithSubstitution(callInfo.name) { symbol, substitutor ->
+
+    fun process(symbol: FirClassifierSymbol<*>, substitutor: ConeSubstitutor) {
         val classifierDeclaration = symbol.fir
         var isSuccessCandidate = !classifierDeclaration.isInvisibleOrHidden(session, bodyResolveComponents)
         if (classifierDeclaration is FirClassLikeDeclaration) {
@@ -148,8 +149,8 @@ private fun FirScope.getFirstClassifierOrNull(
                 result = SymbolWithSubstitutor(symbol, substitutor)
             }
             result?.symbol === symbol -> {
-                // miss identical results
-                return@processClassifiersByNameWithSubstitution
+                // skip identical results
+                return
             }
             result != null -> {
                 if (isSuccessResult == isSuccessCandidate) {
@@ -169,6 +170,15 @@ private fun FirScope.getFirstClassifierOrNull(
                 result = SymbolWithSubstitutor(symbol, substitutor)
             }
         }
+    }
+
+    if (this is FirDefaultStarImportingScope) {
+        processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(callInfo.name) { symbol, substitutor ->
+            process(symbol, substitutor)
+            isSuccessResult
+        }
+    } else {
+        processClassifiersByNameWithSubstitution(callInfo.name, ::process)
     }
 
     return result.takeUnless { isAmbiguousResult }
