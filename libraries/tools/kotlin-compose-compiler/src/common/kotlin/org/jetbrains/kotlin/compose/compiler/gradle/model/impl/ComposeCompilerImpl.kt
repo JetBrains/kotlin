@@ -13,8 +13,6 @@ import java.io.Serializable
  */
 data class ComposeCompilerImpl(
     override val name: String,
-   // override val annotations: List<String>,
-    override val presets: List<String>
 ) : ComposeCompiler, Serializable {
 
     override val modelVersion = serialVersionUID

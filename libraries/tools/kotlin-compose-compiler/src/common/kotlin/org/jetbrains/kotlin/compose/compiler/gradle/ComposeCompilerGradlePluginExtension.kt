@@ -17,12 +17,6 @@
 package org.jetbrains.kotlin.compose.compiler.gradle
 
 open class ComposeCompilerGradlePluginExtension {
-    internal val myPresets = mutableListOf<String>()
-
-    open fun preset(name: String) {
-        myPresets.add(name)
-    }
-
     /**
      * Generate function key meta classes with annotations indicating the functions and their group keys. Generally used for tooling.
      */
