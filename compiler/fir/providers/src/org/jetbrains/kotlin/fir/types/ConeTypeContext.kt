@@ -310,7 +310,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {
-        return this is ConeClassLikeLookupTag
+        // See KT-55383
+        return this is ConeClassLikeLookupTag || this is ConeStubTypeConstructor
     }
 
     override fun TypeConstructorMarker.isInterface(): Boolean {
