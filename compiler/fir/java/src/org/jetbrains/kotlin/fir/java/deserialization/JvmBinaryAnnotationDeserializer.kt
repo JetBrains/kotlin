@@ -343,7 +343,7 @@ private fun FirSession.loadMemberAnnotations(
             }
 
             override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                return annotationsLoader.loadAnnotationMethodDefaultValue(signature) { annotationMethodsDefaultValues[signature] = it }
+                return annotationsLoader.loadAnnotationMethodDefaultValue() { annotationMethodsDefaultValues[signature] = it }
             }
         }
 
