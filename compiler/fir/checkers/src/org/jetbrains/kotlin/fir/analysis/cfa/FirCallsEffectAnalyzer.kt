@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.isFunctionOrKFunctionInvoke
+import org.jetbrains.kotlin.fir.resolve.isFunctionOrSuspendFunctionInvoke
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -194,7 +195,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
             val callSource = node.fir.explicitReceiver?.source ?: node.fir.source
             data.checkExpressionForLeakedSymbols(node.fir.explicitReceiver, callSource) {
-                functionSymbol?.callableId?.isFunctionOrKFunctionInvoke() != true && contractDescription?.getParameterCallsEffect(-1) == null
+                functionSymbol?.callableId?.isFunctionOrSuspendFunctionInvoke() != true && contractDescription?.getParameterCallsEffect(-1) == null
             }
 
             for (arg in node.fir.argumentList.arguments) {
@@ -239,7 +240,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
             dataForNode = dataForNode.checkReference(node.fir.explicitReceiver.toQualifiedReference()) {
                 when {
-                    functionSymbol?.callableId?.isFunctionOrKFunctionInvoke() == true -> MarkedEventOccurrencesRange.ExactlyOnce(node)
+                    functionSymbol?.callableId?.isFunctionOrSuspendFunctionInvoke() == true -> MarkedEventOccurrencesRange.ExactlyOnce(node)
                     else -> contractDescription.getParameterCallsEffect(-1)?.at(node)
                         ?: MarkedEventOccurrencesRange.Zero
                 }
