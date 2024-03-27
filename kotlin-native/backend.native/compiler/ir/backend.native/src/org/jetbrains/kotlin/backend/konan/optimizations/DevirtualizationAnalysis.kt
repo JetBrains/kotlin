@@ -1292,6 +1292,10 @@ internal object DevirtualizationAnalysis {
                             constraintGraph.voidNode
                         }
 
+                        is DataFlowIR.Node.SaveCoroutineState -> {
+                            constraintGraph.voidNode
+                        }
+
                         is DataFlowIR.Node.Variable ->
                             node.values.map { edgeToConstraintNode(it) }.let { values ->
                                 ordinaryNode { "TempVar\$${function.symbol}" }.also { node ->

@@ -408,9 +408,10 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResults, module), disable = !optimize)
     runPhase(DevirtualizationPhase, DevirtualizationInput(module, devirtualizationAnalysisResults), disable = !optimize)
-    // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
-    // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
     module.files.forEach {
+        runPhase(CoroutinesVarSpillingPhase, it)
+        // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
+        // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
         runPhase(PropertyAccessorInlinePhase, it, disable = !optimize)
         runPhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
         runPhase(RedundantCoercionsCleaningPhase, it)

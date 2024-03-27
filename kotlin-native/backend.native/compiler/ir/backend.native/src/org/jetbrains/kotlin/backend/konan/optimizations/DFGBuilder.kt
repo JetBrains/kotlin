@@ -186,7 +186,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
         val function = FunctionDFGBuilder(expressionValuesExtractor, visitor.variableValues,
                 declaration, visitor.expressions, visitor.parentLoops, visitor.returnValues,
-                visitor.thrownValues, visitor.catchParameters).build()
+                visitor.thrownValues, visitor.catchParameters, visitor.liveVariables).build()
 
         context.logMultiple {
             +function.debugString()
@@ -203,9 +203,11 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         val returnValues = mutableListOf<IrExpression>()
         val thrownValues = mutableListOf<IrExpression>()
         val catchParameters = mutableSetOf<IrVariable>()
+        val liveVariables = mutableMapOf<IrCall, List<IrVariable>>()
 
         private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
         private val loopStack = mutableListOf<IrLoop>()
+        private val liveVariablesStack = mutableListOf<List<IrVariable>>()
         private val currentLoop get() = loopStack.peek()
 
         override fun visitElement(element: IrElement) {
@@ -263,6 +265,9 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
                     expressions += jobInvocation to currentLoop
                 }
+                if (expression.symbol == saveCoroutineState)
+                    liveVariables[expression] = liveVariablesStack.peek()!!
+
                 val intrinsicType = tryGetIntrinsicType(expression)
                 if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE) {
                     expressions += IrSetFieldImpl(
@@ -306,8 +311,10 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 suspendableExpressionStack.push(expression)
                 suspendableExpressionValues.put(expression, mutableListOf())
             }
-            if (expression is IrSuspensionPoint)
+            if (expression is IrSuspensionPoint) {
                 suspendableExpressionValues[suspendableExpressionStack.peek()!!]!!.add(expression)
+                liveVariablesStack.push(generationState.liveVariablesAtSuspensionPoints[expression]!!)
+            }
             if (expression is IrLoop) {
                 parentLoops[expression] = currentLoop
                 loopStack.push(expression)
@@ -319,6 +326,8 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 loopStack.pop()
             if (expression is IrSuspendableExpression)
                 suspendableExpressionStack.pop()
+            if (expression is IrSuspensionPoint)
+                liveVariablesStack.pop()
         }
 
         override fun visitSetField(expression: IrSetField) {
@@ -399,6 +408,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
     private val executeImplProducerInvoke = executeImplProducerClass.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
     private val reinterpret = symbols.reinterpret
+    private val saveCoroutineState = symbols.saveCoroutineState
     private val objCObjectRawValueGetter = symbols.interopObjCObjectRawValueGetter
 
     private class Scoped<out T : Any>(val value: T, val scope: DataFlowIR.Node.Scope)
@@ -412,6 +422,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             val returnValues: List<IrExpression>,
             val thrownValues: List<IrExpression>,
             val catchParameters: Set<IrVariable>,
+            val liveVariables: Map<IrCall, List<IrVariable>>,
     ) {
 
         private val rootScope = DataFlowIR.Node.Scope(0, emptyList())
@@ -670,6 +681,8 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                             null
                                     )
                                 }
+
+                                saveCoroutineState -> DataFlowIR.Node.SaveCoroutineState(liveVariables[value]!!.map { variables[it]!!.value })
 
                                 else -> {
                                     /*

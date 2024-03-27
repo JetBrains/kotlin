@@ -863,6 +863,12 @@ internal object EscapeAnalysis {
 
                 traverseAndConvert(body.rootScope, Depths.ROOT_SCOPE - 1)
 
+                val dummyParameter = DataFlowIR.Node.Parameter(-1)
+                val parameters = Array(function.symbol.parameters.size) { dummyParameter } // Put dummy in order to not bother with nullability.
+                // Parameters are declared in the root scope
+                for (node in body.rootScope.nodes)
+                    (node as? DataFlowIR.Node.Parameter)?.let { parameters[it.index] = it }
+
                 val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.ir.symbols.nothing.owner)
                 body.forEachNonScopeNode { node ->
                     when (node) {
@@ -906,6 +912,12 @@ internal object EscapeAnalysis {
                             readResult.addAssignmentEdge(array.getFieldNode(intestinesField, this))
                         }
 
+                        is DataFlowIR.Node.SaveCoroutineState -> {
+                            val thisIntestines = nodes[parameters[0]]!!.getFieldNode(intestinesField, this)
+                            for (variable in node.liveVariables)
+                                thisIntestines.addAssignmentEdge(nodes[variable]!!)
+                        }
+
                         is DataFlowIR.Node.Variable -> {
                             val variable = nodes[node]!!
                             for (value in node.values) {
@@ -931,9 +943,6 @@ internal object EscapeAnalysis {
 
                 val escapes = functionSymbol.escapes
                 if (escapes != null) {
-                    // Parameters are declared in the root scope
-                    val parameters = function.body.rootScope.nodes
-                            .filterIsInstance<DataFlowIR.Node.Parameter>()
                     for (parameter in parameters)
                         if (escapes and (1 shl parameter.index) != 0)
                             escapeOrigins += nodes[parameter]!!

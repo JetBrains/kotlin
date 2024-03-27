@@ -101,25 +101,18 @@ internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerati
     }
 }
 
-internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGenerationState) : FileLoweringPass, IrElementVisitorVoid {
+internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGenerationState) : BodyLoweringPass {
     private val invokeSuspendFunction = generationState.context.ir.symbols.invokeSuspendFunction
 
-    override fun lower(irFile: IrFile) {
-        if (generationState.liveVariablesAtSuspensionPoints.isEmpty())
-            irFile.acceptChildrenVoid(this)
-    }
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (generationState.liveVariablesAtSuspensionPoints.isNotEmpty())
+            return
 
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
+        val thisReceiver = (container as? IrSimpleFunction)?.dispatchReceiverParameter
+        if (thisReceiver == null || !container.overrides(invokeSuspendFunction.owner))
+            return
 
-    override fun visitFunction(declaration: IrFunction) {
-        val body = declaration.body
-        if (body != null && declaration.dispatchReceiverParameter != null
-                && (declaration as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) == true
-        ) {
-            computeVisibleVariablesAtSuspensionPoints(body)
-        }
+        computeVisibleVariablesAtSuspensionPoints(irBody)
     }
 
     private fun computeVisibleVariablesAtSuspensionPoints(body: IrBody) {
