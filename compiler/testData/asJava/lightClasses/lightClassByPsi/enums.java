@@ -49,20 +49,20 @@ public enum Direction /* Direction*/ {
   private  Direction();//  .ctor()
 }
 
-public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.function.BinaryOperator<java.lang.Integer>, java.util.function.IntBinaryOperator {
+public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.function.BinaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, java.util.function.IntBinaryOperator {
   PLUS {
    PLUS();//  .ctor()
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.Integer apply(int, int);//  apply(int, int)
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer apply(int, int);//  apply(int, int)
   },
   TIMES {
    TIMES();//  .ctor()
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.Integer apply(int, int);//  apply(int, int)
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer apply(int, int);//  apply(int, int)
   };
 
   @java.lang.Override()
@@ -85,7 +85,7 @@ static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.Integer apply(int, int);//  apply(int, int)
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer apply(int, int);//  apply(int, int)
 }
 
 static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics {
@@ -93,7 +93,7 @@ static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics {
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public java.lang.Integer apply(int, int);//  apply(int, int)
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer apply(int, int);//  apply(int, int)
 }
 
 public abstract enum ProtocolState /* ProtocolState*/ {

@@ -16,10 +16,10 @@ public final class Container /* Container*/ {
   public final @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Open> bar();//  bar()
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = false)
-  public final int foo(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<? extends java.lang.Integer>);//  foo(boolean, @org.jetbrains.annotations.NotNull() Out<? extends java.lang.Integer>)
+  public final int foo(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  foo(boolean, @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
-  public final int bar(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() In<java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards(suppress = false) long);//  bar(boolean, @org.jetbrains.annotations.NotNull() In<java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards(suppress = false) long)
+  public final int bar(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() In<@org.jetbrains.annotations.NotNull() java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards(suppress = false) long);//  bar(boolean, @org.jetbrains.annotations.NotNull() In<@org.jetbrains.annotations.NotNull() java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards(suppress = false) long)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   public final void deepOpen(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>>);//  deepOpen(@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>>)
@@ -83,7 +83,7 @@ public final class HasAnnotation /* HasAnnotation*/ {
 
   public final void doesNot(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>);//  doesNot(@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>)
 
-  public final void parameterDisagrees(@org.jetbrains.annotations.NotNull() @kotlin.jvm.JvmSuppressWildcards(suppress = false) @org.jetbrains.annotations.NotNull() Out<? extends java.lang.Integer>);//  parameterDisagrees(@kotlin.jvm.JvmSuppressWildcards(suppress = false) @org.jetbrains.annotations.NotNull() Out<? extends java.lang.Integer>)
+  public final void parameterDisagrees(@org.jetbrains.annotations.NotNull() @kotlin.jvm.JvmSuppressWildcards(suppress = false) @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  parameterDisagrees(@kotlin.jvm.JvmSuppressWildcards(suppress = false) @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 }
 
 public final class In /* In*/<Z>  {

@@ -16,7 +16,7 @@ public final class JvmWildcardAnnotationsKt /* JvmWildcardAnnotationsKt*/ {
   public static final @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Open> bar();//  bar()
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = false)
-  public static final int foo(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<? extends java.lang.Integer>);//  foo(boolean, @org.jetbrains.annotations.NotNull() Out<? extends java.lang.Integer>)
+  public static final int foo(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  foo(boolean, @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   @org.jetbrains.annotations.NotNull()
@@ -27,7 +27,7 @@ public final class JvmWildcardAnnotationsKt /* JvmWildcardAnnotationsKt*/ {
   public static final @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() T> foo2();//  foo2()
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
-  public static final int bar(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() In<java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards(suppress = false) long);//  bar(boolean, @org.jetbrains.annotations.NotNull() In<java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards(suppress = false) long)
+  public static final int bar(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() In<@org.jetbrains.annotations.NotNull() java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards(suppress = false) long);//  bar(boolean, @org.jetbrains.annotations.NotNull() In<@org.jetbrains.annotations.NotNull() java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards(suppress = false) long)
 
   @kotlin.jvm.JvmSuppressWildcards(suppress = true)
   public static final void deepOpen(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>>);//  deepOpen(@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>>)

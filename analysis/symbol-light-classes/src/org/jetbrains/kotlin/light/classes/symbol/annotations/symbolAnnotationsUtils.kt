@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -189,7 +190,11 @@ fun annotateByKtType(
         }
 
         // Original type should be used to infer nullability
-        val typeNullability = getTypeNullability(type)
+        val typeNullability = when {
+            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KtTypeNullability.NON_NULLABLE
+            else -> getTypeNullability(type)
+        }
+
         val nullabilityAnnotation = typeNullability.asAnnotationQualifier?.let {
             SymbolLightSimpleAnnotation(it, annotationParent)
         }

@@ -24,7 +24,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final @org.jetbrains.annotations.NotNull() kotlin.Lazy<@org.jetbrains.annotations.NotNull() java.lang.String> lazyProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
+  private static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> sum;
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */ /* constant value This subsystem is deprecated */;
@@ -106,7 +106,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getX();//  getX()
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> getSum();//  getSum()
+  public static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> getSum();//  getSum()
 
   @org.jetbrains.annotations.Nullable()
   public static final @org.jetbrains.annotations.Nullable() java.lang.Boolean getIslowercase();//  getIslowercase()
