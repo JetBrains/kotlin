@@ -626,7 +626,11 @@ class ComposerParamTransformer(
         return when {
             type.isPrimitiveType() -> type
             type.isInlineClassType() -> if (context.platform.isJvm() || constructorAccessible) {
-                type
+                if (type.unboxInlineClass().isPrimitiveType()) {
+                    type
+                } else {
+                    type.makeNullable()
+                }
             } else {
                 // k/js and k/native: private constructors of value classes can be not accessible.
                 // Therefore it won't be possible to create a "fake" default argument for calls.

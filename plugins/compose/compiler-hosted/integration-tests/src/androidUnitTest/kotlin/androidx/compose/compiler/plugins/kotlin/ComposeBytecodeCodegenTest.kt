@@ -780,4 +780,27 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         """
     )
+
+    @Test
+    fun composeValueClassDefaultParameter() =
+        validateBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @JvmInline
+                value class Data(val string: String)
+                @JvmInline
+                value class IntData(val value: Int)
+
+                @Composable fun Example(data: Data = Data(""), intData: IntData = IntData(0)) {}
+            """,
+            validate = {
+                // select Example function body
+                val match = Regex("public final static Example[\\s\\S]*?LOCALVARIABLE").find(it)!!
+                assertFalse(message = "Function body should not contain a not-null check.") {
+                    match.value.contains("Intrinsics.checkNotNullParameter")
+                }
+            },
+            dumpClasses = true
+        )
 }

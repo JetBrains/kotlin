@@ -575,4 +575,20 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                 }
             """
         )
+
+    @Test
+    fun composeValueClassDefaultParameter() =
+        verifyGoldenComposeIrTransform(
+            extra = """
+                @JvmInline
+                value class Data(val string: String)
+                @JvmInline
+                value class IntData(val value: Int)
+            """,
+            source = """
+                import androidx.compose.runtime.*
+
+                @Composable fun Example(data: Data = Data(""), intData: IntData = IntData(0)) {}
+            """
+        )
 }
