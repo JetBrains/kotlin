@@ -158,10 +158,7 @@ enum class GCType(val compilerFlag: String?) {
     NOOP("-Xbinary=gc=noop"),
     STWMS("-Xbinary=gc=stwms"),
     PMCS("-Xbinary=gc=pmcs"),
-
-    // TODO: Remove these deprecated GC options.
-    STMS("-Xgc=stms"),
-    CMS("-Xgc=cms");
+    CMS("-Xbinary=gc=cms");
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
