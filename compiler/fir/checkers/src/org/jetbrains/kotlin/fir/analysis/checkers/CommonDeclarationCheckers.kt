@@ -148,6 +148,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
             FirFiniteBoundRestrictionChecker,
             FirNonExpansiveInheritanceRestrictionChecker,
+            FirObjectConstructorChecker,
         )
 
     override val constructorCheckers: Set<FirConstructorChecker>

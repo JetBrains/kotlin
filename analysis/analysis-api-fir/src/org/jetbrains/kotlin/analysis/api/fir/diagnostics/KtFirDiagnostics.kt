@@ -430,6 +430,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val suggestedFunction: String
     }
 
+    interface SelfCallInNestedObjectConstructorError : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = SelfCallInNestedObjectConstructorError::class
+    }
+
     interface SuperIsNotAnExpression : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }
