@@ -32,6 +32,6 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
 }
 
-nativeTest("llFirNativeTests", "llFirNative")
+nativeTest("llFirNativeTests", "llFirNative", requirePlatformLibs = true)
 
 testsJar()

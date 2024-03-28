@@ -196,15 +196,33 @@ public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends Abstr
     }
 
     @Test
+    @TestMetadata("objCAction_expectAnnotation.kt")
+    public void testObjCAction_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCAction_expectAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("objCName_expectAnnotation.kt")
     public void testObjCName_expectAnnotation() {
       runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCName_expectAnnotation.kt");
     }
 
     @Test
+    @TestMetadata("objCOutlet_expectAnnotation.kt")
+    public void testObjCOutlet_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCOutlet_expectAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("objCRefinement_expectAnnotation.kt")
     public void testObjCRefinement_expectAnnotation() {
       runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCRefinement_expectAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideInit_expectAnnotation.kt")
+    public void testOverrideInit_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/overrideInit_expectAnnotation.kt");
     }
 
     @Test
