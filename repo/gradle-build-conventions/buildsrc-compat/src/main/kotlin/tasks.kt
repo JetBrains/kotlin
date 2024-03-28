@@ -216,7 +216,8 @@ fun Project.projectTest(
             "-XX:+UseCodeCacheFlushing",
             "-XX:ReservedCodeCacheSize=${reservedCodeCacheSizeMb}m",
             "-XX:MaxMetaspaceSize=${maxMetaspaceSizeMb}m",
-            "-Djna.nosys=true"
+            "-Djna.nosys=true",
+            "-XX:+LogCompilation",
         )
 
         val nativeMemoryTracking = project.providers.gradleProperty("kotlin.build.test.process.NativeMemoryTracking")
