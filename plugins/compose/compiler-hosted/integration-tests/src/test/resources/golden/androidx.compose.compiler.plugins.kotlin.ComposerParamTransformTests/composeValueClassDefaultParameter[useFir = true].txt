@@ -1,0 +1,36 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable fun Example(data: Data = Data(""), intData: IntData = IntData(0)) {}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Example(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)P(0:Data,1:IntData):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      data = Data("")
+    }
+    if (%default and 0b0010 != 0) {
+      intData = IntData(0)
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(data, intData, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

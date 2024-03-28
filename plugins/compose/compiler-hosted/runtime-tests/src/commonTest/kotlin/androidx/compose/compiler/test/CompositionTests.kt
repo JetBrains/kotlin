@@ -73,6 +73,13 @@ class CompositionTests {
             Text("1")
         }
     }
+
+    @Test
+    fun composeValueClassDefaultParameter() = compositionTest {
+        compose {
+            DefaultValueClass()
+        }
+    }
 }
 
 class CrossInlineState(content: @Composable () -> Unit = { }) {
@@ -85,4 +92,14 @@ class CrossInlineState(content: @Composable () -> Unit = { }) {
 
     @Composable
     fun place() { content() }
+}
+
+@JvmInline
+value class Data(val string: String)
+
+@Composable
+fun DefaultValueClass(
+    data: Data = Data("Hello")
+) {
+    println(data)
 }
