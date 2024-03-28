@@ -30,8 +30,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
+import com.intellij.util.messages.ListenerDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory
-import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
@@ -96,6 +95,13 @@ object StandaloneProjectFactory {
                         @Suppress("UNCHECKED_CAST")
                         return Class.forName(className, true, classLoader) as Class<T>
                     }
+
+                    @Suppress("UnstableApiUsage")
+                    override fun createListener(descriptor: ListenerDescriptor): Any {
+                        val listenerClass = loadClass<Any>(descriptor.listenerClassName, descriptor.pluginDescriptor)
+                        val listener = listenerClass.getDeclaredConstructor(Project::class.java).newInstance(this)
+                        return listener
+                    }
                 }
             }
         }
@@ -125,16 +131,13 @@ object StandaloneProjectFactory {
     }
 
     private fun registerProjectServices(project: MockProject) {
+        // TODO: rewrite KtResolveExtensionProviderForTest to avoid KtResolveExtensionProvider access before initialized project
         @Suppress("UnstableApiUsage")
         CoreApplicationEnvironment.registerExtensionPoint(
             project.extensionArea,
             KtResolveExtensionProvider.EP_NAME.name,
             KtResolveExtensionProvider::class.java
         )
-
-        project.apply {
-            registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
-        }
     }
 
     private fun registerApplicationExtensionPoints(applicationEnvironment: KotlinCoreApplicationEnvironment) {
@@ -187,13 +190,9 @@ object StandaloneProjectFactory {
         val project = environment.project
 
         KotlinCoreEnvironment.registerProjectExtensionPoints(project.extensionArea)
-        with(project) {
-            registerService(SmartTypePointerManager::class.java, SmartTypePointerManagerImpl::class.java)
-            registerService(SmartPointerManager::class.java, SmartPointerManagerImpl::class.java)
-            registerService(JavaElementSourceFactory::class.java, JavaElementSourceWithSmartPointerFactory::class.java)
 
-            registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
-        }
+        project.registerService(SmartTypePointerManager::class.java, SmartTypePointerManagerImpl::class.java)
+        project.registerService(SmartPointerManager::class.java, SmartPointerManagerImpl::class.java)
 
         val modules = projectStructureProvider.allKtModules
         project.registerService(ProjectStructureProvider::class.java, projectStructureProvider)

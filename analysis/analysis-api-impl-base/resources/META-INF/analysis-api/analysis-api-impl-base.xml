@@ -1,0 +1,31 @@
+<idea-plugin>
+  <extensionPoints>
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.ktResolveExtensionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider"
+        area="IDEA_PROJECT"
+        dynamic="true"
+    />
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.providers.KotlinMessageBusProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.providers.impl.KotlinProjectMessageBusProvider"
+    />
+
+    <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
+  </extensions>
+</idea-plugin>

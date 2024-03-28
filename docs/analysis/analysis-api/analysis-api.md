@@ -23,6 +23,16 @@ Analysis API can work outside IntelliJ IDEA (e.g, it can be used for implementin
 form IntelliJ Core. This is needed mostly for working with [PsiElements](https://plugins.jetbrains.com/docs/intellij/psi-elements.html),
 lexical and syntax analysis.
 
+## Services registration
+
+The Analysis API defines services, extension points, service implementations, and so on in XML files.
+Such files are located in resources under `/META-INF/analysis-api/` directory.
+
+The implementor of the Analysis API has to register such definitions on its side.
+
+- For FE1.0-based implementation it is `/META-INF/analysis-api/analysis-api-fe10.xml` file.
+- For FIR-based implementation it is `/META-INF/analysis-api/analysis-api-fir.xml` file.
+
 ## KtAnalysisSession
 
 `KtAnalysisSession` is a view to the project modules and libraries from some fixed module, so called use-site module. From

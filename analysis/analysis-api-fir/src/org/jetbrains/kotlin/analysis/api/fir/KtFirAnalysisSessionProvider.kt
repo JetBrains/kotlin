@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.CachedValueBase
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeToken
@@ -30,8 +29,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.reflect.KClass
 
-@OptIn(KtAnalysisApiInternals::class)
-class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
+internal class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
     private val cache: ConcurrentMap<Pair<KtModule, KClass<out KtLifetimeToken>>, CachedValue<KtAnalysisSession>> = ConcurrentHashMap()
 
     init {

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.contains
 import kotlin.collections.filter
 
 @OptIn(LLFirInternals::class, SymbolInternals::class)
-class KotlinStandaloneDirectInheritorsProvider(private val project: Project) : KotlinDirectInheritorsProvider {
+internal class KotlinStandaloneDirectInheritorsProvider(private val project: Project) : KotlinDirectInheritorsProvider {
     private val staticDeclarationProviderFactory by lazy {
         KotlinDeclarationProviderFactory.getInstance(project) as? KotlinStaticDeclarationProviderFactory
             ?: error(

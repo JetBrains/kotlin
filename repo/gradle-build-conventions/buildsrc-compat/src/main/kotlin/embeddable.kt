@@ -20,7 +20,6 @@ const val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 
 val packagesToRelocate =
     listOf(
-        "com.intellij",
         "com.google",
         "com.sampullara",
         "org.apache",
@@ -62,6 +61,10 @@ val packagesToExcludeFromDummy =
 
 private fun ShadowJar.configureEmbeddableCompilerRelocation(withJavaxInject: Boolean = true) {
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
+    relocate("com.intellij", "$kotlinEmbeddableRootPackage.com.intellij") {
+        // this is not real package, but this string constant is crutial and used by xml-reader
+        exclude("com.intellij.projectService")
+    }
     packagesToRelocate.forEach {
         relocate(it, "$kotlinEmbeddableRootPackage.$it")
     }

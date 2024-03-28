@@ -1,0 +1,10 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/analysis-api/analysis-api-fir.xml"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.providers.KotlinDirectInheritorsProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.providers.KotlinStandaloneDirectInheritorsProvider"
+    />
+  </extensions>
+</idea-plugin>

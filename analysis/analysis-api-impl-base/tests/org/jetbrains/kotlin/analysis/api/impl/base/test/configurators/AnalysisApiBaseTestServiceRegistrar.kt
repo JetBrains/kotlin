@@ -42,7 +42,6 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
-            registerService(KotlinMessageBusProvider::class.java, KotlinProjectMessageBusProvider::class.java)
             registerService(KotlinGlobalModificationService::class.java, KotlinStaticGlobalModificationService::class.java)
 
             registerService(KtLifetimeTokenProvider::class.java, KtReadActionConfinementLifetimeTokenProvider::class.java)

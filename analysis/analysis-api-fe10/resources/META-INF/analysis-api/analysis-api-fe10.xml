@@ -1,0 +1,36 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/analysis-api/analysis-api-impl-base.xml"/>
+
+  <xi:include href="/META-INF/extensions/compiler.xml"/>
+
+  <extensionPoints>
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.declarationAttributeAltererExtension"
+        interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
+        area="IDEA_PROJECT"
+    />
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.syntheticScopeProviderExtension"
+        interface="org.jetbrains.kotlin.synthetic.SyntheticScopeProviderExtension"
+        area="IDEA_PROJECT"
+    />
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSessionProvider"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
+        serviceImplementation="org.jetbrains.kotlin.references.fe10.base.KtFe10KotlinReferenceProviderContributor"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.descriptors.references.ReadWriteAccessCheckerDescriptorsImpl"
+    />
+  </extensions>
+</idea-plugin>

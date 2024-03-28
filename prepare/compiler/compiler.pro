@@ -248,6 +248,18 @@
     public static boolean iterateChildrenRecursively(com.intellij.openapi.vfs.VirtualFile,com.intellij.openapi.vfs.VirtualFileFilter,com.intellij.openapi.roots.ContentIterator);
 }
 
+-keep class com.intellij.openapi.extensions.DefaultPluginDescriptor {
+    public DefaultPluginDescriptor(java.lang.String);
+}
+
+-keep class com.intellij.ide.plugins.ContainerDescriptor {
+    public java.util.List getServices();
+}
+
+-keep class com.intellij.util.messages.impl.MessageBusEx {
+    void setLazyListeners(java.util.Map);
+}
+
 
 -keepclassmembers class com.intellij.util.PathUtil {
     public static java.lang.String getJarPathForClass(java.lang.Class);
