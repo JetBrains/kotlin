@@ -73,7 +73,7 @@ fun FirResult.convertToIrAndActualize(
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-    fir2IrResultPostCompute: (ModuleCompilerAnalyzedOutput, Fir2IrResult) -> Unit = { _, _ -> },
+    fir2IrResultPostCompute: (ModuleCompilerAnalyzedOutput, IrModuleFragment) -> Unit = { _, _ -> },
 ): Fir2IrActualizedResult {
     require(outputs.isNotEmpty()) { "No modules found" }
 
@@ -112,7 +112,6 @@ fun FirResult.convertToIrAndActualize(
 
     val dependentIrFragments = mutableListOf<IrModuleFragment>()
     lateinit var mainIrFragment: IrModuleFragment
-    lateinit var pluginContext: Fir2IrPluginContext
 
     for (firOutput in outputs) {
         val isMainOutput = firOutput === platformFirOutput
@@ -122,15 +121,14 @@ fun FirResult.convertToIrAndActualize(
             firOutput.createFir2IrComponentsStorage(platformComponentsStorage.irBuiltIns)
         }
 
-        val irFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {
+        val irModuleFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {
             fir2IrResultPostCompute(firOutput, it)
         }
 
         if (isMainOutput) {
-            mainIrFragment = irFragment.irModuleFragment
-            pluginContext = irFragment.pluginContext
+            mainIrFragment = irModuleFragment
         } else {
-            dependentIrFragments.add(irFragment.irModuleFragment)
+            dependentIrFragments.add(irModuleFragment)
         }
     }
 
@@ -168,6 +166,7 @@ fun FirResult.convertToIrAndActualize(
 
     fakeOverrideResolver?.cacheFakeOverridesOfAllClasses(mainIrFragment)
 
+    val pluginContext = Fir2IrPluginContext(platformComponentsStorage, platformComponentsStorage.moduleDescriptor)
     pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
     return Fir2IrActualizedResult(mainIrFragment, platformComponentsStorage, pluginContext, actualizationResult)
 }

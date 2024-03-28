@@ -753,7 +753,7 @@ class Fir2IrConverter(
             )
         }
 
-        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): Fir2IrResult {
+        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragment {
             val session = components.session
 
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
@@ -769,7 +769,7 @@ class Fir2IrConverter(
 
             components.converter.runSourcesConversion(allFirFiles, irModuleFragment, components.fir2IrVisitor)
 
-            return Fir2IrResult(irModuleFragment, components, components.moduleDescriptor)
+            return irModuleFragment
         }
     }
 }
