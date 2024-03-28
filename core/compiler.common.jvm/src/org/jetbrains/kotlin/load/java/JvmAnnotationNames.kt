@@ -41,7 +41,8 @@ val NULLABLE_ANNOTATIONS = listOf(
     FqName("edu.umd.cs.findbugs.annotations.Nullable"),
     FqName("edu.umd.cs.findbugs.annotations.PossiblyNull"),
     FqName("io.reactivex.annotations.Nullable"),
-    FqName("io.reactivex.rxjava3.annotations.Nullable")
+    FqName("io.reactivex.rxjava3.annotations.Nullable"),
+    FqName("jakarta.annotation.Nullable"),
 )
 
 val JAVAX_NONNULL_ANNOTATION = FqName("javax.annotation.Nonnull")
@@ -58,7 +59,8 @@ val NOT_NULL_ANNOTATIONS = listOf(
     FqName("org.checkerframework.checker.nullness.qual.NonNull"),
     FqName("lombok.NonNull"),
     FqName("io.reactivex.annotations.NonNull"),
-    FqName("io.reactivex.rxjava3.annotations.NonNull")
+    FqName("io.reactivex.rxjava3.annotations.NonNull"),
+    FqName("jakarta.annotation.Nonnull"),
 )
 
 val COMPATQUAL_NULLABLE_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NullableDecl")
