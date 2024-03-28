@@ -10,7 +10,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compose.compiler.gradle.model.builder.ComposeCompilerModelBuilder
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.plugin.*
 import javax.inject.Inject
 
@@ -50,7 +49,7 @@ class ComposeCompilerGradleSubplugin
                 // Gradle accepts that form.
                 it.substitute(it.module("androidx.compose.compiler:compiler"))
                     .using(
-                        it.module("org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:${KotlinCompilerVersion.getVersion()}")
+                        it.module("org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:${project.getKotlinPluginVersion()}")
                     )
                     .withoutArtifactSelectors() // https://github.com/gradle/gradle/issues/5174#issuecomment-828558594
                     .because("Compose Compiler is now shipped as part of Kotlin distribution")
