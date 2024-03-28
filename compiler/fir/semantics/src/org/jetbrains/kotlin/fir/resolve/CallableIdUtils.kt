@@ -33,7 +33,7 @@ fun CallableId.isFunctionInvoke(): Boolean =
 fun CallableId.isKFunctionInvoke(): Boolean =
     callableName.asString() == "invoke"
             && className?.asString()?.startsWith("KFunction") == true
-            && packageName == StandardClassIds.BASE_KOTLIN_PACKAGE
+            && packageName == StandardClassIds.BASE_REFLECT_PACKAGE
 
 fun CallableId.isIteratorNext(): Boolean =
     callableName.asString() == "next" && className?.asString()?.endsWith("Iterator") == true
