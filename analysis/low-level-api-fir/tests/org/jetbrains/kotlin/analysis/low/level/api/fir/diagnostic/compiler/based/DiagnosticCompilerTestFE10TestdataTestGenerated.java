@@ -11847,6 +11847,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("deprecationWithComplexMessage.kt")
+      public void testDeprecationWithComplexMessage() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/deprecationWithComplexMessage.kt");
+      }
+
+      @Test
       @TestMetadata("duplicatedOverrideDeprecationOnProperty.kt")
       public void testDuplicatedOverrideDeprecationOnProperty() {
         runTest("compiler/testData/diagnostics/tests/deprecated/duplicatedOverrideDeprecationOnProperty.kt");
