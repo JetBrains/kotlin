@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.resolve.deprecation
 abstract class DeprecationInfo : Comparable<DeprecationInfo> {
     abstract val deprecationLevel: DeprecationLevelValue
     abstract val propagatesToOverrides: Boolean
+
+    /**
+     * In K2, this property mustn't be called before the ANNOTATION_ARGUMENTS phase is finished.
+     */
     abstract val message: String?
 
     override fun compareTo(other: DeprecationInfo): Int {

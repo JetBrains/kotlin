@@ -6,20 +6,17 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.Name
@@ -30,7 +27,6 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.dep
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinWarningSince
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
-import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.isFulfilled
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -93,7 +89,7 @@ private fun FirBasedSymbol<*>.getUseSitesForCallSite(callSite: FirElement?): Arr
  * corresponding declaration.
  */
 fun FirBasedSymbol<*>.getOwnDeprecation(session: FirSession, callSite: FirElement?): DeprecationInfo? {
-    return getOwnDeprecationForCallSite(session.languageVersionSettings, *getUseSitesForCallSite(callSite))
+    return getOwnDeprecationForCallSite(session, *getUseSitesForCallSite(callSite))
 }
 
 /**
@@ -188,12 +184,12 @@ fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
  * corresponding declaration.
  */
 private fun FirBasedSymbol<*>.getOwnDeprecationForCallSite(
-    languageVersionSettings: LanguageVersionSettings,
+    session: FirSession,
     vararg sites: AnnotationUseSiteTarget
 ): DeprecationInfo? {
     val deprecations = when (this) {
-        is FirCallableSymbol<*> -> getDeprecation(languageVersionSettings)
-        is FirClassLikeSymbol<*> -> getOwnDeprecation(languageVersionSettings)
+        is FirCallableSymbol<*> -> getDeprecation(session)
+        is FirClassLikeSymbol<*> -> getOwnDeprecation(session)
         else -> null
     }
     return (deprecations ?: EmptyDeprecationsPerUseSite).forUseSite(*sites)
@@ -210,9 +206,9 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
     vararg sites: AnnotationUseSiteTarget,
 ): DeprecationInfo? {
     return when (this) {
-        !is FirTypeAliasSymbol -> getOwnDeprecationForCallSite(session.languageVersionSettings, *sites)
+        !is FirTypeAliasSymbol -> getOwnDeprecationForCallSite(session, *sites)
         else -> {
-            var worstDeprecationInfo = getOwnDeprecationForCallSite(session.languageVersionSettings, *sites)
+            var worstDeprecationInfo = getOwnDeprecationForCallSite(session, *sites)
             val visited = mutableMapOf<ConeKotlinType, DeprecationInfo?>()
 
             resolvedExpandedTypeRef.type.forEachType {
@@ -232,9 +228,6 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
         }
     }
 }
-
-private fun FirAnnotation.getVersionFromArgument(name: Name): ApiVersion? =
-    getStringArgument(name)?.let { ApiVersion.parse(it) }
 
 private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
     //take last because Annotation might be not resolved yet and arguments passed without explicit names
@@ -289,18 +282,13 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
                 val deprecatedSinceKotlin = this@extractDeprecationAnnotationInfoPerUseSite.firstOrNull {
                     it.unexpandedClassId == StandardClassIds.Annotations.DeprecatedSinceKotlin
                 }
-                val message = deprecated.getStringArgument(ParameterNames.deprecatedMessage)
-                    ?: deprecated.getFirstArgumentStringIfNotNamed()
-
                 val deprecatedInfo =
                     if (deprecatedSinceKotlin == null) {
-                        SimpleDeprecatedProvider(deprecationLevel, propagatesToOverride, message)
+                        SimpleDeprecatedProvider(deprecationLevel, propagatesToOverride, deprecated)
                     } else {
                         DeprecatedSinceKotlinProvider(
-                            deprecatedSinceKotlin.getVersionFromArgument(deprecatedSinceKotlinWarningSince),
-                            deprecatedSinceKotlin.getVersionFromArgument(deprecatedSinceKotlinErrorSince),
-                            deprecatedSinceKotlin.getVersionFromArgument(deprecatedSinceKotlinHiddenSince),
-                            message,
+                            deprecatedSinceKotlin,
+                            deprecated,
                             propagatesToOverride
                         )
                     }
@@ -314,23 +302,10 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
     }
 }
 
-private fun FirAnnotation.getStringArgument(name: Name): String? {
-    return findArgumentByName(name)?.let { expression ->
-        (expression as? FirLiteralExpression<*>)?.value as? String
-    }
-}
-
-private fun FirAnnotation.getFirstArgumentStringIfNotNamed(): String? {
-    if (this !is FirAnnotationCall) return null
-    val firstArgument = argumentList.arguments.firstOrNull() ?: return null
-    return (firstArgument as? FirLiteralExpression<*>)?.value?.toString()
-}
-
-
-fun FirBasedSymbol<*>.isDeprecationLevelHidden(languageVersionSettings: LanguageVersionSettings): Boolean =
+fun FirBasedSymbol<*>.isDeprecationLevelHidden(session: FirSession): Boolean =
     when (this) {
-        is FirCallableSymbol<*> -> getDeprecation(languageVersionSettings)?.all?.deprecationLevel == DeprecationLevelValue.HIDDEN
-        is FirClassLikeSymbol<*> -> getOwnDeprecation(languageVersionSettings)?.all?.deprecationLevel == DeprecationLevelValue.HIDDEN
+        is FirCallableSymbol<*> -> getDeprecation(session)?.all?.deprecationLevel == DeprecationLevelValue.HIDDEN
+        is FirClassLikeSymbol<*> -> getOwnDeprecation(session)?.all?.deprecationLevel == DeprecationLevelValue.HIDDEN
         else -> false
     }
 
@@ -406,7 +381,6 @@ fun FirCallableSymbol<*>.hiddenStatusOfCall(isSuperCall: Boolean, isCallToOverri
     }
 }
 
-
 data class FutureApiDeprecationInfo(
     override val deprecationLevel: DeprecationLevelValue,
     override val propagatesToOverrides: Boolean,
@@ -424,8 +398,8 @@ data class RequireKotlinDeprecationInfo(
 }
 
 class RequireKotlinProvider(private val versionRequirement: VersionRequirement) : DeprecationInfoProvider() {
-    override fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo? {
-        return runUnless(versionRequirement.isFulfilled(languageVersionSettings)) {
+    override fun computeDeprecationInfo(session: FirSession): DeprecationInfo? {
+        return runUnless(versionRequirement.isFulfilled(session.languageVersionSettings)) {
             RequireKotlinDeprecationInfo(
                 deprecationLevel = when (versionRequirement.level) {
                     DeprecationLevel.WARNING -> DeprecationLevelValue.WARNING
@@ -438,9 +412,9 @@ class RequireKotlinProvider(private val versionRequirement: VersionRequirement) 
     }
 }
 
-class SinceKotlinProvider(private val sinceVersion: ApiVersion) : DeprecationInfoProvider() {
-    override fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo? {
-        return runUnless(sinceVersion <= languageVersionSettings.apiVersion) {
+class SinceKotlinProvider(val sinceVersion: ApiVersion) : DeprecationInfoProvider() {
+    override fun computeDeprecationInfo(session: FirSession): DeprecationInfo? {
+        return runUnless(sinceVersion <= session.languageVersionSettings.apiVersion) {
             FutureApiDeprecationInfo(
                 deprecationLevel = DeprecationLevelValue.HIDDEN,
                 propagatesToOverrides = true,
@@ -453,33 +427,50 @@ class SinceKotlinProvider(private val sinceVersion: ApiVersion) : DeprecationInf
 class SimpleDeprecatedProvider(
     private val level: DeprecationLevelValue,
     private val propagatesToOverride: Boolean,
-    private val message: String?
+    private val annotation: FirAnnotation,
 ) : DeprecationInfoProvider() {
-    override fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo {
-        return SimpleDeprecationInfo(
-            level,
-            propagatesToOverride,
-            message
-        )
+    override fun computeDeprecationInfo(session: FirSession): DeprecationInfo {
+        return OnDemandMessageDeprecationInfo(level, propagatesToOverride, annotation, session)
     }
 }
 
 class DeprecatedSinceKotlinProvider(
-    private val warningVersion: ApiVersion?,
-    private val errorVersion: ApiVersion?,
-    private val hiddenVersion: ApiVersion?,
-    private val message: String?,
-    private val propagatesToOverride: Boolean
+    private val deprecatedSinceKotlinAnnotation: FirAnnotation,
+    private val deprecatedAnnotation: FirAnnotation,
+    private val propagatesToOverride: Boolean,
 ) : DeprecationInfoProvider() {
-    override fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo? {
-        fun ApiVersion.takeLevelIfDeprecated(level: DeprecationLevelValue) = level.takeIf { this <= languageVersionSettings.apiVersion }
+    private fun DeprecationLevelValue.takeIfVersionMatches(name: Name, index: Int, session: FirSession): DeprecationLevelValue? {
+        // We can't use getStringArgument because this can be called during TYPES phase when we don't have an argument mapping, yet.
+        val argument = deprecatedSinceKotlinAnnotation.findArgumentByName(name, returnFirstWhenNotFound = false)
+            ?: (deprecatedSinceKotlinAnnotation as? FirAnnotationCall)?.arguments?.elementAtOrNull(index)
 
-        val appliedLevel = hiddenVersion?.takeLevelIfDeprecated(DeprecationLevelValue.HIDDEN)
-            ?: errorVersion?.takeLevelIfDeprecated(DeprecationLevelValue.ERROR)
-            ?: warningVersion?.takeLevelIfDeprecated(DeprecationLevelValue.WARNING)
+        val version = ((argument as? FirLiteralExpression<*>)?.value as? String)
+            ?.let { ApiVersion.parse(it) }
+            ?: return null
+
+        return takeIf { version <= session.languageVersionSettings.apiVersion }
+    }
+
+    override fun computeDeprecationInfo(session: FirSession): DeprecationInfo? {
+        val appliedLevel = DeprecationLevelValue.HIDDEN.takeIfVersionMatches(deprecatedSinceKotlinHiddenSince, 2, session)
+            ?: DeprecationLevelValue.ERROR.takeIfVersionMatches(deprecatedSinceKotlinErrorSince, 1, session)
+            ?: DeprecationLevelValue.WARNING.takeIfVersionMatches(deprecatedSinceKotlinWarningSince, 0, session)
 
         return appliedLevel?.let {
-            SimpleDeprecationInfo(it, propagatesToOverride, message)
+            OnDemandMessageDeprecationInfo(it, propagatesToOverride, deprecatedAnnotation, session)
         }
     }
+}
+
+class OnDemandMessageDeprecationInfo(
+    override val deprecationLevel: DeprecationLevelValue,
+    override val propagatesToOverrides: Boolean,
+    private val annotation: FirAnnotation,
+    private val session: FirSession
+) : DeprecationInfo() {
+    override val message: String?
+        get() {
+            (annotation as? FirAnnotationCall)?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+            return annotation.getStringArgument(ParameterNames.deprecatedMessage, session)
+        }
 }

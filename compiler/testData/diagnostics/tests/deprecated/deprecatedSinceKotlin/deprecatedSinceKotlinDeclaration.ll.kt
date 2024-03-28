@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// ^KT-67115
+// LL_FIR_DIVERGENCE
 // !SKIP_JAVAC
 package kotlin.sub
 
@@ -48,4 +51,4 @@ fun fooEqual() {}
 @DeprecatedSinceKotlin("1.1", "1.1", "1.1")
 class Foo
 
-val foo: <!DEPRECATION_ERROR!>Foo<!> = <!DEPRECATION_ERROR!>Foo<!>()
+val foo: <!UNRESOLVED_REFERENCE!>Foo<!> = <!UNRESOLVED_REFERENCE!>Foo<!>()

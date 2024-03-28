@@ -117,7 +117,7 @@ private fun FirDeclaration.isInvisibleOrHidden(session: FirSession, bodyResolveC
         }
     }
 
-    return symbol.isDeprecationLevelHidden(session.languageVersionSettings)
+    return symbol.isDeprecationLevelHidden(session)
 }
 
 private fun FirScope.getFirstClassifierOrNull(

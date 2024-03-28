@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 abstract class DeprecationsProvider {
-    abstract fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite?
+    abstract fun getDeprecationsInfo(session: FirSession): DeprecationsPerUseSite?
 }
 
 class DeprecationsProviderImpl(
@@ -21,36 +21,37 @@ class DeprecationsProviderImpl(
     private val all: List<DeprecationInfoProvider>?,
     private val bySpecificSite: Map<AnnotationUseSiteTarget, List<DeprecationInfoProvider>>?
 ) : DeprecationsProvider() {
-    private val cache: FirCache<LanguageVersionSettings, DeprecationsPerUseSite, Nothing?> = firCachesFactory.createCache { version ->
+    private val cache: FirCache<FirSession, DeprecationsPerUseSite, Nothing?> = firCachesFactory.createCache { session ->
         @Suppress("UNCHECKED_CAST")
         DeprecationsPerUseSite(
-            all?.computeDeprecationInfoOrNull(version),
-            bySpecificSite?.mapValues { (_, info) -> info.computeDeprecationInfoOrNull(version) }?.filterValues { it != null }
+            all?.computeDeprecationInfoOrNull(session),
+            bySpecificSite?.mapValues { (_, info) -> info.computeDeprecationInfoOrNull(session) }?.filterValues { it != null }
                     as Map<AnnotationUseSiteTarget, DeprecationInfo>?
         )
     }
 
-    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite {
-        return cache.getValue(languageVersionSettings, null)
+    override fun getDeprecationsInfo(session: FirSession): DeprecationsPerUseSite {
+        return cache.getValue(session, null)
     }
 
-    private fun List<DeprecationInfoProvider>.computeDeprecationInfoOrNull(version: LanguageVersionSettings): DeprecationInfo? {
-        return mapNotNull { it.computeDeprecationInfo(version) }.maxByOrNull { it.deprecationLevel }
+    private fun List<DeprecationInfoProvider>.computeDeprecationInfoOrNull(session: FirSession): DeprecationInfo? {
+        return mapNotNull { it.computeDeprecationInfo(session) }.maxByOrNull { it.deprecationLevel }
     }
 }
 
 object EmptyDeprecationsProvider : DeprecationsProvider() {
-    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite {
+    override fun getDeprecationsInfo(session: FirSession): DeprecationsPerUseSite {
         return EmptyDeprecationsPerUseSite
     }
 }
 
 object UnresolvedDeprecationProvider : DeprecationsProvider() {
-    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
+    override fun getDeprecationsInfo(session: FirSession): DeprecationsPerUseSite? {
         return null
     }
 }
 
 abstract class DeprecationInfoProvider {
-    abstract fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo?
+    abstract fun computeDeprecationInfo(session: FirSession): DeprecationInfo?
 }
+
