@@ -25,15 +25,3 @@ class IrContinueImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrContinueImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    loop: IrLoop,
-) = IrContinueImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    loop = loop,
-)

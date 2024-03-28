@@ -24,17 +24,3 @@ class IrDynamicMemberExpressionImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrDynamicMemberExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    memberName: String,
-    receiver: IrExpression,
-) = IrDynamicMemberExpressionImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    memberName = memberName,
-    receiver = receiver,
-)

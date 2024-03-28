@@ -19,28 +19,3 @@ class IrCatchImpl internal constructor(
 ) : IrCatch() {
     override lateinit var result: IrExpression
 }
-
-fun IrCatchImpl(
-    startOffset: Int,
-    endOffset: Int,
-    catchParameter: IrVariable,
-) = IrCatchImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    catchParameter = catchParameter,
-)
-
-fun IrCatchImpl(
-    startOffset: Int,
-    endOffset: Int,
-    catchParameter: IrVariable,
-    result: IrExpression,
-) = IrCatchImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    catchParameter = catchParameter,
-).apply {
-    this.result = result
-}

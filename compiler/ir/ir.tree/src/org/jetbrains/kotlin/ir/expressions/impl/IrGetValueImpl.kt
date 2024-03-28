@@ -27,32 +27,3 @@ class IrGetValueImpl internal constructor(
 
 fun IrGetValue.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
     IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)
-
-fun IrGetValueImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrValueSymbol,
-    origin: IrStatementOrigin? = null,
-) = IrGetValueImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    symbol = symbol,
-    origin = origin,
-)
-
-fun IrGetValueImpl(
-    startOffset: Int,
-    endOffset: Int,
-    symbol: IrValueSymbol,
-    origin: IrStatementOrigin? = null,
-) = IrGetValueImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = symbol.owner.type,
-    symbol = symbol,
-    origin = origin,
-)

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConstantValue
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
-import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrConstantObjectImpl internal constructor(
@@ -29,20 +28,3 @@ class IrConstantObjectImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrConstantObjectImpl(
-    startOffset: Int,
-    endOffset: Int,
-    constructor: IrConstructorSymbol,
-    initValueArguments: List<IrConstantValue>,
-    initTypeArguments: List<IrType>,
-    type: IrType = constructor.owner.constructedClassType,
-) = IrConstantObjectImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    constructor = constructor,
-    type = type,
-).apply {
-    valueArguments.addAll(initValueArguments)
-    typeArguments.addAll(initTypeArguments)
-}

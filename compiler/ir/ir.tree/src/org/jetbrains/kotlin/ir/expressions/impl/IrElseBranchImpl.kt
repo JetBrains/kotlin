@@ -18,26 +18,3 @@ class IrElseBranchImpl internal constructor(
     override var result: IrExpression,
 ) : IrElseBranch()
 
-fun IrElseBranchImpl(
-    startOffset: Int,
-    endOffset: Int,
-    condition: IrExpression,
-    result: IrExpression,
-) = IrElseBranchImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    condition = condition,
-    result = result,
-)
-
-fun IrElseBranchImpl(
-    condition: IrExpression,
-    result: IrExpression,
-) = IrElseBranchImpl(
-    constructorIndicator = null,
-    startOffset = condition.startOffset,
-    endOffset = result.endOffset,
-    condition = condition,
-    result = result,
-)

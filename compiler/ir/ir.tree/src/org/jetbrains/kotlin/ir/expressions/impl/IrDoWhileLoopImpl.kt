@@ -28,15 +28,3 @@ class IrDoWhileLoopImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrDoWhileLoopImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    origin: IrStatementOrigin?,
-) = IrDoWhileLoopImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    origin = origin,
-)

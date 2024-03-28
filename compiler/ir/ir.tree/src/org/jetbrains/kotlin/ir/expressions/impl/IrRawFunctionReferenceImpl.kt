@@ -23,15 +23,3 @@ class IrRawFunctionReferenceImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrRawFunctionReferenceImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrFunctionSymbol,
-) = IrRawFunctionReferenceImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    symbol = symbol,
-)

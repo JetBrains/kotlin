@@ -23,15 +23,3 @@ class IrGetEnumValueImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrGetEnumValueImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrEnumEntrySymbol,
-) = IrGetEnumValueImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    symbol = symbol,
-)

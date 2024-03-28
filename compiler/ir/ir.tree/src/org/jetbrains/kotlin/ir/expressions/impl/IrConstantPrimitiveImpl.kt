@@ -22,13 +22,3 @@ class IrConstantPrimitiveImpl internal constructor(
     override var type = value.type
 }
 
-fun IrConstantPrimitiveImpl(
-    startOffset: Int,
-    endOffset: Int,
-    value: IrConst<*>,
-) = IrConstantPrimitiveImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    value = value,
-)

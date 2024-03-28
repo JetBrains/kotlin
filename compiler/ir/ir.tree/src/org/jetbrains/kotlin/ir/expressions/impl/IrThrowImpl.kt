@@ -23,15 +23,3 @@ class IrThrowImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrThrowImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    value: IrExpression,
-) = IrThrowImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    value = value,
-)

@@ -26,35 +26,6 @@ class IrBlockImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrBlockImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    origin: IrStatementOrigin? = null,
-) = IrBlockImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    origin = origin,
-)
-
-fun IrBlockImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    origin: IrStatementOrigin? = null,
-    statements: List<IrStatement>,
-) = IrBlockImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    origin = origin,
-).apply {
-    this.statements.addAll(statements)
-}
-
 fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
     if (statement != null) statements.add(statement)
 }

@@ -25,32 +25,3 @@ class IrVarargImpl internal constructor(
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 }
-
-fun IrVarargImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    varargElementType: IrType,
-) = IrVarargImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    varargElementType = varargElementType,
-)
-
-fun IrVarargImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    varargElementType: IrType,
-    elements: List<IrVarargElement>,
-) = IrVarargImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    varargElementType = varargElementType,
-).apply {
-    this.elements.addAll(elements)
-}

@@ -17,13 +17,3 @@ class IrSyntheticBodyImpl internal constructor(
     override var kind: IrSyntheticBodyKind,
 ) : IrSyntheticBody()
 
-fun IrSyntheticBodyImpl(
-    startOffset: Int,
-    endOffset: Int,
-    kind: IrSyntheticBodyKind,
-) = IrSyntheticBodyImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    kind = kind,
-)

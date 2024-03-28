@@ -24,17 +24,3 @@ class IrSuspendableExpressionImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrSuspendableExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    suspensionPointId: IrExpression,
-    result: IrExpression,
-) = IrSuspendableExpressionImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    suspensionPointId = suspensionPointId,
-    result = result,
-)
