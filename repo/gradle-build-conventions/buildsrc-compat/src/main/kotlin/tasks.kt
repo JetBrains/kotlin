@@ -216,6 +216,7 @@ fun Project.projectTest(
             "-XX:+UseCodeCacheFlushing",
             "-XX:ReservedCodeCacheSize=${reservedCodeCacheSizeMb}m",
             "-XX:MaxMetaspaceSize=${maxMetaspaceSizeMb}m",
+            "-XX:CICompilerCount=2",
             "-Djna.nosys=true"
         )
 
