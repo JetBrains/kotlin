@@ -25,16 +25,3 @@ class IrConstantArrayImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrConstantArrayImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    initElements: List<IrConstantValue>,
-) = IrConstantArrayImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-).apply {
-    elements.addAll(initElements)
-}

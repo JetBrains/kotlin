@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
-import org.jetbrains.kotlin.ir.util.isAssignable
 
 class IrSetValueImpl internal constructor(
     @Suppress("UNUSED_PARAMETER")
@@ -28,24 +27,3 @@ class IrSetValueImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrSetValueImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrValueSymbol,
-    value: IrExpression,
-    origin: IrStatementOrigin?,
-): IrSetValueImpl {
-    if (symbol.isBound) {
-        assert(symbol.owner.isAssignable) { "Only assignable IrValues can be set" }
-    }
-    return IrSetValueImpl(
-        constructorIndicator = null,
-        startOffset = startOffset,
-        endOffset = endOffset,
-        type = type,
-        symbol = symbol,
-        value = value,
-        origin = origin,
-    )
-}

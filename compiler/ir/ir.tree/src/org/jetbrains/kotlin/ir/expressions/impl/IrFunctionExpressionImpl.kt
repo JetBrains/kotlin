@@ -25,17 +25,3 @@ class IrFunctionExpressionImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrFunctionExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    function: IrSimpleFunction,
-    origin: IrStatementOrigin,
-) = IrFunctionExpressionImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    function = function,
-    origin = origin,
-)

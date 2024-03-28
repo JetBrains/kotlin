@@ -38,35 +38,3 @@ class IrReturnableBlockImpl internal constructor(
     }
 }
 
-fun IrReturnableBlockImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrReturnableBlockSymbol,
-    origin: IrStatementOrigin? = null,
-) = IrReturnableBlockImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    symbol = symbol,
-    origin = origin,
-)
-
-fun IrReturnableBlockImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrReturnableBlockSymbol,
-    origin: IrStatementOrigin?,
-    statements: List<IrStatement>,
-) = IrReturnableBlockImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    symbol = symbol,
-    origin = origin,
-).apply {
-    this.statements.addAll(statements)
-}

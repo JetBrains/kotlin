@@ -30,39 +30,3 @@ class IrGetFieldImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrGetFieldImpl(
-    startOffset: Int,
-    endOffset: Int,
-    symbol: IrFieldSymbol,
-    type: IrType,
-    origin: IrStatementOrigin? = null,
-    superQualifierSymbol: IrClassSymbol? = null,
-) = IrGetFieldImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    symbol = symbol,
-    type = type,
-    origin = origin,
-    superQualifierSymbol = superQualifierSymbol,
-)
-
-fun IrGetFieldImpl(
-    startOffset: Int,
-    endOffset: Int,
-    symbol: IrFieldSymbol,
-    type: IrType,
-    receiver: IrExpression?,
-    origin: IrStatementOrigin? = null,
-    superQualifierSymbol: IrClassSymbol? = null,
-) = IrGetFieldImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    symbol = symbol,
-    type = type,
-    origin = origin,
-    superQualifierSymbol = superQualifierSymbol,
-).apply {
-    this.receiver = receiver
-}

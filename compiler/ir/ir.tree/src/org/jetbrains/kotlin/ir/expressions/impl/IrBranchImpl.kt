@@ -17,27 +17,3 @@ open class IrBranchImpl internal constructor(
     override var condition: IrExpression,
     override var result: IrExpression,
 ) : IrBranch()
-
-fun IrBranchImpl(
-    startOffset: Int,
-    endOffset: Int,
-    condition: IrExpression,
-    result: IrExpression,
-) = IrBranchImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    condition = condition,
-    result = result,
-)
-
-fun IrBranchImpl(
-    condition: IrExpression,
-    result: IrExpression,
-) = IrBranchImpl(
-    constructorIndicator = null,
-    startOffset = condition.startOffset,
-    endOffset = result.endOffset,
-    condition = condition,
-    result = result,
-)

@@ -17,13 +17,3 @@ class IrSpreadElementImpl internal constructor(
     override var expression: IrExpression,
 ) : IrSpreadElement()
 
-fun IrSpreadElementImpl(
-    startOffset: Int,
-    endOffset: Int,
-    expression: IrExpression,
-) = IrSpreadElementImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    expression = expression,
-)

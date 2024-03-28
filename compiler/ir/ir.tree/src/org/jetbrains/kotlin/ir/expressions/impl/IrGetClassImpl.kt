@@ -23,15 +23,3 @@ class IrGetClassImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrGetClassImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    argument: IrExpression,
-) = IrGetClassImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    argument = argument,
-)

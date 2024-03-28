@@ -24,27 +24,3 @@ class IrStringConcatenationImpl internal constructor(
     override val arguments: MutableList<IrExpression> = ArrayList(2)
 }
 
-fun IrStringConcatenationImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-) = IrStringConcatenationImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-)
-
-fun IrStringConcatenationImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    arguments: Collection<IrExpression>,
-) = IrStringConcatenationImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-).apply {
-    this.arguments.addAll(arguments)
-}

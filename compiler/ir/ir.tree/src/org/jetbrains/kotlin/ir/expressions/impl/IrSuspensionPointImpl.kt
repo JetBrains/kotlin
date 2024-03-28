@@ -26,19 +26,3 @@ class IrSuspensionPointImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrSuspensionPointImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    suspensionPointIdParameter: IrVariable,
-    result: IrExpression,
-    resumeResult: IrExpression,
-) = IrSuspensionPointImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    suspensionPointIdParameter = suspensionPointIdParameter,
-    result = result,
-    resumeResult = resumeResult,
-)

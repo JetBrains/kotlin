@@ -25,20 +25,3 @@ class IrTypeOperatorCallImpl internal constructor(
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 }
-
-fun IrTypeOperatorCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    operator: IrTypeOperator,
-    typeOperand: IrType,
-    argument: IrExpression,
-) = IrTypeOperatorCallImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    operator = operator,
-    typeOperand = typeOperand,
-    argument = argument,
-)

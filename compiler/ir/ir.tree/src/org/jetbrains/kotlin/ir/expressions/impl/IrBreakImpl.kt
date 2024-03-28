@@ -24,16 +24,3 @@ class IrBreakImpl internal constructor(
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 }
-
-fun IrBreakImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    loop: IrLoop,
-) = IrBreakImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    loop = loop,
-)

@@ -29,15 +29,3 @@ class IrDynamicOperatorExpressionImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrDynamicOperatorExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    operator: IrDynamicOperator,
-) = IrDynamicOperatorExpressionImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    operator = operator,
-)

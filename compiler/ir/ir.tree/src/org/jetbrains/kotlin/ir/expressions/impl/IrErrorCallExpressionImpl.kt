@@ -27,15 +27,3 @@ class IrErrorCallExpressionImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrErrorCallExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    description: String,
-) = IrErrorCallExpressionImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    description = description,
-)

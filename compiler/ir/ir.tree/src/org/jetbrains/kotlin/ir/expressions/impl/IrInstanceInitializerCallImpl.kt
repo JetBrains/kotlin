@@ -23,15 +23,3 @@ class IrInstanceInitializerCallImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrInstanceInitializerCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    classSymbol: IrClassSymbol,
-    type: IrType,
-) = IrInstanceInitializerCallImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    classSymbol = classSymbol,
-    type = type,
-)

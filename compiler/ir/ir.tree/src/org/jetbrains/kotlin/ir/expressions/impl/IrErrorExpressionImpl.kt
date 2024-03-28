@@ -22,15 +22,3 @@ class IrErrorExpressionImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrErrorExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    description: String,
-) = IrErrorExpressionImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    description = description,
-)

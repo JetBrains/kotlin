@@ -30,31 +30,3 @@ class IrTryImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrTryImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-) = IrTryImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-)
-
-fun IrTryImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    tryResult: IrExpression,
-    catches: List<IrCatch>,
-    finallyExpression: IrExpression?,
-) = IrTryImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-).apply {
-    this.tryResult = tryResult
-    this.catches.addAll(catches)
-    this.finallyExpression = finallyExpression
-}

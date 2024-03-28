@@ -30,39 +30,3 @@ class IrInlinedFunctionBlockImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 }
 
-fun IrInlinedFunctionBlockImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    inlineCall: IrFunctionAccessExpression,
-    inlinedElement: IrElement,
-    origin: IrStatementOrigin? = null,
-) = IrInlinedFunctionBlockImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    inlineCall = inlineCall,
-    inlinedElement = inlinedElement,
-    origin = origin,
-)
-
-fun IrInlinedFunctionBlockImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    inlineCall: IrFunctionAccessExpression,
-    inlinedElement: IrElement,
-    origin: IrStatementOrigin?,
-    statements: List<IrStatement>,
-) = IrInlinedFunctionBlockImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    inlineCall = inlineCall,
-    inlinedElement = inlinedElement,
-    origin = origin,
-).apply {
-    this.statements.addAll(statements)
-}
