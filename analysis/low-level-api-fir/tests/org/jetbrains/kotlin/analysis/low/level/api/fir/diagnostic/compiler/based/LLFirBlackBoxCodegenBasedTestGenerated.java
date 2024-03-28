@@ -38576,6 +38576,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
       }
 
       @Test
+      @TestMetadata("kt66970.kt")
+      public void testKt66970() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/kt66970.kt");
+      }
+
+      @Test
       @TestMetadata("kt-65249.kt")
       public void testKt_65249() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/kt-65249.kt");
