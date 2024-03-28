@@ -39441,6 +39441,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("ExhaustiveSmartcastBoolean.kt")
+      public void testExhaustiveSmartcastBoolean() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSmartcastBoolean.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveValOverConditionalInit.kt")
       public void testExhaustiveValOverConditionalInit() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt");

@@ -41821,6 +41821,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("ExhaustiveSmartcastBoolean.kt")
+      public void testExhaustiveSmartcastBoolean() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSmartcastBoolean.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveValOverConditionalInit.kt")
       public void testExhaustiveValOverConditionalInit() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt");
