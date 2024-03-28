@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -307,26 +308,32 @@ class CallAndReferenceGenerator(
             else -> null
         }
 
-    private val FirQualifiedAccessExpression.dynamicOperator
-        get() = when (calleeReference.source?.kind) {
-            is KtFakeSourceElementKind.ArrayAccessNameReference -> when (calleeReference.resolved?.name) {
-                OperatorNameConventions.SET -> IrDynamicOperator.EQ
-                OperatorNameConventions.GET -> IrDynamicOperator.ARRAY_ACCESS
-                else -> error("Unexpected name")
+    private val FirQualifiedAccessExpression.dynamicOperator: IrDynamicOperator?
+        get() {
+            val kind = calleeReference.source?.kind
+            val isOperationOnArray = (explicitReceiver as? FirQualifiedAccessExpression)
+                ?.calleeReference?.resolved?.name == SpecialNames.ARRAY
+
+            return when {
+                kind is KtFakeSourceElementKind.ArrayAccessNameReference || isOperationOnArray -> when (calleeReference.resolved?.name) {
+                    OperatorNameConventions.SET -> IrDynamicOperator.EQ
+                    OperatorNameConventions.GET -> IrDynamicOperator.ARRAY_ACCESS
+                    else -> error("Unexpected name")
+                }
+
+                kind is KtFakeSourceElementKind.DesugaredPrefixInc -> IrDynamicOperator.PREFIX_INCREMENT
+                kind is KtFakeSourceElementKind.DesugaredPrefixDec -> IrDynamicOperator.PREFIX_DECREMENT
+                kind is KtFakeSourceElementKind.DesugaredPostfixInc -> IrDynamicOperator.POSTFIX_INCREMENT
+                kind is KtFakeSourceElementKind.DesugaredPostfixDec -> IrDynamicOperator.POSTFIX_DECREMENT
+
+                kind is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign -> when (calleeReference.resolved?.name) {
+                    OperatorNameConventions.SET -> IrDynamicOperator.EQ
+                    OperatorNameConventions.GET -> IrDynamicOperator.ARRAY_ACCESS
+                    else -> error("Unexpected name")
+                }
+
+                else -> null
             }
-
-            is KtFakeSourceElementKind.DesugaredPrefixInc -> IrDynamicOperator.PREFIX_INCREMENT
-            is KtFakeSourceElementKind.DesugaredPrefixDec -> IrDynamicOperator.PREFIX_DECREMENT
-            is KtFakeSourceElementKind.DesugaredPostfixInc -> IrDynamicOperator.POSTFIX_INCREMENT
-            is KtFakeSourceElementKind.DesugaredPostfixDec -> IrDynamicOperator.POSTFIX_DECREMENT
-
-            is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign -> when (calleeReference.resolved?.name) {
-                OperatorNameConventions.SET -> IrDynamicOperator.EQ
-                OperatorNameConventions.GET -> IrDynamicOperator.ARRAY_ACCESS
-                else -> error("Unexpected name")
-            }
-
-            else -> null
         }
 
     private fun convertToIrCallForDynamic(

@@ -633,8 +633,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
      *     val <array> = a
      *     val <index0> = b
      *     val <index1> = c
-     *     val <unary> = <array>.get(b, c)
-     *     <array>.set(b, c, <unary>.inc())
+     *     val <unary> = <array>.get(<index0>, <index1>)
+     *     <array>.set(<index0>, <index1>, <unary>.inc())
      *     ^<unary>
      * }
      *
@@ -646,8 +646,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
      *     val <array> = a
      *     val <index0> = b
      *     val <index1> = c
-     *     <array>.set(b, c, <array>.get(b, c).inc())
-     *     ^<array>.get(b, c)
+     *     <array>.set(b, c, <array>.get(<index0>, <index1>).inc())
+     *     ^<array>.get(<index0>, <index1>)
      * }
      *
      */
