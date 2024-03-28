@@ -123,8 +123,7 @@ class WasmSymbols(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "EmptyContinuation")))
     )
 
-    override val functionAdapter: IrClassSymbol
-        get() = TODO()
+    override val functionAdapter = getInternalClass("FunctionAdapter")
 
     val wasmUnreachable = getInternalFunction("wasm_unreachable")
 

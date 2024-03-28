@@ -268,8 +268,8 @@ class JsIrBackendContext(
             override val returnIfSuspended =
                 symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("returnIfSuspended"))
 
-            override val functionAdapter: IrClassSymbol
-                get() = TODO("Not implemented")
+            override val functionAdapter =
+                symbolTable.descriptorExtension.referenceClass(getJsInternalClass("FunctionAdapter"))
 
             override fun functionN(n: Int): IrClassSymbol {
                 return irFactory.stageController.withInitialIr { super.functionN(n) }
