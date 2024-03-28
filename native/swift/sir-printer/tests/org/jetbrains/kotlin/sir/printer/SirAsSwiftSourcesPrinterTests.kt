@@ -818,7 +818,7 @@ class SirAsSwiftSourcesPrinterTests {
 
             enum = buildEnum {
                 name = "my_enum"
-                origin = SirOrigin.Unknown
+                origin = SirOrigin.Namespace(listOf("my_enum"))
             }
             declarations.add(
                 enum
@@ -860,8 +860,7 @@ class SirAsSwiftSourcesPrinterTests {
 
     private fun runTest(module: SirModule, goldenDataFile: String) {
         val expectedSwiftSrc = File(KtTestUtil.getHomeDirectory()).resolve("$goldenDataFile.golden.swift")
-
-        val actualSwiftSrc = SirAsSwiftSourcesPrinter().print(module)
+        val actualSwiftSrc = SirAsSwiftSourcesPrinter.print(module)
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
     }
 }

@@ -29,7 +29,7 @@ internal fun SirModule.dumpResultToFiles(requests: List<BridgeRequest>, output: 
 }
 
 private fun SirModule.generateSwiftSrc(): String {
-    return SirAsSwiftSourcesPrinter().print(this)
+    return SirAsSwiftSourcesPrinter.print(this)
 }
 
 private fun generateBridgeSources(requests: List<BridgeRequest>): BridgeSources {
