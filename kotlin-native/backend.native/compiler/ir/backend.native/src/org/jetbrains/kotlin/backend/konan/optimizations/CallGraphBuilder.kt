@@ -37,7 +37,8 @@ internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.Functi
 
 internal class CallGraph(val directEdges: Map<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>,
                          val reversedEdges: Map<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>,
-                         val rootExternalFunctions: List<DataFlowIR.FunctionSymbol>)
+                         val rootExternalFunctions: List<DataFlowIR.FunctionSymbol>,
+                         val rootSet: List<DataFlowIR.FunctionSymbol.Declared>)
     : DirectedGraph<DataFlowIR.FunctionSymbol.Declared, CallGraphNode> {
 
     override val nodes get() = directEdges.values
@@ -67,7 +68,8 @@ internal class CallGraphBuilder(
     private val directEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>()
     private val reversedEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>()
     private val externalRootFunctions = mutableListOf<DataFlowIR.FunctionSymbol>()
-    private val callGraph = CallGraph(directEdges, reversedEdges, externalRootFunctions)
+    private val wholeRootSet = mutableListOf<DataFlowIR.FunctionSymbol.Declared>()
+    private val callGraph = CallGraph(directEdges, reversedEdges, externalRootFunctions, wholeRootSet)
 
     private data class HandleFunctionParams(val caller: DataFlowIR.FunctionSymbol.Declared?,
                                             val calleeFunction: DataFlowIR.Function)
@@ -80,12 +82,14 @@ internal class CallGraphBuilder(
         while (functionStack.isNotEmpty()) {
             val (caller, calleeFunction) = functionStack.pop()
             val callee = calleeFunction.symbol as DataFlowIR.FunctionSymbol.Declared
-            val gotoCallee = !directEdges.containsKey(callee)
-            if (gotoCallee)
+            val newFunction = !directEdges.containsKey(callee)
+            if (newFunction)
                 addNode(callee)
             if (caller != null)
                 callGraph.addReversedEdge(caller, callee)
-            if (gotoCallee)
+            else if (!newFunction)
+                wholeRootSet.add(callee)
+            if (newFunction)
                 handleFunction(callee, calleeFunction)
         }
         return callGraph
