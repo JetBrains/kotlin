@@ -622,11 +622,11 @@ internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(
 
         FirDeclarationOrigin.IntersectionOverride, is FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.Delegated -> {
             val initial = unwrapFakeOverridesOrDelegated().forbiddenNamedArgumentsTargetOrNull(session) ?: return null
-            initial.takeUnless { hasOverrideThatAllowsNamedArguments(session, originScope) }
+            initial.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(session, originScope) }
         }
 
         FirDeclarationOrigin.Enhancement -> {
-            ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION.takeUnless { hasOverrideThatAllowsNamedArguments(session, originScope) }
+            ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(session, originScope) }
         }
 
         FirDeclarationOrigin.BuiltIns -> ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
@@ -635,18 +635,20 @@ internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(
     }
 }
 
-private fun FirFunction.hasOverrideThatAllowsNamedArguments(
+private fun FirFunctionSymbol<*>.hasOverrideThatAllowsNamedArguments(
     session: FirSession,
     originScope: FirTypeScope?,
 ): Boolean {
     var result = false
-    originScope?.processOverriddenFunctions(symbol as FirNamedFunctionSymbol) {
-        // If an override allows named arguments, it overrides the initial result.
-        if (it.fir.forbiddenNamedArgumentsTargetOrNull(session) == null) {
-            result = true
-            ProcessorAction.STOP
-        } else {
-            ProcessorAction.NEXT
+    if (this is FirNamedFunctionSymbol) {
+        originScope?.processOverriddenFunctions(this) {
+            // If an override allows named arguments, it overrides the initial result.
+            if (it.fir.forbiddenNamedArgumentsTargetOrNull(session) == null) {
+                result = true
+                ProcessorAction.STOP
+            } else {
+                ProcessorAction.NEXT
+            }
         }
     }
     return result

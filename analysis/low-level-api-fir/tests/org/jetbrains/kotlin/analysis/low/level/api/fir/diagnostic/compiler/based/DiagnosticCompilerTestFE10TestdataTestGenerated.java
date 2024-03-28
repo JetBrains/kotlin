@@ -27448,6 +27448,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("throwableNamedArguments.kt")
+        public void testThrowableNamedArguments() {
+          runTest("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition/throwableNamedArguments.kt");
+        }
+
+        @Test
         @TestMetadata("varargs.kt")
         public void testVarargs() {
           runTest("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition/varargs.kt");
