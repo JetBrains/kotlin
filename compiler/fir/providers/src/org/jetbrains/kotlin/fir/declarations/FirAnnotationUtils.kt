@@ -123,7 +123,7 @@ fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, s
 
 // --------------------------- evaluated arguments ---------------------------
 
-fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
+fun FirAnnotation.findArgumentByName(name: Name, returnFirstWhenNotFound: Boolean = true): FirExpression? {
     argumentMapping.mapping[name]?.let { return it }
     if (this !is FirAnnotationCall) return null
 
@@ -137,7 +137,7 @@ fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
     // The condition is required for annotation arguments that are not fully resolved. For example, CompilerRequiredAnnotations.
     // When the annotation is resolved, and we did not find an argument with the given name,
     // there is no argument and we should return null.
-    return if (!resolved) arguments.firstOrNull() else null
+    return if (!resolved && returnFirstWhenNotFound) arguments.firstOrNull() else null
 }
 
 fun FirAnnotation.getBooleanArgument(name: Name, session: FirSession): Boolean? = getPrimitiveArgumentValue(name, session)

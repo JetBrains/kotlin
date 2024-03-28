@@ -530,10 +530,10 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     val conflictingIsFinal = conflicting.isEffectivelyFinal(session)
 
     if (declarationIsFinal && conflictingIsFinal) {
-        val declarationIsHidden = declaration.isDeprecationLevelHidden(session.languageVersionSettings)
+        val declarationIsHidden = declaration.isDeprecationLevelHidden(session)
         if (declarationIsHidden) return true
 
-        val conflictingIsHidden = conflicting.isDeprecationLevelHidden(session.languageVersionSettings)
+        val conflictingIsHidden = conflicting.isDeprecationLevelHidden(session)
         if (conflictingIsHidden) return true
     }
 

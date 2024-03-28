@@ -290,10 +290,10 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         context: CheckerContext,
         firTypeScope: FirTypeScope,
     ) {
-        val ownDeprecation = this.getDeprecation(context.session.languageVersionSettings)
+        val ownDeprecation = this.getDeprecation(context.session)
         if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
         for (overriddenSymbol in overriddenSymbols) {
-            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.session.languageVersionSettings)
+            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.session)
                 ?: continue
             val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden.all
                 ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()
