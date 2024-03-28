@@ -12,7 +12,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("kotlinComposeCompilerPlugin") {
-            id = "org.jetbrains.kotlin.plugin.compose-compiler-gradle-plugin"
+            id = "org.jetbrains.kotlin.plugin.compose"
             displayName = "Kotlin Compose Compiler plugin"
             description = displayName
             implementationClass = "org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradleSubplugin"
