@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -37,6 +38,13 @@ interface Fir2IrExtensions {
      */
     fun hasBackingField(property: FirProperty, session: FirSession): Boolean
 
+    /**
+     * Whether this declaration is forcibly made static in the sense that it has no dispatch receiver.
+     *
+     * For example, on JVM this corresponds to the [JvmStatic] annotation.
+     */
+    fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean
+
     object Default : Fir2IrExtensions {
         override val irNeedsDeserialization: Boolean
             get() = false
@@ -50,5 +58,6 @@ interface Fir2IrExtensions {
         override fun registerDeclarations(symbolTable: SymbolTable) {}
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope) = null
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
+        override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
     }
 }

@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,8 +25,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import kotlin.properties.ReadWriteProperty
 
 abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
@@ -99,12 +95,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     protected fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
         return !fir.isStatic && !containingClass.isFacadeClass &&
-                (!containingClass.isObject || containingClass.isCompanion || !hasJvmStaticAnnotation())
-    }
-
-    private fun hasJvmStaticAnnotation(): Boolean {
-        return fir.hasAnnotation(JVM_STATIC_CLASS_ID, session) ||
-                (fir as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(JVM_STATIC_CLASS_ID, session) == true
+                (!containingClass.isObject || containingClass.isCompanion || !extensions.isTrueStatic(fir, session))
     }
 
     protected fun createThisReceiverParameter(thisType: IrType, explicitReceiver: FirReceiverParameter? = null): IrValueParameter {
@@ -126,9 +117,5 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override fun lazyParent(): IrDeclarationParent {
         return super<AbstractFir2IrLazyDeclaration>.lazyParent()
-    }
-
-    companion object {
-        private val JVM_STATIC_CLASS_ID = ClassId.topLevel(JVM_STATIC_ANNOTATION_FQ_NAME)
     }
 }
