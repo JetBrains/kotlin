@@ -41283,6 +41283,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       @TestDataPath("$PROJECT_ROOT")
       @RunWith(JUnit3RunnerWithInners.class)
       public static class LocalDelegated extends AbstractLightAnalysisModeTest {
+        @TestMetadata("unusedGenericType.kt")
+        public void ignoreUnusedGenericType() {
+          runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/unusedGenericType.kt");
+        }
+
         private void runTest(String testDataFilePath) {
           KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }

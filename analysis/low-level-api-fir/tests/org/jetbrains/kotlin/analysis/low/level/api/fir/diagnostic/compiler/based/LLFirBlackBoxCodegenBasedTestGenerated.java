@@ -52263,6 +52263,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("unusedGenericType.kt")
+        public void testUnusedGenericType() {
+          runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/unusedGenericType.kt");
+        }
+
+        @Test
         @TestMetadata("variableOfGenericType.kt")
         public void testVariableOfGenericType() {
           runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/variableOfGenericType.kt");
