@@ -51,9 +51,11 @@
                         interface="org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
-                        interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"/>
+                        interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
+                        area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.DescriptorSerializerPlugin"
-                        interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"/>
+                        interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"
+                        area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.defaultErrorMessages"
                         interface="org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages.Extension"/>
     </extensionPoints>
