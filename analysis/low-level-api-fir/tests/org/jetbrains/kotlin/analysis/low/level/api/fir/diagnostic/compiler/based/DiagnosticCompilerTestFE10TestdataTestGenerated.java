@@ -41851,6 +41851,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("ExhaustiveSelftype.kt")
+      public void testExhaustiveSelftype() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSelftype.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveSmartcastBoolean.kt")
       public void testExhaustiveSmartcastBoolean() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSmartcastBoolean.kt");
@@ -42022,6 +42028,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("NoElseWhenStatement.kt")
       public void testNoElseWhenStatement() {
         runTest("compiler/testData/diagnostics/tests/when/NoElseWhenStatement.kt");
+      }
+
+      @Test
+      @TestMetadata("NonExhaustiveAfterSmartcast.kt")
+      public void testNonExhaustiveAfterSmartcast() {
+        runTest("compiler/testData/diagnostics/tests/when/NonExhaustiveAfterSmartcast.kt");
       }
 
       @Test

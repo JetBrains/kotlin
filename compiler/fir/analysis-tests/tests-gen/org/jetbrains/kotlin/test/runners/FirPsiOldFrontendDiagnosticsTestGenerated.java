@@ -39471,6 +39471,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("ExhaustiveSelftype.kt")
+      public void testExhaustiveSelftype() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSelftype.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveSmartcastBoolean.kt")
       public void testExhaustiveSmartcastBoolean() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSmartcastBoolean.kt");
@@ -39642,6 +39648,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("NoElseWhenStatement.kt")
       public void testNoElseWhenStatement() {
         runTest("compiler/testData/diagnostics/tests/when/NoElseWhenStatement.kt");
+      }
+
+      @Test
+      @TestMetadata("NonExhaustiveAfterSmartcast.kt")
+      public void testNonExhaustiveAfterSmartcast() {
+        runTest("compiler/testData/diagnostics/tests/when/NonExhaustiveAfterSmartcast.kt");
       }
 
       @Test
