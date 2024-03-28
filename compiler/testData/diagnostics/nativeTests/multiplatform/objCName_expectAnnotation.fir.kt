@@ -18,15 +18,15 @@ open class KotlinClass {
 
 @MyObjcName("ObjCSubClass", "SwiftSubClass")
 class KotlinSubClass: KotlinClass() {
-    @MyObjcName("objCProperty")
+    <!INAPPLICABLE_OBJC_NAME!>@MyObjcName("objCProperty")<!>
     override var kotlinProperty: Int = 1
-    @MyObjcName(swiftName = "swiftFunction")
-    override fun @receiver:MyObjcName("objCReceiver") Int.kotlinFunction(
-    @MyObjcName("objCParam") kotlinParam: Int
+    <!INAPPLICABLE_OBJC_NAME!>@MyObjcName(swiftName = "swiftFunction")<!>
+    override fun <!INAPPLICABLE_OBJC_NAME!>@receiver:MyObjcName("objCReceiver")<!> Int.kotlinFunction(
+    <!INAPPLICABLE_OBJC_NAME!>@MyObjcName("objCParam")<!> kotlinParam: Int
     ): Int = this + kotlinParam * 2
 }
 
-@MyObjcName()
+<!INVALID_OBJC_NAME!>@MyObjcName()<!>
 val invalidObjCName: Int = 0
 
 // MODULE: platform()()(common)

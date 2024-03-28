@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 
-object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Common) {
+object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
     @OptIn(UnexpandedTypeCheck::class)
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session

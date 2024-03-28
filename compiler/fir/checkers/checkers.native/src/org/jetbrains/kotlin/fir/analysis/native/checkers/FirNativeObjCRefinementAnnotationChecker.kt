@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 
-object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
 
     private val hidesFromObjCSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
     private val refinesInSwiftSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
