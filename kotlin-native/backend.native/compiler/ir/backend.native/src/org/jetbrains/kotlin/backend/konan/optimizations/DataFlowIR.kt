@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.getDefaultValueForOverriddenBuiltinFunction
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -40,7 +39,6 @@ internal object DataFlowIR {
             val index: Int,
             val isFinal: Boolean,
             val isAbstract: Boolean,
-            val primitiveBinaryType: PrimitiveBinaryType?,
             val module: Module?,
             val symbolTableIndex: Int,
             val irClass: IrClass?,
@@ -51,11 +49,11 @@ internal object DataFlowIR {
         val itable = mutableMapOf<Int, List<FunctionSymbol>>()
 
         // Special marker type forbidding devirtualization on its instances.
-        object Virtual : Type(0, false, true, null, null, -1, null, "\$VIRTUAL")
+        object Virtual : Type(0, false, true, null, -1, null, "\$VIRTUAL")
 
-        class Public(val hash: Long, index: Int, isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
+        class Public(val hash: Long, index: Int, isFinal: Boolean, isAbstract: Boolean,
                      module: Module, symbolTableIndex: Int, irClass: IrClass?, name: String? = null)
-            : Type(index, isFinal, isAbstract, primitiveBinaryType, module, symbolTableIndex, irClass, name) {
+            : Type(index, isFinal, isAbstract, module, symbolTableIndex, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -72,9 +70,9 @@ internal object DataFlowIR {
             }
         }
 
-        class Private(index: Int, isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
+        class Private(index: Int, isFinal: Boolean, isAbstract: Boolean,
                       module: Module, symbolTableIndex: Int, irClass: IrClass?, name: String? = null)
-            : Type(index, isFinal, isAbstract, primitiveBinaryType, module, symbolTableIndex, irClass, name) {
+            : Type(index, isFinal, isAbstract, module, symbolTableIndex, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -489,10 +487,10 @@ internal object DataFlowIR {
             val placeToClassTable = true
             val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
             val type = if (irClass.isExported())
-                Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract, null,
+                Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract,
                         module, symbolTableIndex, irClass, takeName { name })
             else
-                Type.Private(privateTypeIndex++, isFinal, isAbstract, null,
+                Type.Private(privateTypeIndex++, isFinal, isAbstract,
                         module, symbolTableIndex, irClass, takeName { name })
 
             classMap[irClass] = type
@@ -550,7 +548,6 @@ internal object DataFlowIR {
                             privateTypeIndex++,
                             true,
                             false,
-                            primitiveBinaryType,
                             module,
                             -1,
                             null,
