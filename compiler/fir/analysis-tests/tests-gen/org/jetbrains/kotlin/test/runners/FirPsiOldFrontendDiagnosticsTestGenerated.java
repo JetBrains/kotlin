@@ -34412,6 +34412,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("lambdaWithCallInPlaceAndCycles.kt")
+        public void testLambdaWithCallInPlaceAndCycles() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAndCycles.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaWithCallInPlaceAndDelegate.kt")
         public void testLambdaWithCallInPlaceAndDelegate() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAndDelegate.kt");
