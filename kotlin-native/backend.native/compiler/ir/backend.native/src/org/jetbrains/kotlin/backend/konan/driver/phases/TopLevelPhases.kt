@@ -407,7 +407,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     // TODO: Do not inline box/unbox yet, and value classes properties accessors
     // TODO: runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG), disable = !optimize)
     val devirtualizationAnalysisResults = runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
-    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
+    //val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResults, module), disable = !optimize)
     runPhase(DevirtualizationPhase, DevirtualizationInput(module, devirtualizationAnalysisResults), disable = !optimize)
     module.files.forEach {
@@ -421,6 +421,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         //runPhase(UnboxInlinePhase, it, disable = !optimize)
     }
     runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize) // TODO: Can inline box/unbox.
+    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
     }
