@@ -1,39 +1,34 @@
-# Aliasing problem overview
+# Uniqueness in Kotlin
 
-As described in [The Geneva Convention][1] aliasing between references
-can make it difficult to verify simple programs.
-Let's consider the following Hoare formula:
+A key difficulty of formally verifying programs that make
+use of the heap is *aliasing*.
+This topic is not new, with [The Geneva Convention on the
+Treatment of Object Aliasing][1] (1991) giving an outline of
+this problem that is still relevant today.
+In brief, when two separate references may refer to the same
+object, we cannot assume that a operations on one do not
+modify the other.  For example, we cannot simplify
 
-_{x = true} y := false {x = true}_
+```kt
+x.a += y.a
+x.a += y.a
+```
 
-If _x_ and _y_ refer to the same
-reference (they are aliased) the formula is not valid. \
-Aliasing is not only a problem for formal verification, but also results in mysterious bugs for the programmer, as
-variables change their values seemingly on their own.
+to `x.a += 2 * y.a`, since if `x = y`, the second use of
+`y.a` has a different value than the first.
+Writing and verifying a specification for this kind of code
+is challenging.
 
-Once again, according to [The Geneva Convention][1], the set of (object address) values associated with variables during the execution of a
-method is a context. It is only
-meaningful to speak of aliasing occurring within some context; if two instance variables refer to a single object, but
-one of them belongs to an object that cannot be reached from anywhere in the system, then the
-aliasing is irrelevant. \
-Within any method, objects may be accessed through paths rooted at any of:
+Kotlin, being an object oriented language, uses the heap
+extensively.
+Without some way to constrain aliasing, few programs can be
+verified.
 
-- Self
-- An anonymous locally constructed object
-- A method argument
-- A result returned by another method
-- A (global) variable accessible from the method scope
-- A local method variable bounded to any of the above
-
-An object is **aliased** with respect to some context if two or more such paths to that object exist.
-
-# Aliasing in Kotlin
-
-## Smart casts
-
-The aliasing issue is evident in Kotlin, as the language does not impose any restrictions on aliasing. In the following
-example, the compiler is unable to execute a seemingly obvious smart cast from the user's perspective. However, the
-compiler's analysis is accurate, as `x` may be aliased, and another thread could potentially modify the `x.n` field.
+Kotlin is also a concurrent language, making our job even
+harder.
+In the following example, we could conclude that the smart
+cast is safe in a single-threaded context, but Kotlin does
+not permit it:
 
 ```kt
 class X(var n: Int?)
@@ -41,109 +36,159 @@ class X(var n: Int?)
 fun useX(x: X): Int =
     if (x.n != null) {
         x.n
-//      ^^^ 
+//      ^^^
 // Smart cast to 'Int' is impossible, because 'x.n' is a mutable property that could have been changed by this time
     } else {
         0
     }
 ```
 
-## Proving functional behaviour
+There is a rich body of literature on annotation systems
+for controlling aliasing, much of it collected in the book
+[Aliasing in Object-Oriented Programming][5].
+For this plugin, we introduce a system based on the [Alias
+Burying][2] system by Boyland.
+While our primary motivation is formal verification, we
+think such a system can also be useful for other forms of
+program analysis, memory reuse, and can enrich the smart
+cast rules of the language itself.
 
-The previous example illustrates how even basic functional properties can't be validated when aliasing and mutability
-are involved. Aliasing in Kotlin also poses a challenge for the static analyzer used by IntelliJ IDEA. In the following
-example, aliasing results in an incorrect constant condition as provided by the IDE.
+## Our system
+
+### Theoretical part
+
+The [Geneva Convention][1] defines aliasing as a single
+object being reachable via multiple paths in some context.
+A context is a set of object references, and a path to an
+object is an expression that resolves to that object.
+
+In this sense, the context of a method includes:
+* Method parameters, including `this`
+* (Accessible) global variables
+* Local variables
+* Anonymously constructed objects
+* Return values of called methods
+
+These form the roots of paths, which are built up from
+method references in the context and from property accesses.
+
+We say two paths alias if they refer to the same object.
+
+Consider the following example:
 
 ```kt
-class A(var a: Boolean = false)
+class X(val a: Any?)
 
-fun f(a1: A, a2: A) {
-    a1.a = true
-    a2.a = false
-    if (!a1.a) {
-//      ^^^^^
-// Condition '!a1.a' is always false 
-        println("ALIASED!")
-    }
-}
-
-fun main() {
-    val a1 = A()
-    f(a1, a1) // prints "ALIASED!"
+fun f(x: X, y: X) {
+    // context: x, y
+    // paths: x, y, x.a, y.a
 }
 ```
 
-# Our Uniqueness System
+To say that `x` is not aliased in this context means to say
+that `x` does not refers to the same object as any of `y`,
+`x.a`, or `y.a`.
 
-We propose an annotation system able to provide some guarantees on the uniqueness of the variables.
+This is a good initial understanding, but we are interested
+in a more nuanced perspective.
+In addition to the context of the method being verified, we
+consider three other contexts:
+* The parent context is the context of all methods in the
+  call chain above the current method.
+* The child contexts are the contexts of all methods in the
+  call chain below a current method.  Every method call
+  gives a new child context.
+* The concurrent context is the set of object references
+  accessible to other threads.
 
-## Uniqueness invariant
+With these contexts in mind, we define our two notions,
+uniqueness and borrowing.
+There is a slight duality here: any value may *become*
+borrowed, at which point we are restricted in what we may do
+with it, while any unique value may *lose* its uniqueness.
 
-A unique variable is one whose value is null or else refers to an unshared object, one referred to by no other
-variables. This situation is called the _uniqueness invariant_. Parameters, receivers and return values may be declared
-unique. A use of a unique variable is a destructive read: the variable is atomically set to null at the same time that
-the value is read. The destruction preserves the _uniqueness invariant_.
+An object reference marked *borrowed* may only be copied to
+other object references marked borrowed.
+Note that class members and return values may not be marked
+borrowed, so the borrowed reference may only travel down the
+call graph.
 
-## Alias Burying and relaxation of uniqueness invariant
+An object reference `p` is *unique* if it is `null` or if
+all the following hold:
+* It does not alias anything in the current context or in
+  the concurrent context.
+* Every object reference it aliases in a child context is
+  borrowed.
 
-Ensuring the _uniqueness invariant_ requires unique variables to be set to null every time they are
-read. [Alias burying][2] keeps the uniqueness invariant but only requires it to be true when it is needed.
+The notion of a borrowed variable is similar to that used in
+[Alias Burying][2].
+The key difference is that for us, a reference may be
+unique, borrowed, both, or none.
 
-The uniqueness invariant, therefore, is not actually true at every point in the program. However, the points when it is false are
-‘uninteresting’. That is, a unique variable, once read, is never read again, or it's eventually re-assigned before being read again.
+### Implementation
 
-## Annotations sets
+We allow annotation of parameters and return values to be
+annotated `Unique`, which requires that they satisfy
+uniqueness in the sense above.
 
-- All fields and return values can be annotated as `Unique`. If a field or a return value is not annotated
-  with `Unique`, it is considered to be shared.
-- Method parameters (including the receiver) can be annotated with one or both of these annotations:
-  `Unique`, `Borrowed`. Also in this case, absence of annotations means that the parameter is shared.
-- [Existing literature][4] shows that in systems similar to ours, annotations on
-  fields, return values and parameters are enough to infer annotation for local variable declarations.
+We allow method parameters to be annotated with `Borrowed`,
+which makes the reference borrowed in the sense above and
+restricts it in the same sense.
+Note that this is a weaker, more generally applicable, form
+of the `callsInPlace` contract already present in Kotlin.
 
-## Annotations meaning
+Receivers may be annotated in this way as well.
+Syntactically, this involves placing the annotation on the
+method itself.
+(A solution for multiple receivers still needs to be
+devised.)
 
-- `Unique` denotes ownership, the value is only stored at this location.
-- `Borrowed` method parameter ensures that no further aliases are created by the method.
 
-## Smart casts and uniqueness
+## Open Problems
 
-Moving back to the [smart cast example](#smart-casts), we can see how our annotation system can help the compiler
-performing a smart cast.
+Our system outlined above is an MVP that we think will allow
+some amount of verification, but is not a production-level
+system.
+For that, we need to tackle a number of further questions.
 
-```kt
-class X(var n: Int?)
+### Checking annotations
 
-fun useX(x: @Unique X): Int =
-    if (x.n != null) {
-        x.n // Uniqueness grants that 'x.n' have not changed after checking is nullability
-    } else {
-        0
-    }
-```
+[Solving Shape-Analysis Problems in Languages with
+Destructive Updating][3] is the approach used by the authors
+of [Alias Burying][2] to statically check the correctness of
+uniqueness annotations.
 
-Note that in this example, `useX` doesn't create new aliases of the parameter `x` and so it is possible to annotate it
-as `Borrowed`. Annotating parameter `x` as `Borrowed` preserves uniqueness after `useX` returns.
+We believe that our system can use a similar algorithm, but
+have yet to verify this.
 
-```kt
-fun useX(x: @Borrowed @Unique X): Int {
-    // ...
-}
+### Captured variables
 
-fun main() {
-    val a = X(1) // Uniqueness here can be inferred
-    val y = useX(a)
-    // since the parameter 'x' in 'useX' is borrowed, 'a' is still unique after the call
-    val z = useX(a)
-}
-```
+Our discussion of contexts and paths does not clearly define
+the role of variables captured by lambdas.
+The key question here is whether a variable can be captured
+and still retain uniqueness.
 
-## Checking annotations
+### Annotation inference
 
-[Solving Shape-Analysis Problems in Languages with Destructive Updating][3] is the approach used by the authors
-of [Alias Burying][2] to statically check the correctness of uniqueness annotations.
+[Existing literature][4] shows that in systems similar to
+ours, annotations on fields, return values and parameters
+are enough to infer annotation for local variable
+declarations.
+This would be convenient, but it is unclear whether it is
+possible in all cases.
 
-## Example
+### Class property annotations
+
+Our system is for now restricted to annotations on method
+parameters (including `this`), return values, and local
+variables.
+Alias Burying also specifies semantics for annotations on
+class properties, but we are not sure that these semantics
+are a good fit for Kotlin.
+
+The following example illustrates how such annotations might
+be used.
+We omit annotations on local variables to avoid clutter.
 
 ```kt
 class Node(var value: @Unique Any?, var next: @Unique Node?)
@@ -174,10 +219,120 @@ class Stack(var root: @Unique Node?) {
 }
 ```
 
+In this example, both `Node` and `Stack` can only
+meaningfully be used uniquely.
+One possibility is to require annotating the class itself
+with `Unique`, which would make the semantics clearer.
+However, it is not the only option: we could say that
+modifying the `root` property of a shared instance of
+`Stack` is permitted, but only using a `replace` operation
+that atomically sets it to new `@Unique Node?`.
+
+The `value` property of `Node` is in this example forced to
+be unique, but in practice the user may want a `Stack` to be
+polymorphic in the uniqueness of its elements.
+It is an interesting question whether this can easily be
+supported.
+
+
+## Benefits of Uniqueness
+
+Uniqueness annotations give the compiler information and
+that would otherwise be known only to the programmer.
+This also brings benefits to programmers who do not care
+about formal verification.
+
+### Smart casts
+
+In Kotlin, smart casts are defined based on a set of [stable
+expressions][6].
+Properties of objects referred to by a stable unique
+reference can themselves be considered stable.
+This allows us to accept the following code:
+
+```kt
+class X(var n: Int?)
+
+fun useX(x: @Borrowed @Unique X): Int =
+    if (x.n != null) {
+        x.n // Uniqueness grants that 'x.n' have not changed after checking is nullability
+    } else {
+        0
+    }
+```
+
+Note that the `@Unique` annotation permits the smart cast,
+while the `@Borrowed` annotation allows the caller of `useX`
+to not lose the uniqueness of the argument.
+
+### Analysis
+
+Aliasing in Kotlin also poses a challenge for the static
+analyzer used by IntelliJ IDEA.
+In the following example, aliasing results in an incorrect
+constant condition as provided by the IDE.
+
+```kt
+class A(var a: Boolean = false)
+
+fun f(a1: A, a2: A) {
+    a1.a = true
+    a2.a = false
+    if (!a1.a) {
+//      ^^^^^
+// Condition '!a1.a' is always false 
+        println("ALIASED!")
+    }
+}
+
+fun main() {
+    val a1 = A()
+    f(a1, a1) // prints "ALIASED!"
+}
+```
+
+### In-place modification
+
+When writing in a more functional style, operations on
+collections may look something like the following:
+
+```kt
+myList.map { ... }.filter { ... }
+```
+
+The existing implementations of `map` and `filter` will
+create a new list to store the results.
+However, if the passed-in list is unique then this is
+unnecessary: the list can be modified in place instead.
+By providing uniqueness annotations and allowing functions
+to be overloaded based on uniqueness, we could define
+variants of these standard library functions that reuse the
+list, thereby improving performance.
+
+## Connection to Valhalla and immutability
+
+One related development in the Java world is [Project
+Valhalla][7], which will bring value types to the JVM.
+These are types that do not support object identify: the
+user is not given any guarantees on whether two references
+refer to the same object, or to two separate objects with
+the same values.
+Value objects are also required to only have immutable
+members.
+
+Due to this immutability, marking a value object as unique
+does not have any immediate impact in the system we have
+described now: all information available about the values
+can be known without uniqueness.
+However, if we extend the system to allow uniqueness
+annotations on member properties, there may be interactions
+between the two systems.
+
+
 [1]: https://dl.acm.org/doi/pdf/10.1145/130943.130947
-
 [2]: https://onlinelibrary.wiley.com/doi/abs/10.1002/spe.370
-
 [3]: https://dl.acm.org/doi/pdf/10.1145/271510.271517
-
 [4]: https://arxiv.org/pdf/2309.05637.pdf
+[5]: https://dl.acm.org/doi/10.5555/2554511
+[6]: https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability
+[7]: https://openjdk.org/projects/valhalla/
