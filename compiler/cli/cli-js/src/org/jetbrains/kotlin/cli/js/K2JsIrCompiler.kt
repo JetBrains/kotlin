@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -572,6 +573,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // FIR2IR
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, true)
+        if (diagnosticsReporter.hasErrors) {
+            throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
+        }
 
         if (configuration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)) {
             // TODO: During checking the next round, fir serializer may throw an exception, e.g.
