@@ -18,8 +18,8 @@ abstract class DeprecationsProvider {
 
 class DeprecationsProviderImpl(
     firCachesFactory: FirCachesFactory,
-    private val all: List<DeprecationAnnotationInfo>?,
-    private val bySpecificSite: Map<AnnotationUseSiteTarget, List<DeprecationAnnotationInfo>>?
+    private val all: List<DeprecationInfoProvider>?,
+    private val bySpecificSite: Map<AnnotationUseSiteTarget, List<DeprecationInfoProvider>>?
 ) : DeprecationsProvider() {
     private val cache: FirCache<LanguageVersionSettings, DeprecationsPerUseSite, Nothing?> = firCachesFactory.createCache { version ->
         @Suppress("UNCHECKED_CAST")
@@ -34,7 +34,7 @@ class DeprecationsProviderImpl(
         return cache.getValue(languageVersionSettings, null)
     }
 
-    private fun List<DeprecationAnnotationInfo>.computeDeprecationInfoOrNull(version: LanguageVersionSettings): DeprecationInfo? {
+    private fun List<DeprecationInfoProvider>.computeDeprecationInfoOrNull(version: LanguageVersionSettings): DeprecationInfo? {
         return mapNotNull { it.computeDeprecationInfo(version) }.maxByOrNull { it.deprecationLevel }
     }
 }
@@ -51,6 +51,6 @@ object UnresolvedDeprecationProvider : DeprecationsProvider() {
     }
 }
 
-abstract class DeprecationAnnotationInfo {
+abstract class DeprecationInfoProvider {
     abstract fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo?
 }
