@@ -53,8 +53,10 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.findIsInstanceAnd
 
 class Fir2IrVisitor(
     private val components: Fir2IrComponents,
@@ -1029,72 +1031,73 @@ class Fir2IrVisitor(
             return this == IrStatementOrigin.DO_WHILE_LOOP || this == IrStatementOrigin.WHILE_LOOP || this == IrStatementOrigin.FOR_LOOP
         }
 
-    private inline fun <reified K> List<*>.findFirst() = firstOrNull { it is K } as? K
-
-    private inline fun <reified K> List<*>.findLast() = lastOrNull { it is K } as? K
-
     private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall) =
         functionCall.dynamicVarargArguments?.lastOrNull() as? FirFunctionCall
 
-    private val FirExpression.isIncrementOrDecrementCall: Boolean
-        get() {
-            val name = (this as? FirFunctionCall)?.calleeReference?.resolved?.name
-            return name == OperatorNameConventions.INC || name == OperatorNameConventions.DEC
-        }
+    private fun FirStatement.unwrapDesugaredAssignmentValueReference(): FirStatement =
+        (this as? FirDesugaredAssignmentValueReferenceExpression)?.expressionRef?.value ?: this
 
+    /**
+     * This function tries to "sugar back" `FirBlock`s generated in
+     * [org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.generateIncrementOrDecrementBlockForArrayAccess] and
+     * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformIncrementDecrementExpression]
+     */
     private fun FirBlock.tryConvertDynamicIncrementOrDecrementToIr(): IrExpression? {
-        val receiver = statements.findFirst<FirProperty>() ?: return null
-        val receiverValue = receiver.initializer ?: return null
+        // Key observations:
+        // 1. For postfix operations `<unary>` is always present and is returned in referenced as the last statement
+        // 2. The second to last statement is always either a `set()` call or an assignment
 
-        if (receiverValue.resolvedType !is ConeDynamicType) {
+        val unary = statements.findIsInstanceAnd<FirProperty> { it.name == SpecialNames.UNARY }
+        // The thing `++` or `--` is called for.
+        // This expression may reference things like `<array>` or `<indexN>` if it's an array access,
+        // but it's definitely going to be something `++` or `--` could assign a value to
+        val operationReceiver = (unary?.initializer ?: statements.lastOrNull())
+            ?.unwrapDesugaredAssignmentValueReference() as? FirQualifiedAccessExpression
+            ?: return null
+
+        if (operationReceiver.resolvedType !is ConeDynamicType) {
             return null
         }
 
-        val savedValue = statements.findLast<FirProperty>()?.initializer ?: return null
-        val isPrefix = savedValue.isIncrementOrDecrementCall
-
-        val (operationReceiver, operationCall) = if (isPrefix) {
-            val operation = savedValue as? FirFunctionCall ?: return null
-            val operationReceiver = operation.explicitReceiver ?: return null
-            operationReceiver to operation
-        } else {
-            val operation = statements.findLast<FirVariableAssignment>()?.rValue as? FirFunctionCall
-                ?: statements.findLast<FirFunctionCall>()?.let { extractOperationFromDynamicSetCall(it) }
-                ?: return null
-            savedValue to operation
+        // A node representing either `++` or `--`
+        val operationCall = when (val it = statements[statements.lastIndex - 1]) {
+            is FirVariableAssignment -> it.rValue as? FirFunctionCall ?: return null
+            is FirFunctionCall -> extractOperationFromDynamicSetCall(it) ?: return null
+            else -> return null
         }
 
-        val isArrayAccess = receiver.name == SpecialNames.ARRAY
+        // `operationReceiver` can look like `s`, `r.s` or `r[s]`.
+        // To generate a proper assignment, the block may want to save `r` to a separate variable
+        val operationReceiverReceiver = statements
+            .findIsInstanceAnd<FirProperty> { it.name == SpecialNames.RECEIVER || it.name == SpecialNames.ARRAY }?.initializer
+            ?: (operationReceiver as? FirQualifiedAccessExpression)?.explicitReceiver
 
-        val explicitReceiverExpression = if (isArrayAccess) {
+        // If `operationReceiver` is an array access, let's ignore its `<indexN>` arguments and
+        // later manually convert them and put into the ir expression
+        val isArray = statements.find { it is FirProperty && it.name == SpecialNames.ARRAY } != null
+
+        val convertedOperationReceiver = callGenerator.convertToIrCall(
+            operationReceiver, operationReceiver.resolvedType,
+            convertToIrReceiverExpression(operationReceiverReceiver, operationReceiver),
+            noArguments = isArray,
+        ).applyIf(isArray) {
+            require(this is IrDynamicOperatorExpression)
+
             val arrayAccess = operationReceiver as? FirFunctionCall ?: return null
             val originalVararg = arrayAccess.resolvedArgumentMapping?.keys?.filterIsInstance<FirVarargArgumentsExpression>()?.firstOrNull()
-            (callGenerator.convertToIrCall(
-                arrayAccess, arrayAccess.resolvedType,
-                convertToIrReceiverExpression(receiverValue, arrayAccess),
-                noArguments = true
-            ) as IrDynamicOperatorExpression).apply {
-                originalVararg?.arguments?.forEach {
-                    val that = (it as? FirPropertyAccessExpression)?.calleeReference?.toResolvedPropertySymbol()?.fir
-                    val initializer = that?.initializer ?: return@forEach
-                    arguments.add(convertToIrExpression(initializer))
-                }
+
+            originalVararg?.arguments?.forEach {
+                val indexNVariable = (it as? FirPropertyAccessExpression)?.calleeReference?.toResolvedPropertySymbol()?.fir
+                val initializer = indexNVariable?.initializer ?: return@forEach
+                arguments.add(convertToIrExpression(initializer))
             }
-        } else {
-            val qualifiedAccess = operationReceiver as? FirQualifiedAccessExpression ?: return null
-            val receiverExpression = if (receiverValue != qualifiedAccess) {
-                receiverValue
-            } else {
-                null
-            }
-            callGenerator.convertToIrCall(
-                qualifiedAccess,
-                qualifiedAccess.resolvedType,
-                convertToIrReceiverExpression(receiverExpression, qualifiedAccess),
-            )
+
+            this
         }
+
         return callGenerator.convertToIrCall(
-            operationCall, operationCall.resolvedType, explicitReceiverExpression
+            operationCall, operationCall.resolvedType,
+            convertedOperationReceiver,
         )
     }
 
