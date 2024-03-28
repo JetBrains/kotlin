@@ -400,10 +400,20 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsBoxApplySymbol = getInternalFunction("boxApply")
     val jsCreateExternalThisSymbol = getInternalFunction("createExternalThis")
 
-    // Helpers:
+    // Collections interop:
+    val jsCreateListFrom = getInternalCollectionFunction("createListFrom")
+    val jsCreateMutableListFrom = getInternalCollectionFunction("createMutableListFrom")
+    val jsCreateSetFrom = getInternalCollectionFunction("createSetFrom")
+    val jsCreateMutableSetFrom = getInternalCollectionFunction("createMutableSetFrom")
+    val jsCreateMapFrom = getInternalCollectionFunction("createMapFrom")
+    val jsCreateMutableMapFrom = getInternalCollectionFunction("createMutableMapFrom")
 
+    // Helpers:
     private fun getInternalFunction(name: String) =
         context.symbolTable.descriptorExtension.referenceSimpleFunction(context.getJsInternalFunction(name))
+
+    private fun getInternalCollectionFunction(name: String) =
+        context.symbolTable.descriptorExtension.referenceSimpleFunction(context.getJsInternalCollectionFunction(name))
 
     private fun getInternalProperty(name: String) =
         context.symbolTable.descriptorExtension.referenceProperty(context.getJsInternalProperty(name))

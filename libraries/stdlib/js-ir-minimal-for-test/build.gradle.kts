@@ -95,6 +95,7 @@ val jsMainSources by task<Sync> {
             "org.w3c/**",
             "kotlin/char.kt",
             "kotlin/collectionJs.kt",
+            "kotlin/js.collections.kt",
             "kotlin/collections/**",
             "kotlin/time/**",
             "kotlin/console.kt",
@@ -125,9 +126,11 @@ val jsMainSources by task<Sync> {
     }
     from("$jsDir/runtime") {
         exclude("collectionsHacks.kt")
+        exclude("collectionsInterop.kt")
         into("runtime")
     }
     from("$jsDir/builtins") {
+        exclude("Collections.kt")
         into("builtins")
     }
 

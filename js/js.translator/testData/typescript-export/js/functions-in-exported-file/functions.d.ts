@@ -7,6 +7,9 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtList": unique symbol;
             };
         }
+        const KtList: {
+            fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        };
     }
     namespace foo {
         interface SomeExternalInterface {
