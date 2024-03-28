@@ -1,6 +1,42 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class O1 {
+^^^^^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:2:11: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+    class N1
+          ^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:3:15: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+    interface N2
+              ^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:4:12: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+    object N3
+           ^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:7:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class O2 {
+^^^^^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:8:11: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+    class N2
+          ^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:9:17: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+    inner class I2
+                ^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:12:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class O3 {
+^^^^^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:13:12: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+    object Companion
+           ^^^^^^^^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:14:22: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+    companion object Factory
+                     ^^^^^^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:17:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class O4 {
+^^^^^^
+compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:18:15: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+    companion object
+              ^^^^^^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
