@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.symbols.BirTypeAliasSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeAlias]
- */
 interface BirTypeAlias : BirElement, BirDeclaration, BirDeclarationWithName, BirDeclarationWithVisibility, BirTypeParametersContainer, BirTypeAliasSymbol {
     var isActual: Boolean
     var expandedType: BirType

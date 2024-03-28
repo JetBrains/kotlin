@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirEnumEntrySymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.getEnumValue]
- */
 abstract class BirGetEnumValue(elementClass: BirElementClass<*>) : BirGetSingletonValue(elementClass), BirElement {
     abstract override var symbol: BirEnumEntrySymbol
 

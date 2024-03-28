@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.doWhileLoop]
- */
 abstract class BirDoWhileLoop(elementClass: BirElementClass<*>) : BirLoop(elementClass), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         body?.accept(data, visitor)

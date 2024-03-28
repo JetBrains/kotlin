@@ -23,7 +23,6 @@ class BirVariableImpl(
     origin: IrDeclarationOrigin,
     name: Name,
     type: BirType,
-    isAssignable: Boolean,
     isVar: Boolean,
     isConst: Boolean,
     isLateinit: Boolean,
@@ -101,19 +100,6 @@ class BirVariableImpl(
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
-            }
-        }
-
-    private var _isAssignable: Boolean = isAssignable
-    override var isAssignable: Boolean
-        get() {
-            recordPropertyRead()
-            return _isAssignable
-        }
-        set(value) {
-            if (_isAssignable != value) {
-                _isAssignable = value
                 invalidate()
             }
         }

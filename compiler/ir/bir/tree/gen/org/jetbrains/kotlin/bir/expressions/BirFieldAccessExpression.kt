@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirFieldSymbol
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.fieldAccessExpression]
- */
 abstract class BirFieldAccessExpression(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     abstract override var symbol: BirFieldSymbol
     abstract var superQualifierSymbol: BirClassSymbol?

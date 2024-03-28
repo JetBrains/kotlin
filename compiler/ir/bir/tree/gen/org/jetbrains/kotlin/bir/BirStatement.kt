@@ -8,11 +8,6 @@
 
 package org.jetbrains.kotlin.bir
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.statement]
- */
 interface BirStatement : BirElement {
     companion object : BirElementClass<BirStatement>(BirStatement::class.java, 96, false)
 }

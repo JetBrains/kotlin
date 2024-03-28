@@ -16,11 +16,6 @@ import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirValueParameterSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueParameter]
- */
 interface BirValueParameter : BirElement, BirDeclaration, BirValueDeclaration, BirValueParameterSymbol {
     var index: Int
     var varargElementType: BirType?
@@ -54,6 +49,7 @@ interface BirValueParameter : BirElement, BirDeclaration, BirValueDeclaration, B
      * TODO: consider dropping [isHidden] if it isn't used by any known plugin.
      */
     var isHidden: Boolean
+    var isAssignable: Boolean
     var defaultValue: BirExpressionBody?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

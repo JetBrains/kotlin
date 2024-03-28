@@ -10,11 +10,6 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.*
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.branch]
- */
 abstract class BirBranch(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement {
     abstract var condition: BirExpression?
     abstract var result: BirExpression?

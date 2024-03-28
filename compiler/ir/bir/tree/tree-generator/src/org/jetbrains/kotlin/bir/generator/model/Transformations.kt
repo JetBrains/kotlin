@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.bir.generator.model
 import org.jetbrains.kotlin.bir.generator.BirTree
 import org.jetbrains.kotlin.bir.generator.elementImplBaseType
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 fun transformModel(model: Model) {
     InterfaceAndAbstractClassConfigurator(model.elements)
@@ -104,7 +103,7 @@ private fun processFieldOverrides(elements: List<Element>) {
 
 private fun computeFieldProperties(elements: List<Element>) {
     for (element in elements) {
-        for (field in element.fields) {
+        for (field in element.allFields) {
             field.passViaConstructorParameter = !(field is ListField && field.isChild) && !field.initializeToThis
             field.isReadWriteTrackedProperty = field.isMutable && !(field is ListField && field.isChild)
         }
@@ -113,7 +112,7 @@ private fun computeFieldProperties(elements: List<Element>) {
 
 private fun addWalkableChildren(elements: List<Element>) {
     for (element in elements) {
-        val walkableChildren = element.allFieldsRecursively().filter { it.isChild }
+        val walkableChildren = element.allFields.filter { it.isChild }
         element.walkableChildren = reorderIfNecessary(walkableChildren.toList(), element.childrenOrderOverride)
     }
 }

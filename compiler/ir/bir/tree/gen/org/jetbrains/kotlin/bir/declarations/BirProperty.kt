@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.property]
- */
 interface BirProperty : BirElement, BirDeclaration, BirPossiblyExternalDeclaration, BirOverridableDeclaration<BirPropertySymbol>, BirMetadataSourceOwner, BirAttributeContainer, BirMemberWithContainerSource, BirPropertySymbol {
     var isVar: Boolean
     var isConst: Boolean

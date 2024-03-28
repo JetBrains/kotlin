@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.classReference]
- */
 abstract class BirClassReference(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     abstract override var symbol: BirClassifierSymbol
     abstract var classType: BirType

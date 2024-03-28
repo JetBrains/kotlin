@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.memberAccessExpression]
- */
 abstract class BirMemberAccessExpression<S : BirSymbol>(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     abstract var dispatchReceiver: BirExpression?
     abstract var extensionReceiver: BirExpression?

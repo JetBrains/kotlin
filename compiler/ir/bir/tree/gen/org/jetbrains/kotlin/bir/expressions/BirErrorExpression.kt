@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.errorExpression]
- */
 abstract class BirErrorExpression(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var description: String
 

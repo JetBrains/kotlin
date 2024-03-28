@@ -13,16 +13,16 @@ package org.jetbrains.kotlin.bir.util
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.*
+import org.jetbrains.kotlin.bir.types.IrUninitializedType
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -138,6 +138,7 @@ class Bir2IrConverter(
             isHidden = old.isHidden,
             index = old.index,
             symbol = createBindableSymbol(old),
+            factory = IrFactoryImpl,
         )
     }) {
         defaultValue = old.defaultValue?.let { copyChildElement(it) }
@@ -163,19 +164,21 @@ class Bir2IrConverter(
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
-            isExternal = old.isExternal,
             kind = old.kind,
             modality = old.modality,
-            isCompanion = old.isCompanion,
-            isInner = old.isInner,
-            isData = old.isData,
-            isValue = old.isValue,
-            isExpect = old.isExpect,
-            isFun = old.isFun,
-            hasEnumEntries = old.hasEnumEntries,
             source = old.source,
             symbol = createBindableSymbol(old),
-        )
+            factory = IrFactoryImpl,
+        ).apply {
+            isExternal = old.isExternal
+            isCompanion = old.isCompanion
+            isInner = old.isInner
+            isData = old.isData
+            isValue = old.isValue
+            isExpect = old.isExpect
+            isFun = old.isFun
+            hasEnumEntries = old.hasEnumEntries
+        }
     }) {
         copyAttributes(old)
         thisReceiver = old.thisReceiver?.let { copyChildElement<IrValueParameter>(it) }
@@ -211,6 +214,7 @@ class Bir2IrConverter(
             origin = old.origin,
             isStatic = old.isStatic,
             symbol = createBindableSymbol(old),
+            factory = IrFactoryImpl,
         )
     }) {
         copyDynamicProperties(old)
@@ -231,6 +235,7 @@ class Bir2IrConverter(
             isReified = old.isReified,
             index = old.index,
             symbol = createBindableSymbol(old),
+            factory = IrFactoryImpl,
         )
     }) {
         annotations = old.annotations.map { copyChildElement(it) }
@@ -256,9 +261,10 @@ class Bir2IrConverter(
             isExternal = old.isExternal,
             isInline = old.isInline,
             isExpect = old.isExpect,
-            returnType = IrUninitializedType,
             isPrimary = old.isPrimary,
             symbol = createBindableSymbol(old),
+            containerSource = old[GlobalBirDynamicProperties.ContainerSource],
+            factory = IrFactoryImpl,
         )
     }) {
         dispatchReceiverParameter = old.dispatchReceiverParameter?.let { copyChildElement(it) }
@@ -289,6 +295,7 @@ class Bir2IrConverter(
             origin = old.origin,
             name = old.name,
             symbol = createBindableSymbol(old),
+            factory = IrFactoryImpl,
         )
     }) {
         initializerExpression = old.initializerExpression?.let { copyChildElement(it) }
@@ -306,8 +313,13 @@ class Bir2IrConverter(
         IrErrorDeclarationImpl(
             startOffset = old.sourceSpan.start,
             endOffset = old.sourceSpan.end,
-            old[GlobalBirDynamicProperties.Descriptor],
-        )
+            origin = old.origin,
+            factory = IrFactoryImpl,
+        ).apply {
+            old[GlobalBirDynamicProperties.Descriptor]?.let {
+                descriptor = it
+            }
+        }
     }) {
         origin = old.origin
         copyDynamicProperties(old)
@@ -329,6 +341,7 @@ class Bir2IrConverter(
             isFinal = old.isFinal,
             isStatic = old.isStatic,
             symbol = createBindableSymbol(old),
+            factory = IrFactoryImpl,
         )
     }) {
         initializer = old.initializer?.let { copyChildElement(it) }
@@ -357,6 +370,7 @@ class Bir2IrConverter(
                 type = IrUninitializedType,
                 isVar = old.isVar,
                 symbol = createBindableSymbol(old),
+                factory = IrFactoryImpl,
             )
         }) {
             setter = old.setter?.let { copyChildElement(it) }
@@ -375,7 +389,7 @@ class Bir2IrConverter(
 
     private fun copyModuleFragment(old: BirModuleFragment): IrModuleFragment = copyReferencedElement(old, modules, {
         IrModuleFragmentImpl(
-            descriptor = old.descriptor!!,
+            descriptor = old.descriptor,
             irBuiltins = irBuiltIns,
         )
     }) {
@@ -399,6 +413,8 @@ class Bir2IrConverter(
             isDelegated = old.isDelegated,
             isExpect = old.isExpect,
             symbol = createBindableSymbol(old),
+            containerSource = old[GlobalBirDynamicProperties.ContainerSource],
+            factory = IrFactoryImpl,
         )
     }) {
         copyAttributes(old)
@@ -465,7 +481,6 @@ class Bir2IrConverter(
             isExternal = old.isExternal,
             isInline = old.isInline,
             isExpect = old.isExpect,
-            returnType = IrUninitializedType,
             modality = old.modality,
             isFakeOverride = old.isFakeOverride,
             isTailrec = old.isTailrec,
@@ -473,6 +488,8 @@ class Bir2IrConverter(
             isOperator = old.isOperator,
             isInfix = old.isInfix,
             symbol = createBindableSymbol(old),
+            containerSource = old[GlobalBirDynamicProperties.ContainerSource],
+            factory = IrFactoryImpl,
         )
     }) {
         copyAttributes(old)
@@ -514,6 +531,7 @@ class Bir2IrConverter(
             isActual = old.isActual,
             expandedType = IrUninitializedType,
             symbol = createBindableSymbol(old),
+            factory = IrFactoryImpl,
         )
     }) {
         typeParameters = old.typeParameters.map { copyChildElement(it) }
@@ -589,7 +607,7 @@ class Bir2IrConverter(
     }
 
     private fun copyExpressionBody(old: BirExpressionBody): IrExpressionBody = copyNotReferencedElement(old, {
-        IrExpressionBodyImpl(
+        IrFactoryImpl.createExpressionBody(
             startOffset = old.sourceSpan.start,
             endOffset = old.sourceSpan.end,
             expression = copyChildElement(old.expression),
@@ -603,7 +621,7 @@ class Bir2IrConverter(
     }
 
     private fun copyBlockBody(old: BirBlockBody): IrBlockBody = copyNotReferencedElement(old, {
-        IrBlockBodyImpl(
+        IrFactoryImpl.createBlockBody(
             startOffset = old.sourceSpan.start,
             endOffset = old.sourceSpan.end,
         )
@@ -1580,16 +1598,6 @@ class Bir2IrConverter(
     ) {
         if (this is IrMetadataSourceOwner) {
             metadata = (from as BirMetadataSourceOwner)[GlobalBirDynamicProperties.Metadata]
-        }
-
-        if (this is IrMemberWithContainerSource) {
-            val containerSource = (from as BirMemberWithContainerSource)[GlobalBirDynamicProperties.ContainerSource]
-            when (this) {
-                is IrFunctionImpl -> this.containerSource = containerSource
-                is IrConstructorImpl -> this.containerSource = containerSource
-                is IrPropertyImpl -> this.containerSource = containerSource
-                else -> TODO(this.javaClass.toString())
-            }
         }
 
         if (this is IrAttributeContainer) {

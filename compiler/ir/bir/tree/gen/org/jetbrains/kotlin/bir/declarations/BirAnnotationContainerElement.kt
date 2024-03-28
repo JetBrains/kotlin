@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.annotationContainerElement]
- */
 interface BirAnnotationContainerElement : BirElement, BirAnnotationContainer {
     override val annotations: BirChildElementList<BirConstructorCall>
 

@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.getSingletonValue]
- */
 abstract class BirGetSingletonValue(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     companion object : BirElementClass<BirGetSingletonValue>(BirGetSingletonValue::class.java, 86, false)
 }

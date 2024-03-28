@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.symbols.BirPackageFragmentSymbol
 import org.jetbrains.kotlin.name.FqName
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.packageFragment]
- */
 abstract class BirPackageFragment(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirDeclarationContainer, BirSymbolOwner, BirPackageFragmentSymbol {
     abstract var packageFqName: FqName
 

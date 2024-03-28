@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.suspensionPoint]
- */
 abstract class BirSuspensionPoint(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var suspensionPointIdParameter: BirVariable?
     abstract var result: BirExpression?

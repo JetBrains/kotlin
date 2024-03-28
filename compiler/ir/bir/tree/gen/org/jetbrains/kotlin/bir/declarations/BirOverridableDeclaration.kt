@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.overridableDeclaration]
- */
 interface BirOverridableDeclaration<S : BirSymbol> : BirElement, BirOverridableMember, BirSymbol {
     var isFakeOverride: Boolean
     var overriddenSymbols: List<S>

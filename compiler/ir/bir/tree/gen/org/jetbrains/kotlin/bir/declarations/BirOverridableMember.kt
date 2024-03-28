@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.descriptors.Modality
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.overridableMember]
- */
 interface BirOverridableMember : BirElement, BirDeclaration, BirDeclarationWithVisibility, BirDeclarationWithName, BirSymbolOwner {
     var modality: Modality
 

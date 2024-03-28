@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirImplElementBase
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.body]
- */
 abstract class BirBody(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement {
     companion object : BirElementClass<BirBody>(BirBody::class.java, 70, false)
 }

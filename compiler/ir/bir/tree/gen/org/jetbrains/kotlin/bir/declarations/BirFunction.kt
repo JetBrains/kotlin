@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.function]
- */
 interface BirFunction : BirElement, BirDeclaration, BirPossiblyExternalDeclaration, BirDeclarationWithVisibility, BirTypeParametersContainer, BirSymbolOwner, BirDeclarationParent, BirReturnTarget, BirMemberWithContainerSource, BirMetadataSourceOwner, BirFunctionSymbol {
     var isInline: Boolean
     var isExpect: Boolean

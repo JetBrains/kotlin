@@ -17,11 +17,6 @@ import org.jetbrains.kotlin.bir.symbols.BirFieldSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.field]
- */
 interface BirField : BirElement, BirDeclaration, BirPossiblyExternalDeclaration, BirDeclarationWithVisibility, BirDeclarationParent, BirMetadataSourceOwner, BirFieldSymbol {
     var type: BirType
     var isFinal: Boolean

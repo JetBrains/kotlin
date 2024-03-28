@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.declarations
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.possiblyExternalDeclaration]
- */
 interface BirPossiblyExternalDeclaration : BirElement, BirDeclarationWithName {
     var isExternal: Boolean
 

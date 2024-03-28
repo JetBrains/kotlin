@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.declarations.BirReturnTarget
 import org.jetbrains.kotlin.bir.declarations.BirSymbolOwner
 import org.jetbrains.kotlin.bir.symbols.BirReturnableBlockSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.returnableBlock]
- */
 abstract class BirReturnableBlock(elementClass: BirElementClass<*>) : BirBlock(elementClass), BirElement, BirSymbolOwner, BirReturnTarget, BirReturnableBlockSymbol {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         statements.acceptChildren(visitor, data)

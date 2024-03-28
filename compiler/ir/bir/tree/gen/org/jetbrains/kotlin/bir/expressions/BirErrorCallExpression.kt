@@ -10,11 +10,6 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.*
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.errorCallExpression]
- */
 abstract class BirErrorCallExpression(elementClass: BirElementClass<*>) : BirErrorExpression(elementClass), BirElement {
     abstract var explicitReceiver: BirExpression?
     abstract val arguments: BirChildElementList<BirExpression>

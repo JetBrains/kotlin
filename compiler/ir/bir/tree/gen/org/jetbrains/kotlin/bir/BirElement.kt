@@ -8,11 +8,6 @@
 
 package org.jetbrains.kotlin.bir
 
-/**
- * The root interface of the BIR tree. Each BIR node implements this interface.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.rootElement]
- */
 interface BirElement : BirElementFacade {
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

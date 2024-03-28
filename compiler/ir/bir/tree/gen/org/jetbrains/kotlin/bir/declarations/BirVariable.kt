@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.variable]
- */
 abstract class BirVariable(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirValueDeclaration, BirVariableSymbol {
     abstract var isVar: Boolean
     abstract var isConst: Boolean

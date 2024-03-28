@@ -176,6 +176,7 @@ abstract class BirLoweringPhase : BirPhase {
         })
 
     @JvmName("registerBackReferencesKeyWithSymbolProperty")
+    @Suppress("UNCHECKED_CAST")
     protected inline fun <reified E : BirElement, R : BirElement, S : BirTypedSymbol<R>> registerBackReferencesKey(
         elementType: BirElementType<E>,
         forwardReferenceProperty: KProperty1<E, S>,
@@ -183,12 +184,14 @@ abstract class BirLoweringPhase : BirPhase {
             as BirElementBackReferencesKey<E, R>
 
     // xxx: those overloads overcome the inability to define all [BirSymbol]s as generic
+    @Suppress("UNCHECKED_CAST")
     protected inline fun <reified E : BirElement> registerBackReferencesKey_functionSymbol(
         elementType: BirElementType<E>,
         forwardReferenceProperty: KProperty1<E, BirFunctionSymbol>,
     ) = registerBackReferencesKeyWithUntypedSymbolProperty<E>(elementType, forwardReferenceProperty)
             as BirElementBackReferencesKey<E, BirFunction>
 
+    @Suppress("UNCHECKED_CAST")
     protected inline fun <reified E : BirElement> registerBackReferencesKey_returnTargetSymbol(
         elementType: BirElementType<E>,
         forwardReferenceProperty: KProperty1<E, BirReturnTargetSymbol>,

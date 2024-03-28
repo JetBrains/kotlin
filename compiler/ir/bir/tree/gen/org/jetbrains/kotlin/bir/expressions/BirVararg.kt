@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.vararg]
- */
 abstract class BirVararg(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var varargElementType: BirType
     abstract val elements: BirChildElementList<BirVarargElement>

@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.bir.generator.print
 
-import com.intellij.psi.util.PsiExpressionTrimRenderer.render
 import org.jetbrains.kotlin.bir.generator.*
-import org.jetbrains.kotlin.bir.generator.TREE_GENERATOR_README
-import org.jetbrains.kotlin.bir.generator.model.*
+import org.jetbrains.kotlin.bir.generator.model.Element
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
+import org.jetbrains.kotlin.bir.generator.model.SingleField
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -25,7 +23,6 @@ context(ImportCollector)
 private fun SmartPrinter.printElement(element: Element) {
     val kind = element.kind ?: error("Expected non-null element kind")
 
-    printKDoc(element.extendedKDoc("A ${if (element.isLeaf) "leaf" else "non-leaf"} IR tree element."))
     print(kind.title, " ", element.typeName)
     print(element.params.typeParameters())
     if (element.kind == ImplementationKind.AbstractClass) {

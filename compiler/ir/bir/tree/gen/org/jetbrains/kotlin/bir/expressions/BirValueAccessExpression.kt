@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.declarations.BirValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueAccessExpression]
- */
 abstract class BirValueAccessExpression(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     abstract override var symbol: BirValueDeclaration
     abstract var origin: IrStatementOrigin?

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.bir.lazy
 
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.CompressedSourceSpan.Companion.CompressedSourceSpan
-import org.jetbrains.kotlin.bir.declarations.*
+import org.jetbrains.kotlin.bir.declarations.BirDeclaration
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -73,6 +73,7 @@ abstract class BirLazyElementBase(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     final override fun <T> getDynamicProperty(token: BirDynamicPropertyAccessToken<*, T>): T? {
         if (token.key == GlobalBirDynamicProperties.Descriptor) {
+            @Suppress("UNCHECKED_CAST")
             return originalIrElement.descriptor as T
         }
 

@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.blockBody]
- */
 abstract class BirBlockBody(elementClass: BirElementClass<*>) : BirBody(elementClass), BirElement, BirStatementContainer {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         statements.acceptChildren(visitor, data)

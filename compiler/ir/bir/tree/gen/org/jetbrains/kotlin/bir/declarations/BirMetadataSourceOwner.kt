@@ -11,17 +11,6 @@ package org.jetbrains.kotlin.bir.declarations
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * An [BirElement] capable of holding something which backends can use to write
- * as the metadata for the declaration.
- *
- * Technically, it can even be ± an array of bytes, but right now it's usually the frontend representation of the declaration,
- * so a descriptor in case of K1, and [org.jetbrains.kotlin.fir.FirElement] in case of K2,
- * and the backend invokes a metadata serializer on it to obtain metadata and write it, for example, to `@kotlin.Metadata`
- * on JVM.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.metadataSourceOwner]
- */
 interface BirMetadataSourceOwner : BirElement {
     companion object : BirElementClass<BirMetadataSourceOwner>(BirMetadataSourceOwner::class.java, 90, false)
 }

@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.break]
- */
 abstract class BirBreak(elementClass: BirElementClass<*>) : BirBreakContinue(elementClass), BirElement {
     companion object : BirElementClass<BirBreak>(BirBreak::class.java, 5, true)
 }

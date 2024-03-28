@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirScriptSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.script]
- */
 abstract class BirScript(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirDeclarationWithName, BirDeclarationParent, BirStatementContainer, BirMetadataSourceOwner, BirScriptSymbol {
     abstract var thisReceiver: BirValueParameter?
     abstract var baseClass: BirType?

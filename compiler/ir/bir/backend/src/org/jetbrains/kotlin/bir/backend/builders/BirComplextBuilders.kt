@@ -33,7 +33,7 @@ inline fun birTemporaryVariable(
     val name = Name.identifier(getNameForTemporary(nameHint, addIndexToName))
     return BirVariableImpl(
         sourceSpan = sourceSpan, signature = null, origin = origin, name = name,
-        type = type, isVar = isMutable, isAssignable = true, isConst = false, isLateinit = false, initializer = null,
+        type = type, isVar = isMutable, isConst = false, isLateinit = false, initializer = null,
     ).apply(block)
 }
 

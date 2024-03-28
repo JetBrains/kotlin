@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.breakContinue]
- */
 abstract class BirBreakContinue(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var loop: BirLoop
     abstract var label: String?

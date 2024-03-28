@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.dynamicOperatorExpression]
- */
 abstract class BirDynamicOperatorExpression(elementClass: BirElementClass<*>) : BirDynamicExpression(elementClass), BirElement {
     abstract var operator: IrDynamicOperator
     abstract var receiver: BirExpression?

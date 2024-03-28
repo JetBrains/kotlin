@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.call]
- */
 abstract class BirCall(elementClass: BirElementClass<*>) : BirFunctionAccessExpression(elementClass), BirElement {
     abstract override var symbol: BirSimpleFunctionSymbol
     abstract var superQualifierSymbol: BirClassSymbol?

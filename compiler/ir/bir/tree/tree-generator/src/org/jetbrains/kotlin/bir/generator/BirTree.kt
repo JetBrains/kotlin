@@ -116,7 +116,6 @@ object BirTree : AbstractTreeBuilder() {
 
         +symbol(SymbolTypes.value)
         +field("type", irTypeType)
-        +field("isAssignable", boolean)
     }
     val valueParameter: Element by element(Declaration) {
         typeKind = TypeKind.Interface
@@ -159,6 +158,7 @@ object BirTree : AbstractTreeBuilder() {
             TODO: consider dropping [$name] if it isn't used by any known plugin.
             """.trimIndent()
         }
+        +field("isAssignable", boolean)
         +field("defaultValue", expressionBody, nullable = true)
     }
     val `class`: Element by element(Declaration) {

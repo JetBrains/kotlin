@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.containerExpression]
- */
 abstract class BirContainerExpression(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement, BirStatementContainer {
     abstract var origin: IrStatementOrigin?
     abstract override val statements: BirChildElementList<BirStatement>

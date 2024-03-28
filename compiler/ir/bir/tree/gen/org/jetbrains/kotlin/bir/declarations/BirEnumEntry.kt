@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirEnumEntrySymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.enumEntry]
- */
 interface BirEnumEntry : BirElement, BirDeclaration, BirDeclarationWithName, BirEnumEntrySymbol {
     var initializerExpression: BirExpressionBody?
     var correspondingClass: BirClass?

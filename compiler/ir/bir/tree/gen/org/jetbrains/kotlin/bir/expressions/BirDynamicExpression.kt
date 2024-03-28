@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.dynamicExpression]
- */
 abstract class BirDynamicExpression(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     companion object : BirElementClass<BirDynamicExpression>(BirDynamicExpression::class.java, 81, false)
 }

@@ -13,14 +13,8 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirValueSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueDeclaration]
- */
 interface BirValueDeclaration : BirElement, BirDeclarationWithName, BirSymbolOwner, BirValueSymbol {
     var type: BirType
-    var isAssignable: Boolean
 
     companion object : BirElementClass<BirValueDeclaration>(BirValueDeclaration::class.java, 101, false)
 }

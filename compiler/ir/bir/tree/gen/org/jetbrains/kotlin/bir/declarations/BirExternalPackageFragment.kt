@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.symbols.BirExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.externalPackageFragment]
- */
 abstract class BirExternalPackageFragment(elementClass: BirElementClass<*>) : BirPackageFragment(elementClass), BirElement, BirExternalPackageFragmentSymbol {
     abstract val containerSource: DeserializedContainerSource?
 

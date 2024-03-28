@@ -11,14 +11,6 @@ package org.jetbrains.kotlin.bir.declarations
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * Represents an IR element that can be copied, but must remember its original element. It is
- * useful, for example, to keep track of generated names for anonymous declarations.
- * @property attributeOwnerId original element before copying. Always satisfies the following
- *   invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.attributeContainer]
- */
 interface BirAttributeContainer : BirElement {
     var attributeOwnerId: BirAttributeContainer
 

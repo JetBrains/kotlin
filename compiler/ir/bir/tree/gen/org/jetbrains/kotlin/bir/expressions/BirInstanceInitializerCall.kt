@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.instanceInitializerCall]
- */
 abstract class BirInstanceInitializerCall(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var classSymbol: BirClassSymbol
 

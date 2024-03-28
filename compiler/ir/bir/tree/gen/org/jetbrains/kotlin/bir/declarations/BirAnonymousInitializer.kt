@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.symbols.BirAnonymousInitializerSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.anonymousInitializer]
- */
 abstract class BirAnonymousInitializer(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirAnonymousInitializerSymbol {
     abstract var isStatic: Boolean
     abstract var body: BirBlockBody?

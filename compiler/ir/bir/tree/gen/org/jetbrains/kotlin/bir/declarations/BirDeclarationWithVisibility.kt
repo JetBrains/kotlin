@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.declarationWithVisibility]
- */
 interface BirDeclarationWithVisibility : BirElement, BirDeclaration {
     var visibility: DescriptorVisibility
 

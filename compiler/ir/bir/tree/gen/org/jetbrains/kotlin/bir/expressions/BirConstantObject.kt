@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantObject]
- */
 abstract class BirConstantObject(elementClass: BirElementClass<*>) : BirConstantValue(elementClass), BirElement {
     abstract var constructor: BirConstructorSymbol
     abstract val valueArguments: BirChildElementList<BirConstantValue>

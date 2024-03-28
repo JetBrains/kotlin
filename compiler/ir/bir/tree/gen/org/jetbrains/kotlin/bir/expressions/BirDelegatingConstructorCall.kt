@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.delegatingConstructorCall]
- */
 abstract class BirDelegatingConstructorCall(elementClass: BirElementClass<*>) : BirFunctionAccessExpression(elementClass), BirElement {
     abstract override var symbol: BirConstructorSymbol
 

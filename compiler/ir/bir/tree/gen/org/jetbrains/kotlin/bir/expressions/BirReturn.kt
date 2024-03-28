@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.return]
- */
 abstract class BirReturn(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var value: BirExpression?
     abstract var returnTargetSymbol: BirReturnTargetSymbol

@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.rawFunctionReference]
- */
 abstract class BirRawFunctionReference(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     abstract override var symbol: BirFunctionSymbol
 

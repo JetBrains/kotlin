@@ -14,11 +14,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.when]
- */
 abstract class BirWhen(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var origin: IrStatementOrigin?
     abstract val branches: BirChildElementList<BirBranch>

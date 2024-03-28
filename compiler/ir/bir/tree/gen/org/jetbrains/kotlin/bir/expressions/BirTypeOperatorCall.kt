@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeOperatorCall]
- */
 abstract class BirTypeOperatorCall(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var operator: IrTypeOperator
     abstract var argument: BirExpression?

@@ -6,14 +6,16 @@
 
 package org.jetbrains.kotlin.bir.generator.print
 
-import org.jetbrains.kotlin.bir.generator.*
 import org.jetbrains.kotlin.bir.generator.BirTree.rootElement
+import org.jetbrains.kotlin.bir.generator.Packages
 import org.jetbrains.kotlin.bir.generator.TREE_GENERATOR_README
-import org.jetbrains.kotlin.bir.generator.model.*
+import org.jetbrains.kotlin.bir.generator.childElementList
+import org.jetbrains.kotlin.bir.generator.elementImplBaseType
+import org.jetbrains.kotlin.bir.generator.model.Element
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
+import org.jetbrains.kotlin.bir.generator.model.SingleField
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -24,7 +26,7 @@ private fun SmartPrinter.printElementImpl(element: Element) {
     print("class ", element.elementImplName.typeName)
     print(element.params.typeParameters())
 
-    val allFields = element.allFieldsRecursively()
+    val allFields = element.allFields
     println("(")
     withIndent {
         for (field in allFields) {

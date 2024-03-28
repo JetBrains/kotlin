@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.const]
- */
 abstract class BirConst<T>(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var kind: IrConstKind<T>
     abstract var value: T

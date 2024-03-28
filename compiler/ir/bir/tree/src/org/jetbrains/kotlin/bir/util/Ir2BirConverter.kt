@@ -9,13 +9,13 @@
 package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.*
+import org.jetbrains.kotlin.bir.CompressedSourceSpan.Companion.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.*
 import org.jetbrains.kotlin.bir.declarations.lazy.*
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.*
 import org.jetbrains.kotlin.bir.types.BirUninitializedType
-import org.jetbrains.kotlin.bir.CompressedSourceSpan.Companion.CompressedSourceSpan
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -434,7 +434,6 @@ class Ir2BirConverter(
             origin = old.origin,
             name = old.name,
             type = BirUninitializedType,
-            isAssignable = old.isAssignable,
             isVar = old.isVar,
             isConst = old.isConst,
             isLateinit = old.isLateinit,

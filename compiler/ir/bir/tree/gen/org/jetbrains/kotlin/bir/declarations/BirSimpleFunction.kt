@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.simpleFunction]
- */
 interface BirSimpleFunction : BirElement, BirFunction, BirOverridableDeclaration<BirSimpleFunctionSymbol>, BirAttributeContainer, BirSimpleFunctionSymbol {
     var isTailrec: Boolean
     var isSuspend: Boolean

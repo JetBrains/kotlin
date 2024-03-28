@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantValue]
- */
 abstract class BirConstantValue(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     companion object : BirElementClass<BirConstantValue>(BirConstantValue::class.java, 73, false)
 }

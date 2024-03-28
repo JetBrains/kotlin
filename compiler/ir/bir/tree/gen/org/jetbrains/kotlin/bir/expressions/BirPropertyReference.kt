@@ -16,11 +16,6 @@ import org.jetbrains.kotlin.bir.symbols.BirFieldSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.propertyReference]
- */
 abstract class BirPropertyReference(elementClass: BirElementClass<*>) : BirCallableReference<BirPropertySymbol>(elementClass), BirElement {
     abstract override var symbol: BirPropertySymbol
     abstract var field: BirFieldSymbol?

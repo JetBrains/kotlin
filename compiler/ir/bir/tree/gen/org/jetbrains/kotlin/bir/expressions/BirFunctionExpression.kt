@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.functionExpression]
- */
 abstract class BirFunctionExpression(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var origin: IrStatementOrigin
     abstract var function: BirSimpleFunction?

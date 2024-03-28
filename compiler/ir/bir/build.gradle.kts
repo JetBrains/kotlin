@@ -22,8 +22,8 @@ sourceSets {
     "test" {}
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        allWarningsAsErrors = false
+tasks.compileKotlin {
+    compilerOptions {
+        allWarningsAsErrors.set(false)
     }
 }

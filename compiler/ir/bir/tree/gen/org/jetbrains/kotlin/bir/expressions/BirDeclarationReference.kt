@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.declarationReference]
- */
 abstract class BirDeclarationReference(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract val symbol: BirSymbol
 

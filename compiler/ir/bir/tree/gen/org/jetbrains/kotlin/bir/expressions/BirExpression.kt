@@ -15,11 +15,6 @@ import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.types.BirType
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.expression]
- */
 abstract class BirExpression(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirStatement, BirVarargElement, BirAttributeContainer {
     abstract var type: BirType
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.bir
 
 import java.util.*
-import kotlin.ConcurrentModificationException
 
 /**
  * A regular, mutable implementation of [BirChildElementList].
@@ -371,6 +370,7 @@ class BirImplChildElementList<E : BirElement?>(
             modCount++
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
             if (elementArray is Array<*>) {
+                @Suppress("UNCHECKED_CAST")
                 (elementArray as Array<BirElementBase?>).copyInto(newArray, endIndex = _size)
             } else {
                 newArray[0] = elementArray as BirElementBase?

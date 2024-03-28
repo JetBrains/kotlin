@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.stringConcatenation]
- */
 abstract class BirStringConcatenation(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract val arguments: BirChildElementList<BirExpression>
 

@@ -20,11 +20,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.class]
- */
 interface BirClass : BirElement, BirDeclaration, BirPossiblyExternalDeclaration, BirDeclarationWithVisibility, BirTypeParametersContainer, BirDeclarationContainer, BirAttributeContainer, BirMetadataSourceOwner, BirClassSymbol {
     var kind: ClassKind
     var modality: Modality

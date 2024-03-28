@@ -9,14 +9,12 @@ package org.jetbrains.kotlin.bir.util
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementBase
-import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.*
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.*
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.types.*
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.utils.mapOrTakeThisIfIdentity
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -650,7 +648,6 @@ open class BirTreeDeepCopier {
                 origin = old.origin,
                 name = old.name,
                 type = BirUninitializedType,
-                isAssignable = old.isAssignable,
                 isVar = old.isVar,
                 isConst = old.isConst,
                 isLateinit = old.isLateinit,

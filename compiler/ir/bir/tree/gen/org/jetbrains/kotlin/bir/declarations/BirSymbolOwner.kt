@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.symbolOwner]
- */
 interface BirSymbolOwner : BirElement, BirSymbolOwnerFacade {
     override var signature: IdSignature?
 

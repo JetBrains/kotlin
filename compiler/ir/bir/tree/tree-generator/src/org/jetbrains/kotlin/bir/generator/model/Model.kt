@@ -52,9 +52,6 @@ class Element(
 
     override val fields = mutableSetOf<Field>()
 
-    override val allFields: List<Field>
-        get() = fields.toList()
-
     override val element: Element
         get() = this
 
@@ -133,16 +130,6 @@ class Element(
         }
     }
 
-    fun allFieldsRecursively(): List<Field> {
-        val parentFields = elementParentsRecursively()
-            .reversed()
-            .flatMap { it.element.fields }
-        return (parentFields + fields)
-            .asReversed()
-            .distinctBy { it.name }
-            .asReversed()
-    }
-
     operator fun TypeVariable.unaryPlus() = apply {
         params.add(this)
     }
@@ -158,12 +145,8 @@ typealias ElementOrRef = GenericElementOrRef<Element>
 sealed class Field(
     override val name: String,
     override var isMutable: Boolean,
-    isChild: Boolean,
+    override val isChild: Boolean,
 ) : AbstractField<Field>() {
-    init {
-        this.isChild = isChild
-    }
-
     var isOverride = false
 
     var passViaConstructorParameter = false
@@ -188,6 +171,9 @@ sealed class Field(
 
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
+        copy.passViaConstructorParameter = passViaConstructorParameter
+        copy.isReadWriteTrackedProperty = isReadWriteTrackedProperty
+        copy.initializeToThis = initializeToThis
     }
 
     protected abstract fun internalCopy(): Field

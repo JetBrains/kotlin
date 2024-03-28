@@ -10,11 +10,6 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.*
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.try]
- */
 abstract class BirTry(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var tryResult: BirExpression?
     abstract val catches: BirChildElementList<BirCatch>

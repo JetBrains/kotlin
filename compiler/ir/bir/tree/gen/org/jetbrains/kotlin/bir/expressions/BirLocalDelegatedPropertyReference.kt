@@ -16,11 +16,6 @@ import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.symbols.BirLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.localDelegatedPropertyReference]
- */
 abstract class BirLocalDelegatedPropertyReference(elementClass: BirElementClass<*>) : BirCallableReference<BirLocalDelegatedPropertySymbol>(elementClass), BirElement {
     abstract override var symbol: BirLocalDelegatedPropertySymbol
     abstract var delegate: BirVariableSymbol

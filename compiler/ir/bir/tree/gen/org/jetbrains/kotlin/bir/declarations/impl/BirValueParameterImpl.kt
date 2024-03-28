@@ -23,12 +23,12 @@ class BirValueParameterImpl(
     origin: IrDeclarationOrigin,
     name: Name,
     type: BirType,
-    isAssignable: Boolean,
     index: Int,
     varargElementType: BirType?,
     isCrossinline: Boolean,
     isNoinline: Boolean,
     isHidden: Boolean,
+    isAssignable: Boolean,
     defaultValue: BirExpressionBody?,
 ) : BirImplElementBase(BirValueParameter), BirValueParameter {
     override val owner: BirValueParameterImpl
@@ -103,19 +103,6 @@ class BirValueParameterImpl(
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
-            }
-        }
-
-    private var _isAssignable: Boolean = isAssignable
-    override var isAssignable: Boolean
-        get() {
-            recordPropertyRead()
-            return _isAssignable
-        }
-        set(value) {
-            if (_isAssignable != value) {
-                _isAssignable = value
                 invalidate()
             }
         }
@@ -208,6 +195,19 @@ class BirValueParameterImpl(
         set(value) {
             if (_isHidden != value) {
                 _isHidden = value
+                invalidate()
+            }
+        }
+
+    private var _isAssignable: Boolean = isAssignable
+    override var isAssignable: Boolean
+        get() {
+            recordPropertyRead()
+            return _isAssignable
+        }
+        set(value) {
+            if (_isAssignable != value) {
+                _isAssignable = value
                 invalidate()
             }
         }

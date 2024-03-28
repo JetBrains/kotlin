@@ -16,11 +16,6 @@ import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.types.Variance
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeParameter]
- */
 abstract class BirTypeParameter(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirDeclarationWithName, BirTypeParameterSymbol {
     abstract var variance: Variance
     abstract var index: Int

@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.getValue]
- */
 abstract class BirGetValue(elementClass: BirElementClass<*>) : BirValueAccessExpression(elementClass), BirElement {
     companion object : BirElementClass<BirGetValue>(BirGetValue::class.java, 38, true)
 }

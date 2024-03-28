@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.name.Name
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.moduleFragment]
- */
 abstract class BirModuleFragment(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement {
     abstract val name: Name
     @ObsoleteDescriptorBasedAPI

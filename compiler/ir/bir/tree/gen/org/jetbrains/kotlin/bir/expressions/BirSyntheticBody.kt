@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.syntheticBody]
- */
 abstract class BirSyntheticBody(elementClass: BirElementClass<*>) : BirBody(elementClass), BirElement {
     abstract var kind: IrSyntheticBodyKind
 

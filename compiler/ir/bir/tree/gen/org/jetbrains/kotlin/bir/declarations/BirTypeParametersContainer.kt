@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeParametersContainer]
- */
 interface BirTypeParametersContainer : BirElement, BirDeclaration, BirDeclarationParent {
     val typeParameters: BirChildElementList<BirTypeParameter>
 

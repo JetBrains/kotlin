@@ -203,7 +203,6 @@ inline fun BirVariable.Companion.build(init: BirVariableImpl.() -> Unit): BirVar
         name = UninitializedName,
         origin = IrDeclarationOrigin.DEFINED,
         type = BirUninitializedType,
-        isAssignable = true,
         isVar = false,
         isConst = false,
         isLateinit = false,
@@ -257,7 +256,7 @@ inline fun BirConst.Companion.build(init: BirConstImpl<Any?>.() -> Unit) =
     BirConstImpl<Any?>(
         CompressedSourceSpan.UNDEFINED,
         type = BirUninitializedType,
-        kind = IrConstKind.Null as IrConstKind<Any?>,
+        kind = @Suppress("UNCHECKED_CAST") (IrConstKind.Null as IrConstKind<Any?>),
         value = null,
     ).apply(init)
 

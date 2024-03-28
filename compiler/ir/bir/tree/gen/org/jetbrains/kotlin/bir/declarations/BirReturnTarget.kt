@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.returnTarget]
- */
 interface BirReturnTarget : BirElement, BirSymbolOwner, BirReturnTargetSymbol {
     companion object : BirElementClass<BirReturnTarget>(BirReturnTarget::class.java, 95, false)
 }

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT_ARGUMENTS
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.GlobalBirDynamicProperties
 import org.jetbrains.kotlin.bir.backend.BirBackendContext

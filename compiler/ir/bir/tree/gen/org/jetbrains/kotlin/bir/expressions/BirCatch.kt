@@ -11,11 +11,6 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.catch]
- */
 abstract class BirCatch(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement {
     abstract var catchParameter: BirVariable?
     abstract var result: BirExpression?

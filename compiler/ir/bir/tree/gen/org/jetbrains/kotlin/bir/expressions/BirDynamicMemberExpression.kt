@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
-/**
- * A leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.dynamicMemberExpression]
- */
 abstract class BirDynamicMemberExpression(elementClass: BirElementClass<*>) : BirDynamicExpression(elementClass), BirElement {
     abstract var memberName: String
     abstract var receiver: BirExpression?

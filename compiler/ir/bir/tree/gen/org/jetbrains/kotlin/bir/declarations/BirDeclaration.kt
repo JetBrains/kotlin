@@ -13,11 +13,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 
-/**
- * A non-leaf IR tree element.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.declaration]
- */
 interface BirDeclaration : BirElement, BirStatement, BirSymbolOwner, BirAnnotationContainerElement {
     var origin: IrDeclarationOrigin
 
