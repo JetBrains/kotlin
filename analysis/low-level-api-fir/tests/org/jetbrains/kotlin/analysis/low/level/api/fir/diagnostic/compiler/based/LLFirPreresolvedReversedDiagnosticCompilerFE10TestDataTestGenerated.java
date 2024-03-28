@@ -37088,6 +37088,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("otherModuleOpenVal.kt")
+        public void testOtherModuleOpenVal() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/publicVals/otherModuleOpenVal.kt");
+        }
+
+        @Test
         @TestMetadata("protected.kt")
         public void testProtected() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/publicVals/protected.kt");
