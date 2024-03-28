@@ -41667,6 +41667,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("ExhaustiveSelftype.kt")
+      public void testExhaustiveSelftype() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSelftype.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveValOverConditionalInit.kt")
       public void testExhaustiveValOverConditionalInit() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt");
@@ -41832,6 +41838,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("NoElseWhenStatement.kt")
       public void testNoElseWhenStatement() {
         runTest("compiler/testData/diagnostics/tests/when/NoElseWhenStatement.kt");
+      }
+
+      @Test
+      @TestMetadata("NonExhaustiveAfterSmartcast.kt")
+      public void testNonExhaustiveAfterSmartcast() {
+        runTest("compiler/testData/diagnostics/tests/when/NonExhaustiveAfterSmartcast.kt");
       }
 
       @Test

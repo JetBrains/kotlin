@@ -68,7 +68,7 @@ fun case_8(value_1: SealedClassMixed?): String = <!NO_ELSE_IN_WHEN!>when<!>(valu
  * TESTCASE NUMBER: 9
  * DISCUSSION: maybe make exhaustive without else?
  */
-fun case_9(value_1: Any?): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
+fun case_9(value_1: Any?): String = when (value_1) {
     is Any -> ""
     <!SENSELESS_COMPARISON!>null<!> -> ""
 }
