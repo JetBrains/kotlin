@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.Printer
 
-class FirControlFlowGraphRenderVisitor(
+private class ControlFlowGraphRenderer(
     builder: StringBuilder,
-    private val options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions(),
-) : FirVisitorVoid() {
+    private val options: ControlFlowGraphRenderOptions,
+) {
     companion object {
         private const val EDGE = " -> "
         private const val RED = "red"
@@ -35,22 +35,30 @@ class FirControlFlowGraphRenderVisitor(
     private var nodeCounter = 0
     private var clusterCounter = 0
 
-    override fun visitFile(file: FirFile) {
-        var name = file.name.replace(".", "_")
-        if (DIGIT_REGEX.matches(name.first().toString())) {
-            name = "_$name"
+    fun renderCompleteGraph(graphName: String, printNodesAndEdges: () -> Unit) {
+        var sanitizedName = graphName.replace(".", "_")
+        if (sanitizedName.isNotEmpty() && DIGIT_REGEX.matches(sanitizedName.first().toString())) {
+            sanitizedName = "_$sanitizedName"
         }
         printer
-            .println("digraph $name {")
+            .println("digraph $sanitizedName {")
             .pushIndent()
             .println("graph [nodesep=3]")
             .println("node [shape=box penwidth=2]")
             .println("edge [penwidth=2]")
             .println()
-        visitElement(file)
+        printNodesAndEdges()
         printer
             .popIndent()
             .println("}")
+    }
+
+    fun renderPartialGraph(controlFlowGraph: ControlFlowGraph) {
+        val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
+            .associateWithTo(linkedMapOf()) { nodeCounter++ }
+        printer.renderNodes(nodes)
+        printer.renderEdges(nodes)
+        printer.println()
     }
 
     private fun Printer.renderNodes(nodes: Map<CFGNode<*>, Int>) {
@@ -139,21 +147,6 @@ class FirControlFlowGraphRenderVisitor(
         }
     }
 
-    override fun visitElement(element: FirElement) {
-        element.acceptChildren(this)
-    }
-
-    override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
-        val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
-        if (controlFlowGraph.isSubGraph) return
-
-        val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
-            .associateWithTo(linkedMapOf()) { nodeCounter++ }
-        printer.renderNodes(nodes)
-        printer.renderEdges(nodes)
-        printer.println()
-    }
-
     private fun Printer.enterCluster(color: String) {
         println("subgraph cluster_${clusterCounter++} {")
         pushIndent()
@@ -236,3 +229,45 @@ class FirControlFlowGraphRenderVisitor(
 }
 
 data class ControlFlowGraphRenderOptions(val renderLevels: Boolean = false, val renderFlow: Boolean = false)
+
+fun ControlFlowGraph.renderTo(builder: StringBuilder, options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()) {
+    ControlFlowGraphRenderer(builder, options).run {
+        renderCompleteGraph(name) {
+            renderPartialGraph(this@renderTo)
+        }
+    }
+}
+
+fun FirElement.renderControlFlowGraphTo(builder: StringBuilder, options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()) {
+    val graphName = (this@renderControlFlowGraphTo as? FirFile)?.name ?: ""
+    ControlFlowGraphRenderer(builder, options).run {
+        renderCompleteGraph(graphName) {
+            accept(
+                object : FirVisitorVoid() {
+                    override fun visitElement(element: FirElement) {
+                        element.acceptChildren(this)
+                    }
+
+                    override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
+                        val controlFlowGraph =
+                            (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
+                        if (controlFlowGraph.isSubGraph) return
+                        renderPartialGraph(controlFlowGraph)
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Suppress("unused") // Can be used from the debugger
+fun ControlFlowGraph.render(options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()): String =
+    buildString {
+        renderTo(this, options)
+    }
+
+@Suppress("unused") // Can be used from the debugger
+fun FirElement.renderControlFlowGraph(options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()): String =
+    buildString {
+        renderControlFlowGraphTo(this, options)
+    }
