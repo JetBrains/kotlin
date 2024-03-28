@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 class FirControlFlowGraphRenderVisitor(
     builder: StringBuilder,
-    private val renderLevels: Boolean = false,
-    private val renderFlow: Boolean = false,
+    private val options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions(),
 ) : FirVisitorVoid() {
     companion object {
         private const val EDGE = " -> "
@@ -62,13 +61,13 @@ class FirControlFlowGraphRenderVisitor(
                 color = BLUE
             }
             val attributes = mutableListOf<String>()
-            if (renderFlow) {
+            if (options.renderFlow) {
                 // To maintain compatibility with existing CFG renders, only use HTML-like rendering if flow details are enabled.
                 val label = buildString {
                     append("<TABLE BORDER=\"0\">")
                     append("<TR><TD><B>")
                     append(node.render().toHtmlLikeString())
-                    if (renderLevels) {
+                    if (options.renderLevels) {
                         append(" [${node.level}]")
                     }
                     append("</B></TD></TR>")
@@ -83,7 +82,7 @@ class FirControlFlowGraphRenderVisitor(
             } else {
                 val label = buildString {
                     append(node.render().replace("\"", ""))
-                    if (renderLevels) {
+                    if (options.renderLevels) {
                         append(" [${node.level}]")
                     }
                 }
@@ -235,3 +234,5 @@ class FirControlFlowGraphRenderVisitor(
         .replace(">", "&gt;")
         .replace("<", "&lt;")
 }
+
+data class ControlFlowGraphRenderOptions(val renderLevels: Boolean = false, val renderFlow: Boolean = false)
