@@ -249,7 +249,7 @@ fun transformFirToIr(
         visibilityConverter = Fir2IrVisibilityConverter.Default,
         kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
         actualizerTypeContextProvider = ::IrTypeSystemContextImpl
-    ) { _, irModuleFragment ->
+    ) { irModuleFragment ->
         (irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }.also {
         performanceManager?.notifyIRTranslationFinished()

@@ -73,7 +73,7 @@ fun FirResult.convertToIrAndActualize(
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-    fir2IrResultPostCompute: (ModuleCompilerAnalyzedOutput, IrModuleFragment) -> Unit = { _, _ -> },
+    irModuleFragmentPostCompute: (IrModuleFragment) -> Unit = { _ -> },
 ): Fir2IrActualizedResult {
     require(outputs.isNotEmpty()) { "No modules found" }
 
@@ -122,7 +122,7 @@ fun FirResult.convertToIrAndActualize(
         }
 
         val irModuleFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {
-            fir2IrResultPostCompute(firOutput, it)
+            irModuleFragmentPostCompute(it)
         }
 
         if (isMainOutput) {
