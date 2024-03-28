@@ -30,10 +30,10 @@ interface Fir2IrExtensions {
     fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue?
 
     /**
-     * Platform-dependent logic to determine, whether a backing field is required.
-     * Should be called instead of `FirProperty.hasBackingField()` to decide whether to create a backing field.
-     * The implementation should return `true` in case platform-dependent condition for backing field existence is met,
-     * otherwise return a result of Fir2IrExtensions.Default.hasBackingField()
+     * Platform-dependent logic to determine whether a backing field is required for [property].
+     * Should be called instead of [FirProperty.hasBackingField] to decide whether to create a backing field.
+     * The implementation should return `true` in case a platform-dependent condition for backing field existence is met,
+     * otherwise it should return the result of [Fir2IrExtensions.Default.hasBackingField].
      */
     fun hasBackingField(property: FirProperty, session: FirSession): Boolean
 
