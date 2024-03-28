@@ -33,7 +33,6 @@ internal fun ProjectKotlinAnalysis(
 internal class KotlinAnalysis(
     private val sourceModules: SourceSetDependent<KtSourceModule>,
     private val analysisSession: StandaloneAnalysisAPISession,
-    private val applicationDisposable: Disposable,
     private val projectDisposable: Disposable
 ) : Closeable {
 
@@ -47,7 +46,6 @@ internal class KotlinAnalysis(
         get() = analysisSession.modulesWithFiles
 
     override fun close() {
-        Disposer.dispose(applicationDisposable)
         Disposer.dispose(projectDisposable)
     }
 }

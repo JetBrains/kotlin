@@ -63,14 +63,12 @@ internal fun getLanguageVersionSettings(
 internal fun createAnalysisSession(
     sourceSets: List<DokkaConfiguration.DokkaSourceSet>,
     logger: DokkaLogger,
-    applicationDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.application"),
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
     isSampleProject: Boolean = false
 ): KotlinAnalysis {
     val sourcesModule = mutableMapOf<DokkaConfiguration.DokkaSourceSet, KtSourceModule>()
 
     val analysisSession = buildStandaloneAnalysisAPISession(
-        applicationDisposable = applicationDisposable,
         projectDisposable = projectDisposable,
         withPsiDeclarationFromBinaryModuleProvider = false
     ) {
@@ -135,7 +133,7 @@ internal fun createAnalysisSession(
                 ?: Platform.common.toTargetPlatform()
         }
     }
-    return KotlinAnalysis(sourcesModule, analysisSession, applicationDisposable, projectDisposable)
+    return KotlinAnalysis(sourcesModule, analysisSession, projectDisposable)
 }
 
 private enum class State {
