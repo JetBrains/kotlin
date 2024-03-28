@@ -102,9 +102,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(variable) {
-            implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride =
-                listOf("startOffset", "endOffset", "origin", "symbol", "name", "type", "isVar", "isConst", "isLateinit")
+            implementation.isConstructorPublic = false
             defaultNull("initializer")
             default("factory") {
                 value = "error(\"Create IrVariableImpl directly\")"

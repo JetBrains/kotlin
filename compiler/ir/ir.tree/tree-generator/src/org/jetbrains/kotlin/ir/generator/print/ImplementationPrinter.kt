@@ -51,7 +51,7 @@ internal class ImplementationPrinter(
     }
 
     override fun additionalConstructorParameters(implementation: Implementation): List<FunctionParameter> =
-        if (implementation.element.category == Element.Category.Expression) {
+        if (implementation.element.category == Element.Category.Expression || implementation.element == IrTree.variable) {
             listOf(FunctionParameter("constructorIndicator", irElementConstructorIndicatorType.copy(nullable = true), markAsUnused = true))
         } else {
             emptyList()
