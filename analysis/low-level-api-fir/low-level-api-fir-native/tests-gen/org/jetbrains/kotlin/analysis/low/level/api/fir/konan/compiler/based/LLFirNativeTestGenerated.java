@@ -183,6 +183,41 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/nativeTests/multiplatform")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("llFirNative")
+  public class Multiplatform {
+    @Test
+    public void testAllFilesPresentInMultiplatform() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("objCName_expectAnnotation.kt")
+    public void testObjCName_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCName_expectAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("objCRefinement_expectAnnotation.kt")
+    public void testObjCRefinement_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/objCRefinement_expectAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("sharedImmutable_expectAnnotation.kt")
+    public void testSharedImmutable_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/sharedImmutable_expectAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("threadLocal_expectAnnotation.kt")
+    public void testThreadLocal_expectAnnotation() {
+      runTest("compiler/testData/diagnostics/nativeTests/multiplatform/threadLocal_expectAnnotation.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("llFirNative")
