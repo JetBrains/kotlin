@@ -17,33 +17,34 @@ package kotlin
  *    You enroll into the new behavior right away.
  * 2. You disable all the warnings/errors about the behavior change because they become unnecessary.
  *
- * The effect of '-Xconsistent-data-copy-visibility' flag is the same as applying [ConsistentCopyVisibility] to all data classes in the module.
+ * The effect of '-Xconsistent-data-class-copy-visibility' flag is the same as applying [ConsistentCopyVisibility] to all data classes in the module.
  *
  * ## Deprecation timeline
  *
  * - **Phase 1.** Kotlin 2.0.20.
- *   The compiler warns about the behavior change on the data class declaration and on 'copy' method usages.
- *   It's possible to suppress the warning on the declaration with [ConsistentCopyVisibility]/[ExposedCopyVisibility] annotations or the '-Xconsistent-data-copy-visibility' flag.
- *   It's impossible to suppress the warning on illegal 'copy' method usages.
+ *   The compiler warns about the behavior change on the data class declaration and on illegal 'copy' method usages (illegal usages are those that will become invisible by the end of the migration).
+ *   It's possible to suppress the warning on the declaration with [ConsistentCopyVisibility]/[ExposedCopyVisibility] annotations or the '-Xconsistent-data-class-copy-visibility' flag.
  *   Illegal usages should start the migration.
- * - **Phase 2.** (Supposedly Kotlin 2.1). The warnings turn into errors.
- *   It's possible to suppress the error on the declaration with [ConsistentCopyVisibility]/[ExposedCopyVisibility] annotations or the '-Xconsistent-data-copy-visibility' flag.
+ * - **Phase 2.** (Supposedly Kotlin 2.1 or Kotlin 2.2). The warnings turn into errors.
+ *   Keep in mind that the compiler still generates public 'copy' under the hood. The binary signature is preserved.
+ *   It's possible to suppress the error on the declaration with [ConsistentCopyVisibility]/[ExposedCopyVisibility] annotations or the '-Xconsistent-data-class-copy-visibility' flag.
  *   It's impossible to suppress the error on illegal 'copy' method usages.
  *   Illegal usages should migrate.
- * - **Phase 3.** (Supposedly Kotlin 2.2). The default changes.
+ * - **Phase 3.** (Supposedly Kotlin 2.2 or Kotlin 2.3). The default changes.
  *   Unless [ExposedCopyVisibility] is used, the generated 'copy' method has the same visibility as the primary constructor.
+ *   The binary signature changes.
  *   The error on the declaration is no longer reported.
- *   '-Xconsistent-data-copy-visibility' compiler flag and [ConsistentCopyVisibility] annotation are now unnecessary.
+ *   '-Xconsistent-data-class-copy-visibility' compiler flag and [ConsistentCopyVisibility] annotation are now unnecessary.
  *
- * For the exact mapping of deprecation phases and Kotlin versions follow [KT-11914](https://youtrack.jetbrains.com/issue/KT-11914).
- *
- * You can turn the warning into an error by using the '-progressive' compiler flag.
+ * **Notes:**
+ * - For the exact mapping of deprecation phases and Kotlin versions follow [KT-11914](https://youtrack.jetbrains.com/issue/KT-11914).
+ * - You can turn the warning into an error by using the '-progressive'/'-Werror' compiler flag.
  *
  * ## Recommendation and alternatives
  *
  * - If you write new code or don't care about binary compatibility,
- *   it's recommended to use [ConsistentCopyVisibility] (or '-Xconsistent-data-copy-visibility' compiler flag) instead of the [ExposedCopyVisibility].
- * - When you use [ExposedCopyVisibility], it's also recommended to use '-Xconsistent-data-copy-visibility' in the same module.
+ *   it's recommended to use [ConsistentCopyVisibility] (or '-Xconsistent-data-class-copy-visibility' compiler flag) instead of the [ExposedCopyVisibility].
+ * - When you use [ExposedCopyVisibility], it's also recommended to use '-Xconsistent-data-class-copy-visibility' in the same module.
  *   This way, old classes won't change their behavior, but new classes will have the correct visibility of the 'copy' method.
  * - Once all the illegal 'copy' method usages are migrated, please drop the [ExposedCopyVisibility] annotation.
  * - You can introduce your own 'copy'-like method alongside the generated 'copy',
@@ -75,28 +76,29 @@ public annotation class ConsistentCopyVisibility
  * ## Deprecation timeline
  *
  * - **Phase 1.** Kotlin 2.0.20.
- *   The compiler warns about the behavior change on the data class declaration and on 'copy' method usages.
- *   It's possible to suppress the warning on the declaration with [ConsistentCopyVisibility]/[ExposedCopyVisibility] annotations or the '-Xconsistent-data-copy-visibility' flag.
- *   It's impossible to suppress the warning on illegal 'copy' method usages.
+ *   The compiler warns about the behavior change on the data class declaration and on illegal 'copy' method usages (illegal usages are those that will become invisible by the end of the migration).
+ *   It's possible to suppress the warning on the declaration with [ConsistentCopyVisibility]/[ExposedCopyVisibility] annotations or the '-Xconsistent-data-class-copy-visibility' flag.
  *   Illegal usages should start the migration.
- * - **Phase 2.** (Supposedly Kotlin 2.1). The warnings turn into errors.
- *   It's possible to suppress the error on the declaration with [ConsistentCopyVisibility]/[ExposedCopyVisibility] annotations or the '-Xconsistent-data-copy-visibility' flag.
+ * - **Phase 2.** (Supposedly Kotlin 2.1 or Kotlin 2.2). The warnings turn into errors.
+ *   Keep in mind that the compiler still generates public 'copy' under the hood. The binary signature is preserved.
+ *   It's possible to suppress the error on the declaration with [ConsistentCopyVisibility]/[ExposedCopyVisibility] annotations or the '-Xconsistent-data-class-copy-visibility' flag.
  *   It's impossible to suppress the error on illegal 'copy' method usages.
  *   Illegal usages should migrate.
- * - **Phase 3.** (Supposedly Kotlin 2.2). The default changes.
+ * - **Phase 3.** (Supposedly Kotlin 2.2 or Kotlin 2.3). The default changes.
  *   Unless [ExposedCopyVisibility] is used, the generated 'copy' method has the same visibility as the primary constructor.
+ *   The binary signature changes.
  *   The error on the declaration is no longer reported.
- *   '-Xconsistent-data-copy-visibility' compiler flag and [ConsistentCopyVisibility] annotation are now unnecessary.
+ *   '-Xconsistent-data-class-copy-visibility' compiler flag and [ConsistentCopyVisibility] annotation are now unnecessary.
  *
- * For the exact mapping of deprecation phases and Kotlin versions follow [KT-11914](https://youtrack.jetbrains.com/issue/KT-11914).
- *
- * You can turn the warning into an error by using the '-progressive' compiler flag.
+ * **Notes:**
+ * - For the exact mapping of deprecation phases and Kotlin versions follow [KT-11914](https://youtrack.jetbrains.com/issue/KT-11914).
+ * - You can turn the warning into an error by using the '-progressive'/'-Werror' compiler flag.
  *
  * ## Recommendation and alternatives
  *
  * - If you write new code or don't care about binary compatibility,
- *   it's recommended to use [ConsistentCopyVisibility] (or '-Xconsistent-data-copy-visibility' compiler flag) instead of the [ExposedCopyVisibility].
- * - When you use [ExposedCopyVisibility], it's also recommended to use '-Xconsistent-data-copy-visibility' in the same module.
+ *   it's recommended to use [ConsistentCopyVisibility] (or '-Xconsistent-data-class-copy-visibility' compiler flag) instead of the [ExposedCopyVisibility].
+ * - When you use [ExposedCopyVisibility], it's also recommended to use '-Xconsistent-data-class-copy-visibility' in the same module.
  *   This way, old classes won't change their behavior, but new classes will have the correct visibility of the 'copy' method.
  * - Once all the illegal 'copy' method usages are migrated, please drop the [ExposedCopyVisibility] annotation.
  * - You can introduce your own 'copy'-like method alongside the generated 'copy',
