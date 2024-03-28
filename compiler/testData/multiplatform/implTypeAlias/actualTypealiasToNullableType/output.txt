@@ -1,6 +1,12 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class E01
+^^^^^^
+compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/common.kt:2:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class E02
+^^^^^^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

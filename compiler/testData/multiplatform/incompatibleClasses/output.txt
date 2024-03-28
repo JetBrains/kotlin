@@ -1,6 +1,57 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/incompatibleClasses/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class PClass
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:2:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect interface PInterface
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect object PObject
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:4:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect enum class PEnumClass
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:5:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect annotation class PAnnotationClass
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:7:10: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+internal expect object InternalObject
+         ^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:8:8: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+public expect object PublicObject
+       ^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:10:6: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+open expect class OpenClass
+     ^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:11:10: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+abstract expect class AbstractClass
+         ^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:12:7: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+final expect class FinalClass
+      ^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:14:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class C1<A>
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:15:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class C2<B>
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:16:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class C3<D, E : D>
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:18:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class C4<F>
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:21:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect abstract class ExtendsNumber : Number
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:23:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect fun interface FunInterface {
+^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/common.kt:27:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect fun interface FunInterface2 {
+^^^^^^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

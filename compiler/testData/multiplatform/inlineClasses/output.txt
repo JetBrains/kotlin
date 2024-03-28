@@ -1,6 +1,15 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/inlineClasses/common.kt:1:16: warning: this code uses error suppression for 'UNSUPPORTED_FEATURE'. While it might compile and work, the compiler behavior is UNSPECIFIED and WON'T BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
+@file:Suppress("UNSUPPORTED_FEATURE")
+               ^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/multiplatform/inlineClasses/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect inline class Foo1(val x: Int)
+^^^^^^
+compiler/testData/multiplatform/inlineClasses/common.kt:4:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect inline class Foo2(val y: String)
+^^^^^^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
