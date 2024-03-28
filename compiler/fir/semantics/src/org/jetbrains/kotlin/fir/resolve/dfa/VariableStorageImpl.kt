@@ -46,7 +46,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
     ): RealVariable {
         val realFir = fir.unwrapElement()
         val identifier = getIdentifierBySymbol(flow, symbol, realFir)
-        val stability = symbol.getStability(fir)
+        val stability = symbol.getStability(realFir)
         requireWithAttachment(stability != null, { "Stability for initialized variable always should be computable" }) {
             withFirSymbolEntry("symbol", symbol)
             withFirEntry("fir", fir)
@@ -160,8 +160,8 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         return _realVariables.getOrPut(identifier, factory)
     }
 
-    private fun FirBasedSymbol<*>.getStability(originalFir: FirElement): PropertyStability? {
-        if (originalFir is FirThisReceiverExpression) return PropertyStability.STABLE_VALUE
+    private fun FirBasedSymbol<*>.getStability(realFir: FirElement): PropertyStability? {
+        if (realFir is FirThisReceiverExpression) return PropertyStability.STABLE_VALUE
         when (this) {
             is FirAnonymousObjectSymbol -> return null
             is FirFunctionSymbol<*>, is FirClassSymbol<*> -> return PropertyStability.STABLE_VALUE
@@ -198,21 +198,16 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             property.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
             property.getter.let { it != null && it !is FirDefaultPropertyAccessor } -> PropertyStability.PROPERTY_WITH_GETTER
             property.visibility == Visibilities.Private -> PropertyStability.STABLE_VALUE
-            property.modality != Modality.FINAL -> {
-                val dispatchReceiver = (originalFir.unwrapElement() as? FirQualifiedAccessExpression)?.dispatchReceiver ?: return null
-
-                val receiverType = dispatchReceiver.resolvedType.lowerBoundIfFlexible().fullyExpandedType(session)
-                val receiverSymbol = (receiverType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) ?: return null
-                when (val receiverFir = receiverSymbol.fir) {
-                    is FirAnonymousObject -> PropertyStability.STABLE_VALUE
-                    is FirRegularClass -> if (receiverFir.modality == Modality.FINAL) PropertyStability.STABLE_VALUE else PropertyStability.PROPERTY_WITH_GETTER
-                    else -> errorWithAttachment("Should not be here: $${receiverFir::class.simpleName}") {
-                        withFirEntry("fir", receiverFir)
-                    }
-                }
-            }
+            property.modality != Modality.FINAL && !realFir.hasFinalDispatchReceiver() -> PropertyStability.PROPERTY_WITH_GETTER
             else -> property.determineStabilityByModule()
         }
+    }
+
+    private fun FirElement.hasFinalDispatchReceiver(): Boolean {
+        val dispatchReceiver = (this as? FirQualifiedAccessExpression)?.dispatchReceiver ?: return false
+        val receiverType = dispatchReceiver.resolvedType.lowerBoundIfFlexible().fullyExpandedType(session)
+        val receiverFir = (receiverType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.fir ?: return false
+        return receiverFir is FirAnonymousObject || receiverFir.modality == Modality.FINAL
     }
 
     private fun FirVariable.determineStabilityByModule(): PropertyStability {
