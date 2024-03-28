@@ -1,3 +1,27 @@
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.js.ExperimentalJsCollectionsApi
+public inline fun <E> kotlin.js.collections.JsReadonlyArray<E>.toList(): kotlin.collections.List<E>
+
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.js.ExperimentalJsCollectionsApi
+public inline fun <K, V> kotlin.js.collections.JsReadonlyMap<K, V>.toMap(): kotlin.collections.Map<K, V>
+
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.js.ExperimentalJsCollectionsApi
+public inline fun <E> kotlin.js.collections.JsReadonlyArray<E>.toMutableList(): kotlin.collections.MutableList<E>
+
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.js.ExperimentalJsCollectionsApi
+public inline fun <K, V> kotlin.js.collections.JsReadonlyMap<K, V>.toMutableMap(): kotlin.collections.MutableMap<K, V>
+
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.js.ExperimentalJsCollectionsApi
+public inline fun <E> kotlin.js.collections.JsReadonlySet<E>.toMutableSet(): kotlin.collections.MutableSet<E>
+
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.js.ExperimentalJsCollectionsApi
+public inline fun <E> kotlin.js.collections.JsReadonlySet<E>.toSet(): kotlin.collections.Set<E>
+
 @kotlin.js.JsName(name = "Array")
 @kotlin.SinceKotlin(version = "2.0")
 @kotlin.js.ExperimentalJsCollectionsApi
