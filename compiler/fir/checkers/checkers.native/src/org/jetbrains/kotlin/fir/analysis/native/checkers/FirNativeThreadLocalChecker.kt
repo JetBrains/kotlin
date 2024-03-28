@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-object FirNativeThreadLocalChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirNativeThreadLocalChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     private val threadLocalClassId = ClassId.topLevel(FqName("kotlin.native.concurrent.ThreadLocal"))
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {

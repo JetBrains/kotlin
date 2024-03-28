@@ -22,22 +22,22 @@ data class Point(val x: Double, val y: Double)
 @MySharedImmutable
 val point1 = Point(1.0, 1.0)
 
-@MySharedImmutable
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var point2 = Point(2.0, 2.0)
 
-class Date(@MySharedImmutable val month: Int, @MySharedImmutable var day:Int)
+class Date(<!INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL!>@MySharedImmutable<!> val month: Int, <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL!>@MySharedImmutable<!> var day:Int)
 class Person(val name: String) {
-    @MySharedImmutable
+    <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL!>@MySharedImmutable<!>
     var surname: String? = null
 }
 
 class Figure {
-    @MySharedImmutable
+    <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL!>@MySharedImmutable<!>
     val cornerPoint: Point
         get() = point1
 }
 
-@MySharedImmutable
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var age = 20
     get() {
         println("Age is: $field")
@@ -48,7 +48,7 @@ var age = 20
     }
 
 var globalAge = 30
-@MySharedImmutable
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var age1 = 20
     get() {
         println("Age is: $field")
@@ -65,14 +65,14 @@ val age2 = 20
         return field
     }
 
-@MySharedImmutable
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var point3: Point
     get() = point2
     set(value) {
         point2 = value
     }
 
-@MySharedImmutable
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var point4: Point
     get() = point2
     set(value) {
@@ -82,7 +82,7 @@ var point4: Point
 @MyThreadLocal
 var point0 = Point(2.0, 2.0)
 
-@MySharedImmutable
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var point5: Point
     get() = point0
     set(value) {
@@ -135,7 +135,7 @@ class Delegate2 {
 @MySharedImmutable
 var property2: Int by Delegate2()
 
-@MySharedImmutable
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 val someValue: Int
     get() = 20
 

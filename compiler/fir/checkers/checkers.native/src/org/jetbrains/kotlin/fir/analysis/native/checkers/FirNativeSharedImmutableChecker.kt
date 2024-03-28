@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     private val sharedImmutableClassId = ClassId.topLevel(FqName("kotlin.native.concurrent.SharedImmutable"))
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
