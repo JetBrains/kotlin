@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.optimizations.*
+import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
+import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
+import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFGBuilder
+import org.jetbrains.kotlin.backend.konan.optimizations.dce
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -59,9 +63,7 @@ internal val DevirtualizationAnalysisPhase = createSimpleNamedCompilerPhase<Nati
             )
         },
         op = { generationState, (irModule, moduleDFG) ->
-            val context = generationState.context
-            val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
-            DevirtualizationAnalysis.run(context, irModule, moduleDFG, externalModulesDFG)
+            DevirtualizationAnalysis.run(generationState.context, irModule, moduleDFG)
         }
 )
 
@@ -105,9 +107,7 @@ internal val DevirtualizationPhase = createSimpleNamedCompilerPhase<NativeGenera
                     .asSequence()
                     .filter { it.key.irCallSite != null }
                     .associate { it.key.irCallSite!! to it.value }
-            val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
-            DevirtualizationAnalysis.devirtualize(input.irModule, context,
-                    externalModulesDFG, devirtualizedCallSites,
+            DevirtualizationAnalysis.devirtualize(input.irModule, context, devirtualizedCallSites,
                     DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_VTABLE_CALL, DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_ITABLE_CALL)
         }
 )
@@ -131,7 +131,6 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
             val lifetimes = mutableMapOf<IrElement, Lifetime>()
             val context = generationState.context
             val entryPoint = context.ir.symbols.entryPoint?.owner
-            val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
             val nonDevirtualizedCallSitesUnfoldFactor =
                     if (entryPoint != null) {
                         // For a final program it can be safely assumed that what classes we see is what we got,
@@ -149,12 +148,11 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     context,
                     input.irModule,
                     input.moduleDFG,
-                    externalModulesDFG,
                     input.devirtualizationAnalysisResult,
                     DevirtualizationUnfoldFactors.DFG_DEVIRTUALIZED_CALL,
                     nonDevirtualizedCallSitesUnfoldFactor
             ).build()
-            EscapeAnalysis.computeLifetimes(context, generationState, input.moduleDFG, externalModulesDFG, callGraph, lifetimes)
+            EscapeAnalysis.computeLifetimes(context, generationState, input.moduleDFG, callGraph, lifetimes)
             lifetimes
         }
 )
@@ -176,19 +174,17 @@ internal val RemoveRedundantCallsToStaticInitializersPhase = createSimpleNamedCo
         op = { generationState, input ->
             val context = generationState.context
             val moduleDFG = input.moduleDFG
-            val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
 
             val callGraph = CallGraphBuilder(
                     context,
                     input.irModule,
                     moduleDFG,
-                    externalModulesDFG,
                     input.devirtualizationAnalysisResult,
                     devirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE,
                     nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
             ).build()
 
-            val rootSet = DevirtualizationAnalysis.computeRootSet(context, input.irModule, moduleDFG, externalModulesDFG)
+            val rootSet = DevirtualizationAnalysis.computeRootSet(context, input.irModule, moduleDFG)
                     .mapNotNull { it.irFunction }
                     .toSet()
 

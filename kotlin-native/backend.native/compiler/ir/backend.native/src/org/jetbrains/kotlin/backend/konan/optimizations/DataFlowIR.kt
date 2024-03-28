@@ -36,43 +36,26 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal object DataFlowIR {
+    abstract class Type(
+            val index: Int,
+            val isFinal: Boolean,
+            val isAbstract: Boolean,
+            val primitiveBinaryType: PrimitiveBinaryType?,
+            val module: Module?,
+            val symbolTableIndex: Int,
+            val irClass: IrClass?,
+            val name: String?
+    ) {
+        val superTypes = mutableListOf<Type>()
+        val vtable = mutableListOf<FunctionSymbol>()
+        val itable = mutableMapOf<Int, List<FunctionSymbol>>()
 
-    abstract class Type(val isFinal: Boolean, val isAbstract: Boolean,
-                        val primitiveBinaryType: PrimitiveBinaryType?,
-                        val name: String?) {
         // Special marker type forbidding devirtualization on its instances.
-        object Virtual : Declared(0, false, true, null, null, -1, null, "\$VIRTUAL")
-
-        class External(val hash: Long, isFinal: Boolean, isAbstract: Boolean,
-                       primitiveBinaryType: PrimitiveBinaryType?, name: String? = null)
-            : Type(isFinal, isAbstract, primitiveBinaryType, name) {
-            override fun equals(other: Any?): Boolean {
-                if (this === other) return true
-                if (other !is External) return false
-
-                return hash == other.hash
-            }
-
-            override fun hashCode(): Int {
-                return hash.hashCode()
-            }
-
-            override fun toString(): String {
-                return "ExternalType(hash='$hash', name='$name')"
-            }
-        }
-
-        abstract class Declared(val index: Int, isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
-                                val module: Module?, val symbolTableIndex: Int, val irClass: IrClass?, name: String?)
-            : Type(isFinal, isAbstract, primitiveBinaryType, name) {
-            val superTypes = mutableListOf<Type>()
-            val vtable = mutableListOf<FunctionSymbol>()
-            val itable = mutableMapOf<Int, List<FunctionSymbol>>()
-        }
+        object Virtual : Type(0, false, true, null, null, -1, null, "\$VIRTUAL")
 
         class Public(val hash: Long, index: Int, isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
                      module: Module, symbolTableIndex: Int, irClass: IrClass?, name: String? = null)
-            : Declared(index, isFinal, isAbstract, primitiveBinaryType, module, symbolTableIndex, irClass, name) {
+            : Type(index, isFinal, isAbstract, primitiveBinaryType, module, symbolTableIndex, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -91,7 +74,7 @@ internal object DataFlowIR {
 
         class Private(index: Int, isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
                       module: Module, symbolTableIndex: Int, irClass: IrClass?, name: String? = null)
-            : Declared(index, isFinal, isAbstract, primitiveBinaryType, module, symbolTableIndex, irClass, name) {
+            : Type(index, isFinal, isAbstract, primitiveBinaryType, module, symbolTableIndex, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -159,9 +142,7 @@ internal object DataFlowIR {
 
         abstract class Declared(val module: Module, val symbolTableIndex: Int,
                                 attributes: Int, irDeclaration: IrDeclaration?, var bridgeTarget: FunctionSymbol?, name: String?)
-            : FunctionSymbol(attributes, irDeclaration, name) {
-
-        }
+            : FunctionSymbol(attributes, irDeclaration, name)
 
         class Public(val hash: Long, module: Module, symbolTableIndex: Int,
                      attributes: Int, irDeclaration: IrDeclaration?, bridgeTarget: FunctionSymbol?, name: String? = null)

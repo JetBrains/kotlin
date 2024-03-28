@@ -356,19 +356,12 @@ internal object EscapeAnalysis {
             val generationState: NativeGenerationState,
             val callGraph: CallGraph,
             val moduleDFG: ModuleDFG,
-            val externalModulesDFG: ExternalModulesDFG,
             val lifetimes: MutableMap<IrElement, Lifetime>,
             val propagateExiledToHeapObjects: Boolean
     ) {
 
         private val symbols = context.ir.symbols
         private val throwable = symbols.throwable.owner
-
-        private fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
-            if (this is DataFlowIR.Type.Declared) return this
-            val hash = (this as DataFlowIR.Type.External).hash
-            return externalModulesDFG.publicTypes[hash] ?: error("Unable to resolve exported type $hash")
-        }
 
         val escapeAnalysisResults = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, FunctionEscapeAnalysisResult>()
 
@@ -693,14 +686,8 @@ internal object EscapeAnalysis {
             return true
         }
 
-        private fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
-            if (this is DataFlowIR.FunctionSymbol.External)
-                return externalModulesDFG.publicFunctions[this.hash] ?: this
-            return this
-        }
-
         private fun getExternalFunctionEAResult(callSite: CallGraphNode.CallSite): FunctionEscapeAnalysisResult {
-            val callee = callSite.actualCallee.resolved()
+            val callee = callSite.actualCallee
 
             val calleeEAResult = if (callSite.isVirtual) {
                 context.log { "A virtual call: $callee" }
@@ -876,7 +863,7 @@ internal object EscapeAnalysis {
 
                 traverseAndConvert(body.rootScope, Depths.ROOT_SCOPE - 1)
 
-                val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.ir.symbols.nothing.owner).resolved()
+                val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.ir.symbols.nothing.owner)
                 body.forEachNonScopeNode { node ->
                     when (node) {
                         is DataFlowIR.Node.FieldWrite -> {
@@ -891,7 +878,7 @@ internal object EscapeAnalysis {
                         }
 
                         is DataFlowIR.Node.Singleton -> {
-                            val type = node.type.resolved()
+                            val type = node.type
                             if (type != nothing)
                                 escapeOrigins.add(nodes[node]!!)
                         }
@@ -1630,7 +1617,7 @@ internal object EscapeAnalysis {
                     }
 
                     if (lifetime == Lifetime.STACK && node is DataFlowIR.Node.NewObject) {
-                        val constructedType = node.constructedType.resolved()
+                        val constructedType = node.constructedType
                         constructedType.irClass?.let { irClass ->
                             val itemSize = arrayItemSizeOf(irClass)
                             if (itemSize != null) {
@@ -1758,7 +1745,6 @@ internal object EscapeAnalysis {
             context: Context,
             generationState: NativeGenerationState,
             moduleDFG: ModuleDFG,
-            externalModulesDFG: ExternalModulesDFG,
             callGraph: CallGraph,
             lifetimes: MutableMap<IrElement, Lifetime>
     ) {
@@ -1766,7 +1752,7 @@ internal object EscapeAnalysis {
 
         try {
             InterproceduralAnalysis(context, generationState, callGraph,
-                    moduleDFG, externalModulesDFG, lifetimes,
+                    moduleDFG, lifetimes,
                     propagateExiledToHeapObjects = context.config.memoryModel != MemoryModel.EXPERIMENTAL
                             // The GC must be careful not to scan exiled objects, that have already became dead,
                             // as they may reference other already destroyed stack-allocated objects.

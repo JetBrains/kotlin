@@ -29,11 +29,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 
-internal class ExternalModulesDFG(val allTypes: List<DataFlowIR.Type.Declared>,
-                                  val publicTypes: Map<Long, DataFlowIR.Type.Public>,
-                                  val publicFunctions: Map<Long, DataFlowIR.FunctionSymbol.Public>,
-                                  val functionDFGs: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>)
-
 internal val STATEMENT_ORIGIN_PRODUCER_INVOCATION = IrStatementOriginImpl("PRODUCER_INVOCATION")
 internal val STATEMENT_ORIGIN_JOB_INVOCATION = IrStatementOriginImpl("JOB_INVOCATION")
 
@@ -869,8 +864,6 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
             symbolTable.classMap.forEach { (irClass, type) ->
                 +"    IR CLASS: ${irClass.render()}"
                 +"    TYPE: $type"
-                if (type !is DataFlowIR.Type.Declared)
-                    return@forEach
                 +"        SUPER TYPES:"
                 type.superTypes.forEach { +"            $it" }
                 +"        VTABLE:"
