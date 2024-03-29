@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.diagnostics
+package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -282,7 +282,7 @@ private class FirConstCheckVisitor(
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?
     ): ConstantArgumentKind {
-        val propertySymbol = propertyAccessExpression.toReference(session)?.toResolvedCallableSymbol()
+        val propertySymbol = propertyAccessExpression.calleeReference.toResolvedCallableSymbol()
         if (propertySymbol in propertyStack.get()) return ConstantArgumentKind.NOT_CONST
         when (propertySymbol) {
             // Null symbol means some error occurred.
