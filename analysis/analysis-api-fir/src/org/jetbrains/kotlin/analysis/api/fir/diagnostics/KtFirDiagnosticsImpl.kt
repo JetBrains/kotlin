@@ -4952,6 +4952,26 @@ internal class WrongOperationWithDynamicImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.WrongOperationWithDynamic
 
+internal class JsStaticNotInClassCompanionImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JsStaticNotInClassCompanion
+
+internal class JsStaticOnNonPublicMemberImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JsStaticOnNonPublicMember
+
+internal class JsStaticOnConstImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JsStaticOnConst
+
+internal class JsStaticOnOverrideImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JsStaticOnOverride
+
 internal class SyntaxImpl(
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,

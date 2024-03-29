@@ -1,5 +1,6 @@
 // WITH_REFLECT
 // FIR_DUMP
+
 import kotlin.reflect.*
 
 interface Foo<T : Any> {

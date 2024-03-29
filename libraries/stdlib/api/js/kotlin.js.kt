@@ -235,6 +235,14 @@ public final annotation class ExperimentalJsReflectionCreateInstance : kotlin.An
     public constructor ExperimentalJsReflectionCreateInstance()
 }
 
+@kotlin.RequiresOptIn(level = Level.WARNING)
+@kotlin.annotation.MustBeDocumented
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.SinceKotlin(version = "2.0")
+public final annotation class ExperimentalJsStatic : kotlin.Annotation {
+    public constructor ExperimentalJsStatic()
+}
+
 public external object JSON {
     public final fun <T> parse(text: kotlin.String): T
 
@@ -328,6 +336,15 @@ public final annotation class JsQualifier : kotlin.Annotation {
     public constructor JsQualifier(value: kotlin.String)
 
     public final val value: kotlin.String { get; }
+}
+
+@kotlin.js.ExperimentalJsStatic
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER})
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "2.0")
+public final annotation class JsStatic : kotlin.Annotation {
+    public constructor JsStatic()
 }
 
 public external interface Json {

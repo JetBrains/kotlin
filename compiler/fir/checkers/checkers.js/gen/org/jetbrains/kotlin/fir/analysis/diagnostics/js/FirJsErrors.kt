@@ -86,6 +86,12 @@ object FirJsErrors {
     val SPREAD_OPERATOR_IN_DYNAMIC_CALL: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.SPREAD_OPERATOR)
     val WRONG_OPERATION_WITH_DYNAMIC: KtDiagnosticFactory1<String> by error1<KtElement, String>()
 
+    // Static
+    val JS_STATIC_NOT_IN_CLASS_COMPANION: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val JS_STATIC_ON_NON_PUBLIC_MEMBER: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val JS_STATIC_ON_CONST: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val JS_STATIC_ON_OVERRIDE: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
     }
