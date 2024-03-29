@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.ArrayList
@@ -81,23 +81,30 @@ import kotlin.math.sign
 @OptIn(KtAnalysisNonPublicApi::class)
 internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnalysisSession) : KtDataFlowInfoProvider() {
     override fun getExitPointSnapshot(statements: List<KtExpression>): KtDataFlowExitPointSnapshot {
-        require(statements.isNotEmpty())
-        require(haveCommonParent(statements))
-
         val firResolveSession = analysisSession.firResolveSession
 
-        val firStatements = statements.map { it.unwrap().getOrBuildFirOfType<FirElement>(firResolveSession) }
+        val parent = getCommonParent(statements)
+        val firParent = parent.parentsWithSelf
+            .filterIsInstance<KtElement>()
+            .firstNotNullOf { it.getOrBuildFir(firResolveSession) }
+
+        val unwrappedStatements = statements.map { it.unwrap() }
+
+        val statementSearcher = FirStatementSearcher(unwrappedStatements)
+        firParent.accept(statementSearcher)
+
+        val firStatements = unwrappedStatements.map { statementSearcher[it] ?: it.getOrBuildFirOfType<FirElement>(firResolveSession) }
 
         val collector = FirElementCollector()
         firStatements.forEach { it.accept(collector) }
 
         val firValuedReturnExpressions = collector.firReturnExpressions.filter { !it.result.resolvedType.isUnit }
 
-        val firDefaultStatement = firStatements.last()
-        val defaultExpressionInfo = computeDefaultExpression(statements, firDefaultStatement)
+        val firDefaultStatementCandidate = firStatements.last()
+        val defaultExpressionInfo = computeDefaultExpression(statements, firDefaultStatementCandidate, firValuedReturnExpressions)
 
         val firEscapingCandidates = buildSet<FirElement> {
-            add(firDefaultStatement)
+            add(firDefaultStatementCandidate)
             addAll(collector.firReturnExpressions)
             addAll(collector.firBreakExpressions)
             addAll(collector.firContinueExpressions)
@@ -111,7 +118,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
 
         return KtDataFlowExitPointSnapshot(
             defaultExpressionInfo = defaultExpressionInfo,
-            valuedReturnExpressions = firValuedReturnExpressions.mapNotNull { it.psi as? KtReturnExpression },
+            valuedReturnExpressions = firValuedReturnExpressions.mapNotNull { it.psi as? KtExpression },
             returnValueType = computeReturnType(firValuedReturnExpressions),
             loopJumpExpressions = loopJumpExpressions,
             hasJumps = collector.hasJumps,
@@ -122,35 +129,49 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         )
     }
 
-    private fun haveCommonParent(statements: List<KtElement>): Boolean {
-        if (statements.size < 2) {
-            return true
+    private fun getCommonParent(statements: List<KtElement>): KtElement {
+        require(statements.isNotEmpty())
+
+        val parent = statements[0].parent as KtElement
+
+        for (i in 1..<statements.size) {
+            require(statements[i].parent == parent)
         }
 
-        val parent = statements.first().parent
-        return statements.all { it.parent == parent }
+        return parent
     }
 
     private fun computeDefaultExpression(
         statements: List<KtExpression>,
-        firDefaultStatement: FirElement
+        firDefaultStatement: FirElement,
+        firValuedReturnExpressions: List<FirReturnExpression>
     ): KtDataFlowExitPointSnapshot.DefaultExpressionInfo? {
+        val defaultExpressionFromPsi = statements.last()
+
+        if (firDefaultStatement in firValuedReturnExpressions) {
+            return null
+        }
+
         when (firDefaultStatement) {
             !is FirExpression,
             is FirJump<*>,
-            is FirBlock,
             is FirThrowExpression,
             is FirResolvedQualifier,
             is FirUnitExpression,
             is FirErrorExpression -> {
                 return null
             }
+
+            is FirBlock -> {
+                if (firDefaultStatement.resolvedType.isUnit) {
+                    return null
+                }
+            }
         }
 
         @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
         require(firDefaultStatement is FirExpression)
 
-        val defaultExpressionFromPsi = statements.last()
         val defaultExpressionFromFir = firDefaultStatement.psi as? KtExpression ?: return null
 
         if (!PsiTreeUtil.isAncestor(defaultExpressionFromFir, defaultExpressionFromPsi, false)) {
@@ -276,6 +297,36 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         }
 
         return false
+    }
+
+    /**
+     * This class, unlike 'getOrBuildFirOfType()', tries to find topmost FIR elements.
+     * This is useful when PSI expressions get wrapped in the FIR tree, such as implicit return expressions from lambdas.
+     */
+    private inner class FirStatementSearcher(statements: List<KtExpression>) : FirDefaultVisitorVoid() {
+        private val statements = statements.toHashSet()
+
+        private val mapping = LinkedHashMap<KtExpression, FirElement?>()
+        private var unmappedCount = statements.size
+
+        operator fun get(statement: KtExpression): FirElement? {
+            return mapping[statement]
+        }
+
+        override fun visitElement(element: FirElement) {
+            val psi = element.psi
+
+            if (psi is KtExpression && psi in statements) {
+                mapping.computeIfAbsent(psi) { _ ->
+                    unmappedCount -= 1
+                    element
+                }
+            }
+
+            if (unmappedCount > 0) {
+                element.acceptChildren(this)
+            }
+        }
     }
 
     private inner class FirElementCollector : FirDefaultVisitorVoid() {

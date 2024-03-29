@@ -392,6 +392,12 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     }
 
     @Test
+    @TestMetadata("lambdaImplicitReturn.kt")
+    public void testLambdaImplicitReturn() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/lambdaImplicitReturn.kt");
+    }
+
+    @Test
     @TestMetadata("nullableDefaultType.kt")
     public void testNullableDefaultType() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/nullableDefaultType.kt");

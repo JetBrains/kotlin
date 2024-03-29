@@ -33,9 +33,12 @@ public class KtDataFlowExitPointSnapshot(
     public val defaultExpressionInfo: DefaultExpressionInfo?,
 
     /**
-     * A list of [KtReturnExpression]s that return a value.
+     * A list of expressions that return a value.
+     *
+     * Returned expressions are not necessarily [KtReturnExpression]s.
+     * For instance, implicit return from a lambda can be an arbitrary expression.
      */
-    public val valuedReturnExpressions: List<KtReturnExpression>,
+    public val valuedReturnExpressions: List<KtExpression>,
 
     /**
      * A common supertype of values returned in [valuedReturnExpressions].

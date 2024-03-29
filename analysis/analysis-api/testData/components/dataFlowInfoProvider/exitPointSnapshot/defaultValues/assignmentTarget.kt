@@ -10,7 +10,7 @@ fun buildFoo(builder: Foo.() -> Unit): Foo {
     return foo
 }
 
-fun Foo {
+class Foo {
     var value: String? = null
 }
 
