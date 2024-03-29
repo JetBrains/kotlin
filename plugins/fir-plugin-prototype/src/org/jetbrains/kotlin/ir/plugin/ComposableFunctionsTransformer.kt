@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.plugin.types.ComposableNames.FULL_COMPOSABLE_NAME_PREFIX
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
@@ -42,8 +39,23 @@ class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrEle
     override fun visitValueParameter(declaration: IrValueParameter) {
         declaration.apply {
             type = type.update()
+            type.checkStability()
         }
         visitElement(declaration)
+    }
+
+    // Mimic stability check of Compose compiler plugin.
+    private fun IrType.checkStability() {
+        val classForType = classifierOrNull?.owner as? IrClass ?: return
+        for (member in classForType.declarations) {
+            when (member) {
+                is IrProperty -> {
+                    member.backingField?.let {
+                        if (member.isVar && !member.isDelegated) return
+                    }
+                }
+            }
+        }
     }
 
     override fun visitFunction(declaration: IrFunction) {

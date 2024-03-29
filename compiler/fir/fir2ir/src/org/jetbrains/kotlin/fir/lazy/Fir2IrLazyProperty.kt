@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -121,7 +122,8 @@ class Fir2IrLazyProperty(
             }
             // Setting initializers to every other class causes some cryptic errors in lowerings
             initializer is FirLiteralExpression<*> -> {
-                val constType = initializer.resolvedType.toIrType(c)
+                fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                val constType = fir.initializer?.resolvedType?.toIrType(c) ?: initializer.resolvedType.toIrType(c)
                 factory.createExpressionBody(initializer.toIrConst(constType))
             }
             else -> null
