@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // MODULE: lib
 // FILE: Lib.kt
 
