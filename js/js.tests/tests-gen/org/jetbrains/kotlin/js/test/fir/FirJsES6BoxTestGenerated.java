@@ -1745,6 +1745,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("deserializedDynamicWithAnnotatedBounds.kt")
+    public void testDeserializedDynamicWithAnnotatedBounds() {
+      runTest("js/js.translator/testData/box/dynamic/deserializedDynamicWithAnnotatedBounds.kt");
+    }
+
+    @Test
     @TestMetadata("dynamicArrayInc.kt")
     public void testDynamicArrayInc() {
       runTest("js/js.translator/testData/box/dynamic/dynamicArrayInc.kt");
