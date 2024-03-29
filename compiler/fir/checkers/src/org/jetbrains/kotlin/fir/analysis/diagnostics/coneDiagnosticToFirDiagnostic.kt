@@ -282,8 +282,7 @@ private fun mapInapplicableCandidateError(
     val typeContext = session.typeContext
     val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol)
 
-    @OptIn(ApplicabilityDetail::class)
-    val diagnostics = diagnostic.candidate.diagnostics.filter { !it.applicability.isSuccess }.mapNotNull { rootCause ->
+    val diagnostics = diagnostic.candidate.diagnostics.filter { !it.isSuccess }.mapNotNull { rootCause ->
         when (rootCause) {
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.createOn(
                 rootCause.argument.source ?: qualifiedAccessSource

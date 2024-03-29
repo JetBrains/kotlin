@@ -176,3 +176,6 @@ class MissingInnerClassConstructorReceiver(val candidateSymbol: FirRegularClassS
 @OptIn(ApplicabilityDetail::class)
 val Collection<ResolutionDiagnostic>.allSuccessful: Boolean get() = all { it.applicability.isSuccess }
 val Collection<ResolutionDiagnostic>.anyUnsuccessful: Boolean get() = !allSuccessful
+
+@OptIn(ApplicabilityDetail::class)
+val ResolutionDiagnostic.isSuccess get() = applicability.isSuccess

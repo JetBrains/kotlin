@@ -900,8 +900,7 @@ class FirCallResolver(
     private fun needTreatErrorCandidateAsResolved(candidate: Candidate): Boolean {
         return if (candidate.isCodeFragmentVisibilityError) {
             components.resolutionStageRunner.fullyProcessCandidate(candidate, transformer.resolutionContext)
-            @OptIn(ApplicabilityDetail::class)
-            candidate.diagnostics.all { it.applicability.isSuccess || it.applicability == CandidateApplicability.K2_VISIBILITY_ERROR }
+            candidate.diagnostics.all { it.isSuccess || it.applicability == CandidateApplicability.K2_VISIBILITY_ERROR }
         } else false
     }
 
