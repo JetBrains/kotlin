@@ -7,18 +7,37 @@
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 import platform.Foundation.*
 import platform.darwin.*
+import kotlinx.cinterop.internal.*
 import kotlin.test.*
 
-fun box(): String {
+fun test1() {
     try {
-        // Test: cast to NSObject Metaclass
         Any() as NSObject.Companion
-        // Test: cast to subclass of NSObject Metaclass
-        Any() as NSString.Companion
-        Any() as NSArray.Companion
     } catch (e: Exception) {
-        // Cannot access 'TypeCastException': it is internal in Kotlin/Native.
         assertTrue(e is ClassCastException)
     }
+}
+
+fun test2() {
+    try {
+        Any() as NSNumber.Companion
+    } catch (e: Exception) {
+        assertTrue(e is ClassCastException)
+    }
+}
+
+fun test3() {
+    assertFalse(Any() is NSObject.Companion)
+    assertFalse(Any() is NSNumber.Companion)
+
+    val nsObjectClass: Any = NSObject
+    assertFalse(nsObjectClass is NSNumberMeta)
+}
+
+fun box(): String {
+    test1()
+    test2()
+    test3()
+
     return "OK"
 }
