@@ -181,6 +181,32 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/nativeTests/constantEvaluator")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ConstantEvaluator {
+    @Test
+    public void testAllFilesPresentInConstantEvaluator() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/constantEvaluator"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/nativeTests/constantEvaluator/constant")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Constant {
+      @Test
+      public void testAllFilesPresentInConstant() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/constantEvaluator/constant"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("divideByZeroInConstantContext.kt")
+      public void testDivideByZeroInConstantContext() {
+        runTest("compiler/testData/diagnostics/nativeTests/constantEvaluator/constant/divideByZeroInConstantContext.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/nativeTests/multiplatform")
   @TestDataPath("$PROJECT_ROOT")
   public class Multiplatform {

@@ -25,6 +25,32 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/wasmTests/constantEvaluator")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ConstantEvaluator {
+    @Test
+    public void testAllFilesPresentInConstantEvaluator() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/constantEvaluator"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/wasmTests/constantEvaluator/constant")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Constant {
+      @Test
+      public void testAllFilesPresentInConstant() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/constantEvaluator/constant"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("divideByZeroInConstantContext.kt")
+      public void testDivideByZeroInConstantContext() {
+        runTest("compiler/testData/diagnostics/wasmTests/constantEvaluator/constant/divideByZeroInConstantContext.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop")
   @TestDataPath("$PROJECT_ROOT")
   public class JsInterop {

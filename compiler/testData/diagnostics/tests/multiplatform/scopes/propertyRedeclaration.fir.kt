@@ -10,9 +10,9 @@ expect abstract class B
 
 expect class C : B
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect abstract class D() {
-    <!AMBIGUOUS_ACTUALS{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>val x: Int<!>
-}<!>
+expect abstract class D() {
+    val x: Int
+}
 
 class E : D()
 

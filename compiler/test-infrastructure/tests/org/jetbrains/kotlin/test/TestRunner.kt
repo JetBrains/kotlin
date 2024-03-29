@@ -147,7 +147,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
                 }
                 is TestStep.StepResult.ErrorFromFacade -> {
                     allFailedExceptions += result.exception
-                    return false
+                    return true // stop processing current module and proceed to next module
                 }
                 is TestStep.StepResult.HandlersResult -> {
                     val (exceptionsFromHandlers, shouldRunNextSteps) = result
@@ -155,10 +155,10 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
                     allRanHandlers += step.handlers
                     allFailedExceptions += exceptionsFromHandlers
                     if (!shouldRunNextSteps) {
-                        return false
+                        return true // stop processing current module and proceed to next module
                     }
                 }
-                is TestStep.StepResult.NoArtifactFromFacade -> return false
+                is TestStep.StepResult.NoArtifactFromFacade -> return true // stop processing current module and proceed to next module
             }
         }
         return true

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.bind
 import java.lang.Boolean.getBoolean
 
 abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
@@ -58,7 +59,8 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     }
 
     protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
-        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+        val failureDisablesNextSteps = pathToTestDir != "compiler/testData/codegen/boxError/"
+        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade, failureDisablesNextSteps)
 
         val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         defaultDirectives {
@@ -128,6 +130,7 @@ fun <
     frontendFacade: Constructor<FrontendFacade<R>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
     backendFacade: Constructor<BackendFacade<I, A>>,
+    failureDisablesNextSteps: Boolean = true,
 ) {
     globalDefaults {
         frontend = targetFrontend
@@ -158,7 +161,7 @@ fun <
     }
 
     firHandlersStep {
-        useHandlers(::FirDiagnosticsHandler)
+        useHandlers(::FirDiagnosticsHandler.bind(failureDisablesNextSteps))
     }
 
     facadeStep(frontendToBackendConverter)

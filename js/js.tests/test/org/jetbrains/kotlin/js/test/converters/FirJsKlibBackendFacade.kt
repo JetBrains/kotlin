@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
@@ -44,7 +45,10 @@ class FirJsKlibBackendFacade(
         return module.backendKind == inputKind
     }
 
-    override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
+    override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib? {
+        if (module.directives.contains(DiagnosticsDirectives.SKIP_KLIB_SERIALIZATION))
+            return null
+
         require(inputArtifact is IrBackendInput.JsIrBackendInput) {
             "JsKlibBackendFacade expects IrBackendInput.JsIrBackendInput as input"
         }

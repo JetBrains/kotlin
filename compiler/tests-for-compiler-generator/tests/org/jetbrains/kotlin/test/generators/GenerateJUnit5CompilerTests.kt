@@ -258,14 +258,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractFirPsiDiagnosticTest>(suiteTestClassName = "FirPsiOldFrontendDiagnosticsTestGenerated") {
                 model(
                     "diagnostics/tests", pattern = "^(.*)\\.kts?$",
-                    excludeDirsRecursively = listOf("multiplatform"),
                     excludedPattern = excludedCustomTestdataPattern
                 )
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractFirPsiWithActualizerDiagnosticsTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithPsiTestGenerated") {
-                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/irInterpreter")
             }
 
             testClass<AbstractFirLightTreeDiagnosticsTest>(
@@ -273,14 +269,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             ) {
                 model(
                     "diagnostics/tests",
-                    excludeDirsRecursively = listOf("multiplatform"),
                     excludedPattern = excludedCustomTestdataPattern
                 )
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractFirLightTreeWithActualizerDiagnosticsTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated") {
-                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/irInterpreter")
             }
 
             testClass<AbstractFirPsiForeignAnnotationsSourceJavaTest>(
@@ -375,14 +367,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractFirPsiLocalVariableTest> {
                 model("debug/localVariables")
-            }
-
-            testClass<AbstractFirPsiWithInterpreterDiagnosticsTest> {
-                model("diagnostics/irInterpreter")
-            }
-
-            testClass<AbstractFirLightTreeWithInterpreterDiagnosticsTest> {
-                model("diagnostics/irInterpreter")
             }
 
             testClass<AbstractFirPsiDiagnosticsTestWithJvmIrBackend> {

@@ -8,10 +8,15 @@ package org.jetbrains.kotlin.wasm.test.diagnostics
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
+import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrWasmResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -25,6 +30,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibBackendFacade
 
 abstract class AbstractFirWasmDiagnosticTestBase(
     val parser: FirParser,
@@ -66,6 +72,18 @@ abstract class AbstractFirWasmDiagnosticTestBase(
             )
         }
 
+        useAdditionalService(::LibraryProvider)
+        facadeStep(::Fir2IrWasmResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
+            )
+        }
+        facadeStep { FirWasmKlibBackendFacade(it, true) }
+
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibBackendDiagnosticsHandler)
+        }
         forTestsMatching("compiler/testData/diagnostics/wasmTests/multiplatform/*") {
             defaultDirectives {
                 LanguageSettingsDirectives.LANGUAGE + "+MultiPlatformProjects"

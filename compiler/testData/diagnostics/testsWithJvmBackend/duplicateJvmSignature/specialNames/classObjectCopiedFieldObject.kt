@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 class B {
     companion object <!REDECLARATION!>A<!> {
     }

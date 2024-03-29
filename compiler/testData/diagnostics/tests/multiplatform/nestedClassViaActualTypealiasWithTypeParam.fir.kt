@@ -6,13 +6,13 @@ expect class Foo {
 }
 
 expect fun substituted(p: Foo.Inner<Any>)
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun substitutedIncorrect(p: Foo.Inner<Any>)<!>
+expect fun substitutedIncorrect(p: Foo.Inner<Any>)
 
 expect fun <T> withTypeParam(p: Foo.Inner<T>)
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun <T, R> withTypeParamIncorrect(p: Foo.Inner<R>)<!>
+expect fun <T, R> withTypeParamIncorrect(p: Foo.Inner<R>)
 
 expect fun star(p: Foo.Inner<*>)
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun starVsNonStar(p: Foo.Inner<*>)<!>
+expect fun starVsNonStar(p: Foo.Inner<*>)
 
 
 // MODULE: m2-jvm()()(m1-common)

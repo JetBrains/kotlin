@@ -26,9 +26,8 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
-import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -50,19 +49,12 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
     final override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirDiagnosticCollectorService))
 
-    final override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? =
-        try {
-            transformInternal(module, inputArtifact)
-        } catch (e: Throwable) {
-            if (
-                CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS in module.directives &&
-                testServices.firDiagnosticCollectorService.containsErrors(inputArtifact)
-            ) {
-                null
-            } else {
-                throw e
-            }
-        }
+    final override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? {
+        if (module.directives.contains(DiagnosticsDirectives.SKIP_FIR2IR))
+            return null
+
+        return transformInternal(module, inputArtifact)
+    }
 
     private fun transformInternal(
         module: TestModule,

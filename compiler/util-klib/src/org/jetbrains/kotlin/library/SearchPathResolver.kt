@@ -256,7 +256,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                     .firstOrNull()
                     .let(::ResolvedLibrary)
             } catch (e: Throwable) {
-                logger.error("KLIB resolver: Failed to resolve Kotlin library: $givenPath")
+                logger.error("KLIB resolver: Failed to resolve Kotlin library: $givenPath due to ${e.message}")
                 throw e
             }
         }.library

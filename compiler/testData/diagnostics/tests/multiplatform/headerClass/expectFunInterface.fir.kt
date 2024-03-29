@@ -5,9 +5,9 @@ expect fun interface F1 {
     fun run()
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect fun interface F2 {
+expect fun interface F2 {
     fun run()
-}<!>
+}
 
 expect fun interface F3 {
     fun run()
@@ -21,9 +21,9 @@ expect fun interface F5 {
     fun run()
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect fun interface F6 {
+expect fun interface F6 {
     fun run()
-}<!>
+}
 
 expect fun interface F7 {
     fun run()

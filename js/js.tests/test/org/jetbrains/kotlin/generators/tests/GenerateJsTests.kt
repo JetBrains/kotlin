@@ -217,18 +217,21 @@ fun main(args: Array<String>) {
                 model("debug/localVariables", excludeDirs = listOf("inlineScopes"))
             }
 
-            testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsKlibDiagnosticsTestGenerated") {
+            testClass<AbstractFirPsiJsDiagnosticTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsTestGenerated") {
                 model(
-                    relativeRootPath = "diagnostics/klibSerializationTests",
+                    relativeRootPath = "diagnostics/testsWithJsStdLib",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
                     targetBackend = TargetBackend.JS_IR
                 )
-            }
-
-            testClass<AbstractFirPsiJsDiagnosticTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsTestGenerated") {
                 model(
-                    relativeRootPath = "diagnostics/testsWithJsStdLib",
+                    relativeRootPath = "diagnostics/testsWithJsStdLibAndBackendCompilation",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+                model(
+                    relativeRootPath = "diagnostics/klibSerializationTests",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
                     targetBackend = TargetBackend.JS_IR
@@ -242,20 +245,14 @@ fun main(args: Array<String>) {
                     excludedPattern = excludedFirTestdataPattern,
                     targetBackend = TargetBackend.JS_IR
                 )
-            }
-
-            testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsWithBackendTestGenerated") {
                 model(
                     relativeRootPath = "diagnostics/testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
                     targetBackend = TargetBackend.JS_IR
                 )
-            }
-
-            testClass<AbstractFirLightTreeJsDiagnosticWithBackendTest>(suiteTestClassName = "FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated") {
                 model(
-                    relativeRootPath = "diagnostics/testsWithJsStdLibAndBackendCompilation",
+                    relativeRootPath = "diagnostics/klibSerializationTests",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
                     targetBackend = TargetBackend.JS_IR

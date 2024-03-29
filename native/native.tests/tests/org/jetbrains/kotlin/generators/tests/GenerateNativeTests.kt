@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractDiagnosticsNativeTest
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsTest
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsWithBackendTestBase
+import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
@@ -347,23 +344,18 @@ fun main() {
 
             testClass<AbstractFirPsiNativeDiagnosticsTest>(
                 suiteTestClassName = "FirPsiOldFrontendNativeDiagnosticsTestGenerated",
-                annotations = listOf(*frontendFir()),
+                annotations = listOf(*frontendFir(), klib())
             ) {
+                model("diagnostics/klibSerializationTests")
                 model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             testClass<AbstractFirLightTreeNativeDiagnosticsTest>(
                 suiteTestClassName = "FirLightTreeOldFrontendNativeDiagnosticsTestGenerated",
-                annotations = listOf(*frontendFir()),
-            ) {
-                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractFirPsiNativeDiagnosticsWithBackendTestBase>(
-                suiteTestClassName = "FirPsiNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(*frontendFir(), klib())
             ) {
                 model("diagnostics/klibSerializationTests")
+                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
         }
 

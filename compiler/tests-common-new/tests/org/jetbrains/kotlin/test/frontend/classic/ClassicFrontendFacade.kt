@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.WasmTarget
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -280,7 +281,7 @@ class ClassicFrontendFacade(
         val resolvedLibraries = CommonKLibResolver.resolve(
             names,
             configuration.getLogger(treatWarningsAsErrors = true),
-            knownIrProviders = listOf("kotlin.native.cinterop"), // FIXME use KonanLibraryProperResolver instead, as in production.
+            knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER), // FIXME use KonanLibraryProperResolver instead, as in production.
         ).getFullResolvedList()
 
         var builtInsModule: KotlinBuiltIns? = null

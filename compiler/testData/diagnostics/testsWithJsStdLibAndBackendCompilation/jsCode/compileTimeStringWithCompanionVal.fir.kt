@@ -37,14 +37,14 @@ class ClassFromThisFile {
         val valFromThisFileCompanion = "valFromThisFileCompanion"
 
         fun testCompanionFromThisCompanion() {
-            js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion<!>} = 1;"<!>)
-            js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion<!> + " = 1;"<!>)
+            js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion<!>} = 1;")
+            js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion<!> + " = 1;")
         }
     }
 
     fun testCompanionFromThis() {
-        js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion<!>} = 1;"<!>)
-        js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion<!> + " = 1;"<!>)
+        js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion<!>} = 1;")
+        js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion<!> + " = 1;")
     }
 }
 
@@ -53,44 +53,44 @@ class ClassFromThisFile2 {
         val valFromThisFileCompanion2 = ClassFromThisFile.valFromThisFileCompanion + "2"
 
         fun testCompanionFromThisCompanion() {
-            js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion2<!>} = 1;"<!>)
-            js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion2<!> + " = 1;"<!>)
+            js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion2<!>} = 1;")
+            js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion2<!> + " = 1;")
         }
     }
 
     fun testCompanionFromThis() {
-        js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion2<!>} = 1;"<!>)
-        js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion2<!> + " = 1;"<!>)
+        js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion2<!>} = 1;")
+        js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valFromThisFileCompanion2<!> + " = 1;")
     }
 }
 
 fun testCompanionValFromOtherModule() {
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherModule.valFromOtherModuleCompanion<!>} = 1;"<!>)
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherModule.valFromOtherModuleCompanion<!> + " = 1;"<!>)
+    js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherModule.valFromOtherModuleCompanion<!>} = 1;")
+    js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherModule.valFromOtherModuleCompanion<!> + " = 1;")
 }
 
 fun testCompanionValFromOtherModule2() {
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherModule2.valFromOtherModuleCompanion2<!>} = 1;"<!>)
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherModule2.valFromOtherModuleCompanion2<!> + " = 1;"<!>)
+    js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherModule2.valFromOtherModuleCompanion2<!>} = 1;")
+    js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherModule2.valFromOtherModuleCompanion2<!> + " = 1;")
 }
 
 
 fun testCompanionValFromOtherFile() {
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherFile.valFromOtherFileCompanion<!>} = 1;"<!>)
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherFile.valFromOtherFileCompanion<!> + " = 1;"<!>)
+    js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherFile.valFromOtherFileCompanion<!>} = 1;")
+    js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherFile.valFromOtherFileCompanion<!> + " = 1;")
 }
 
 fun testCompanionValFromOtherFile2() {
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherFile2.valFromOtherFileCompanion2<!>} = 1;"<!>)
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherFile2.valFromOtherFileCompanion2<!> + " = 1;"<!>)
+    js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherFile2.valFromOtherFileCompanion2<!>} = 1;")
+    js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromOtherFile2.valFromOtherFileCompanion2<!> + " = 1;")
 }
 
 fun testCompanionValFromThisFile() {
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromThisFile.valFromThisFileCompanion<!>} = 1;"<!>)
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromThisFile.valFromThisFileCompanion<!> + " = 1;"<!>)
+    js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromThisFile.valFromThisFileCompanion<!>} = 1;")
+    js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromThisFile.valFromThisFileCompanion<!> + " = 1;")
 }
 
 fun testCompanionValFromThisFile2() {
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromThisFile2.valFromThisFileCompanion2<!>} = 1;"<!>)
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromThisFile2.valFromThisFileCompanion2<!> + " = 1;"<!>)
+    js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromThisFile2.valFromThisFileCompanion2<!>} = 1;")
+    js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>ClassFromThisFile2.valFromThisFileCompanion2<!> + " = 1;")
 }

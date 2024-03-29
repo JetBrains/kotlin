@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
@@ -34,7 +35,7 @@ object TestFirNativeSessionFactory {
         val resolvedLibraries = CommonKLibResolver.resolve(
             getAllNativeDependenciesPaths(module, testServices),
             configuration.getLogger(treatWarningsAsErrors = true),
-            knownIrProviders = listOf("kotlin.native.cinterop"), // FIXME use KonanLibraryProperResolver instead, as in production.
+            knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER), // FIXME use KonanLibraryProperResolver instead, as in production.
         ).getFullResolvedList()
 
         return FirNativeSessionFactory.createLibrarySession(

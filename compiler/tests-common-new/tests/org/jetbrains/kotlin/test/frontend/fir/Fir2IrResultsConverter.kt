@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.junit.jupiter.api.Assumptions
 
 class Fir2IrResultsConverter(
     testServices: TestServices
@@ -26,13 +27,18 @@ class Fir2IrResultsConverter(
     private val jvmResultsConverter = Fir2IrJvmResultsConverter(testServices)
     private val jsResultsConverter = Fir2IrJsResultsConverter(testServices)
 
-    override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? = when {
-        module.targetPlatform.isJvm() || module.targetPlatform.isCommon() -> {
-            jvmResultsConverter.transform(module, inputArtifact)
+    override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? {
+        if (module.directives.contains(DiagnosticsDirectives.SKIP_FIR2IR))
+            return null
+
+        return when {
+            module.targetPlatform.isJvm() || module.targetPlatform.isCommon() -> {
+                jvmResultsConverter.transform(module, inputArtifact)
+            }
+            module.targetPlatform.isJs() -> {
+                jsResultsConverter.transform(module, inputArtifact)
+            }
+            else -> error("Unsupported platform: ${module.targetPlatform}")
         }
-        module.targetPlatform.isJs() -> {
-            jsResultsConverter.transform(module, inputArtifact)
-        }
-        else -> error("Unsupported platform: ${module.targetPlatform}")
     }
 }

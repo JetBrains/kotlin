@@ -87,4 +87,12 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
     val RENDER_IR_DIAGNOSTICS_FULL_TEXT by directive(
         description = "Render IR diagnostic texts to .ir.diag.txt"
     )
+
+    val SKIP_FIR2IR by directive(
+        description = "Don't invoke Fir2Ir facade"
+    )
+
+    val SKIP_KLIB_SERIALIZATION by directive(
+        description = "Don't invoke Fir*KlibBackendFacade"
+    )
 }

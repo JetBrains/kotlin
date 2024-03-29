@@ -12,28 +12,28 @@ class Class {
     inline fun inlineMethod1() = "method1"
 
     fun testMethodFromThis() {
-        js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>method1()<!>}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>method1()<!> + "';"<!>)
+        js("var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>method1()<!>}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>method1()<!> + "';")
     }
 
     fun testInlineMethodFromThis() {
-        js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>inlineMethod1()<!>}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>inlineMethod1()<!> + "';"<!>)
+        js("var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>inlineMethod1()<!>}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>inlineMethod1()<!> + "';")
     }
 }
 
 fun testFunction() {
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>function1()<!>}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>function1()<!> + "';"<!>)
+    js("var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>function1()<!>}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>function1()<!> + "';")
 }
 
 fun testInlineFunction() {
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>inlineFunction1()<!>}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>inlineFunction1()<!> + "';"<!>)
+    js("var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>inlineFunction1()<!>}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>inlineFunction1()<!> + "';")
 }
 
 fun testMethod() {
     val c = Class()
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>c<!>.method1()}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>c<!>.method1() + "';"<!>)
+    js("var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>c<!>.method1()}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>c<!>.method1() + "';")
 }
 
 fun testInlineMethod() {
     val c = Class()
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>c<!>.inlineMethod1()}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>c<!>.inlineMethod1() + "';"<!>)
+    js("var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>c<!>.inlineMethod1()}' + '" + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>c<!>.inlineMethod1() + "';")
 }

@@ -9,22 +9,22 @@ val code = """
 """
 
 fun main(): Unit {
-    js(<!JSCODE_ERROR!>"var = 10;"<!>)
+    js("var = 10;")
 
-    js(<!JSCODE_ERROR!>"""var = 10;"""<!>)
+    js("""var = 10;""")
 
-    js(<!JSCODE_ERROR!>"""var
+    js("""var
       = 777;
-    """<!>)
+    """)
 
-    js(<!JSCODE_ERROR!>"""
+    js("""
     var = 777;
-    """<!>)
+    """)
 
-    js(<!JSCODE_ERROR!>"var " + " = " + "10;"<!>)
+    js("var " + " = " + "10;")
 
     val n = 10
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"var = $<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>n<!>;"<!>)
+    js("var = $<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>n<!>;")
 
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>code<!>)
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>code<!>)
 }

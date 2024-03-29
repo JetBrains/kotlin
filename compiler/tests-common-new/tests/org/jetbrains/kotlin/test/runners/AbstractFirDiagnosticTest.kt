@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
+import kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
+import kotlin.reflect.jvm.reflect
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
@@ -64,38 +66,6 @@ class LightTreeSyntaxDiagnosticsReporterHolder : TestService {
 }
 
 val TestServices.lightTreeSyntaxDiagnosticsReporterHolder: LightTreeSyntaxDiagnosticsReporterHolder? by TestServices.nullableTestServiceAccessor()
-
-abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS
-            }
-        }
-    }
-
-    override fun TestConfigurationBuilder.configuration() {
-        configureFirParser(parser)
-        baseFirDiagnosticTestConfiguration()
-
-        facadeStep(::Fir2IrResultsConverter)
-        irHandlersStep {
-            useHandlers(
-                ::IrDiagnosticsHandler
-            )
-        }
-
-        useAdditionalService(::LibraryProvider)
-
-        @OptIn(TestInfrastructureInternals::class)
-        useModuleStructureTransformers(DuplicateFileNameChecker, PlatformModuleProvider)
-    }
-}
-
-open class AbstractFirPsiWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.Psi)
-
-open class AbstractFirLightTreeWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.LightTree)
 
 fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
@@ -145,6 +115,23 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     }
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
+
+    val frontendFacadeName = frontendFacade(TestServices()).javaClass.simpleName
+    if (frontendFacadeName != "LowLevelFirFrontendFacade") {
+        // In CLI mode (when frontendFacade is FirFrontendFacade), Fir2Ir stage should be invoked and its diagnostics checked.
+        // In IDE mode (when frontendFacade is LowLevelFirFrontendFacade), Fir2Ir stage must NOT be invoked.
+        useAdditionalService(::LibraryProvider)
+        facadeStep(::Fir2IrResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
+            )
+        }
+        forTestsMatching("compiler/testData/diagnostics/tests/multiplatform/*") {
+            @OptIn(TestInfrastructureInternals::class)
+            useModuleStructureTransformers(DuplicateFileNameChecker, PlatformModuleProvider)
+        }
+    }
 
     forTestsMatching("compiler/testData/diagnostics/*") {
         configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)

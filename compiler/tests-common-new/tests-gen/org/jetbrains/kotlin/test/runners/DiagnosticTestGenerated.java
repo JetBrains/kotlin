@@ -7248,6 +7248,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("divideByZeroInConstantContext.kt")
+        public void testDivideByZeroInConstantContext() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/divideByZeroInConstantContext.kt");
+        }
+
+        @Test
         @TestMetadata("duplicateLabelWithNonTrivialCondition_disabled.kt")
         public void testDuplicateLabelWithNonTrivialCondition_disabled() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/duplicateLabelWithNonTrivialCondition_disabled.kt");

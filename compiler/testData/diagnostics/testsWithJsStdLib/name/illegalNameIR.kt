@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// KT-67057: Spaces in names cause crashes in Klib Serializer
+// SKIP_KLIB_SERIALIZATION
 // SKIP_TXT
 // IGNORE_BACKEND: JS
 // !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping

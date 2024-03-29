@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -75,18 +77,15 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
                 ::FirScopeDumpHandler,
             )
         }
-    }
 
-    final override fun TestConfigurationBuilder.configuration() {
-        configureTestBuilder(this@configuration)
-    }
-}
-
-abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
-    override fun configureTestBuilder(builder: TestConfigurationBuilder) = builder.apply {
-        super.configureTestBuilder(builder)
-
+        useAdditionalService(::LibraryProvider)
         facadeStep(::Fir2IrJsResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
+            )
+        }
+
         facadeStep { FirJsKlibBackendFacade(it, true) }
 
         // TODO: Currently do not run lowerings, because they don't report anything;
@@ -97,10 +96,11 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
             useHandlers(::KlibBackendDiagnosticsHandler)
         }
     }
+
+    final override fun TestConfigurationBuilder.configuration() {
+        configureTestBuilder(this@configuration)
+    }
 }
 
 abstract class AbstractFirPsiJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(FirParser.LightTree)
-
-abstract class AbstractFirPsiJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.Psi)
-abstract class AbstractFirLightTreeJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.LightTree)
