@@ -6,7 +6,7 @@ KtDataFlowExitPointSnapshot:
   hasJumps = true
   hasMultipleJumpKinds = false
   hasMultipleJumpTargets = false
-  loopJumpExpressions = [
+  jumpExpressions = [
     continue
   ]
   returnValueType = null

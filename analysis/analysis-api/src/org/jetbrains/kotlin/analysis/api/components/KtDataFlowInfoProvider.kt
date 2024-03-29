@@ -46,10 +46,10 @@ public class KtDataFlowExitPointSnapshot(
     public val returnValueType: KtType?,
 
     /**
-     * `break` and `continue` jump expressions.
+     * All jump expressions.
      * @see [hasJumps] for the definition of jumps.
      */
-    public val loopJumpExpressions: List<KtExpression>,
+    public val jumpExpressions: List<KtExpression>,
 
     /**
      * `true` if there are any control-flow statements that jump outside given statements.

@@ -4,7 +4,9 @@ KtDataFlowExitPointSnapshot:
   hasJumps = true
   hasMultipleJumpKinds = false
   hasMultipleJumpTargets = false
-  loopJumpExpressions = []
+  jumpExpressions = [
+    return it + 1
+  ]
   returnValueType = kotlin.Int
   valuedReturnExpressions = [
     return it + 1

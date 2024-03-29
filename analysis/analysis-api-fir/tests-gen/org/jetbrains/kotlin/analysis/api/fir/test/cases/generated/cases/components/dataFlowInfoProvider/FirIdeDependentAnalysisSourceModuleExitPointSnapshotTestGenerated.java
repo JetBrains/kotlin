@@ -307,6 +307,12 @@ public class FirIdeDependentAnalysisSourceModuleExitPointSnapshotTestGenerated e
       public void testBreak4() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps/break4.kt");
       }
+
+      @Test
+      @TestMetadata("nonLocalReturn.kt")
+      public void testNonLocalReturn() {
+        runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps/nonLocalReturn.kt");
+      }
     }
   }
 

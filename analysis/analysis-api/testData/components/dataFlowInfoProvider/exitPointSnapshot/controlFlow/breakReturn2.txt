@@ -10,7 +10,8 @@ KtDataFlowExitPointSnapshot:
   hasJumps = true
   hasMultipleJumpKinds = true
   hasMultipleJumpTargets = true
-  loopJumpExpressions = [
+  jumpExpressions = [
+    return 1,
     break
   ]
   returnValueType = kotlin.Int

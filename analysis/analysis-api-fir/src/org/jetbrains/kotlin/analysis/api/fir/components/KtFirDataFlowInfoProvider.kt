@@ -112,15 +112,21 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
 
         val hasEscapingJumps = computeHasEscapingJumps(statements.first(), firStatements.first(), firEscapingCandidates)
 
-        val loopJumpExpressions = ArrayList<KtExpression>(collector.firBreakExpressions.size + collector.firContinueExpressions.size)
-        collector.firBreakExpressions.mapNotNullTo(loopJumpExpressions) { it.psi as? KtExpression }
-        collector.firContinueExpressions.mapNotNullTo(loopJumpExpressions) { it.psi as? KtExpression }
+        val jumpExpressions = buildList {
+            fun add(expressions: List<FirElement>) {
+                expressions.mapNotNullTo(this) { it.psi as? KtExpression }
+            }
+
+            add(collector.firReturnExpressions)
+            add(collector.firBreakExpressions)
+            add(collector.firContinueExpressions)
+        }
 
         return KtDataFlowExitPointSnapshot(
             defaultExpressionInfo = defaultExpressionInfo,
             valuedReturnExpressions = firValuedReturnExpressions.mapNotNull { it.psi as? KtExpression },
             returnValueType = computeReturnType(firValuedReturnExpressions),
-            loopJumpExpressions = loopJumpExpressions,
+            jumpExpressions = jumpExpressions,
             hasJumps = collector.hasJumps,
             hasEscapingJumps = hasEscapingJumps,
             hasMultipleJumpKinds = collector.hasMultipleJumpKinds,
