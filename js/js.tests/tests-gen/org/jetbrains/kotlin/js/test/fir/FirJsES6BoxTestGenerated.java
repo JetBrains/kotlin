@@ -3197,6 +3197,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("exportWithJsStatic.kt")
+    public void testExportWithJsStatic() {
+      runTest("js/js.translator/testData/box/export/exportWithJsStatic.kt");
+    }
+
+    @Test
     @TestMetadata("nonIndetifierModuleName.kt")
     public void testNonIndetifierModuleName() {
       runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");

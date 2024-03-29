@@ -300,3 +300,14 @@ public annotation class JsExternalInheritorsOnly
 @Target(VALUE_PARAMETER)
 @SinceKotlin("1.9")
 public annotation class JsExternalArgument
+
+/**
+ * Specifies that an additional static method is generated from the annotated companion object member if it's a function.
+ * If the member is a property, additional static getter/setter methods are generated.
+ */
+@ExperimentalJsStatic
+@Retention(AnnotationRetention.BINARY)
+@Target(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
+@MustBeDocumented
+@SinceKotlin("2.0")
+public actual annotation class JsStatic

@@ -442,6 +442,38 @@ public class FirJsTypeScriptExportTestGenerated extends AbstractFirJsTypeScriptE
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/js-static")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Js_static {
+    @Test
+    public void testAllFilesPresentInJs_static() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js-static"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("js-static.kt")
+    public void testJs_static() {
+      runTest("js/js.translator/testData/typescript-export/js/js-static/js-static.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/js-static-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Js_static_in_exported_file {
+    @Test
+    public void testAllFilesPresentInJs_static_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js-static-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("js-static.kt")
+    public void testJs_static() {
+      runTest("js/js.translator/testData/typescript-export/js/js-static-in-exported-file/js-static.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/member-properties")
   @TestDataPath("$PROJECT_ROOT")
   public class Member_properties {

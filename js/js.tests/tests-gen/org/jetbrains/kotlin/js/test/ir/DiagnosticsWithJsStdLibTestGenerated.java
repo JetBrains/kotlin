@@ -80,6 +80,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Test
+  @TestMetadata("jsStatic.kt")
+  public void testJsStatic() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsStatic.kt");
+  }
+
+  @Test
   @TestMetadata("localClassMetadata.kt")
   public void testLocalClassMetadata() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/localClassMetadata.kt");

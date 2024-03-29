@@ -3396,6 +3396,9 @@ public abstract interface annotation class kotlin/js/ExperimentalJsFileName : ja
 public abstract interface annotation class kotlin/js/ExperimentalJsReflectionCreateInstance : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/js/ExperimentalJsStatic : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/jvm/ImplicitlyActualizedByJvmDeclaration : java/lang/annotation/Annotation {
 }
 
