@@ -349,11 +349,7 @@ class PSICallResolver(
     private fun CallResolutionResult.isEmpty(): Boolean =
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>() != null
 
-    private fun Collection<ResolutionCandidate>.areAllFailed() =
-        all {
-            @OptIn(ApplicabilityDetail::class)
-            !it.resultingApplicability.isSuccess
-        }
+    private fun Collection<ResolutionCandidate>.areAllFailed() = all { !it.isSuccessful }
 
     private fun Collection<ResolutionCandidate>.areAllFailedWithInapplicableWrongReceiver() =
         all {

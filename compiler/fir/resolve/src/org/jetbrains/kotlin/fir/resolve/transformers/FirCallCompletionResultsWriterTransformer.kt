@@ -166,8 +166,7 @@ class FirCallCompletionResultsWriterTransformer(
             // fun f(s: String, action: (String.() -> Unit)?) {
             //    s.action?.let { it() }
             //}
-            @OptIn(ApplicabilityDetail::class)
-            if (subCandidate.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER && subCandidate.applicability.isSuccess) {
+            if (subCandidate.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER && subCandidate.isSuccessful) {
                 replaceExplicitReceiver(dispatchReceiver)
             }
         }
