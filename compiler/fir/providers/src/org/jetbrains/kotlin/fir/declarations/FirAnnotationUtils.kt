@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
+// --------------------------- annotation -> type/class ---------------------------
+
 fun FirAnnotation.toAnnotationClassLikeType(session: FirSession): ConeClassLikeType? =
     // this cast fails when we have generic-typed annotations @T
     (annotationTypeRef.coneType as? ConeClassLikeType)?.fullyExpandedType(session)
@@ -42,7 +44,9 @@ fun FirAnnotation.toAnnotationClassLikeSymbol(session: FirSession): FirClassLike
 fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClass? =
     toAnnotationClassLikeSymbol(session)?.fir as? FirRegularClass
 
-private val sourceName = Name.identifier("SOURCE")
+// --------------------------- annotations lookup/filtering ---------------------------
+
+private val sourceName: Name = Name.identifier("SOURCE")
 
 fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     this.filter { annotation ->
@@ -111,16 +115,7 @@ fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, s
     }
 }
 
-fun FirExpression.unwrapVarargValue(): List<FirExpression> {
-    return when (this) {
-        is FirVarargArgumentsExpression -> when (val first = arguments.firstOrNull()) {
-            is FirWrappedArgumentExpression -> first.expression.unwrapVarargValue()
-            else -> arguments
-        }
-        is FirArrayLiteral -> arguments
-        else -> listOf(this)
-    }
-}
+// --------------------------- evaluated arguments ---------------------------
 
 fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
     argumentMapping.mapping[name]?.let { return it }
@@ -161,21 +156,6 @@ fun FirGetClassCall.getTargetType(): ConeKotlinType? {
     return resolvedType.typeArguments.getOrNull(0)?.type
 }
 
-val FirAnnotation.resolved: Boolean
-    get() {
-        if (annotationTypeRef !is FirResolvedTypeRef) return false
-        if (this !is FirAnnotationCall) return true
-        return calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference
-    }
-
-private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
-    ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
-
-fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any {
-    val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
-    lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
-}
-
 data class EnumValueArgumentInfo(val enumClassId: ClassId?, val enumEntryName: Name)
 
 fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
@@ -192,4 +172,32 @@ fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
         is FirEnumEntryDeserializedAccessExpression -> EnumValueArgumentInfo(enumClassId, enumEntryName)
         else -> null
     }
+}
+
+// --------------------------- other utilities ---------------------------
+
+fun FirExpression.unwrapVarargValue(): List<FirExpression> {
+    return when (this) {
+        is FirVarargArgumentsExpression -> when (val first = arguments.firstOrNull()) {
+            is FirWrappedArgumentExpression -> first.expression.unwrapVarargValue()
+            else -> arguments
+        }
+        is FirArrayLiteral -> arguments
+        else -> listOf(this)
+    }
+}
+
+val FirAnnotation.resolved: Boolean
+    get() {
+        if (annotationTypeRef !is FirResolvedTypeRef) return false
+        if (this !is FirAnnotationCall) return true
+        return calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference
+    }
+
+private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
+    ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
+
+fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>): Boolean = annotations.any {
+    val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
+    lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
 }
