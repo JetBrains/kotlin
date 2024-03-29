@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.transformers
+package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
@@ -15,13 +15,10 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.isAnnotationConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.diagnostics.canBeEvaluatedAtCompileTime
-import org.jetbrains.kotlin.fir.resolve.diagnostics.canBeUsedForConstVal
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -184,7 +181,7 @@ object FirExpressionEvaluator {
         }
 
         override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?): FirEvaluatorResult {
-            val propertySymbol = propertyAccessExpression.toReference(session)?.toResolvedCallableSymbol()
+            val propertySymbol = propertyAccessExpression.calleeReference.toResolvedCallableSymbol()
                 ?: return NotEvaluated
 
             if (propertySymbol.wasVisited()) {

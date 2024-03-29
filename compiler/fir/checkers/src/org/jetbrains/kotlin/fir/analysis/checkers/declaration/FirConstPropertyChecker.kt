@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConstantArgumentKind
-import org.jetbrains.kotlin.fir.resolve.diagnostics.canBeUsedForConstVal
-import org.jetbrains.kotlin.fir.resolve.diagnostics.computeConstantExpressionKind
+import org.jetbrains.kotlin.fir.expressions.ConstantArgumentKind
+import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
+import org.jetbrains.kotlin.fir.expressions.computeConstantExpressionKind
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneType
