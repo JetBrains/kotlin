@@ -1353,6 +1353,11 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("compilationErrorConstDivByZero.args")
+    public void testCompilationErrorConstDivByZero() {
+      runTest("compiler/testData/cli/js/compilationErrorConstDivByZero.args");
+    }
+
     @TestMetadata("compilationErrorK2.args")
     public void testCompilationErrorK2() {
       runTest("compiler/testData/cli/js/compilationErrorK2.args");

@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/compilationErrorConstDivByZero.kt
+-language-version
+2.0
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+compilationErrorConstDivByZero.kt
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main
