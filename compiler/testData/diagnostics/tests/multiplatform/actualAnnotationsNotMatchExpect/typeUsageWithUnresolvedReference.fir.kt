@@ -3,7 +3,7 @@
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun <T : @Ann Any> foo()<!>
+expect fun <T : @Ann Any> foo()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

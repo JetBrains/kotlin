@@ -1,9 +1,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>(i: Int) {
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>(i: Int) {
     fun foo()
-}<!>
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

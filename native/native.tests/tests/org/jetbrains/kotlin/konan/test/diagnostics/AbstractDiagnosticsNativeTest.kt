@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -160,6 +158,11 @@ abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser
         useAdditionalService(::LibraryProvider)
 
         facadeStep(::Fir2IrNativeResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
+            )
+        }
         facadeStep(::FirNativeKlibBackendFacade)
 
         klibArtifactsHandlersStep {

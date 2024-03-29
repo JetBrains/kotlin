@@ -5,21 +5,21 @@
 
 // MODULE: common
 // FILE: common.kt
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_OVERLOADS!>fun foo(): String<!> = ""<!>
+<!CONFLICTING_OVERLOADS!>fun foo(): String<!> = ""
 
 expect class A
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!><!CONFLICTING_OVERLOADS!>fun bar(x: A): Int<!> = 2<!>
+<!CONFLICTING_OVERLOADS!>fun bar(x: A): Int<!> = 2
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR, CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION")
-val param = 0<!>
+@Suppress("REDECLARATION")
+val param = 0
 
 // MODULE: platform()()(common)
 // FILE: platform.kt
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun foo(): Int = 0<!>
+fun foo(): Int = 0
 
 class B
 actual typealias A = B
-<!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun bar(x: B): Int = 3<!>
+fun bar(x: B): Int = 3
 
-<!CONFLICTING_KLIB_SIGNATURES_ERROR, CONFLICTING_KLIB_SIGNATURES_ERROR!>@Suppress("REDECLARATION")
-val param = 0<!>
+@Suppress("REDECLARATION")
+val param = 0

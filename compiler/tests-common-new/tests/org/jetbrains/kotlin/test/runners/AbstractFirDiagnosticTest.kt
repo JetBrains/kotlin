@@ -65,38 +65,6 @@ class LightTreeSyntaxDiagnosticsReporterHolder : TestService {
 
 val TestServices.lightTreeSyntaxDiagnosticsReporterHolder: LightTreeSyntaxDiagnosticsReporterHolder? by TestServices.nullableTestServiceAccessor()
 
-abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS
-            }
-        }
-    }
-
-    override fun TestConfigurationBuilder.configuration() {
-        configureFirParser(parser)
-        baseFirDiagnosticTestConfiguration()
-
-        facadeStep(::Fir2IrResultsConverter)
-        irHandlersStep {
-            useHandlers(
-                ::IrDiagnosticsHandler
-            )
-        }
-
-        useAdditionalService(::LibraryProvider)
-
-        @OptIn(TestInfrastructureInternals::class)
-        useModuleStructureTransformers(DuplicateFileNameChecker, PlatformModuleProvider)
-    }
-}
-
-open class AbstractFirPsiWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.Psi)
-
-open class AbstractFirLightTreeWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.LightTree)
-
 fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
 ) {
@@ -145,6 +113,22 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     }
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
+
+    if (frontendFacade(TestServices()).javaClass.simpleName == "FirFrontendFacade") {
+        // In CLI mode (when frontendFacade is FirFrontendFacade), Fir2Ir stage should be invoked and its diagnostics checked.
+        // In IDE mode (when frontendFacade is LLFir), Fir2Ir stage must NOT be invoked.
+        useAdditionalService(::LibraryProvider)
+        facadeStep(::Fir2IrResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
+            )
+        }
+        forTestsMatching("compiler/testData/diagnostics/tests/multiplatform/*") {
+            @OptIn(TestInfrastructureInternals::class)
+            useModuleStructureTransformers(DuplicateFileNameChecker, PlatformModuleProvider)
+        }
+    }
 
     forTestsMatching("compiler/testData/diagnostics/*") {
         configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)

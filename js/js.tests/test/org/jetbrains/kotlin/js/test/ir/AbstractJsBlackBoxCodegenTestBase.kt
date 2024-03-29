@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandlerNotDisablingNextSteps
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersForCodegenTest
@@ -158,7 +158,7 @@ fun <
     }
 
     firHandlersStep {
-        useHandlers(::FirDiagnosticsHandler)
+        useHandlers(::FirDiagnosticsHandlerNotDisablingNextSteps)
     }
 
     facadeStep(frontendToBackendConverter)

@@ -19,9 +19,9 @@ interface I2
 
 expect fun <T> severalBounds() where T : I1, T : @Ann I2
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun <T> severalBoundsDifferentOrder() where T : I2, T : @Ann I1<!>
+expect fun <T> severalBoundsDifferentOrder() where T : I2, T : @Ann I1
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun <T> lessTypeParamBoundsOnActual() where T : I1, T : @Ann I2<!>
+expect fun <T> lessTypeParamBoundsOnActual() where T : I1, T : @Ann I2
 
 expect fun @Ann Any.onReceiver()
 
@@ -51,7 +51,7 @@ expect fun qualifierPartsMatching(arg: WithNested<String>.Nested<@Ann String>)
 
 expect fun qualifierPartsNonMatching(arg: WithNested<String>.Nested<@Ann String>)
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun funTypeVsUserType(arg: () -> @Ann String)<!>
+expect fun funTypeVsUserType(arg: () -> @Ann String)
 
 expect fun funcTypeReturnType(arg: () -> @Ann Any)
 
@@ -61,46 +61,46 @@ expect fun funcTypeArgType(arg: (arg: @Ann Any) -> Unit)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun valueParameterType(arg: String) {}<!>
+actual fun valueParameterType(arg: String) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun returnType(): String = ""<!>
+actual fun returnType(): String = ""
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T : Any> methodTypeParamBound() {}<!>
+actual fun <T : Any> methodTypeParamBound() {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClassTypeParamBound<T : Any><!>
+actual class OnClassTypeParamBound<T : Any>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> typeParamBoundInWhere() where T : Any {}<!>
+actual fun <T> typeParamBoundInWhere() where T : Any {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> severalBounds() where T : I1, T : I2 {}<!>
+actual fun <T> severalBounds() where T : I1, T : I2 {}
 
 actual fun <T> <!ACTUAL_WITHOUT_EXPECT!>severalBoundsDifferentOrder<!>() where T : @Ann I1, T : I2 {}
 
 actual fun <T> <!ACTUAL_WITHOUT_EXPECT!>lessTypeParamBoundsOnActual<!>() where T : @Ann I2 {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun Any.onReceiver() {}<!>
+actual fun Any.onReceiver() {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClassSuper : I1<!>
+actual class OnClassSuper : I1
 
 actual class OnClassSuperDifferentOrder : @Ann I2, I1
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClassSuperMoreOnActual : I1, I2<!>
+actual class OnClassSuperMoreOnActual : I1, I2
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClassSuperTypeParams<T> : I3<T><!>
+actual class OnClassSuperTypeParams<T> : I3<T>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun deepInParamsTypes(arg: I3<I3<Any>>) {}<!>
+actual fun deepInParamsTypes(arg: I3<I3<Any>>) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun starProjection(arg: I4<*, Any>) {}<!>
+actual fun starProjection(arg: I4<*, Any>) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> typeArgWithVariance(t: I3<out T>) {}<!>
+actual fun <T> typeArgWithVariance(t: I3<out T>) {}
 
 actual fun qualifierPartsMatching(arg: WithNested<String>.Nested<@Ann String>) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun qualifierPartsNonMatching(arg: WithNested<@Ann String>.Nested<String>) {}<!>
+actual fun qualifierPartsNonMatching(arg: WithNested<@Ann String>.Nested<String>) {}
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>funTypeVsUserType<!>(arg: kotlin.jvm.functions.Function0<String>) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun funcTypeReturnType(arg: () -> Any) {}<!>
+actual fun funcTypeReturnType(arg: () -> Any) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun funcTypeReceiverType(arg: Any.() -> Unit) {}<!>
+actual fun funcTypeReceiverType(arg: Any.() -> Unit) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun funcTypeArgType(arg: (arg: Any) -> Unit) {}<!>
+actual fun funcTypeArgType(arg: (arg: Any) -> Unit) {}

@@ -4,18 +4,18 @@
 
 // ERROR_POLICY: SEMANTIC
 fun test() {
-    js(<!JSCODE_NO_JAVASCRIPT_PRODUCED!>""<!>)
-    js(<!JSCODE_NO_JAVASCRIPT_PRODUCED!>" "<!>)
-    js(<!JSCODE_NO_JAVASCRIPT_PRODUCED!>"""
-               """<!>)
+    js("")
+    js(" ")
+    js("""
+               """)
 
     val empty = ""
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>empty<!>)
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>empty<!>)
 
     val whitespace = "  "
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>whitespace<!>)
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>whitespace<!>)
 
     val multiline = """
     """
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>multiline<!>)
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>multiline<!>)
 }

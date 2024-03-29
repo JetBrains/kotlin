@@ -2,7 +2,7 @@
 // FILE: common.kt
 
 interface A
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect fun <T : A> foo(t: T): String<!>
+expect fun <T : A> foo(t: T): String
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

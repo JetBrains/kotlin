@@ -59,7 +59,7 @@ object BackendKinds {
     }
 
     fun fromTargetBackend(targetBackend: TargetBackend?): BackendKind<*> {
-        if (targetBackend == null) return BackendKind.NoBackend
+        if (targetBackend == null) return IrBackend // Fir2Ir must be invoked by default to check its diagnostics
         return if (targetBackend.isIR) IrBackend
         else ClassicBackend
     }

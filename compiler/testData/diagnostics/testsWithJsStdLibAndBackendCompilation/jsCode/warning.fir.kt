@@ -4,12 +4,12 @@
 
 // ERROR_POLICY: SEMANTIC
 fun main(): Unit {
-    js(<!JSCODE_WARNING!>"var a = 08;"<!>)
+    js("var a = 08;")
 
-    js(<!JSCODE_WARNING!>"""var a =
+    js("""var a =
 
-        08;"""<!>)
+        08;""")
 
     val code = "var a = 08;"
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>code<!>)
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>code<!>)
 }

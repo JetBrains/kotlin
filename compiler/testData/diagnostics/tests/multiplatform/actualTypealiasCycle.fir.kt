@@ -2,10 +2,10 @@
 // FILE: common.kt
 
 open class A {}
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}("B; B; some supertypes are missing in the actual declaration")!>expect class B : A<!>
+expect class B : A
 
 expect open class A2() {}
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}("B2; B2; some supertypes are missing in the actual declaration")!>expect open class B2 : A2 {}<!>
+expect open class B2 : A2 {}
 
 expect open class A3
 

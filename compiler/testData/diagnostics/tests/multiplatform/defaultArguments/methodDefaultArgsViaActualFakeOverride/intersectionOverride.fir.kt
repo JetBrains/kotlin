@@ -1,8 +1,8 @@
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect interface Foo {
-    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>fun foo(p: Int = 1)<!>
-}<!>
+expect interface Foo {
+    fun foo(p: Int = 1)
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
