@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -45,17 +48,15 @@ object FirNativeObjCNameUtilities {
     }
 
     private fun FirAnnotationContainer.getObjCName(session: FirSession): ObjCName? =
-        getAnnotationByClassId(objCNameClassId, session)?.let(::ObjCName)
+        getAnnotationByClassId(objCNameClassId, session)?.let { ObjCName(it, session) }
 
     private fun FirBasedSymbol<*>.getObjCName(session: FirSession): ObjCName? =
-        getAnnotationByClassId(objCNameClassId, session)?.let(::ObjCName)
+        getAnnotationByClassId(objCNameClassId, session)?.let { ObjCName(it, session) }
 
-    class ObjCName(
-        val annotation: FirAnnotation
-    ) {
-        val name: String? = annotation.getStringArgument(StandardNames.NAME)
-        val swiftName: String? = annotation.getStringArgument(swiftNameName)
-        val exact: Boolean = annotation.getBooleanArgument(exactName) ?: false
+    class ObjCName(val annotation: FirAnnotation, session: FirSession) {
+        val name: String? = annotation.getStringArgument(StandardNames.NAME, session)
+        val swiftName: String? = annotation.getStringArgument(swiftNameName, session)
+        val exact: Boolean = annotation.getBooleanArgument(exactName, session) ?: false
 
         override fun equals(other: Any?): Boolean =
             other is ObjCName && name == other.name && swiftName == other.swiftName && exact == other.exact

@@ -6,9 +6,14 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -19,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.PrivateForInline
 
 // --------------------------- annotation -> type/class ---------------------------
 
@@ -134,22 +140,25 @@ fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
     return if (!resolved) arguments.firstOrNull() else null
 }
 
-fun FirAnnotation.getBooleanArgument(name: Name): Boolean? = getPrimitiveArgumentValue(name)
-fun FirAnnotation.getStringArgument(name: Name): String? = getPrimitiveArgumentValue(name)
-fun FirAnnotation.getStringArrayArgument(name: Name): List<String>? {
-    val argument = findArgumentByName(name) as? FirArrayLiteral ?: return null
-    return argument.arguments.mapNotNull { (it as? FirLiteralExpression<*>)?.value as? String }
+fun FirAnnotation.getBooleanArgument(name: Name, session: FirSession): Boolean? = getPrimitiveArgumentValue(name, session)
+fun FirAnnotation.getStringArgument(name: Name, session: FirSession): String? = getPrimitiveArgumentValue(name, session)
+
+private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name, session: FirSession): T? {
+    val argument = findArgumentByName(name) ?: return null
+    val literal = argument.evaluateAs<FirLiteralExpression<*>>(session) ?: return null
+    return literal.value as? T
 }
 
-private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name): T? {
-    return findArgumentByName(name)?.let { expression ->
-        (expression as? FirLiteralExpression<*>)?.value as? T
-    }
+fun FirAnnotation.getStringArrayArgument(name: Name, session: FirSession): List<String>? {
+    val argument = findArgumentByName(name) ?: return null
+    val arrayLiteral = argument.evaluateAs<FirArrayLiteral>(session) ?: return null
+    return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression<*>)?.value as? String }
 }
 
-fun FirAnnotation.getKClassArgument(name: Name): ConeKotlinType? {
-    val argument = findArgumentByName(name) as? FirGetClassCall ?: return null
-    return argument.getTargetType()
+fun FirAnnotation.getKClassArgument(name: Name, session: FirSession): ConeKotlinType? {
+    val argument = findArgumentByName(name) ?: return null
+    val getClassCall = argument.evaluateAs<FirGetClassCall>(session) ?: return null
+    return getClassCall.getTargetType()
 }
 
 fun FirGetClassCall.getTargetType(): ConeKotlinType? {
@@ -172,6 +181,16 @@ fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
         is FirEnumEntryDeserializedAccessExpression -> EnumValueArgumentInfo(enumClassId, enumEntryName)
         else -> null
     }
+}
+
+@PrivateForInline
+val FirEvaluatorResult.result: FirElement?
+    get() = (this as? FirEvaluatorResult.Evaluated)?.result
+
+@OptIn(PrivateForInline::class)
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+inline fun <reified T : FirElement> FirExpression.evaluateAs(session: FirSession): @kotlin.internal.NoInfer T? {
+    return FirExpressionEvaluator.evaluateExpression(this, session)?.result as? T
 }
 
 // --------------------------- other utilities ---------------------------
