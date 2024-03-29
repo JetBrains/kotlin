@@ -182,6 +182,14 @@ fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {
             ::FirScopeDumpHandler,
         )
     }
+
+    useAdditionalService(::LibraryProvider)
+    facadeStep(::Fir2IrNativeResultsConverter)
+    irHandlersStep {
+        useHandlers(
+            ::IrDiagnosticsHandler,
+        )
+    }
 }
 
 

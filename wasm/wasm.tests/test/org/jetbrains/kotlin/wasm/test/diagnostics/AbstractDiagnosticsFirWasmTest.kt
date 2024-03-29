@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.wasm.test.diagnostics
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrWasmResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -63,6 +66,14 @@ abstract class AbstractFirWasmDiagnosticTestBase(
                 ::FirCfgConsistencyHandler,
                 ::FirResolvedTypesVerifier,
                 ::FirScopeDumpHandler,
+            )
+        }
+
+        useAdditionalService(::LibraryProvider)
+        facadeStep(::Fir2IrWasmResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
             )
         }
 

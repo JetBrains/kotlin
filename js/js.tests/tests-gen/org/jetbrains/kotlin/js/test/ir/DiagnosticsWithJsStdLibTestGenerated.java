@@ -138,6 +138,32 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/constantEvaluator")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ConstantEvaluator {
+    @Test
+    public void testAllFilesPresentInConstantEvaluator() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/constantEvaluator"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/constantEvaluator/constant")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Constant {
+      @Test
+      public void testAllFilesPresentInConstant() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/constantEvaluator/constant"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("divideByZeroInConstantContext.kt")
+      public void testDivideByZeroInConstantContext() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/constantEvaluator/constant/divideByZeroInConstantContext.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class DynamicTypes {
