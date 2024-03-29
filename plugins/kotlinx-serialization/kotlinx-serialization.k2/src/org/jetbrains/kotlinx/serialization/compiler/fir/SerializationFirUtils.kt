@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -119,10 +118,10 @@ fun FirClassSymbol<*>.hasSerializableAnnotationWithArgs(session: FirSession): Bo
 }
 
 internal fun FirBasedSymbol<*>.getSerializableWith(session: FirSession): ConeKotlinType? =
-    serializableAnnotation(needArguments = true, session)?.getKClassArgument(AnnotationParameterNames.WITH)
+    serializableAnnotation(needArguments = true, session)?.getKClassArgument(AnnotationParameterNames.WITH, session)
 
 internal fun List<FirAnnotation>.getSerializableWith(session: FirSession): ConeKotlinType? =
-    serializableAnnotation(session)?.getKClassArgument(AnnotationParameterNames.WITH)
+    serializableAnnotation(session)?.getKClassArgument(AnnotationParameterNames.WITH, session)
 
 fun FirAnnotation.getGetKClassArgument(name: Name): FirGetClassCall? {
     return findArgumentByName(name) as? FirGetClassCall
@@ -134,7 +133,7 @@ internal fun FirClassSymbol<*>.getSerializerAnnotation(session: FirSession): Fir
 // ---------------------- class utils ----------------------
 internal fun FirClassSymbol<*>.getSerializerForClass(session: FirSession): ConeKotlinType? = resolvedAnnotationsWithArguments
     .getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId, session)
-    ?.getKClassArgument(AnnotationParameterNames.FOR_CLASS)
+    ?.getKClassArgument(AnnotationParameterNames.FOR_CLASS, session)
 
 internal fun FirClassLikeDeclaration.getSerializerFor(session: FirSession): FirGetClassCall? =
     getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId, session)

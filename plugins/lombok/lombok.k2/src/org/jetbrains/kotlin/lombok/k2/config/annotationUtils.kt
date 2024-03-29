@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.lombok.k2.config
 
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.evaluateAs
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.expressions.*
@@ -14,13 +16,17 @@ import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.utils.trimToNull
 import org.jetbrains.kotlin.name.Name
 
-fun FirAnnotation.getAccessLevel(field: Name = LombokConfigNames.VALUE): AccessLevel {
-    val value = getArgumentAsString(field) ?: return AccessLevel.PUBLIC
+fun FirAnnotation.getAccessLevel(field: Name, session: FirSession): AccessLevel {
+    val value = getArgumentAsString(field, session) ?: return AccessLevel.PUBLIC
     return AccessLevel.valueOf(value)
 }
 
-private fun FirAnnotation.getArgumentAsString(field: Name): String? {
-    val argument = findArgumentByName(field) ?: return null
+fun FirAnnotation.getAccessLevel(session: FirSession): AccessLevel {
+    return getAccessLevel(LombokConfigNames.VALUE, session)
+}
+
+private fun FirAnnotation.getArgumentAsString(field: Name, session: FirSession): String? {
+    val argument = findArgumentByName(field)?.evaluateAs<FirExpression>(session) ?: return null
     return when (argument) {
         is FirLiteralExpression<*> -> argument.value as? String
         is FirEnumEntryDeserializedAccessExpression -> argument.enumEntryName.identifier
@@ -37,11 +43,11 @@ private fun FirAnnotation.getArgumentAsString(field: Name): String? {
     }
 }
 
-fun getVisibility(annotation: FirAnnotation, field: Name = LombokConfigNames.VALUE): Visibility {
-    return annotation.getAccessLevel(field).toVisibility()
+fun FirAnnotation.getVisibility(field: Name, session: FirSession): Visibility {
+    return getAccessLevel(field, session).toVisibility()
 }
 
-fun FirAnnotation.getNonBlankStringArgument(name: Name): String? = getStringArgument(name)?.trimToNull()
+fun FirAnnotation.getNonBlankStringArgument(name: Name, session: FirSession): String? = getStringArgument(name, session)?.trimToNull()
 
 object LombokConfigNames {
     val VALUE = Name.identifier("value")

@@ -22,18 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
@@ -136,7 +127,7 @@ internal val FirResolvedQualifier.isImplicitDispatchReceiver: Boolean
 fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
     val annotationCalls = getAnnotationsByClassId(JvmStandardClassIds.Annotations.JvmName, session)
     return annotationCalls.firstNotNullOfOrNull { call ->
-        call.getStringArgument(StandardNames.NAME)
+        call.getStringArgument(StandardNames.NAME, session)
             ?.takeIf { target == null || call.useSiteTarget == target }
     }
 }

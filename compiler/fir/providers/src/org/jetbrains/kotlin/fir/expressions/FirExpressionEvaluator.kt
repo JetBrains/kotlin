@@ -75,6 +75,11 @@ object FirExpressionEvaluator {
         return argumentMapping.mapValues { (_, expression) -> expression.evaluate(session) }
     }
 
+    fun evaluateExpression(expression: FirExpression, session: FirSession): FirEvaluatorResult? {
+        if (!expression.canBeEvaluated(session)) return null
+        return expression.evaluate(session)
+    }
+
     private fun FirExpression?.canBeEvaluated(session: FirSession): Boolean {
         val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
         if (this == null || intrinsicConstEvaluation || this is FirLazyExpression || !isResolved) return false

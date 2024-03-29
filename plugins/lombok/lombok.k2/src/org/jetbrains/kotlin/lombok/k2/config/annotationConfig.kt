@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.k2.config
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
@@ -51,29 +52,29 @@ fun List<FirAnnotation>.findAnnotation(classId: ClassId): FirAnnotation? {
 
 abstract class ConeAnnotationCompanion<T>(val name: ClassId) {
 
-    abstract fun extract(annotation: FirAnnotation): T
+    abstract fun extract(annotation: FirAnnotation, session: FirSession): T
 
-    fun getOrNull(annotated: FirAnnotationContainer): T? {
-        return annotated.annotations.findAnnotation(name)?.let(this::extract)
+    fun getOrNull(annotated: FirAnnotationContainer, session: FirSession): T? {
+        return annotated.annotations.findAnnotation(name)?.let { this.extract(it, session) }
     }
 }
 
 abstract class ConeAnnotationAndConfigCompanion<T>(val annotationName: ClassId) {
 
-    abstract fun extract(annotation: FirAnnotation?, config: LombokConfig): T
+    abstract fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): T
 
     /**
      * Get from annotation or config or default
      */
-    fun get(annotated: FirAnnotationContainer, config: LombokConfig): T =
-        extract(annotated.annotations.findAnnotation(annotationName), config)
+    fun get(annotated: FirAnnotationContainer, config: LombokConfig, session: FirSession): T =
+        extract(annotated.annotations.findAnnotation(annotationName), config, session)
 
     /**
      * If element is annotated, get from it or config or default
      */
-    fun getIfAnnotated(annotated: FirAnnotationContainer, config: LombokConfig): T? =
+    fun getIfAnnotated(annotated: FirAnnotationContainer, config: LombokConfig, session: FirSession): T? =
         annotated.annotations.findAnnotation(annotationName)?.let { annotation ->
-            extract(annotation, config)
+            extract(annotation, config, session)
         }
 
 }
@@ -86,15 +87,15 @@ object ConeLombokAnnotations {
         val prefix: List<String> = emptyList()
     ) {
         companion object : ConeAnnotationAndConfigCompanion<Accessors>(LombokNames.ACCESSORS_ID) {
-            override fun extract(annotation: FirAnnotation?, config: LombokConfig): Accessors {
-                val fluent = annotation?.getBooleanArgument(FLUENT)
+            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): Accessors {
+                val fluent = annotation?.getBooleanArgument(FLUENT, session)
                     ?: config.getBoolean(FLUENT_CONFIG)
                     ?: false
-                val chain = annotation?.getBooleanArgument(CHAIN)
+                val chain = annotation?.getBooleanArgument(CHAIN, session)
                     ?: config.getBoolean(CHAIN_CONFIG)
                     ?: fluent
                 val noIsPrefix = config.getBoolean(NO_IS_PREFIX_CONFIG) ?: false
-                val prefix = annotation?.getStringArrayArgument(PREFIX)
+                val prefix = annotation?.getStringArrayArgument(PREFIX, session)
                     ?: config.getMultiString(PREFIX_CONFIG)
                     ?: emptyList()
 
@@ -105,24 +106,24 @@ object ConeLombokAnnotations {
 
     class Getter(val visibility: AccessLevel = AccessLevel.PUBLIC) {
         companion object : ConeAnnotationCompanion<Getter>(LombokNames.GETTER_ID) {
-            override fun extract(annotation: FirAnnotation): Getter = Getter(
-                visibility = annotation.getAccessLevel()
+            override fun extract(annotation: FirAnnotation, session: FirSession): Getter = Getter(
+                visibility = annotation.getAccessLevel(session)
             )
         }
     }
 
     class Setter(val visibility: AccessLevel = AccessLevel.PUBLIC) {
         companion object : ConeAnnotationCompanion<Setter>(LombokNames.SETTER_ID) {
-            override fun extract(annotation: FirAnnotation): Setter = Setter(
-                visibility = annotation.getAccessLevel()
+            override fun extract(annotation: FirAnnotation, session: FirSession): Setter = Setter(
+                visibility = annotation.getAccessLevel(session)
             )
         }
     }
 
     class With(val visibility: AccessLevel = AccessLevel.PUBLIC) {
         companion object : ConeAnnotationCompanion<With>(LombokNames.WITH_ID) {
-            override fun extract(annotation: FirAnnotation): With = With(
-                visibility = annotation.getAccessLevel()
+            override fun extract(annotation: FirAnnotation, session: FirSession): With = With(
+                visibility = annotation.getAccessLevel(session)
             )
         }
     }
@@ -137,10 +138,12 @@ object ConeLombokAnnotations {
         override val staticName: String?
     ) : ConstructorAnnotation {
         companion object : ConeAnnotationCompanion<NoArgsConstructor>(LombokNames.NO_ARGS_CONSTRUCTOR_ID) {
-            override fun extract(annotation: FirAnnotation): NoArgsConstructor = NoArgsConstructor(
-                visibility = getVisibility(annotation, ACCESS),
-                staticName = annotation.getNonBlankStringArgument(STATIC_NAME)
-            )
+            override fun extract(annotation: FirAnnotation, session: FirSession): NoArgsConstructor {
+                return NoArgsConstructor(
+                    visibility = annotation.getVisibility(ACCESS, session),
+                    staticName = annotation.getNonBlankStringArgument(STATIC_NAME, session)
+                )
+            }
         }
     }
 
@@ -149,10 +152,12 @@ object ConeLombokAnnotations {
         override val staticName: String? = null
     ) : ConstructorAnnotation {
         companion object : ConeAnnotationCompanion<AllArgsConstructor>(LombokNames.ALL_ARGS_CONSTRUCTOR_ID) {
-            override fun extract(annotation: FirAnnotation): AllArgsConstructor = AllArgsConstructor(
-                visibility = getVisibility(annotation, ACCESS),
-                staticName = annotation.getNonBlankStringArgument(STATIC_NAME)
-            )
+            override fun extract(annotation: FirAnnotation, session: FirSession): AllArgsConstructor {
+                return AllArgsConstructor(
+                    visibility = annotation.getVisibility(ACCESS, session),
+                    staticName = annotation.getNonBlankStringArgument(STATIC_NAME, session)
+                )
+            }
         }
     }
 
@@ -161,10 +166,12 @@ object ConeLombokAnnotations {
         override val staticName: String? = null
     ) : ConstructorAnnotation {
         companion object : ConeAnnotationCompanion<RequiredArgsConstructor>(LombokNames.REQUIRED_ARGS_CONSTRUCTOR_ID) {
-            override fun extract(annotation: FirAnnotation): RequiredArgsConstructor = RequiredArgsConstructor(
-                visibility = getVisibility(annotation, ACCESS),
-                staticName = annotation.getNonBlankStringArgument(STATIC_NAME)
-            )
+            override fun extract(annotation: FirAnnotation, session: FirSession): RequiredArgsConstructor {
+                return RequiredArgsConstructor(
+                    visibility = annotation.getVisibility(ACCESS, session),
+                    staticName = annotation.getNonBlankStringArgument(STATIC_NAME, session)
+                )
+            }
         }
     }
 
@@ -177,9 +184,9 @@ object ConeLombokAnnotations {
         )
 
         companion object : ConeAnnotationCompanion<Data>(LombokNames.DATA_ID) {
-            override fun extract(annotation: FirAnnotation): Data =
+            override fun extract(annotation: FirAnnotation, session: FirSession): Data =
                 Data(
-                    staticConstructor = annotation.getNonBlankStringArgument(STATIC_CONSTRUCTOR)
+                    staticConstructor = annotation.getNonBlankStringArgument(STATIC_CONSTRUCTOR, session)
                 )
         }
     }
@@ -192,8 +199,8 @@ object ConeLombokAnnotations {
         )
 
         companion object : ConeAnnotationCompanion<Value>(LombokNames.VALUE_ID) {
-            override fun extract(annotation: FirAnnotation): Value = Value(
-                staticConstructor = annotation.getNonBlankStringArgument(STATIC_CONSTRUCTOR)
+            override fun extract(annotation: FirAnnotation, session: FirSession): Value = Value(
+                staticConstructor = annotation.getNonBlankStringArgument(STATIC_CONSTRUCTOR, session)
             )
         }
     }
@@ -213,16 +220,16 @@ object ConeLombokAnnotations {
             private const val DEFAULT_REQUIRES_TO_BUILDER = false
 
 
-            override fun extract(annotation: FirAnnotation?, config: LombokConfig): Builder {
+            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): Builder {
                 return Builder(
-                    builderClassName = annotation?.getStringArgument(BUILDER_CLASS_NAME)
+                    builderClassName = annotation?.getStringArgument(BUILDER_CLASS_NAME, session)
                         ?: config.getString(BUILDER_CLASS_NAME_CONFIG)
                         ?: DEFAULT_BUILDER_CLASS_NAME,
-                    buildMethodName = annotation?.getStringArgument(BUILD_METHOD_NAME) ?: DEFAULT_BUILD_METHOD_NAME,
-                    builderMethodName = annotation?.getStringArgument(BUILDER_METHOD_NAME) ?: DEFAULT_BUILDER_METHOD_NAME,
-                    requiresToBuilder = annotation?.getBooleanArgument(TO_BUILDER) ?: DEFAULT_REQUIRES_TO_BUILDER,
-                    visibility = annotation?.getAccessLevel(ACCESS) ?: AccessLevel.PUBLIC,
-                    setterPrefix = annotation?.getStringArgument(SETTER_PREFIX)
+                    buildMethodName = annotation?.getStringArgument(BUILD_METHOD_NAME, session) ?: DEFAULT_BUILD_METHOD_NAME,
+                    builderMethodName = annotation?.getStringArgument(BUILDER_METHOD_NAME, session) ?: DEFAULT_BUILDER_METHOD_NAME,
+                    requiresToBuilder = annotation?.getBooleanArgument(TO_BUILDER, session) ?: DEFAULT_REQUIRES_TO_BUILDER,
+                    visibility = annotation?.getAccessLevel(ACCESS, session) ?: AccessLevel.PUBLIC,
+                    setterPrefix = annotation?.getStringArgument(SETTER_PREFIX, session)
                 )
             }
         }
@@ -233,14 +240,12 @@ object ConeLombokAnnotations {
         val allowNull: Boolean,
     ) {
         companion object : ConeAnnotationCompanion<Singular>(LombokNames.SINGULAR_ID) {
-            override fun extract(annotation: FirAnnotation): Singular {
+            override fun extract(annotation: FirAnnotation, session: FirSession): Singular {
                 return Singular(
-                    singularName = annotation.getStringArgument(VALUE),
-                    allowNull = annotation.getBooleanArgument(IGNORE_NULL_COLLECTIONS) ?: false
+                    singularName = annotation.getStringArgument(VALUE, session),
+                    allowNull = annotation.getBooleanArgument(IGNORE_NULL_COLLECTIONS, session) ?: false
                 )
             }
         }
     }
 }
-
-
