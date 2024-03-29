@@ -217,6 +217,7 @@ fun Project.projectTest(
             "-XX:ReservedCodeCacheSize=${reservedCodeCacheSizeMb}m",
             "-XX:MaxMetaspaceSize=${maxMetaspaceSizeMb}m",
             "-Djna.nosys=true",
+            "-XX:+UnlockDiagnosticVMOptions",
             "-XX:+LogCompilation",
         )
 
