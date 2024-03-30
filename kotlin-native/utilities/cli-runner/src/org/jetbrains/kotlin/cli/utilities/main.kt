@@ -11,17 +11,17 @@ import org.jetbrains.kotlin.cli.bc.mainNoExitWithGradleRenderer as konancMainWit
 import org.jetbrains.kotlin.cli.bc.mainNoExitWithXcodeRenderer as konancMainWithXcodeRenderer
 import org.jetbrains.kotlin.backend.konan.env.setEnv
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 
-private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (Array<String>) -> Unit) {
+private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (Array<String>) -> CommonCompilerPerformanceManager?): CommonCompilerPerformanceManager? {
     val utilityName = args[0]
     val utilityArgs = args.drop(1).toTypedArray()
     when (utilityName) {
-        "konanc" ->
-            konancMain(utilityArgs)
+        "konanc" -> return konancMain(utilityArgs)
 
         "cinterop" -> {
             val konancArgs = invokeInterop("native", utilityArgs, runFromDaemon)
-            konancArgs?.let { konancMain(it) }
+            return konancArgs?.let { konancMain(it) }
         }
         "jsinterop" -> {
             error("wasm target in Kotlin/Native is removed. See https://kotl.in/native-targets-tiers")
@@ -39,21 +39,28 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
         else ->
             error("Unexpected utility name")
     }
+    return null
 }
 
-fun main(args: Array<String>) = mainImpl(args, false, ::konancMain)
+fun main(args: Array<String>) {
+    mainImpl(args, false, ::konancMain)
+}
 
 private fun setupClangEnv() {
     setEnv("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
 }
 
-fun daemonMain(args: Array<String>) = inProcessMain(args, ::konancMainWithGradleRenderer)
+fun daemonMain(args: Array<String>):CommonCompilerPerformanceManager? = inProcessMain(args, ::konancMainWithGradleRenderer)
 
-fun daemonMainWithXcodeRenderer(args: Array<String>) = inProcessMain(args, ::konancMainWithXcodeRenderer)
+fun daemonMainWithXcodeRenderer(args: Array<String>):CommonCompilerPerformanceManager? = inProcessMain(args, ::konancMainWithXcodeRenderer)
 
-private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> Unit) {
-    usingNativeMemoryAllocator {
-        setupClangEnv() // For in-process invocation have to setup proper environment manually.
-        mainImpl(args, true, konancMain)
-    }
-}
+private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> CommonCompilerPerformanceManager) =
+        usingNativeMemoryAllocator {
+            setupClangEnv() // For in-process invocation have to setup proper environment manually.
+            mainImpl(args, true, konancMain)
+        }.also {
+            println("____DEBUG_____")
+            println(it)
+       }
+
+

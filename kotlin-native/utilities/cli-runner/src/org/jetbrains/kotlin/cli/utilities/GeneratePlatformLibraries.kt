@@ -328,6 +328,7 @@ private fun buildCache(
     )
     logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
     K2Native.mainNoExit(compilerArgs)
+    return@with
 }
 
 private fun buildStdlibCache(
@@ -352,6 +353,7 @@ private fun buildStdlibCache(
     )
     logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
     K2Native.mainNoExit(compilerArgs)
+    return@with
 }
 
 private fun generatePlatformLibraries(target: KonanTarget, cinteropOptions: CInteropOptions,

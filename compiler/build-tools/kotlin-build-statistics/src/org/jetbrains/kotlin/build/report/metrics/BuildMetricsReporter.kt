@@ -30,7 +30,9 @@ interface BuildMetricsReporter<B : BuildTime, P : BuildPerformanceMetric> {
 inline fun <B : BuildTime, P : BuildPerformanceMetric, T> BuildMetricsReporter<B, P>.measure(time: B, fn: () -> T): T {
     startMeasure(time)
     try {
-        return fn()
+        return fn().also {
+            println(it)
+        }
     } finally {
         endMeasure(time)
     }

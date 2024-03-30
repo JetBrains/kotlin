@@ -170,26 +170,33 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun executableScriptFileName() = "kotlinc-native"
 
     companion object {
-        @JvmStatic fun main(args: Array<String>) {
+        @JvmStatic fun main(args: Array<String>): CommonCompilerPerformanceManager {
+            val k2Native = K2Native()
             profile("Total compiler main()") {
-                doMain(K2Native(), args)
+                doMain(k2Native, args)
             }
+            return k2Native.defaultPerformanceManager
         }
 
-        @JvmStatic fun mainNoExit(args: Array<String>) {
+        @JvmStatic fun mainNoExit(args: Array<String>): CommonCompilerPerformanceManager {
+            val k2Native = K2Native()
             profile("Total compiler main()") {
-                if (doMainNoExit(K2Native(), args) != ExitCode.OK) {
+                if (doMainNoExit(k2Native, args) != ExitCode.OK) {
                     throw KonanCompilationException("Compilation finished with errors")
                 }
             }
+            return k2Native.defaultPerformanceManager
+
         }
 
-        @JvmStatic fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer) {
+        @JvmStatic fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer): CommonCompilerPerformanceManager {
+            val k2Native = K2Native()
             profile("Total compiler main()") {
-                if (doMainNoExit(K2Native(), args, messageRenderer) != ExitCode.OK) {
+                if (doMainNoExit(k2Native, args, messageRenderer) != ExitCode.OK) {
                     throw KonanCompilationException("Compilation finished with errors")
                 }
             }
+            return k2Native.defaultPerformanceManager
         }
     }
 }

@@ -91,11 +91,12 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
     @DisplayName("Smoke test")
     @GradleTest
     fun checkIncrementalCacheIsCreated(gradleVersion: GradleVersion) {
-        nativeProject("native-incremental-simple", gradleVersion) {
+        nativeProject("native-incremental-simple", gradleVersion, enableGradleDebug = true) {
             build("linkDebugExecutableHost") {
                 assertDirectoryExists(
                     getFileCache("native-incremental-simple", "src/hostMain/kotlin/main.kt")
                 )
+                printBuildOutput()
             }
         }
     }

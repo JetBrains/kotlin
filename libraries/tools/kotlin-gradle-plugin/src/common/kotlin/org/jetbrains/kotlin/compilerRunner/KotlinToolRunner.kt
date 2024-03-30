@@ -14,6 +14,7 @@ import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.JavaExecSpec
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -205,7 +206,8 @@ abstract class KotlinToolRunner(
                     .singleOrNull { it.name == daemonEntryPoint } ?: error("Couldn't find daemon entry point '$daemonEntryPoint'")
 
                 metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
-                    entryPoint.invoke(null, transformedArgs.toTypedArray())
+                    val performanceManager = entryPoint.invoke(null, transformedArgs.toTypedArray()) as CommonCompilerPerformanceManager
+                    System.out.println(performanceManager)
                 }
             } catch (t: InvocationTargetException) {
                 throw t.targetException
