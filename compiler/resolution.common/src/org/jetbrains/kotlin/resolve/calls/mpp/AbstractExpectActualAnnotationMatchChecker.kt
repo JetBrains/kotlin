@@ -58,8 +58,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         areAnnotationsCompatible(expectSymbol, actualSymbol, containingExpectClass)
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsCompatible(
+    private fun ExpectActualMatchingContext<*>.areAnnotationsCompatible(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClass: RegularClassSymbolMarker?,
@@ -75,8 +74,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areCallableAnnotationsCompatible(
+    private fun ExpectActualMatchingContext<*>.areCallableAnnotationsCompatible(
         expectSymbol: CallableSymbolMarker,
         actualSymbol: CallableSymbolMarker,
         containingExpectClass: RegularClassSymbolMarker?,
@@ -103,8 +101,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun arePropertyGetterAndSetterAnnotationsCompatible(
+    private fun ExpectActualMatchingContext<*>.arePropertyGetterAndSetterAnnotationsCompatible(
         expectSymbol: PropertySymbolMarker,
         actualSymbol: PropertySymbolMarker,
     ): Incompatibility? {
@@ -122,8 +119,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areClassAnnotationsCompatible(
+    private fun ExpectActualMatchingContext<*>.areClassAnnotationsCompatible(
         expectSymbol: RegularClassSymbolMarker,
         actualSymbol: ClassLikeSymbolMarker,
     ): Incompatibility? {
@@ -157,8 +153,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun commonForClassAndCallableChecks(
+    private fun ExpectActualMatchingContext<*>.commonForClassAndCallableChecks(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
@@ -168,8 +163,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsOnValueParametersCompatible(
+    private fun ExpectActualMatchingContext<*>.areAnnotationsOnValueParametersCompatible(
         expectSymbol: CallableSymbolMarker,
         actualSymbol: CallableSymbolMarker,
     ): Incompatibility? {
@@ -185,8 +179,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsOnTypeParametersCompatible(
+    private fun ExpectActualMatchingContext<*>.areAnnotationsOnTypeParametersCompatible(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
@@ -210,8 +203,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsOnTypeParameterBoundsCompatible(
+    private fun ExpectActualMatchingContext<*>.areAnnotationsOnTypeParameterBoundsCompatible(
         expectDeclarationSymbol: DeclarationSymbolMarker,
         actualDeclarationSymbol: DeclarationSymbolMarker,
         expectParam: TypeParameterSymbolMarker,
@@ -231,8 +223,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsSetOnTypesCompatible(
+    private fun ExpectActualMatchingContext<*>.areAnnotationsSetOnTypesCompatible(
         expectDeclarationSymbol: DeclarationSymbolMarker,
         actualDeclarationSymbol: DeclarationSymbolMarker,
         expectTypeRef: TypeRefMarker?,
@@ -254,8 +245,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return firstIncompatibility
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsSetOnDeclarationsCompatible(
+    private fun ExpectActualMatchingContext<*>.areAnnotationsSetOnDeclarationsCompatible(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
@@ -263,8 +253,7 @@ object AbstractExpectActualAnnotationMatchChecker {
             ?.let { Incompatibility(expectSymbol, actualSymbol, actualSymbol.getSourceElement(), it) }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationListsCompatible(
+    private fun ExpectActualMatchingContext<*>.areAnnotationListsCompatible(
         expectAnnotations: List<ExpectActualMatchingContext.AnnotationCallInfo>,
         actualAnnotations: List<ExpectActualMatchingContext.AnnotationCallInfo>,
         actualContainerSymbol: DeclarationSymbolMarker,
@@ -308,8 +297,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun checkAnnotationsInClassMemberScope(
+    private fun ExpectActualMatchingContext<*>.checkAnnotationsInClassMemberScope(
         expectClass: RegularClassSymbolMarker,
         actualClass: RegularClassSymbolMarker,
     ): Incompatibility? {
@@ -330,8 +318,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun checkAnnotationsOnEnumEntries(
+    private fun ExpectActualMatchingContext<*>.checkAnnotationsOnEnumEntries(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassSymbol: RegularClassSymbolMarker,
     ): Incompatibility? {

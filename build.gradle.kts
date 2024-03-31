@@ -479,7 +479,6 @@ val mppProjects by extra {
 
 val projectsWithEnabledContextReceivers by extra {
     listOf(
-        ":compiler:resolution.common",
         ":compiler:frontend.common",
         ":compiler:fir:resolve",
         ":compiler:fir:plugin-utils",

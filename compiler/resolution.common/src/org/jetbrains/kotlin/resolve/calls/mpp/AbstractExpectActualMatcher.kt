@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibil
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
@@ -31,7 +30,7 @@ object AbstractExpectActualMatcher {
         expectContainingClass: RegularClassSymbolMarker?,
         actualContainingClass: RegularClassSymbolMarker?,
         context: ExpectActualMatchingContext<*>,
-    ): ExpectActualMatchingCompatibility = with (context) {
+    ): ExpectActualMatchingCompatibility = with(context) {
         val expectTypeParameters = expectContainingClass?.typeParameters.orEmpty()
         val actualTypeParameters = actualContainingClass?.typeParameters.orEmpty()
         val parentSubstitutor = (expectTypeParameters zipIfSizesAreEqual actualTypeParameters)
@@ -66,7 +65,7 @@ object AbstractExpectActualMatcher {
         context: ExpectActualMatchingContext<*>,
     ): ExpectActualMatchingCompatibility = with(context) {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
-        check(expectClassSymbol.name == actualClassLikeSymbol.name) {
+        check(nameOf(expectClassSymbol) == nameOf(actualClassLikeSymbol)) {
             "This function should be invoked only for declarations with the same name: $expectClassSymbol, $actualClassLikeSymbol"
         }
         check(actualClassLikeSymbol is RegularClassSymbolMarker || actualClassLikeSymbol is TypeAliasSymbolMarker) {
@@ -82,8 +81,7 @@ object AbstractExpectActualMatcher {
      * - It adds mismatched members to `mismatchedMembers`
      * - It calls `onMatchedMembers` and `onMismatchedMembersFromClassScope` callbacks
      */
-    context(ExpectActualMatchingContext<*>)
-    internal fun matchSingleExpectAgainstPotentialActuals(
+    internal fun ExpectActualMatchingContext<*>.matchSingleExpectAgainstPotentialActuals(
         expectMember: DeclarationSymbolMarker,
         actualMembers: List<DeclarationSymbolMarker>,
         substitutor: TypeSubstitutorMarker?,
@@ -102,7 +100,7 @@ object AbstractExpectActualMatcher {
                 )
 
                 is RegularClassSymbolMarker -> {
-                    matchClassifiers(expectMember, actualMember as ClassLikeSymbolMarker, this@ExpectActualMatchingContext)
+                    matchClassifiers(expectMember, actualMember as ClassLikeSymbolMarker, this)
                 }
                 else -> error("Unsupported declaration: $expectMember ($actualMembers)")
             }
@@ -127,8 +125,7 @@ object AbstractExpectActualMatcher {
         return null
     }
 
-    context(ExpectActualMatchingContext<*>)
-    private fun getCallablesCompatibility(
+    private fun ExpectActualMatchingContext<*>.getCallablesCompatibility(
         expectDeclaration: CallableSymbolMarker,
         actualDeclaration: CallableSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
@@ -177,8 +174,8 @@ object AbstractExpectActualMatcher {
 
         if (
             !areCompatibleTypeLists(
-                expectedValueParameters.toTypeList(substitutor),
-                actualValueParameters.toTypeList(createEmptySubstitutor()),
+                toTypeList(expectedValueParameters, substitutor),
+                toTypeList(actualValueParameters, createEmptySubstitutor()),
                 insideAnnotationClass
             ) || !areCompatibleExpectActualTypes(
                 expectedReceiverType?.let { substitutor.safeSubstitute(it) },
@@ -196,8 +193,7 @@ object AbstractExpectActualMatcher {
         return ExpectActualMatchingCompatibility.MatchedSuccessfully
     }
 
-    context(ExpectActualMatchingContext<*>)
-    private fun valueParametersCountCompatible(
+    private fun ExpectActualMatchingContext<*>.valueParametersCountCompatible(
         expectDeclaration: CallableSymbolMarker,
         actualDeclaration: CallableSymbolMarker,
         expectValueParameters: List<ValueParameterSymbolMarker>,
@@ -214,8 +210,10 @@ object AbstractExpectActualMatcher {
 
     // ---------------------------------------- Utils ----------------------------------------
 
-    context(ExpectActualMatchingContext<*>)
-    private fun List<ValueParameterSymbolMarker>.toTypeList(substitutor: TypeSubstitutorMarker): List<KotlinTypeMarker> {
-        return this.map { substitutor.safeSubstitute(it.returnType) }
+    private fun ExpectActualMatchingContext<*>.toTypeList(
+        parameterSymbolMarkers: List<ValueParameterSymbolMarker>,
+        substitutor: TypeSubstitutorMarker,
+    ): List<KotlinTypeMarker> {
+        return parameterSymbolMarkers.map { substitutor.safeSubstitute(it.returnType) }
     }
 }
