@@ -12,32 +12,28 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
-context(ExpectActualMatchingContext<*>)
-internal fun getPossibleActualsByExpectName(
+internal fun ExpectActualMatchingContext<*>.getPossibleActualsByExpectName(
     expectMember: DeclarationSymbolMarker,
     actualMembersByName: Map<Name, List<DeclarationSymbolMarker>>,
 ): List<DeclarationSymbolMarker> {
-    val actualMembers = actualMembersByName[expectMember.name]?.filter { actualMember ->
+    val actualMembers = actualMembersByName[nameOf(expectMember)]?.filter { actualMember ->
         expectMember is CallableSymbolMarker && actualMember is CallableSymbolMarker ||
                 expectMember is RegularClassSymbolMarker && actualMember is RegularClassSymbolMarker
     }.orEmpty()
     return actualMembers
 }
 
-context(ExpectActualMatchingContext<*>)
-internal val DeclarationSymbolMarker.name: Name
-    get() = when (this) {
-        is ConstructorSymbolMarker -> SpecialNames.INIT
-        is ValueParameterSymbolMarker -> parameterName
-        is CallableSymbolMarker -> callableId.callableName
-        is RegularClassSymbolMarker -> classId.shortClassName
-        is TypeAliasSymbolMarker -> classId.shortClassName
-        is TypeParameterSymbolMarker -> parameterName
-        else -> error("Unsupported declaration: $this")
-    }
+internal fun ExpectActualMatchingContext<*>.nameOf(d: DeclarationSymbolMarker): Name = when (d) {
+    is ConstructorSymbolMarker -> SpecialNames.INIT
+    is ValueParameterSymbolMarker -> d.parameterName
+    is CallableSymbolMarker -> d.callableId.callableName
+    is RegularClassSymbolMarker -> d.classId.shortClassName
+    is TypeAliasSymbolMarker -> d.classId.shortClassName
+    is TypeParameterSymbolMarker -> d.parameterName
+    else -> error("Unsupported declaration: $this")
+}
 
-context(ExpectActualMatchingContext<*>)
-internal fun areCompatibleTypeParameterUpperBounds(
+internal fun ExpectActualMatchingContext<*>.areCompatibleTypeParameterUpperBounds(
     expectTypeParameterSymbols: List<TypeParameterSymbolMarker>,
     actualTypeParameterSymbols: List<TypeParameterSymbolMarker>,
     substitutor: TypeSubstitutorMarker,
@@ -60,8 +56,7 @@ internal fun areCompatibleTypeParameterUpperBounds(
     return true
 }
 
-context(ExpectActualMatchingContext<*>)
-internal fun areCompatibleTypeLists(
+internal fun ExpectActualMatchingContext<*>.areCompatibleTypeLists(
     expectedTypes: List<KotlinTypeMarker?>,
     actualTypes: List<KotlinTypeMarker?>,
     insideAnnotationClass: Boolean,
@@ -81,8 +76,7 @@ internal fun areCompatibleTypeLists(
  * In terms of KMP, there is no such thing as `expect constructor` for enums,
  * but they are physically exist in FIR and IR, so we need to skip matching and checking for them
  */
-context(ExpectActualMatchingContext<*>)
-internal fun areEnumConstructors(
+internal fun ExpectActualMatchingContext<*>.areEnumConstructors(
     expectDeclaration: CallableSymbolMarker,
     actualDeclaration: CallableSymbolMarker,
     expectContainingClass: RegularClassSymbolMarker?,
@@ -92,8 +86,7 @@ internal fun areEnumConstructors(
         expectDeclaration is ConstructorSymbolMarker &&
         actualDeclaration is ConstructorSymbolMarker
 
-context(ExpectActualMatchingContext<*>)
-internal fun checkCallablesInvariants(
+internal fun ExpectActualMatchingContext<*>.checkCallablesInvariants(
     expectDeclaration: CallableSymbolMarker,
     actualDeclaration: CallableSymbolMarker,
 ) {
