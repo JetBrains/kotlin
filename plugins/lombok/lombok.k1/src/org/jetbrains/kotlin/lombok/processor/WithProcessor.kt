@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 class WithProcessor : Processor {
-
-    context(LazyJavaResolverContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
-    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder, c: LazyJavaResolverContext) {
         val clWith = With.getOrNull(classDescriptor)
 
         classDescriptor

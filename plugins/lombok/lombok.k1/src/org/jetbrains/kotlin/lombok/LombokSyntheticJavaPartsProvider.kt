@@ -99,7 +99,7 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
 
     private fun LazyJavaResolverContext.computeSyntheticParts(descriptor: ClassDescriptor): SyntheticParts {
         val builder = SyntheticPartsBuilder()
-        processors.forEach { it.contribute(descriptor, builder) }
+        processors.forEach { it.contribute(descriptor, builder, this) }
         return builder.build()
     }
 
