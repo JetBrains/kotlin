@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class SetterProcessor(private val config: LombokConfig) : Processor {
 
-    context(LazyJavaResolverContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
-    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder, c: LazyJavaResolverContext) {
         //lombok doesn't generate setters for enums
         if (classDescriptor.kind == ClassKind.ENUM_CLASS) return
 
