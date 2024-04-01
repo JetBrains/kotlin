@@ -11,7 +11,7 @@ suspend fun foo(data: Data, body: suspend Long.(String, Data, Int) -> Unit) {
     1L.body("OK", data, 1)
 }
 
-// The JVM and IR backend differ in naming scheme of captured receiver paramters in suspend lambdas
+// The JVM and IR backend differ in naming scheme of captured receiver parameters in suspend lambdas
 
 // METHOD : ParametersKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 

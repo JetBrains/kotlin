@@ -155,7 +155,7 @@ class ConeEffectExtractor(
                 ConeContractDescriptionError.IllegalParameter(symbol, "$symbol is not a value parameter")
             )
         val index = valueParameters.indexOf(parameter).takeUnless { it < 0 } ?: return KtErroneousValueParameterReference(
-            ConeContractDescriptionError.IllegalParameter(symbol, "Value paramter $symbol is not found in parameters of outer function")
+            ConeContractDescriptionError.IllegalParameter(symbol, "Value parameter $symbol is not found in parameters of outer function")
         )
         val type = parameter.returnTypeRef.coneType
 
