@@ -119,8 +119,8 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     /**
      * Will add a [KotlinSourceSet] directly into this compilation.
-     * This method is deprecated and targets Kotlin 2.0 for its removal.
-     * After Kotlin 2.0 there will be exactly one SourceSet associated with a given Kotlin Compilation.
+     * This method is deprecated and targets Kotlin 2.1 for its removal.
+     * After Kotlin 2.1 there will be exactly one SourceSet associated with a given Kotlin Compilation.
      *
      * In order to include other sources into the compilation, please build a hierarchy of Source Sets instead.
      * See: [KotlinSourceSet.dependsOn] or [KotlinTargetHierarchyDsl].
@@ -155,7 +155,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
      * Further details:
      * https://kotl.in/compilation-source-deprecation
      */
-    @Deprecated("scheduled for removal with Kotlin 2.0")
+    @Deprecated("scheduled for removal with Kotlin 2.1")
     fun source(sourceSet: KotlinSourceSet)
 
     fun associateWith(other: KotlinCompilation<*>)
@@ -187,7 +187,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 /**
  * @suppress TODO: KT-58858 add documentation
  */
-@Deprecated("Scheduled for removal with Kotlin 2.0")
+@Deprecated("Scheduled for removal with Kotlin 2.1")
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     override val runtimeDependencyConfigurationName: String
 
@@ -203,7 +203,7 @@ typealias DeprecatedKotlinCompilationToRunnableFiles<T> = KotlinCompilationToRun
 /**
  * @suppress TODO: KT-58858 add documentation
  */
-@Deprecated("Scheduled for removal with Kotlin 2.0")
+@Deprecated("Scheduled for removal with Kotlin 2.1")
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
@@ -211,7 +211,7 @@ val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyCo
 /**
  * @suppress TODO: KT-58858 add documentation
  */
-@Deprecated("Scheduled for removal with Kotlin 2.0")
+@Deprecated("Scheduled for removal with Kotlin 2.1")
 interface KotlinCompilationWithResources<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     val processResourcesTaskName: String
 }

@@ -332,7 +332,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.0. Check KT-58759",
+        "Scheduled for removal in Kotlin 2.1. Check KT-58759",
         replaceWith = ReplaceWith("project.dependencies.enforcedPlatform(notation)")
     )
     fun enforcedPlatform(notation: Any): Dependency =
@@ -342,7 +342,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.0. Check KT-58759",
+        "Scheduled for removal in Kotlin 2.1. Check KT-58759",
         replaceWith = ReplaceWith("project.dependencies.enforcedPlatform(notation, configureAction)")
     )
     fun enforcedPlatform(notation: Any, configureAction: Action<in Dependency>): Dependency =
@@ -352,7 +352,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.0. Check KT-58759",
+        "Scheduled for removal in Kotlin 2.1. Check KT-58759",
         replaceWith = ReplaceWith("project.dependencies.platform(notation)")
     )
     fun platform(notation: Any): Dependency =
@@ -362,7 +362,7 @@ interface KotlinDependencyHandler : HasProject {
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.0. Check KT-58759",
+        "Scheduled for removal in Kotlin 2.1. Check KT-58759",
         replaceWith = ReplaceWith("project.dependencies.platform(notation, configureAction)")
     )
     fun platform(notation: Any, configureAction: Action<in Dependency>): Dependency =
