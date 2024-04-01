@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 class JvmFir2IrExtensions(
@@ -107,6 +107,6 @@ class JvmFir2IrExtensions(
         property.origin is FirDeclarationOrigin.Java || Fir2IrExtensions.Default.hasBackingField(property, session)
 
     override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean =
-        declaration.hasAnnotation(JVM_STATIC_ANNOTATION_CLASS_ID, session) ||
-                (declaration as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(JVM_STATIC_ANNOTATION_CLASS_ID, session) == true
+        declaration.hasAnnotation(StandardClassIds.Annotations.jvmStatic, session) ||
+                (declaration as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(StandardClassIds.Annotations.jvmStatic, session) == true
 }
