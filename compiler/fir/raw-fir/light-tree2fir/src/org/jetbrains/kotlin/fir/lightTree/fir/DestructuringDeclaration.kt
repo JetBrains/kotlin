@@ -31,8 +31,8 @@ data class DestructuringDeclaration(
     val source: KtSourceElement,
     val annotations: List<FirAnnotation>,
 ) {
-    context(AbstractRawFirBuilder<*>)
     fun toFirDestructingDeclaration(
+        builder: AbstractRawFirBuilder<*>,
         moduleData: FirModuleData,
         tmpVariable: Boolean = true,
     ): FirExpression {
@@ -44,7 +44,16 @@ data class DestructuringDeclaration(
             extractedAnnotations = annotations
         )
         return buildBlock {
-            statements.addDestructuringStatements(moduleData, this@DestructuringDeclaration, baseVariable, tmpVariable, forceLocal = false)
+            with(builder) {
+                addDestructuringStatements(
+                    statements,
+                    moduleData,
+                    this@DestructuringDeclaration,
+                    baseVariable,
+                    tmpVariable,
+                    forceLocal = false
+                )
+            }
         }
     }
 }
@@ -70,8 +79,8 @@ class DestructuringEntry(
     }
 }
 
-context(AbstractRawFirBuilder<*>)
-fun MutableList<FirStatement>.addDestructuringStatements(
+fun AbstractRawFirBuilder<*>.addDestructuringStatements(
+    destination: MutableList<FirStatement>,
     moduleData: FirModuleData,
     multiDeclaration: DestructuringDeclaration,
     container: FirVariable,
@@ -79,14 +88,14 @@ fun MutableList<FirStatement>.addDestructuringStatements(
     forceLocal: Boolean
 
 ) {
-    with(DestructuringEntry) {
-        addDestructuringVariables(
-            moduleData,
-            container,
-            multiDeclaration.entries,
-            multiDeclaration.isVar,
-            tmpVariable,
-            forceLocal
-        )
-    }
+    addDestructuringVariables(
+        destination,
+        DestructuringEntry,
+        moduleData,
+        container,
+        multiDeclaration.entries,
+        multiDeclaration.isVar,
+        tmpVariable,
+        forceLocal
+    )
 }

@@ -1312,7 +1312,9 @@ open class PsiRawFirBuilder(
                                 val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
                                 declarations.add(destructuringContainerVar)
 
-                                declarations.addDestructuringVariables(
+                                addDestructuringVariables(
+                                    declarations,
+                                    this@Visitor,
                                     moduleData,
                                     declaration,
                                     destructuringContainerVar,
@@ -1881,7 +1883,9 @@ open class PsiRawFirBuilder(
                             isNoinline = false
                             isVararg = false
                         }
-                        destructuringVariables.addDestructuringVariables(
+                        addDestructuringVariables(
+                            destructuringVariables,
+                            this@Visitor,
                             baseModuleData,
                             multiDeclaration,
                             multiParameter,
@@ -2802,7 +2806,9 @@ open class PsiRawFirBuilder(
                             extractedAnnotations = ktParameter.modifierList?.annotationEntries?.map { it.convert<FirAnnotation>() },
                         )
                         if (multiDeclaration != null) {
-                            blockBuilder.statements.addDestructuringVariables(
+                            addDestructuringVariables(
+                                blockBuilder.statements,
+                                this@Visitor,
                                 baseModuleData,
                                 multiDeclaration = multiDeclaration,
                                 container = firLoopParameter,
@@ -3188,6 +3194,7 @@ open class PsiRawFirBuilder(
                 extractAnnotationsTo = { extractAnnotationsTo(it) }
             )
             return generateDestructuringBlock(
+                this@Visitor,
                 baseModuleData,
                 multiDeclaration,
                 baseVariable,

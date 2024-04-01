@@ -140,6 +140,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
             return buildDestructuringVariable(
                 moduleData = baseModuleData,
+                this,
                 container = container,
                 element,
                 isVar = false,

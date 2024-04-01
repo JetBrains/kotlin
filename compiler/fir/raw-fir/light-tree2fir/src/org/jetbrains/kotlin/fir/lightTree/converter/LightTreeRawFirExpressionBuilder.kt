@@ -142,7 +142,7 @@ class LightTreeRawFirExpressionBuilder(
 
             OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
             FUN -> declarationBuilder.convertFunctionDeclaration(expression)
-            DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression).toFirDestructingDeclaration(baseModuleData)
+            DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression).toFirDestructingDeclaration(this, baseModuleData)
             else -> buildErrorExpression(expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
         }
     }
@@ -202,7 +202,8 @@ class LightTreeRawFirExpressionBuilder(
                         isNoinline = false
                         isVararg = false
                     }
-                    destructuringStatements.addDestructuringStatements(
+                    addDestructuringStatements(
+                        destructuringStatements,
                         baseModuleData,
                         multiDeclaration,
                         multiParameter,
@@ -1212,7 +1213,8 @@ class LightTreeRawFirExpressionBuilder(
                         extractedAnnotations = valueParameter.annotations
                     )
                     if (multiDeclaration != null) {
-                        statements.addDestructuringStatements(
+                        addDestructuringStatements(
+                            statements,
                             baseModuleData,
                             multiDeclaration,
                             firLoopParameter,

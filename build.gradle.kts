@@ -479,9 +479,6 @@ val mppProjects by extra {
 
 val projectsWithEnabledContextReceivers by extra {
     listOf(
-        ":compiler:fir:raw-fir:raw-fir.common",
-        ":compiler:fir:raw-fir:psi2fir",
-        ":compiler:fir:raw-fir:light-tree2fir",
         ":compiler:fir:tree:tree-generator",
         ":compiler:ir.tree:tree-generator",
         ":native:swift:sir:tree-generator",
