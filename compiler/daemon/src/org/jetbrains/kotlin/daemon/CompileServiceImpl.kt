@@ -764,9 +764,7 @@ class CompileServiceImpl(
     override fun releaseCompileSession(sessionId: Int) = ifAlive(minAliveness = Aliveness.LastSession) {
         state.sessions.remove(sessionId)
         log.info("cleaning after session $sessionId")
-        rwlock.write {
-            clearJarCache()
-        }
+        clearJarCache()
         postReleaseCompileSession()
     }
 
