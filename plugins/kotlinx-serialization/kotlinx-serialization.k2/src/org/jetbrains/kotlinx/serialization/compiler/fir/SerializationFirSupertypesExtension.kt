@@ -41,19 +41,19 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean =
         session.predicateBasedProvider.matches(serializerFor, declaration) || isSerializableObjectAndNeedsFactory(declaration) || isCompanionAndNeedsFactory(declaration)
 
-    private fun isSerializableObjectAndNeedsFactory(declaration: FirClassLikeDeclaration): Boolean = with(session) {
+    private fun isSerializableObjectAndNeedsFactory(declaration: FirClassLikeDeclaration): Boolean {
         if (isJvmOrMetadata) return false
         return declaration is FirClass && declaration.classKind.isObject
                 && session.predicateBasedProvider.matches(annotatedWithSerializableOrMeta, declaration)
     }
 
-    private fun isCompanionAndNeedsFactory(declaration: FirClassLikeDeclaration): Boolean = with(session) {
+    private fun isCompanionAndNeedsFactory(declaration: FirClassLikeDeclaration): Boolean {
         if (isJvmOrMetadata) return false
         if (declaration !is FirRegularClass) return false
         if (!declaration.isCompanion) return false
         val parentSymbol = declaration.symbol.getContainingDeclaration(session) as FirClassSymbol<*>
         return session.predicateBasedProvider.matches(annotatedWithSerializableOrMeta, parentSymbol)
-                && parentSymbol.companionNeedsSerializerFactory
+                && parentSymbol.companionNeedsSerializerFactory(session)
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {

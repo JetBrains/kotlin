@@ -55,12 +55,10 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         val result = mutableSetOf<Name>()
-        with(session) {
-            if (classSymbol.shouldHaveGeneratedMethodsInCompanion && !classSymbol.isSerializableObject)
-                result += SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-            if (classSymbol.shouldHaveGeneratedSerializer && !classSymbol.isInternallySerializableObject)
-                result += SerialEntityNames.SERIALIZER_CLASS_NAME
-        }
+        if (classSymbol.shouldHaveGeneratedMethodsInCompanion(session) && !classSymbol.isSerializableObject(session))
+            result += SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+        if (classSymbol.shouldHaveGeneratedSerializer(session) && !classSymbol.isInternallySerializableObject(session))
+            result += SerialEntityNames.SERIALIZER_CLASS_NAME
 
         return result
     }
@@ -131,7 +129,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 }
             }
 
-            with(session) { classSymbol.isSerializableObject } -> result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
+            classSymbol.isSerializableObject(session) -> result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
         }
         return result
     }
@@ -154,14 +152,14 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         if (callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME) {
             val serializableClass = if (owner.isCompanion) {
                 val containingSymbol = owner.getContainingDeclaration(session) as? FirClassSymbol<*> ?: return emptyList()
-                if (with(session) { containingSymbol.shouldHaveGeneratedMethodsInCompanion }) containingSymbol else null
+                if (containingSymbol.shouldHaveGeneratedMethodsInCompanion(session)) containingSymbol else null
             } else {
-                if (with(session) { owner.isSerializableObject }) owner else null
+                if (owner.isSerializableObject(session)) owner else null
             }
 
             if (serializableClass == null) return emptyList()
             val serializableGetterInCompanion = generateSerializerGetterInCompanion(owner, serializableClass, callableId)
-            val serializableGetterFromFactory = runIf (with(session) { serializableClass.companionNeedsSerializerFactory }) {
+            val serializableGetterFromFactory = runIf(serializableClass.companionNeedsSerializerFactory(session)) {
                 val original = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) }.fir
                 generateSerializerFactoryVararg(owner, callableId, original)
             }
@@ -183,7 +181,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             origin = SerializationPluginKey.origin
             status = original.status.copy(modality = Modality.FINAL)
         }
-        copy.excludeFromJsExport()
+        copy.excludeFromJsExport(session)
         return listOf(copy.symbol)
     }
 
@@ -196,7 +194,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             val vpo = original.valueParameters.single()
             valueParameter(vpo.name, vpo.returnTypeRef.coneType, vpo.isCrossinline, vpo.isNoinline, vpo.isVararg, vpo.defaultValue != null)
         }.apply {
-            excludeFromJsExport()
+            excludeFromJsExport(session)
         }.symbol
 
     private fun generateSerializerGetterInCompanion(
@@ -227,7 +225,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             }
         }
 
-        function.excludeFromJsExport()
+        function.excludeFromJsExport(session)
 
         return function.symbol
     }
@@ -245,7 +243,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             target.resolvedReturnType
         )
 
-        property.excludeFromJsExport()
+        property.excludeFromJsExport(session)
 
         return listOf(property.symbol)
     }
@@ -293,8 +291,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 )
             }
         }.apply {
-            excludeFromJsExport()
-            markAsDeprecatedHidden()
+            excludeFromJsExport(session)
+            markAsDeprecatedHidden(session)
         }
         return serializerFirClass.symbol
     }
@@ -302,7 +300,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     private fun generateCompanionDeclaration(owner: FirRegularClassSymbol): FirRegularClassSymbol? {
         if (owner.companionObjectSymbol != null) return null
         val companion = createCompanionObject(owner, SerializationPluginKey) {
-            if (with(session) { owner.companionNeedsSerializerFactory }) {
+            if (owner.companionNeedsSerializerFactory(session)) {
                 val serializerFactoryClassId = ClassId(SerializationPackages.internalPackageFqName, SERIALIZER_FACTORY_INTERFACE_NAME)
                 superType(serializerFactoryClassId.constructClassLikeType(emptyArray(), false))
             }

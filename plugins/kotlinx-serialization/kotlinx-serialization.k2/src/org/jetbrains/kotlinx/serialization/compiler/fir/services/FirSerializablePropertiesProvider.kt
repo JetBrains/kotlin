@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
-import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.getSuperClassNotAny
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.superClassNotAny
 import org.jetbrains.kotlinx.serialization.compiler.fir.isInternalSerializable
 import org.jetbrains.kotlinx.serialization.compiler.resolve.ISerializableProperty
 
@@ -53,7 +53,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             it to parameterSymbol.hasDefaultValue
         }.toMap().withDefault { false }
 
-        val isInternalSerializable = with(session) { classSymbol.isInternalSerializable }
+        val isInternalSerializable = classSymbol.isInternalSerializable(session)
 
         fun isPropertySerializable(propertySymbol: FirPropertySymbol): Boolean {
             return when {
@@ -77,9 +77,9 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .filterNot { it.transient }
             .partition { it.propertySymbol in primaryConstructorProperties }
             .let { (fromConstructor, standalone) ->
-                val superClassSymbol = classSymbol.getSuperClassNotAny(session)
+                val superClassSymbol = classSymbol.superClassNotAny(session)
                 buildList {
-                    if (superClassSymbol != null && with(session) { superClassSymbol.isInternalSerializable }) {
+                    if (superClassSymbol != null && superClassSymbol.isInternalSerializable(session)) {
                         addAll(getSerializablePropertiesForClass(superClassSymbol).serializableProperties)
                     }
                     addAll(fromConstructor)

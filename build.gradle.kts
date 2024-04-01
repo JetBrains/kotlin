@@ -483,7 +483,6 @@ val projectsWithEnabledContextReceivers by extra {
         ":compiler:ir.tree:tree-generator",
         ":native:swift:sir:tree-generator",
         ":generators:tree-generator-common",
-        ":kotlinx-serialization-compiler-plugin.k2",
         ":plugins:parcelize:parcelize-compiler:parcelize.k2",
         ":plugins:fir-plugin-prototype",
         ":plugins:kapt4",
