@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.SearchScope
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
@@ -120,6 +121,8 @@ class BinaryJavaClass(
                 this,
                 ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
             )
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             throw IllegalStateException("Could not read class: $virtualFile", e)
         }

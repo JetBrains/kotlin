@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
@@ -123,6 +124,8 @@ internal abstract class IrConstTransformer(
     protected fun IrExpression.canBeInterpreted(): Boolean {
         return try {
             this.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns))
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             if (suppressExceptions) {
                 return false
@@ -134,6 +137,8 @@ internal abstract class IrConstTransformer(
     protected fun IrExpression.interpret(failAsError: Boolean): IrExpression {
         val result = try {
             interpreter.interpret(this, irFile)
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             if (suppressExceptions) {
                 return this

@@ -8,6 +8,8 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     implementation(project(":core:compiler.common.js"))
+
+    compileOnly(intellijCore())
 }
 
 optInToUnsafeDuringIrConstructionAPI()
