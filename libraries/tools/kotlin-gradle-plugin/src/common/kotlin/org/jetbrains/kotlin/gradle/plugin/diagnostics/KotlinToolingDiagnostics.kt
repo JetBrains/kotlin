@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import java.io.File
@@ -601,9 +602,38 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object XCFrameworkDifferentInnerFrameworksName : ToolingDiagnosticFactory(WARNING) {
+    object XCFrameworkNameIsDifferentFromInnerFrameworksName : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(xcFramework: String, innerFrameworks: String) = build(
             "Name of XCFramework '$xcFramework' differs from inner frameworks name '$innerFrameworks'! Framework renaming is not supported yet"
+        )
+    }
+
+    object FrameworksInXCFrameworkHaveDifferentNames : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(xcFramework: String, buildType: NativeBuildType, frameworkPaths: List<String>) = build(
+            errorText(xcFramework, buildType, frameworkPaths)
+        )
+
+        fun errorText(xcFramework: String, buildType: NativeBuildType, frameworkPaths: List<String>): String {
+            return "All inner frameworks in XCFramework '$xcFramework' (${buildType.name}) must have the same name. Frameworks in the XCFramework:" +
+                    frameworkPaths.map { "\n${it}" }.joinToString()
+        }
+    }
+
+    object XCFrameworkHasNoFrameworks : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(xcFramework: String, buildType: NativeBuildType) = build(
+            "XCFramework '${xcFramework}' (${buildType.name}) is empty and it's task is going to be skipped"
+        )
+    }
+
+    object MissingBuildTypeInXCFrameworkConfiguration : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(xcFrameworkConfigation: String, buildType: NativeBuildType) = build(
+            "XCFramework configuration '$xcFrameworkConfigation' is missing build type '${buildType.name}'"
+        )
+    }
+
+    object AddingFrameworkToXCFrameworkAfterDSLFinalized : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(xcFramework: String, buildType: NativeBuildType, framework: String) = build(
+            "Adding framework '$framework' to XCFramework '${xcFramework}' (${buildType.name}) after DSL is finalized isn't allowed"
         )
     }
 
