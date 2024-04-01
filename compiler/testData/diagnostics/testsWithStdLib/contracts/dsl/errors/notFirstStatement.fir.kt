@@ -50,7 +50,7 @@ inline fun case_4(number: Int?): Boolean {
 inline fun case_5(cond: Boolean): Boolean {
     run {
         <!CONTRACT_NOT_ALLOWED!>contract<!> {
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (cond)<!>
+            returns(true) implies (cond)
         }
     }
     return true
@@ -69,7 +69,7 @@ inline fun case_6(cond: Boolean): Boolean {
 fun case_7(cond: Boolean): Boolean {
     fun innerFun() {
         <!CONTRACT_NOT_ALLOWED!>contract<!> {
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (cond)<!>
+            returns(true) implies (cond)
         }
     }
     return true

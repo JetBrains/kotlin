@@ -53,7 +53,7 @@ class case_4 : ClassLevel3() {
 
     fun <T>T.case_4_3_wrap() {
         fun case_4_3_contract() {
-            <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this@case_4_3_wrap is ClassLevel1)<!> }
+            <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (this@case_4_3_wrap is ClassLevel1) }
             if (this@case_4_3_wrap !is ClassLevel1) throw Exception()
         }
         case_4_3_contract()
