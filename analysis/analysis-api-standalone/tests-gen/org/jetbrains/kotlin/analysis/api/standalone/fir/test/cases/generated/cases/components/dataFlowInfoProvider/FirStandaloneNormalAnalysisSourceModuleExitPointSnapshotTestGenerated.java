@@ -392,6 +392,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
     }
 
     @Test
+    @TestMetadata("infixOperatorVariable.kt")
+    public void testInfixOperatorVariable() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/infixOperatorVariable.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaExpression.kt")
     public void testLambdaExpression() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/lambdaExpression.kt");
