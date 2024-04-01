@@ -484,11 +484,9 @@ open class FirSupertypeResolverVisitor(
     ) {
         if (supertypeGenerationExtensions.isEmpty()) return
         val typeResolveService = TypeResolveServiceForPlugins(typeResolveTransformer, scopeDeclaration)
-        with(FirSupertypeGenerationExtension.TypeResolveServiceContainer(typeResolveService)) {
-            for (extension in supertypeGenerationExtensions) {
-                if (extension.needTransformSupertypes(klass)) {
-                    supertypeRefs += extension.computeAdditionalSupertypes(klass, supertypeRefs)
-                }
+        for (extension in supertypeGenerationExtensions) {
+            if (extension.needTransformSupertypes(klass)) {
+                supertypeRefs += extension.computeAdditionalSupertypes(klass, supertypeRefs, typeResolveService)
             }
         }
     }

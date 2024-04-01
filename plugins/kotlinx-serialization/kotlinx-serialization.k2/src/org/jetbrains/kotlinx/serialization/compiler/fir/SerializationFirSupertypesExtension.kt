@@ -60,10 +60,10 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
         register(serializerFor)
     }
 
-    context(TypeResolveServiceContainer)
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
+        typeResolver: TypeResolveService
     ): List<FirResolvedTypeRef> {
         val kSerializerClassId = ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME)
         val generatedSerializerClassId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
@@ -72,7 +72,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
             session.predicateBasedProvider.matches(serializerFor, classLikeDeclaration) -> {
                 if (resolvedSupertypes.any { it.type.classId == kSerializerClassId || it.type.classId == generatedSerializerClassId }) return emptyList()
                 val getClassArgument = classLikeDeclaration.getSerializerFor(session) ?: return emptyList()
-                val serializerConeType = resolveConeTypeFromArgument(getClassArgument)
+                val serializerConeType = resolveConeTypeFromArgument(getClassArgument, typeResolver)
 
                 listOf(
                     buildResolvedTypeRef {
@@ -93,8 +93,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
     }
 
     // Function helps to resolve class call from annotation argument to `ConeKotlinType`
-    context(TypeResolveServiceContainer)
-    private fun resolveConeTypeFromArgument(getClassCall: FirGetClassCall): ConeKotlinType {
+    private fun resolveConeTypeFromArgument(getClassCall: FirGetClassCall, typeResolver: TypeResolveService): ConeKotlinType {
         val typeToResolve = buildUserTypeFromQualifierParts(isMarkedNullable = false) {
             fun visitQualifiers(expression: FirExpression) {
                 if (expression !is FirPropertyAccessExpression) return
