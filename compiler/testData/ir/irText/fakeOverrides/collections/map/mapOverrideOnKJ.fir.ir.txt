@@ -408,13 +408,13 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public abstract fun <get-size> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-      CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=EQ
         <K>: @[FlexibleNullability] kotlin.Boolean?
         <V>: @[FlexibleNullability] kotlin.Boolean?
         $receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         key: CONST Boolean type=kotlin.Boolean value=true
         value: CONST Boolean type=kotlin.Boolean value=true
-      CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=EQ
         <K>: @[FlexibleNullability] kotlin.Boolean?
         <V>: @[FlexibleNullability] kotlin.Boolean?
         $receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
@@ -442,13 +442,13 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun <get-values> (): kotlin.collections.MutableCollection<kotlin.Boolean> declared in <root>.B' type=kotlin.collections.MutableCollection<kotlin.Boolean> origin=GET_PROPERTY
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-      CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=EQ
         <K>: @[FlexibleNullability] kotlin.Boolean?
         <V>: @[FlexibleNullability] kotlin.Boolean?
         $receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         key: CONST Boolean type=kotlin.Boolean value=false
         value: CONST Boolean type=kotlin.Boolean value=false
-      CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+      CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=EQ
         <K>: @[FlexibleNullability] kotlin.Boolean?
         <V>: @[FlexibleNullability] kotlin.Boolean?
         $receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null

@@ -249,7 +249,7 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
                 $this: GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=foo.B
           CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.B' type=kotlin.Int origin=PREFIX_DECR
             $this: GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=foo.B
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=EQ
         $this: CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
           <T>: kotlin.Array<kotlin.Int>
           t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY

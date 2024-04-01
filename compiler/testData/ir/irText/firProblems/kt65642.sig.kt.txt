@@ -1,0 +1,5 @@
+// CHECK:
+//   Mangled name: #foo(kotlin.IntArray){}
+//   Public signature: /foo|-42398349591314544[0]
+//   Public signature debug description: foo(kotlin.IntArray){}
+fun foo(arr: IntArray): Unit

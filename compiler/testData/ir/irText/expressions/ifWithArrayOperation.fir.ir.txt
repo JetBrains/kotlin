@@ -9,14 +9,14 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
-            CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+            CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
               $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
               index: CONST Int type=kotlin.Int value=0
               value: CONST Int type=kotlin.Int value=2
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
-            CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+            CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
               $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
               index: CONST Int type=kotlin.Int value=0
               value: CONST Int type=kotlin.Int value=3
@@ -24,14 +24,14 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
-            CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+            CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
               $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
               index: CONST Int type=kotlin.Int value=0
               value: CONST Int type=kotlin.Int value=4
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
-            CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+            CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
               $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
               index: CONST Int type=kotlin.Int value=0
               value: CONST Int type=kotlin.Int value=5
@@ -112,14 +112,14 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
               arg0: GET_VAR 'val tmp_8: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
               arg1: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=null
-              CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+              CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
                 $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
                 index: CONST Int type=kotlin.Int value=0
                 value: CONST Int type=kotlin.Int value=10
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: BLOCK type=kotlin.Unit origin=null
-              CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+              CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
                 $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
                 index: CONST Int type=kotlin.Int value=0
                 value: CONST Int type=kotlin.Int value=11
@@ -134,14 +134,14 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
               arg0: GET_VAR 'val tmp_9: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
               arg1: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=null
-              CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+              CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
                 $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
                 index: CONST Int type=kotlin.Int value=0
                 value: CONST Int type=kotlin.Int value=12
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: BLOCK type=kotlin.Unit origin=null
-              CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
+              CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
                 $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
                 index: CONST Int type=kotlin.Int value=0
                 value: CONST Int type=kotlin.Int value=13

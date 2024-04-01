@@ -2526,6 +2526,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
       runTest("compiler/testData/ir/irText/firProblems/kt59102.kt");
     }
 
+    @TestMetadata("kt65642.kt")
+    public void testKt65642() {
+      runTest("compiler/testData/ir/irText/firProblems/kt65642.kt");
+    }
+
     @TestMetadata("lambdaInEnumEntryConstructorCall.kt")
     public void testLambdaInEnumEntryConstructorCall() {
       runTest("compiler/testData/ir/irText/firProblems/lambdaInEnumEntryConstructorCall.kt");

@@ -4091,6 +4091,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
+    @TestMetadata("kt65642.kt")
+    public void testKt65642() {
+      runTest("compiler/testData/ir/irText/firProblems/kt65642.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaInEnumEntryConstructorCall.kt")
     public void testLambdaInEnumEntryConstructorCall() {
       runTest("compiler/testData/ir/irText/firProblems/lambdaInEnumEntryConstructorCall.kt");

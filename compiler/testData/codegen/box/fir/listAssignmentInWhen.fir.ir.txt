@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/listAssignmentInWhen.kt
             if: GET_VAR 'condition: kotlin.Boolean declared in <root>.foo' type=kotlin.Boolean origin=null
             then: BLOCK type=kotlin.Unit origin=null
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                CALL 'public abstract fun set (index: kotlin.Int, element: E of kotlin.collections.MutableList): E of kotlin.collections.MutableList declared in kotlin.collections.MutableList' type=kotlin.Any? origin=null
+                CALL 'public abstract fun set (index: kotlin.Int, element: E of kotlin.collections.MutableList): E of kotlin.collections.MutableList declared in kotlin.collections.MutableList' type=kotlin.Any? origin=EQ
                   $this: GET_VAR 'list: kotlin.collections.MutableList<kotlin.Any?> declared in <root>.foo' type=kotlin.collections.MutableList<kotlin.Any?> origin=null
                   index: CONST Int type=kotlin.Int value=0
                   element: CONST String type=kotlin.String value="OK"
