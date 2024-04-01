@@ -479,7 +479,6 @@ val mppProjects by extra {
 
 val projectsWithEnabledContextReceivers by extra {
     listOf(
-        ":compiler:fir:fir2ir",
         ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:raw-fir:psi2fir",
         ":compiler:fir:raw-fir:light-tree2fir",

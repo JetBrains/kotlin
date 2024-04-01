@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 
 class Fir2IrTypeConverter(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope,
-) : Fir2IrComponents by components {
+) : Fir2IrComponents by c {
 
     internal val classIdToSymbolMap by lazy {
         // Note: this map must include all base classes, and they should be before derived classes!
@@ -108,7 +108,7 @@ class Fir2IrTypeConverter(
 
                 val irSymbol =
                     getBuiltInClassSymbol(classId)
-                        ?: lookupTag.toSymbol(session)?.toSymbol(typeOrigin) {
+                        ?: lookupTag.toSymbol(session)?.toSymbol(c, typeOrigin) {
                             typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
                         }
                         ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifiersGenerator::createIrClassForNotFoundClass)?.symbol
@@ -217,7 +217,7 @@ class Fir2IrTypeConverter(
                 val cached = capturedTypeCache[this]
                 if (cached == null) {
                     capturedTypeCache[this] = errorTypeForCapturedTypeStub
-                    val irType = this.approximateForIrOrSelf().toIrType(
+                    val irType = this.approximateForIrOrSelf(c).toIrType(
                         typeOrigin,
                         annotations,
                         hasFlexibleNullability = hasFlexibleNullability,
@@ -234,11 +234,11 @@ class Fir2IrTypeConverter(
                 }
             }
             is ConeDefinitelyNotNullType -> {
-                original.toIrType(typeOrigin).makeNotNull()
+                original.toIrType(c, typeOrigin).makeNotNull()
             }
             is ConeIntersectionType -> {
-                val approximated = approximateForIrOrNull()!!
-                approximated.toIrType(typeOrigin)
+                val approximated = approximateForIrOrNull(c)!!
+                approximated.toIrType(c, typeOrigin)
             }
             is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> createErrorType()
         }
@@ -258,7 +258,7 @@ class Fir2IrTypeConverter(
         val resultType = (commonSupertype as? ConeClassLikeType)?.replaceArgumentsWithStarProjections()
             ?: commonSupertype
         val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.let { approximateType(it) } ?: resultType
-        return approximatedType.toIrType()
+        return approximatedType.toIrType(c)
     }
 
     private fun ConeFlexibleType.isMutabilityFlexible(): Boolean {
@@ -271,7 +271,7 @@ class Fir2IrTypeConverter(
 
     private fun ConeTypeProjection.toIrTypeArgument(typeOrigin: ConversionTypeOrigin): IrTypeArgument {
         fun toIrTypeArgument(type: ConeKotlinType, variance: Variance): IrTypeProjection {
-            val irType = type.toIrType(typeOrigin)
+            val irType = type.toIrType(c, typeOrigin)
             return makeTypeProjection(irType, variance)
         }
 
@@ -286,7 +286,7 @@ class Fir2IrTypeConverter(
                     // We can return * early here to avoid recursive type conversions.
                     IrStarProjectionImpl
                 } else {
-                    val irType = toIrType(typeOrigin)
+                    val irType = toIrType(c, typeOrigin)
                     makeTypeProjection(irType, Variance.INVARIANT)
                 }
             }
@@ -342,7 +342,7 @@ class Fir2IrTypeConverter(
                 } else null
             }
         }
-        return substitutor.substituteOrSelf(type).approximateForIrOrSelf()
+        return substitutor.substituteOrSelf(type).approximateForIrOrSelf(c)
     }
 }
 
@@ -355,34 +355,22 @@ fun FirTypeRef.toIrType(
     }
 }
 
-context(Fir2IrComponents)
-fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType {
-    return with(typeConverter) {
+fun FirTypeRef.toIrType(c: Fir2IrComponents, typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType {
+    return with(c.typeConverter) {
         toIrType(typeOrigin)
     }
 }
 
-context(Fir2IrComponents)
-fun ConeKotlinType.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType {
-    return with(typeConverter) {
+fun ConeKotlinType.toIrType(c: Fir2IrComponents, typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType {
+    return with(c.typeConverter) {
         toIrType(typeOrigin)
     }
 }
 
-fun ConeKotlinType.toIrType(
-    typeConverter: Fir2IrTypeConverter,
-    typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
-): IrType =
-    with(typeConverter) {
-        toIrType(typeOrigin)
-    }
-
-context(Fir2IrComponents)
-internal fun ConeKotlinType.approximateForIrOrNull(): ConeKotlinType? {
-    return session.typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.FrontendToBackendTypesApproximation)
+internal fun ConeKotlinType.approximateForIrOrNull(c: Fir2IrComponents): ConeKotlinType? {
+    return c.session.typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.FrontendToBackendTypesApproximation)
 }
 
-context(Fir2IrComponents)
-internal fun ConeKotlinType.approximateForIrOrSelf(): ConeKotlinType {
-    return approximateForIrOrNull() ?: this
+internal fun ConeKotlinType.approximateForIrOrSelf(c: Fir2IrComponents): ConeKotlinType {
+    return approximateForIrOrNull(c) ?: this
 }

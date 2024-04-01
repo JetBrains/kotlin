@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.isObject
 import kotlin.properties.ReadWriteProperty
 
 abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
-    components: Fir2IrComponents,
+    protected val c: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
@@ -36,7 +36,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override var parent: IrDeclarationParent,
     override var isFakeOverride: Boolean
 ) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
-    Fir2IrComponents by components {
+    Fir2IrComponents by c {
 
     override lateinit var typeParameters: List<IrTypeParameter>
 
@@ -77,7 +77,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     }
 
     override var visibility: DescriptorVisibility by lazyVar(lock) {
-        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+        c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
     }
 
     override var modality: Modality
@@ -100,7 +100,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     protected fun createThisReceiverParameter(thisType: IrType, explicitReceiver: FirReceiverParameter? = null): IrValueParameter {
         declarationStorage.enterScope(this.symbol)
-        return declareThisReceiverParameter(thisType, origin, explicitReceiver = explicitReceiver).apply {
+        return declareThisReceiverParameter(c, thisType, origin, explicitReceiver = explicitReceiver).apply {
             declarationStorage.leaveScope(this@AbstractFir2IrLazyFunction.symbol)
         }
     }

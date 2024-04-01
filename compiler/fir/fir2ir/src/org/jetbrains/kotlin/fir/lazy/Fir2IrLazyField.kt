@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrConst
+import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
@@ -28,14 +29,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyField(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirField,
     val containingClass: FirRegularClass?,
     override val symbol: IrFieldSymbol,
-) : IrField(), AbstractFir2IrLazyDeclaration<FirField>, Fir2IrComponents by components {
+) : IrField(), AbstractFir2IrLazyDeclaration<FirField>, Fir2IrComponents by c {
     init {
         symbol.bind(this)
     }
@@ -63,11 +64,11 @@ class Fir2IrLazyField(
         get() = fir.name
         set(_) = mutationNotSupported()
 
-    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) = mutationNotSupported()
 
     override var type: IrType
-        get() = with(typeConverter) { fir.returnTypeRef.toIrType() }
+        get() = fir.returnTypeRef.toIrType(c)
         set(_) = mutationNotSupported()
 
     override var initializer: IrExpressionBody? by lazyVar(lock) {

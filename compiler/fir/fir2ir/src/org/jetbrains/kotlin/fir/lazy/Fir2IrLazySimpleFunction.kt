@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 class Fir2IrLazySimpleFunction(
-    components: Fir2IrComponents,
+    c: Fir2IrComponents,
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -37,7 +37,7 @@ class Fir2IrLazySimpleFunction(
     symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     isFakeOverride: Boolean
-) : AbstractFir2IrLazyFunction<FirSimpleFunction>(components, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
+) : AbstractFir2IrLazyFunction<FirSimpleFunction>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
@@ -59,7 +59,8 @@ class Fir2IrLazySimpleFunction(
             val thisType = Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(
                 this,
                 fir,
-                containingClass
+                containingClass,
+                c
             )
             createThisReceiverParameter(thisType ?: error("No dispatch receiver receiver for function"))
         } else null
@@ -114,7 +115,7 @@ class Fir2IrLazySimpleFunction(
                 return it
             }
         }
-        return fir.generateOverriddenFunctionSymbols(firParent)
+        return fir.generateOverriddenFunctionSymbols(firParent, c)
     }
 
     private fun computeOverriddenSymbolsForIrFakeOverrideGenerator(): List<IrSimpleFunctionSymbol> {

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 
-class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
+class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     internal fun createIrLazyFunction(
         fir: FirSimpleFunction,
         symbol: IrSimpleFunctionSymbol,
@@ -25,7 +25,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
             val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
             val isFakeOverride = fir.isFakeOverride(firContainingClass)
             Fir2IrLazySimpleFunction(
-                components, startOffset, endOffset, declarationOrigin,
+                c, startOffset, endOffset, declarationOrigin,
                 fir, firContainingClass, symbol, lazyParent, isFakeOverride
             ).apply {
                 prepareTypeParameters()
@@ -49,7 +49,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         val originForProperty = if (isPropertyForField) IrDeclarationOrigin.DEFINED else declarationOrigin
         return fir.convertWithOffsets { startOffset, endOffset ->
             Fir2IrLazyProperty(
-                components, startOffset, endOffset, originForProperty, fir, firContainingClass, symbols, lazyParent, isFakeOverride
+                c, startOffset, endOffset, originForProperty, fir, firContainingClass, symbols, lazyParent, isFakeOverride
             )
         }
     }
@@ -60,7 +60,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         declarationOrigin: IrDeclarationOrigin,
         lazyParent: IrDeclarationParent,
     ): Fir2IrLazyConstructor = fir.convertWithOffsets { startOffset, endOffset ->
-        Fir2IrLazyConstructor(components, startOffset, endOffset, declarationOrigin, fir, symbol, lazyParent)
+        Fir2IrLazyConstructor(c, startOffset, endOffset, declarationOrigin, fir, symbol, lazyParent)
     }
 
     fun createIrLazyClass(
@@ -68,8 +68,8 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         irParent: IrDeclarationParent,
         symbol: IrClassSymbol
     ): Fir2IrLazyClass = firClass.convertWithOffsets { startOffset, endOffset ->
-        val firClassOrigin = firClass.irOrigin()
-        Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
+        val firClassOrigin = firClass.irOrigin(c)
+        Fir2IrLazyClass(c, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
     }
 
     fun createIrLazyTypeAlias(
@@ -78,7 +78,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         symbol: IrTypeAliasSymbol
     ): Fir2IrLazyTypeAlias = firTypeAlias.convertWithOffsets { startOffset, endOffset ->
         Fir2IrLazyTypeAlias(
-            components, startOffset, endOffset, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, firTypeAlias, symbol, irParent
+            c, startOffset, endOffset, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, firTypeAlias, symbol, irParent
         )
     }
 
@@ -90,7 +90,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
     ): IrField {
         return fir.convertWithOffsets { startOffset, endOffset ->
             Fir2IrLazyField(
-                components, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol
+                c, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol
             )
         }
     }

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrLazyConstructor(
-    components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
@@ -38,7 +38,7 @@ class Fir2IrLazyConstructor(
     override val symbol: IrConstructorSymbol,
     override var parent: IrDeclarationParent
 ) : IrConstructor(), AbstractFir2IrLazyDeclaration<FirConstructor>, Fir2IrTypeParametersContainer,
-    Fir2IrComponents by components {
+    Fir2IrComponents by c {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
@@ -73,7 +73,7 @@ class Fir2IrLazyConstructor(
         get() = SpecialNames.INIT
         set(_) = mutationNotSupported()
 
-    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {
@@ -86,6 +86,7 @@ class Fir2IrLazyConstructor(
         if (containingClass?.isInner == true && outerClass != null) {
             declarationStorage.enterScope(this.symbol)
             declareThisReceiverParameter(
+                c,
                 thisType = outerClass.thisReceiver!!.type,
                 thisOrigin = origin
             ).apply {
