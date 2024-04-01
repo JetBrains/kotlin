@@ -9,6 +9,8 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -19,6 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -130,7 +134,12 @@ internal constructor(
         onlyIf { HostManager.hostIsMac }
     }
 
-    private val archToFramework: MutableMap<AppleArchitecture, FrameworkDescriptor> = mutableMapOf()
+    private val archToFrameworkProvider: MutableMap<AppleArchitecture, Provider<FrameworkDescriptor>> = mutableMapOf()
+    private val archToFramework: Map<AppleArchitecture, FrameworkDescriptor> get() = archToFrameworkProvider.mapValues { it.value.get() }
+
+    // This property is only used to carry implicit task dependencies
+    @get:Input
+    protected val taskDependencies: ListProperty<Boolean> = objectFactory.listProperty()
 
     //region DSL properties.
     /**
@@ -143,8 +152,13 @@ internal constructor(
     /**
      * A base name for the fat framework.
      */
-    @Input
-    var baseName: String = project.name
+    @get:Input
+    var baseName: String
+        get() = baseNameProvider.get()
+        set(value) = baseNameProvider.set(value)
+
+    @get:Internal
+    internal val baseNameProvider: Property<String> = objectFactory.property(project.name)
 
     @get:Internal
     internal val defaultDestinationDir: Provider<Directory> = projectLayout.buildDirectory.dir("fat-framework")
@@ -220,15 +234,25 @@ internal constructor(
      * Adds the specified frameworks in this fat framework.
      */
     fun from(frameworks: Iterable<Framework>) {
-        fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
-        frameworks.forEach { dependsOn(it.linkTask) }
+        fromFrameworkDescriptorProviders(
+            frameworks.map { framework ->
+                framework.linkTaskProvider.map { FrameworkDescriptor(framework) }
+            }
+        )
     }
+
+    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) = fromFrameworkDescriptorProviders(
+        frameworks.map { framework ->
+            project.provider { framework }
+        }
+    )
 
     /**
      * Adds the specified frameworks in this fat framework.
      */
-    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) {
-        frameworks.forEach { framework ->
+    internal fun fromFrameworkDescriptorProviders(frameworks: Iterable<Provider<FrameworkDescriptor>>) {
+        frameworks.forEach { frameworkProvider ->
+            val framework = frameworkProvider.get()
             val arch = framework.target.appleArchitecture
             val family = framework.target.family
             val fatFrameworkFamily = getFatFrameworkFamily()
@@ -257,7 +281,8 @@ internal constructor(
                 }
             }
 
-            archToFramework[arch] = framework
+            archToFrameworkProvider[arch] = frameworkProvider
+            taskDependencies.add(frameworkProvider.map { true })
         }
     }
     // endregion.

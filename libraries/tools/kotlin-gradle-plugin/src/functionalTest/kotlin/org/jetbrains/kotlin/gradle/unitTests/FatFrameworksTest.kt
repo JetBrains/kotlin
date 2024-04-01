@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.assertConfigurationsHaveTaskDependencies
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -125,6 +129,33 @@ class FatFrameworksTest {
             "fooDebugFrameworkIosFat",
             ":linkFooDebugFrameworkIosFat"
         )
+    }
+
+    @Test
+    fun `universal framework task - receives implicit dependencies from frameworks`() {
+        buildProjectWithMPP {
+            kotlin {
+                val task = tasks.register("testUniversalFrameworkTask", FatFrameworkTask::class.java)
+                val linkTasks = mutableListOf<Task>()
+
+                listOf(
+                    iosX64(),
+                    iosSimulatorArm64(),
+                ).forEach {
+                    it.binaries.framework("foo", listOf(NativeBuildType.DEBUG)) {
+                        linkTasks.add(linkTask)
+                        task.configure {
+                            it.from(this)
+                        }
+                    }
+                }
+
+                assertEquals(
+                    linkTasks,
+                    task.get().taskDependencies.getDependencies(null).toList(),
+                )
+            }
+        }
     }
 
     private fun testFatFrameworkGrouping(
