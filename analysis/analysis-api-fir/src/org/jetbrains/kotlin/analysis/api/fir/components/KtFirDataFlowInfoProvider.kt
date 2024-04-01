@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
@@ -211,19 +212,16 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
     }
 
     private fun computeHasEscapingJumps(anchor: KtElement, firAnchor: FirElement, firTargets: Set<FirElement>): Boolean {
-        if (firTargets.size < 2) {
-            // There should be both a default expression and some kind of jump
-            return false
+        val graphIndex = ControlFlowGraphIndex {
+            findControlFlowGraph(anchor, firAnchor)
+                ?: errorWithAttachment("Cannot find a control flow graph for element") {
+                    withKtModuleEntry("module", analysisSession.useSiteModule)
+                    withPsiEntry("anchor", anchor)
+                    withFirEntry("firAnchor", firAnchor)
+                }
         }
 
-        val graph = findControlFlowGraph(anchor, firAnchor)
-            ?: errorWithAttachment("Cannot find a control flow graph for element") {
-                withKtModuleEntry("module", analysisSession.useSiteModule)
-                withPsiEntry("anchor", anchor)
-                withFirEntry("firAnchor", firAnchor)
-            }
-
-        return graph.hasMultipleExitPoints(firTargets)
+        return graphIndex.hasMultipleExitPoints(firTargets)
     }
 
     private fun findControlFlowGraph(anchor: KtElement, firAnchor: FirElement): ControlFlowGraph? {
@@ -241,30 +239,22 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         return null
     }
 
-    private fun ControlFlowGraph.hasMultipleExitPoints(firTargets: Set<FirElement>): Boolean {
-        val exitNodes = HashMap<FirElement, List<CFGNode<*>>>()
-        collectExitNodes(firTargets, exitNodes)
-        return exitNodes.values.distinct().size > 1
-    }
+    private fun ControlFlowGraphIndex.hasMultipleExitPoints(firTargets: Set<FirElement>): Boolean {
+        if (firTargets.size < 2) {
+            return false
+        }
 
-    private fun ControlFlowGraph.collectExitNodes(firTargets: Set<FirElement>, exitNodes: MutableMap<FirElement, List<CFGNode<*>>>) {
-        for (node in nodes) {
-            val fir = node.fir
-            if (fir in firTargets) {
-                // This intentionally replaces existing values, in case if there are multiple nodes with the same FirElement.
-                // Here we look for exits, so we are interested in the last matching node.
-                exitNodes[fir] = node.followingNodes
+        val exitPoints = firTargets
+            .mapNotNull { findLast(it) }
+            .flatMap { node ->
+                node.followingNodes
                     .filter { it !is StubNode }
                     .map { it.unwrap() }
                     .distinct()
                     .sortedBy { it.id }
-            }
-            if (node is CFGNodeWithSubgraphs<*>) {
-                for (subGraph in node.subGraphs) {
-                    subGraph.collectExitNodes(firTargets, exitNodes)
-                }
-            }
-        }
+            }.distinct()
+
+        return exitPoints.size > 1
     }
 
     private fun CFGNode<*>.unwrap(): CFGNode<*> {
@@ -433,5 +423,43 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
 
     private fun ConeKotlinType.toKtType(): KtType {
         return analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
+    }
+}
+
+private class ControlFlowGraphIndex(graphProvider: () -> ControlFlowGraph) {
+    private val mapping: Map<FirElement, List<CFGNode<*>>> by lazy {
+        val result = HashMap<FirElement, MutableList<CFGNode<*>>>()
+
+        fun addGraph(graph: ControlFlowGraph) {
+            for (node in graph.nodes) {
+                result.getOrPut(node.fir) { SmartList() }.add(node)
+
+                if (node is CFGNodeWithSubgraphs<*>) {
+                    node.subGraphs.forEach(::addGraph)
+                }
+            }
+        }
+
+        addGraph(graphProvider())
+
+        return@lazy result
+    }
+
+    /**
+     * Find the last node in a graph (or its subgraphs) that point to the given [fir] element.
+     */
+    fun findLast(fir: FirElement): CFGNode<*>? {
+        val directNodes = mapping[fir]
+        if (directNodes != null) {
+            return directNodes.last()
+        }
+
+        if (fir is FirBlock) {
+            return fir.statements
+                .asReversed()
+                .firstNotNullOfOrNull(::findLast)
+        }
+
+        return null
     }
 }

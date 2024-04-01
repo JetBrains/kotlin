@@ -326,6 +326,18 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
     }
 
     @Test
+    @TestMetadata("annotationInfixOperatorProperty.kt")
+    public void testAnnotationInfixOperatorProperty() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/annotationInfixOperatorProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationValueCode.kt")
+    public void testAnnotationValueCode() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/annotationValueCode.kt");
+    }
+
+    @Test
     @TestMetadata("anonymousFunction.kt")
     public void testAnonymousFunction() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/anonymousFunction.kt");
@@ -389,6 +401,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
     @TestMetadata("infixOperator.kt")
     public void testInfixOperator() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/infixOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("infixOperatorProperty.kt")
+    public void testInfixOperatorProperty() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/infixOperatorProperty.kt");
     }
 
     @Test
