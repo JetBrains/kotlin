@@ -69,7 +69,7 @@ internal fun generateStubs(
     }
     val jvmDefaultMode = module.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
     return analyze(module) {
-        StubGenerator(files.filterIsInstance<KtFile>(), options, logger, metadataRenderer, metadataVersion.toArray(), jvmDefaultMode)
+        StubGenerator(files.filterIsInstance<KtFile>(), options, logger, metadataRenderer, metadataVersion.toArray(), jvmDefaultMode, this)
             .generateStubs()
     }
 }
@@ -81,7 +81,6 @@ class KaptStub(val source: String, val kaptMetadata: ByteArray) {
     }
 }
 
-context(KtAnalysisSession)
 private class StubGenerator(
     private val files: List<KtFile>,
     options: KaptOptions,
@@ -89,6 +88,7 @@ private class StubGenerator(
     private val metadataRenderer: (Printer.(Metadata) -> Unit)? = null,
     private val metadataVersion: IntArray,
     private val jvmDefaultMode: JvmDefaultMode,
+    private val analysisSession: KtAnalysisSession
 ) {
     private val strictMode = options[KaptFlag.STRICT]
     private val stripMetadata = options[KaptFlag.STRIP_METADATA]
@@ -185,7 +185,7 @@ private class StubGenerator(
                     ?.getCalleeExpressionIfAny()
                     ?.references
                     ?.firstOrNull() as? KtReference
-                val importedSymbols = importedReference?.resolveToSymbols().orEmpty()
+                val importedSymbols = with(analysisSession) { importedReference?.resolveToSymbols().orEmpty() }
                 val isAllUnderClassifierImport = importDirective.isAllUnder && importedSymbols.any { it is KtClassOrObjectSymbol }
                 val isCallableImport = !importDirective.isAllUnder && importedSymbols.any { it is KtCallableSymbol }
                 val isEnumEntryImport = !importDirective.isAllUnder && importedSymbols.any { it is KtEnumEntrySymbol }

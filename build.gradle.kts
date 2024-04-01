@@ -485,7 +485,6 @@ val projectsWithEnabledContextReceivers by extra {
         ":generators:tree-generator-common",
         ":plugins:parcelize:parcelize-compiler:parcelize.k2",
         ":plugins:fir-plugin-prototype",
-        ":plugins:kapt4",
     )
 }
 
