@@ -129,7 +129,7 @@ public fun FirExtension.createConstructor(
         }
     }.build().also {
         if (generateDelegatedNoArgConstructorCall) {
-            it.generateNoArgDelegatingConstructorCall()
+            it.generateNoArgDelegatingConstructorCall(session)
         }
     }
 }
@@ -153,8 +153,7 @@ public fun FirExtension.createDefaultPrivateConstructor(
     }
 }
 
-context(FirExtension)
-private fun FirConstructor.generateNoArgDelegatingConstructorCall() {
+private fun FirConstructor.generateNoArgDelegatingConstructorCall(session: FirSession) {
     val owner = returnTypeRef.coneType.toSymbol(session) as? FirClassSymbol<*>
     requireNotNull(owner)
     val delegatingConstructorCall = buildDelegatedConstructorCall {
