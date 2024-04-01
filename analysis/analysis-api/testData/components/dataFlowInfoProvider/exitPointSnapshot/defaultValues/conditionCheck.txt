@@ -1,7 +1,7 @@
 KtDataFlowExitPointSnapshot:
   defaultExpressionInfo = DefaultExpressionInfo:
-    expression = x[0]++
-    type = kotlin.Unit
+    expression = words.check { it.length == 5 }
+    type = kotlin.Boolean
   hasEscapingJumps = false
   hasJumps = false
   hasMultipleJumpKinds = false

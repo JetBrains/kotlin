@@ -368,6 +368,12 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     }
 
     @Test
+    @TestMetadata("conditionCheck.kt")
+    public void testConditionCheck() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/conditionCheck.kt");
+    }
+
+    @Test
     @TestMetadata("errorDefaultType.kt")
     public void testErrorDefaultType() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/errorDefaultType.kt");
@@ -467,6 +473,12 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     @TestMetadata("variableDeclaration.kt")
     public void testVariableDeclaration() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/variableDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("whenCondition.kt")
+    public void testWhenCondition() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/whenCondition.kt");
     }
 
     @Test

@@ -1,6 +1,6 @@
 KtDataFlowExitPointSnapshot:
   defaultExpressionInfo = null
-  hasEscapingJumps = true
+  hasEscapingJumps = false
   hasJumps = true
   hasMultipleJumpKinds = false
   hasMultipleJumpTargets = false

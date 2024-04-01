@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot
+import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot.DefaultExpressionInfo
 import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot.VariableReassignment
 import org.jetbrains.kotlin.analysis.api.components.KtDataFlowInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -19,32 +22,17 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
 import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
-import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
-import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
-import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirJump
-import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.AnonymousObjectExpressionExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
@@ -63,6 +51,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenBranchResultExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenSubjectExpressionExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
 import org.jetbrains.kotlin.fir.types.isNothing
@@ -71,13 +60,17 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.util.ArrayList
+import java.util.Optional
+import kotlin.collections.ArrayList
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.sign
 
 @OptIn(KtAnalysisNonPublicApi::class)
@@ -93,17 +86,13 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
 
         val firValuedReturnExpressions = collector.firReturnExpressions.filter { !it.result.resolvedType.isUnit }
 
-        val firDefaultStatementCandidate = firStatements.last()
-        val defaultExpressionInfo = computeDefaultExpression(statements, firDefaultStatementCandidate, firValuedReturnExpressions)
+        val defaultStatement = statements.last()
+        val firDefaultStatement = firStatements.last()
+        val defaultExpressionInfo = computeDefaultExpression(defaultStatement, firDefaultStatement, firValuedReturnExpressions)
 
-        val firEscapingCandidates = buildSet<FirElement> {
-            add(firDefaultStatementCandidate)
-            addAll(collector.firReturnExpressions)
-            addAll(collector.firBreakExpressions)
-            addAll(collector.firContinueExpressions)
+        val graphIndex = ControlFlowGraphIndex {
+            getControlFlowGraph(anchor = statements.first(), firStatements = firStatements)
         }
-
-        val hasEscapingJumps = computeHasEscapingJumps(statements.first(), firStatements.first(), firEscapingCandidates)
 
         val jumpExpressions = buildList {
             fun add(expressions: List<FirElement>) {
@@ -121,7 +110,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
             returnValueType = computeReturnType(firValuedReturnExpressions),
             jumpExpressions = jumpExpressions,
             hasJumps = collector.hasJumps,
-            hasEscapingJumps = hasEscapingJumps,
+            hasEscapingJumps = graphIndex.computeHasEscapingJumps(firDefaultStatement, collector),
             hasMultipleJumpKinds = collector.hasMultipleJumpKinds,
             hasMultipleJumpTargets = collector.hasMultipleJumpTargets,
             variableReassignments = collector.variableReassignments
@@ -131,12 +120,23 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
     private fun computeStatements(statements: List<KtExpression>): List<FirElement> {
         val firParent = computeCommonParent(statements)
 
-        val unwrappedStatements = statements.map { it.unwrap() }
+        val firStatements = statements.map { it.unwrap().getOrBuildFirOfType<FirElement>(firResolveSession) }
+        val pathSearcher = FirElementPathSearcher(firStatements)
+        firParent.accept(pathSearcher)
 
-        val statementSearcher = FirStatementSearcher(unwrappedStatements)
-        firParent.accept(statementSearcher)
+        return firStatements.map { unwrapLeaf(pathSearcher[it] ?: it) }
+    }
 
-        return unwrappedStatements.map { statementSearcher[it] ?: it.getOrBuildFirOfType<FirElement>(firResolveSession) }
+    private fun unwrapLeaf(firLeaf: FirElement): FirElement {
+        if (firLeaf is FirBlock && firLeaf.statements.size == 1) {
+            val firStatement = firLeaf.statements[0]
+            if (firStatement is FirExpression && firStatement.resolvedType == firLeaf.resolvedType) {
+                // Trivial blocks might not appear in the CFG, so here we include their content
+                return firStatement
+            }
+        }
+
+        return firLeaf
     }
 
     private fun computeCommonParent(statements: List<KtElement>): FirElement {
@@ -148,22 +148,38 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
             require(statements[i].parent == parent)
         }
 
+        val firContainer = collectUseSiteContainers(parent, firResolveSession)?.lastOrNull()
+        if (firContainer != null) {
+            firContainer.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            return firContainer
+        }
+
         return parent.parentsWithSelf
             .filterIsInstance<KtElement>()
             .firstNotNullOf { it.getOrBuildFir(firResolveSession) }
     }
 
     private fun computeDefaultExpression(
-        statements: List<KtExpression>,
+        defaultStatement: KtExpression,
         firDefaultStatement: FirElement,
         firValuedReturnExpressions: List<FirReturnExpression>
-    ): KtDataFlowExitPointSnapshot.DefaultExpressionInfo? {
-        val defaultExpressionFromPsi = statements.last()
-
+    ): DefaultExpressionInfo? {
         if (firDefaultStatement in firValuedReturnExpressions) {
             return null
         }
 
+        val defaultConeType = computeOrdinaryDefaultType(defaultStatement, firDefaultStatement)
+            ?: computeOperationDefaultType(defaultStatement)
+            ?: computeAssignmentTargetDefaultType(defaultStatement, firDefaultStatement)
+
+        if (defaultConeType == null || defaultConeType.isNothing) {
+            return null
+        }
+
+        return DefaultExpressionInfo(defaultStatement, defaultConeType.toKtType())
+    }
+
+    private fun computeOrdinaryDefaultType(defaultStatement: KtExpression, firDefaultStatement: FirElement): ConeKotlinType? {
         when (firDefaultStatement) {
             !is FirExpression,
             is FirJump<*>,
@@ -184,21 +200,31 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
         require(firDefaultStatement is FirExpression)
 
-        val defaultExpressionFromFir = firDefaultStatement.psi as? KtExpression ?: return null
+        val defaultStatementFromFir = firDefaultStatement.psi as? KtExpression ?: return null
 
-        if (!PsiTreeUtil.isAncestor(defaultExpressionFromFir, defaultExpressionFromPsi, false)) {
+        if (!PsiTreeUtil.isAncestor(defaultStatementFromFir, defaultStatement, false)) {
             // In certain cases, expressions might be different in PSI and FIR sources.
             // E.g., in 'foo.<expr>bar()</expr>', there is no FIR expression that corresponds to the 'bar()' KtCallExpression.
             return null
         }
 
-        val defaultConeType = firDefaultStatement.resolvedType
-        if (defaultConeType.isNothing) {
-            return null
+        return firDefaultStatement.resolvedType
+    }
+
+    private fun computeOperationDefaultType(defaultStatement: KtExpression): ConeKotlinType? {
+        val binaryExpression = (defaultStatement as? KtOperationReferenceExpression)?.parent as? KtBinaryExpression ?: return null
+        val expressionCall = binaryExpression.getOrBuildFirSafe<FirQualifiedAccessExpression>(firResolveSession) ?: return null
+        val receiverCall = expressionCall.explicitReceiver as? FirQualifiedAccessExpression ?: return null
+
+        return receiverCall.resolvedType
+    }
+
+    private fun computeAssignmentTargetDefaultType(defaultStatement: KtExpression, firDefaultStatement: FirElement): ConeKotlinType? {
+        if (firDefaultStatement is FirVariableAssignment && firDefaultStatement.lValue.psi == defaultStatement) {
+            return computeOrdinaryDefaultType(defaultStatement, firDefaultStatement.lValue)
         }
 
-        val defaultType = defaultConeType.toKtType()
-        return KtDataFlowExitPointSnapshot.DefaultExpressionInfo(defaultExpressionFromPsi, defaultType)
+        return null
     }
 
     private fun computeReturnType(firReturnExpressions: List<FirReturnExpression>): KtType? {
@@ -216,26 +242,49 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         return analysisSession.useSiteSession.typeContext.commonSuperTypeOrNull(coneTypes)?.toKtType()
     }
 
-    private fun computeHasEscapingJumps(anchor: KtElement, firAnchor: FirElement, firTargets: Set<FirElement>): Boolean {
-        val graphIndex = ControlFlowGraphIndex {
-            findControlFlowGraph(anchor, firAnchor)
-                ?: errorWithAttachment("Cannot find a control flow graph for element") {
-                    withKtModuleEntry("module", analysisSession.useSiteModule)
-                    withPsiEntry("anchor", anchor)
-                    withFirEntry("firAnchor", firAnchor)
-                }
+    private fun ControlFlowGraphIndex.computeHasEscapingJumps(firDefaultStatement: FirElement, collector: FirElementCollector): Boolean {
+        val firTargets = buildSet<FirElement> {
+            add(firDefaultStatement)
+            addAll(collector.firReturnExpressions)
+            addAll(collector.firBreakExpressions)
+            addAll(collector.firContinueExpressions)
         }
 
-        return graphIndex.hasMultipleExitPoints(firTargets)
+        return hasMultipleExitPoints(firTargets)
     }
 
-    private fun findControlFlowGraph(anchor: KtElement, firAnchor: FirElement): ControlFlowGraph? {
-        val parentDeclarations = anchor.parentsOfType<KtDeclaration>(withSelf = false)
+    private fun getControlFlowGraph(anchor: KtElement, firStatements: List<FirElement>): ControlFlowGraph {
+        return findControlFlowGraph(anchor, firStatements)
+            ?: errorWithAttachment("Cannot find a control flow graph for element") {
+                withKtModuleEntry("module", analysisSession.useSiteModule)
+                withPsiEntry("anchor", anchor)
+                withFirEntry("firAnchor", firStatements.last())
+            }
+    }
+
+    private fun findControlFlowGraph(anchor: KtElement, firStatements: List<FirElement>): ControlFlowGraph? {
+        /**
+         * Not all expressions appear in the [ControlFlowGraph].
+         * Still, if we find at least some of them, it's very unlikely that we will ever find a better graph.
+         */
+        val firCandidates = buildSet {
+            fun addCandidate(firCandidate: FirElement) {
+                add(firCandidate)
+
+                if (firCandidate is FirBlock) {
+                    firCandidate.statements.forEach(::addCandidate)
+                }
+            }
+
+            firStatements.forEach(::addCandidate)
+        }
+
+        val parentDeclarations = anchor.parentsOfType<KtDeclaration>(withSelf = true)
         for (parentDeclaration in parentDeclarations) {
-            val parentFirDeclaration = parentDeclaration.getOrBuildFir(analysisSession.firResolveSession)
+            val parentFirDeclaration = parentDeclaration.getOrBuildFir(firResolveSession)
             if (parentFirDeclaration is FirControlFlowGraphOwner) {
                 val graph = parentFirDeclaration.controlFlowGraphReference?.controlFlowGraph
-                if (graph != null && firAnchor in graph) {
+                if (graph != null && graph.contains(firCandidates)) {
                     return graph
                 }
             }
@@ -290,12 +339,15 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         }
     }
 
-    private operator fun ControlFlowGraph.contains(fir: FirElement): Boolean {
+    /**
+     * Returns `true` if the control graph contains at least one of the [firCandidates].
+     */
+    private fun ControlFlowGraph.contains(firCandidates: Set<FirElement>): Boolean {
         for (node in nodes) {
-            if (node.fir == fir) {
+            if (node.fir in firCandidates) {
                 return true
             }
-            if (node is CFGNodeWithSubgraphs<*> && node.subGraphs.any { fir in it }) {
+            if (node is CFGNodeWithSubgraphs<*> && node.subGraphs.any { it.contains(firCandidates) }) {
                 return true
             }
         }
@@ -303,32 +355,66 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         return false
     }
 
-    /**
-     * This class, unlike 'getOrBuildFirOfType()', tries to find topmost FIR elements.
-     * This is useful when PSI expressions get wrapped in the FIR tree, such as implicit return expressions from lambdas.
-     */
-    private inner class FirStatementSearcher(statements: List<KtExpression>) : FirDefaultVisitorVoid() {
+    private class FirElementPathSearcher(statements: Collection<FirElement>) : FirDefaultVisitorVoid() {
+        private companion object {
+            val FORBIDDEN_FAKE_SOURCE_KINDS: Set<KtFakeSourceElementKind> = setOf(
+                KtFakeSourceElementKind.WhenCondition,
+                KtFakeSourceElementKind.SingleExpressionBlock
+            )
+        }
+
         private val statements = statements.toHashSet()
 
-        private val mapping = LinkedHashMap<KtExpression, FirElement?>()
+        private val mapping = HashMap<FirElement, Optional<FirElement>>()
         private var unmappedCount = statements.size
 
-        operator fun get(statement: KtExpression): FirElement? {
-            return mapping[statement]
+        private val stack = ArrayDeque<FirElement>()
+
+        operator fun get(fir: FirElement): FirElement? {
+            return mapping[fir]?.getOrNull()
         }
 
         override fun visitElement(element: FirElement) {
-            val psi = element.psi
+            withElement(element) {
+                if (element in statements) {
+                    // The leaf is in mapping, but its value is still 'null'
+                    mapping.computeIfAbsent(element) { _ ->
+                        unmappedCount -= 1
+                        // Here we intentionally use the 'Optional' wrapper to make 'computeIfAbsent' work smoothly
+                        Optional.ofNullable(computeTarget(element))
+                    }
+                }
 
-            if (psi is KtExpression && psi in statements) {
-                mapping.computeIfAbsent(psi) { _ ->
-                    unmappedCount -= 1
-                    element
+                if (unmappedCount > 0) {
+                    element.acceptChildren(this)
                 }
             }
+        }
 
-            if (unmappedCount > 0) {
-                element.acceptChildren(this)
+        private fun computeTarget(element: FirElement): FirElement? {
+            val psi = element.psi
+            return stack.firstOrNull { it.psi == psi && isAppropriateTarget(it) }
+        }
+
+        private fun isAppropriateTarget(element: FirElement): Boolean {
+            if (element !is FirStatement && element !is FirReference) {
+                return false
+            }
+
+            val source = element.source
+            if (source is KtFakeSourceElement && source.kind in FORBIDDEN_FAKE_SOURCE_KINDS) {
+                return false
+            }
+
+            return true
+        }
+
+        private inline fun withElement(element: FirElement, block: () -> Unit) {
+            stack.addLast(element)
+            try {
+                block()
+            } finally {
+                stack.removeLast()
             }
         }
     }
