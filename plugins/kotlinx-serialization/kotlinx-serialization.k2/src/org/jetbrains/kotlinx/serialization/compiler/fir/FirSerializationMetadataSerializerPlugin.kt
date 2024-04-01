@@ -29,5 +29,5 @@ class FirSerializationMetadataSerializerPlugin(session: FirSession) : FirMetadat
     }
 
     private val FirRegularClassSymbol.needSaveProgramOrder: Boolean
-        get() = (modality == Modality.OPEN || modality == Modality.ABSTRACT) && with(session) { isInternalSerializable }
+        get() = (modality == Modality.OPEN || modality == Modality.ABSTRACT) && isInternalSerializable(session)
 }
