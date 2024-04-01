@@ -69,7 +69,8 @@ public class KtDataFlowExitPointSnapshot(
     public val hasMultipleJumpKinds: Boolean,
 
     /**
-     * `true` if two or more jumps have different next-executed instructions. Such as, there are both inner and outer loop `break`s.
+     * `true` if two or more jumps have different next-executed instructions.
+     * Such as, there are both inner and outer loop `break`, or a `break` and `continue` for the same loop.
      */
     public val hasMultipleJumpTargets: Boolean,
 

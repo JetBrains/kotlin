@@ -9,7 +9,7 @@ KtDataFlowExitPointSnapshot:
   hasEscapingJumps = true
   hasJumps = true
   hasMultipleJumpKinds = true
-  hasMultipleJumpTargets = false
+  hasMultipleJumpTargets = true
   jumpExpressions = [
     break,
     continue

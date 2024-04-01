@@ -1,0 +1,23 @@
+KtDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = x++
+    type = kotlin.Int
+  hasEscapingJumps = true
+  hasJumps = true
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = false
+  jumpExpressions = [
+    break
+  ]
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = [
+    VariableReassignment:
+      expression = x++
+      isAugmented = true
+      variable = var x: kotlin.Int,
+    VariableReassignment:
+      expression = x++
+      isAugmented = true
+      variable = var x: kotlin.Int
+  ]

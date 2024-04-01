@@ -62,6 +62,12 @@ public class FirIdeDependentAnalysisSourceModuleExitPointSnapshotTestGenerated e
     }
 
     @Test
+    @TestMetadata("breakContinue2.kt")
+    public void testBreakContinue2() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/breakContinue2.kt");
+    }
+
+    @Test
     @TestMetadata("breakReturn.kt")
     public void testBreakReturn() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/breakReturn.kt");
@@ -224,6 +230,12 @@ public class FirIdeDependentAnalysisSourceModuleExitPointSnapshotTestGenerated e
       @TestMetadata("breakAndReturn.kt")
       public void testBreakAndReturn() {
         runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/breakAndReturn.kt");
+      }
+
+      @Test
+      @TestMetadata("breakAndReturn2.kt")
+      public void testBreakAndReturn2() {
+        runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence/breakAndReturn2.kt");
       }
 
       @Test
@@ -401,6 +413,12 @@ public class FirIdeDependentAnalysisSourceModuleExitPointSnapshotTestGenerated e
     @TestMetadata("functionCall.kt")
     public void testFunctionCall() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/functionCall.kt");
+    }
+
+    @Test
+    @TestMetadata("incrementPostfix.kt")
+    public void testIncrementPostfix() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/incrementPostfix.kt");
     }
 
     @Test
