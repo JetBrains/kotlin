@@ -53,14 +53,11 @@ import org.jetbrains.kotlin.types.model.TypeVariance
  *     requires spreading.
  */
 internal class AdapterGenerator(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
-) : Fir2IrComponents by components {
+) : Fir2IrComponents by c {
 
     private val samResolver = FirSamResolver(session, scopeSession)
-
-    private fun ConeKotlinType.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
-        with(typeConverter) { toIrType(typeOrigin) }
 
     internal fun needToGenerateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
@@ -97,7 +94,7 @@ internal class AdapterGenerator(
         val actualReturnType = function.returnTypeRef.coneType
         return expectedReturnType?.isUnit() == true &&
                 // In case of an external function whose return type is a type parameter, e.g., operator fun <T, R> invoke(T): R
-                !actualReturnType.isUnit && actualReturnType.toSymbol(components.session) !is FirTypeParameterSymbol
+                !actualReturnType.isUnit && actualReturnType.toSymbol(c.session) !is FirTypeParameterSymbol
     }
 
     /**
@@ -330,7 +327,7 @@ internal class AdapterGenerator(
         }
 
         firAdaptee.valueParameters.forEachIndexed { index, valueParameter ->
-            val varargElementType = valueParameter.varargElementType?.toIrType()
+            val varargElementType = valueParameter.varargElementType?.toIrType(c)
             val parameterType = valueParameter.returnTypeRef.toIrType(typeConverter)
             when (val mappedArgument = mappedArguments?.get(valueParameter)) {
                 is ResolvedCallArgument.VarargArgument -> {
@@ -414,7 +411,7 @@ internal class AdapterGenerator(
         if (argument !is FirSamConversionExpression) return this
 
         val samFirType = argument.resolvedType.let { it.removeExternalProjections() ?: it }
-        val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
+        val samType = samFirType.toIrType(c, ConversionTypeOrigin.DEFAULT)
 
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         fun IrExpression.generateSamConversion(samType: IrType, firSamConversion: FirSamConversionExpression, samFirType: ConeKotlinType) =
@@ -445,12 +442,12 @@ internal class AdapterGenerator(
     ): IrExpression {
         // The rule for SAM conversions is: the argument must be a subtype of the required function type.
         // We handle intersection types, captured types, etc. by approximating both expected and actual types.
-        var approximatedConeKotlinFunctionType = getFunctionTypeForPossibleSamType(samType)?.approximateForIrOrSelf() ?: return argument
+        var approximatedConeKotlinFunctionType = getFunctionTypeForPossibleSamType(samType)?.approximateForIrOrSelf(c) ?: return argument
 
         // This line is not present in the K1 counterpart because there is InsertImplicitCasts::cast that effectively removes
         // such unnecessary casts. At the same time, many IR lowerings assume that there are no such redundant casts and many
         // tests from FirBlackBoxCodegenTestGenerated relevant to INDY start failing once this line is removed.
-        val approximateArgumentConeType = argumentConeType.approximateForIrOrSelf()
+        val approximateArgumentConeType = argumentConeType.approximateForIrOrSelf(c)
 
         // We don't want to insert a redundant cast from a function type to a suspend function type,
         // because that's already handled by suspend conversion.
@@ -464,7 +461,7 @@ internal class AdapterGenerator(
             return argument
         }
 
-        val irFunctionType = approximatedConeKotlinFunctionType.toIrType()
+        val irFunctionType = approximatedConeKotlinFunctionType.toIrType(c)
         return argument.implicitCastTo(irFunctionType)
     }
 
@@ -586,7 +583,7 @@ internal class AdapterGenerator(
         }
 
         val invokeSymbol = findInvokeSymbol(expectedFunctionalType, argument) ?: return this
-        val suspendConvertedType = parameterType.toIrType() as IrSimpleType
+        val suspendConvertedType = parameterType.toIrType(c) as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, type, invokeSymbol)
             val irAdapterRef = IrFunctionReferenceImpl(
@@ -782,7 +779,7 @@ internal class AdapterGenerator(
                 startOffset, endOffset,
                 listOf(
                     IrReturnImpl(
-                        startOffset, endOffset, components.irBuiltIns.nothingType, irAdapterFunction.symbol,
+                        startOffset, endOffset, c.irBuiltIns.nothingType, irAdapterFunction.symbol,
                         IrTypeOperatorCallImpl(
                             startOffset, endOffset, irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
                             IrCallImpl(

@@ -49,18 +49,18 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IrBuiltInsOverFir(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     override val languageVersionSettings: LanguageVersionSettings,
     private val moduleDescriptor: FirModuleDescriptor,
     irMangler: KotlinMangler.IrMangler
 ) : IrBuiltIns() {
     private val session: FirSession
-        get() = components.session
+        get() = c.session
 
     private val symbolProvider: FirSymbolProvider
         get() = session.symbolProvider
 
-    override val irFactory: IrFactory = components.irFactory
+    override val irFactory: IrFactory = c.irFactory
 
     private val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
 
@@ -79,7 +79,7 @@ class IrBuiltInsOverFir(
 
     private fun findFirMemberFunctions(classId: ClassId, name: Name): List<FirNamedFunctionSymbol> {
         val klass = symbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
-        val scope = with(components) { klass.unsubstitutedScope() }
+        val scope = klass.unsubstitutedScope(c)
         return scope.getFunctions(name)
     }
 
@@ -140,9 +140,9 @@ class IrBuiltInsOverFir(
                  * If @IntrinsicConstEvaluation is present in sources, then we are compiling stdlib and there is no need to create IrClass
                  *   for it manually, as we will create it from the source FIR class
                  */
-                val irClassSymbol = components.classifierStorage.getIrClassSymbol(firClassSymbol)
+                val irClassSymbol = c.classifierStorage.getIrClassSymbol(firClassSymbol)
                 val firConstructor = firClassSymbol.fir.constructors(session).single()
-                val irConstructorSymbol = components.declarationStorage.getIrConstructorSymbol(firConstructor, potentiallyExternal = false)
+                val irConstructorSymbol = c.declarationStorage.getIrConstructorSymbol(firConstructor, potentiallyExternal = false)
                 irClassSymbol to irConstructorSymbol
             }
 
@@ -164,7 +164,7 @@ class IrBuiltInsOverFir(
                      *   somewhere in the code
                      */
                     @OptIn(LeakedDeclarationCaches::class)
-                    components.classifierStorage.cacheIrClass(firClassSymbol.fir, irClass)
+                    c.classifierStorage.cacheIrClass(firClassSymbol.fir, irClass)
                 }
                 // class for intrinsicConst is created manually and it definitely is not a lazy class
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -520,7 +520,7 @@ class IrBuiltInsOverFir(
             name,
             *packageNameSegments,
             mapKey = { symbol ->
-                with(components) { symbol.fir.receiverParameter?.typeRef?.toIrType(typeConverter)?.classifierOrNull }
+                symbol.fir.receiverParameter?.typeRef?.toIrType(c)?.classifierOrNull
             },
             mapValue = { _, irSymbol -> irSymbol }
         )
@@ -533,7 +533,7 @@ class IrBuiltInsOverFir(
         return getFunctionsByKey(
             name,
             *packageNameSegments,
-            mapKey = { with(components) { it.fir.returnTypeRef.toIrType(typeConverter).classifierOrNull } },
+            mapKey = { it.fir.returnTypeRef.toIrType(c).classifierOrNull },
             mapValue = { _, irSymbol -> irSymbol }
         )
     }
@@ -546,7 +546,7 @@ class IrBuiltInsOverFir(
             name,
             *packageNameSegments,
             mapKey = { symbol ->
-                with(components) { symbol.fir.receiverParameter?.typeRef?.toIrType(typeConverter)?.classifierOrNull }
+                symbol.fir.receiverParameter?.typeRef?.toIrType(c)?.classifierOrNull
             },
             mapValue = { firSymbol, irSymbol -> firSymbol to irSymbol }
         )
@@ -631,7 +631,7 @@ class IrBuiltInsOverFir(
 
     private fun loadClassSafe(classId: ClassId): IrClassSymbol? {
         val firClassSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
-        return components.classifierStorage.getIrClassSymbol(firClassSymbol)
+        return c.classifierStorage.getIrClassSymbol(firClassSymbol)
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -700,7 +700,7 @@ class IrBuiltInsOverFir(
 
         val irFun4SignatureCalculation = makeWithSymbol(IrSimpleFunctionSymbolImpl())
         val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
-        return components.symbolTable.declareSimpleFunction(
+        return c.symbolTable.declareSimpleFunction(
             signature,
             { IrSimpleFunctionPublicSymbolImpl(signature, null) },
             ::makeWithSymbol
@@ -729,7 +729,7 @@ class IrBuiltInsOverFir(
 
     private fun findFunction(functionSymbol: FirNamedFunctionSymbol): IrSimpleFunctionSymbol {
         functionSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        return components.declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
+        return c.declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
     }
 
     private fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> {
@@ -738,7 +738,7 @@ class IrBuiltInsOverFir(
 
     private fun findProperty(propertySymbol: FirPropertySymbol): IrPropertySymbol {
         propertySymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        return components.declarationStorage.getIrPropertySymbol(propertySymbol) as IrPropertySymbol
+        return c.declarationStorage.getIrPropertySymbol(propertySymbol) as IrPropertySymbol
     }
 
     private val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType

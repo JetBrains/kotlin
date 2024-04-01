@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrPluginContext(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor
 ) : IrPluginContext {
     companion object {
@@ -53,33 +53,33 @@ class Fir2IrPluginContext(
     override val afterK2: Boolean = true
 
     override val languageVersionSettings: LanguageVersionSettings
-        get() = components.session.languageVersionSettings
+        get() = c.session.languageVersionSettings
 
     override val platform: TargetPlatform
-        get() = components.session.moduleData.platform
+        get() = c.session.moduleData.platform
 
     override val symbolTable: ReferenceSymbolTable
-        get() = components.symbolTable
+        get() = c.symbolTable
 
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, symbolTable)
 
     override val irBuiltIns: IrBuiltIns
-        get() = components.irBuiltIns
+        get() = c.irBuiltIns
 
     private val symbolProvider: FirSymbolProvider
-        get() = components.session.symbolProvider
+        get() = c.session.symbolProvider
 
     override val metadataDeclarationRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
-        get() = components.annotationsFromPluginRegistrar
+        get() = c.annotationsFromPluginRegistrar
 
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
         val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol<*> ?: return null
-        return components.classifierStorage.getIrClassSymbol(firSymbol)
+        return c.classifierStorage.getIrClassSymbol(firSymbol)
     }
 
     override fun referenceTypeAlias(classId: ClassId): IrTypeAliasSymbol? {
         val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirTypeAliasSymbol ?: return null
-        return components.classifierStorage.getIrTypeAliasSymbol(firSymbol)
+        return c.classifierStorage.getIrTypeAliasSymbol(firSymbol)
     }
 
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
@@ -117,17 +117,14 @@ class Fir2IrPluginContext(
     ): Collection<R> {
         val callables = if (classId != null) {
             val expandedClass = symbolProvider.getClassLikeSymbolByClassId(classId)
-                ?.fullyExpandedClass(components.session)
+                ?.fullyExpandedClass(c.session)
                 ?: return emptyList()
-
-            with(components) {
-                expandedClass.unsubstitutedScope().getCallablesFromScope()
-            }
+            expandedClass.unsubstitutedScope(c).getCallablesFromScope()
         } else {
             symbolProvider.getCallablesFromProvider()
         }
 
-        return callables.mapNotNull { components.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
+        return callables.mapNotNull { c.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
     }
 
     override fun createDiagnosticReporter(pluginId: String): IrMessageLogger {

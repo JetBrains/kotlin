@@ -60,10 +60,10 @@ import org.jetbrains.kotlin.utils.threadLocal
 import java.util.concurrent.ConcurrentHashMap
 
 class Fir2IrDeclarationStorage(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     private val sourceModuleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage
-) : Fir2IrComponents by components {
+) : Fir2IrComponents by c {
 
     private val fragmentCache: ConcurrentHashMap<FqName, ExternalPackageFragments> = ConcurrentHashMap()
     private val moduleDescriptorCache: ConcurrentHashMap<FirModuleData, FirModuleDescriptor> = ConcurrentHashMap()
@@ -199,15 +199,15 @@ class Fir2IrDeclarationStorage(
         val parentIsExpect: Boolean,
     ) {
         companion object {
-            context(Fir2IrComponents)
             operator fun invoke(
                 originalSymbol: FirCallableSymbol<*>,
                 dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+                c: Fir2IrComponents
             ): FakeOverrideIdentifier {
                 return FakeOverrideIdentifier(
                     originalSymbol,
                     dispatchReceiverLookupTag,
-                    dispatchReceiverLookupTag.toFirRegularClass(session)?.isExpect == true
+                    dispatchReceiverLookupTag.toFirRegularClass(c.session)?.isExpect == true
                 )
             }
         }
@@ -455,7 +455,8 @@ class Fir2IrDeclarationStorage(
                 val originalFunction = function.unwrapFakeOverridesOrDelegated()
                 val key = FakeOverrideIdentifier(
                     originalFunction.symbol,
-                    fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!
+                    fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!,
+                    c
                 )
                 irForFirSessionDependantDeclarationMap[key] = irFunctionSymbol
             }
@@ -693,7 +694,8 @@ class Fir2IrDeclarationStorage(
             val originalProperty = property.unwrapFakeOverridesOrDelegated()
             val key = FakeOverrideIdentifier(
                 originalProperty.symbol,
-                fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!
+                fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!,
+                c
             )
             irForFirSessionDependantDeclarationMap[key] = irPropertySymbol
         } else {
@@ -1172,7 +1174,8 @@ class Fir2IrDeclarationStorage(
         if (isFakeOverride) {
             val key = FakeOverrideIdentifier(
                 declaration.unwrapFakeOverridesOrDelegated().symbol,
-                fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!
+                fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!,
+                c
             )
             irForFirSessionDependantDeclarationMap[key]?.let { return it as IS }
         } else {
@@ -1220,7 +1223,8 @@ class Fir2IrDeclarationStorage(
                 isFakeOverride -> {
                     val key = FakeOverrideIdentifier(
                         declaration.symbol.unwrapFakeOverrides(),
-                        fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!
+                        fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!,
+                        c
                     )
                     irForFirSessionDependantDeclarationMap[key] = cachedInSymbolTable
                 }
@@ -1476,11 +1480,11 @@ class Fir2IrDeclarationStorage(
          */
         val firProvider = if (configuration.allowNonCachedDeclarations) {
             when {
-                firBasedSymbol.moduleData == session.moduleData -> components.firProvider
+                firBasedSymbol.moduleData == session.moduleData -> c.firProvider
                 else -> firBasedSymbol.moduleData.session.firProvider
             }
         } else {
-            components.firProvider
+            c.firProvider
         }
 
         val containerFile = when (firBasedSymbol) {

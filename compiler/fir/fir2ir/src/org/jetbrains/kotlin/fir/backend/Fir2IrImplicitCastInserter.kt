@@ -27,14 +27,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
-class Fir2IrImplicitCastInserter(
-    private val components: Fir2IrComponents
-) : Fir2IrComponents by components, FirDefaultVisitor<IrElement, IrElement>() {
-
-    private fun ConeKotlinType.toIrType(typeOrigin: ConversionTypeOrigin): IrType = with(typeConverter) {
-        toIrType(typeOrigin)
-    }
-
+class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, IrElement>() {
     override fun visitElement(element: FirElement, data: IrElement): IrElement {
         TODO("Should not be here: ${element::class}: ${element.render()}")
     }
@@ -218,7 +211,7 @@ class Fir2IrImplicitCastInserter(
             }
             expandedValueType is ConeDynamicType -> {
                 if (expandedExpectedType !is ConeDynamicType && !expandedExpectedType.isNullableAny) {
-                    implicitCast(this, expandedExpectedType.toIrType(ConversionTypeOrigin.DEFAULT))
+                    implicitCast(this, expandedExpectedType.toIrType(c, ConversionTypeOrigin.DEFAULT))
                 } else {
                     this
                 }
@@ -237,11 +230,11 @@ class Fir2IrImplicitCastInserter(
         expectedType: ConeKotlinType
     ): IrExpression {
         if (argumentType !is ConeIntersectionType) return this
-        val approximatedArgumentType = argumentType.approximateForIrOrNull() ?: argumentType
+        val approximatedArgumentType = argumentType.approximateForIrOrNull(c) ?: argumentType
         if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return this
 
         return findComponentOfIntersectionForExpectedType(argumentType, expectedType)?.let {
-            implicitCast(this, it.toIrType())
+            implicitCast(this, it.toIrType(c))
         } ?: this
     }
 
@@ -291,7 +284,7 @@ class Fir2IrImplicitCastInserter(
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
         return if (smartCastExpression.isStable && smartCastExpression.smartcastTypeWithoutNullableNothing == null) {
             val smartcastedType = smartCastExpression.resolvedType
-            val approximatedType = smartcastedType.approximateForIrOrNull()
+            val approximatedType = smartcastedType.approximateForIrOrNull(c)
             if (approximatedType != null) {
                 if (smartCastExpression.originalExpression.resolvedType.isSubtypeOf(approximatedType, session)) {
                     return data
@@ -324,7 +317,7 @@ class Fir2IrImplicitCastInserter(
         typeOrigin: ConversionTypeOrigin,
     ): IrExpression? {
         val receiverExpressionType = receiver.resolvedType as? ConeIntersectionType ?: return null
-        val referencedDeclaration = selector.calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative()?.fir
+        val referencedDeclaration = selector.calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative(c)?.fir
 
         val receiverType = with(selector) {
             when {
@@ -334,7 +327,7 @@ class Fir2IrImplicitCastInserter(
                 }
                 receiver === extensionReceiver -> {
                     val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
-                    val substitutor = selector.buildSubstitutorByCalledCallable()
+                    val substitutor = selector.buildSubstitutorByCalledCallable(c)
                     val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
                     // Frontend may write captured types as type arguments (by design), so we need to approximate receiver type after substitution
                     val approximatedType = session.typeApproximator.approximateToSuperType(
@@ -364,7 +357,7 @@ class Fir2IrImplicitCastInserter(
     private fun implicitCastOrExpression(
         original: IrExpression, castType: ConeKotlinType, typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrExpression {
-        return implicitCastOrExpression(original, castType.toIrType(typeOrigin))
+        return implicitCastOrExpression(original, castType.toIrType(c, typeOrigin))
     }
 
     companion object {

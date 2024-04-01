@@ -64,9 +64,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope,
-) : Fir2IrComponents by components {
+) : Fir2IrComponents by c {
 
     private val generatorExtensions = session.extensionService.declarationGenerators
 
@@ -122,7 +122,7 @@ class Fir2IrConverter(
 
         if (
             configuration.useFirBasedFakeOverrideGenerator &&
-            components.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+            c.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
         ) {
             // See the comment to generateUnboundFakeOverrides function itself
             @OptIn(LeakedDeclarationCaches::class)
@@ -276,7 +276,7 @@ class Fir2IrConverter(
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
         if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData)) {
             declarationStorage.enterScope(irConstructor.symbol)
-            val dataClassMembersGenerator = DataClassMembersGenerator(components)
+            val dataClassMembersGenerator = DataClassMembersGenerator(c)
             if (irClass.isSingleFieldValueClass) {
                 allDeclarations += dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
             }
@@ -333,7 +333,7 @@ class Fir2IrConverter(
 
         IrSimpleFunctionSymbolImpl().let { irSymbol ->
             val lastStatement = codeFragment.block.statements.lastOrNull()
-            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(typeConverter) ?: irBuiltIns.unitType
+            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(c) ?: irBuiltIns.unitType
 
             irFactory.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -413,7 +413,7 @@ class Fir2IrConverter(
         return irClass.declarations.filter {
             it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
         }.mapNotNull {
-            components.declarationStorage.originalDeclarationForDelegated(it)
+            c.declarationStorage.originalDeclarationForDelegated(it)
         }
     }
 

@@ -52,18 +52,16 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class CallAndReferenceGenerator(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
     private val conversionScope: Fir2IrConversionScope,
-) : Fir2IrComponents by components {
+) : Fir2IrComponents by c {
 
-    private val adapterGenerator = AdapterGenerator(components, conversionScope)
+    private val adapterGenerator = AdapterGenerator(c, conversionScope)
 
-    private fun FirTypeRef.toIrType(): IrType =
-        with(typeConverter) { toIrType(conversionScope.defaultConversionTypeOrigin()) }
+    private fun FirTypeRef.toIrType(): IrType = toIrType(c, conversionScope.defaultConversionTypeOrigin())
 
-    private fun ConeKotlinType.toIrType(): IrType =
-        with(typeConverter) { toIrType(conversionScope.defaultConversionTypeOrigin()) }
+    private fun ConeKotlinType.toIrType(): IrType = toIrType(c, conversionScope.defaultConversionTypeOrigin())
 
     fun convertToIrCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
@@ -72,7 +70,7 @@ class CallAndReferenceGenerator(
     ): IrExpression {
         val type = approximateFunctionReferenceType(callableReferenceAccess.resolvedType).toIrType()
 
-        val firSymbol = callableReferenceAccess.calleeReference.extractSymbolForCall()
+        val firSymbol = callableReferenceAccess.calleeReference.extractSymbolForCall(c)
         if (firSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
             assert(explicitReceiverExpression == null) {
                 "Fun interface constructor reference should be unbound: ${explicitReceiverExpression?.dump()}"
@@ -94,6 +92,7 @@ class CallAndReferenceGenerator(
 
             fun FirCallableSymbol<*>.toSymbolForCall(): IrSymbol? {
                 return toSymbolForCall(
+                    c,
                     callableReferenceAccess.dispatchReceiver,
                     explicitReceiver = callableReferenceAccess.explicitReceiver,
                     isDelegate = isDelegate,
@@ -462,13 +461,14 @@ class CallAndReferenceGenerator(
                 }
             }
             val symbol = calleeReference.toSymbolForCall(
+                c,
                 dispatchReceiver,
                 explicitReceiver = qualifiedAccess.explicitReceiver
             )
             when (symbol) {
                 is IrConstructorSymbol -> {
                     require(firSymbol is FirConstructorSymbol)
-                    val constructor = firSymbol.unwrapCallRepresentative().fir as FirConstructor
+                    val constructor = firSymbol.unwrapCallRepresentative(c).fir as FirConstructor
                     val totalTypeParametersCount = constructor.typeParameters.size
                     val constructorTypeParametersCount = constructor.typeParameters.count { it is FirTypeParameter }
                     IrConstructorCallImpl(
@@ -554,7 +554,7 @@ class CallAndReferenceGenerator(
                     IrGetValueImpl(
                         startOffset, endOffset,
                         // Note: there is a case with componentN function when IR type of variable differs from FIR type
-                        variable.irTypeForPotentiallyComponentCall(predefinedType = irType),
+                        variable.irTypeForPotentiallyComponentCall(c, predefinedType = irType),
                         symbol,
                         origin = if (variableAsFunctionMode) IrStatementOrigin.VARIABLE_AS_FUNCTION
                         else incOrDeclSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind] ?: calleeReference.statementOrigin()
@@ -657,6 +657,7 @@ class CallAndReferenceGenerator(
         }
 
         val symbol = calleeReference.toSymbolForCall(
+            c,
             extractDispatchReceiverOfAssignment(variableAssignment),
             explicitReceiver = variableAssignment.explicitReceiver,
             preferGetter = false,
@@ -775,7 +776,7 @@ class CallAndReferenceGenerator(
                     // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
                     val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass
                     var constructorSymbol: FirConstructorSymbol? = null
-                    fir?.unsubstitutedScope()?.processDeclaredConstructors {
+                    fir?.unsubstitutedScope(c)?.processDeclaredConstructors {
                         if (it.fir.isPrimary && constructorSymbol == null) {
                             constructorSymbol = it
                         }
@@ -819,7 +820,7 @@ class CallAndReferenceGenerator(
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
             val symbol = annotationTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol ?: return null
 
-            val constructorSymbol = symbol.unsubstitutedScope().getDeclaredConstructors().firstOrNull() ?: return null
+            val constructorSymbol = symbol.unsubstitutedScope(c).getDeclaredConstructors().firstOrNull() ?: return null
 
             val argumentToParameterToMapping = constructorSymbol.valueParameterSymbols.mapNotNull {
                 val parameter = it.fir
@@ -858,7 +859,7 @@ class CallAndReferenceGenerator(
             if (classSymbol != null) {
                 IrGetObjectValueImpl(
                     startOffset, endOffset, irType,
-                    classSymbol.toSymbol() as IrClassSymbol
+                    classSymbol.toSymbol(c) as IrClassSymbol
                 )
             } else {
                 IrErrorCallExpressionImpl(
@@ -881,7 +882,7 @@ class CallAndReferenceGenerator(
         val function = ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
         val valueParameters = function?.valueParameters
         val argumentMapping = call.resolvedArgumentMapping
-        val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledCallable() ?: ConeSubstitutor.Empty
+        val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledCallable(c) ?: ConeSubstitutor.Empty
         return Triple(valueParameters, argumentMapping, substitutor)
     }
 
@@ -1287,7 +1288,7 @@ class CallAndReferenceGenerator(
                         symbol.fir.receiverParameter?.typeRef?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
                                 val extensionReceiver = qualifiedAccess.extensionReceiver!!
-                                val substitutor = qualifiedAccess.buildSubstitutorByCalledCallable()
+                                val substitutor = qualifiedAccess.buildSubstitutorByCalledCallable(c)
                                 it.insertSpecialCast(
                                     extensionReceiver,
                                     extensionReceiver.resolvedType,

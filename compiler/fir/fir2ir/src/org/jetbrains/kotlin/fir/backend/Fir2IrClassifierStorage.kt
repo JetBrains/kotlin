@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrClassifierStorage(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     private val conversionScope: Fir2IrConversionScope,
-) : Fir2IrComponents by components {
+) : Fir2IrComponents by c {
     private val classCache: MutableMap<FirRegularClass, IrClassSymbol> = commonMemberStorage.classCache
 
     private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAliasSymbol> = mutableMapOf()
@@ -141,7 +141,7 @@ class Fir2IrClassifierStorage(
             return cachedSymbol
         }
 
-        if (components.configuration.allowNonCachedDeclarations) {
+        if (c.configuration.allowNonCachedDeclarations) {
             return createIrTypeParameterForNonCachedDeclaration(firTypeParameter)
         }
 
@@ -247,14 +247,14 @@ class Fir2IrClassifierStorage(
 
         return fieldsForContextReceivers.getOrPut(irClass) {
             klass.contextReceivers.withIndex().map { (index, contextReceiver) ->
-                components.irFactory.createField(
+                c.irFactory.createField(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     origin = IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
                     name = Name.identifier("contextReceiverField$index"),
                     visibility = DescriptorVisibilities.PRIVATE,
                     symbol = IrFieldSymbolImpl(),
-                    type = contextReceiver.typeRef.toIrType(),
+                    type = contextReceiver.typeRef.toIrType(c),
                     isFinal = true,
                     isStatic = false,
                     isExternal = false,

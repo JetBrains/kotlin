@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.Name
 
 internal class OperatorExpressionGenerator(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
     private val conversionScope: Fir2IrConversionScope
-) : Fir2IrComponents by components {
+) : Fir2IrComponents by c {
 
     fun convertComparisonExpression(comparisonExpression: FirComparisonExpression): IrExpression {
         return comparisonExpression.convertWithOffsets { startOffset, endOffset ->
@@ -81,7 +81,7 @@ internal class OperatorExpressionGenerator(
             return fallbackToRealCall()
         }
 
-        val comparisonInfo = comparisonExpression.inferPrimitiveNumericComparisonInfo() ?: return fallbackToRealCall()
+        val comparisonInfo = comparisonExpression.inferPrimitiveNumericComparisonInfo(c) ?: return fallbackToRealCall()
         val comparisonType = comparisonInfo.comparisonType
 
         val comparisonIrType = typeConverter.classIdToTypeMap[comparisonType.lookupTag.classId] ?: return fallbackToRealCall()
@@ -166,7 +166,7 @@ internal class OperatorExpressionGenerator(
             FirOperation.NOT_EQ -> IrStatementOrigin.EXCLEQ
             else -> error("Not an equality operation: $operation")
         }
-        val comparisonInfo = inferPrimitiveNumericComparisonInfo(arguments[0], arguments[1])
+        val comparisonInfo = inferPrimitiveNumericComparisonInfo(arguments[0], arguments[1], c)
 
         val convertedLeft = arguments[0].convertToIrExpression(comparisonInfo, isLeftType = true)
         val convertedRight = arguments[1].convertToIrExpression(comparisonInfo, isLeftType = false)
@@ -287,7 +287,7 @@ internal class OperatorExpressionGenerator(
         val targetClassId = targetType.lookupTag.classId
         if (operandClassId == targetClassId) return eraseImplicitCast()
         val operandFirClass = session.symbolProvider.getRegularClassSymbolByClassId(operandClassId) ?: error("No symbol for $operandClassId")
-        val conversionFirFunction = operandFirClass.unsubstitutedScope()
+        val conversionFirFunction = operandFirClass.unsubstitutedScope(c)
             .getFunctions(Name.identifier("to${targetType.lookupTag.classId.shortClassName.asString()}"))
             .singleOrNull()
             ?: error("No conversion function for $operandType ~> $targetType")
@@ -295,7 +295,7 @@ internal class OperatorExpressionGenerator(
 
         val unsafeIrCall = IrCallImpl(
             irExpression.startOffset, irExpression.endOffset,
-            conversionFirFunction.resolvedReturnType.toIrType(),
+            conversionFirFunction.resolvedReturnType.toIrType(c),
             conversionFunctionSymbol as IrSimpleFunctionSymbol,
             valueArgumentsCount = 0,
             typeArgumentsCount = 0
@@ -304,11 +304,11 @@ internal class OperatorExpressionGenerator(
         }
         return if (operandType.isNullable) {
             val (receiverVariable, receiverVariableSymbol) =
-                components.createTemporaryVariableForSafeCallConstruction(irExpression, conversionScope)
+                c.createTemporaryVariableForSafeCallConstruction(irExpression, conversionScope)
 
             unsafeIrCall.dispatchReceiver = IrGetValueImpl(irExpression.startOffset, irExpression.endOffset, receiverVariableSymbol)
 
-            components.createSafeCallConstruction(receiverVariable, receiverVariableSymbol, unsafeIrCall)
+            c.createSafeCallConstruction(receiverVariable, receiverVariableSymbol, unsafeIrCall)
         } else {
             unsafeIrCall
         }
