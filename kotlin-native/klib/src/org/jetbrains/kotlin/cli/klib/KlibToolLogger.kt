@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.klib
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.util.Logger
 
-internal class KlibToolLogger(private val output: KlibToolOutput) : Logger, IrMessageLogger {
+class KlibToolLogger(private val output: KlibToolOutput) : Logger, IrMessageLogger {
     override fun log(message: String) {
         output.logInfo(message)
     }

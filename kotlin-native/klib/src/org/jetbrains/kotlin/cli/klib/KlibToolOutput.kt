@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.cli.klib
  *  Note: The [org.jetbrains.kotlin.cli.common.messages.MessageCollector] is designed to track an individual short messages
  *  logged at different levels, but is not supposed to collect plain output (such as, for example, IR dump).
  */
-internal class KlibToolOutput(
+class KlibToolOutput(
         stdout: Appendable,
         val stderr: Appendable
 ) : Appendable by stdout {

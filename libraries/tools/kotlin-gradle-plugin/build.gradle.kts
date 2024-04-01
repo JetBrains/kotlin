@@ -26,6 +26,18 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             )
         )
+
+//        freeCompilerArgs.addAll(
+//            project.provider {
+//                println(
+//                    this@kotlin.target
+//                        .compilations.getByName("main").compileDependencyFiles
+//                        .filter { it.nameWithoutExtension.contains("klib") && it.extension == "jar" }
+//                        .map { "-Xfriend-paths=${it.path}" }
+//                )
+//                emptyList<String>()
+//            }
+//        )
     }
 }
 
@@ -84,6 +96,9 @@ dependencies {
     commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
 
+//    embedded(project(":kotlin-native:klib"))
+    commonCompileOnly(project(":kotlin-native:klib"))
+
     commonRuntimeOnly(project(":kotlin-compiler-runner")) {
         // Excluding dependency with not-relocated 'com.intellij' types
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
@@ -91,6 +106,8 @@ dependencies {
     }
     commonRuntimeOnly(project(":kotlin-util-klib"))
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
+
+    commonRuntimeOnly(project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"))
 
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))

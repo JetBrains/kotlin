@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
@@ -48,6 +49,22 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             resolver = IdeNativeStdlibDependencyResolver,
             constraint = SourceSetConstraint.isNative,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            priority = IdeMultiplatformImport.Priority.normal
+        )
+
+        registerDependencyResolver(
+            resolver = IdeNativeStdlibDependencyResolver,
+            // FIXME: IDE thinks swiftApi source set is a native source set...
+//            resolver = IdeSwiftApiStdlibDependencyResolver,
+            constraint = { it.name.contains("swiftApi") },
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            priority = IdeMultiplatformImport.Priority.normal
+        )
+
+        registerDependencyResolver(
+            resolver = IdeSwiftApiDependencyResolver,
+            constraint = { it.name.contains("swiftApi") },
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.PreDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
 

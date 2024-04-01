@@ -239,6 +239,7 @@ abstract class KotlinCompile @Inject constructor(
             KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
             overrideArgsUsingTaskModuleNameWithWarning(args)
+            // FIXME: Fails here
             requireNotNull(args.moduleName)
 
             val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
