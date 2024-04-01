@@ -39315,6 +39315,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("ExhaustiveSealedIntersection.kt")
+      public void testExhaustiveSealedIntersection() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSealedIntersection.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveSmartcastBoolean.kt")
       public void testExhaustiveSmartcastBoolean() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSmartcastBoolean.kt");
