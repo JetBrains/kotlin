@@ -162,13 +162,13 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
             !is FirExpression,
             is FirJump<*>,
             is FirThrowExpression,
-            is FirResolvedQualifier,
             is FirUnitExpression,
             is FirErrorExpression -> {
                 return null
             }
 
-            is FirBlock -> {
+            is FirBlock,
+            is FirResolvedQualifier -> {
                 if (firDefaultStatement.resolvedType.isUnit) {
                     return null
                 }

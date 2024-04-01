@@ -410,6 +410,12 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     }
 
     @Test
+    @TestMetadata("objectQualifier.kt")
+    public void testObjectQualifier() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/objectQualifier.kt");
+    }
+
+    @Test
     @TestMetadata("packageQualifier.kt")
     public void testPackageQualifier() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/packageQualifier.kt");
