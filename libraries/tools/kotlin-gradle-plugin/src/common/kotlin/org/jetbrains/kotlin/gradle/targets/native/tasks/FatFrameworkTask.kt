@@ -9,6 +9,9 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -19,6 +22,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -28,6 +33,7 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.Serializable
 import java.nio.file.Files
 import javax.inject.Inject
 
@@ -99,7 +105,7 @@ class FrameworkDescriptor(
     val file: File,
     val isStatic: Boolean,
     val target: KonanTarget
-) {
+) : Serializable {
     constructor(framework: Framework) : this(
         framework.outputFile,
         framework.isStatic,
@@ -110,8 +116,8 @@ class FrameworkDescriptor(
         require(NativeOutputKind.FRAMEWORK.availableFor(target))
     }
 
-    val name = file.nameWithoutExtension
-    val files = FrameworkLayout(file, target.family == Family.OSX)
+    val name get() = file.nameWithoutExtension
+    val files get() = FrameworkLayout(file, target.family == Family.OSX)
 }
 
 /**
@@ -130,7 +136,12 @@ internal constructor(
         onlyIf { HostManager.hostIsMac }
     }
 
-    private val archToFramework: MutableMap<AppleArchitecture, FrameworkDescriptor> = mutableMapOf()
+    @get:Input
+    protected val archToFrameworkProvider: MapProperty<AppleArchitecture, FrameworkDescriptor> = objectFactory.mapProperty(
+        AppleArchitecture::class.java,
+        FrameworkDescriptor::class.java,
+    )
+    private val archToFramework: Map<AppleArchitecture, FrameworkDescriptor> get() = archToFrameworkProvider.get().mapValues { it.value }
 
     //region DSL properties.
     /**
@@ -190,7 +201,7 @@ internal constructor(
             }
         }
 
-    private enum class AppleArchitecture(val clangMacro: String) {
+    protected enum class AppleArchitecture(val clangMacro: String) {
         X64("__x86_64__"),
         X86("__i386__"),
         ARM32("__arm__"),
@@ -220,15 +231,27 @@ internal constructor(
      * Adds the specified frameworks in this fat framework.
      */
     fun from(frameworks: Iterable<Framework>) {
-        fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
-        frameworks.forEach { dependsOn(it.linkTask) }
+        fromFrameworkDescriptorProviders(
+            frameworks.map { framework ->
+                framework.linkTaskProvider.map {
+                    FrameworkDescriptor(framework)
+                }
+            }
+        )
     }
+
+    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) = fromFrameworkDescriptorProviders(
+        frameworks.map { framework ->
+            project.provider { framework }
+        }
+    )
 
     /**
      * Adds the specified frameworks in this fat framework.
      */
-    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) {
-        frameworks.forEach { framework ->
+    internal fun fromFrameworkDescriptorProviders(frameworks: Iterable<Provider<FrameworkDescriptor>>) {
+        frameworks.forEach { frameworkProvider ->
+            val framework = frameworkProvider.get()
             val arch = framework.target.appleArchitecture
             val family = framework.target.family
             val fatFrameworkFamily = getFatFrameworkFamily()
@@ -257,7 +280,7 @@ internal constructor(
                 }
             }
 
-            archToFramework[arch] = framework
+            archToFrameworkProvider.put(arch, frameworkProvider)
         }
     }
     // endregion.

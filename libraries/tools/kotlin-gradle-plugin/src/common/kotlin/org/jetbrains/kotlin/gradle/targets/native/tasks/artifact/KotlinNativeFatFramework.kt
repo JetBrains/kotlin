@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.Provider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
@@ -98,7 +99,7 @@ class KotlinNativeFatFrameworkImpl(
             parentTask.dependsOn(fatTask)
 
             val nameSuffix = "ForFat"
-            val frameworkDescriptors: List<FrameworkDescriptor> = targets.map { target ->
+            val frameworkDescriptors: List<Provider<FrameworkDescriptor>> = targets.map { target ->
                 val librariesConfigurationName = project.registerLibsDependencies(target, artifactName + nameSuffix, modules)
                 val exportConfigurationName = project.registerExportDependencies(target, artifactName + nameSuffix, modules)
                 val targetTask = registerLinkFrameworkTask(
@@ -112,11 +113,11 @@ class KotlinNativeFatFrameworkImpl(
                     outDirName = "${artifactName}FatFrameworkTemp",
                     taskNameSuffix = nameSuffix
                 )
-                fatTask.dependsOn(targetTask)
-                val frameworkFileProvider = targetTask.flatMap { it.outputFile }
-                FrameworkDescriptor(frameworkFileProvider.get(), isStatic, target)
+                targetTask.map {
+                    FrameworkDescriptor(it.outputFile.get(), isStatic, target)
+                }
             }
-            fatTask.configure { it.fromFrameworkDescriptors(frameworkDescriptors) }
+            fatTask.configure { it.fromFrameworkDescriptorProviders(frameworkDescriptors) }
         }
     }
 }

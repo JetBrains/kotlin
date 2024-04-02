@@ -162,8 +162,8 @@ class FatFrameworksTest {
         )
         assertEquals(
             listOf(
-                project.layout.buildDirectory.file("bin/iosX64/debugFramework/test.framework").get().asFile,
-                project.layout.buildDirectory.file("bin/iosSimulatorArm64/debugFramework/test.framework").get().asFile,
+                project.layout.buildDirectory.file("bin/iosX64/debugFramework/foo.framework").get().asFile,
+                project.layout.buildDirectory.file("bin/iosSimulatorArm64/debugFramework/foo.framework").get().asFile,
             ),
             task.frameworks.map { it.file }
         )
