@@ -158,10 +158,6 @@ class FirSignatureEnhancement(
                     this.name = name
                     returnTypeRef = newReturnTypeRef
                     isFromSource = original.origin.fromSource
-
-                    // TODO: Use some kind of copy mechanism
-                    visibility = firElement.visibility
-                    modality = firElement.modality
                     isVar = firElement.isVar
                     annotationBuilder = { firElement.annotations }
                     status = firElement.status
