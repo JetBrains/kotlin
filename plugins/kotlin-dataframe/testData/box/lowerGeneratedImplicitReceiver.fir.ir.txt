@@ -34,16 +34,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.Cars>) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480>
               VALUE_PARAMETER name:it index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.Cars>
               BLOCK_BODY
-                CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1 [primary]
+                CLASS CLASS name:TokenCars_3085480I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DataFrameType1 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
-                  PROPERTY name:age visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-age> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY name:age visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenCars_3085480I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -57,38 +53,44 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:age visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-age> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:age visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I
                 CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0 [primary]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:age visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:age type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-age> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "TokenCars_3085480I_age")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:age visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-age> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I> origin=null
+                              name: CONST String type=kotlin.String value="age"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:age visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:age type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-age> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "TokenCars_3085480I_age")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:age visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-age> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I> origin=null
+                              columnName: CONST String type=kotlin.String value="age"
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
-                  PROPERTY name:age visibility:public modality:FINAL [val]
-                    FUN name:<get-age> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                      annotations:
-                        JvmName(name = 'DataFrameType1_age')
-                      correspondingProperty: PROPERTY name:age visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-age> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=org.jetbrains.kotlinx.dataframe.DataColumn<*> origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1> origin=null
-                              columnName: CONST String type=kotlin.String value="age"
-                  PROPERTY name:age visibility:public modality:FINAL [val]
-                    FUN name:<get-age> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1>) returnType:kotlin.Int
-                      annotations:
-                        JvmName(name = 'DataFrameType1_age')
-                      correspondingProperty: PROPERTY name:age visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-age> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0'
-                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1> origin=null
-                              name: CONST String type=kotlin.String value="age"
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -102,51 +104,50 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                CLASS CLASS name:TokenCars_3085480 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1]
+                CLASS CLASS name:TokenCars_3085480 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480
-                  CONSTRUCTOR visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenCars_3085480 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1]'
-                  PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480) returnType:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY name:scope0 visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480
-                  PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
-                    overridden:
-                      public abstract age: kotlin.Int
-                    FUN FAKE_OVERRIDE name:<get-age> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1) returnType:kotlin.Int [fake_override]
-                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
-                      overridden:
-                        public abstract fun <get-age> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenCars_3085480 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I]'
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                     overridden:
-                      public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1
+                      public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                     overridden:
-                      public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.DataFrameType1
+                      public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
+                    overridden:
+                      public abstract age: kotlin.Int
+                    FUN FAKE_OVERRIDE name:<get-age> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I) returnType:kotlin.Int [fake_override]
+                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
+                      overridden:
+                        public abstract fun <get-age> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480) returnType:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.Cars>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480> declared in org.jetbrains.kotlinx.dataframe.api.box'
-                  TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480>
-                    CALL 'public final fun add <R, T> (name: kotlin.String, expression: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, R of org.jetbrains.kotlinx.dataframe.api.add>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.add> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.TokenCars_3085480> origin=null
-                      <R>: kotlin.Int
-                      <T>: org.jetbrains.kotlinx.dataframe.api.Cars
-                      $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.Cars> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.Cars> origin=null
-                      name: CONST String type=kotlin.String value="age"
-                      expression: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>, @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>, kotlin.Int> origin=LAMBDA
-                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>, it:@[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>) returnType:kotlin.Int
-                          $receiver: VALUE_PARAMETER name:$this$add type:org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>
-                          VALUE_PARAMETER name:it index:0 type:@[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>
-                          BLOCK_BODY
-                            RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[ParameterName(name = 'it')] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>'
-                              CONST Int type=kotlin.Int value=2022
+                  CALL 'public final fun add <R, T> (name: kotlin.String, infer: org.jetbrains.kotlinx.dataframe.api.Infer, expression: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, R of org.jetbrains.kotlinx.dataframe.api.add>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.add> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480> origin=null
+                    <R>: kotlin.Int
+                    <T>: org.jetbrains.kotlinx.dataframe.api.Cars
+                    $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.Cars> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.api.Cars> origin=null
+                    name: CONST String type=kotlin.String value="age"
+                    expression: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>, kotlin.Int> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>, it:@[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>) returnType:kotlin.Int
+                        $receiver: VALUE_PARAMETER name:$this$add type:org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>
+                        VALUE_PARAMETER name:it index:0 type:@[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<org.jetbrains.kotlinx.dataframe.api.Cars>): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>'
+                            CONST Int type=kotlin.Int value=2022
       VAR name:col type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> [val]
         CALL 'public final fun <get-age> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=GET_PROPERTY
           $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Scope0 origin=null
@@ -155,7 +156,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
         WHEN type=kotlin.String origin=IF
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: CALL 'public abstract fun get (index: kotlin.Int): T of org.jetbrains.kotlinx.dataframe.DataColumn declared in org.jetbrains.kotlinx.dataframe.DataColumn' type=kotlin.Int origin=null
+              arg0: CALL 'public abstract fun get (index: kotlin.Int): T of org.jetbrains.kotlinx.dataframe.DataColumn declared in org.jetbrains.kotlinx.dataframe.DataColumn' type=kotlin.Int origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val col: org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.api.box' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=null
                 index: CONST Int type=kotlin.Int value=0
               arg1: CONST Int type=kotlin.Int value=2022
@@ -163,6 +164,6 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
-              $this: CALL 'public abstract fun get (index: kotlin.Int): T of org.jetbrains.kotlinx.dataframe.DataColumn declared in org.jetbrains.kotlinx.dataframe.DataColumn' type=kotlin.Int origin=null
+              $this: CALL 'public abstract fun get (index: kotlin.Int): T of org.jetbrains.kotlinx.dataframe.DataColumn declared in org.jetbrains.kotlinx.dataframe.DataColumn' type=kotlin.Int origin=GET_ARRAY_ELEMENT
                 $this: GET_VAR 'val col: org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.api.box' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=null
                 index: CONST Int type=kotlin.Int value=0

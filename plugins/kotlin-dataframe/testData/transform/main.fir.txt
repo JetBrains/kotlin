@@ -319,7 +319,7 @@ FILE: main.kt
             )
         }
         )
-        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/sortByDesc|<R|<local>/TokenReadCSV_1000286747|, R|kotlin/Int|>(<L> = sortByDesc@fun R|org/jetbrains/kotlinx/dataframe/api/SortDsl<<local>/TokenReadCSV_1000286747>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/SortDsl<<local>/TokenReadCSV_1000286747>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/sortByDesc|<R|<local>/TokenReadCSV_1000286747|, R|kotlin/Int|>(<L> = sortByDesc@fun R|org/jetbrains/kotlinx/dataframe/api/SortDsl<<local>/TokenReadCSV_1000286747>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/SortDsl<<local>/TokenReadCSV_1000286747>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<kotlin/Int>| <inline=NoInline>  {
             ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope0.stargazers_count|
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/print|<R|<local>/TokenReadCSV_1000286747|>(rowsLimit = Int(10))

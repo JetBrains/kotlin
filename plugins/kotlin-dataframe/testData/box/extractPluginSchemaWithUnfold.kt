@@ -41,7 +41,7 @@ class RefinedFunction(
 
 fun DataFrame<Function>.refine(bridges: DataFrame<Bridge>) {
     val functions = this
-    val df1 = functions.joinDefault(bridges) {
+    val df1 = functions.join(bridges) {
         functions.functionReturnType.name.match(right.type.name)
     }
     val col: DataColumn<DataFrame<*>> = df1.parameters

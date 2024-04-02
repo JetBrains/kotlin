@@ -5,124 +5,96 @@ FILE: injectAccessors.kt
 
     }
     public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class DataFrameType1 : R|kotlin/Any| {
-                public constructor(): R|<local>/DataFrameType1| {
-                    super<R|kotlin/Any|>()
-                }
-
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenCars_3085480I : R|kotlin/Any| {
                 public abstract val year: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
+                public constructor(): R|<local>/TokenCars_3085480I|
+
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public constructor(): R|<local>/Scope0| {
-                    super<R|kotlin/Any|>()
-                }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenCars_3085480I>|.year: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_year)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/year|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(year)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenCars_3085480I>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.year: R|kotlin/Int|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_year)) public get(): R|kotlin/Int| {
-                        ^ (this@R|<local>/year|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(year)) as R|kotlin/Int|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenCars_3085480I>|.age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_age)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/age|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(age)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenCars_3085480I>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.age: R|kotlin/Int|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_age)) public get(): R|kotlin/Int| {
-                        ^ (this@R|<local>/age|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(age)) as R|kotlin/Int|)
-                    }
+                public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenCars_3085480 : R|<local>/DataFrameType1| {
-                public constructor(): R|<local>/TokenCars_3085480| {
-                    super<R|<local>/DataFrameType1|>()
-                }
-
+            local abstract class TokenCars_3085480 : R|<local>/TokenCars_3085480I| {
                 public abstract val scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
 
+                public constructor(): R|<local>/TokenCars_3085480|
+
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>|)
+            )
         }
         )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/Name is evaluated to age|, R|<local>/df1|).R|<local>/age|
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/Name is evaluated to age|, R|<local>/df1|).R|<local>/Scope0.age|
     }
     public final fun ReturnType is evaluated to Int(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class DataFrameType1 : R|kotlin/Any| {
-                public constructor(): R|<local>/DataFrameType1| {
-                    super<R|kotlin/Any|>()
-                }
-
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenCars_3085480I : R|kotlin/Any| {
                 public abstract val year: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
+                public constructor(): R|<local>/TokenCars_3085480I|
+
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public constructor(): R|<local>/Scope0| {
-                    super<R|kotlin/Any|>()
-                }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenCars_3085480I>|.year: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_year)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/year|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(year)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenCars_3085480I>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.year: R|kotlin/Int|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_year)) public get(): R|kotlin/Int| {
-                        ^ (this@R|<local>/year|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(year)) as R|kotlin/Int|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenCars_3085480I>|.age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_age)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/age|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(age)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenCars_3085480I>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.age: R|kotlin/Int|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_age)) public get(): R|kotlin/Int| {
-                        ^ (this@R|<local>/age|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(age)) as R|kotlin/Int|)
-                    }
+                public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenCars_3085480 : R|<local>/DataFrameType1| {
-                public constructor(): R|<local>/TokenCars_3085480| {
-                    super<R|<local>/DataFrameType1|>()
-                }
-
+            local abstract class TokenCars_3085480 : R|<local>/TokenCars_3085480I| {
                 public abstract val scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
 
+                public constructor(): R|<local>/TokenCars_3085480|
+
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>|)
+            )
         }
         )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/ReturnType is evaluated to Int|, R|<local>/df1|).R|<local>/age|
+        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/ReturnType is evaluated to Int|, R|<local>/df1|).R|<local>/Scope0.age|
     }
 FILE: __GENERATED DECLARATIONS__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.year: R|kotlin/Int|

@@ -1,7 +1,7 @@
 FILE: nestedDataSchemaCodegen.kt
     package org.jetbrains.kotlinx.dataframe
 
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Function : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Function : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(receiverType: R|kotlin/String|, function: R|kotlin/String|, functionReturnType: R|org/jetbrains/kotlinx/dataframe/Type|, parameters: R|kotlin/collections/List<org/jetbrains/kotlinx/dataframe/Parameter>|): R|org/jetbrains/kotlinx/dataframe/Function| {
             super<R|kotlin/Any|>()
         }
@@ -19,7 +19,7 @@ FILE: nestedDataSchemaCodegen.kt
             public get(): R|kotlin/collections/List<org/jetbrains/kotlinx/dataframe/Parameter>|
 
     }
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Type : R|kotlin/Any| {
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Type : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(name: R|kotlin/String|, vararg: R|kotlin/Boolean|): R|org/jetbrains/kotlinx/dataframe/Type| {
             super<R|kotlin/Any|>()
         }
@@ -37,7 +37,7 @@ FILE: nestedDataSchemaCodegen.kt
         public final fun copy(name: R|kotlin/String| = this@R|org/jetbrains/kotlinx/dataframe/Type|.R|org/jetbrains/kotlinx/dataframe/Type.name|, vararg: R|kotlin/Boolean| = this@R|org/jetbrains/kotlinx/dataframe/Type|.R|org/jetbrains/kotlinx/dataframe/Type.vararg|): R|org/jetbrains/kotlinx/dataframe/Type|
 
     }
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Parameter : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Parameter : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(name: R|kotlin/String|, returnType: R|org/jetbrains/kotlinx/dataframe/Type|, defaultValue: R|kotlin/String?|): R|org/jetbrains/kotlinx/dataframe/Parameter| {
             super<R|kotlin/Any|>()
         }

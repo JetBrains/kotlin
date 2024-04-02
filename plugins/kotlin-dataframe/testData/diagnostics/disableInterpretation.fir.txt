@@ -2,5 +2,5 @@ FILE: disableInterpretation.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final fun main(): R|kotlin/Unit| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>| = @R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation|() Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/io/read|(String(wowah_data_100K.csv))
+        lval df: R|org/jetbrains/kotlinx/dataframe/AnyFrame| = @R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation|() Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/io/read|(String(wowah_data_100K.csv))
     }
