@@ -6340,3 +6340,36 @@ public final class kotlin/time/TimedValue {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class kotlin/uuid/Uuid : java/io/Serializable {
+	public static final field Companion Lkotlin/uuid/Uuid$Companion;
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLeastSignificantBits ()J
+	public final fun getMostSignificantBits ()J
+	public fun hashCode ()I
+	public final fun toByteArray ()[B
+	public final fun toHexString ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/uuid/Uuid$Companion {
+	public final fun fromByteArray ([B)Lkotlin/uuid/Uuid;
+	public final fun fromLongs (JJ)Lkotlin/uuid/Uuid;
+	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/uuid/Uuid;
+	public final fun getLEXICAL_ORDER ()Ljava/util/Comparator;
+	public final fun getNIL ()Lkotlin/uuid/Uuid;
+	public final fun parse (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseHex (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun random ()Lkotlin/uuid/Uuid;
+}
+
+public final class kotlin/uuid/UuidKt {
+	public static final fun getUuid (Ljava/nio/ByteBuffer;)Lkotlin/uuid/Uuid;
+	public static final fun getUuid (Ljava/nio/ByteBuffer;I)Lkotlin/uuid/Uuid;
+	public static final fun putUuid (Ljava/nio/ByteBuffer;ILkotlin/uuid/Uuid;)Ljava/nio/ByteBuffer;
+	public static final fun putUuid (Ljava/nio/ByteBuffer;Lkotlin/uuid/Uuid;)Ljava/nio/ByteBuffer;
+	public static final fun toJavaUuid (Lkotlin/uuid/Uuid;)Ljava/util/UUID;
+	public static final fun toKotlinUuid (Ljava/util/UUID;)Lkotlin/uuid/Uuid;
+}
+
