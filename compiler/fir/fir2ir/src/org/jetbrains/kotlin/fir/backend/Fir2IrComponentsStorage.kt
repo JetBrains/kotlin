@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -16,8 +17,10 @@ import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class Fir2IrComponentsStorage(
     override val session: FirSession,
@@ -27,13 +30,14 @@ class Fir2IrComponentsStorage(
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
     override val filesBeingCompiled: Set<FirFile>?,
-    irFakeOverrideBuilderProvider: (IrBuiltIns) -> IrFakeOverrideBuilder,
+    actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     val moduleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irMangler: KotlinMangler.IrMangler,
     specialSymbolProvider: Fir2IrSpecialSymbolProvider,
     initializedIrBuiltIns: IrBuiltInsOverFir?,
     initializedFirBuiltIns: Fir2IrBuiltIns?,
+    initializedIrTypeSystemContext: IrTypeSystemContext?,
     override val firProvider: FirProviderWithGeneratedFiles,
 ) : Fir2IrComponents {
     override val signatureComposer: FirBasedSignatureComposer = commonMemberStorage.firSignatureComposer
@@ -55,7 +59,16 @@ class Fir2IrComponentsStorage(
         this, configuration.languageVersionSettings, moduleDescriptor, irMangler
     )
     override val builtIns: Fir2IrBuiltIns = initializedFirBuiltIns ?: Fir2IrBuiltIns(this, specialSymbolProvider)
-    override val fakeOverrideBuilder: IrFakeOverrideBuilder = irFakeOverrideBuilderProvider(irBuiltIns)
+    val irTypeSystemContext: IrTypeSystemContext = initializedIrTypeSystemContext ?: actualizerTypeContextProvider(irBuiltIns)
+
+    override val fakeOverrideBuilder: IrFakeOverrideBuilder = IrFakeOverrideBuilder(
+        irTypeSystemContext,
+        Fir2IrFakeOverrideStrategy(
+            Fir2IrConverter.friendModulesMap(session),
+            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm()
+        ),
+        extensions.externalOverridabilityConditions
+    )
 
     override val irProviders: List<IrProvider> = emptyList()
 
@@ -65,6 +78,7 @@ class Fir2IrComponentsStorage(
 
     override val annotationGenerator: AnnotationGenerator = AnnotationGenerator(this)
     override val callGenerator: CallAndReferenceGenerator = CallAndReferenceGenerator(this, fir2IrVisitor, conversionScope)
+
     @FirBasedFakeOverrideGenerator
     override val fakeOverrideGenerator: FakeOverrideGenerator = FakeOverrideGenerator(this, conversionScope)
     override val delegatedMemberGenerator: DelegatedMemberGenerator = DelegatedMemberGenerator(this)
