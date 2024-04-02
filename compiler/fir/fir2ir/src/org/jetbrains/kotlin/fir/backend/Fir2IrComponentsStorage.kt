@@ -34,7 +34,7 @@ class Fir2IrComponentsStorage(
     val moduleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irMangler: KotlinMangler.IrMangler,
-    specialSymbolProvider: Fir2IrSpecialSymbolProvider,
+    specialSymbolProvider: Fir2IrSpecialSymbolProvider?,
     initializedIrBuiltIns: IrBuiltInsOverFir?,
     initializedFirBuiltIns: Fir2IrBuiltIns?,
     initializedIrTypeSystemContext: IrTypeSystemContext?,
