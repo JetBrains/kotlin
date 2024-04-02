@@ -88,19 +88,11 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 override fun visitEnd() {
                     visitExpression(name, buildArrayLiteral {
                         @OptIn(UnresolvedExpressionTypeAccess::class)
-                        // 1. Calculate array literal type using its element, if any
-                        // 2. If this way doesn't work, use Array<Any> as an approximation; later FIR2IR will calculate more precise type
+                        // For the array literal type, we use Array<Any> as an approximation; later FIR2IR will calculate more precise type
                         // See KT-62598
-                        // Note: we suppose that (1) can be dropped without real semantic changes;
-                        // in this case array literal argument types will be always Array<Any> at FIR level (even for non-empty literals),
-                        // but at IR level we will still have a real array type, like Array<String> or IntArray
-                        // Anyway, FIR provides no guarantees on having exact type of deserialized array literals in annotations,
+                        // FIR provides no guarantees on having exact type of deserialized array literals in annotations,
                         // including non-empty ones.
-                        elements.firstOrNull()?.coneTypeOrNull?.createOutArrayType()?.let {
-                            coneTypeOrNull = it
-                        } ?: run {
-                            coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
-                        }
+                        coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
                         argumentList = buildArgumentList {
                             arguments += elements
                         }
