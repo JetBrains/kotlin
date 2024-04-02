@@ -23360,6 +23360,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("javaSamTypeWithRecursionInBounds.kt")
+        public void testJavaSamTypeWithRecursionInBounds() {
+          runTest("compiler/testData/diagnostics/tests/j+k/samByProjectedType/javaSamTypeWithRecursionInBounds.kt");
+        }
+
+        @Test
         @TestMetadata("noAdapterBecuaseOfRecursiveUpperBound.kt")
         public void testNoAdapterBecuaseOfRecursiveUpperBound() {
           runTest("compiler/testData/diagnostics/tests/j+k/samByProjectedType/noAdapterBecuaseOfRecursiveUpperBound.kt");
