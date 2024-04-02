@@ -37,8 +37,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
     private val calculator = JsIrArithBuilder(context)
 
-    private val devMode = context.devMode
-
     //NOTE: Should we define JS-own functions similar to current implementation?
     private val throwCCE = context.ir.symbols.throwTypeCastException
     private val throwNPE = context.ir.symbols.throwNullPointerException
@@ -77,8 +75,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 super.visitTypeOperator(expression, data)
 
                 return when (expression.operator) {
-                    IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression, data)
-                    IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> lowerImplicitDynamicCast(expression, data)
+                    IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression)
+                    IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> lowerImplicitDynamicCast(expression)
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> lowerCoercionToUnit(expression)
                     IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression, data)
                     IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitNotNull(expression, data)
@@ -142,14 +140,14 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 }
             }
 
-            private fun lowerImplicitCast(expression: IrTypeOperatorCall, data: IrDeclarationParent) = expression.run {
+            private fun lowerImplicitCast(expression: IrTypeOperatorCall) = expression.run {
                 assert(operator == IrTypeOperator.IMPLICIT_CAST)
-                if (devMode) lowerCast(expression, data, false) else wrapWithUnsafeCast(argument)
+                wrapWithUnsafeCast(argument)
             }
 
-            private fun lowerImplicitDynamicCast(expression: IrTypeOperatorCall, data: IrDeclarationParent) = expression.run {
+            private fun lowerImplicitDynamicCast(expression: IrTypeOperatorCall) = expression.run {
                 assert(operator == IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
-                if (devMode) lowerCast(expression, data, false) else wrapWithUnsafeCast(argument)
+                wrapWithUnsafeCast(argument)
             }
 
             // Note: native `instanceOf` is not used which is important because of null-behaviour

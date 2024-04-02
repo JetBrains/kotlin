@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -94,12 +93,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val SKIP_MANGLE_VERIFICATION by directive(
         description = "",
         applicability = DirectiveApplicability.Global
-    )
-
-    val ERROR_POLICY by enumDirective<ErrorTolerancePolicy>(
-        description = "",
-        applicability = DirectiveApplicability.Global,
-        additionalParser = { ErrorTolerancePolicy.resolvePolicy(it) }
     )
 
     val PROPERTY_LAZY_INITIALIZATION by directive(

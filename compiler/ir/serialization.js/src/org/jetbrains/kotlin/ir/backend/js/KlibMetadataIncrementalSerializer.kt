@@ -55,7 +55,7 @@ class KlibMetadataIncrementalSerializer(
         project: Project,
         bindingContext: BindingContext,
         moduleDescriptor: ModuleDescriptor,
-        allowErrorTypes: Boolean,
+        allowErrorTypes: Boolean = false,
     ) : this(
         ktFiles = files,
         bindingContext = bindingContext,

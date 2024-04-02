@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -102,8 +101,7 @@ class ClassicFrontend2IrConverter(
             testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }
 
-        val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
-        val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(sourceFiles, analysisResult.bindingContext, errorPolicy)
+        val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(sourceFiles, analysisResult.bindingContext)
         val metadataSerializer = KlibMetadataIncrementalSerializer(
             sourceFiles,
             configuration,
@@ -148,9 +146,8 @@ class ClassicFrontend2IrConverter(
             testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }
 
-        val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
         val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(JSConfigurationKeys.WASM_TARGET))
-        val hasErrors = analyzerFacade.checkForErrors(sourceFiles, analysisResult.bindingContext, errorPolicy)
+        val hasErrors = analyzerFacade.checkForErrors(sourceFiles, analysisResult.bindingContext)
         val metadataSerializer = KlibMetadataIncrementalSerializer(
             sourceFiles,
             configuration,

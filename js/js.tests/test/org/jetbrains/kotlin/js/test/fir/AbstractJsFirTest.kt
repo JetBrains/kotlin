@@ -129,11 +129,6 @@ open class AbstractFirJsCodegenBoxTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsCodegenBoxErrorTest : AbstractFirJsTest(
-    pathToTestDir = "compiler/testData/codegen/boxError/",
-    testGroupOutputDirPrefix = "codegen/firBoxError/"
-)
-
 open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/firBoxInline/"

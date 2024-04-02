@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
-    allowErrorTypes: Boolean,
+    allowErrorTypes: Boolean = false,
     builtIns: IrBuiltIns,
     messageLogger: IrMessageLogger
 ): PartialLinkageSupportForLinker = if (partialLinkageConfig.isEnabled)

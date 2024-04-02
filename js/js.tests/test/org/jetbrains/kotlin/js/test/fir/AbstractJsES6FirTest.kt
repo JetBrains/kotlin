@@ -43,11 +43,6 @@ open class AbstractFirJsES6CodegenBoxTest : AbstractFirJsES6Test(
     }
 }
 
-open class AbstractFirJsES6CodegenBoxErrorTest : AbstractFirJsES6Test(
-    pathToTestDir = "compiler/testData/codegen/boxError/",
-    testGroupOutputDirPrefix = "codegen/firEs6BoxError/"
-)
-
 open class AbstractFirJsES6CodegenInlineTest : AbstractFirJsES6Test(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/firEs6BoxInline/"

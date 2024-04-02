@@ -578,19 +578,6 @@ private val multipleCatchesLoweringPhase = makeIrModulePhase(
     description = "Replace multiple catches with single one"
 )
 
-private val errorExpressionLoweringPhase = makeIrModulePhase(
-    ::JsErrorExpressionLowering,
-    name = "errorExpressionLoweringPhase",
-    description = "Transform error expressions into simple ir code",
-    prerequisite = setOf(multipleCatchesLoweringPhase)
-)
-
-private val errorDeclarationLoweringPhase = makeIrModulePhase(
-    ::JsErrorDeclarationLowering,
-    name = "errorDeclarationLoweringPhase",
-    description = "Transform error declarations into simple ir code"
-)
-
 private val bridgesConstructionPhase = makeIrModulePhase(
     ::JsBridgesConstruction,
     name = "BridgesConstruction",
@@ -611,7 +598,7 @@ private val typeOperatorLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(
         bridgesConstructionPhase,
         removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
-        singleAbstractMethodPhase, errorExpressionLoweringPhase,
+        singleAbstractMethodPhase,
         interopCallableReferenceLoweringPhase,
     )
 )
@@ -866,8 +853,6 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     throwableSuccessorsLoweringPhase,
     varargLoweringPhase,
     multipleCatchesLoweringPhase,
-    errorExpressionLoweringPhase,
-    errorDeclarationLoweringPhase,
     bridgesConstructionPhase,
     typeOperatorLoweringPhase,
     secondaryConstructorLoweringPhase,

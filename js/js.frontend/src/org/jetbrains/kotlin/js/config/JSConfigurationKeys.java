@@ -72,9 +72,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> METADATA_ONLY =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files only");
 
-    public static final CompilerConfigurationKey<Boolean> DEVELOPER_MODE =
-            CompilerConfigurationKey.create("enables additional checkers");
-
     public static final CompilerConfigurationKey<Boolean> GENERATE_COMMENTS_WITH_FILE_PATH =
             CompilerConfigurationKey.create("generate comments with file path at the start of each file block");
 
@@ -106,9 +103,6 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> FAKE_OVERRIDE_VALIDATOR =
             CompilerConfigurationKey.create("IR fake override validator");
-
-    public static final CompilerConfigurationKey<ErrorTolerancePolicy> ERROR_TOLERANCE_POLICY =
-            CompilerConfigurationKey.create("set up policy to ignore compilation errors");
 
     public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALIZATION =
             CompilerConfigurationKey.create("perform lazy initialization for properties");

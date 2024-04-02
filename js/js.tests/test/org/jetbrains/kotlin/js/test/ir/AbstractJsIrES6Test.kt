@@ -34,11 +34,6 @@ open class AbstractIrJsES6CodegenBoxTest : AbstractJsIrES6Test(
     testGroupOutputDirPrefix = "codegen/irEs6Box/"
 )
 
-open class AbstractIrJsES6CodegenBoxErrorTest : AbstractJsIrES6Test(
-    pathToTestDir = "compiler/testData/codegen/boxError/",
-    testGroupOutputDirPrefix = "codegen/irEs6BoxError/"
-)
-
 open class AbstractIrJsES6CodegenInlineTest : AbstractJsIrES6Test(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/irEs6BoxInline/"

@@ -82,10 +82,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             }
         }
 
-        forTestsNotMatching("compiler/testData/codegen/boxError/*") {
-            enableMetaInfoHandler()
-        }
-
         configureIrHandlersStep {
             useHandlers(::IrMangledNameAndSignatureDumpHandler)
         }

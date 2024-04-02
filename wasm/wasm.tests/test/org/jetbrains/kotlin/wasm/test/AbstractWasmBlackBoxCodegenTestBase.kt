@@ -108,10 +108,6 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             }
         }
 
-        forTestsNotMatching("compiler/testData/codegen/boxError/*") {
-            enableMetaInfoHandler()
-        }
-
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
             enableMetaInfoHandler()
             configureKlibArtifactsHandlersStep {

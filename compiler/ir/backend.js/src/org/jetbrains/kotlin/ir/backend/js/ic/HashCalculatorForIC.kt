@@ -156,7 +156,6 @@ internal class ICHasher {
         val booleanKeys = listOf(
             JSConfigurationKeys.SOURCE_MAP,
             JSConfigurationKeys.META_INFO,
-            JSConfigurationKeys.DEVELOPER_MODE,
             JSConfigurationKeys.USE_ES6_CLASSES,
             JSConfigurationKeys.GENERATE_POLYFILLS,
             JSConfigurationKeys.GENERATE_DTS,
@@ -174,7 +173,6 @@ internal class ICHasher {
             JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
             JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
             JSConfigurationKeys.MODULE_KIND,
-            JSConfigurationKeys.ERROR_TOLERANCE_POLICY
         )
         hashCalculator.updateConfigKeys(config, enumKeys) { value: Enum<*> ->
             hashCalculator.update(value.ordinal)

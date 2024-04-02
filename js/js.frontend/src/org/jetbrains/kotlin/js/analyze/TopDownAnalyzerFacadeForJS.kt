@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
@@ -56,7 +55,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         friendModuleDescriptors: List<ModuleDescriptor>,
         targetEnvironment: TargetEnvironment,
         thisIsBuiltInsModule: Boolean = false,
-        customBuiltInsModule: ModuleDescriptor? = null
+        customBuiltInsModule: ModuleDescriptor? = null,
     ): JsAnalysisResult {
         require(!thisIsBuiltInsModule || customBuiltInsModule == null) {
             "Can't simultaneously use custom built-ins module and set current module as built-ins"
@@ -85,7 +84,10 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
 
         val dependencies = mutableSetOf(context.module) + moduleDescriptors + builtIns.builtInsModule
         @Suppress("UNCHECKED_CAST")
-        context.module.setDependencies(dependencies.toList() as List<ModuleDescriptorImpl>, friendModuleDescriptors.toSet() as Set<ModuleDescriptorImpl>)
+        context.module.setDependencies(
+            dependencies.toList() as List<ModuleDescriptorImpl>,
+            friendModuleDescriptors.toSet() as Set<ModuleDescriptorImpl>
+        )
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
@@ -98,7 +100,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         incrementalData: IncrementalDataProvider,
         moduleContext: ModuleContext,
         lookupTracker: LookupTracker,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): PackageFragmentProvider
 
     fun analyzeFilesWithGivenTrace(
@@ -166,16 +168,12 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         }
     }
 
-    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext, errorPolicy: ErrorTolerancePolicy): Boolean {
+    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext): Boolean {
         var hasErrors = false
         try {
             AnalyzingUtils.throwExceptionOnErrors(bindingContext)
         } catch (ex: Exception) {
-            if (!errorPolicy.allowSemanticErrors) {
-                throw ex
-            } else {
-                hasErrors = true
-            }
+            throw ex
         }
 
         try {
@@ -183,11 +181,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
                 AnalyzingUtils.checkForSyntacticErrors(file)
             }
         } catch (ex: Exception) {
-            if (!errorPolicy.allowSyntaxErrors) {
-                throw ex
-            } else {
-                hasErrors = true
-            }
+            throw ex
         }
 
         return hasErrors
@@ -203,7 +197,7 @@ object TopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForWeb() {
         incrementalData: IncrementalDataProvider,
         moduleContext: ModuleContext,
         lookupTracker: LookupTracker,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
     ): PackageFragmentProvider {
         val metadata = PackagesWithHeaderMetadata(
             incrementalData.headerMetadata,
@@ -219,7 +213,7 @@ object TopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForWeb() {
     @JvmStatic
     fun analyzeFiles(
         files: Collection<KtFile>,
-        config: JsConfig
+        config: JsConfig,
     ): JsAnalysisResult {
         config.init()
         return analyzeFiles(

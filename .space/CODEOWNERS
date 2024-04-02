@@ -118,7 +118,6 @@
 /compiler/testData/codegen/asmLike/ "Kotlin JVM"
 /compiler/testData/codegen/box/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/codegen/box/size/ Zalim.Bashorov
-/compiler/testData/codegen/boxError/ "Kotlin JS"
 /compiler/testData/codegen/boxInline/ "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/codegen/boxKlib/ "Kotlin JVM"
 /compiler/testData/codegen/boxModernJdk/ "Kotlin JVM"
