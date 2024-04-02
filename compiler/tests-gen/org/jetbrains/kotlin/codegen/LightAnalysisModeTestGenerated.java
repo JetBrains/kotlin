@@ -43111,6 +43111,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/sam/samInterfaceTypeParameterErasure.kt");
     }
 
+    @TestMetadata("samWithInferenceToDefaultBounds.kt")
+    public void testSamWithInferenceToDefaultBounds() {
+      runTest("compiler/testData/codegen/box/sam/samWithInferenceToDefaultBounds.kt");
+    }
+
     @TestMetadata("smartCastSamConversion.kt")
     public void testSmartCastSamConversion() {
       runTest("compiler/testData/codegen/box/sam/smartCastSamConversion.kt");
