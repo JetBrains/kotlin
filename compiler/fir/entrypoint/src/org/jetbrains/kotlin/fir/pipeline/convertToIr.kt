@@ -93,7 +93,10 @@ fun FirResult.convertToIrAndActualize(
     // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
     val specialAnnotationSymbolProvider = Fir2IrJvmSpecialAnnotationSymbolProvider(IrFactoryImpl)
 
-    fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(irBuiltIns: IrBuiltInsOverFir?): Fir2IrComponentsStorage {
+    fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(
+        irBuiltIns: IrBuiltInsOverFir?,
+        fir2IrBuiltIns: Fir2IrBuiltIns?,
+    ): Fir2IrComponentsStorage {
         return Fir2IrComponentsStorage(
             session,
             scopeSession,
@@ -117,12 +120,13 @@ fun FirResult.convertToIrAndActualize(
             irMangler,
             specialAnnotationSymbolProvider,
             irBuiltIns,
+            fir2IrBuiltIns,
             firProvidersWithGeneratedFiles.getValue(session.moduleData),
         )
     }
 
     val platformFirOutput = outputs.last()
-    val platformComponentsStorage = platformFirOutput.createFir2IrComponentsStorage(irBuiltIns = null)
+    val platformComponentsStorage = platformFirOutput.createFir2IrComponentsStorage(irBuiltIns = null, fir2IrBuiltIns = null)
 
     val dependentIrFragments = mutableListOf<IrModuleFragment>()
     lateinit var mainIrFragment: IrModuleFragment
@@ -134,7 +138,7 @@ fun FirResult.convertToIrAndActualize(
         val componentsStorage = if (isMainOutput) {
             platformComponentsStorage
         } else {
-            firOutput.createFir2IrComponentsStorage(platformComponentsStorage.irBuiltIns)
+            firOutput.createFir2IrComponentsStorage(platformComponentsStorage.irBuiltIns, platformComponentsStorage.builtIns)
         }
 
         val irModuleFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {

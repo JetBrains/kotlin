@@ -33,6 +33,7 @@ class Fir2IrComponentsStorage(
     irMangler: KotlinMangler.IrMangler,
     specialSymbolProvider: Fir2IrSpecialSymbolProvider,
     initializedIrBuiltIns: IrBuiltInsOverFir?,
+    initializedFirBuiltIns: Fir2IrBuiltIns?,
     override val firProvider: FirProviderWithGeneratedFiles,
 ) : Fir2IrComponents {
     override val signatureComposer: FirBasedSignatureComposer = commonMemberStorage.firSignatureComposer
@@ -53,7 +54,7 @@ class Fir2IrComponentsStorage(
     override val irBuiltIns: IrBuiltInsOverFir = initializedIrBuiltIns ?: IrBuiltInsOverFir(
         this, configuration.languageVersionSettings, moduleDescriptor, irMangler
     )
-    override val builtIns: Fir2IrBuiltIns = Fir2IrBuiltIns(this, specialSymbolProvider)
+    override val builtIns: Fir2IrBuiltIns = initializedFirBuiltIns ?: Fir2IrBuiltIns(this, specialSymbolProvider)
     override val fakeOverrideBuilder: IrFakeOverrideBuilder = irFakeOverrideBuilderProvider(irBuiltIns)
 
     override val irProviders: List<IrProvider> = emptyList()
