@@ -135,7 +135,13 @@ class XcodeSimulatorExecutor(
         return checkNotNull(simulatorRuntimeOrNull()) { "Runtime is not available for the selected $deviceId. Check Xcode installation" }
     }
 
-    private fun downloadRuntimeFor(osName: String) {
+    private val downloadRuntimeResultByOsName = mutableMapOf<String, Result<Unit>>()
+
+    private fun downloadRuntimeFor(osName: String) = downloadRuntimeResultByOsName.getOrPut(osName) {
+        runCatching { downloadRuntimeForImpl(osName) }
+    }.getOrThrow()
+
+    private fun downloadRuntimeForImpl(osName: String) {
         val version = Xcode.findCurrent().version
         check(version.major >= 14) {
             "Was unable to get the required runtimes running on Xcode $version. Check the Xcode installation"
