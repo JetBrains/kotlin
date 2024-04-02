@@ -6,7 +6,7 @@
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/box">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,irBox}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,irBox,firBox,firEs6Box}/$TEST_DATA_FILE$_v5.js" />
               <option value="$PROJECT_DIR$/js/js.translator/testData/out/codegen/wasmBox/$TEST_DATA_FILE$.wat" />
             </array>
           </value>
@@ -14,7 +14,7 @@
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/boxInline">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,irBoxInline}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,irBoxInline,firBoxInline,firEs6BoxInline}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
@@ -28,7 +28,7 @@
         <entry key="$PROJECT_DIR$/js/js.translator/testData/box">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,irBox}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,irBox,firBox,firEs6Box}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
