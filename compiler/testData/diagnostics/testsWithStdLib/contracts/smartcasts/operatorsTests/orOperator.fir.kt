@@ -39,14 +39,14 @@ fun truetrue(x: Any?) {
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!UNRESOLVED_REFERENCE!>inc<!>()
+        x.<!NONE_APPLICABLE!>inc<!>()
     }
 }
 
 fun truefalse(x: Any?) {
     if (trueWhenString(x) || falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!UNRESOLVED_REFERENCE!>inc<!>()
+        x.<!NONE_APPLICABLE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -57,18 +57,18 @@ fun truefalse(x: Any?) {
 fun falsetrue(x: Any?) {
     if (falseWhenString(x) || trueWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!UNRESOLVED_REFERENCE!>inc<!>()
+        x.<!NONE_APPLICABLE!>inc<!>()
     }
     else {
         x.length
-        x.<!UNRESOLVED_REFERENCE!>inc<!>()
+        x.<!NONE_APPLICABLE!>inc<!>()
     }
 }
 
 fun falsefalse(x: Any?) {
     if (falseWhenString(x) || falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!UNRESOLVED_REFERENCE!>inc<!>()
+        x.<!NONE_APPLICABLE!>inc<!>()
     }
     else {
         x.length

@@ -18,14 +18,14 @@
 fun case_1(x: Class?, y: Any) {
     x?.prop_12 = if (y is String) "" else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!UNRESOLVED_REFERENCE!>uppercase<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!NONE_APPLICABLE!>uppercase<!>()
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Class?, y: Any) {
     x?.prop_9 = y is String || return
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!UNRESOLVED_REFERENCE!>uppercase<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!NONE_APPLICABLE!>uppercase<!>()
 }
 
 /*
@@ -36,7 +36,7 @@ fun case_2(x: Class?, y: Any) {
 fun case_3(x: Class?, y: Any) {
     x?.prop_12 = y as String
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!UNRESOLVED_REFERENCE!>uppercase<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!NONE_APPLICABLE!>uppercase<!>()
 }
 
 /*
@@ -47,7 +47,7 @@ fun case_3(x: Class?, y: Any) {
 fun case_4(x: Class?, y: Any) {
     x?.prop_12 = y as? String ?: return
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!UNRESOLVED_REFERENCE!>uppercase<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!NONE_APPLICABLE!>uppercase<!>()
 }
 
 /*

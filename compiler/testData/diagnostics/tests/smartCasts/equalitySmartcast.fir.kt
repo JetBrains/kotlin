@@ -10,16 +10,16 @@ fun string(foo: Any) {
 
 fun int(foo: Any) {
     val int = 1
-    if (1 == foo) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1)
-    if (int == foo) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1)
-    if (foo == 1) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1)
+    if (1 == foo) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1)
+    if (int == foo) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1)
+    if (foo == 1) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1)
 }
 
 fun long(foo: Any) {
     val long = 1L
-    if (1L == foo) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1L)
-    if (long == foo) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1L)
-    if (foo == 1L) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1L)
+    if (1L == foo) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1L)
+    if (long == foo) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1L)
+    if (foo == 1L) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1L)
 }
 
 fun char(foo: Any) {

@@ -3,7 +3,7 @@
 class Foo
 
 fun main1() = when {
-    else -> Foo::<!UNRESOLVED_REFERENCE!>plus<!>
+    else -> Foo::<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>
 }
 
 fun main2() = if (true) Foo::<!UNRESOLVED_REFERENCE!>minus<!> else Foo::<!UNRESOLVED_REFERENCE!>times<!>

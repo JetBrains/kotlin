@@ -1,6 +1,10 @@
-/labelClashes.fir.kt:(84,87): error: Unresolved reference 'inc'.
+/labelClashes.fir.kt:(84,87): error: None of the following candidates is applicable:
+@SinceKotlin(...) @InlineOnly() fun @receiver:SinceKotlin(...) @receiver:InlineOnly() BigDecimal.inc(): BigDecimal
+@SinceKotlin(...) @InlineOnly() fun @receiver:SinceKotlin(...) @receiver:InlineOnly() BigInteger.inc(): BigInteger
 
-/labelClashes.fir.kt:(151,154): error: Unresolved reference 'inc'.
+/labelClashes.fir.kt:(151,154): error: None of the following candidates is applicable:
+@SinceKotlin(...) @InlineOnly() fun @receiver:SinceKotlin(...) @receiver:InlineOnly() BigDecimal.inc(): BigDecimal
+@SinceKotlin(...) @InlineOnly() fun @receiver:SinceKotlin(...) @receiver:InlineOnly() BigInteger.inc(): BigInteger
 
 /labelClashes.fir.kt:(268,271): error: Unresolved reference 'foo'.
 

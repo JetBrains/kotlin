@@ -275,17 +275,17 @@ fun poll76() {
 
 fun poll8() {
     val inv = ::<!UNRESOLVED_REFERENCE!>bar<!> in setOf(::<!UNRESOLVED_REFERENCE!>foo<!>)
-    <!UNRESOLVED_REFERENCE!>inv<!>()
+    inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
 fun poll81() {
     val inv = ::bar2 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(::foo2)
-    <!UNRESOLVED_REFERENCE!>inv<!>()
+    inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
 fun poll82() {
     val inv = ::<!UNRESOLVED_REFERENCE!>bar3<!> in setOf(::<!UNRESOLVED_REFERENCE!>foo3<!>)
-    <!UNRESOLVED_REFERENCE!>inv<!>()
+    inv<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
 fun poll83() {

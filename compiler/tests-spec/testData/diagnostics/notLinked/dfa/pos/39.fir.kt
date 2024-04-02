@@ -20,7 +20,7 @@ fun case_1(x: Number?) {
 
     if (x == y) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -55,7 +55,7 @@ fun case_4() {
 
     if (x == y) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -67,6 +67,6 @@ fun case_4() {
 fun case_5(x: Class, y: Class) {
     if (x.prop_14 == y.prop_15) {
         x.prop_14
-        x.prop_14.<!UNRESOLVED_REFERENCE!>inv<!>()
+        x.prop_14.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }

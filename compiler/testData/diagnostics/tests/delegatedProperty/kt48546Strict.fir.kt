@@ -19,11 +19,11 @@ object DelegateTest2 {
 
     var intResult = 0
     val i1 by lazy {
-        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i1<!>
+        intResult <!NONE_APPLICABLE!>+=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i1<!>
         0
     }
     val i2 by lazy {
-        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>-=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i2<!>
+        intResult <!NONE_APPLICABLE!>-=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i2<!>
         0
     }
     val i3 by lazy {
