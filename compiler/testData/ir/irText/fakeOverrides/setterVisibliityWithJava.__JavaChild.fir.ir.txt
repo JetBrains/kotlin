@@ -1,6 +1,5 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaChild modality:OPEN visibility:public superTypes:[<root>.KotlinBase]
   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JavaChild
-  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:private
   CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.JavaChild [primary]
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
     overridden:

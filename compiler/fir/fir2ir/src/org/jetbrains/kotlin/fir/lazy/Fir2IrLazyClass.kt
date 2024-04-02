@@ -197,7 +197,7 @@ class Fir2IrLazyClass(
         fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
             if (scope == null) return
             for (name in scope.getCallableNames()) {
-                scope.processFunctionsByName(name) l@{ symbol ->
+                scope.processFunctionsByName(name) { symbol ->
                     when {
                         !shouldBuildStub(symbol.fir) -> {}
                         else -> {
@@ -207,18 +207,18 @@ class Fir2IrLazyClass(
                         }
                     }
                 }
-                scope.processPropertiesByName(name) l@{ symbol ->
+                scope.processPropertiesByName(name) { symbol ->
                     when {
+                        !shouldBuildStub(symbol.fir) -> {}
                         symbol is FirFieldSymbol && (symbol.isStatic || symbol.containingClassLookupTag() == ownerLookupTag) -> {
                             result += declarationStorage.getOrCreateIrField(symbol.fir, this)
                         }
-                        !shouldBuildStub(symbol.fir) -> {}
-                        symbol !is FirPropertySymbol -> {}
-                        else -> {
+                        symbol is FirPropertySymbol -> {
                             // Lazy declarations are created together with their symbol, so it's safe to take the owner here
                             @OptIn(UnsafeDuringIrConstructionAPI::class)
                             result += declarationStorage.getIrPropertySymbol(symbol, lookupTag).owner as IrProperty
                         }
+                        else -> {}
                     }
                 }
             }
