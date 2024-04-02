@@ -34,7 +34,7 @@ class FrameworkBinariesTests {
                             linkTask.outputFile.get().name,
                         )
                         assertEquals(
-                            "test.framework",
+                            "foo.framework",
                             outputFile.name,
                         )
                     }
