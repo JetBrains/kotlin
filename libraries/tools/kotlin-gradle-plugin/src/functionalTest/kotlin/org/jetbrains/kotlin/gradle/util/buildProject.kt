@@ -13,6 +13,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.cocoapodsExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -109,6 +110,8 @@ fun Project.applyCocoapodsPlugin(): CocoapodsExtension {
         it.version = "1.0"
     }
 }
+
+fun KotlinMultiplatformExtension.cocoapods(code: CocoapodsExtension.() -> Unit) = cocoapodsExtension.code()
 
 val Project.propertiesExtension: ExtraPropertiesExtension
     get() = extensions.getByType(ExtraPropertiesExtension::class.java)
