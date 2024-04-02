@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java2
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java4
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -128,7 +128,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java4
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java6]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
@@ -154,7 +154,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final a: kotlin.Int
+        public/*package*/ final a: kotlin.Int declared in <root>.Java6
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java6]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final a: kotlin.Int
+        public/*package*/ final a: kotlin.Int declared in <root>.Java6
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java7]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
@@ -218,7 +218,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java7
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java7]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -256,7 +256,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java7
   CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java8]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
@@ -282,7 +282,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final a: kotlin.Int
+        public/*package*/ final a: kotlin.Int declared in <root>.Java8
   CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinClass [primary]
@@ -308,7 +308,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java1
   CLASS CLASS name:KotlinClass2 modality:OPEN visibility:public superTypes:[<root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass2
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinClass2 [primary]
@@ -334,7 +334,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java3
   CLASS CLASS name:KotlinClass3 modality:OPEN visibility:public superTypes:[<root>.Java5]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass3
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinClass3 [primary]
@@ -360,7 +360,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final a: kotlin.Int
+        public/*package*/ final a: kotlin.Int declared in <root>.Java5
   CLASS CLASS name:KotlinClass4 modality:OPEN visibility:public superTypes:[<root>.JavaSeparate1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass4
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinClass4 [primary]
@@ -386,7 +386,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaSeparate1
   CLASS CLASS name:KotlinClass5 modality:OPEN visibility:public superTypes:[<root>.JavaSeparate2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass5
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinClass5 [primary]
@@ -412,7 +412,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final a: kotlin.Int
+        public/*package*/ final a: kotlin.Int declared in <root>.JavaSeparate2
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, c:<root>.C, d:<root>.D, e:<root>.E, h:<root>.H) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B

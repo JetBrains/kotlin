@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[FlexibleNullability] kotlin.String?
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.J1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.J2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[FlexibleNullability] kotlin.String?
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.J2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.J1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST String type=kotlin.String value=""
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[FlexibleNullability] kotlin.String?
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.J1
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.J2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -132,7 +132,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST String type=kotlin.String value=""
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[FlexibleNullability] kotlin.String?
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.J2
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:param type:kotlin.String? [val]

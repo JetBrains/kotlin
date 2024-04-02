@@ -129,7 +129,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?, @[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>>
+        public open entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?, @[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:OPEN <> ($this:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?, @[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -137,7 +137,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>
+        public open keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -145,7 +145,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int
+        public open size: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -153,7 +153,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>
+        public open values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN <> ($this:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -163,7 +163,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
-        public open size: kotlin.Int
+        public open size: kotlin.Int declared in <root>.Java1
       FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'size: kotlin.Int declared in <root>.B.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -311,7 +311,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?, @[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>>
+        public open entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?, @[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:OPEN <> ($this:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?, @[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -319,7 +319,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>
+        public open keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -327,7 +327,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?>
+        public open values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN <> ($this:java.util.HashMap<@[FlexibleNullability] java.lang.Void?, @[FlexibleNullability] java.lang.Void?>) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[FlexibleNullability] java.lang.Void?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:

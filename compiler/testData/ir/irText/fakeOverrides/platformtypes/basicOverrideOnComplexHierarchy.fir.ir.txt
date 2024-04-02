@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open b: kotlin.Int
+        public open b: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -141,7 +141,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Int type=kotlin.Int value=2
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.Java1
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/1.kt
             CONST Int type=kotlin.Int value=2
     PROPERTY name:b visibility:public modality:OPEN [var]
       overridden:
-        public open b: kotlin.Int
+        public open b: kotlin.Int declared in <root>.Java1
       FUN name:<get-b> visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         overridden:

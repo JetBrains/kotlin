@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[FlexibleNullability] kotlin.String?
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString
+        public final nullableString declared in <root>.A
   CLASS CLASS name:C modality:OPEN visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST String type=kotlin.String value="C"
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[FlexibleNullability] kotlin.String?
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.Java1
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.C]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -126,7 +126,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString
+        public final nullableString declared in <root>.C
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.C]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST String type=kotlin.String value="E"
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString
+        public final nullableString declared in <root>.C
   FUN name:test visibility:public modality:FINAL <> (b:<root>.B, d:<root>.D, e:<root>.E) returnType:kotlin.Unit
     VALUE_PARAMETER name:b index:0 type:<root>.B
     VALUE_PARAMETER name:d index:1 type:<root>.D

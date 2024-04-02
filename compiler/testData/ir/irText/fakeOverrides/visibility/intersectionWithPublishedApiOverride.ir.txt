@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
     PROPERTY name:a visibility:internal modality:OPEN [val]
       overridden:
-        internal open a: kotlin.Int
+        internal open a: kotlin.Int declared in <root>.InternalVisibility
       FUN name:<get-a> visibility:internal modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:internal modality:OPEN [val]
         overridden:
@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
     PROPERTY name:a visibility:internal modality:OPEN [val]
       overridden:
-        internal open a: kotlin.Int
+        internal open a: kotlin.Int declared in <root>.InternalVisibility
       FUN name:<get-a> visibility:internal modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:internal modality:OPEN [val]
         overridden:

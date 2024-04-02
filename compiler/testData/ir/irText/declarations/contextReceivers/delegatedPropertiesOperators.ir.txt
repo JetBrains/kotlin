@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
               $context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<get-s>' type=<root>.Result origin=null
               thisRef: GET_VAR '<this>: <root>.Result declared in <root>.Result.<get-s>' type=<root>.Result origin=null
-              property: PROPERTY_REFERENCE 'public final s: kotlin.String' field=null getter='public final fun <get-s> (): kotlin.String declared in <root>.Result' setter='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.reflect.KMutableProperty1<<root>.Result, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'public final s: kotlin.String declared in <root>.Result' field=null getter='public final fun <get-s> (): kotlin.String declared in <root>.Result' setter='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.reflect.KMutableProperty1<<root>.Result, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-s> visibility:public modality:FINAL <> ($this:<root>.Result, <set-?>:kotlin.String) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [delegated,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Result
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
               $context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
               thisRef: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
-              property: PROPERTY_REFERENCE 'public final s: kotlin.String' field=null getter='public final fun <get-s> (): kotlin.String declared in <root>.Result' setter='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.reflect.KMutableProperty1<<root>.Result, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'public final s: kotlin.String declared in <root>.Result' field=null getter='public final fun <get-s> (): kotlin.String declared in <root>.Result' setter='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.reflect.KMutableProperty1<<root>.Result, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR '<set-?>: kotlin.String declared in <root>.Result.<set-s>' type=kotlin.String origin=null
     CONSTRUCTOR visibility:public <> ($context_receiver_0:kotlin.Int) returnType:<root>.Result [primary]
       VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int

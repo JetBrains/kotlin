@@ -185,7 +185,7 @@ FILE fqName:<root> fileName:/B.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>>
+        public abstract entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>> declared in java.util.SortedMap
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -193,7 +193,7 @@ FILE fqName:<root> fileName:/B.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?>
+        public abstract keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SortedMap?> declared in java.util.SortedMap
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Boolean?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -201,7 +201,7 @@ FILE fqName:<root> fileName:/B.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int declared in java.util.SortedMap
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -209,7 +209,7 @@ FILE fqName:<root> fileName:/B.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?>
+        public abstract values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SortedMap?> declared in java.util.SortedMap
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Boolean?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:ABSTRACT [fake_override,val]
         overridden:

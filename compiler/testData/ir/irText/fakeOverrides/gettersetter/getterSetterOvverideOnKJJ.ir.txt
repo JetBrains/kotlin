@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final b: kotlin.Boolean
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/1.kt
           value: GET_VAR 't: kotlin.Boolean declared in <root>.B.setB' type=kotlin.Boolean origin=null
     PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final b: kotlin.Boolean
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java1
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -123,7 +123,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final b: kotlin.Boolean
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java3
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -165,7 +165,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final b: kotlin.Boolean
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java3
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, c:<root>.C, d:<root>.D) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B

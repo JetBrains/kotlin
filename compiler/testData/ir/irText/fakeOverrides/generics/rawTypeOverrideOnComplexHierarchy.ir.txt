@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open a: kotlin.collections.List<*>
+        public open a: kotlin.collections.List<*> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.collections.List<*> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public open a: kotlin.collections.List<*>
+        public open a: kotlin.collections.List<*> declared in <root>.Java1
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.collections.List<*>
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
@@ -142,8 +142,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open a: kotlin.collections.List<*>
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public open a: kotlin.collections.List<*> declared in <root>.Java1
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.collections.List<*> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -193,8 +193,8 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public open a: kotlin.collections.List<*>
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public open a: kotlin.collections.List<*> declared in <root>.Java1
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.D) returnType:kotlin.collections.List<*>
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
@@ -250,7 +250,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open a: kotlin.collections.List<*>
+        public open a: kotlin.collections.List<*> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.collections.List<*> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -301,7 +301,7 @@ FILE fqName:<root> fileName:/1.kt
             $this: GET_VAR '<this>: <root>.F declared in <root>.F.bar' type=<root>.F origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open a: kotlin.collections.List<*>
+        public open a: kotlin.collections.List<*> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.collections.List<*> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -348,7 +348,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open a: kotlin.collections.List<*>
+        public open a: kotlin.collections.List<*> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.collections.List<*> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -396,7 +396,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open a: kotlin.collections.List<*>
+        public open a: kotlin.collections.List<*> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.collections.List<*> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:

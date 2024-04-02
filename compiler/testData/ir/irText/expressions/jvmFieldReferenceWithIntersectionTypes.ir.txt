@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final f: kotlin.Int
+        public final f: kotlin.Int declared in <root>.JFieldOwner
   CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.JFieldOwner; <root>.IFoo]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived2
     CONSTRUCTOR visibility:public <> () returnType:<root>.Derived2 [primary]
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final f: kotlin.Int
+        public final f: kotlin.Int declared in <root>.JFieldOwner
   CLASS CLASS name:DerivedThroughMid1 modality:FINAL visibility:public superTypes:[<root>.Mid; <root>.IFoo]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DerivedThroughMid1
     CONSTRUCTOR visibility:public <> () returnType:<root>.DerivedThroughMid1 [primary]
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final f
+        public final f declared in <root>.Mid
   CLASS CLASS name:DerivedThroughMid2 modality:FINAL visibility:public superTypes:[<root>.Mid; <root>.IFoo]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DerivedThroughMid2
     CONSTRUCTOR visibility:public <> () returnType:<root>.DerivedThroughMid2 [primary]
@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final f
+        public final f declared in <root>.Mid
   CLASS CLASS name:Mid modality:OPEN visibility:public superTypes:[<root>.JFieldOwner]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Mid
     CONSTRUCTOR visibility:public <> () returnType:<root>.Mid [primary]
@@ -120,7 +120,7 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final f: kotlin.Int
+        public final f: kotlin.Int declared in <root>.JFieldOwner
   CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

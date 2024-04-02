@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
-        public abstract bar: kotlin.Int
+        public abstract bar: kotlin.Int declared in <root>.IBar
       FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42

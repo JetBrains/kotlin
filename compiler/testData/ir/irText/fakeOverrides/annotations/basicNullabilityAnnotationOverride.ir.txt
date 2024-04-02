@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java1
   CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]

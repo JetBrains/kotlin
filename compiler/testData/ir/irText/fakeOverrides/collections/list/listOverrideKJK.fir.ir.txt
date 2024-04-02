@@ -177,7 +177,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Int type=kotlin.Int value=1
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int
+        public open size: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
         annotations:
           Override

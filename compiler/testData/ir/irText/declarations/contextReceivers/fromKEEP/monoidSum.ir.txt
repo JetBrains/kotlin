@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IntMonoid
     PROPERTY name:unit visibility:public modality:OPEN [val]
       overridden:
-        public abstract unit: T of <root>.Monoid
+        public abstract unit: T of <root>.Monoid declared in <root>.Monoid
       FIELD PROPERTY_BACKING_FIELD name:unit type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringMonoid
     PROPERTY name:unit visibility:public modality:OPEN [val]
       overridden:
-        public abstract unit: T of <root>.Monoid
+        public abstract unit: T of <root>.Monoid declared in <root>.Monoid
       FIELD PROPERTY_BACKING_FIELD name:unit type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""

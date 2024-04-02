@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -111,7 +111,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -125,7 +125,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<kotlin.Any?>
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -167,10 +167,10 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.D) returnType:kotlin.collections.List<kotlin.Any?>
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
@@ -227,7 +227,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -241,12 +241,12 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<kotlin.Any?>
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.collections.List<kotlin.Any?> visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.collections.List<kotlin.Any?> declared in <root>.F.<init>' type=kotlin.collections.List<kotlin.Any?> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -314,7 +314,7 @@ FILE fqName:<root> fileName:/1.kt
               CONST Int type=kotlin.Int value=1
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface; <root>.KotlinInterface2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
@@ -355,8 +355,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
-        public abstract a: kotlin.collections.List<*>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
+        public abstract a: kotlin.collections.List<*> declared in <root>.KotlinInterface2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -372,13 +372,13 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<kotlin.Any?>
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface; <root>.KotlinInterface2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
-        public abstract a: kotlin.collections.List<*>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
+        public abstract a: kotlin.collections.List<*> declared in <root>.KotlinInterface2
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.collections.List<kotlin.Any?> visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.collections.List<kotlin.Any?> declared in <root>.H.<init>' type=kotlin.collections.List<kotlin.Any?> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -443,7 +443,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
@@ -484,7 +484,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS CLASS name:J modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
     CONSTRUCTOR visibility:public <> () returnType:<root>.J [primary]
@@ -532,7 +532,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

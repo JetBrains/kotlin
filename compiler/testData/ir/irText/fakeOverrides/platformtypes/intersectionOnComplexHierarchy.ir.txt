@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java2
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Int declared in <root>.C.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Int type=kotlin.Int value=1
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -213,7 +213,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -264,7 +264,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -280,7 +280,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java2
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Int declared in <root>.G.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -346,7 +346,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java2
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Int declared in <root>.H.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER

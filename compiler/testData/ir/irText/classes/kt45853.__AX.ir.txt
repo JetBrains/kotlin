@@ -23,7 +23,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibili
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:a visibility:public modality:OPEN [val]
     overridden:
-      public abstract a: <root>.A? [val]
+      public abstract a: <root>.A? [val] declared in <root>.A
     FUN IR_EXTERNAL_DECLARATION_STUB name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:@[EnhancedNullability] <root>.AX?
       annotations:
         Override

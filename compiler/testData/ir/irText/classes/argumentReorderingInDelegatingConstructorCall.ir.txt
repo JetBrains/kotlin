@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: kotlin.Int
+        public final x: kotlin.Int declared in <root>.Base
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final y: kotlin.Int
+        public final y: kotlin.Int declared in <root>.Base
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: kotlin.Int
+        public final x: kotlin.Int declared in <root>.Base
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -122,7 +122,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final y: kotlin.Int
+        public final y: kotlin.Int declared in <root>.Base
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:

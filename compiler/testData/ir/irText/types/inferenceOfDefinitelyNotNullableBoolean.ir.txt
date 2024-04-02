@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/test.kt
             <T>: @[EnhancedNullability] kotlin.Boolean
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:x$delegate type:kotlin.Lazy<@[EnhancedNullability] kotlin.Boolean> visibility:private [final,static]' type=kotlin.Lazy<@[EnhancedNullability] kotlin.Boolean> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final x: @[EnhancedNullability] kotlin.Boolean' field=null getter='public final fun <get-x> (): @[EnhancedNullability] kotlin.Boolean declared in <root>' setter=null type=kotlin.reflect.KProperty0<@[EnhancedNullability] kotlin.Boolean> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'public final x: @[EnhancedNullability] kotlin.Boolean declared in <root>' field=null getter='public final fun <get-x> (): @[EnhancedNullability] kotlin.Boolean declared in <root>' setter=null type=kotlin.reflect.KProperty0<@[EnhancedNullability] kotlin.Boolean> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun println (message: kotlin.Boolean): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null

@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
           CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int declared in kotlin.collections.Set
       FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.MySet) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:

@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java3
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -142,7 +142,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java3
   CLASS CLASS name:E modality:ABSTRACT visibility:public superTypes:[<root>.Java2; <root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
@@ -188,7 +188,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
@@ -235,7 +235,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
@@ -279,7 +279,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract nullableString: kotlin.Any
+        public abstract nullableString: kotlin.Any declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-nullableString> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Any [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -289,12 +289,12 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     PROPERTY name:nullableString visibility:public modality:OPEN [val]
       overridden:
-        public abstract nullableString: kotlin.Any
+        public abstract nullableString: kotlin.Any declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:nullableString type:kotlin.Any visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'nullableString: kotlin.Any declared in <root>.H.<init>' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -352,7 +352,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java5]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
@@ -389,7 +389,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String?
+        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java5
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

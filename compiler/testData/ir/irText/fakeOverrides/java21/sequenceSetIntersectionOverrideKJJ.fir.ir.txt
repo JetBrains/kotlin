@@ -169,8 +169,8 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int
-        public abstract size: kotlin.Int
+        public open size: kotlin.Int declared in java.util.HashSet
+        public abstract size: kotlin.Int declared in java.util.SequencedSet
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -352,8 +352,8 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int
-        public abstract size: kotlin.Int
+        public open size: kotlin.Int declared in java.util.HashSet
+        public abstract size: kotlin.Int declared in java.util.SequencedSet
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:

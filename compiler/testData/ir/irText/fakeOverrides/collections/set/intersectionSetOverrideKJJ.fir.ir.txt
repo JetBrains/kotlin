@@ -155,8 +155,8 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int
-        public open size: kotlin.Int
+        public abstract size: kotlin.Int declared in java.util.SortedSet
+        public open size: kotlin.Int declared in java.util.HashSet
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.SortedSet<kotlin.Any>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -325,8 +325,8 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int
-        public open size: kotlin.Int
+        public abstract size: kotlin.Int declared in java.util.SortedSet
+        public open size: kotlin.Int declared in java.util.HashSet
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.SortedSet<kotlin.Any>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -565,8 +565,8 @@ FILE fqName:<root> fileName:/1.kt
           reason: CONST String type=kotlin.String value="Not yet implemented"
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int
-        public open size: kotlin.Int
+        public abstract size: kotlin.Int declared in java.util.SortedSet
+        public open size: kotlin.Int declared in java.util.ArrayList
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.SortedSet<kotlin.Any>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:

@@ -169,7 +169,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Int declared in <root>.E.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -276,7 +276,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Int type=kotlin.Int value=1
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -337,7 +337,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Int type=kotlin.Int value=1
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.KotlinInterface
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.G) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
@@ -399,7 +399,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:

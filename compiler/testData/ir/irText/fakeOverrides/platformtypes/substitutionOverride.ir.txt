@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] T of <root>.J1?
+        public final a: @[FlexibleNullability] T of <root>.J1? declared in <root>.J1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.J2<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] T of <root>.J2?
+        public final a: @[FlexibleNullability] T of <root>.J2? declared in <root>.J2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.J1<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] T of <root>.J1?
+        public final a: @[FlexibleNullability] T of <root>.J1? declared in <root>.J1
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.J2<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -136,7 +136,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] T of <root>.J2?
+        public final a: @[FlexibleNullability] T of <root>.J2? declared in <root>.J2
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:k1 type:kotlin.Int [val]

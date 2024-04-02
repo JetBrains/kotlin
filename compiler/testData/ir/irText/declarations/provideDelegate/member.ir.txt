@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/member.kt
             $this: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
               value: CONST String type=kotlin.String value="OK"
             thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
-            property: PROPERTY_REFERENCE 'public final testMember: kotlin.String' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'public final testMember: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.String
         correspondingProperty: PROPERTY name:testMember visibility:public modality:FINAL [delegated,val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Host
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/member.kt
               $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
                 receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=null
               thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=null
-              property: PROPERTY_REFERENCE 'public final testMember: kotlin.String' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'public final testMember: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

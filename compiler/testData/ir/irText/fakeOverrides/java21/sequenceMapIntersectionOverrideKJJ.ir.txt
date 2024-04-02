@@ -203,8 +203,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractMap<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.Int?>
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] K of java.util.HashMap, @[EnhancedNullability] V of java.util.HashMap>>
-        public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>>
+        public open entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] K of java.util.HashMap, @[EnhancedNullability] V of java.util.HashMap>> declared in java.util.HashMap
+        public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>> declared in java.util.SequencedMap
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] kotlin.Int, @[EnhancedNullability] kotlin.Int>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -213,8 +213,8 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<kotlin.Int, kotlin.Int>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] K of java.util.HashMap>
-        public abstract keys: kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SequencedMap?>
+        public open keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] K of java.util.HashMap> declared in java.util.HashMap
+        public abstract keys: kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SequencedMap?> declared in java.util.SequencedMap
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.Int> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -223,8 +223,8 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<kotlin.Int, kotlin.Int>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int
-        public abstract size: kotlin.Int
+        public open size: kotlin.Int declared in java.util.HashMap
+        public abstract size: kotlin.Int declared in java.util.SequencedMap
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -233,8 +233,8 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<kotlin.Int, kotlin.Int>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] V of java.util.HashMap>
-        public abstract values: kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SequencedMap?>
+        public open values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] V of java.util.HashMap> declared in java.util.HashMap
+        public abstract values: kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SequencedMap?> declared in java.util.SequencedMap
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] kotlin.Int> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -450,8 +450,8 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] K of java.util.HashMap, @[EnhancedNullability] V of java.util.HashMap>>
-        public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>>
+        public open entries: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] K of java.util.HashMap, @[EnhancedNullability] V of java.util.HashMap>> declared in java.util.HashMap
+        public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>> declared in java.util.SequencedMap
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.collections.MutableMap.MutableEntry<@[EnhancedNullability] kotlin.Int, @[EnhancedNullability] kotlin.Int>> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -460,8 +460,8 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<kotlin.Int, kotlin.Int>
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] K of java.util.HashMap>
-        public abstract keys: kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SequencedMap?>
+        public open keys: @[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] K of java.util.HashMap> declared in java.util.HashMap
+        public abstract keys: kotlin.collections.MutableSet<@[FlexibleNullability] K of java.util.SequencedMap?> declared in java.util.SequencedMap
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:@[EnhancedNullability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.Int> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -470,8 +470,8 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<kotlin.Int, kotlin.Int>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int
-        public abstract size: kotlin.Int
+        public open size: kotlin.Int declared in java.util.HashMap
+        public abstract size: kotlin.Int declared in java.util.SequencedMap
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -480,8 +480,8 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:java.util.HashMap<kotlin.Int, kotlin.Int>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] V of java.util.HashMap>
-        public abstract values: kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SequencedMap?>
+        public open values: @[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] V of java.util.HashMap> declared in java.util.HashMap
+        public abstract values: kotlin.collections.MutableCollection<@[FlexibleNullability] V of java.util.SequencedMap?> declared in java.util.SequencedMap
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:@[EnhancedNullability] kotlin.collections.MutableCollection<@[EnhancedNullability] kotlin.Int> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:

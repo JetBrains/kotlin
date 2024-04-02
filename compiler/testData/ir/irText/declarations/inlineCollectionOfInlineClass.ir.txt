@@ -236,7 +236,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
             elements: GET_VAR 'elements: kotlin.collections.Collection<<root>.IT> declared in <root>.InlineMutableSet.retainAll' type=kotlin.collections.Collection<<root>.IT> origin=null
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int declared in kotlin.collections.MutableSet
       FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:

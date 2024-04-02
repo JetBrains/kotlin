@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/objectReferenceInClosureInSuperConstructorCall.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final lambda: kotlin.Function0<kotlin.Any>
+        public final lambda: kotlin.Function0<kotlin.Any> declared in <root>.Base
       FUN FAKE_OVERRIDE name:<get-lambda> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Function0<kotlin.Any> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [fake_override,val]
         overridden:

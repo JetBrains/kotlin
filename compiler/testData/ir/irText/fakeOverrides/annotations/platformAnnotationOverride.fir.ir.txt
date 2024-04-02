@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final a: kotlin.String
+        public final a: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final c: kotlin.String
+        public final c: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         annotations:
           JvmName(name = "getText")
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final a: kotlin.String
+        public final a: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final c: kotlin.String
+        public final c: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         annotations:
           JvmName(name = "getText")
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: @[EnhancedNullability] kotlin.String
+        public open a: @[EnhancedNullability] kotlin.String declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:@[EnhancedNullability] kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open c: @[EnhancedNullability] kotlin.String
+        public open c: @[EnhancedNullability] kotlin.String declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:@[EnhancedNullability] kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -203,7 +203,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open c: @[EnhancedNullability] kotlin.String
+        public open c: @[EnhancedNullability] kotlin.String declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:@[EnhancedNullability] kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -217,7 +217,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:text index:0 type:@[EnhancedNullability] kotlin.String
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: @[EnhancedNullability] kotlin.String
+        public open a: @[EnhancedNullability] kotlin.String declared in <root>.Java2
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.D) returnType:kotlin.String
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -285,7 +285,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final a: kotlin.String
+        public final a: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -293,7 +293,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final c: kotlin.String
+        public final c: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         annotations:
           JvmName(name = "getText")
@@ -374,7 +374,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final a: kotlin.String
+        public final a: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -382,7 +382,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final c: kotlin.String
+        public final c: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         annotations:
           JvmName(name = "getText")
@@ -446,8 +446,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final a: kotlin.String
-        public abstract a: kotlin.String
+        public final a: kotlin.String declared in <root>.Java1
+        public abstract a: kotlin.String declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -456,7 +456,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract b: kotlin.String
+        public abstract b: kotlin.String declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -464,8 +464,8 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final c: kotlin.String
-        public abstract c: kotlin.String
+        public final c: kotlin.String declared in <root>.Java1
+        public abstract c: kotlin.String declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         annotations:
           JvmName(name = "getText")
@@ -487,7 +487,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     PROPERTY name:b visibility:public modality:OPEN [val]
       overridden:
-        public abstract b: kotlin.String
+        public abstract b: kotlin.String declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'b: kotlin.String declared in <root>.H.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -549,8 +549,8 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final a: kotlin.String
-        public abstract a: kotlin.String
+        public final a: kotlin.String declared in <root>.Java1
+        public abstract a: kotlin.String declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -559,8 +559,8 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final c: kotlin.String
-        public abstract c: kotlin.String
+        public final c: kotlin.String declared in <root>.Java1
+        public abstract c: kotlin.String declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:FINAL <> ($this:<root>.Java1) returnType:kotlin.String [fake_override]
         annotations:
           JvmName(name = "getText")

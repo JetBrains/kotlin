@@ -38,4 +38,4 @@ FILE fqName:<root> fileName:/Derived.kt
           value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final value: kotlin.Int
+        public final value: kotlin.Int declared in <root>.Base

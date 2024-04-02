@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: @[FlexibleNullability] T of <root>.Java1?
+        public abstract a: @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java1<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: @[FlexibleNullability] T of <root>.Java1?
+        public abstract a: @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int? visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Int? declared in <root>.C.<init>' type=kotlin.Int? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -103,7 +103,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: @[FlexibleNullability] T of <root>.Java1?
+        public abstract a: @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int? visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Int? declared in <root>.D.<init>' type=kotlin.Int? origin=INITIALIZE_PROPERTY_FROM_PARAMETER

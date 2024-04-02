@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           annotations:
             IntrinsicConstEvaluation
           overridden:
-            public final name: kotlin.String
+            public final name: kotlin.String declared in <root>.A
           FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:kotlin.String [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
         PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
           overridden:
-            public final ordinal: kotlin.Int
+            public final ordinal: kotlin.Int declared in <root>.A
           FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:kotlin.Int [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
         PROPERTY FAKE_OVERRIDE name:prop1 visibility:public modality:FINAL [fake_override,val]
           overridden:
-            public final prop1: kotlin.String
+            public final prop1: kotlin.String declared in <root>.A
           FUN FAKE_OVERRIDE name:<get-prop1> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.String [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:prop1 visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.A
         PROPERTY FAKE_OVERRIDE name:prop2 visibility:public modality:FINAL [fake_override,val]
           overridden:
-            public final prop2: kotlin.String
+            public final prop2: kotlin.String declared in <root>.A
           FUN FAKE_OVERRIDE name:<get-prop2> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.String [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:prop2 visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.A
         PROPERTY FAKE_OVERRIDE name:prop3 visibility:public modality:FINAL [fake_override,var]
           overridden:
-            public final prop3: kotlin.String
+            public final prop3: kotlin.String declared in <root>.A
           FUN FAKE_OVERRIDE name:<get-prop3> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.String [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:prop3 visibility:public modality:FINAL [fake_override,var]
             overridden:
@@ -207,7 +207,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
       annotations:
         IntrinsicConstEvaluation
       overridden:
-        public final name: kotlin.String
+        public final name: kotlin.String declared in kotlin.Enum
       FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:kotlin.String [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -215,7 +215,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
     PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final ordinal: kotlin.Int
+        public final ordinal: kotlin.Int declared in kotlin.Enum
       FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
         overridden:

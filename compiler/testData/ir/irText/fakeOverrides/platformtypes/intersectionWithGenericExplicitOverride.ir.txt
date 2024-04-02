@@ -82,13 +82,13 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] T of <root>.Java3?
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.C>; <root>.KotlinInterface<R of <root>.C>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<R of <root>.C>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: T of <root>.KotlinInterface
+        public abstract a: T of <root>.KotlinInterface declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:a type:R of <root>.C visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: R of <root>.C declared in <root>.C.<init>' type=R of <root>.C origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -154,7 +154,7 @@ FILE fqName:<root> fileName:/1.kt
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: T of <root>.KotlinInterface
+        public abstract a: T of <root>.KotlinInterface declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:a type:R of <root>.D visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: R of <root>.D declared in <root>.D.<init>' type=R of <root>.D origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -270,7 +270,7 @@ FILE fqName:<root> fileName:/1.kt
             $this: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.foo' type=<root>.E<R of <root>.E> origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] T of <root>.Java3?
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.F>; <root>.KotlinInterface<R of <root>.F>; <root>.KotlinInterface2<R of <root>.F>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F<R of <root>.F>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -318,8 +318,8 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: T of <root>.KotlinInterface
-        public abstract a: T of <root>.KotlinInterface2
+        public abstract a: T of <root>.KotlinInterface declared in <root>.KotlinInterface
+        public abstract a: T of <root>.KotlinInterface2 declared in <root>.KotlinInterface2
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.F<R of <root>.F>) returnType:R of <root>.F
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:

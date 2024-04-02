@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
             <T>: kotlin.Int
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final test1: kotlin.Int' field=null getter='public final fun <get-test1> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'public final test1: kotlin.Int declared in <root>' field=null getter='public final fun <get-test1> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   CLASS ANNOTATION_CLASS name:Ann modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Ann
     CONSTRUCTOR visibility:public <> () returnType:<root>.Ann [primary]

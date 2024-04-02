@@ -46,8 +46,8 @@ FILE fqName:<root> fileName:/platform.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     PROPERTY name:p visibility:public modality:OPEN [val]
       overridden:
-        public abstract p: kotlin.Int
-        public abstract p: kotlin.Int
+        public abstract p: kotlin.Int declared in <root>.I1
+        public abstract p: kotlin.Int declared in <root>.I2
       FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42

@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY DELEGATED_MEMBER name:prop visibility:public modality:OPEN [val]
       overridden:
-        public abstract prop: kotlin.Int
+        public abstract prop: kotlin.Int declared in <root>.Base
       FUN DELEGATED_MEMBER name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.Delegated) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:prop visibility:public modality:OPEN [val]
         overridden:
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.<get-prop>' type=<root>.Delegated origin=null
     PROPERTY DELEGATED_MEMBER name:propWithAccessors visibility:public modality:OPEN [var]
       overridden:
-        public abstract propWithAccessors: kotlin.Int
+        public abstract propWithAccessors: kotlin.Int declared in <root>.Base
       FUN DELEGATED_MEMBER name:<get-propWithAccessors> visibility:public modality:OPEN <> ($this:<root>.Delegated) returnType:kotlin.Int
         annotations:
           Ann

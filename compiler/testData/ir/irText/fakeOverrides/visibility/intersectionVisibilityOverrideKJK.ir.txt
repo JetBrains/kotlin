@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinDefault
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.D declared in <root>.D.test' type=<root>.D origin=null
     PROPERTY name:a visibility:protected modality:OPEN [val]
       overridden:
-        protected open a: kotlin.Int
+        protected open a: kotlin.Int declared in <root>.KotlinProtected
       FUN name:<get-a> visibility:protected modality:OPEN <> ($this:<root>.D) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:protected modality:OPEN [val]
         overridden:
@@ -208,7 +208,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.E declared in <root>.E.test' type=<root>.E origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinPublic
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.E) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -255,7 +255,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.F declared in <root>.F.test' type=<root>.F origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        internal open a: kotlin.Int
+        internal open a: kotlin.Int declared in <root>.KotlinInternal
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.F) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -300,7 +300,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.G declared in <root>.G.test' type=<root>.G origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinDefault
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinDefault) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -343,7 +343,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.H declared in <root>.H.test' type=<root>.H origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinDefault
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.H) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -410,7 +410,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.J declared in <root>.J.test' type=<root>.J origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinPublic
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinPublic) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -453,7 +453,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.K declared in <root>.K.test' type=<root>.K origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinPublic
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.K) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -562,10 +562,10 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.L declared in <root>.L.test' type=<root>.L origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinDefault
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.L) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -610,7 +610,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
   CLASS CLASS name:N modality:FINAL visibility:public superTypes:[<root>.JavaProtected; <root>.KotlinPrivate]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.N
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -659,7 +659,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.N declared in <root>.N.test' type=<root>.N origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
   CLASS CLASS name:O modality:FINAL visibility:public superTypes:[<root>.JavaProtected; <root>.KotlinPublic]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
     CONSTRUCTOR visibility:public <> () returnType:<root>.O [primary]
@@ -698,10 +698,10 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.O declared in <root>.O.test' type=<root>.O origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final a: kotlin.Int
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinPublic
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.O) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -748,7 +748,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.P declared in <root>.P.test' type=<root>.P origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinDefault
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.P) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -841,7 +841,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.R declared in <root>.R.test' type=<root>.R origin=null
     PROPERTY name:a visibility:protected modality:OPEN [val]
       overridden:
-        protected open a: kotlin.Int
+        protected open a: kotlin.Int declared in <root>.KotlinProtected
       FUN name:<get-a> visibility:protected modality:OPEN <> ($this:<root>.R) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:protected modality:OPEN [val]
         overridden:
@@ -888,7 +888,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.S declared in <root>.S.test' type=<root>.S origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.KotlinPublic
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.S) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -935,7 +935,7 @@ FILE fqName:<root> fileName:/test.kt
           $this: GET_VAR '<this>: <root>.T declared in <root>.T.test' type=<root>.T origin=null
     PROPERTY name:a visibility:internal modality:OPEN [val]
       overridden:
-        internal open a: kotlin.Int
+        internal open a: kotlin.Int declared in <root>.KotlinInternal
       FUN name:<get-a> visibility:internal modality:OPEN <> ($this:<root>.T) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:internal modality:OPEN [val]
         overridden:

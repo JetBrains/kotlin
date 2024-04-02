@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     PROPERTY name:sam visibility:public modality:OPEN [val]
       overridden:
-        public abstract sam: <root>.FIn<T of <root>.I2>
+        public abstract sam: <root>.FIn<T of <root>.I2> declared in <root>.I2
       FIELD PROPERTY_BACKING_FIELD name:sam type:<root>.FIn<T of <root>.AC> visibility:private [final]
         EXPRESSION_BODY
           TYPE_OP type=<root>.FIn<T of <root>.AC> origin=SAM_CONVERSION typeOperand=<root>.FIn<T of <root>.AC>
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:l visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract l: @[ExtensionFunctionType] kotlin.Function1<T of <root>.I1, kotlin.Unit>
+        public abstract l: @[ExtensionFunctionType] kotlin.Function1<T of <root>.I1, kotlin.Unit> declared in <root>.I1
       FUN FAKE_OVERRIDE name:<get-l> visibility:public modality:ABSTRACT <> ($this:<root>.I1<T of <root>.AC>) returnType:@[ExtensionFunctionType] kotlin.Function1<T of <root>.AC, kotlin.Unit> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:l visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     PROPERTY name:l visibility:public modality:OPEN [val]
       overridden:
-        public abstract l: @[ExtensionFunctionType] kotlin.Function1<T of <root>.AC, kotlin.Unit>
+        public abstract l: @[ExtensionFunctionType] kotlin.Function1<T of <root>.AC, kotlin.Unit> declared in <root>.AC
       FIELD PROPERTY_BACKING_FIELD name:l type:@[ExtensionFunctionType] kotlin.Function1<{T of <root>.AD & Any}, kotlin.Unit> visibility:private [final]
         EXPRESSION_BODY
           FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<{T of <root>.AD & Any}, kotlin.Unit> origin=LAMBDA
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:sam visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open sam: <root>.FIn<T of <root>.AC>
+        public open sam: <root>.FIn<T of <root>.AC> declared in <root>.AC
       FUN FAKE_OVERRIDE name:<get-sam> visibility:public modality:OPEN <> ($this:<root>.AC<{T of <root>.AD & Any}>) returnType:<root>.FIn<{T of <root>.AD & Any}> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:sam visibility:public modality:OPEN [fake_override,val]
         overridden:

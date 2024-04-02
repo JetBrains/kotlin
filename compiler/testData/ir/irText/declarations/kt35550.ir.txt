@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/kt35550.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
       overridden:
-        public open id: T of <root>.I.<get-id>
+        public open id: T of <root>.I.<get-id> declared in <root>.I
       FUN DELEGATED_MEMBER name:<get-id> visibility:public modality:OPEN <T> ($this:<root>.A, $receiver:T of <root>.A.<get-id>) returnType:T of <root>.A.<get-id>
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
         overridden:

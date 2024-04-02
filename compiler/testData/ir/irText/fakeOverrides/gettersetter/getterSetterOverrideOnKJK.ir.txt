@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open b: kotlin.Int
+        public open b: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open c: kotlin.Int
+        public open c: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open d: kotlin.Int
+        public open d: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-d> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:d visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final e: kotlin.Int
+        public final e: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-e> visibility:public modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
         overridden:
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
       overridden:
-        protected final f: kotlin.Int
+        protected final f: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-f> visibility:protected modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
         overridden:
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
       overridden:
-        protected final i: kotlin.Int
+        protected final i: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-i> visibility:protected modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
         overridden:
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:j visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open j: kotlin.Int
+        public open j: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-j> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:j visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:k visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open k: kotlin.Int
+        public open k: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-k> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:k visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -116,7 +116,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:l visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open l: kotlin.Boolean
+        public open l: kotlin.Boolean declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-l> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Boolean [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:l visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -132,7 +132,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     PROPERTY name:b visibility:public modality:OPEN [var]
       overridden:
-        public open b: kotlin.Int
+        public open b: kotlin.Int declared in <root>.Java1
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=19
@@ -157,7 +157,7 @@ FILE fqName:<root> fileName:/1.kt
             value: CONST Int type=kotlin.Int value=20
     PROPERTY name:d visibility:public modality:OPEN [var]
       overridden:
-        public open d: kotlin.Int
+        public open d: kotlin.Int declared in <root>.Java1
       FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=22
@@ -182,7 +182,7 @@ FILE fqName:<root> fileName:/1.kt
             value: CONST Int type=kotlin.Int value=23
     PROPERTY name:j visibility:public modality:OPEN [var]
       overridden:
-        public open j: kotlin.Int
+        public open j: kotlin.Int declared in <root>.Java1
       FIELD PROPERTY_BACKING_FIELD name:j type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=24
@@ -205,7 +205,7 @@ FILE fqName:<root> fileName:/1.kt
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.B.<set-j>' type=kotlin.Int origin=null
     PROPERTY name:k visibility:public modality:OPEN [var]
       overridden:
-        public open k: kotlin.Int
+        public open k: kotlin.Int declared in <root>.Java1
       FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=25
@@ -229,7 +229,7 @@ FILE fqName:<root> fileName:/1.kt
             value: CONST Int type=kotlin.Int value=27
     PROPERTY name:l visibility:public modality:OPEN [var]
       overridden:
-        public open l: kotlin.Boolean
+        public open l: kotlin.Boolean declared in <root>.Java1
       FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.Boolean visibility:private
         EXPRESSION_BODY
           CONST Boolean type=kotlin.Boolean value=true
@@ -271,7 +271,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final e: kotlin.Int
+        public final e: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-e> visibility:public modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
         overridden:
@@ -279,7 +279,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
       overridden:
-        protected final f: kotlin.Int
+        protected final f: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-f> visibility:protected modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
         overridden:
@@ -293,7 +293,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
       overridden:
-        protected final i: kotlin.Int
+        protected final i: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-i> visibility:protected modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
         overridden:
@@ -301,7 +301,7 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.Java1
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -312,7 +312,7 @@ FILE fqName:<root> fileName:/1.kt
             CONST Int type=kotlin.Int value=18
     PROPERTY name:c visibility:public modality:OPEN [val]
       overridden:
-        public open c: kotlin.Int
+        public open c: kotlin.Int declared in <root>.Java1
       FUN name:<get-c> visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:c visibility:public modality:OPEN [val]
         overridden:
@@ -342,7 +342,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -350,10 +350,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final a: kotlin.Int
+        public/*package*/ final a: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open b: kotlin.Int
+        public open b: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -367,10 +367,10 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:c visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final c: kotlin.Int
+        protected/*protected and package*/ final c: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open c: kotlin.Int
+        public open c: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -378,10 +378,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open d: kotlin.Int
+        public open d: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-d> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:d visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -395,7 +395,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final e: kotlin.Int
+        public final e: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-e> visibility:public modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
         overridden:
@@ -403,10 +403,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:e visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final e: kotlin.Int
+        public/*package*/ final e: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
       overridden:
-        protected final f: kotlin.Int
+        protected final f: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-f> visibility:protected modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
         overridden:
@@ -420,16 +420,16 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:f visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final f: kotlin.Int
+        public/*package*/ final f: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:g visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final g: kotlin.Int
+        public/*package*/ final g: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:h visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final h: kotlin.Int
+        public/*package*/ final h: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
       overridden:
-        protected final i: kotlin.Int
+        protected final i: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-i> visibility:protected modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
         overridden:
@@ -437,10 +437,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:i visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final i: kotlin.Int
+        public/*package*/ final i: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:j visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open j: kotlin.Int
+        public open j: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-j> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:j visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -448,10 +448,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:j visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final j: kotlin.Int
+        public/*package*/ final j: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:k visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open k: kotlin.Int
+        public open k: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-k> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:k visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -465,10 +465,10 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:k visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final k: kotlin.Int
+        public/*package*/ final k: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:l visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open l: kotlin.Boolean
+        public open l: kotlin.Boolean declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-l> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Boolean [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:l visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -482,12 +482,12 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Boolean
     PROPERTY FAKE_OVERRIDE name:l visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final l: kotlin.Boolean
+        public/*package*/ final l: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     PROPERTY name:b visibility:public modality:OPEN [var]
       overridden:
-        public open b: kotlin.Int
+        public open b: kotlin.Int declared in <root>.Java2
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
@@ -513,7 +513,7 @@ FILE fqName:<root> fileName:/1.kt
               other: CONST Int type=kotlin.Int value=1
     PROPERTY name:d visibility:public modality:OPEN [var]
       overridden:
-        public open d: kotlin.Int
+        public open d: kotlin.Int declared in <root>.Java2
       FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=45
@@ -555,16 +555,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final a: kotlin.Int
+        public/*package*/ final a: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:c visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final c: kotlin.Int
+        protected/*protected and package*/ final c: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final e: kotlin.Int
+        public final e: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-e> visibility:public modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
         overridden:
@@ -572,10 +572,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:e visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final e: kotlin.Int
+        public/*package*/ final e: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
       overridden:
-        protected final f: kotlin.Int
+        protected final f: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-f> visibility:protected modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
         overridden:
@@ -589,16 +589,16 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:f visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final f: kotlin.Int
+        public/*package*/ final f: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:g visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final g: kotlin.Int
+        public/*package*/ final g: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:h visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final h: kotlin.Int
+        public/*package*/ final h: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
       overridden:
-        protected final i: kotlin.Int
+        protected final i: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-i> visibility:protected modality:FINAL <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
         overridden:
@@ -606,10 +606,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:i visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final i: kotlin.Int
+        public/*package*/ final i: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:j visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open j: kotlin.Int
+        public open j: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-j> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:j visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -617,10 +617,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
     PROPERTY FAKE_OVERRIDE name:j visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final j: kotlin.Int
+        public/*package*/ final j: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:k visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open k: kotlin.Int
+        public open k: kotlin.Int declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-k> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:k visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -634,10 +634,10 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:k visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final k: kotlin.Int
+        public/*package*/ final k: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:l visibility:public modality:OPEN [fake_override,var]
       overridden:
-        public open l: kotlin.Boolean
+        public open l: kotlin.Boolean declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-l> visibility:public modality:OPEN <> ($this:<root>.KotlinClass) returnType:kotlin.Boolean [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:l visibility:public modality:OPEN [fake_override,var]
         overridden:
@@ -651,10 +651,10 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Boolean
     PROPERTY FAKE_OVERRIDE name:l visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
-        public/*package*/ final l: kotlin.Boolean
+        public/*package*/ final l: kotlin.Boolean declared in <root>.Java2
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.Java2
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.D) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:
@@ -665,7 +665,7 @@ FILE fqName:<root> fileName:/1.kt
             CONST Int type=kotlin.Int value=41
     PROPERTY name:c visibility:public modality:OPEN [val]
       overridden:
-        public open c: kotlin.Int
+        public open c: kotlin.Int declared in <root>.Java2
       FUN name:<get-c> visibility:public modality:OPEN <> ($this:<root>.D) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:c visibility:public modality:OPEN [val]
         overridden:

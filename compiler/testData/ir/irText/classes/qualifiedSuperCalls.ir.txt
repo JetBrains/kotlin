@@ -33,8 +33,8 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
           $this: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.foo' type=<root>.CBoth origin=null
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
-        public open bar: kotlin.Int
-        public open bar: kotlin.Int
+        public open bar: kotlin.Int declared in <root>.ILeft
+        public open bar: kotlin.Int declared in <root>.IRight
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.CBoth) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN [val]
         overridden:

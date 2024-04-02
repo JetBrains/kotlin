@@ -159,7 +159,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java4
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java4) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -169,7 +169,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.Java4
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Int declared in <root>.F.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -251,7 +251,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.Java5
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.Java5) returnType:kotlin.Int [fake_override]
         annotations:
           Override
@@ -297,7 +297,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public open a: kotlin.Int
+        public open a: kotlin.Int declared in <root>.Java5
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.H) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
         overridden:

@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.D) returnType:kotlin.collections.List<kotlin.Any?>
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
@@ -215,7 +215,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -231,7 +231,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.collections.List<kotlin.Any?> visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.collections.List<kotlin.Any?> declared in <root>.F.<init>' type=kotlin.collections.List<kotlin.Any?> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -337,8 +337,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
-        public abstract a: kotlin.collections.List<*>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
+        public abstract a: kotlin.collections.List<*> declared in <root>.KotlinInterface2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -356,8 +356,8 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.collections.List<kotlin.Any?>
-        public abstract a: kotlin.collections.List<*>
+        public abstract a: kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
+        public abstract a: kotlin.collections.List<*> declared in <root>.KotlinInterface2
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.collections.List<kotlin.Any?> visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.collections.List<kotlin.Any?> declared in <root>.H.<init>' type=kotlin.collections.List<kotlin.Any?> origin=INITIALIZE_PROPERTY_FROM_PARAMETER

@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/kt45853.kt
             $this: GET_VAR '<this>: <root>.B declared in <root>.B.getA' type=<root>.B origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: @[EnhancedNullability] <root>.AX?
+        public open a: @[EnhancedNullability] <root>.AX? declared in <root>.AX
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:@[EnhancedNullability] <root>.AX? [fake_override]
         annotations:
           Override

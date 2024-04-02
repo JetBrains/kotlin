@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/kt47328.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     PROPERTY name:x visibility:public modality:OPEN [val]
       overridden:
-        public abstract x: kotlin.Int
+        public abstract x: kotlin.Int declared in <root>.A
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
         annotations:
           JvmField

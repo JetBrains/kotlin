@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number?
+        public open a: kotlin.Number? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:@[RawType] <root>.KotlinClass<kotlin.Number>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number?
+        public open a: kotlin.Number? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:@[RawType] <root>.KotlinClass<kotlin.Number>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int?
+        public open a: kotlin.Int? declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass<@[FlexibleNullability] kotlin.Int?>) returnType:kotlin.Int? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -141,7 +141,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Int type=kotlin.Int value=6
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int?
+        public open a: kotlin.Int? declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass<@[FlexibleNullability] kotlin.Int?>) returnType:kotlin.Int? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -183,7 +183,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number?
+        public open a: kotlin.Number? declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:@[RawType] <root>.KotlinClass<kotlin.Number>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -226,7 +226,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number?
+        public open a: kotlin.Number? declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:@[RawType] <root>.KotlinClass<kotlin.Number>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -262,7 +262,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number?
+        public open a: kotlin.Number? declared in <root>.Java4
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:@[RawType] <root>.KotlinClass2<kotlin.Number>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -301,7 +301,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Int type=kotlin.Int value=1
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number?
+        public open a: kotlin.Number? declared in <root>.Java4
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:@[RawType] <root>.KotlinClass2<kotlin.Number>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -337,7 +337,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int?
+        public open a: kotlin.Int? declared in <root>.Java5
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass2<@[FlexibleNullability] kotlin.Int?>) returnType:kotlin.Int? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -374,7 +374,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Int?
+        public open a: kotlin.Int? declared in <root>.Java5
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass2<@[FlexibleNullability] kotlin.Int?>) returnType:kotlin.Int? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -414,7 +414,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number?
+        public open a: kotlin.Number? declared in <root>.Java6
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:@[RawType] <root>.KotlinClass2<kotlin.Number>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -537,7 +537,7 @@ FILE fqName:<root> fileName:/1.kt
           CONST Int type=kotlin.Int value=4
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open a: kotlin.Number?
+        public open a: kotlin.Number? declared in <root>.Java6
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:@[RawType] <root>.KotlinClass2<kotlin.Number>) returnType:kotlin.Number? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:

@@ -183,11 +183,13 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     append(": ")
                     append(type.renderTypeWithRenderer(null, options))
                 }
+                append(' ')
 
                 if (options.printFlagsInDeclarationReferences) {
-                    append(' ')
                     append(declaration.renderPropertyFlags())
                 }
+
+                renderDeclaredIn(declaration)
             }
 
         override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =

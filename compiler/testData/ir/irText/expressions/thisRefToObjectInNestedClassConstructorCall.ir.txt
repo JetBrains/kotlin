@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final x: kotlin.Any
+          public final x: kotlin.Any declared in <root>.Base
         FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -82,7 +82,7 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final x: kotlin.Any
+          public final x: kotlin.Any declared in <root>.Base
         FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Any [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:

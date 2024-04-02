@@ -84,8 +84,8 @@ FILE fqName:com.example fileName:/47424.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract b: com.example.Bb<*>
-        public abstract b: com.example.Ba
+        public abstract b: com.example.Bb<*> declared in com.example.Cb
+        public abstract b: com.example.Ba declared in com.example.Ca
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:ABSTRACT <> ($this:com.example.Cb) returnType:com.example.Bb<*> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
         overridden:

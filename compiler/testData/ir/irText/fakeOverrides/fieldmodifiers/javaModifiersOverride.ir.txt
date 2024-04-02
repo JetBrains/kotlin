@@ -20,16 +20,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final b: kotlin.Int
+        public final b: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final c: kotlin.Int
+        public final c: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -51,16 +51,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final b: kotlin.Int
+        public final b: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final c: kotlin.Int
+        public final c: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -82,16 +82,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final b: kotlin.Int
+        public final b: kotlin.Int declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final c: kotlin.Int
+        public final c: kotlin.Int declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java3
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -116,16 +116,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final b: kotlin.Int
+        public final b: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final c: kotlin.Int
+        public final c: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java1
   CLASS CLASS name:E modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -158,10 +158,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract b: kotlin.Int
+        public abstract b: kotlin.Int declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -169,10 +169,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final b: kotlin.Int
+        public final b: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract c: kotlin.Int
+        public abstract c: kotlin.Int declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -180,10 +180,10 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final c: kotlin.Int
+        public final c: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract d: kotlin.Int
+        public abstract d: kotlin.Int declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-d> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:d visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -191,12 +191,12 @@ FILE fqName:<root> fileName:/1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java1
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
-        public abstract a: kotlin.Int
+        public abstract a: kotlin.Int declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Int declared in <root>.F.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/1.kt
               receiver: GET_VAR '<this>: <root>.F declared in <root>.F.<get-a>' type=<root>.F origin=null
     PROPERTY name:b visibility:public modality:OPEN [val]
       overridden:
-        public abstract b: kotlin.Int
+        public abstract b: kotlin.Int declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'b: kotlin.Int declared in <root>.F.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -226,7 +226,7 @@ FILE fqName:<root> fileName:/1.kt
               receiver: GET_VAR '<this>: <root>.F declared in <root>.F.<get-b>' type=<root>.F origin=null
     PROPERTY name:c visibility:public modality:OPEN [val]
       overridden:
-        public abstract c: kotlin.Int
+        public abstract c: kotlin.Int declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'c: kotlin.Int declared in <root>.F.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -241,7 +241,7 @@ FILE fqName:<root> fileName:/1.kt
               receiver: GET_VAR '<this>: <root>.F declared in <root>.F.<get-c>' type=<root>.F origin=null
     PROPERTY name:d visibility:public modality:OPEN [val]
       overridden:
-        public abstract d: kotlin.Int
+        public abstract d: kotlin.Int declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'd: kotlin.Int declared in <root>.F.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -280,16 +280,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final b: kotlin.Int
+        public final b: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final c: kotlin.Int
+        public final c: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java1
   CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinClass [primary]
@@ -311,16 +311,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: kotlin.Int
+        public final a: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final b: kotlin.Int
+        public final b: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final c: kotlin.Int
+        public final c: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final d: kotlin.Int
+        public final d: kotlin.Int declared in <root>.Java1
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

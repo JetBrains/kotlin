@@ -136,7 +136,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
-        public abstract a: kotlin.Any
+        public abstract a: kotlin.Any declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Any [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract b: kotlin.Boolean
+        public abstract b: kotlin.Boolean declared in <root>.KotlinInterface
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Boolean [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -160,7 +160,7 @@ FILE fqName:<root> fileName:/1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     PROPERTY name:a visibility:public modality:OPEN [var]
       overridden:
-        public abstract a: kotlin.Any
+        public abstract a: kotlin.Any declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Any visibility:private
         EXPRESSION_BODY
           GET_VAR 'a: kotlin.Any declared in <root>.D.<init>' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -185,7 +185,7 @@ FILE fqName:<root> fileName:/1.kt
             value: GET_VAR '<set-?>: kotlin.Any declared in <root>.D.<set-a>' type=kotlin.Any origin=null
     PROPERTY name:b visibility:public modality:OPEN [val]
       overridden:
-        public abstract b: kotlin.Boolean
+        public abstract b: kotlin.Boolean declared in <root>.KotlinInterface
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Boolean visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'b: kotlin.Boolean declared in <root>.D.<init>' type=kotlin.Boolean origin=INITIALIZE_PROPERTY_FROM_PARAMETER

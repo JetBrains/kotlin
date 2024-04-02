@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/smartCastInValInitialization.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:parentBus visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final parentBus: kotlin.Any?
+        public final parentBus: kotlin.Any? declared in <root>.MessageBusImpl
       FUN FAKE_OVERRIDE name:<get-parentBus> visibility:public modality:FINAL <> ($this:<root>.MessageBusImpl) returnType:kotlin.Any? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:parentBus visibility:public modality:FINAL [fake_override,val]
         overridden:

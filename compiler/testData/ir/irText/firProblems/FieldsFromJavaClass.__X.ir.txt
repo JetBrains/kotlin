@@ -2,17 +2,17 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:X modality:OPEN visibility:pu
   $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.X
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 visibility:public modality:FINAL [var]
     overridden:
-      public final f2: kotlin.Int [var]
+      public final f2: kotlin.Int [var] declared in <root>.J
     FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 type:kotlin.Int visibility:public
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:f visibility:public modality:FINAL [fake_override,var]
     overridden:
-      public final f: kotlin.Int [var]
+      public final f: kotlin.Int [var] declared in <root>.J
     FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:s2 visibility:public modality:FINAL [var]
     FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s2 type:kotlin.Int visibility:public [static]
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:s visibility:public modality:FINAL [fake_override,var]
     overridden:
-      public final s: kotlin.Int [var]
+      public final s: kotlin.Int [var] declared in <root>.J
     FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static]
   CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.X [primary]
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

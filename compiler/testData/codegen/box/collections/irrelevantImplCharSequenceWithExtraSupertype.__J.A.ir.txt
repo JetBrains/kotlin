@@ -31,8 +31,8 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:A modality:OPEN visibility:pu
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:endIndex index:1 type:kotlin.Int
   PROPERTY IR_EXTERNAL_DECLARATION_STUB name:length visibility:public modality:FINAL [fake_override,val]
     overridden:
-      public abstract length: kotlin.Int [val]
-      public final length: kotlin.Int [val]
+      public abstract length: kotlin.Int [val] declared in kotlin.CharSequence
+      public final length: kotlin.Int [val] declared in <root>.J.A
     FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:FINAL <> ($this:kotlin.CharSequence) returnType:kotlin.Int [fake_override]
       correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:length visibility:public modality:FINAL [fake_override,val]
       overridden:

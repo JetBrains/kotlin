@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/kt45236.kt
                 receiver: GET_VAR '<this>: <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> declared in <root>.NetRequestStatus.Error.<get-error>' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
       PROPERTY name:value visibility:public modality:OPEN [val]
         overridden:
-          public abstract value: T of <root>.NetRequestStatus?
+          public abstract value: T of <root>.NetRequestStatus? declared in <root>.NetRequestStatus
         FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.NetRequestStatus.Error? visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'value: T of <root>.NetRequestStatus.Error? declared in <root>.NetRequestStatus.Error.<init>' type=T of <root>.NetRequestStatus.Error? origin=INITIALIZE_PROPERTY_FROM_PARAMETER

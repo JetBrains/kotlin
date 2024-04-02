@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.outer.Local
         PROPERTY name:aval visibility:public modality:OPEN [val]
           overridden:
-            public abstract aval: kotlin.Int
+            public abstract aval: kotlin.Int declared in <root>.outer.ALocal
           FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:private [final]
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=1
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
                   receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<get-aval>' type=<root>.outer.Local origin=null
         PROPERTY name:avar visibility:public modality:OPEN [var]
           overridden:
-            public abstract avar: kotlin.Int
+            public abstract avar: kotlin.Int declared in <root>.outer.ALocal
           FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:private
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=2

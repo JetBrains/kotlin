@@ -106,7 +106,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
             PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
               overridden:
-                public final y: kotlin.Int
+                public final y: kotlin.Int declared in <root>.Outer.Inner
               FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<kotlin.Int>) returnType:kotlin.Int [fake_override]
                 correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
                 overridden:

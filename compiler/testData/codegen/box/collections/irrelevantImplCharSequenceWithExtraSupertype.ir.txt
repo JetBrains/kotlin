@@ -36,8 +36,8 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:length visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final length: kotlin.Int
-        public abstract length: kotlin.Int
+        public final length: kotlin.Int declared in <root>.J.A
+        public abstract length: kotlin.Int declared in <root>.I
       FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:FINAL <> ($this:kotlin.CharSequence) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract length: kotlin.Int
+        public abstract length: kotlin.Int declared in kotlin.CharSequence
       FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
         overridden:

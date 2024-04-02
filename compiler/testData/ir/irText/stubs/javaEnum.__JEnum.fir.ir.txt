@@ -40,7 +40,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
     annotations:
       IntrinsicConstEvaluation
     overridden:
-      public final name: kotlin.String [val]
+      public final name: kotlin.String [val] declared in kotlin.Enum
     FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:<root>.JEnum) returnType:kotlin.String [fake_override]
       correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
       overridden:
@@ -48,7 +48,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.JEnum
   PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
     overridden:
-      public final ordinal: kotlin.Int [val]
+      public final ordinal: kotlin.Int [val] declared in kotlin.Enum
     FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:<root>.JEnum) returnType:kotlin.Int [fake_override]
       correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
       overridden:

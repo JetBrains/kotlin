@@ -3,17 +3,17 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:X1 modality:OPEN visibility:p
   TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 visibility:public modality:FINAL [var]
     overridden:
-      public final f2: @[FlexibleNullability] T of <root>.J1? [var]
+      public final f2: @[FlexibleNullability] T of <root>.J1? [var] declared in <root>.J1
     FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 type:@[FlexibleNullability] kotlin.String? visibility:public
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:f visibility:public modality:FINAL [fake_override,var]
     overridden:
-      public final f: @[FlexibleNullability] T of <root>.J1? [var]
+      public final f: @[FlexibleNullability] T of <root>.J1? [var] declared in <root>.J1
     FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] kotlin.String? visibility:public
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:s2 visibility:public modality:FINAL [var]
     FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s2 type:@[FlexibleNullability] kotlin.String? visibility:public [static]
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:s visibility:public modality:FINAL [fake_override,var]
     overridden:
-      public final s: @[FlexibleNullability] T of <root>.J1? [var]
+      public final s: @[FlexibleNullability] T of <root>.J1? [var] declared in <root>.J1
     FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:@[FlexibleNullability] T of <root>.J1? visibility:public [static]
   CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public/*package*/ <> () returnType:<root>.X1<T of <root>.X1> [primary]
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

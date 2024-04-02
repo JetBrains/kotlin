@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
     PROPERTY name:ref visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:ref type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final]
         EXPRESSION_BODY
-          PROPERTY_REFERENCE 'protected/*protected and package*/ final j' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' getter=null setter=null type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+          PROPERTY_REFERENCE 'protected/*protected and package*/ final j declared in <root>.Derived' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' getter=null setter=null type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ref> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?>
         correspondingProperty: PROPERTY name:ref visibility:public modality:FINAL [val]
@@ -43,4 +43,4 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
           value: CONST String type=kotlin.String value="OK"
     PROPERTY FAKE_OVERRIDE name:j visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final j: @[FlexibleNullability] kotlin.String?
+        protected/*protected and package*/ final j: @[FlexibleNullability] kotlin.String? declared in p.Base

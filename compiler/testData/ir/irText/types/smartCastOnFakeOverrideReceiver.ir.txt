@@ -129,7 +129,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
               then: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final aVal: kotlin.Int
+        public final aVal: kotlin.Int declared in <root>.A
       FUN FAKE_OVERRIDE name:<get-aVal> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -214,7 +214,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
               GET_VAR 'a: kotlin.Any declared in <root>.GB.testGB1' type=kotlin.Any origin=null
     PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final aVal: kotlin.Int
+        public final aVal: kotlin.Int declared in <root>.GA
       FUN FAKE_OVERRIDE name:<get-aVal> visibility:public modality:FINAL <> ($this:<root>.GA<T of <root>.GB>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
         overridden:

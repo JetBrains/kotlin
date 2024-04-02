@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/superCalls.kt
           $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=null
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
-        public open bar: kotlin.String
+        public open bar: kotlin.String declared in <root>.Base
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.Derived) returnType:kotlin.String
         correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN [val]
         overridden:
