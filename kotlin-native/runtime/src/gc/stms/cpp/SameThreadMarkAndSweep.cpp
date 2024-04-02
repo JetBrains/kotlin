@@ -71,10 +71,8 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
     // This should really be done by each individual thread while waiting
-    int threadCount = 0;
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
         thread.allocator().prepareForGC();
-        ++threadCount;
     }
     allocator_.prepareForGC();
 
@@ -98,7 +96,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     finalizerQueue.mergeFrom(allocator_.impl().heap().ExtractFinalizerQueue());
 #endif
 
-    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes() + threadCount * allocator_.estimateOverheadPerThread());
+    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
 
     resumeTheWorld(gcHandle);
 

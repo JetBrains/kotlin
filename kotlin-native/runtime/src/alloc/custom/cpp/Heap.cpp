@@ -116,22 +116,6 @@ std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
     return unfinalized;
 }
 
-// This overhead is calculated under the assumption that each thread holds on
-// to one almost empty page of each page type currently in use. Thus, the
-// per-thread-overhead is the sum of the page sizes of the page types that the
-// Heap has currently allocated, i.e., whose PageStores are not empty. This
-// estimate has two-sided error, and there are still pathological allocation
-// patterns that would lead to constant GC triggering.
-size_t Heap::EstimateOverheadPerThread() noexcept {
-    size_t overHeadPerThread = 0;
-    if (!nextFitPages_.isEmpty()) overHeadPerThread += NEXT_FIT_PAGE_SIZE;
-    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
-        if (!fixedBlockPages_[blockSize].isEmpty()) overHeadPerThread += FIXED_BLOCK_PAGE_SIZE;
-    }
-    if (!extraObjectPages_.isEmpty()) overHeadPerThread += EXTRA_OBJECT_PAGE_SIZE;
-    return  overHeadPerThread;
-}
-
 void Heap::ClearForTests() noexcept {
     for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
         fixedBlockPages_[blockSize].ClearForTests();
