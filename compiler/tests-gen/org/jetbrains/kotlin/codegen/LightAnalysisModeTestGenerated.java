@@ -34425,6 +34425,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/primitiveTypes/booleanHashCode.kt");
     }
 
+    @TestMetadata("charToByte.kt")
+    public void testCharToByte() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/charToByte.kt");
+    }
+
     @TestMetadata("comparisonWithNaN.kt")
     public void testComparisonWithNaN() {
       runTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNaN.kt");

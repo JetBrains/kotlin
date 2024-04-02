@@ -32128,6 +32128,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       }
 
       @Test
+      @TestMetadata("charToByte.kt")
+      public void testCharToByte() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/charToByte.kt");
+      }
+
+      @Test
       @TestMetadata("comparisonWithNullCallsFun.kt")
       public void testComparisonWithNullCallsFun() {
         runTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNullCallsFun.kt");

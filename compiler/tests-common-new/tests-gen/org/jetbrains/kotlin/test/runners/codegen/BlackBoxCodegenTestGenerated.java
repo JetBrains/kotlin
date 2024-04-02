@@ -38194,6 +38194,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("charToByte.kt")
+    public void testCharToByte() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/charToByte.kt");
+    }
+
+    @Test
     @TestMetadata("comparisonWithNaN.kt")
     public void testComparisonWithNaN() {
       runTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNaN.kt");
