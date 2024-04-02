@@ -138,7 +138,7 @@ class Explode : TestWithCompileTimeInformation() {
         "Charlie", 30, "Moscow", 90
     )
 
-    private val defaultExplodeColumns: ColumnsSelector<*, *> = { dfs { it.isList() || it.isFrameColumn() } }
+    private val defaultExplodeColumns: ColumnsSelector<*, *> = { colsAtAnyDepth { it.isList() || it.isFrameColumn() } }
 
     fun <T> DataFrame<T>.explodeTest(
         facade: KotlinTypeFacade,
