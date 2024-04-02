@@ -870,7 +870,7 @@ public fun String.hexToLong(format: HexFormat = HexFormat.Default): Long = hexTo
  */
 @ExperimentalStdlibApi
 //@SinceKotlin("1.9")
-private fun String.hexToLong(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Long =
+internal fun String.hexToLong(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Long =
     hexToLongImpl(startIndex, endIndex, format, maxDigits = 16)
 
 // -------------------------- private format and parse functions --------------------------
