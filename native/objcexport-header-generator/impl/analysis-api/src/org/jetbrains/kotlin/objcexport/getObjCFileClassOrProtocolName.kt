@@ -5,6 +5,6 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFileName
 import org.jetbrains.kotlin.backend.konan.objcexport.toIdentifier
 
 context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtResolvedObjCExportFile.getObjCFileClassOrProtocolName(): ObjCExportFileName {
+fun KtResolvedObjCExportFile.getObjCFileClassOrProtocolName(): ObjCExportFileName {
     return (fileName + "Kt").toIdentifier().getObjCFileName()
 }

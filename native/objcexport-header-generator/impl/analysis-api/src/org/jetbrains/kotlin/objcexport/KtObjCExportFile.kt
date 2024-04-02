@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllClassOrObjectSymbo
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.tooling.core.withClosure
 
-internal interface KtObjCExportFile {
+interface KtObjCExportFile {
     val fileName: String
     val packageFqName: FqName
 
@@ -37,7 +37,7 @@ data class KtResolvedObjCExportFile(
 
 /* Factory functions */
 
-internal fun KtObjCExportFile(file: KtFile): KtObjCExportFile {
+fun KtObjCExportFile(file: KtFile): KtObjCExportFile {
     return KtPsiObjCExportFile(file)
 }
 
