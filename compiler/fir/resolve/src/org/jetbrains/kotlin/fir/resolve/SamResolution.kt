@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
@@ -110,7 +112,7 @@ class FirSamResolver(
 
         val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
-        val functionType = firRegularClass.buildSubstitutorForSamTypeAlias(session, type)?.substituteOrNull(unsubstitutedFunctionType)
+        val functionType = firRegularClass.buildSubstitutorWithUpperBounds(session, type)?.substituteOrNull(unsubstitutedFunctionType)
             ?: unsubstitutedFunctionType
 
         require(functionType is ConeLookupTagBasedType) {
@@ -234,7 +236,7 @@ class FirSamResolver(
         // The constructor is something like `fun <T, ...> C(...): C<T, ...>`, meaning the type parameters
         // we need to replace are owned by it, not by the class (see the substitutor in `buildSamConstructor`
         // for `FirRegularClass` above).
-        val substitutor = samConstructorForClass.buildSubstitutorForSamTypeAlias(session, type)
+        val substitutor = samConstructorForClass.buildSubstitutorWithUpperBounds(session, type)
             ?: return samConstructorForClass.symbol
         val newReturnType = substitutor.substituteOrNull(samConstructorForClass.returnTypeRef.coneType)
         val newParameterTypes = samConstructorForClass.valueParameters.map {
@@ -286,17 +288,78 @@ class FirSamResolver(
 
 }
 
-private fun FirTypeParameterRefsOwner.buildSubstitutorForSamTypeAlias(session: FirSession, type: ConeClassLikeType): ConeSubstitutor? {
+/**
+ * This function creates a substitutor for SAM class/SAM constructor based on the expected SAM type.
+ * If there is a typeless projection in some argument of the expected type then the upper bound of the corresponding type parameters is used
+ */
+private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: FirSession, type: ConeClassLikeType): ConeSubstitutor? {
     if (typeParameters.isEmpty()) return null
-    val mapping = typeParameters.zip(type.typeArguments).associate { (parameter, projection) ->
-        val typeArgument =
-            (projection as? ConeKotlinTypeProjection)?.type
-            // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
-                ?: parameter.symbol.fir.bounds.firstOrNull()?.coneTypeSafe()
-                ?: session.builtinTypes.nullableAnyType.type
-        Pair(parameter.symbol, typeArgument)
+
+    fun createMapping(substitutor: ConeSubstitutor): Map<FirTypeParameterSymbol, ConeKotlinType> {
+        return typeParameters.zip(type.typeArguments).associate { (parameter, projection) ->
+            val typeArgument =
+                (projection as? ConeKotlinTypeProjection)?.type
+                // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
+                    ?: parameter.symbol.fir.bounds.firstOrNull()?.coneTypeSafe()
+                    ?: session.builtinTypes.nullableAnyType.type
+            Pair(parameter.symbol, substitutor.substituteOrSelf(typeArgument))
+        }
     }
-    return substitutorByMap(mapping, session)
+
+    /*
+     *
+     * There might be a case when there is a recursion in upper bounds of SAM type parameters:
+     *
+     * ```
+     * public interface Function<E extends CharSequence, F extends Map<String, E>> {
+     *     E handle(F f);
+     * }
+     * ```
+     *
+     * In this case, it's not enough to just take the upper bound of the parameter, as it may contain the reference to another parameter.
+     * To handle it correctly, we need to substitute upper bounds with existing substitutor too.
+     * This recursive substitution process may last at most as the number of presented type parameters
+     */
+    var substitutor: ConeSubstitutor = ConeSubstitutor.Empty
+    var containsNonSubstitutedArguments = false
+
+    for (i in typeParameters.indices) {
+        val mapping = createMapping(substitutor)
+        substitutor = substitutorByMap(mapping, session)
+        containsNonSubstitutedArguments = mapping.values.any { bound ->
+            bound.contains { type ->
+                type is ConeTypeParameterType && typeParameters.any { it.symbol == type.lookupTag.typeParameterSymbol }
+            }
+        }
+        if (!containsNonSubstitutedArguments) {
+            break
+        }
+    }
+
+    /*
+    * If there are still unsubstituted
+     *   parameters, then it means that there is a cycle in parameters themselves and it's impossible to infer proper substitution. For that
+     *   case we just create error types for such parameters
+     *
+     * ```
+     * public interface Function1<A extends B, B extends A> {
+     *     B handle(A a);
+     * }
+     * ```
+     */
+    if (containsNonSubstitutedArguments) {
+        val errorSubstitution = typeParameters.associate {
+            val diagnostic = ConeSimpleDiagnostic(
+                reason = "Parameter ${it.symbol.name} has a cycle in its upper bounds",
+                DiagnosticKind.CannotInferParameterType
+            )
+            it.symbol to ConeErrorType(diagnostic)
+        }
+        val errorSubstitutor = substitutorByMap(errorSubstitution, session)
+        substitutor = substitutorByMap(createMapping(errorSubstitutor), session)
+    }
+
+    return substitutor
 }
 
 private fun FirRegularClass.getSingleAbstractMethodOrNull(
