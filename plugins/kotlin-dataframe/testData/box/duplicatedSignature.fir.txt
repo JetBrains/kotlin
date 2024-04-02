@@ -15,20 +15,98 @@ FILE: Test.kt
 
     }
     public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
-        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>().R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(ba), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/Int| <inline=NoInline>  {
-            ^ Int(42)
+        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenSchema_2992104>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>().R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenSchema_2992104>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenSchema_2992104>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenSchema_2992104I : R|kotlin/Any| {
+                public abstract val ba: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public abstract val a: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public constructor(): R|<local>/TokenSchema_2992104I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenSchema_2992104I>|.ba: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenSchema_2992104I>|.ba: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenSchema_2992104I>|.a: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenSchema_2992104I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class TokenSchema_2992104 : R|<local>/TokenSchema_2992104I| {
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+
+                public constructor(): R|<local>/TokenSchema_2992104|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(ba), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(42)
+            }
+            )
         }
         )
-        R|<local>/res|.<Unresolved name: ba>#.R|org/jetbrains/kotlinx/dataframe/api/print|()
-        R|<local>/res|.R|org/jetbrains/kotlinx/dataframe/a|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
-        lval a: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>| = R|<local>/res|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/Schema|, R|kotlin/Int|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Schema>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
-            ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/a|
+        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|<local>/Scope0.ba|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|<local>/Scope0.a|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        lval a: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_113141796>| = R|<local>/res|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|<local>/TokenSchema_2992104|, R|kotlin/Int|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/TokenSchema_2992104>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/TokenSchema_2992104>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<kotlin/Int>| <inline=NoInline>  {
+            ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|<local>/Scope0.a|
         }
-        ).R|org/jetbrains/kotlinx/dataframe/api/with|<R|org/jetbrains/kotlinx/dataframe/Schema|, R|kotlin/Int|, R|kotlin/Char|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|kotlin/Int|): R|kotlin/Char| <inline=NoInline>  {
-            ^ R|<local>/it|.R|kotlin/text/digitToChar|()
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<<local>/TokenSchema_2992104, kotlin/Int>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_113141796>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<<local>/TokenSchema_2992104, kotlin/Int>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_113141796>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenWith_113141796I : R|kotlin/Any| {
+                public abstract val ba: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public abstract val a: R|kotlin/Char|
+                    public get(): R|kotlin/Char|
+
+                public constructor(): R|<local>/TokenWith_113141796I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.ba: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.ba: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.a: R|kotlin/Char|
+                    public get(): R|kotlin/Char|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Char>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Char>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class TokenWith_113141796 : R|<local>/TokenWith_113141796I| {
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+
+                public constructor(): R|<local>/TokenWith_113141796|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/with|<R|<local>/TokenSchema_2992104|, R|kotlin/Int|, R|kotlin/Char|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenSchema_2992104>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  kotlin/Int|): R|kotlin/Char| <inline=NoInline>  {
+                ^ R|<local>/it|.R|kotlin/text/digitToChar|()
+            }
+            )
         }
         )
-        lval str: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Char>| = R|<local>/a|.R|org/jetbrains/kotlinx/dataframe/a|
+        lval str: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Char>| = (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/a|).R|<local>/Scope0.a|
         R|kotlin/io/print|(R|<local>/str|)
     }
 FILE: duplicatedSignature.kt
@@ -60,14 +138,98 @@ FILE: duplicatedSignature.kt
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ActivePlayer>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(char), String(level), String(race), String(charclass), String(zone), String(guild), String(timestamp))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(59425), Int(1), String(Orc), String(Rogue), String(Orgrimmar), Int(165), String(01/01/08 00:02:04))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>(verify = Boolean(true))
         lval format: R|java/time/format/DateTimeFormatter!| = Q|java/time/format/DateTimeFormatter|.R|java/time/format/DateTimeFormatter.ofPattern*s|(String(MM/dd/yy HH:mm:ss))
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ActivePlayer>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/String>| <inline=NoInline>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_113141796>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<kotlin/String>| <inline=NoInline>  {
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamp|
         }
-        ).R|org/jetbrains/kotlinx/dataframe/api/with|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|, R|java/time/LocalDateTime|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|kotlin/String|): R|java/time/LocalDateTime| <inline=NoInline>  {
-            ^ Q|java/time/LocalDateTime|.R|java/time/LocalDateTime.parse*s|(R|<local>/it|, R|<local>/format|)!!
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_113141796>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_113141796>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenWith_113141796I : R|kotlin/Any| {
+                public abstract val timestamp: R|java/time/LocalDateTime|
+                    public get(): R|java/time/LocalDateTime|
+
+                public abstract val charclass: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public abstract val guild: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public abstract val char: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public abstract val race: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public abstract val level: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public abstract val zone: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/TokenWith_113141796I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.timestamp: R|java/time/LocalDateTime|
+                    public get(): R|java/time/LocalDateTime|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.timestamp: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/time/LocalDateTime>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/time/LocalDateTime>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.charclass: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.charclass: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.guild: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.guild: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.char: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.char: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.race: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.race: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.level: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.level: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenWith_113141796I>|.zone: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenWith_113141796I>|.zone: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class TokenWith_113141796 : R|<local>/TokenWith_113141796I| {
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+
+                public constructor(): R|<local>/TokenWith_113141796|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/with|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|, R|java/time/LocalDateTime|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  kotlin/String|): R|java/time/LocalDateTime| <inline=NoInline>  {
+                ^ Q|java/time/LocalDateTime|.R|java/time/LocalDateTime.parse*s|(R|<local>/it|, R|<local>/format|)!!
+            }
+            )
         }
         )
-        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>()
+        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|<local>/TokenWith_113141796|>()
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt

@@ -9,7 +9,7 @@ FILE: conflictingJvmDeclarations.kt
             public get(): R|kotlin/String|
 
     }
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Type : R|kotlin/Any| {
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Type : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(name: R|kotlin/String|, vararg: R|kotlin/Boolean|): R|org/jetbrains/kotlinx/dataframe/Type| {
             super<R|kotlin/Any|>()
         }

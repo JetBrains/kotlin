@@ -20,28 +20,8 @@ FILE fqName:<root> fileName:/OuterClass.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Hello modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     annotations:
-      DataSchema(isOpen = 'false')
+      DataSchema(isOpen = false)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Hello
-    PROPERTY name:name visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:kotlin.String
-        correspondingProperty: PROPERTY name:name visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
-    PROPERTY name:test name visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test name> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:<root>.Hello.InnerClass
-        correspondingProperty: PROPERTY name:test name visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
-    PROPERTY name:nullableProperty visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nullableProperty> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:kotlin.Int?
-        correspondingProperty: PROPERTY name:nullableProperty visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
-    PROPERTY name:a visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:kotlin.Function0<kotlin.Unit>
-        correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
-    PROPERTY name:d visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:kotlin.collections.List<kotlin.collections.List<*>>
-        correspondingProperty: PROPERTY name:d visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
     CLASS CLASS name:InnerClass modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Hello.InnerClass
       CONSTRUCTOR visibility:public <> () returnType:<root>.Hello.InnerClass [primary]
@@ -74,6 +54,30 @@ FILE fqName:<root> fileName:/OuterClass.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY name:a visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:kotlin.Function0<kotlin.Unit>
+        correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
+    PROPERTY name:d visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:kotlin.collections.List<kotlin.collections.List<*>>
+        correspondingProperty: PROPERTY name:d visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
+    PROPERTY name:name visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:name visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
+    PROPERTY name:nullableProperty visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nullableProperty> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:kotlin.Int?
+        correspondingProperty: PROPERTY name:nullableProperty visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
+    PROPERTY name:test name visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test name> visibility:public modality:ABSTRACT <> ($this:<root>.Hello) returnType:<root>.Hello.InnerClass
+        correspondingProperty: PROPERTY name:test name visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Hello
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
   PROPERTY name:col1 visibility:public modality:FINAL [val]
     FUN name:<get-col1> visibility:public modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Hello>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
       correspondingProperty: PROPERTY name:col1 visibility:public modality:FINAL [val]
@@ -154,7 +158,3 @@ FILE fqName:<root> fileName:/OuterClass.kt
         RETURN type=kotlin.Nothing from='public final fun <get-row5> (): kotlin.collections.List<kotlin.collections.List<*>> declared in <root>'
           CALL 'public final fun <get-d> (): kotlin.collections.List<kotlin.collections.List<*>> declared in <root>' type=kotlin.collections.List<kotlin.collections.List<*>> origin=GET_PROPERTY
             $receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.Hello> declared in <root>.<get-row5>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.Hello> origin=null
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value="OK"

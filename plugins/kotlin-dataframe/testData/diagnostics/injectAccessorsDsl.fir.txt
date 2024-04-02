@@ -1,57 +1,43 @@
 FILE: injectAccessorsDsl.kt
     public final fun Dsl is evaluated to (df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class DataFrameType1 : R|kotlin/Any| {
-                public constructor(): R|<local>/DataFrameType1| {
-                    super<R|kotlin/Any|>()
-                }
-
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenAdd_2988969I : R|kotlin/Any| {
                 public abstract val col1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public abstract val col2: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
+                public constructor(): R|<local>/TokenAdd_2988969I|
+
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public constructor(): R|<local>/Scope0| {
-                    super<R|kotlin/Any|>()
-                }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAdd_2988969I>|.col1: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col1)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/col1|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(col1)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenAdd_2988969I>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.col1: R|kotlin/Int|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col1)) public get(): R|kotlin/Int| {
-                        ^ (this@R|<local>/col1|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(col1)) as R|kotlin/Int|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAdd_2988969I>|.col2: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.col2: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col2)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
-                        ^ (this@R|<local>/col2|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(col2)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenAdd_2988969I>|.col2: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.col2: R|kotlin/Int|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col2)) public get(): R|kotlin/Int| {
-                        ^ (this@R|<local>/col2|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(col2)) as R|kotlin/Int|)
-                    }
+                public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenAdd_2988969 : R|<local>/DataFrameType1| {
-                public constructor(): R|<local>/TokenAdd_2988969| {
-                    super<R|<local>/DataFrameType1|>()
-                }
-
+            local abstract class TokenAdd_2988969 : R|<local>/TokenAdd_2988969I| {
                 public abstract val scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
 
+                public constructor(): R|<local>/TokenAdd_2988969|
+
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Any?|>(<L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDsl<kotlin/Any?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Any?|>(<L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDsl<kotlin/Any?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 (this@R|special/anonymous|, String(col1)).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.from: R|kotlin/Boolean|>|<R|kotlin/Int|>(from@fun R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any?>|): R|kotlin/Int| <inline=NoInline>  {
                     ^ Int(5)
                 }
@@ -61,9 +47,9 @@ FILE: injectAccessorsDsl.kt
                 }
                 )).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.into: R|kotlin/Boolean|>|(String(col2))
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>|)
+            )
         }
         )
-        (this@R|/Dsl is evaluated to |, R|<local>/df1|).R|<local>/col1|
-        (this@R|/Dsl is evaluated to |, R|<local>/df1|).R|<local>/col2|
+        (this@R|/Dsl is evaluated to |, R|<local>/df1|).R|<local>/Scope0.col1|
+        (this@R|/Dsl is evaluated to |, R|<local>/df1|).R|<local>/Scope0.col2|
     }
