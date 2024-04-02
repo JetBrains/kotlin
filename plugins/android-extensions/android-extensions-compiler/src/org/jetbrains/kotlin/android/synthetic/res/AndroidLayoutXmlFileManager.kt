@@ -93,6 +93,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
     protected abstract fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup
 
     protected fun parseAndroidResource(id: ResourceIdentifier, tag: String, sourceElement: PsiElement?): AndroidResource {
+        @Suppress("DEPRECATION")
         val sourceElementPointer = sourceElement?.createSmartPointer()
         return when (tag) {
             "fragment" -> AndroidResource.Fragment(id, sourceElementPointer)

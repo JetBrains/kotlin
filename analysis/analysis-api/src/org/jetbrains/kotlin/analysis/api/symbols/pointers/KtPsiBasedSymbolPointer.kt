@@ -43,7 +43,7 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
             other.expectedClass == expectedClass &&
             other.psiPointer == psiPointer
 
-    public constructor(psi: KtElement, expectedClass: KClass<S>) : this(psi.createSmartPointer(), expectedClass)
+    public constructor(psi: KtElement, expectedClass: KClass<S>) : this(@Suppress("DEPRECATION") psi.createSmartPointer(), expectedClass)
 
     public companion object {
         @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")

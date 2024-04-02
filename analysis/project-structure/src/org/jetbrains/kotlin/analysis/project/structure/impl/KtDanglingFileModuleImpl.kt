@@ -24,6 +24,7 @@ public class KtDanglingFileModuleImpl(
 ) : KtDanglingFileModule {
     override val isCodeFragment: Boolean = file is KtCodeFragment
 
+    @Suppress("DEPRECATION")
     private val fileRef = file.createSmartPointer()
 
     init {

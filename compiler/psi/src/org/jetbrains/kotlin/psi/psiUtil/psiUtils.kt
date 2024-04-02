@@ -443,6 +443,10 @@ fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList
 
 operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
+@Deprecated(
+    "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
+    ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
+)
 fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
     SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
 
