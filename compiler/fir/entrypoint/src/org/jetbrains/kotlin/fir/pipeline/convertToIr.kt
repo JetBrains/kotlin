@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrConverter.Companion.friendModulesMap
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
@@ -91,22 +94,29 @@ fun FirResult.convertToIrAndActualize(
     val specialAnnotationSymbolProvider = Fir2IrJvmSpecialAnnotationSymbolProvider(IrFactoryImpl)
 
     fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(irBuiltIns: IrBuiltInsOverFir?): Fir2IrComponentsStorage {
-        return Fir2IrConverter.createFir2IrComponentsStorage(
+        return Fir2IrComponentsStorage(
             session,
             scopeSession,
-            fir,
-            // We need to build all modules before rebuilding fake overrides
-            // to avoid fixing declaration storages
+            IrFactoryImpl,
             fir2IrExtensions,
             fir2IrConfiguration,
-            irMangler,
-            IrFactoryImpl,
             visibilityConverter,
-            specialAnnotationSymbolProvider,
-            kotlinBuiltIns,
+            runIf(fir2IrConfiguration.allowNonCachedDeclarations) { fir.toSet() },
+            { irBuiltins ->
+                IrFakeOverrideBuilder(
+                    actualizerTypeContextProvider(irBuiltins),
+                    Fir2IrFakeOverrideStrategy(
+                        friendModulesMap(session),
+                        isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm()
+                    ),
+                    fir2IrExtensions.externalOverridabilityConditions
+                )
+            },
+            FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns),
             commonMemberStorage,
+            irMangler,
+            specialAnnotationSymbolProvider,
             irBuiltIns,
-            actualizerTypeContextProvider,
             firProvidersWithGeneratedFiles.getValue(session.moduleData),
         )
     }
@@ -117,6 +127,8 @@ fun FirResult.convertToIrAndActualize(
     val dependentIrFragments = mutableListOf<IrModuleFragment>()
     lateinit var mainIrFragment: IrModuleFragment
 
+    // We need to build all modules before rebuilding fake overrides
+    // to avoid fixing declaration storages
     for (firOutput in outputs) {
         val isMainOutput = firOutput === platformFirOutput
         val componentsStorage = if (isMainOutput) {

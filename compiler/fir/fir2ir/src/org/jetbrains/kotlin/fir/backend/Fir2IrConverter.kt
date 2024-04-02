@@ -694,7 +694,7 @@ class Fir2IrConverter(
         }
 
         // TODO: drop this function in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
-        private fun friendModulesMap(session: FirSession): Map<String, List<String>> {
+        fun friendModulesMap(session: FirSession): Map<String, List<String>> {
             fun FirModuleData.friendsMapName() = name.asStringStripSpecialMarkers()
             fun FirModuleData.collectDependsOnRecursive(set: MutableSet<FirModuleData>) {
                 if (!set.add(this)) return
@@ -708,49 +708,6 @@ class Fir2IrConverter(
             }
             val friendNames = (moduleData.friendDependencies + dependsOnTransitive).map { it.friendsMapName() }
             return dependsOnTransitive.associate { it.friendsMapName() to friendNames }
-        }
-
-        fun createFir2IrComponentsStorage(
-            session: FirSession,
-            scopeSession: ScopeSession,
-            firFiles: List<FirFile>,
-            fir2IrExtensions: Fir2IrExtensions,
-            fir2IrConfiguration: Fir2IrConfiguration,
-            irMangler: KotlinMangler.IrMangler,
-            irFactory: IrFactory,
-            visibilityConverter: Fir2IrVisibilityConverter,
-            specialSymbolProvider: Fir2IrSpecialSymbolProvider,
-            kotlinBuiltIns: KotlinBuiltIns,
-            commonMemberStorage: Fir2IrCommonMemberStorage,
-            initializedIrBuiltIns: IrBuiltInsOverFir?,
-            typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-            firProviderWithGeneratedFiles: FirProviderWithGeneratedFiles,
-        ): Fir2IrComponentsStorage {
-            return Fir2IrComponentsStorage(
-                session,
-                scopeSession,
-                irFactory,
-                fir2IrExtensions,
-                fir2IrConfiguration,
-                visibilityConverter,
-                runIf(fir2IrConfiguration.allowNonCachedDeclarations) { firFiles.toSet() },
-                { irBuiltins ->
-                    IrFakeOverrideBuilder(
-                        typeContextProvider(irBuiltins),
-                        Fir2IrFakeOverrideStrategy(
-                            friendModulesMap(session),
-                            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm()
-                        ),
-                        fir2IrExtensions.externalOverridabilityConditions
-                    )
-                },
-                FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns),
-                commonMemberStorage,
-                irMangler,
-                specialSymbolProvider,
-                initializedIrBuiltIns,
-                firProviderWithGeneratedFiles,
-            )
         }
 
         fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragment {
