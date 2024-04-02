@@ -71,7 +71,8 @@ class Fir2IrComponentsStorage(
         irTypeSystemContext,
         Fir2IrFakeOverrideStrategy(
             Fir2IrConverter.friendModulesMap(session),
-            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm()
+            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
+            isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
         ),
         extensions.externalOverridabilityConditions
     )

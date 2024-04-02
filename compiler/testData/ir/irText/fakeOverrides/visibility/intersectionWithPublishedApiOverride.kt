@@ -1,7 +1,6 @@
 // SKIP_KT_DUMP
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-63381
 
 // MODULE: separate
 // FILE: KotlinInternalSeparate.kt

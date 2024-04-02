@@ -36017,6 +36017,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/publishedApi"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
+    @TestMetadata("doNotOverrideFromAnotherModule.kt")
+    public void testDoNotOverrideFromAnotherModule() {
+      runTest("compiler/testData/codegen/box/publishedApi/doNotOverrideFromAnotherModule.kt");
+    }
+
     @TestMetadata("inlineFromFriendModule.kt")
     public void testInlineFromFriendModule() {
       runTest("compiler/testData/codegen/box/publishedApi/inlineFromFriendModule.kt");
