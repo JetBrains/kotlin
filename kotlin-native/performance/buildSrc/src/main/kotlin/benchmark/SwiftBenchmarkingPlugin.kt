@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.benchmark
 
+import kotlinBuildProperties
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -8,12 +9,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 import javax.inject.Inject
 import java.nio.file.Paths
-import java.net.URL
 import java.util.concurrent.TimeUnit
 import java.nio.file.Path
 import kotlin.reflect.KClass
@@ -98,10 +97,10 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     }
 
     fun Array<String>.runCommand(
-            workingDir: File = File("."),
-            timeoutAmount: Long = 60,
-            timeoutUnit: TimeUnit = TimeUnit.SECONDS,
-            env: Map<String, String>,
+        workingDir: File = File("."),
+        timeoutAmount: Long = 60,
+        timeoutUnit: TimeUnit = TimeUnit.SECONDS,
+        env: Map<String, String> = emptyMap(),
     ): String {
         return try {
             val processBuilder = ProcessBuilder(*this)
@@ -120,6 +119,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             error(e.message!!)
         }
     }
+
     fun compileSwift(
             project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
             output: Path, fullBitcode: Boolean = false
@@ -128,6 +128,36 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         assert(platform.configurables is AppleConfigurables)
         val configs = platform.configurables as AppleConfigurables
         val compiler = configs.absoluteTargetToolchain + "/bin/swiftc"
+
+        if (!File(compiler).exists()) {
+            println(
+                """
+                    swiftc doesn't exists at $compiler
+                """
+            )
+
+            println()
+
+            println("ls -al \$absoluteTargetToolchain")
+            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain).runCommand())
+            println()
+
+            println("ls -al \$absoluteTargetToolchain/bin")
+            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain + "/bin").runCommand())
+            println()
+
+            println("ls -al \$absoluteTargetToolchain/..")
+            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain + "/..").runCommand())
+            println()
+
+            println("ls -al \$absoluteTargetToolchain/../..")
+            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain + "/../..").runCommand())
+            println()
+
+            println("ls -al \$absoluteTargetToolchain/../../..")
+            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain + "/../../..").runCommand())
+            println()
+        }
 
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
