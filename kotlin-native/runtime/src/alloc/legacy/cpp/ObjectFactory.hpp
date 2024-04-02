@@ -15,7 +15,7 @@
 #include "Alignment.hpp"
 #include "FinalizerHooks.hpp"
 #include "Memory.h"
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 #include "Porting.h"
 #include "TypeLayout.hpp"
 #include "Types.h"

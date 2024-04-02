@@ -11,7 +11,7 @@
 #include "gtest/gtest.h"
 
 #include "RunLoopTestSupport.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 
 using namespace kotlin;
 

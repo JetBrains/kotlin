@@ -25,7 +25,7 @@
 #include "ObjCMMAPI.h"
 #include "StackTrace.hpp"
 #include "Types.h"
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 
 using namespace kotlin;
 

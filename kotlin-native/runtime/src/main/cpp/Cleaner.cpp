@@ -4,7 +4,7 @@
  */
 
 #include "Cleaner.h"
-
+#include "std_support/Atomic.hpp"
 #include "Memory.h"
 #include "Runtime.h"
 #include "Worker.h"
@@ -24,10 +24,10 @@ constexpr KInt kCleanerWorkerUninitialized = 0;
 constexpr KInt kCleanerWorkerInitializing = -1;
 constexpr KInt kCleanerWorkerShutdown = -2;
 
-KInt globalCleanerWorker = kCleanerWorkerUninitialized;
+std::atomic globalCleanerWorker = kCleanerWorkerUninitialized;
 
 void disposeCleaner(CleanerImpl* thiz) {
-    auto worker = atomicGet(&globalCleanerWorker);
+    auto worker = globalCleanerWorker.load();
     RuntimeAssert(
             worker != kCleanerWorkerUninitialized && worker != kCleanerWorkerInitializing,
             "Cleaner worker must've been initialized by now");
@@ -66,10 +66,10 @@ void ShutdownCleaners(bool executeScheduledCleaners) {
         // This loop may spin waiting for a proper worker state. Switch to the native thread state.
         kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
         do {
-            worker = atomicGet(&globalCleanerWorker);
+            worker = globalCleanerWorker.load();
             RuntimeAssert(worker != kCleanerWorkerShutdown, "Cleaner worker must not be shutdown twice");
             if (worker == kCleanerWorkerUninitialized) {
-                if (!compareAndSet(&globalCleanerWorker, kCleanerWorkerUninitialized, kCleanerWorkerShutdown)) {
+                if (!globalCleanerWorker.compare_exchange_weak(worker, kCleanerWorkerShutdown)) {
                     // Someone is trying to initialize the worker. Try again.
                     continue;
                 }
@@ -89,7 +89,7 @@ void ShutdownCleaners(bool executeScheduledCleaners) {
 
     RuntimeAssert(worker > 0, "Cleaner worker must be fully initialized here");
 
-    atomicSet(&globalCleanerWorker, kCleanerWorkerShutdown);
+    globalCleanerWorker.store(kCleanerWorkerShutdown);
     Kotlin_CleanerImpl_shutdownCleanerWorker(worker, executeScheduledCleaners);
     WaitNativeWorkerTermination(worker);
 }
@@ -99,15 +99,15 @@ extern "C" KInt Kotlin_CleanerImpl_getCleanerWorker() {
     // This loop may spin waiting for a proper worker state. Switch to the native thread state.
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     do {
-        worker = atomicGet(&globalCleanerWorker);
+        worker = globalCleanerWorker.load();
         RuntimeAssert(worker != kCleanerWorkerShutdown, "Cleaner worker must not have been shutdown");
         if (worker == kCleanerWorkerUninitialized) {
-            if (!compareAndSet(&globalCleanerWorker, kCleanerWorkerUninitialized, kCleanerWorkerInitializing)) {
+            if (!globalCleanerWorker.compare_exchange_weak(worker, kCleanerWorkerInitializing)) {
                 // Someone else is trying to initialize the worker. Try again.
                 continue;
             }
             worker = kotlin::CallWithThreadState<kotlin::ThreadState::kRunnable>(Kotlin_CleanerImpl_createCleanerWorker);
-            if (!compareAndSet(&globalCleanerWorker, kCleanerWorkerInitializing, worker)) {
+            if (!kotlin::std_support::atomic_compare_exchange_strong(globalCleanerWorker, kCleanerWorkerInitializing, worker)) {
                 RuntimeCheck(false, "Someone interrupted worker initializing");
             }
             // Worker is initialized.
@@ -128,5 +128,5 @@ extern "C" KInt Kotlin_CleanerImpl_getCleanerWorker() {
 }
 
 void ResetCleanerWorkerForTests() {
-    atomicSet(&globalCleanerWorker, kCleanerWorkerUninitialized);
+    globalCleanerWorker.store(kCleanerWorkerUninitialized);
 }

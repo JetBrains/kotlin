@@ -12,7 +12,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;

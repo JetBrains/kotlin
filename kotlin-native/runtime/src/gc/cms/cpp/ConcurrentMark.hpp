@@ -11,7 +11,7 @@
 #include "GCStatistics.hpp"
 #include "ManuallyScoped.hpp"
 #include "ObjectData.hpp"
-#include "ParallelProcessor.hpp"
+#include "concurrent/ParallelProcessor.hpp"
 #include "SafePoint.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"

@@ -28,7 +28,7 @@
 #import "ObjCExportPrivate.h"
 #import "ObjCMMAPI.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 #import "Exceptions.h"
 #import "Natives.h"
 

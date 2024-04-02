@@ -12,7 +12,7 @@
 #include <mutex>
 #include <type_traits>
 
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 #include "Utils.hpp"
 #include "std_support/Memory.hpp"
 

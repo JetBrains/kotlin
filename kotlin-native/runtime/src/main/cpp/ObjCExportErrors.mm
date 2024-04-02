@@ -22,7 +22,7 @@
 #import "ObjCExport.h"
 #import "Porting.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 
 #import "ObjCExportErrors.h"
 

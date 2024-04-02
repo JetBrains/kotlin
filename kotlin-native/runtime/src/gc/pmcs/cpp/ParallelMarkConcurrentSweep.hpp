@@ -21,7 +21,7 @@
 #include "MarkAndSweepUtils.hpp"
 #include "ObjectData.hpp"
 #include "ParallelMark.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 #include "Utils.hpp"

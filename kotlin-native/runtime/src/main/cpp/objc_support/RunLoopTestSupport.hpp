@@ -11,7 +11,7 @@
 #include <mutex>
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "Utils.hpp"
 #include "objc_support/ObjectPtr.hpp"
 

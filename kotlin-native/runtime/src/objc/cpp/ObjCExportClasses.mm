@@ -18,7 +18,7 @@
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 #import "Exceptions.h"
 
 @interface NSObject (NSObjectPrivateMethods)
