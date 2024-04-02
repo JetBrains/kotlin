@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.FirSession
@@ -62,6 +63,7 @@ class GeneratedNames : IGeneratedNames {
 val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
 
 // listOf("-P", "plugin:org.jetbrains.kotlinx.dataframe:path=/home/nikita/IdeaProjects/run-df")
+@OptIn(ExperimentalCompilerApi::class)
 class DataFrameCommandLineProcessor : CommandLineProcessor {
     companion object {
         val RESOLUTION_DIRECTORY = CliOption(
@@ -97,6 +99,7 @@ class FirDataFrameExtensionRegistrar(
     }
 }
 
+@OptIn(ExperimentalCompilerApi::class)
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {

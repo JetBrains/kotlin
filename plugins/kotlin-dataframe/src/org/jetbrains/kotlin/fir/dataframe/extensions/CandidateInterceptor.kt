@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
@@ -297,73 +296,72 @@ class CandidateInterceptor(
         val callDispatchReceiver = call.dispatchReceiver
         val callExtensionReceiver = call.extensionReceiver
 
-        val argument = buildLambdaArgumentExpression {
-            expression = buildAnonymousFunctionExpression {
-                val fSymbol = FirAnonymousFunctionSymbol()
-                val target = FirFunctionTarget(null, isLambda = true)
-                anonymousFunction = buildAnonymousFunction {
-                    resolvePhase = FirResolvePhase.BODY_RESOLVE
+        val argument =  buildAnonymousFunctionExpression {
+            isTrailingLambda = true
+            val fSymbol = FirAnonymousFunctionSymbol()
+            val target = FirFunctionTarget(null, isLambda = true)
+            anonymousFunction = buildAnonymousFunction {
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                moduleData = session.moduleData
+                origin = FirDeclarationOrigin.Source
+                status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                deprecationsProvider = EmptyDeprecationsProvider
+                returnTypeRef = buildResolvedTypeRef {
+                    type = returnType
+                }
+                val itName = Name.identifier("it")
+                val parameterSymbol = FirValueParameterSymbol(itName)
+                valueParameters += buildValueParameter {
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source
-                    status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
-                    deprecationsProvider = EmptyDeprecationsProvider
                     returnTypeRef = buildResolvedTypeRef {
-                        type = returnType
+                        type = receiverType
                     }
-                    val itName = Name.identifier("it")
-                    val parameterSymbol = FirValueParameterSymbol(itName)
-                    valueParameters += buildValueParameter {
-                        moduleData = session.moduleData
-                        origin = FirDeclarationOrigin.Source
-                        returnTypeRef = buildResolvedTypeRef {
-                            type = receiverType
-                        }
-                        this.name = itName
-                        this.symbol = parameterSymbol
-                        containingFunctionSymbol = fSymbol
-                        isCrossinline = false
-                        isNoinline = false
-                        isVararg = false
-                    }.also { parameterSymbol.bind(it) }
-                    body = buildBlock {
-                        this.coneTypeOrNull = returnType
-                        dataSchemaApis.asReversed().forEach {
-                            statements += it.schema
-                            statements += it.scope
-                        }
+                    this.name = itName
+                    this.symbol = parameterSymbol
+                    containingFunctionSymbol = fSymbol
+                    isCrossinline = false
+                    isNoinline = false
+                    isVararg = false
+                }.also { parameterSymbol.bind(it) }
+                body = buildBlock {
+                    this.coneTypeOrNull = returnType
+                    dataSchemaApis.asReversed().forEach {
+                        statements += it.schema
+                        statements += it.scope
+                    }
 
-                        statements += tokenFir
+                    statements += tokenFir
 
-                        statements += buildReturnExpression {
-                            val itPropertyAccess = buildPropertyAccessExpression {
-                                coneTypeOrNull = receiverType
-                                calleeReference = buildResolvedNamedReference {
-                                    name = itName
-                                    resolvedSymbol = parameterSymbol
-                                }
+                    statements += buildReturnExpression {
+                        val itPropertyAccess = buildPropertyAccessExpression {
+                            coneTypeOrNull = receiverType
+                            calleeReference = buildResolvedNamedReference {
+                                name = itName
+                                resolvedSymbol = parameterSymbol
                             }
-                            call.replaceExplicitReceiver(itPropertyAccess)
-                            call.replaceExtensionReceiver(itPropertyAccess)
-                            result = call
-                            this.target = target
                         }
+                        call.replaceExplicitReceiver(itPropertyAccess)
+                        call.replaceExtensionReceiver(itPropertyAccess)
+                        result = call
+                        this.target = target
                     }
-                    this.symbol = fSymbol
-                    isLambda = true
-                    hasExplicitParameterList = false
-                    typeRef = buildResolvedTypeRef {
-                        type = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
-                            typeArguments = arrayOf(receiverType, returnType),
-                            isNullable = false
-                        )
-                    }
-                    invocationKind = EventOccurrencesRange.EXACTLY_ONCE
-                    inlineStatus = InlineStatus.Inline
-                }.also {
-                    target.bind(it)
-                    fSymbol.bind(it)
                 }
+                this.symbol = fSymbol
+                isLambda = true
+                hasExplicitParameterList = false
+                typeRef = buildResolvedTypeRef {
+                    type = ConeClassLikeTypeImpl(
+                        ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
+                        typeArguments = arrayOf(receiverType, returnType),
+                        isNullable = false
+                    )
+                }
+                invocationKind = EventOccurrencesRange.EXACTLY_ONCE
+                inlineStatus = InlineStatus.Inline
+            }.also {
+                target.bind(it)
+                fSymbol.bind(it)
             }
         }
 
@@ -386,7 +384,7 @@ class CandidateInterceptor(
             dispatchReceiver = callDispatchReceiver
             this.explicitReceiver = callExplicitReceiver
             extensionReceiver = callExtensionReceiver
-            argumentList = buildResolvedArgumentList(linkedMapOf(argument to parameter.fir))
+            argumentList = buildResolvedArgumentList(original = null, linkedMapOf(argument to parameter.fir))
             calleeReference = buildResolvedNamedReference {
                 source = call.calleeReference.source
                 this.name = Name.identifier("let")
