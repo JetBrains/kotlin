@@ -34,12 +34,11 @@ fun runWithKotlinc(
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     classpath: List<File> = emptyList(),
-    additionalEnvVars: Iterable<Pair<String, String>>? = null,
-    expectErrorOnK2: Boolean = false
+    additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
     runWithKotlinc(
         arrayOf("-script", scriptPath),
-        expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, classpath, additionalEnvVars, expectErrorOnK2
+        expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, classpath, additionalEnvVars
     )
 }
 
@@ -51,8 +50,7 @@ fun runWithKotlinLauncherScript(
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     classpath: List<File> = emptyList(),
-    additionalEnvVars: Iterable<Pair<String, String>>? = null,
-    expectErrorOnK2: Boolean = false
+    additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
     val executableFileName =
         if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "$launcherScriptName.bat" else launcherScriptName
@@ -69,8 +67,7 @@ fun runWithKotlinLauncherScript(
     }
 
     runAndCheckResults(
-        args, expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, additionalEnvVars,
-        expectErrorOnK2 = expectErrorOnK2
+        args, expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, additionalEnvVars
     )
 }
 
@@ -81,12 +78,11 @@ fun runWithKotlinc(
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     classpath: List<File> = emptyList(),
-    additionalEnvVars: Iterable<Pair<String, String>>? = null,
-    expectErrorOnK2: Boolean = false
+    additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
     runWithKotlinLauncherScript(
         "kotlinc", compilerArgs.asIterable(), expectedOutPatterns, expectedErrPatterns,
-        expectedExitCode, workDirectory, classpath, additionalEnvVars, expectErrorOnK2
+        expectedExitCode, workDirectory, classpath, additionalEnvVars
     )
 }
 
@@ -96,8 +92,7 @@ fun runAndCheckResults(
     expectedErrPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
-    additionalEnvVars: Iterable<Pair<String, String>>? = null,
-    expectErrorOnK2: Boolean = false
+    additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
     val processBuilder = ProcessBuilder(args)
     if (workDirectory != null) {
@@ -144,27 +139,20 @@ fun runAndCheckResults(
         Assert.assertFalse("stderr thread not finished", stderrThread.isAlive)
         Assert.assertNull(stderrException.value)
 
-        if (expectedExitCode == 0 && expectErrorOnK2 && processOut.contains("Language version 2.0")) {
-            Assert.assertTrue(
-                "Expecting an error on K2 compilation, but got: exit code: ${process.exitValue()}\n$processOut",
-                process.exitValue() != 0 || processOut.contains("error: ")
-            )
-        } else {
-            fun checkExpectedOutputPatterns(expectedPatterns: List<String>, actualOut: List<String>) {
-                Assert.assertEquals(expectedPatterns.size, actualOut.size)
-                for ((expectedPattern, actualLine) in expectedPatterns.zip(actualOut)) {
-                    Assert.assertTrue(
-                        "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
-                        Regex(expectedPattern).matches(actualLine)
-                    )
-                }
+        fun checkExpectedOutputPatterns(expectedPatterns: List<String>, actualOut: List<String>) {
+            Assert.assertEquals(expectedPatterns.size, actualOut.size)
+            for ((expectedPattern, actualLine) in expectedPatterns.zip(actualOut)) {
+                Assert.assertTrue(
+                    "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
+                    Regex(expectedPattern).matches(actualLine)
+                )
             }
-            checkExpectedOutputPatterns(expectedOutPatterns, processOut)
-            if (expectedErrPatterns.isNotEmpty()) {
-                checkExpectedOutputPatterns(expectedErrPatterns, processErr)
-            }
-            Assert.assertEquals(expectedExitCode, process.exitValue())
         }
+        checkExpectedOutputPatterns(expectedOutPatterns, processOut)
+        if (expectedErrPatterns.isNotEmpty()) {
+            checkExpectedOutputPatterns(expectedErrPatterns, processErr)
+        }
+        Assert.assertEquals(expectedExitCode, process.exitValue())
 
     } catch (e: Throwable) {
         println("OUT:\n${processOut.joinToString("\n")}")
@@ -178,7 +166,6 @@ fun runWithK2JVMCompiler(
     expectedOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     classpath: List<File> = emptyList(),
-    expectErrorOnK2: Boolean = false,
 ) {
     val args = arrayListOf("-kotlin-home", "dist/kotlinc").apply {
         if (classpath.isNotEmpty()) {
@@ -188,15 +175,14 @@ fun runWithK2JVMCompiler(
         add("-script")
         add(scriptPath)
     }
-    runWithK2JVMCompiler(args.toTypedArray(), expectedOutPatterns, expectedExitCode, expectErrorOnK2 = expectErrorOnK2)
+    runWithK2JVMCompiler(args.toTypedArray(), expectedOutPatterns, expectedExitCode)
 }
 
 fun runWithK2JVMCompiler(
     args: Array<String>,
     expectedAllOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
-    expectedSomeErrPatterns: List<String>? = null,
-    expectErrorOnK2: Boolean = false
+    expectedSomeErrPatterns: List<String>? = null
 ) {
     val argsWithBasefromProp = getBaseCompilerArgumentsFromProperty()?.let { (it + args).toTypedArray() } ?: args
     val (out, err, ret) = captureOutErrRet {
@@ -208,34 +194,26 @@ fun runWithK2JVMCompiler(
     try {
         val outLines = if (out.isEmpty()) emptyList() else out.lines()
         val errLines by lazy { err.lines() }
-        if (expectErrorOnK2 && errLines.any { it.contains("language version 2.0") }) {
+        Assert.assertEquals(
+            "Expecting pattern:\n  ${expectedAllOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
+            expectedAllOutPatterns.size, outLines.size
+        )
+        for ((expectedPattern, actualLine) in expectedAllOutPatterns.zip(outLines)) {
             Assert.assertTrue(
-                "Expecting an error on K2 compilation, but got: exit code: ${ret.code}\n" +
-                        "  ${outLines.joinToString("\n  ")}${errLines.joinToString("\n")}",
-                ret.code != 0 || err.lines().any { it.contains(("error: ")) }
+                "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
+                Regex(expectedPattern).matches(actualLine)
             )
-        } else {
-            Assert.assertEquals(
-                "Expecting pattern:\n  ${expectedAllOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
-                expectedAllOutPatterns.size, outLines.size
-            )
-            for ((expectedPattern, actualLine) in expectedAllOutPatterns.zip(outLines)) {
+        }
+        if (expectedSomeErrPatterns != null) {
+            for (expectedPattern in expectedSomeErrPatterns) {
+                val re = Regex(expectedPattern)
                 Assert.assertTrue(
-                    "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
-                    Regex(expectedPattern).matches(actualLine)
+                    "Expected pattern \"$expectedPattern\" is not found in the stderr:\n${errLines.joinToString("\n")}",
+                    errLines.any { re.find(it) != null }
                 )
             }
-            if (expectedSomeErrPatterns != null) {
-                for (expectedPattern in expectedSomeErrPatterns) {
-                    val re = Regex(expectedPattern)
-                    Assert.assertTrue(
-                        "Expected pattern \"$expectedPattern\" is not found in the stderr:\n${errLines.joinToString("\n")}",
-                        errLines.any { re.find(it) != null }
-                    )
-                }
-            }
-            Assert.assertEquals(expectedExitCode, ret.code)
         }
+        Assert.assertEquals(expectedExitCode, ret.code)
     } catch (e: Throwable) {
         println("OUT:\n$out")
         println("ERR:\n$err")

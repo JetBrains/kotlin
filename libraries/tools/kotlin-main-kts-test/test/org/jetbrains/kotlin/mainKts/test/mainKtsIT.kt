@@ -190,13 +190,11 @@ fun runWithKotlinRunner(
     expectedOutPatterns: List<String> = emptyList(),
     expectedErrPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
-    cacheDir: Path? = null,
-    expectErrorOnK2: Boolean = false
+    cacheDir: Path? = null
 ) {
     runWithKotlinLauncherScript(
         "kotlin", listOf(scriptPath), expectedOutPatterns, expectedErrPatterns, expectedExitCode,
-        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: "")),
-        expectErrorOnK2 = expectErrorOnK2
+        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: ""))
     )
 }
 
