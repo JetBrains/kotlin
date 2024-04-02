@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTaskHolder
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkConfig
 import org.jetbrains.kotlin.gradle.tasks.FrameworkDescriptor
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
@@ -88,13 +89,24 @@ class KotlinNativeXCFrameworkImpl(
         }
         project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(parentTask)
 
-        modes.forEach { buildType ->
-            val holder = XCFrameworkTaskHolder.create(project, artifactName, buildType).also {
-                parentTask.dependsOn(it.task)
-            }
+        val config = XCFrameworkConfig(
+            project = project,
+            buildTypes = modes,
+            xcframeworkConfigurationName = artifactName,
+            xcframeworkTaskConfigurationProvider = { buildType ->
+                XCFrameworkConfig.XCFrameworkTaskConfiguration(
+                    taskName = { xcFrameworkName -> XCFrameworkConfig.defaultXCFrameworkTaskName(buildType, xcFrameworkName) },
+                    baseName = project.provider { artifactName },
+                    description = XCFrameworkConfig.defaultXCFrameworkTaskDescription(buildType),
+                    customOutputDirectory = project.layout.buildDirectory.dir(outDir).mapToFile(),
+                    aggregateTask = parentTask,
+                )
+            },
+        )
 
+        modes.forEach { buildType ->
             val nameSuffix = "ForXCF"
-            val frameworkDescriptors: List<FrameworkDescriptor> = targets.map { target ->
+            targets.forEach { target ->
                 val librariesConfigurationName = project.registerLibsDependencies(target, artifactName + nameSuffix, modules)
                 val exportConfigurationName = project.registerExportDependencies(target, artifactName + nameSuffix, modules)
                 val targetTask = registerLinkFrameworkTask(
@@ -108,21 +120,16 @@ class KotlinNativeXCFrameworkImpl(
                     outDirName = "${artifactName}XCFrameworkTemp",
                     taskNameSuffix = nameSuffix
                 )
-                holder.task.dependsOn(targetTask)
-                val frameworkFileProvider = targetTask.flatMap { it.outputFile }
-                val descriptor = FrameworkDescriptor(frameworkFileProvider.get(), isStatic, target)
-
-                val group = AppleTarget.values().firstOrNull { it.targets.contains(target) }
-                holder.fatTasks[group]?.configure { fatTask ->
-                    fatTask.baseName = artifactName
-                    fatTask.fromFrameworkDescriptors(listOf(descriptor))
-                    fatTask.dependsOn(targetTask)
-                }
-                descriptor
-            }
-            holder.task.configure {
-                it.fromFrameworkDescriptors(frameworkDescriptors)
-                it.outputDir = project.layout.buildDirectory.dir(outDir).get().asFile
+                config.add(
+                    targetTask.map { linkTask ->
+                        FrameworkDescriptor(
+                            linkTask.outputFile.get(),
+                            isStatic,
+                            target,
+                        )
+                    },
+                    buildType
+                )
             }
         }
     }

@@ -152,8 +152,13 @@ internal constructor(
     /**
      * A base name for the fat framework.
      */
-    @Input
-    var baseName: String = project.name
+    @get:Input
+    var baseName: String
+        get() = baseNameProvider.get()
+        set(value) = baseNameProvider.set(value)
+
+    @get:Input
+    internal val baseNameProvider: Property<String> = objectFactory.property(project.name)
 
     @get:Internal
     internal val defaultDestinationDir: Provider<Directory> = projectLayout.buildDirectory.dir("fat-framework")
