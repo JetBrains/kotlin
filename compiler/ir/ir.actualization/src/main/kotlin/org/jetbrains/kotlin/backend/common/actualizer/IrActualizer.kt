@@ -76,7 +76,7 @@ class IrActualizer(
 
     fun actualizeCallablesAndMergeModules(): Map<IrSymbol, IrSymbol> {
         // 1. Collect expect-actual links for members of classes found on step 1.
-        val expectActualMap = collector.collect(classActualizationInfo)
+        val expectActualMap = collector.matchAllExpectDeclarations(classActualizationInfo)
 
         if (useFirBasedFakeOverrideGenerator) {
             //   2. Actualize expect fake overrides in non-expect classes inside common or multi-platform module.
