@@ -39,7 +39,6 @@ public:
 
     void AddToFinalizerQueue(FinalizerQueue queue) noexcept;
     FinalizerQueue ExtractFinalizerQueue() noexcept;
-    size_t EstimateOverheadPerThread() noexcept;
 
     // Test method
     std::vector<ObjHeader*> GetAllocatedObjects() noexcept;

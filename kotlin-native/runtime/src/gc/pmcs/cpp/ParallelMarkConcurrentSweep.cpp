@@ -176,10 +176,8 @@ void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
     // By this point all the alive heap must be marked.
     // All the mutations (incl. allocations) after this method will be subject for the next GC.
     // This should really be done by each individual thread while waiting
-    int threadCount = 0;
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
         thread.allocator().prepareForGC();
-        ++threadCount;
     }
     allocator_.prepareForGC();
 
@@ -208,7 +206,7 @@ void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
     }
     finalizerQueue.mergeFrom(allocator_.impl().heap().ExtractFinalizerQueue());
 #endif
-    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes() + threadCount * allocator_.estimateOverheadPerThread());
+    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
