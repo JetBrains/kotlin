@@ -6,17 +6,25 @@ package model
 
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
-import org.jetbrains.dokka.model.DClass
-import org.jetbrains.dokka.model.DFunction
-import org.jetbrains.dokka.model.DInterface
+import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
 import utils.AbstractModelTest
 import utils.assertNotNull
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", "inheritors") {
+
+    val configuration = dokkaConfiguration {
+        suppressObviousFunctions = false
+        sourceSets {
+            sourceSet {
+                sourceRoots = listOf("src/main/kotlin")
+            }
+        }
+    }
 
     @Test
     fun simple() {
@@ -425,4 +433,83 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
             }
         }
     }
+
+    @Test
+    fun `java nested classes should not be inherited`() {
+        testInline(
+            """
+            |/src/main/kotlin/sample/ParentInKotlin.kt
+            |package sample
+            |class Child: JavaParent()
+            |
+            |/src/main/kotlin/sample/ChildInJava.java
+            |package sample;
+            |public class JavaParent {
+            |    public class InnerJavaParent{}
+            |    public static class NestedJavaParent{}
+            |}
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val childClass = module.packages.flatMap { it.classlikes }
+                    .find { it.name == "Child" } as DClass
+                assertEquals(emptyList(), childClass.classlikes)
+
+                val javaParent = module.packages.flatMap { it.classlikes }
+                    .find { it.name == "JavaParent" } as DClass
+                assertEquals(2, javaParent.classlikes.size)
+            }
+        }
+    }
+    @Test
+    fun `kotlin nested classes should not be inherited`() {
+        testInline(
+            """
+            |/src/main/kotlin/sample/ParentInKotlin.kt
+            |package sample
+            |class KotlinChild: KotlinParent() 
+            |open class KotlinParent {
+            | class NestedClass
+            | inner class InnerClass
+            |}
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val childKotlinClass = module.packages.flatMap { it.classlikes }
+                    .find { it.name == "KotlinChild" } as DClass
+                assertEquals(emptyList(), childKotlinClass.classlikes)
+                val kotlinParent = module.packages.flatMap { it.classlikes }
+                    .find { it.name == "KotlinParent" } as DClass
+                assertEquals(2, kotlinParent.classlikes.size)
+            }
+        }
+    }
+
+    @Test
+    fun `nested classes should not be inherited in an enum entry`() {
+        testInline(
+            """
+            |/src/main/kotlin/sample/ParentInKotlin.kt
+            |package sample
+            |enum class A {
+            |   E;
+            |   class NestedClass
+            |   inner class InnerClass
+            |}
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val enumEntry = module
+                    .dfs { it.name == "E" } as DEnumEntry
+                assertEquals(emptyList(), enumEntry.classlikes)
+                val enumClass = module
+                    .dfs { it.name == "A" } as DEnum
+                assertEquals(2, enumClass.classlikes.size)
+            }
+        }
+    }
+
 }

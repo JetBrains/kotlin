@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
@@ -91,16 +90,6 @@ internal class DokkaSymbolVisitor(
 ) {
     private var annotationTranslator = AnnotationTranslator()
     private var typeTranslator = TypeTranslator(sourceSet, annotationTranslator)
-
-    /**
-     * To avoid recursive classes
-     * e.g.
-     * open class Klass() {
-     *   object Default : Klass()
-     * }
-     */
-    private val visitedNamedClassOrObjectSymbol: MutableSet<ClassId> =
-        mutableSetOf()
 
     private fun <T> T.toSourceSetDependent() = if (this != null) mapOf(sourceSet to this) else emptyMap()
 
@@ -205,8 +194,6 @@ internal class DokkaSymbolVisitor(
         namedClassOrObjectSymbol: KtNamedClassOrObjectSymbol,
         parent: DRI
     ): DClasslike = withExceptionCatcher(namedClassOrObjectSymbol) {
-        namedClassOrObjectSymbol.classIdIfNonLocal?.let { visitedNamedClassOrObjectSymbol.add(it) }
-
         val name = namedClassOrObjectSymbol.name.asString()
         val dri = parent.withClass(name)
 
@@ -400,19 +387,31 @@ internal class DokkaSymbolVisitor(
     )
 
     /**
-     * @param includeStaticScope flag to add static members, e.g. `valueOf`, `values` and `entries` members for Enum
+     * @return a scope [DokkaScope] consisting of:
+     * - primary and secondary constructors
+     * - member functions, including inherited ones
+     * - member properties, including inherited ones and synthetic java properties
+     * - classlikes (classes and objects **except a companion**) that are explicitly declared in [namedClassOrObjectSymbol]
+     *   only if [includeStaticScope] is enabled
+     *
+     * @param includeStaticScope a flag to add static members, e.g. `valueOf`, `values` and `entries` members for Enum.
+     * See [org.jetbrains.kotlin.analysis.api.components.KtScopeProvider.getStaticDeclaredMemberScope] for what a static scope is.
      */
     private fun KtAnalysisSession.getDokkaScopeFrom(
         namedClassOrObjectSymbol: KtNamedClassOrObjectSymbol,
         dri: DRI,
         includeStaticScope: Boolean = true
     ): DokkaScope {
+        // getCombinedMemberScope additionally includes a static scope, see [getCombinedMemberScope]
         // e.g. getStaticMemberScope contains `valueOf`, `values` and `entries` members for Enum
-        val scope = if(includeStaticScope) listOf(namedClassOrObjectSymbol.getMemberScope(), namedClassOrObjectSymbol.getStaticMemberScope()).asCompositeScope() else namedClassOrObjectSymbol.getMemberScope()
+        val scope = if(includeStaticScope) namedClassOrObjectSymbol.getCombinedMemberScope() else namedClassOrObjectSymbol.getMemberScope()
         val constructors = scope.getConstructors().map { visitConstructorSymbol(it) }.toList()
 
         val callables = scope.getCallableSymbols().toList()
-        val classifiers = scope.getClassifierSymbols().toList()
+
+        // Dokka K1 does not show inherited nested and inner classes,
+        // so it should show only classifiers (classes and objects) explicitly declared
+        val classifiers = if(includeStaticScope) namedClassOrObjectSymbol.getStaticMemberScope().getClassifierSymbols() else emptySequence()
 
         val syntheticJavaProperties =
             namedClassOrObjectSymbol.buildSelfClassType().getSyntheticJavaPropertiesScope()?.getCallableSignatures()
@@ -440,32 +439,20 @@ internal class DokkaSymbolVisitor(
                 javaFields.map { visitJavaFieldSymbol(it, dri) }
 
 
-        fun List<KtNamedClassOrObjectSymbol>.filterOutCompanion() =
+        fun Sequence<KtNamedClassOrObjectSymbol>.filterOutCompanion() =
                 filterNot {
                     it.classKind == KtClassKind.COMPANION_OBJECT
                 }
 
-        fun List<KtNamedClassOrObjectSymbol>.filterOutAndMarkAlreadyVisited() = filterNot { symbol ->
-            visitedNamedClassOrObjectSymbol.contains(symbol.classIdIfNonLocal)
-                .also {
-                    if (!it) symbol.classIdIfNonLocal?.let { classId ->
-                        visitedNamedClassOrObjectSymbol.add(
-                            classId
-                        )
-                    }
-                }
-        }
-
         val classlikes = classifiers.filterIsInstance<KtNamedClassOrObjectSymbol>()
             .filterOutCompanion() // also, this is a hack to filter out companion for enum
-            .filterOutAndMarkAlreadyVisited()
             .map { visitNamedClassOrObjectSymbol(it, dri) }
 
         return DokkaScope(
             constructors = constructors,
             functions = functions,
             properties = properties,
-            classlikesWithoutCompanion = classlikes
+            classlikesWithoutCompanion = classlikes.toList()
         )
     }
 
