@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -128,3 +128,42 @@ fun BuildResult.assertIncrementalCompilationFellBackToNonIncremental(reason: Bui
 private const val INCREMENTAL_COMPILATION_COMPLETED = "Incremental compilation completed"
 const val NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED = "Non-incremental compilation will be performed"
 private const val FALLING_BACK_TO_NON_INCREMENTAL_COMPILATION = "Falling back to non-incremental compilation"
+
+private val latestSupportedJdkPath by lazy {
+    val regex = "jdk(\\d+)Home".toRegex()
+    System.getProperties()
+        .mapKeys { regex.find(it.key.toString())?.groupValues?.get(1)?.toInt() }
+        .filterKeys { it != null }
+        .maxByOrNull { it.key as Int }?.value ?: error("No JDK found")
+}
+
+/**
+ * Asserts that the class declarations of a given class contain the expected declarations. Uses `javap` to extract those.
+ *
+ * @param classesDir The path to the directory containing the compiled classes.
+ * @param classFqn The fully qualified name of the class to inspect.
+ * @param expectedDeclarations The set of expected class declarations.
+ */
+fun assertClassDeclarationsContain(classesDir: Path, classFqn: String, vararg expectedDeclarations: String) {
+    assertClassDeclarationsContain(classesDir, classFqn, expectedDeclarations.toSet())
+}
+
+/**
+ * Asserts that the class declarations of a given class contain the expected declarations. Uses `javap` to extract those.
+ *
+ * @param classesDir The path to the directory containing the compiled classes.
+ * @param classFqn The fully qualified name of the class to inspect.
+ * @param expectedDeclarations The set of expected class declarations.
+ */
+fun assertClassDeclarationsContain(classesDir: Path, classFqn: String, expectedDeclarations: Set<String>) {
+    val javapPath = "$latestSupportedJdkPath/bin/javap"
+    val result = runProcess(listOf(javapPath, classFqn), classesDir.toFile())
+    assert(result.isSuccessful)
+    val actualDeclarations = result.output.lines().drop(2).dropLast(1).map { it.trim() }.toSet()
+    val diff = expectedDeclarations - actualDeclarations
+    assert(diff.isEmpty()) {
+        val expectedDeclarationsString = expectedDeclarations.joinToString(separator = "\n", prefix = "Expected declarations:\n")
+        val actualDeclarationsString = actualDeclarations.joinToString(separator = "\n", prefix = "Actual declarations:\n")
+        "$expectedDeclarationsString\n\n$actualDeclarationsString"
+    }
+}
