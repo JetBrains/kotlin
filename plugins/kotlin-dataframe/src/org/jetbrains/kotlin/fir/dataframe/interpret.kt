@@ -136,30 +136,24 @@ fun <T> KotlinTypeFacade.interpret(
                         Interpreter.Success(toKPropertyApproximation(expression, session))
                     }
 
-                    is FirLambdaArgumentExpression -> {
-                        val col: Any? = when (val lambda = expression.expression) {
-                            is FirAnonymousFunctionExpression -> {
-                                val result = (lambda.anonymousFunction.body!!.statements.last() as FirReturnExpression).result
-                                when (result) {
-                                    is FirPropertyAccessExpression -> {
-                                        columnWithPathApproximations(result)
-                                    }
-
-                                    is FirFunctionCall -> {
-                                        val interpreter = result.loadInterpreter()
-                                        if (interpreter == null) {
-                                            reporter.reportInterpretationError(result, "Cannot load interpreter")
-                                        }
-                                        interpreter?.let { interpret(result, interpreter, reporter = reporter)?.value }
-                                    }
-
-                                    is FirErrorExpression -> null
-
-                                    else -> TODO(result::class.toString())
-                                }
+                    is FirAnonymousFunctionExpression -> {
+                        val result = (expression.anonymousFunction.body!!.statements.last() as FirReturnExpression).result
+                        val col: Any? = when (result) {
+                            is FirPropertyAccessExpression -> {
+                                columnWithPathApproximations(result)
                             }
 
-                            else -> TODO(lambda::class.toString())
+                            is FirFunctionCall -> {
+                                val interpreter = result.loadInterpreter()
+                                if (interpreter == null) {
+                                    reporter.reportInterpretationError(result, "Cannot load interpreter")
+                                }
+                                interpreter?.let { interpret(result, interpreter, reporter = reporter)?.value }
+                            }
+
+                            is FirErrorExpression -> null
+
+                            else -> TODO(result::class.toString())
                         }
                         col?.let { Interpreter.Success(it) }
                     }
@@ -175,7 +169,7 @@ fun <T> KotlinTypeFacade.interpret(
 
             is Interpreter.Dsl -> {
                 { receiver: Any ->
-                    ((it.expression as FirLambdaArgumentExpression).expression as FirAnonymousFunctionExpression)
+                    (it.expression as FirAnonymousFunctionExpression)
                         .anonymousFunction.body!!
                         .statements.filterIsInstance<FirFunctionCall>()
                         .forEach { call ->

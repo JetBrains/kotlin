@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
@@ -52,6 +53,7 @@ abstract class AbstractResearchTest : BaseTestRunner() {
     }
 
     class EnvironmentConfigurator1(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+        @OptIn(ExperimentalCompilerApi::class)
         override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
             module: TestModule,
             configuration: CompilerConfiguration
