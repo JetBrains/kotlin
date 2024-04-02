@@ -833,6 +833,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("bridges.kt")
+    public void testBridges() {
+      runTest("native/native.tests/testData/codegen/fileCheck/bridges.kt");
+    }
+
+    @Test
     @TestMetadata("constants_merge.kt")
     public void testConstants_merge() {
       runTest("native/native.tests/testData/codegen/fileCheck/constants_merge.kt");
