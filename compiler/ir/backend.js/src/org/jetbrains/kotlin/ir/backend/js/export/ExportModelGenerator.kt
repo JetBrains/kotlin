@@ -501,14 +501,14 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         return when (candidate) {
             is IrProperty -> {
                 if (candidate.isAllowedFakeOverriddenDeclaration(context)) {
-                    val type: ExportedType? = when (candidate.getExportedIdentifier()) {
+                    val type: ExportedType = when (candidate.getExportedIdentifier()) {
                         "name" -> enumEntries
                             .map { it.getExportedIdentifier() }
                             .map { ExportedType.LiteralType.StringLiteralType(it) }
-                            .reduce { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
+                            .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) } ?: return null
                         "ordinal" -> enumEntriesToOrdinal
                             .map { (_, ordinal) -> ExportedType.LiteralType.NumberLiteralType(ordinal) }
-                            .reduce { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
+                            .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) } ?: return null
                         else -> return null
                     }
                     exportPropertyUnsafely(

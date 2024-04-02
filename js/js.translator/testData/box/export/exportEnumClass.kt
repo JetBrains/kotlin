@@ -7,6 +7,9 @@
 // FILE: lib.kt
 
 @JsExport
+enum class Uninhabited
+
+@JsExport
 enum class Foo(val constructorParameter: String) {
     A("aConstructorParameter"),
     B("bConstructorParameter");
@@ -98,6 +101,8 @@ function box() {
     if (this["export_enum_class"].OuterClass.NestedEnum.B.ordinal !== 1) return "fail30"
 
     if (this["export_enum_class"].Foo.entries !== undefined) return "fail31"
+
+    if (this["export_enum_class"].Uninhabited.values().length !== 0) return "Uninhabited.values"
 
     return "OK"
 }
