@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -740,7 +740,8 @@ class Fir2IrConverter(
                         typeContextProvider(irBuiltins),
                         Fir2IrFakeOverrideStrategy(
                             friendModulesMap(session),
-                            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm()
+                            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
+                            isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
                         ),
                         fir2IrExtensions.externalOverridabilityConditions
                     )

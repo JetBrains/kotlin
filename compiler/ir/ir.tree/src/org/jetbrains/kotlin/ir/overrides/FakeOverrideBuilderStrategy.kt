@@ -50,6 +50,17 @@ abstract class FakeOverrideBuilderStrategy(
     open val isGenericClashFromSameSupertypeAllowed: Boolean = false
 
     /**
+     * True iff it's not allowed to override an internal `@PublishedApi` function with an internal function from another module.
+     *
+     * On JVM, internal functions in classes are mangled unless they're annotated with `@PublishedApi`. This leads to a bug KT-61132 where
+     * an internal `@PublishedApi` function can be accidentally overridden by a public function in another module. This bug should be fixed,
+     * but until it is, we're replicating this behavior in klib-based backends, basically by treating internal `@PublishedApi` functions as
+     * public. This flag controls this behavior. Note that it is enabled only on JVM, which unfortunately means that KT-67114 is still
+     * a problem on klib-based backends.
+     */
+    open val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean = false
+
+    /**
      * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
      * if no fake override should be created for this member
      */
@@ -101,8 +112,8 @@ abstract class FakeOverrideBuilderStrategy(
                 when {
                     thisModule == memberModule -> true
                     isInFriendModules(thisModule, memberModule) -> true
-                    // TODO: this is very questionable - KT-63381
-                    original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
+                    !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
+                            original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false
                 }
             }
