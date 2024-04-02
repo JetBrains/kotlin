@@ -87,6 +87,9 @@ fun FirResult.convertToIrAndActualize(
         firProvidersWithGeneratedFiles[session.moduleData] = FirProviderWithGeneratedFiles(session, firProvidersWithGeneratedFiles)
     }
 
+    // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
+    val specialAnnotationSymbolProvider = Fir2IrJvmSpecialAnnotationSymbolProvider(IrFactoryImpl)
+
     fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(irBuiltIns: IrBuiltInsOverFir?): Fir2IrComponentsStorage {
         return Fir2IrConverter.createFir2IrComponentsStorage(
             session,
@@ -99,7 +102,7 @@ fun FirResult.convertToIrAndActualize(
             irMangler,
             IrFactoryImpl,
             visibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
+            specialAnnotationSymbolProvider,
             kotlinBuiltIns,
             commonMemberStorage,
             irBuiltIns,
