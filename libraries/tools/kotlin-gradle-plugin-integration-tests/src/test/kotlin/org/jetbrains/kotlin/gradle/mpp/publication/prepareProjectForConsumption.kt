@@ -25,7 +25,7 @@ fun GradleProject.prepareProjectForConsumption(
         buildGradleKts.writeText(
             """
         repositories {
-            maven("${localRepoDir.absolutePathString()}")
+            maven("${localRepoDir.absolutePathString().replace("\\", "\\\\")}")
         }
 
     """.trimIndent() + buildGradleKts.readText()
@@ -34,7 +34,7 @@ fun GradleProject.prepareProjectForConsumption(
         settingsGradleKts.replaceText("""dependencyResolutionManagement {""", """
             dependencyResolutionManagement {
                 repositories {
-                    maven("${localRepoDir.absolutePathString()}")
+                    maven("${localRepoDir.absolutePathString().replace("\\", "\\\\")}")
                 }
             
         """.trimIndent())
