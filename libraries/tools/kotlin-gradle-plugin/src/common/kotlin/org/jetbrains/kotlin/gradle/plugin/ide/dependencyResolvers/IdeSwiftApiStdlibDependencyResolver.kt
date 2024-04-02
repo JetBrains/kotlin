@@ -31,11 +31,6 @@ import org.jetbrains.kotlin.library.resolveSingleFileKlib
 
 internal object IdeSwiftApiStdlibDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-//        val konanDistribution = KonanDistribution(sourceSet.project.konanHome)
-//        val stdlibFile = KonanDistribution(sourceSet.project.konanHome).stdlib
-//        sourceSet.internal.implementationConfigurationName
-
-
         return setOf(
             IdeaKotlinResolvedBinaryDependency(
                 binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,

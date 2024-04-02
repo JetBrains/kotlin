@@ -26,40 +26,7 @@ fun dumpKlibs(
         }
     }
 
-//    val packages = swiftExportDSLModules.map {
-//        it.packages
-//    }.flatten().toSet().sorted()
-
     return swiftExportDSLModules
-
-//    packages.forEach { packageFQN ->
-//        val file = FileSpec.builder("", "HelloWorld")
-//            .addType(
-//                TypeSpec.classBuilder("Package___${packageFQN.replace(".", "_")}")
-//                    .addFunction(
-//                        FunSpec.builder("collapse")
-//                            .build()
-//                    )
-//                    .build()
-//            )
-//            .build()
-//
-//        println(file.toString())
-//    }
-//
-//    swiftExportDSLModules.map {
-//        val file = FileSpec.builder("", "HelloWorld")
-//            .addType(
-//                TypeSpec.classBuilder("Module___${it.libraryName}")
-//                    .addFunction(
-//                        FunSpec.builder("export")
-//                            .build()
-//                    )
-//                    .build()
-//            )
-//            .build()
-//        println(file.toString())
-//    }
 }
 
 class SwiftExportDSLModule(
