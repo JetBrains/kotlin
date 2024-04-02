@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.kapt4
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -20,7 +19,6 @@ class Kapt4EnvironmentConfigurator(testServices: TestServices) : EnvironmentConf
         languageVersion: LanguageVersion,
     ): Map<AnalysisFlag<*>, Any?> = mapOf(
         JvmAnalysisFlags.generatePropertyAnnotationsMethods to true,
-        JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ALL
     )
 
     override val directiveContainers: List<DirectivesContainer> = listOf(Kapt4TestDirectives)

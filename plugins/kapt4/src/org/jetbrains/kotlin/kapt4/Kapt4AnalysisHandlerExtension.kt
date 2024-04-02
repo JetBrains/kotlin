@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.kapt3.base.util.info
 import org.jetbrains.kotlin.kapt3.measureTimeMillis
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.utils.metadataVersion
 import java.io.File
 
 private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
@@ -120,7 +121,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                         options,
                         logger,
                         configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
-                        configuration[CommonConfigurationKeys.METADATA_VERSION]
+                        configuration.metadataVersion()
                     )
 
                 }
@@ -150,10 +151,10 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         options: KaptOptions,
         logger: MessageCollectorBackedKaptLogger,
         reportOutputFiles: Boolean,
-        overriddenMetadataVersion: BinaryVersion?
+        metadataVersion: BinaryVersion
     ) {
         val (stubGenerationTime, classesToStubs) = measureTimeMillis {
-            generateStubs(module, files, options, logger, overriddenMetadataVersion)
+            generateStubs(module, files, options, logger, metadataVersion)
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }

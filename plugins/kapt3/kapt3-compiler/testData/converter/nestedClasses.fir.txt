@@ -60,6 +60,13 @@ public final class A {
         public abstract A.B getY();
 
 
+        /**
+         * synthetic class
+         */
+        @kotlin.Metadata()
+        public static final class DefaultImpls {
+
+        }
     }
     /**
      * public final object A.C : kotlin/Any {
