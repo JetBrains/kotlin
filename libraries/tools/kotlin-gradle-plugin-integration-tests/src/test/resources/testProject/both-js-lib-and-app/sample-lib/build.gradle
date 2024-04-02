@@ -51,6 +51,6 @@ apply plugin: 'maven-publish'
 
 publishing {
     repositories {
-        maven { url "file://${projectDir.absolutePath.replace('\\', '/')}/repo" }
+        maven { url "${projectDir.absolutePath.replace('\\', '/')}/repo" }
     }
 }
