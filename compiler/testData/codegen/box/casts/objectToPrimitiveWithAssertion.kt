@@ -1,4 +1,3 @@
-// IGNORE_NATIVE: optimizationMode=DEBUG
 // IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM
 @Suppress("UNCHECKED_CAST")
 fun <T> f() = 1L as T

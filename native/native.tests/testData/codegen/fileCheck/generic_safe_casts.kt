@@ -1,5 +1,6 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 
 value class Foo(val value: Int)
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:Foo#$<bridge-NUN>toString(){}kotlin.String(){}kotlin.String

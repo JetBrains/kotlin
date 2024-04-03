@@ -1,4 +1,4 @@
-// IGNORE_NATIVE: optimizationMode=OPT
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 // WITH_STDLIB
 
 interface I<T> {

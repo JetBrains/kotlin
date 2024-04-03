@@ -1,5 +1,5 @@
 // TARGET_BACKEND: NATIVE
-// IGNORE_NATIVE: optimizationMode=OPT
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 // MODULE: cinterop
 // FILE: kt57640.def
 language = Objective-C

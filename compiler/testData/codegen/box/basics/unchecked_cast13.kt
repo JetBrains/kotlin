@@ -1,4 +1,4 @@
-// IGNORE_NATIVE: optimizationMode=OPT
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 
 class Z<T>(val s: T)

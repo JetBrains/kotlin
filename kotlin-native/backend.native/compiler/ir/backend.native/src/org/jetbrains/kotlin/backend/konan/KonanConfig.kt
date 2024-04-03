@@ -278,7 +278,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val genericSafeCasts: Boolean by lazy {
         configuration.get(BinaryOptions.genericSafeCasts)
-                ?: !optimizationsEnabled // Disable for optimized compilation due to performance penalty.
+                ?: false // For now disabled by default due to performance penalty.
     }
 
     internal val bridgesPolicy: BridgesPolicy by lazy {

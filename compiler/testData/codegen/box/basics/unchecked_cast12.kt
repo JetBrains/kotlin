@@ -1,4 +1,4 @@
-// IGNORE_NATIVE: optimizationMode=OPT
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 
 class Foo(val s: String): Comparable<Foo> {
     override fun compareTo(other: Foo): Int {

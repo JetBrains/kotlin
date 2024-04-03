@@ -1,4 +1,4 @@
-// IGNORE_NATIVE: optimizationMode=OPT
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 
 open class Base<T> {
     open fun foo(x: T): Int = 42
