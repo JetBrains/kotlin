@@ -1,0 +1,29 @@
+KtClassErrorType:
+  abbreviatedType: KtUsualClassType:
+    abbreviatedType: null
+    annotationsList: []
+    classId: expansion/FooAlias
+    classSymbol: KtTypeAliasSymbol(expansion/FooAlias)
+    nullability: NON_NULLABLE
+    ownTypeArguments: []
+    qualifiers: [
+      qualifier:
+        name: FooAlias
+        symbol: KtTypeAliasSymbol(expansion/FooAlias)
+        typeArguments: []
+    ]
+  annotationsList: []
+  candidateClassSymbols: []
+  errorMessage: Symbol not found for base/Foo
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: base
+      typeArguments: []
+    qualifier:
+      name: Foo
+      typeArguments: []
+  ]
+
+Rendered type:
+base.Foo

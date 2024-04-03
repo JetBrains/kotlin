@@ -1,0 +1,177 @@
+KtFunctionalType:
+  abbreviatedType: null
+  annotationsList: []
+  arity: 1
+  classId: kotlin/Function1
+  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Function1)
+  contextReceivers: []
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: false
+  isSuspend: false
+  nullability: NON_NULLABLE
+  ownTypeArguments: [
+    KtUsualClassType:
+      abbreviatedType: KtUsualClassType:
+        abbreviatedType: null
+        annotationsList: []
+        classId: expansion/StringAlias
+        classSymbol: KtTypeAliasSymbol(expansion/StringAlias)
+        nullability: NON_NULLABLE
+        ownTypeArguments: []
+        qualifiers: [
+          qualifier:
+            name: StringAlias
+            symbol: KtTypeAliasSymbol(expansion/StringAlias)
+            typeArguments: []
+        ]
+      annotationsList: []
+      classId: kotlin/String
+      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      nullability: NON_NULLABLE
+      ownTypeArguments: []
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+      ]
+    KtUsualClassType:
+      abbreviatedType: KtUsualClassType:
+        abbreviatedType: null
+        annotationsList: []
+        classId: expansion/IntAlias
+        classSymbol: KtTypeAliasSymbol(expansion/IntAlias)
+        nullability: NON_NULLABLE
+        ownTypeArguments: []
+        qualifiers: [
+          qualifier:
+            name: IntAlias
+            symbol: KtTypeAliasSymbol(expansion/IntAlias)
+            typeArguments: []
+        ]
+      annotationsList: []
+      classId: kotlin/Int
+      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+      nullability: NON_NULLABLE
+      ownTypeArguments: []
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+  ]
+  parameterTypes: [
+    KtUsualClassType:
+      abbreviatedType: KtUsualClassType:
+        abbreviatedType: null
+        annotationsList: []
+        classId: expansion/StringAlias
+        classSymbol: KtTypeAliasSymbol(expansion/StringAlias)
+        nullability: NON_NULLABLE
+        ownTypeArguments: []
+        qualifiers: [
+          qualifier:
+            name: StringAlias
+            symbol: KtTypeAliasSymbol(expansion/StringAlias)
+            typeArguments: []
+        ]
+      annotationsList: []
+      classId: kotlin/String
+      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      nullability: NON_NULLABLE
+      ownTypeArguments: []
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+      ]
+  ]
+  qualifiers: [
+    qualifier:
+      name: Function1
+      symbol: KtNamedClassOrObjectSymbol(kotlin/Function1)
+      typeArguments: [
+        KtUsualClassType:
+          abbreviatedType: KtUsualClassType:
+            abbreviatedType: null
+            annotationsList: []
+            classId: expansion/StringAlias
+            classSymbol: KtTypeAliasSymbol(expansion/StringAlias)
+            nullability: NON_NULLABLE
+            ownTypeArguments: []
+            qualifiers: [
+              qualifier:
+                name: StringAlias
+                symbol: KtTypeAliasSymbol(expansion/StringAlias)
+                typeArguments: []
+            ]
+          annotationsList: []
+          classId: kotlin/String
+          classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          nullability: NON_NULLABLE
+          ownTypeArguments: []
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+          ]
+        KtUsualClassType:
+          abbreviatedType: KtUsualClassType:
+            abbreviatedType: null
+            annotationsList: []
+            classId: expansion/IntAlias
+            classSymbol: KtTypeAliasSymbol(expansion/IntAlias)
+            nullability: NON_NULLABLE
+            ownTypeArguments: []
+            qualifiers: [
+              qualifier:
+                name: IntAlias
+                symbol: KtTypeAliasSymbol(expansion/IntAlias)
+                typeArguments: []
+            ]
+          annotationsList: []
+          classId: kotlin/Int
+          classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          nullability: NON_NULLABLE
+          ownTypeArguments: []
+          qualifiers: [
+            qualifier:
+              name: Int
+              symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+      ]
+  ]
+  receiverType: null
+  returnType: KtUsualClassType:
+    abbreviatedType: KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: expansion/IntAlias
+      classSymbol: KtTypeAliasSymbol(expansion/IntAlias)
+      nullability: NON_NULLABLE
+      ownTypeArguments: []
+      qualifiers: [
+        qualifier:
+          name: IntAlias
+          symbol: KtTypeAliasSymbol(expansion/IntAlias)
+          typeArguments: []
+      ]
+    annotationsList: []
+    classId: kotlin/Int
+    classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+    nullability: NON_NULLABLE
+    ownTypeArguments: []
+    qualifiers: [
+      qualifier:
+        name: Int
+        symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+        typeArguments: []
+    ]
+
+Rendered type:
+(kotlin.String) -> kotlin.Int

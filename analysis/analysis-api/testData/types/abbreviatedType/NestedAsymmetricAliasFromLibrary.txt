@@ -1,0 +1,590 @@
+KtUsualClassType:
+  abbreviatedType: KtUsualClassType:
+    abbreviatedType: null
+    annotationsList: []
+    classId: library1/AsymmetricAlias2
+    classSymbol: KtTypeAliasSymbol(library1/AsymmetricAlias2)
+    nullability: NON_NULLABLE
+    ownTypeArguments: [
+      KtUsualClassType:
+        abbreviatedType: KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: library1/IntAlias
+          classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+          nullability: NON_NULLABLE
+          ownTypeArguments: []
+          qualifiers: [
+            qualifier:
+              name: IntAlias
+              symbol: KtTypeAliasSymbol(library1/IntAlias)
+              typeArguments: []
+          ]
+        annotationsList: []
+        classId: kotlin/Int
+        classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+        nullability: NON_NULLABLE
+        ownTypeArguments: []
+        qualifiers: [
+          qualifier:
+            name: Int
+            symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+      KtUsualClassType:
+        abbreviatedType: KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: library1/AsymmetricAlias
+          classSymbol: KtTypeAliasSymbol(library1/AsymmetricAlias)
+          nullability: NON_NULLABLE
+          ownTypeArguments: [
+            KtUsualClassType:
+              abbreviatedType: KtUsualClassType:
+                abbreviatedType: null
+                annotationsList: []
+                classId: library1/BooleanAlias
+                classSymbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                nullability: NON_NULLABLE
+                ownTypeArguments: []
+                qualifiers: [
+                  qualifier:
+                    name: BooleanAlias
+                    symbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                    typeArguments: []
+                ]
+              annotationsList: []
+              classId: kotlin/Boolean
+              classSymbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+              nullability: NON_NULLABLE
+              ownTypeArguments: []
+              qualifiers: [
+                qualifier:
+                  name: Boolean
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                  typeArguments: []
+              ]
+            KtUsualClassType:
+              abbreviatedType: KtUsualClassType:
+                abbreviatedType: null
+                annotationsList: []
+                classId: library1/IntAlias
+                classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+                nullability: NON_NULLABLE
+                ownTypeArguments: []
+                qualifiers: [
+                  qualifier:
+                    name: IntAlias
+                    symbol: KtTypeAliasSymbol(library1/IntAlias)
+                    typeArguments: []
+                ]
+              annotationsList: []
+              classId: kotlin/Int
+              classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+              nullability: NON_NULLABLE
+              ownTypeArguments: []
+              qualifiers: [
+                qualifier:
+                  name: Int
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                  typeArguments: []
+              ]
+          ]
+          qualifiers: [
+            qualifier:
+              name: AsymmetricAlias
+              symbol: KtTypeAliasSymbol(library1/AsymmetricAlias)
+              typeArguments: [
+                KtUsualClassType:
+                  abbreviatedType: KtUsualClassType:
+                    abbreviatedType: null
+                    annotationsList: []
+                    classId: library1/BooleanAlias
+                    classSymbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                    nullability: NON_NULLABLE
+                    ownTypeArguments: []
+                    qualifiers: [
+                      qualifier:
+                        name: BooleanAlias
+                        symbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                        typeArguments: []
+                    ]
+                  annotationsList: []
+                  classId: kotlin/Boolean
+                  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                  nullability: NON_NULLABLE
+                  ownTypeArguments: []
+                  qualifiers: [
+                    qualifier:
+                      name: Boolean
+                      symbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                      typeArguments: []
+                  ]
+                KtUsualClassType:
+                  abbreviatedType: KtUsualClassType:
+                    abbreviatedType: null
+                    annotationsList: []
+                    classId: library1/IntAlias
+                    classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+                    nullability: NON_NULLABLE
+                    ownTypeArguments: []
+                    qualifiers: [
+                      qualifier:
+                        name: IntAlias
+                        symbol: KtTypeAliasSymbol(library1/IntAlias)
+                        typeArguments: []
+                    ]
+                  annotationsList: []
+                  classId: kotlin/Int
+                  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                  nullability: NON_NULLABLE
+                  ownTypeArguments: []
+                  qualifiers: [
+                    qualifier:
+                      name: Int
+                      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                      typeArguments: []
+                  ]
+              ]
+          ]
+        annotationsList: []
+        classId: kotlin/String
+        classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+        nullability: NON_NULLABLE
+        ownTypeArguments: []
+        qualifiers: [
+          qualifier:
+            name: String
+            symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+            typeArguments: []
+        ]
+    ]
+    qualifiers: [
+      qualifier:
+        name: AsymmetricAlias2
+        symbol: KtTypeAliasSymbol(library1/AsymmetricAlias2)
+        typeArguments: [
+          KtUsualClassType:
+            abbreviatedType: KtUsualClassType:
+              abbreviatedType: null
+              annotationsList: []
+              classId: library1/IntAlias
+              classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+              nullability: NON_NULLABLE
+              ownTypeArguments: []
+              qualifiers: [
+                qualifier:
+                  name: IntAlias
+                  symbol: KtTypeAliasSymbol(library1/IntAlias)
+                  typeArguments: []
+              ]
+            annotationsList: []
+            classId: kotlin/Int
+            classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+            nullability: NON_NULLABLE
+            ownTypeArguments: []
+            qualifiers: [
+              qualifier:
+                name: Int
+                symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                typeArguments: []
+            ]
+          KtUsualClassType:
+            abbreviatedType: KtUsualClassType:
+              abbreviatedType: null
+              annotationsList: []
+              classId: library1/AsymmetricAlias
+              classSymbol: KtTypeAliasSymbol(library1/AsymmetricAlias)
+              nullability: NON_NULLABLE
+              ownTypeArguments: [
+                KtUsualClassType:
+                  abbreviatedType: KtUsualClassType:
+                    abbreviatedType: null
+                    annotationsList: []
+                    classId: library1/BooleanAlias
+                    classSymbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                    nullability: NON_NULLABLE
+                    ownTypeArguments: []
+                    qualifiers: [
+                      qualifier:
+                        name: BooleanAlias
+                        symbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                        typeArguments: []
+                    ]
+                  annotationsList: []
+                  classId: kotlin/Boolean
+                  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                  nullability: NON_NULLABLE
+                  ownTypeArguments: []
+                  qualifiers: [
+                    qualifier:
+                      name: Boolean
+                      symbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                      typeArguments: []
+                  ]
+                KtUsualClassType:
+                  abbreviatedType: KtUsualClassType:
+                    abbreviatedType: null
+                    annotationsList: []
+                    classId: library1/IntAlias
+                    classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+                    nullability: NON_NULLABLE
+                    ownTypeArguments: []
+                    qualifiers: [
+                      qualifier:
+                        name: IntAlias
+                        symbol: KtTypeAliasSymbol(library1/IntAlias)
+                        typeArguments: []
+                    ]
+                  annotationsList: []
+                  classId: kotlin/Int
+                  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                  nullability: NON_NULLABLE
+                  ownTypeArguments: []
+                  qualifiers: [
+                    qualifier:
+                      name: Int
+                      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                      typeArguments: []
+                  ]
+              ]
+              qualifiers: [
+                qualifier:
+                  name: AsymmetricAlias
+                  symbol: KtTypeAliasSymbol(library1/AsymmetricAlias)
+                  typeArguments: [
+                    KtUsualClassType:
+                      abbreviatedType: KtUsualClassType:
+                        abbreviatedType: null
+                        annotationsList: []
+                        classId: library1/BooleanAlias
+                        classSymbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                        nullability: NON_NULLABLE
+                        ownTypeArguments: []
+                        qualifiers: [
+                          qualifier:
+                            name: BooleanAlias
+                            symbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                            typeArguments: []
+                        ]
+                      annotationsList: []
+                      classId: kotlin/Boolean
+                      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                      nullability: NON_NULLABLE
+                      ownTypeArguments: []
+                      qualifiers: [
+                        qualifier:
+                          name: Boolean
+                          symbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                          typeArguments: []
+                      ]
+                    KtUsualClassType:
+                      abbreviatedType: KtUsualClassType:
+                        abbreviatedType: null
+                        annotationsList: []
+                        classId: library1/IntAlias
+                        classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+                        nullability: NON_NULLABLE
+                        ownTypeArguments: []
+                        qualifiers: [
+                          qualifier:
+                            name: IntAlias
+                            symbol: KtTypeAliasSymbol(library1/IntAlias)
+                            typeArguments: []
+                        ]
+                      annotationsList: []
+                      classId: kotlin/Int
+                      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                      nullability: NON_NULLABLE
+                      ownTypeArguments: []
+                      qualifiers: [
+                        qualifier:
+                          name: Int
+                          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                          typeArguments: []
+                      ]
+                  ]
+              ]
+            annotationsList: []
+            classId: kotlin/String
+            classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+            nullability: NON_NULLABLE
+            ownTypeArguments: []
+            qualifiers: [
+              qualifier:
+                name: String
+                symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+                typeArguments: []
+            ]
+        ]
+    ]
+  annotationsList: []
+  classId: kotlin/collections/List
+  classSymbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+  nullability: NON_NULLABLE
+  ownTypeArguments: [
+    KtUsualClassType:
+      abbreviatedType: KtUsualClassType:
+        abbreviatedType: null
+        annotationsList: []
+        classId: library1/AsymmetricAlias
+        classSymbol: KtTypeAliasSymbol(library1/AsymmetricAlias)
+        nullability: NON_NULLABLE
+        ownTypeArguments: [
+          KtUsualClassType:
+            abbreviatedType: KtUsualClassType:
+              abbreviatedType: null
+              annotationsList: []
+              classId: library1/BooleanAlias
+              classSymbol: KtTypeAliasSymbol(library1/BooleanAlias)
+              nullability: NON_NULLABLE
+              ownTypeArguments: []
+              qualifiers: [
+                qualifier:
+                  name: BooleanAlias
+                  symbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                  typeArguments: []
+              ]
+            annotationsList: []
+            classId: kotlin/Boolean
+            classSymbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+            nullability: NON_NULLABLE
+            ownTypeArguments: []
+            qualifiers: [
+              qualifier:
+                name: Boolean
+                symbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                typeArguments: []
+            ]
+          KtUsualClassType:
+            abbreviatedType: KtUsualClassType:
+              abbreviatedType: null
+              annotationsList: []
+              classId: library1/IntAlias
+              classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+              nullability: NON_NULLABLE
+              ownTypeArguments: []
+              qualifiers: [
+                qualifier:
+                  name: IntAlias
+                  symbol: KtTypeAliasSymbol(library1/IntAlias)
+                  typeArguments: []
+              ]
+            annotationsList: []
+            classId: kotlin/Int
+            classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+            nullability: NON_NULLABLE
+            ownTypeArguments: []
+            qualifiers: [
+              qualifier:
+                name: Int
+                symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                typeArguments: []
+            ]
+        ]
+        qualifiers: [
+          qualifier:
+            name: AsymmetricAlias
+            symbol: KtTypeAliasSymbol(library1/AsymmetricAlias)
+            typeArguments: [
+              KtUsualClassType:
+                abbreviatedType: KtUsualClassType:
+                  abbreviatedType: null
+                  annotationsList: []
+                  classId: library1/BooleanAlias
+                  classSymbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                  nullability: NON_NULLABLE
+                  ownTypeArguments: []
+                  qualifiers: [
+                    qualifier:
+                      name: BooleanAlias
+                      symbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                      typeArguments: []
+                  ]
+                annotationsList: []
+                classId: kotlin/Boolean
+                classSymbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                nullability: NON_NULLABLE
+                ownTypeArguments: []
+                qualifiers: [
+                  qualifier:
+                    name: Boolean
+                    symbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                    typeArguments: []
+                ]
+              KtUsualClassType:
+                abbreviatedType: KtUsualClassType:
+                  abbreviatedType: null
+                  annotationsList: []
+                  classId: library1/IntAlias
+                  classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+                  nullability: NON_NULLABLE
+                  ownTypeArguments: []
+                  qualifiers: [
+                    qualifier:
+                      name: IntAlias
+                      symbol: KtTypeAliasSymbol(library1/IntAlias)
+                      typeArguments: []
+                  ]
+                annotationsList: []
+                classId: kotlin/Int
+                classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                nullability: NON_NULLABLE
+                ownTypeArguments: []
+                qualifiers: [
+                  qualifier:
+                    name: Int
+                    symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                    typeArguments: []
+                ]
+            ]
+        ]
+      annotationsList: []
+      classId: kotlin/String
+      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      nullability: NON_NULLABLE
+      ownTypeArguments: []
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+      ]
+  ]
+  qualifiers: [
+    qualifier:
+      name: List
+      symbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+      typeArguments: [
+        KtUsualClassType:
+          abbreviatedType: KtUsualClassType:
+            abbreviatedType: null
+            annotationsList: []
+            classId: library1/AsymmetricAlias
+            classSymbol: KtTypeAliasSymbol(library1/AsymmetricAlias)
+            nullability: NON_NULLABLE
+            ownTypeArguments: [
+              KtUsualClassType:
+                abbreviatedType: KtUsualClassType:
+                  abbreviatedType: null
+                  annotationsList: []
+                  classId: library1/BooleanAlias
+                  classSymbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                  nullability: NON_NULLABLE
+                  ownTypeArguments: []
+                  qualifiers: [
+                    qualifier:
+                      name: BooleanAlias
+                      symbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                      typeArguments: []
+                  ]
+                annotationsList: []
+                classId: kotlin/Boolean
+                classSymbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                nullability: NON_NULLABLE
+                ownTypeArguments: []
+                qualifiers: [
+                  qualifier:
+                    name: Boolean
+                    symbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                    typeArguments: []
+                ]
+              KtUsualClassType:
+                abbreviatedType: KtUsualClassType:
+                  abbreviatedType: null
+                  annotationsList: []
+                  classId: library1/IntAlias
+                  classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+                  nullability: NON_NULLABLE
+                  ownTypeArguments: []
+                  qualifiers: [
+                    qualifier:
+                      name: IntAlias
+                      symbol: KtTypeAliasSymbol(library1/IntAlias)
+                      typeArguments: []
+                  ]
+                annotationsList: []
+                classId: kotlin/Int
+                classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                nullability: NON_NULLABLE
+                ownTypeArguments: []
+                qualifiers: [
+                  qualifier:
+                    name: Int
+                    symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                    typeArguments: []
+                ]
+            ]
+            qualifiers: [
+              qualifier:
+                name: AsymmetricAlias
+                symbol: KtTypeAliasSymbol(library1/AsymmetricAlias)
+                typeArguments: [
+                  KtUsualClassType:
+                    abbreviatedType: KtUsualClassType:
+                      abbreviatedType: null
+                      annotationsList: []
+                      classId: library1/BooleanAlias
+                      classSymbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                      nullability: NON_NULLABLE
+                      ownTypeArguments: []
+                      qualifiers: [
+                        qualifier:
+                          name: BooleanAlias
+                          symbol: KtTypeAliasSymbol(library1/BooleanAlias)
+                          typeArguments: []
+                      ]
+                    annotationsList: []
+                    classId: kotlin/Boolean
+                    classSymbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                    nullability: NON_NULLABLE
+                    ownTypeArguments: []
+                    qualifiers: [
+                      qualifier:
+                        name: Boolean
+                        symbol: KtNamedClassOrObjectSymbol(kotlin/Boolean)
+                        typeArguments: []
+                    ]
+                  KtUsualClassType:
+                    abbreviatedType: KtUsualClassType:
+                      abbreviatedType: null
+                      annotationsList: []
+                      classId: library1/IntAlias
+                      classSymbol: KtTypeAliasSymbol(library1/IntAlias)
+                      nullability: NON_NULLABLE
+                      ownTypeArguments: []
+                      qualifiers: [
+                        qualifier:
+                          name: IntAlias
+                          symbol: KtTypeAliasSymbol(library1/IntAlias)
+                          typeArguments: []
+                      ]
+                    annotationsList: []
+                    classId: kotlin/Int
+                    classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                    nullability: NON_NULLABLE
+                    ownTypeArguments: []
+                    qualifiers: [
+                      qualifier:
+                        name: Int
+                        symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+                        typeArguments: []
+                    ]
+                ]
+            ]
+          annotationsList: []
+          classId: kotlin/String
+          classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          nullability: NON_NULLABLE
+          ownTypeArguments: []
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+          ]
+      ]
+  ]
+
+Rendered type:
+kotlin.collections.List<kotlin.String>

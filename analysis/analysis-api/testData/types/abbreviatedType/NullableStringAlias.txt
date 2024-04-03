@@ -1,0 +1,16 @@
+KtUsualClassType:
+  abbreviatedType: null
+  annotationsList: []
+  classId: kotlin/String
+  classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+  nullability: NULLABLE
+  ownTypeArguments: []
+  qualifiers: [
+    qualifier:
+      name: String
+      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      typeArguments: []
+  ]
+
+Rendered type:
+kotlin.String?

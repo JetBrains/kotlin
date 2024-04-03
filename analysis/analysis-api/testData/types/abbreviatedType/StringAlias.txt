@@ -1,0 +1,28 @@
+KtUsualClassType:
+  abbreviatedType: KtUsualClassType:
+    abbreviatedType: null
+    annotationsList: []
+    classId: expansion/StringAlias
+    classSymbol: KtTypeAliasSymbol(expansion/StringAlias)
+    nullability: NON_NULLABLE
+    ownTypeArguments: []
+    qualifiers: [
+      qualifier:
+        name: StringAlias
+        symbol: KtTypeAliasSymbol(expansion/StringAlias)
+        typeArguments: []
+    ]
+  annotationsList: []
+  classId: kotlin/String
+  classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+  nullability: NON_NULLABLE
+  ownTypeArguments: []
+  qualifiers: [
+    qualifier:
+      name: String
+      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      typeArguments: []
+  ]
+
+Rendered type:
+kotlin.String
