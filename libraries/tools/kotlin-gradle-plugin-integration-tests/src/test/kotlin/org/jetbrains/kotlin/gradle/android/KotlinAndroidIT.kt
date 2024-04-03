@@ -267,7 +267,7 @@ class KotlinAndroidIT : KGPBaseTest() {
                                 }
                                 repositories {
                                     maven {
-                                        url = "file://${'$'}buildDir/repo"
+                                        url = "${'$'}buildDir/repo"
                                     }
                                 }
                             }
