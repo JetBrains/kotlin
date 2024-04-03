@@ -24626,6 +24626,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("rangeToAndUntil.kt")
+        public void testRangeToAndUntil() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/const/rangeToAndUntil.kt");
+        }
+
+        @Test
         @TestMetadata("stdlibConstFun.kt")
         public void testStdlibConstFun() {
           runTest("compiler/testData/diagnostics/tests/modifiers/const/stdlibConstFun.kt");
