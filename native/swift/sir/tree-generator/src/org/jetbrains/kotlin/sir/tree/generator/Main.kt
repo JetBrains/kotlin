@@ -25,12 +25,7 @@ fun main(args: Array<String>) {
         model,
         pureAbstractElementType,
         ::ElementPrinter,
-        listOf(
-            elementVisitorType to ::VisitorPrinter,
-            elementVisitorVoidType to ::VisitorVoidPrinter,
-            elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
-            elementTransformerVoidType to ::TransformerVoidPrinter,
-        ),
+        emptyList(),
         ImplementationConfigurator,
         BuilderConfigurator(model.elements),
         ::ImplementationPrinter,

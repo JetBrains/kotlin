@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.sir.SirDeclarationParent
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirVisibility
-import org.jetbrains.kotlin.sir.visitors.SirTransformer
-import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 internal class SirImportImpl(
     override val origin: SirOrigin,
@@ -24,10 +22,4 @@ internal class SirImportImpl(
     override val moduleName: String,
 ) : SirImport() {
     override lateinit var parent: SirDeclarationParent
-
-    override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) {
-    }
-
-    override fun <D> transformChildren(transformer: SirTransformer<D>, data: D) {
-    }
 }

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.sir.util
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildStruct
-import org.jetbrains.kotlin.sir.visitors.SirTransformer
-import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 /**
  * A module representing the swift standard library
@@ -55,12 +53,6 @@ object SirSwiftModule : SirModule() {
         double,
         float,
     )
-
-    override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) {
-        declarations.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: SirTransformer<D>, data: D) {}
 }
 
 private fun primitive(typeName: String) = buildStruct {

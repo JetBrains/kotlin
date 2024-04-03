@@ -11,9 +11,6 @@
 package org.jetbrains.kotlin.sir.impl
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.util.transformInPlace
-import org.jetbrains.kotlin.sir.visitors.SirTransformer
-import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 internal class SirEnumImpl(
     override val origin: SirOrigin,
@@ -24,12 +21,4 @@ internal class SirEnumImpl(
     override val cases: MutableList<SirEnumCase>,
 ) : SirEnum() {
     override lateinit var parent: SirDeclarationParent
-
-    override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) {
-        declarations.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: SirTransformer<D>, data: D) {
-        declarations.transformInPlace(transformer, data)
-    }
 }
