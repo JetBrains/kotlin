@@ -1044,8 +1044,12 @@ class ControlFlowGraphBuilder {
         val leftNode = lastNodes.pop()
         val rhsAlwaysExecuted =
             binaryLogicExpression.leftOperand.booleanLiteralValue == (binaryLogicExpression.kind == LogicOperationKind.AND)
-        addEdge(leftNode, exitNode, propagateDeadness = !rhsAlwaysExecuted, isDead = rhsAlwaysExecuted)
-        addEdge(rightNode, exitNode, propagateDeadness = rhsAlwaysExecuted)
+        if (rhsAlwaysExecuted) {
+            addEdge(rightNode, exitNode)
+        } else {
+            addEdge(leftNode, exitNode, propagateDeadness = true)
+            addEdge(rightNode, exitNode, propagateDeadness = false)
+        }
         lastNodes.push(exitNode)
         return exitNode
     }

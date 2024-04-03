@@ -34097,6 +34097,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("binaryOperatorsWithJumps_before.kt")
+      public void testBinaryOperatorsWithJumps_before() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/binaryOperatorsWithJumps_before.kt");
+      }
+
+      @Test
       @TestMetadata("classObjectMember.kt")
       public void testClassObjectMember() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/classObjectMember.kt");

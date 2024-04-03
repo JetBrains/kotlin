@@ -1,5 +1,5 @@
 // ISSUE: KT-37115
-// LANGUAGE: +InferMoreImplicationsFromBooleanExpressions
+// LANGUAGE: -InferMoreImplicationsFromBooleanExpressions
 
 fun test1(foo: String?) {
     foo != null || throw IllegalArgumentException()
@@ -132,5 +132,5 @@ fun test19(foo: Any?) {
 
 fun test20(foo: Any?) {
     foo == null || foo !is String? && throw IllegalArgumentException()
-    var k: String? = foo
+    var k: String? = <!INITIALIZER_TYPE_MISMATCH!>foo<!>
 }

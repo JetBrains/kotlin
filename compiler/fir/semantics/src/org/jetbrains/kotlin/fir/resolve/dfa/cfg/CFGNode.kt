@@ -591,8 +591,8 @@ class TryExpressionExitNode(owner: ControlFlowGraph, override val fir: FirTryExp
 // ----------------------------------- Boolean operators -----------------------------------
 
 abstract class AbstractBinaryExitNode<T : FirElement>(owner: ControlFlowGraph, level: Int) : CFGNode<T>(owner, level) {
-    val leftOperandNode: CFGNode<*> get() = previousNodes[0]
-    val rightOperandNode: CFGNode<*> get() = previousNodes[1]
+    val leftOperandNode: CFGNode<*>? get() = if (previousNodes.size > 1) firstPreviousNode else null
+    val rightOperandNode: CFGNode<*> get() = lastPreviousNode
 }
 
 class BinaryAndEnterNode(owner: ControlFlowGraph, override val fir: FirBinaryLogicExpression, level: Int) : CFGNode<FirBinaryLogicExpression>(owner, level),
