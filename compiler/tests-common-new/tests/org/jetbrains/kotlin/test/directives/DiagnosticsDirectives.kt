@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_JAVAC
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ConstantValuesHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 
 object DiagnosticsDirectives : SimpleDirectivesContainer() {
     val WITH_NEW_INFERENCE by directive(
@@ -86,5 +88,19 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
 
     val RENDER_IR_DIAGNOSTICS_FULL_TEXT by directive(
         description = "Render IR diagnostic texts to .ir.diag.txt"
+    )
+
+    val DONT_STOP_ON_FIR_ERRORS by directive(
+        description = """
+            Don't stop test pipeline when FIR errors is encountered by ${FirDiagnosticsHandler::class}.
+            It allows to to pass incorrect FIR to further facades/handlers (FIR2IR, Klib serializer), emulating bad behavior of IR compiler plugins. 
+        """.trimIndent()
+    )
+
+    val DONT_STOP_ON_IR_ERRORS by directive(
+        description = """
+            Don't stop test pipeline when IR errors is encountered by ${IrDiagnosticsHandler::class}
+            It allows to to pass incorrect IR to further facades/handlers(Klib serializer), emulating bad IR from compiler plugins. 
+        """.trimIndent()
     )
 }

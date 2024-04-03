@@ -48,12 +48,10 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.DisableNextStepsException
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
@@ -127,6 +125,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         val frontendDiagnosticsPerFile = testServices.firDiagnosticCollectorService.getFrontendDiagnosticsForModule(info)
+        val collectedMetadataInfos = mutableListOf<FirDiagnosticCodeMetaInfo>()
 
         for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
@@ -153,13 +152,17 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                             forceRenderArguments,
                             kmpCompilation
                         )
-                    }
+                    }.also { collectedMetadataInfos += it }
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
                 collectSyntaxDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments)
                 collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
                 fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics.map { it.diagnostic }, file)
             }
         }
+        val dontStopOnFirErrors = DiagnosticsDirectives.DONT_STOP_ON_FIR_ERRORS in module.directives
+        val errorMetadataInfos = collectedMetadataInfos.filter { it.diagnostic.severity == Severity.ERROR }
+        if (errorMetadataInfos.isNotEmpty() && !dontStopOnFirErrors && CodegenTestDirectives.IGNORE_ERRORS !in module.directives)
+            throw DisableNextStepsException("There were FIR error diagnostics: ${errorMetadataInfos.map { it.diagnostic.factory }}")
     }
 
     @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -170,7 +173,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean,
         forceRenderArguments: Boolean,
-    ) {
+    ): List<FirDiagnosticCodeMetaInfo> {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
                 FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), it.errorDescription, positioningStrategy = null)
@@ -201,6 +204,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
 
         globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
+        return metaInfos
     }
 
     private fun collectDebugInfoDiagnostics(

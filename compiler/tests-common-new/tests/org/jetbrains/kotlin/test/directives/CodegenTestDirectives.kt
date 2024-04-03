@@ -232,12 +232,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS by directive(
-        description = """
-            Ignore FIR2IR exceptions if FIR reported some diagnostics with ERROR severity
-        """.trimIndent()
-    )
-
     val IGNORE_FIR_METADATA_LOADING_K1 by directive(
         description = """
             Ignore exceptions in AbstractFirLoadK1CompiledKotlin tests

@@ -46,18 +46,7 @@ class Fir2IrJvmResultsConverter(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput? {
-        return try {
-            transformInternal(module, inputArtifact)
-        } catch (e: Throwable) {
-            if (
-                CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS in module.directives &&
-                testServices.firDiagnosticCollectorService.containsErrors(inputArtifact)
-            ) {
-                null
-            } else {
-                throw e
-            }
-        }
+        return transformInternal(module, inputArtifact)
     }
 
     private fun transformInternal(

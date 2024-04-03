@@ -72,10 +72,14 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             thereWereExceptionsOnPreviousSteps: Boolean
         ): StepResult.HandlersResult {
             val exceptions = mutableListOf<WrappedException>()
+            var shouldRunNextSteps = true
             for (outputHandler in handlers) {
                 if (outputHandler.shouldRun(thereWasAnException = thereWereExceptionsOnPreviousSteps || exceptions.isNotEmpty())) {
                     try {
                         outputHandler.processModule(module, inputArtifact)
+                    } catch (dnse: DisableNextStepsException) {
+                        shouldRunNextSteps = false
+                        // Continuing `for` to complete invocation of other handlers in this step
                     } catch (e: Throwable) {
                         exceptions += WrappedException.FromHandler(e, outputHandler)
                         if (outputHandler.failureDisablesNextSteps) {
@@ -84,7 +88,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                     }
                 }
             }
-            return StepResult.HandlersResult(exceptions, shouldRunNextSteps = true)
+            return StepResult.HandlersResult(exceptions, shouldRunNextSteps = shouldRunNextSteps)
         }
     }
 

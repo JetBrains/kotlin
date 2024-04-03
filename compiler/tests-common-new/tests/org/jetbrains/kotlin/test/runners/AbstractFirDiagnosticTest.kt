@@ -66,15 +66,6 @@ class LightTreeSyntaxDiagnosticsReporterHolder : TestService {
 val TestServices.lightTreeSyntaxDiagnosticsReporterHolder: LightTreeSyntaxDiagnosticsReporterHolder? by TestServices.nullableTestServiceAccessor()
 
 abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS
-            }
-        }
-    }
-
     override fun TestConfigurationBuilder.configuration() {
         configureFirParser(parser)
         baseFirDiagnosticTestConfiguration()
