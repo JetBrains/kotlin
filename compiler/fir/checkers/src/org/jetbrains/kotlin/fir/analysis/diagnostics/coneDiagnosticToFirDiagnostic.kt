@@ -469,18 +469,26 @@ private fun ConstraintSystemError.toDiagnostic(
     return when (this) {
         is NewConstraintError -> {
             val position = position.from
-            val argument =
+            val (argument, reportOn) =
                 when (position) {
-                    is ConeArgumentConstraintPosition -> position.argument
-                    is ConeLambdaArgumentConstraintPosition -> position.lambda
-                    is ConeReceiverConstraintPosition -> position.argument
-                    else -> null
+                    is ConeArgumentConstraintPosition -> position.argument to null
+                    is ConeLambdaArgumentConstraintPosition -> position.lambda to null
+                    is ConeReceiverConstraintPosition -> position.argument to position.source
+                    // ConeExpectedTypeConstraintPosition is processed below,
+                    // all others are reported as NEW_INFERENCE_ERROR instead (see mapSystemHasContradictionError);
+                    // About calls from mapInapplicableCandidateError:
+                    // - ConeExplicitTypeParameterConstraintPosition is reported as UPPER_BOUND_VIOLATED
+                    // (see e.g. testCheckEnhancedUpperBounds)
+                    // - ConeFixVariableConstraintPosition is occurred in delegates only,
+                    // and reported as DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE (see testSuccessfulProvideDelegateLeadsToRedGetValue)
+                    // Finally, ConeDeclaredUpperBoundConstraintPosition never occurs here
+                    else -> null to null
                 }
 
             val typeMismatchDueToNullability = typeContext.isTypeMismatchDueToNullability(lowerConeType, upperConeType)
             argument?.let {
                 return FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
-                    it.source ?: source,
+                    reportOn ?: it.source ?: source,
                     lowerConeType.removeTypeVariableTypes(typeContext),
                     upperConeType.removeTypeVariableTypes(typeContext),
                     typeMismatchDueToNullability

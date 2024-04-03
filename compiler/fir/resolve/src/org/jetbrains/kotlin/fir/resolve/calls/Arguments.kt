@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
-import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -276,9 +276,10 @@ fun Candidate.resolvePlainArgumentType(
     context: ResolutionContext,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    useNullableArgumentType: Boolean = false
+    useNullableArgumentType: Boolean = false,
+    sourceForReceiver: KtSourceElement? = null,
 ) {
-    val position = if (isReceiver) ConeReceiverConstraintPosition(argument) else ConeArgumentConstraintPosition(argument)
+    val position = if (isReceiver) ConeReceiverConstraintPosition(argument, sourceForReceiver) else ConeArgumentConstraintPosition(argument)
 
     val session = context.session
     val capturedType = prepareCapturedType(argumentType, context)

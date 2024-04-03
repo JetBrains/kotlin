@@ -131,6 +131,7 @@ object CheckExtensionReceiver : ResolutionStage() {
             context = context,
             isReceiver = true,
             isDispatch = false,
+            sourceForReceiver = candidate.callInfo.callSite.source
         )
 
         candidate.chosenExtensionReceiver = receiver.expression
