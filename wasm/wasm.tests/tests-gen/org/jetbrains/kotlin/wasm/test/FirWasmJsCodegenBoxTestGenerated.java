@@ -24862,9 +24862,9 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
-    @TestMetadata("jvmFloatDoubleToString.kt")
-    public void testJvmFloatDoubleToString() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/jvmFloatDoubleToString.kt");
+    @TestMetadata("jsFloatDoubleToString.kt")
+    public void testJsFloatDoubleToString() {
+      runTest("compiler/testData/codegen/box/involvesIrInterpreter/jsFloatDoubleToString.kt");
     }
 
     @Test

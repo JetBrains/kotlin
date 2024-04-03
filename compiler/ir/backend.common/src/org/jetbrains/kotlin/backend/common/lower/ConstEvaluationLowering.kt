@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.runConstOptimizations
+import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
@@ -23,7 +25,7 @@ class ConstEvaluationLowering(
     private val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
     private val evaluatedConstTracker = context.configuration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
     private val inlineConstTracker = context.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
-    private val mode = EvaluationMode.OnlyIntrinsicConst
+    private val mode = EvaluationMode.OnlyIntrinsicConst(isFloatingPointOptimizationDisabled = configuration.platform.isJs() || configuration.platform.isWasm())
 
     override fun lower(irFile: IrFile) {
         irFile.runConstOptimizations(interpreter, mode, evaluatedConstTracker, inlineConstTracker, suppressErrors)

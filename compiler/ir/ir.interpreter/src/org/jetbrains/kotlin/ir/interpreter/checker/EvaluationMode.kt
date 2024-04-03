@@ -132,9 +132,15 @@ sealed class EvaluationMode {
         }
     }
 
-    data object OnlyIntrinsicConst : EvaluationMode() {
+    class OnlyIntrinsicConst(private val isFloatingPointOptimizationDisabled: Boolean = false) : EvaluationMode() {
         override fun canEvaluateFunction(function: IrFunction): Boolean {
+            if (isFloatingPointOptimizationDisabled && function.isFloatingPointOperation()) return false
             return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation()
+        }
+
+        private fun IrFunction.isFloatingPointOperation(): Boolean {
+            val parentType = (this.parent as? IrClass)?.defaultType ?: return false
+            return parentType.isFloat() || parentType.isDouble() || this.returnType.isFloat() || this.returnType.isDouble()
         }
 
         private fun IrFunction?.isCompileTimePropertyAccessor(): Boolean {

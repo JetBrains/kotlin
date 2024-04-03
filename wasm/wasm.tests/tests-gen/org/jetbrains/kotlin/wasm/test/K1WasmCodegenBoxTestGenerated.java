@@ -24862,9 +24862,9 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
-    @TestMetadata("jvmFloatDoubleToString.kt")
-    public void testJvmFloatDoubleToString() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/jvmFloatDoubleToString.kt");
+    @TestMetadata("jsFloatDoubleToString.kt")
+    public void testJsFloatDoubleToString() {
+      runTest("compiler/testData/codegen/box/involvesIrInterpreter/jsFloatDoubleToString.kt");
     }
 
     @Test

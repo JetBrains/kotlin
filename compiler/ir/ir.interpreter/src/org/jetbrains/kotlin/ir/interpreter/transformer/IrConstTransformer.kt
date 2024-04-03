@@ -114,7 +114,7 @@ internal abstract class IrConstTransformer(
             onError(irFile, original, this)
             return when (mode) {
                 // need to pass any const value to be able to get some bytecode and then report error
-                EvaluationMode.OnlyIntrinsicConst -> IrConstImpl.constNull(startOffset, endOffset, type)
+                is EvaluationMode.OnlyIntrinsicConst -> IrConstImpl.constNull(startOffset, endOffset, type)
                 else -> original
             }
         }

@@ -24808,6 +24808,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("cornerCaseInFloat.kt")
+    public void testCornerCaseInFloat() {
+      runTest("compiler/testData/codegen/box/involvesIrInterpreter/cornerCaseInFloat.kt");
+    }
+
+    @Test
     @TestMetadata("doubleOperations.kt")
     public void testDoubleOperations() {
       runTest("compiler/testData/codegen/box/involvesIrInterpreter/doubleOperations.kt");

@@ -333,14 +333,6 @@ internal fun State.unsignedToString(): String {
     }
 }
 
-internal fun Any?.specialToStringForJs(): String {
-    return when {
-        this is Float && !this.isInfinite() && floor(this) == this -> this.toInt().toString()
-        this is Double && !this.isInfinite() && floor(this) == this -> this.toLong().toString()
-        else -> this.toString()
-    }
-}
-
 internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
     val enumClass = this.symbol.owner.parentAsClass
     val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
