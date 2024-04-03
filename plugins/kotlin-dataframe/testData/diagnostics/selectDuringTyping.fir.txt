@@ -7,48 +7,38 @@ FILE: selectDuringTyping.kt
 
     }
     public final fun explode(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|kotlin/Unit| {
-        R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenExplodeSchema_1928912023>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenExplodeSchema_1928912023>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class DataFrameType1 : R|kotlin/Any| {
-                public constructor(): R|<local>/DataFrameType1| {
-                    super<R|kotlin/Any|>()
-                }
-
+        R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenExplodeSchema_1928912023>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenExplodeSchema_1928912023>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class TokenExplodeSchema_1928912023I : R|kotlin/Any| {
                 public abstract val timestamps: R|kotlin/collections/List<kotlin/Int>|
                     public get(): R|kotlin/collections/List<kotlin/Int>|
+
+                public constructor(): R|<local>/TokenExplodeSchema_1928912023I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public constructor(): R|<local>/Scope0| {
-                    super<R|kotlin/Any|>()
-                }
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenExplodeSchema_1928912023I>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
+                    public get(): R|kotlin/collections/List<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_timestamps)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>| {
-                        ^ (this@R|<local>/timestamps|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(timestamps)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|)
-                    }
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenExplodeSchema_1928912023I>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_timestamps)) public get(): R|kotlin/collections/List<kotlin/Int>| {
-                        ^ (this@R|<local>/timestamps|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(timestamps)) as R|kotlin/collections/List<kotlin/Int>|)
-                    }
+                public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenExplodeSchema_1928912023 : R|<local>/DataFrameType1| {
-                public constructor(): R|<local>/TokenExplodeSchema_1928912023| {
-                    super<R|<local>/DataFrameType1|>()
-                }
-
+            local abstract class TokenExplodeSchema_1928912023 : R|<local>/TokenExplodeSchema_1928912023I| {
                 public abstract val scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
 
+                public constructor(): R|<local>/TokenExplodeSchema_1928912023|
+
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/explode|<R|org/jetbrains/kotlinx/dataframe/ExplodeSchema|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/explode|<R|org/jetbrains/kotlinx/dataframe/ExplodeSchema|>(<L> = explode@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
                 ^ <Unresolved name: timestamp>#
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenExplodeSchema_1928912023>|)
+            )
         }
         )
     }
