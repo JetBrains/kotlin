@@ -31,18 +31,42 @@ class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
 
     private fun doTest(fileName: String, goldenDataExtension: String = ".txt") {
         val source = "$BASE_DIR/$fileName"
+        val klibFile = compileOneFile(source)
+
+        compareDumps(klibFile, source, goldenDataExtension)
+    }
+
+    private fun doTestWithDependency(mainFileName: String, dependencyFileName: String, goldenDataExtension: String = ".txt") {
+        val dependencySource = "$BASE_DIR/$dependencyFileName"
+        val dependencyKlibFile = compileOneFile(dependencySource)
+        compareDumps(dependencyKlibFile, dependencySource, goldenDataExtension)
+
+        val mainSource = "$BASE_DIR/$mainFileName"
+        val mainKlibFile = compileOneFile(mainSource, dependencyKlibFile.absolutePath)
+        compareDumps(mainKlibFile, mainSource, goldenDataExtension)
+    }
+
+    private fun compileOneFile(source: String, vararg additionalClassPath: String): File {
         val klibName = File(source).nameWithoutExtension
         val klibFile = File(tmpdir, "$klibName.klib")
 
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2MetadataCompiler(), listOf(
+        val classpath = buildList {
+            addAll(additionalClassPath)
+            add(ForTestCompileRuntime.stdlibCommonForTests().absolutePath)
+        }
+        CompilerTestUtil.executeCompilerAssertSuccessful(
+            K2MetadataCompiler(), listOf(
                 File(source).absolutePath,
                 "-d", klibFile.absolutePath,
                 "-module-name", klibName,
                 // support for the legacy version of kotlin-stdlib-common (JAR with .kotlin_metadata)
-                "-classpath", ForTestCompileRuntime.stdlibCommonForTests().absolutePath
+                "-classpath", classpath.joinToString(File.pathSeparatorChar.toString())
             )
         )
+        return klibFile
+    }
 
+    private fun compareDumps(klibFile: File, source: String, goldenDataExtension: String) {
         val module = KlibTestUtil.deserializeKlibToCommonModule(klibFile)
 
         RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(
@@ -104,5 +128,9 @@ class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
 
     fun testFieldAnnotations() {
         doTest("klib/fieldAnnotations.kt")
+    }
+
+    fun testDelegationToInterfaceWithDeprecation() {
+        doTestWithDependency("klib/delegationToInterfaceWithDeprecation_main.kt", "klib/delegationToInterfaceWithDeprecation_dep.kt")
     }
 }
