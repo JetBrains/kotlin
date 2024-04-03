@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-coroutines-core-jvm</artifactId>
-      <version>1.5.0</version>
+      <version>1.6.4</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
