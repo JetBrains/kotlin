@@ -122,7 +122,8 @@ private class FirConstCheckVisitor(
     }
 
     private val compileTimeFunctions = setOf(
-        *OperatorNameConventions.BINARY_OPERATION_NAMES.toTypedArray(), *OperatorNameConventions.UNARY_OPERATION_NAMES.toTypedArray(),
+        *OperatorNameConventions.BINARY_OPERATION_NAMES.toTypedArray(),
+        *OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES.toTypedArray(),
         OperatorNameConventions.SHL, OperatorNameConventions.SHR, OperatorNameConventions.USHR,
         OperatorNameConventions.OR, OperatorNameConventions.AND, OperatorNameConventions.XOR,
         OperatorNameConventions.COMPARE_TO

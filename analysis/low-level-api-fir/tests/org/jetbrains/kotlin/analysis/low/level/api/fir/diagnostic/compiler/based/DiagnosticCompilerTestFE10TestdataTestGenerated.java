@@ -24566,6 +24566,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("incAndDecOperations.kt")
+        public void testIncAndDecOperations() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/const/incAndDecOperations.kt");
+        }
+
+        @Test
         @TestMetadata("kCallable_after.kt")
         public void testKCallable_after() {
           runTest("compiler/testData/diagnostics/tests/modifiers/const/kCallable_after.kt");
