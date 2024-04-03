@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -103,16 +102,16 @@ fun FirResult.convertToIrAndActualize(
         return Fir2IrComponentsStorage(
             session,
             scopeSession,
+            fir,
             IrFactoryImpl,
             fir2IrExtensions,
             fir2IrConfiguration,
             visibilityConverter,
-            runIf(fir2IrConfiguration.allowNonCachedDeclarations) { fir.toSet() },
             actualizerTypeContextProvider,
-            FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns),
             commonMemberStorage,
             irMangler,
             specialAnnotationSymbolProvider,
+            kotlinBuiltIns,
             irBuiltIns,
             fir2IrBuiltIns,
             irTypeSystemContext,

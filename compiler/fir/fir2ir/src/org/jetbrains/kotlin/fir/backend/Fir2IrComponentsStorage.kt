@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -21,25 +22,30 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrComponentsStorage(
     override val session: FirSession,
     override val scopeSession: ScopeSession,
+    val fir: List<FirFile>,
     override val irFactory: IrFactory,
     override val extensions: Fir2IrExtensions,
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
-    override val filesBeingCompiled: Set<FirFile>?,
     actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-    val moduleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irMangler: KotlinMangler.IrMangler,
     specialSymbolProvider: Fir2IrSpecialSymbolProvider?,
+    kotlinBuiltIns: KotlinBuiltIns,
     initializedIrBuiltIns: IrBuiltInsOverFir?,
     initializedFirBuiltIns: Fir2IrBuiltIns?,
     initializedIrTypeSystemContext: IrTypeSystemContext?,
     override val firProvider: FirProviderWithGeneratedFiles,
 ) : Fir2IrComponents {
+    override val filesBeingCompiled: Set<FirFile>? = runIf(configuration.allowNonCachedDeclarations) { fir.toSet() }
+
+    val moduleDescriptor: FirModuleDescriptor = FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
+
     override val signatureComposer: FirBasedSignatureComposer = commonMemberStorage.firSignatureComposer
     override val symbolTable: SymbolTable = commonMemberStorage.symbolTable
 
