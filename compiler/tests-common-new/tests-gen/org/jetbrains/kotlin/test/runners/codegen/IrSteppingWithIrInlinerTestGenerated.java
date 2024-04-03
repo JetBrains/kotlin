@@ -463,6 +463,12 @@ public class IrSteppingWithIrInlinerTestGenerated extends AbstractIrSteppingWith
   }
 
   @Test
+  @TestMetadata("propertyInvokeInsidePCLALambda.kt")
+  public void testPropertyInvokeInsidePCLALambda() {
+    runTest("compiler/testData/debug/stepping/propertyInvokeInsidePCLALambda.kt");
+  }
+
+  @Test
   @TestMetadata("psvm.kt")
   public void testPsvm() {
     runTest("compiler/testData/debug/stepping/psvm.kt");
