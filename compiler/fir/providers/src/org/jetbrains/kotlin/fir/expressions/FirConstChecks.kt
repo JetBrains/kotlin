@@ -108,6 +108,19 @@ private class FirConstCheckVisitor(
          * ```
          */
         private val propertyStack: ThreadLocal<MutableList<FirCallableSymbol<*>>> = ThreadLocal.withInitial { mutableListOf() }
+
+        private val compileTimeFunctions = setOf(
+            *OperatorNameConventions.SIMPLE_BINARY_OPERATION_NAMES.toTypedArray(),
+            *OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES.toTypedArray(),
+            *OperatorNameConventions.SIMPLE_BITWISE_OPERATION_NAMES.toTypedArray(),
+            OperatorNameConventions.COMPARE_TO
+        )
+
+        private val compileTimeExtensionFunctions = listOf("floorDiv", "mod", "code").mapTo(hashSetOf()) { Name.identifier(it) }
+
+        private val compileTimeConversionFunctions = listOf(
+            "toInt", "toLong", "toShort", "toByte", "toFloat", "toDouble", "toChar", "toBoolean"
+        ).mapTo(hashSetOf()) { Name.identifier(it) }
     }
 
     private val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
@@ -120,19 +133,6 @@ private class FirConstCheckVisitor(
             propertyStack.get().removeLast()
         }
     }
-
-    private val compileTimeFunctions = setOf(
-        *OperatorNameConventions.SIMPLE_BINARY_OPERATION_NAMES.toTypedArray(),
-        *OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES.toTypedArray(),
-        *OperatorNameConventions.SIMPLE_BITWISE_OPERATION_NAMES.toTypedArray(),
-        OperatorNameConventions.COMPARE_TO
-    )
-
-    private val compileTimeExtensionFunctions = listOf("floorDiv", "mod", "code").mapTo(hashSetOf()) { Name.identifier(it) }
-
-    private val compileTimeConversionFunctions = listOf(
-        "toInt", "toLong", "toShort", "toByte", "toFloat", "toDouble", "toChar", "toBoolean"
-    ).mapTo(hashSetOf()) { Name.identifier(it) }
 
     override fun visitElement(element: FirElement, data: Nothing?): ConstantArgumentKind {
         return ConstantArgumentKind.NOT_CONST
