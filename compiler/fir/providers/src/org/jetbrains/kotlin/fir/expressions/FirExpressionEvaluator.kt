@@ -359,6 +359,27 @@ object FirExpressionEvaluator {
         ): FirEvaluatorResult {
             return classReferenceExpression.wrap()
         }
+
+        override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): FirEvaluatorResult {
+            return visitAnnotation(annotationCall, data)
+        }
+
+        override fun visitAnnotation(annotation: FirAnnotation, data: Nothing?): FirEvaluatorResult {
+            val mapping = annotation.argumentMapping.mapping
+            if (mapping.isEmpty()) return annotation.wrap()
+            val evaluatedMapping = mutableMapOf<Name, FirExpression>()
+            for ((name, expression) in mapping) {
+                when (val evaluatedExpression = evaluate(expression)) {
+                    is Evaluated -> evaluatedMapping[name] = evaluatedExpression.result as FirExpression
+                    else -> return evaluatedExpression
+                }
+            }
+            return buildAnnotationCopy(annotation) {
+                argumentMapping = buildAnnotationArgumentMapping {
+                    this.mapping.putAll(evaluatedMapping)
+                }
+            }.wrap()
+        }
     }
 }
 
