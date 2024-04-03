@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -1601,3 +1599,18 @@ val IrValueDeclaration.isAssignable: Boolean
         is IrVariable -> true
         else -> error("Unexpected IrValueDeclaration class $this")
     }
+
+fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
+    if (statement != null) statements.add(statement)
+}
+
+fun IrBlockImpl.inlineStatement(statement: IrStatement) {
+    if (statement is IrBlock) {
+        statements.addAll(statement.statements)
+    } else {
+        statements.add(statement)
+    }
+}
+
+fun IrGetValue.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
+    IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)

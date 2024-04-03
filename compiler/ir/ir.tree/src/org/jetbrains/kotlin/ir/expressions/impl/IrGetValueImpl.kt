@@ -24,6 +24,3 @@ class IrGetValueImpl internal constructor(
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 }
-
-fun IrGetValue.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
-    IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)
