@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -81,6 +85,18 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             isLocal = localEntries
             status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
             entry.extractAnnotationsTo(this, context.containerSymbol)
+            if (!localEntries) {
+                getter = FirDefaultPropertyGetter(
+                    source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor), moduleData,
+                    FirDeclarationOrigin.Source, returnTypeRef, Visibilities.Public, symbol,
+                )
+                if (isVar) {
+                    setter = FirDefaultPropertySetter(
+                        source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor), moduleData,
+                        FirDeclarationOrigin.Source, returnTypeRef, Visibilities.Public, symbol,
+                    )
+                }
+            }
         }
     }.also(configure)
 }

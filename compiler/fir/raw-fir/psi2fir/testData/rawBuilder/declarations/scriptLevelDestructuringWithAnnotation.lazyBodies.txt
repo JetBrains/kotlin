@@ -3,15 +3,15 @@ FILE: scriptLevelDestructuringWithAnnotation.kts
 
         @DestrAnno(LAZY_EXPRESSION) lval <destruct>: <implicit> = LAZY_EXPRESSION
         @LeftAnno(LAZY_EXPRESSION) public final val a: <implicit> = LAZY_EXPRESSION
-
+            public get(): <implicit>
 
         @RightAnno(LAZY_EXPRESSION) public final val b: <implicit> = LAZY_EXPRESSION
-
+            public get(): <implicit>
 
         @Destr2Anno(LAZY_EXPRESSION) lval <destruct>: <implicit> = LAZY_EXPRESSION
         @SecondLeftAnno(LAZY_EXPRESSION) public final val c: <implicit> = LAZY_EXPRESSION
-
+            public get(): <implicit>
 
         @SecondRightAnno(LAZY_EXPRESSION) public final val d: <implicit> = LAZY_EXPRESSION
-
+            public get(): <implicit>
 

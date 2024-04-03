@@ -154,6 +154,18 @@
   context -> FirPropertySymbol util/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
+@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/a
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/a
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/a
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
 @R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?
   context -> FirPropertySymbol util/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
@@ -164,6 +176,18 @@
 
 @R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int
   context -> FirPropertySymbol util/b
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/b
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/b
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?
@@ -178,6 +202,18 @@
   context -> FirPropertySymbol util/c
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
+@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/c
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/c
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/c
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
 @R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?
   context -> FirPropertySymbol util/d
   anchor -> [FirConstructorSymbol util/Pair.Pair]
@@ -188,6 +224,18 @@
 
 @R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int
   context -> FirPropertySymbol util/d
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/d
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/d
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/d
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
@@ -232,17 +280,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
         @R|util/Anno|[Types](str = <strcat>(String(a ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(b ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
         @R|util/Anno|[Types](str = <strcat>(String(c ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(d ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 

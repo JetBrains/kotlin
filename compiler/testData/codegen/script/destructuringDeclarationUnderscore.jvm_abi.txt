@@ -9,14 +9,6 @@ MODULE main
 				---
 			K2
 				<unused var>
-			K1
-				---
-			K2
-				b
-			K1
-				getB()I
-			K2
-				---
 			Property: class.metadata.superTypes
 				K1
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
