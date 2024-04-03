@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.getBaseCompilerArgumentsFromProperty
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import kotlin.reflect.KClass
@@ -95,8 +94,7 @@ class ScriptCompilerTest : TestCase() {
         assertEquals("Clazz", nestedClasses[0].simpleName)
     }
 
-    // Fails on K2, see KT-60501
-    fun testDestructingDeclarations() = expectTestToFailOnK2 {
+    fun testDestructingDeclarations() {
         val res = compileToClass(
             """
                 val c = 3

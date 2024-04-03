@@ -52,6 +52,8 @@ FILE: [ResolvedTo(IMPORTS)] destruct.kts
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol util/pair]] lval <destruct>: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  util/MyPair<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|util/pair|
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+

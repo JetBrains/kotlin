@@ -41,17 +41,17 @@ FILE: [ResolvedTo(RAW_FIR)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -99,17 +99,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -157,17 +157,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -215,17 +215,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -273,17 +273,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -331,17 +331,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -389,17 +389,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -447,17 +447,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -505,17 +505,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -563,17 +563,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -621,17 +621,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -679,17 +679,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -737,17 +737,17 @@ FILE: [ResolvedTo(IMPORTS)] scriptLevel.kts
 
         @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
         @R|util/Anno|[Types](str = <strcat>(String(a ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(b ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
         @R|util/Anno|[Types](str = <strcat>(String(c ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(d ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -795,18 +795,17 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptLevel.kts
 
         @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
         @R|util/Anno|[Types](str = <strcat>(String(a ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(b ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
         @R|util/Anno|[Types](str = <strcat>(String(c ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|
 
         @R|util/Anno|[Types](str = <strcat>(String(d ), R|util/prop|)) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }
-

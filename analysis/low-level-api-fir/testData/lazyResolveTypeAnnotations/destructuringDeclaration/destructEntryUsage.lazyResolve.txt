@@ -41,10 +41,10 @@ FILE: [ResolvedTo(RAW_FIR)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val property: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
@@ -93,10 +93,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val property: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
@@ -145,10 +145,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val property: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
@@ -197,10 +197,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] val property: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
@@ -249,10 +249,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(SUPER_TYPES)] val property: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(SUPER_TYPES)] get(): <implicit>
@@ -301,10 +301,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(TYPES)] val property: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(TYPES)] get(): <implicit>
@@ -353,10 +353,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(STATUS)] val property: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
@@ -405,10 +405,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val property: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
@@ -457,10 +457,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(CONTRACTS)] val property: <implicit> = left#
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
@@ -509,10 +509,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/MyPair.MyPair]] val left: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
-
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/MyPair.MyPair]] val property: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
@@ -561,10 +561,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/MyPair.MyPair]] val left: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
-
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/MyPair.MyPair]] val property: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|
@@ -613,10 +613,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/MyPair.MyPair]] val left: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
-
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
@@ -665,10 +665,10 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/MyPair.MyPair]] val left: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
-
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
-
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(BODY_RESOLVE)] val property: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
@@ -717,11 +717,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructEntryUsage.kts
 
         [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: R|kotlin/Int| = R|<local>/<destruct>|.R|util/MyPair.component2|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final [ResolvedTo(BODY_RESOLVE)] val property: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|
-
