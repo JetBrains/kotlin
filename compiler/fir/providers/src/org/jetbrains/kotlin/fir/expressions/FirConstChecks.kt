@@ -276,7 +276,12 @@ private class FirConstCheckVisitor(
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): ConstantArgumentKind {
-        return ConstantArgumentKind.NOT_CONST
+        val classSymbol = thisReceiverExpression.calleeReference.boundSymbol as? FirClassSymbol
+        return if (classSymbol?.classKind == ClassKind.OBJECT) {
+            ConstantArgumentKind.VALID_CONST
+        } else {
+            ConstantArgumentKind.NOT_CONST
+        }
     }
 
     override fun visitPropertyAccessExpression(
@@ -295,30 +300,27 @@ private class FirConstCheckVisitor(
                     return ConstantArgumentKind.ENUM_NOT_CONST
                 }
 
+                val isConstWithoutInitializer = propertySymbol.unwrapFakeOverrides().canBeEvaluated()
+                        || propertySymbol.isCompileTimeBuiltinProperty()
                 when {
-                    propertySymbol.unwrapFakeOverrides().canBeEvaluated() || propertySymbol.isCompileTimeBuiltinProperty() -> {
-                        val receiver = listOf(propertyAccessExpression.dispatchReceiver, propertyAccessExpression.extensionReceiver)
-                            .single { it != null }
-                        return receiver?.accept(this, data) ?: ConstantArgumentKind.VALID_CONST
+                    propertySymbol.isConst || isConstWithoutInitializer -> {
+                        val receivers = listOf(propertyAccessExpression.dispatchReceiver, propertyAccessExpression.extensionReceiver)
+                        if (receivers.count { it != null } == 2) {
+                            return ConstantArgumentKind.NOT_CONST
+                        }
+                        receivers.singleOrNull { it != null }?.accept(this, data)?.ifNotValidConst { return it }
                     }
                     propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
                     propertyAccessExpression.getExpandedType().classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
                 }
 
                 return when {
+                    isConstWithoutInitializer -> ConstantArgumentKind.VALID_CONST
                     propertySymbol.isConst -> {
-                        if (propertyAccessExpression.extensionReceiver == null &&
-                            propertyAccessExpression.dispatchReceiver.let {
-                                it == null ||
-                                    (it is FirThisReceiverExpression && (it.calleeReference.boundSymbol as? FirClassSymbol)?.classKind == ClassKind.OBJECT) ||
-                                    it.accept(this, data) == ConstantArgumentKind.VALID_CONST
-                            }
-                        ) {
-                            // even if called on CONSTANT_EVALUATION, it's safe to call resolvedInitializer, as intializers of const vals
-                            // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
-                            val initializer = propertySymbol.resolvedInitializer
-                            propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
-                        } else ConstantArgumentKind.NOT_CONST
+                        // even if called on CONSTANT_EVALUATION, it's safe to call resolvedInitializer, as intializers of const vals
+                        // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
+                        val initializer = propertySymbol.resolvedInitializer
+                        propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
                     }
 
                     // if it called at checkers stage it's safe to call resolvedInitializer
