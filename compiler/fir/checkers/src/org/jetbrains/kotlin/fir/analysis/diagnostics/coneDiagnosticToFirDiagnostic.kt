@@ -171,7 +171,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason)
     is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason)
     is ConeTypeParameterInQualifiedAccess -> null // reported in various checkers instead
-    is ConeNotAnnotationContainer -> null
+    is ConeNotAnnotationContainer -> null // Reported in FirAnnotationExpressionChecker.checkAnnotationUsedAsAnnotationArgument
     is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name)
     is ConeUnsupported -> FirErrors.UNSUPPORTED.createOn(this.source ?: source, this.reason)
     is ConeLocalVariableNoTypeOrInitializer -> runIf(variable.isLocalMember) {
