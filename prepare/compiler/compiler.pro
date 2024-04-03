@@ -4,6 +4,10 @@
 -dontwarn com.google.errorprone.**
 -dontwarn com.google.j2objc.**
 -dontwarn com.google.j2objc.annotations.Weak
+# True warning, should be removed later: https://github.com/JetBrains/intellij-community/commit/e84b32f0620126b0e2b3a3f477cda8c1c9b5b4d2
+-dontwarn com.intellij.openapi.vfs.VirtualFileUtil
+-dontwarn com.intellij.platform.util.progress.ProgressReporterKt
+-dontwarn com.intellij.platform.util.progress.RawProgressReporter
 -dontwarn com.intellij.psi.util.PsiClassUtil
 -dontwarn com.intellij.ui.**
 -dontwarn com.intellij.util.CompressionUtil
@@ -13,8 +17,10 @@
 -dontwarn com.intellij.util.SVGLoader
 -dontwarn com.intellij.util.SVGLoader$MyTranscoder
 -dontwarn com.intellij.util.SnappyInitializer
+-dontwarn com.intellij.util.diff.*
 -dontwarn com.intellij.util.io.Compressor$Tar
 -dontwarn com.intellij.util.io.TarUtil
+-dontwarn com.intellij.util.lang.*
 -dontwarn com.intellij.util.ui.**
 -dontwarn com.sun.jna.NativeString
 -dontwarn com.sun.jna.WString
@@ -26,6 +32,9 @@
 -dontwarn javax.crypto.**
 -dontwarn kotlinx.collections.immutable.*
 -dontwarn kotlinx.collections.immutable.**
+-dontwarn kotlinx.coroutines.debug.DebugProbes
+-dontwarn kotlinx.coroutines.future.FutureKt
+-dontwarn kotlinx.serialization.**
 -dontwarn net.sf.cglib.**
 -dontwarn org.apache.hadoop.io.compress.*
 -dontwarn org.apache.xerces.dom.**
