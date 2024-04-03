@@ -46,14 +46,6 @@ class ConeLambdaArgumentConstraintPosition(
     }
 }
 
-
-class ConeBuilderInferenceSubstitutionConstraintPosition(initialConstraint: InitialConstraint) :
-    BuilderInferenceSubstitutionConstraintPosition<Nothing?>(null, initialConstraint) {
-    override fun toString(): String = "Incorporated builder inference constraint $initialConstraint " +
-            "into some call"
-}
-
 class ConeReceiverConstraintPosition(receiver: FirExpression) : ReceiverConstraintPosition<FirExpression>(receiver) {
     override fun toString(): String = "Receiver ${argument.render()}"
-
 }
