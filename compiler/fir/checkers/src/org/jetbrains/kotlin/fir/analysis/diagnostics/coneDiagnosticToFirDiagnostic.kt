@@ -63,16 +63,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken)
     is ConeUnresolvedTypeQualifierError -> {
         when {
-            // There could be an implicit reference here, such as FirImplicitThisReference,
-            // or other implicit elements without a source.
-            // In that case, it's not necessary to report UNRESOLVED_REFERENCE because they are implicit.
-            source == null -> null
-
             // this.qualifiers will contain all resolved qualifiers from the left up to (including) the first unresolved qualifier.
             // We want to report UNRESOLVED_REFERENCE exactly on the first unresolved qualifier with its name as argument.
             // Examples: <!UNRESOLVED_REFERENCE!>Unresolved<!>, <!UNRESOLVED_REFERENCE!>Unresolved<!>.Foo,
             // Resolved.<!UNRESOLVED_REFERENCE!>Unresolved<!>, Resolved.<!UNRESOLVED_REFERENCE!>Unresolved<!>.Foo
-            source.kind == KtRealSourceElementKind -> {
+            source?.kind == KtRealSourceElementKind -> {
                 val lastQualifier = this.qualifiers.last()
                 FirErrors.UNRESOLVED_REFERENCE.createOn(lastQualifier.source, lastQualifier.name.asString(), null)
             }

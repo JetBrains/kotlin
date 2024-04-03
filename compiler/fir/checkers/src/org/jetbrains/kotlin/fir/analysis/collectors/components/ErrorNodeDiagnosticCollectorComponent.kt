@@ -128,7 +128,9 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     override fun visitThisReference(thisReference: FirThisReference, data: CheckerContext) {
         val diagnostic = thisReference.diagnostic ?: return
-        reportFirDiagnostic(diagnostic, thisReference.source, data)
+        // FirImplicitThisReference has no source, in this case use source of containing ThisReceiverExpression
+        val source = thisReference.source ?: data.containingElements.elementAtOrNull(1)?.source
+        reportFirDiagnostic(diagnostic, source, data)
     }
 
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: CheckerContext) {
