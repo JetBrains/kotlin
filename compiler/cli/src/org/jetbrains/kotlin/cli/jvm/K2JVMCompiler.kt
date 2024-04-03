@@ -153,11 +153,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return COMPILATION_ERROR
                 }
 
-                compileModulesUsingFrontendIrAndLightTree(
-                    projectEnvironment, configuration, messageCollector, buildFile, chunk.single(), targetDescription,
-                    checkSourceFiles = !arguments.allowNoSourceFiles,
-                    isPrintingVersion = arguments.version,
-                )
+                if (!compileModulesUsingFrontendIrAndLightTree(
+                        projectEnvironment, configuration, messageCollector, buildFile, chunk.single(), targetDescription,
+                        checkSourceFiles = !arguments.allowNoSourceFiles,
+                        isPrintingVersion = arguments.version,
+                    )
+                ) return COMPILATION_ERROR
             } else {
                 val environment = createCoreEnvironment(
                     rootDisposable, configuration, messageCollector,
@@ -174,7 +175,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return COMPILATION_ERROR
                 }
 
-                KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
+                if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
             }
             return OK
         } catch (e: CompilationException) {

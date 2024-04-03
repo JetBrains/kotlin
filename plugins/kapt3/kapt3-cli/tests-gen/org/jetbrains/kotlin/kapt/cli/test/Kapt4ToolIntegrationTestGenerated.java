@@ -24,6 +24,12 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
   }
 
   @Test
+  @TestMetadata("aptError")
+  public void testAptError() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/aptError/");
+  }
+
+  @Test
   @TestMetadata("argfile")
   public void testArgfile() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/argfile/");

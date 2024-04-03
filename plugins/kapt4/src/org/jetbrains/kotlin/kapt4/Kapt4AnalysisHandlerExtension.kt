@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.EfficientProcessorLoader
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.base.*
+import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.info
 import org.jetbrains.kotlin.kapt3.measureTimeMillis
@@ -131,11 +132,14 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                         false,
                         logger
                     ).use { context ->
-                        runProcessors(context, options)
+                        try {
+                            runProcessors(context, options)
+                        } catch (e: KaptBaseError) {
+                            return false
+                        }
                     }
                 }
                 true
-
             } catch (e: Exception) {
                 logger.exception(e)
                 false
