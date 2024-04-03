@@ -125,6 +125,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             output: Path, fullBitcode: Boolean = false
     ) {
         val platform = project.platformManager.platform(target)
+        platform.downloadDependencies()
         assert(platform.configurables is AppleConfigurables)
         val configs = platform.configurables as AppleConfigurables
         val compiler = configs.absoluteTargetToolchain + "/bin/swiftc"
