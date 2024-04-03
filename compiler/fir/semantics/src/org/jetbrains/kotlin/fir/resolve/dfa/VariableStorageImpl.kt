@@ -19,13 +19,11 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
-class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
+class VariableStorageImpl(private val session: FirSession) {
     // These are basically hash sets, since they map each key to itself. The only point of having them as maps
     // is to deduplicate equal instances with lookups. The impact of that is questionable, but whatever.
     private val realVariables: MutableMap<RealVariable, RealVariable> = HashMap()
     private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
-
-    fun clear(): VariableStorageImpl = VariableStorageImpl(session)
 
     private val nextVariableIndex: Int
         get() = realVariables.size + syntheticVariables.size + 1
@@ -41,7 +39,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
 
     // Use this when making non-type statements, such as `variable eq true`.
     // Returns null if the statement would be useless (the variable has not been used in any implications).
-    override fun getIfUsed(fir: FirElement, unwrapAlias: (RealVariable, FirElement) -> RealVariable?): DataFlowVariable? =
+    fun getIfUsed(fir: FirElement, unwrapAlias: (RealVariable, FirElement) -> RealVariable?): DataFlowVariable? =
         getImpl(fir, createReal = false, unwrapAlias)?.takeSyntheticIfKnown()
 
     // Use this when making type statements, such as `variable typeEq ...` or `variable notEq null`.
