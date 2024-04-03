@@ -44,6 +44,9 @@ FILE: HistoryItem.kt
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/HistoryItem>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/io/readJson|(String()).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/HistoryItem|>()
         ERROR_EXPR(Qualified expression without selector)
     }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
 

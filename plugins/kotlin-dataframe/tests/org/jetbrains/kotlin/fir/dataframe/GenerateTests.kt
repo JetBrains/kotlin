@@ -22,9 +22,6 @@ fun main() {
             testClass<AbstractDataFrameBlackBoxCodegenTest> {
                 model("box")
             }
-            testClass<AbstractDataFrameTransformTest> {
-                model("transform")
-            }
 //
 //            testClass<AbstractResearchTest> {
 //                model("research")
