@@ -14,3 +14,6 @@ KtUsualClassType:
       symbol: KtNamedClassOrObjectSymbol(<local>/C)
       typeArguments: []
   ]
+
+Rendered type:
+B.C

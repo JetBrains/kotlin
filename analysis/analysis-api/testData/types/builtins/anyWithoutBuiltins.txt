@@ -11,3 +11,6 @@ KtClassErrorType:
       name: Any
       typeArguments: []
   ]
+
+Rendered type:
+kotlin.Any

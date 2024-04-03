@@ -36,3 +36,6 @@ KtUsualClassType:
           ]
       ]
   ]
+
+Rendered type:
+B<kotlin.Int>

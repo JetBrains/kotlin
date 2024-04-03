@@ -13,12 +13,20 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModu
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyseForTest(mainFile.declarations.first()) {
             val type = getType(mainFile, mainModule, testServices)
-            DebugSymbolRenderer(renderTypeByProperties = true).renderType(type)
+
+            buildString {
+                appendLine(DebugSymbolRenderer(renderTypeByProperties = true).renderType(type))
+
+                appendLine()
+                appendLine("Rendered type:")
+                appendLine(type.render(position = Variance.INVARIANT))
+            }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }

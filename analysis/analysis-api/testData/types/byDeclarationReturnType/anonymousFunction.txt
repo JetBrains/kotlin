@@ -10,3 +10,6 @@ KtUsualClassType:
       symbol: KtNamedClassOrObjectSymbol(kotlin/Unit)
       typeArguments: []
   ]
+
+Rendered type:
+kotlin.Unit
