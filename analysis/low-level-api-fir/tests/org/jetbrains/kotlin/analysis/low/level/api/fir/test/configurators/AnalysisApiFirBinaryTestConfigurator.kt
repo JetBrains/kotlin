@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
@@ -29,13 +30,15 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
-object AnalysisApiFirLibraryBinaryDecompiledTestConfigurator : AnalysisApiTestConfigurator() {
+abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurator() {
+    protected abstract val testModuleFactory: KtTestModuleFactory
+
     override val analyseInDependentSession: Boolean get() = false
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
-            useAdditionalService<KtTestModuleFactory> { KtLibraryBinaryDecompiledTestModuleFactory }
+            useAdditionalService<KtTestModuleFactory> { testModuleFactory }
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
             configureLibraryCompilationSupport(this)
             configureOptionalTestCompilerPlugin()
@@ -69,4 +72,12 @@ object AnalysisApiFirLibraryBinaryDecompiledTestConfigurator : AnalysisApiTestCo
             AnalysisApiFirTestServiceRegistrar,
             AnalysisApiLibraryBaseTestServiceRegistrar,
         )
+}
+
+object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiFirBinaryTestConfigurator() {
+    override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryTestModuleFactory
+}
+
+object AnalysisApiFirLibraryBinaryDecompiledTestConfigurator : AnalysisApiFirBinaryTestConfigurator() {
+    override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryDecompiledTestModuleFactory
 }

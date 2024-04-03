@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
@@ -28,7 +29,9 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.ExternalAnnotationsEnvironmentConfigurator
 
-object StandaloneModeLibraryBinaryDecompiledTestConfigurator : StandaloneModeConfiguratorBase() {
+abstract class StandaloneModeBinaryTestConfigurator : StandaloneModeConfiguratorBase() {
+    protected abstract val testModuleFactory: KtTestModuleFactory
+
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)
 
@@ -38,7 +41,7 @@ object StandaloneModeLibraryBinaryDecompiledTestConfigurator : StandaloneModeCon
             useConfigurators(::ExternalAnnotationsEnvironmentConfigurator)
             useSourcePreprocessor(::ExternalAnnotationsSourcePreprocessor)
 
-            useAdditionalService<KtTestModuleFactory> { KtLibraryBinaryDecompiledTestModuleFactory }
+            useAdditionalService<KtTestModuleFactory> { testModuleFactory }
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
 
@@ -61,4 +64,12 @@ object StandaloneModeLibraryBinaryDecompiledTestConfigurator : StandaloneModeCon
     ): KtTestModuleStructure {
         return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
     }
+}
+
+object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeBinaryTestConfigurator() {
+    override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryTestModuleFactory
+}
+
+object StandaloneModeLibraryBinaryDecompiledTestConfigurator : StandaloneModeBinaryTestConfigurator() {
+    override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryDecompiledTestModuleFactory
 }

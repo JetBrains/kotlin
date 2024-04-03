@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.configurators
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCodeFragmentTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibrarySourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -25,6 +26,11 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
             TestModuleKind.Source -> when (data.analysisSessionMode) {
                 AnalysisSessionMode.Normal -> AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
                 AnalysisSessionMode.Dependent -> AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = true)
+            }
+
+            TestModuleKind.LibraryBinary -> {
+                require(data.analysisSessionMode == AnalysisSessionMode.Normal)
+                AnalysisApiFirLibraryBinaryTestConfigurator
             }
 
             TestModuleKind.LibraryBinaryDecompiled -> {
@@ -56,13 +62,13 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
                     true
                 }
 
+                TestModuleKind.LibraryBinary,
                 TestModuleKind.LibraryBinaryDecompiled,
                 TestModuleKind.LibrarySource,
                 TestModuleKind.CodeFragment -> {
                     data.analysisSessionMode == AnalysisSessionMode.Normal
                 }
 
-                TestModuleKind.LibraryBinary,
                 TestModuleKind.NotUnderContentRoot -> false
             }
         }
