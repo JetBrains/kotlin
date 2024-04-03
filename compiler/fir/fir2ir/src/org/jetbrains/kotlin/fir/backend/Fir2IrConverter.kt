@@ -642,7 +642,7 @@ class Fir2IrConverter(
             )
 
             val interpreter = IrInterpreter(IrInterpreterEnvironment(irModuleFragment.irBuiltins, configuration))
-            val mode = if (intrinsicConstEvaluation) EvaluationMode.OnlyIntrinsicConst else EvaluationMode.OnlyBuiltins
+            val mode = if (intrinsicConstEvaluation) EvaluationMode.OnlyIntrinsicConst() else EvaluationMode.OnlyBuiltins
 
             components.session.javaElementFinder?.propertyEvaluator = { it.evaluate(components, interpreter, mode) }
 

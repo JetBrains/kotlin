@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.checker
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -16,10 +17,9 @@ import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.isAccessToNotNullableObject
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isEnumName
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isKCallableNameCall
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.isStringClassType
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isToString
+import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
 
@@ -133,16 +133,14 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: IrInterpreterCheckerData): Boolean {
         return expression.arguments.all { arg ->
-            when (arg) {
-                is IrGetObjectValue -> {
-                    val toString = arg.symbol.owner.declarations
-                        .filterIsInstance<IrSimpleFunction>()
-                        .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
+            val toString = arg.type.classOrNull?.owner?.declarations
+                ?.filterIsInstance<IrSimpleFunction>()
+                ?.singleOrNull { it.isToString() }
 
-                    data.mode.canEvaluateFunction(toString) && visitBodyIfNeeded(toString, data)
-                }
-
-                else -> arg.accept(this, data)
+            when {
+                toString == null || arg.type.isUnsigned() -> arg.accept(this, data)
+                arg is IrGetObjectValue -> data.mode.canEvaluateFunction(toString) && visitBodyIfNeeded(toString, data)
+                else -> arg.accept(this, data) && data.mode.canEvaluateFunction(toString) && visitBodyIfNeeded(toString, data)
             }
         }
     }

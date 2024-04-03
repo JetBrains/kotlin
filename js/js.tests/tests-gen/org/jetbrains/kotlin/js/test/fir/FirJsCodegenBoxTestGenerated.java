@@ -24802,6 +24802,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("cornerCaseInFloat.kt")
+    public void testCornerCaseInFloat() {
+      runTest("compiler/testData/codegen/box/involvesIrInterpreter/cornerCaseInFloat.kt");
+    }
+
+    @Test
     @TestMetadata("doubleOperations.kt")
     public void testDoubleOperations() {
       runTest("compiler/testData/codegen/box/involvesIrInterpreter/doubleOperations.kt");
