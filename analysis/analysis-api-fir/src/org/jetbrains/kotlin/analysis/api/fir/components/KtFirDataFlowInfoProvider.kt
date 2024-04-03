@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtDataFlowInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
@@ -81,20 +82,11 @@ import kotlin.math.sign
 
 @OptIn(KtAnalysisNonPublicApi::class)
 internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnalysisSession) : KtDataFlowInfoProvider() {
+    private val firResolveSession: LLFirResolveSession
+        get() = analysisSession.firResolveSession
+
     override fun getExitPointSnapshot(statements: List<KtExpression>): KtDataFlowExitPointSnapshot {
-        val firResolveSession = analysisSession.firResolveSession
-
-        val parent = getCommonParent(statements)
-        val firParent = parent.parentsWithSelf
-            .filterIsInstance<KtElement>()
-            .firstNotNullOf { it.getOrBuildFir(firResolveSession) }
-
-        val unwrappedStatements = statements.map { it.unwrap() }
-
-        val statementSearcher = FirStatementSearcher(unwrappedStatements)
-        firParent.accept(statementSearcher)
-
-        val firStatements = unwrappedStatements.map { statementSearcher[it] ?: it.getOrBuildFirOfType<FirElement>(firResolveSession) }
+        val firStatements = computeStatements(statements)
 
         val collector = FirElementCollector()
         firStatements.forEach { it.accept(collector) }
@@ -136,7 +128,18 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         )
     }
 
-    private fun getCommonParent(statements: List<KtElement>): KtElement {
+    private fun computeStatements(statements: List<KtExpression>): List<FirElement> {
+        val firParent = computeCommonParent(statements)
+
+        val unwrappedStatements = statements.map { it.unwrap() }
+
+        val statementSearcher = FirStatementSearcher(unwrappedStatements)
+        firParent.accept(statementSearcher)
+
+        return unwrappedStatements.map { statementSearcher[it] ?: it.getOrBuildFirOfType<FirElement>(firResolveSession) }
+    }
+
+    private fun computeCommonParent(statements: List<KtElement>): FirElement {
         require(statements.isNotEmpty())
 
         val parent = statements[0].parent as KtElement
@@ -145,7 +148,9 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
             require(statements[i].parent == parent)
         }
 
-        return parent
+        return parent.parentsWithSelf
+            .filterIsInstance<KtElement>()
+            .firstNotNullOf { it.getOrBuildFir(firResolveSession) }
     }
 
     private fun computeDefaultExpression(
