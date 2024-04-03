@@ -148,7 +148,7 @@ dependencies {
     api(project(":kotlin-script-runtime"))
     api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    api(libs.kotlinx.coroutines.core)
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
@@ -167,7 +167,7 @@ dependencies {
         libraries(kotlinStdlib(classifier = "distJsKlib"))
     }
 
-    librariesStripVersion(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
     librariesStripVersion(commonDependency("org.jetbrains.intellij.deps:trove4j")) { isTransitive = false }
 
     distLibraryProjects.forEach {

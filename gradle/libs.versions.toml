@@ -9,6 +9,8 @@ gradle-toolchains-foojay-resolver = "0.4.0"
 guava = "33.1.0-jre"
 jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.5.0"
+# Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA
+kotlinx-coroutines = "1.5.0"
 shadow = "8.1.1" # Should be in sync with version in kotlin-native/
 spdx = "0.8.0-dev-14"
 proguard = "7.4.2"
@@ -38,6 +40,8 @@ gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-d
 gradle-enterprise-gradlePlugin = { module = "com.gradle:gradle-enterprise-gradle-plugin", version.ref = "gradle-enterprise" }
 gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }
 gradle-toolchainsFoojayResolver-gradlePlugin = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradle-toolchains-foojay-resolver" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
 shadow-gradlePlugin = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }

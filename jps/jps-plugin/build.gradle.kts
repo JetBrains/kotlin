@@ -70,7 +70,7 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:util-ex:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.google.code.gson:gson:2.8.9")
     testRuntimeOnly(intellijJDom())
-    testRuntimeOnly(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
+    testRuntimeOnly(libs.kotlinx.coroutines.core.jvm)
 
     testImplementation(projectTests(":compiler:incremental-compilation-impl"))
     testImplementation(jpsBuild())
