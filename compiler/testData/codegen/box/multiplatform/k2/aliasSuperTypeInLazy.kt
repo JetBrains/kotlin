@@ -1,6 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// KT-64776 - test infra problems
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM
 // MODULE: dep
 // FILE: dep.kt
 
@@ -18,12 +16,12 @@ open expect class BaseAlias() : Base1
 
 open class Child: BaseAlias()
 
-// MODULE: lib-jvm(dep)()(lib-common)
-// FILE: lib-jvm.kt
+// MODULE: lib(dep)()(lib-common)
+// FILE: lib.kt
 
 actual typealias BaseAlias = Base2
 
-// MODULE: main(lib-jvm, dep)
+// MODULE: main(lib, dep)
 // FILE: main.kt
 
 class InMain : Child()
