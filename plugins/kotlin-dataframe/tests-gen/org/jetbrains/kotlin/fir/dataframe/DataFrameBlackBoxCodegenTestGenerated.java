@@ -5,7 +5,6 @@ package org.jetbrains.kotlin.fir.dataframe;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -169,27 +168,5 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("transformReplaceFunctionCall.kt")
   public void testTransformReplaceFunctionCall() {
     runTest("testData/box/transformReplaceFunctionCall.kt");
-  }
-
-  @Nested
-  @TestMetadata("testData/box/schemaRender")
-  @TestDataPath("$PROJECT_ROOT")
-  public class SchemaRender {
-    @Test
-    public void testAllFilesPresentInSchemaRender() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/box/schemaRender"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("Schema1.kt")
-    public void testSchema1() {
-      runTest("testData/box/schemaRender/Schema1.kt");
-    }
-
-    @Test
-    @TestMetadata("Schema2.kt")
-    public void testSchema2() {
-      runTest("testData/box/schemaRender/Schema2.kt");
-    }
   }
 }
