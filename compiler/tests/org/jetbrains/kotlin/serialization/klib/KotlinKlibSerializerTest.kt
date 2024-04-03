@@ -133,4 +133,8 @@ class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
     fun testDelegationToInterfaceWithDeprecation() {
         doTestWithDependency("klib/delegationToInterfaceWithDeprecation_main.kt", "klib/delegationToInterfaceWithDeprecation_dep.kt")
     }
+
+    fun testComplexDeprecation() {
+        doTest("klib/complexDeprecation.kt")
+    }
 }
