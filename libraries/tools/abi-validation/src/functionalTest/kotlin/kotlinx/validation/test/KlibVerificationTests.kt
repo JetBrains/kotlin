@@ -669,4 +669,33 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         }
         runner.build()
     }
+
+    @Test
+    fun `apiDump for a project with generated sources only`() {
+        val runner = test {
+            baseProjectSetting()
+            additionalBuildConfig("/examples/gradle/configuration/generatedSources/generatedSources.gradle.kts")
+            // TODO: enable configuration cache back when we start skipping tasks correctly
+            runner(withConfigurationCache = false) {
+                arguments.add(":apiDump")
+            }
+        }
+        checkKlibDump(runner.build(), "/examples/classes/GeneratedSources.klib.dump")
+    }
+
+    @Test
+    fun `apiCheck for a project with generated sources only`() {
+        val runner = test {
+            baseProjectSetting()
+            additionalBuildConfig("/examples/gradle/configuration/generatedSources/generatedSources.gradle.kts")
+            abiFile(projectName = "testproject") {
+                resolve("/examples/classes/GeneratedSources.klib.dump")
+            }
+            // TODO: enable configuration cache back when we start skipping tasks correctly
+            runner(withConfigurationCache = false) {
+                arguments.add(":apiCheck")
+            }
+        }
+        assertApiCheckPassed(runner.build())
+    }
 }

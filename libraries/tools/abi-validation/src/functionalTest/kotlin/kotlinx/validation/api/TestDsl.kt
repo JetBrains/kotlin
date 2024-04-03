@@ -148,8 +148,8 @@ internal fun FileContainer.emptyApiFile(projectName: String) {
     apiFile(projectName) {}
 }
 
-internal fun BaseKotlinScope.runner(fn: Runner.() -> Unit) {
-    val runner = Runner()
+internal fun BaseKotlinScope.runner(withConfigurationCache: Boolean = true, fn: Runner.() -> Unit) {
+    val runner = Runner(withConfigurationCache)
     fn(runner)
 
     this.runner = runner
@@ -188,9 +188,9 @@ internal class AppendableScope(val filePath: String) {
     val files: MutableList<String> = mutableListOf()
 }
 
-internal class Runner {
+internal class Runner(withConfigurationCache: Boolean = true) {
     val arguments: MutableList<String> = mutableListOf<String>().apply {
-        if (!koverEnabled) {
+        if (!koverEnabled && withConfigurationCache) {
             // Configuration cache is incompatible with javaagents being enabled for Gradle
             // See https://github.com/gradle/gradle/issues/25979
             add("--configuration-cache")

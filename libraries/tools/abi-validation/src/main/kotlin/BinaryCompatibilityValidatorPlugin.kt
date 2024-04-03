@@ -398,9 +398,16 @@ private class KlibValidationPipelineBuilder(
         commonApiCheck.configure { it.dependsOn(klibCheck) }
 
         klibDump.configure { it.dependsOn(klibMergeInferred) }
+        // Extraction task depends on supportedTargets() provider which returns a set of targets supported
+        // by the host compiler and having some sources. A set of sources for a target may change until the actual
+        // klib compilation will take place, so we may observe incorrect value if check source sets earlier.
+        // Merge task already depends on compilations, so instead of adding each compilation task to the extraction's
+        // dependency set, we can depend on the merge task itself.
+        klibExtractAbiForSupportedTargets.configure {
+            it.dependsOn(klibMerge)
+        }
         klibCheck.configure {
             it.dependsOn(klibExtractAbiForSupportedTargets)
-            it.dependsOn(klibMerge)
         }
 
         project.configureTargets(klibApiDir, klibMerge, klibMergeInferred)
