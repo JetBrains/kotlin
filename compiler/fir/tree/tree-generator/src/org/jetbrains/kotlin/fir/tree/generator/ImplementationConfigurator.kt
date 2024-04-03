@@ -222,8 +222,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorLoop) {
             default("block", "FirEmptyExpressionBlock()")
-            default("condition", "FirErrorExpressionImpl(source, MutableOrEmptyList.empty(), ConeStubDiagnostic(diagnostic), null, null)")
-            additionalImports(emptyExpressionBlock, coneStubDiagnosticType)
+            default("condition", "FirErrorExpressionImpl(source, MutableOrEmptyList.empty(), ConeUnreportedDuplicateDiagnostic(diagnostic), null, null)")
+            additionalImports(emptyExpressionBlock, coneUnreportedDuplicateDiagnosticType)
         }
 
         impl(expression, "FirExpressionStub") {
@@ -502,13 +502,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(errorExpression) {
-            default("coneTypeOrNull", "expression?.coneTypeOrNull ?: ConeErrorType(ConeStubDiagnostic(diagnostic))", withGetter = true)
-            additionalImports(coneErrorTypeType, coneStubDiagnosticType)
+            default("coneTypeOrNull", "expression?.coneTypeOrNull ?: ConeErrorType(ConeUnreportedDuplicateDiagnostic(diagnostic))", withGetter = true)
+            additionalImports(coneErrorTypeType, coneUnreportedDuplicateDiagnosticType)
         }
 
         impl(qualifiedErrorAccessExpression) {
-            default("coneTypeOrNull", "ConeErrorType(ConeStubDiagnostic(diagnostic))")
-            additionalImports(coneErrorTypeType, coneStubDiagnosticType)
+            default("coneTypeOrNull", "ConeErrorType(ConeUnreportedDuplicateDiagnostic(diagnostic))")
+            additionalImports(coneErrorTypeType, coneUnreportedDuplicateDiagnosticType)
         }
 
         impl(errorFunction) {

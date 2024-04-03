@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -309,7 +309,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                         unresolvedTypes++
 
                         if (typeRef.psi != null) {
-                            if (typeRef is FirErrorTypeRef && typeRef.diagnostic is ConeStubDiagnostic) {
+                            if (typeRef is FirErrorTypeRef && typeRef.diagnostic is ConeUnreportedDuplicateDiagnostic) {
                                 return
                             }
                             val psi = typeRef.psi!!
@@ -327,7 +327,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                         val type = resolvedTypeRef.type
                         if (type is ConeErrorType || type is ConeErrorType) {
                             errorTypes++
-                            if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is ConeStubDiagnostic) {
+                            if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is ConeUnreportedDuplicateDiagnostic) {
                                 return
                             }
                             val psi = resolvedTypeRef.psi ?: return

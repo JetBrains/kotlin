@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -30,7 +30,7 @@ internal class FirQualifiedErrorAccessExpressionImpl(
     override var receiver: FirExpression,
 ) : FirQualifiedErrorAccessExpression() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override var coneTypeOrNull: ConeKotlinType? = ConeErrorType(ConeStubDiagnostic(diagnostic))
+    override var coneTypeOrNull: ConeKotlinType? = ConeErrorType(ConeUnreportedDuplicateDiagnostic(diagnostic))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
@@ -69,7 +69,7 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
         }
         is ConeDiagnosticWithCandidates -> candidateSymbols
         is ConeDiagnosticWithSymbol<*> -> listOf(symbol)
-        is ConeStubDiagnostic -> original.getCandidateSymbols()
+        is ConeUnreportedDuplicateDiagnostic -> original.getCandidateSymbols()
         else -> emptyList()
     }
 

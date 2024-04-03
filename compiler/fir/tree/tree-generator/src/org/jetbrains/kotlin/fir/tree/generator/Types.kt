@@ -90,7 +90,7 @@ val pureAbstractElementType = generatedType("FirPureAbstractElement")
 val coneContractElementType = type("fir.contracts.description", "ConeContractDescriptionElement")
 val coneEffectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
 val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic", kind = TypeKind.Interface)
-val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")
+val coneUnreportedDuplicateDiagnosticType = generatedType("diagnostics", "ConeUnreportedDuplicateDiagnostic")
 
 val firImplementationDetailType = generatedType("FirImplementationDetail")
 val declarationOriginType = generatedType("declarations", "FirDeclarationOrigin")

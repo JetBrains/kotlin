@@ -385,7 +385,8 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
         is FirErrorNamedReference ->
             buildErrorTypeRef {
                 source = access.source?.fakeElement(KtFakeSourceElementKind.ErrorTypeRef)
-                diagnostic = ConeStubDiagnostic(calleeReference.diagnostic)
+                // The diagnostic is reported on the callee reference, no need to report it again on the error type ref.
+                diagnostic = ConeUnreportedDuplicateDiagnostic(calleeReference.diagnostic)
             }
         is FirNamedReferenceWithCandidate -> {
             typeFromSymbol(calleeReference.candidateSymbol)
