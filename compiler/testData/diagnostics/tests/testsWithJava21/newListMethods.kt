@@ -2,9 +2,6 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // DIAGNOSTICS: -SUPER_CANT_BE_EXTENSION_RECEIVER
 // ^Otherwise only K1 errors are written to .diag file.
-// IGNORE_REVERSED_RESOLVE
-// IGNORE_NON_REVERSED_RESOLVE
-// ^Mute is required because in AA, parameter names differ in RENDER_DIAGNOSTICS_FULL_TEXT output
 
 import java.util.function.IntFunction
 
