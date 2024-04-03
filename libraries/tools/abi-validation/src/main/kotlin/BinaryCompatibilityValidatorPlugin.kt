@@ -219,9 +219,7 @@ private fun Project.configureKotlinCompilation(
 
     val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build")) {
         // Do not enable task for empty umbrella modules
-        isEnabled = apiCheckEnabled(projectName, extension)
-        val hasSourcesPredicate = compilation.hasAnySourcesPredicate()
-        onlyIf { hasSourcesPredicate.get() }
+        isEnabled = apiCheckEnabled(projectName, extension) && compilation.hasAnySources()
         // 'group' is not specified deliberately, so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"

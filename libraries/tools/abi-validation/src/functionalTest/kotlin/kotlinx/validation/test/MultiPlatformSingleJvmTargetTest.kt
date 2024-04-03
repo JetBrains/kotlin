@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 JetBrains s.r.o.
+ * Copyright 2016-2024 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
 
@@ -7,10 +7,11 @@ package kotlinx.validation.test
 
 import kotlinx.validation.api.*
 import org.assertj.core.api.Assertions.assertThat
+import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Test
 import java.io.File
 
-internal class MultiPlatformSingleJvmKlibTargetTest : BaseKotlinGradleTest() {
+internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
     private fun BaseKotlinScope.createProjectHierarchyWithPluginOnRoot() {
         settingsGradleKts {
             resolve("/examples/gradle/settings/settings-name-testproject.gradle.kts")
@@ -113,6 +114,45 @@ internal class MultiPlatformSingleJvmKlibTargetTest : BaseKotlinGradleTest() {
 
             val mainExpectedApi = commonExpectedApi + "\n" + readFileList("/examples/classes/Subsub2Class.dump")
             assertThat(jvmApiDump.readText()).isEqualToIgnoringNewLines(mainExpectedApi)
+        }
+    }
+
+    @Test
+    fun testApiDumpPassesForEmptyProject() {
+        val runner = test {
+            buildGradleKts {
+                resolve("/examples/gradle/base/multiplatformWithSingleJvmTarget.gradle.kts")
+            }
+
+            runner {
+                arguments.add(":apiDump")
+            }
+        }
+
+        runner.build().apply {
+            assertTaskSkipped(":jvmApiDump")
+            assertTaskUpToDate(":apiDump")
+        }
+    }
+
+    @Test
+    fun testApiCheckPassesForEmptyProject() {
+        val runner = test {
+            buildGradleKts {
+                resolve("/examples/gradle/base/multiplatformWithSingleJvmTarget.gradle.kts")
+            }
+
+            emptyApiFile(projectName = rootProjectDir.name)
+
+            runner {
+                arguments.add(":apiCheck")
+            }
+        }
+
+        runner.build().apply {
+            assertTaskSkipped(":jvmApiCheck")
+            assertTaskUpToDate(":apiCheck")
+
         }
     }
 
