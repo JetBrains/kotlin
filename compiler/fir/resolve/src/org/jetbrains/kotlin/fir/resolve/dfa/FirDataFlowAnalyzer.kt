@@ -47,7 +47,7 @@ class DataFlowAnalyzerContext(private val session: FirSession) {
     val graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
     internal val variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
 
-    var variableStorage: VariableStorageImpl = VariableStorageImpl(session)
+    var variableStorage: VariableStorage = VariableStorage(session)
         private set
 
     private var assignmentCounter = 0
@@ -59,7 +59,7 @@ class DataFlowAnalyzerContext(private val session: FirSession) {
     fun reset() {
         graphBuilder.reset()
         variableAssignmentAnalyzer.reset()
-        variableStorage = VariableStorageImpl(session)
+        variableStorage = VariableStorage(session)
     }
 }
 
@@ -88,7 +88,7 @@ abstract class FirDataFlowAnalyzer(
 
                 override val logicSystem: LogicSystem =
                     object : LogicSystem(components.session.typeContext) {
-                        override val variableStorage: VariableStorageImpl
+                        override val variableStorage: VariableStorage
                             get() = dataFlowAnalyzerContext.variableStorage
 
                         override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {

@@ -25,7 +25,7 @@ class FirControlFlowGraphReferenceImpl(
     }
 }
 
-class DataFlowInfo(val variableStorage: VariableStorageImpl)
+class DataFlowInfo(val variableStorage: VariableStorage)
 
 val FirControlFlowGraphReference.controlFlowGraph: ControlFlowGraph?
     get() = (this as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
-class VariableStorageImpl(private val session: FirSession) {
+class VariableStorage(private val session: FirSession) {
     // These are basically hash sets, since they map each key to itself. The only point of having them as maps
     // is to deduplicate equal instances with lookups. The impact of that is questionable, but whatever.
     private val realVariables: MutableMap<RealVariable, RealVariable> = HashMap()
