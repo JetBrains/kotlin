@@ -1,0 +1,7 @@
+package test
+
+public final class Other : test.Some {
+    public constructor Other(/*0*/ s: test.Some)
+    public final val s: test.Some
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "somemessage", replaceWith = kotlin.ReplaceWith(expression = "somereplacement", imports = {})) public open /*delegation*/ fun foo(): kotlin.Unit
+}

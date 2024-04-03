@@ -435,6 +435,18 @@ private class FirConstCheckVisitor(
         return ConstantArgumentKind.VALID_CONST
     }
 
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): ConstantArgumentKind {
+        return visitAnnotation(annotationCall, data)
+    }
+
+    override fun visitAnnotation(annotation: FirAnnotation, data: Nothing?): ConstantArgumentKind {
+        for (argument in annotation.argumentMapping.mapping.values) {
+            val argumentKind = argument.accept(this, data)
+            if (argumentKind != ConstantArgumentKind.VALID_CONST) return argumentKind
+        }
+        return ConstantArgumentKind.VALID_CONST
+    }
+
     // --- Utils ---
     private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
         return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
