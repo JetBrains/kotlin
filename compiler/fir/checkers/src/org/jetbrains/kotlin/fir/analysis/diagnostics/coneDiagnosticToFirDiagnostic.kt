@@ -156,7 +156,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(callOrAssignmentSource ?: source, reason)
 
     is ConeSimpleDiagnostic -> when {
-        (source?.kind as? KtFakeSourceElementKind)?.canBeIgnored == true -> null
+        (source?.kind as? KtFakeSourceElementKind)?.shouldIgnoreSimpleDiagnostic == true -> null
         else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source)
     }
 
@@ -196,7 +196,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
-private val KtFakeSourceElementKind.canBeIgnored: Boolean
+/**
+ * `DelegatingConstructorCall` because in this case there is either `UNRESOLVED_REFERENCE` or `SYNTAX` already.
+ * `ErrorTypeRef` because in this case there is `SYNTAX` already.
+ * */
+private val KtFakeSourceElementKind.shouldIgnoreSimpleDiagnostic: Boolean
     get() = this == KtFakeSourceElementKind.DelegatingConstructorCall
             || this == KtFakeSourceElementKind.ErrorTypeRef
 
