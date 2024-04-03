@@ -25,15 +25,3 @@ class IrBlockImpl internal constructor(
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 }
-
-fun IrBlockImpl.addIfNotNull(statement: IrStatement?) {
-    if (statement != null) statements.add(statement)
-}
-
-fun IrBlockImpl.inlineStatement(statement: IrStatement) {
-    if (statement is IrBlock) {
-        statements.addAll(statement.statements)
-    } else {
-        statements.add(statement)
-    }
-}
