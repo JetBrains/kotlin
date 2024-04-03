@@ -19,10 +19,13 @@ import javax.inject.Inject
  *
  * Default values are set in the root `gradle.properties`, and can be overridden via
  * [project properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:project_properties)
+ *
+ * @param projectVersion Provides the value of [org.gradle.api.Project.getVersion], lazily evaluated.
  */
 abstract class DokkaBuildProperties @Inject constructor(
     private val providers: ProviderFactory,
     private val layout: ProjectLayout,
+    val projectVersion: Provider<String>,
 ) {
 
     private val buildingOnTeamCity: Provider<Boolean> =
