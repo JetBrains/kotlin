@@ -61,7 +61,7 @@ public interface KtUsualClassTypeRenderer {
                     AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(analysisSession, type, typeRenderer, printer)
                     if (type.classSymbol is KtTypeAliasSymbol) {
                         append(" /* = ")
-                        typeRenderer.renderType(analysisSession, type.fullyExpandedType, printer)
+                        typeRenderer.renderTypeIgnoringAbbreviation(type.fullyExpandedType, printer)
                         append(" */")
                     }
                 }

@@ -25,4 +25,4 @@ KtUsualClassType:
   ]
 
 Rendered type:
-kotlin.String
+library1.StringAlias

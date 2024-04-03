@@ -26,4 +26,4 @@ KtClassErrorType:
   ]
 
 Rendered type:
-base.Foo
+expansion.FooAlias

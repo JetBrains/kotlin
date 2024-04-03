@@ -587,4 +587,4 @@ KtUsualClassType:
   ]
 
 Rendered type:
-kotlin.collections.List<kotlin.String>
+expansion.AsymmetricAlias2<expansion.IntAlias, expansion.AsymmetricAlias<expansion.BooleanAlias, expansion.IntAlias>>

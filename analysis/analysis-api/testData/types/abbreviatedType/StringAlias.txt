@@ -25,4 +25,4 @@ KtUsualClassType:
   ]
 
 Rendered type:
-kotlin.String
+expansion.StringAlias

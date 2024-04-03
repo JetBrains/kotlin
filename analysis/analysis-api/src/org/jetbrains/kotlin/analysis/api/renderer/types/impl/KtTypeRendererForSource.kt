@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
 
 public object KtTypeRendererForSource {
     public val WITH_QUALIFIED_NAMES: KtTypeRenderer = KtTypeRenderer {
+        expandedTypeRenderer = KtExpandedTypeRenderer.AS_ABBREVIATED_TYPE
         capturedTypeRenderer = KtCapturedTypeRenderer.AS_PROJECTION
         definitelyNotNullTypeRenderer = KtDefinitelyNotNullTypeRenderer.AS_TYPE_INTERSECTION
         dynamicTypeRenderer = KtDynamicTypeRenderer.AS_DYNAMIC_WORD

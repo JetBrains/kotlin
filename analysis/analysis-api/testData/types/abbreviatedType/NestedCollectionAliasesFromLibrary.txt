@@ -545,4 +545,4 @@ KtUsualClassType:
   ]
 
 Rendered type:
-kotlin.collections.List<kotlin.collections.Set<kotlin.String>>
+library1.ListAlias<library1.SetAlias<library1.StringAlias>>

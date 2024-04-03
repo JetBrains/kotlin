@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public class KtTypeRenderer private constructor(
+    public val expandedTypeRenderer: KtExpandedTypeRenderer,
     public val capturedTypeRenderer: KtCapturedTypeRenderer,
     public val definitelyNotNullTypeRenderer: KtDefinitelyNotNullTypeRenderer,
     public val dynamicTypeRenderer: KtDynamicTypeRenderer,
@@ -36,6 +37,19 @@ public class KtTypeRenderer private constructor(
     public val keywordsRenderer: KtKeywordsRenderer,
 ) {
     public fun renderType(analysisSession: KtAnalysisSession, type: KtType, printer: PrettyPrinter) {
+        val abbreviatedType = type.abbreviatedType
+        if (abbreviatedType != null) {
+            expandedTypeRenderer.renderType(type, abbreviatedType, printer)
+        } else {
+            renderTypeIgnoringAbbreviation(type, printer)
+        }
+    }
+
+    /**
+     * Renders [type] directly without considering its [KtType.abbreviatedType] and bypassing [expandedTypeRenderer].
+     */
+    context(KtAnalysisSession)
+    internal fun renderTypeIgnoringAbbreviation(type: KtType, printer: PrettyPrinter) {
         when (type) {
             is KtCapturedType -> capturedTypeRenderer.renderType(analysisSession, type, this, printer)
             is KtFunctionalType -> functionalTypeRenderer.renderType(analysisSession, type, this, printer)
@@ -54,6 +68,7 @@ public class KtTypeRenderer private constructor(
     public fun with(action: Builder.() -> Unit): KtTypeRenderer {
         val renderer = this
         return KtTypeRenderer {
+            this.expandedTypeRenderer = renderer.expandedTypeRenderer
             this.capturedTypeRenderer = renderer.capturedTypeRenderer
             this.definitelyNotNullTypeRenderer = renderer.definitelyNotNullTypeRenderer
             this.dynamicTypeRenderer = renderer.dynamicTypeRenderer
@@ -82,6 +97,7 @@ public class KtTypeRenderer private constructor(
     }
 
     public class Builder {
+        public lateinit var expandedTypeRenderer: KtExpandedTypeRenderer
         public lateinit var capturedTypeRenderer: KtCapturedTypeRenderer
         public lateinit var definitelyNotNullTypeRenderer: KtDefinitelyNotNullTypeRenderer
         public lateinit var dynamicTypeRenderer: KtDynamicTypeRenderer
@@ -102,6 +118,7 @@ public class KtTypeRenderer private constructor(
         public lateinit var keywordsRenderer: KtKeywordsRenderer
 
         public fun build(): KtTypeRenderer = KtTypeRenderer(
+            expandedTypeRenderer,
             capturedTypeRenderer,
             definitelyNotNullTypeRenderer,
             dynamicTypeRenderer,

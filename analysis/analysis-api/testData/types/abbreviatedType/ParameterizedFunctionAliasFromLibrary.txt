@@ -174,4 +174,4 @@ KtFunctionalType:
     ]
 
 Rendered type:
-(kotlin.String) -> kotlin.Int
+(library1.StringAlias) -> library1.IntAlias
