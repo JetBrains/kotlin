@@ -761,15 +761,20 @@ fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
 
     val rValue = rValue as FirFunctionCall
     val kind = rValue.source?.kind
-    if (kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement || kind == KtFakeSourceElementKind.DesugaredCompoundAssignment) {
-        if (callableName == OperatorNameConventions.PLUS) {
-            return IrStatementOrigin.PLUSEQ
-        } else if (callableName == OperatorNameConventions.MINUS) {
-            return IrStatementOrigin.MINUSEQ
-        }
-    }
 
-    return IrStatementOrigin.EQ
+    return when (kind) {
+        KtFakeSourceElementKind.DesugaredPrefixInc, KtFakeSourceElementKind.DesugaredPostfixInc -> IrStatementOrigin.PLUSEQ
+        KtFakeSourceElementKind.DesugaredPrefixDec, KtFakeSourceElementKind.DesugaredPostfixDec -> IrStatementOrigin.MINUSEQ
+        KtFakeSourceElementKind.DesugaredCompoundAssignment -> when (callableName) {
+            OperatorNameConventions.PLUS -> IrStatementOrigin.PLUSEQ
+            OperatorNameConventions.MINUS -> IrStatementOrigin.MINUSEQ
+            OperatorNameConventions.TIMES -> IrStatementOrigin.MULTEQ
+            OperatorNameConventions.DIV -> IrStatementOrigin.DIVEQ
+            OperatorNameConventions.REM, OperatorNameConventions.MOD -> IrStatementOrigin.PERCEQ
+            else -> IrStatementOrigin.EQ
+        }
+        else -> IrStatementOrigin.EQ
+    }
 }
 
 fun FirVariableAssignment.getIrPrefixPostfixOriginIfAny(): IrStatementOrigin? {

@@ -37,30 +37,22 @@ fun test1(a: IntArray) {
     tmp_8.set(index = tmp_9, value = tmp_8.get(index = tmp_9).rem(other = 5))
   }
   a.set(index = 5, value = 6)
-  { // BLOCK
-    val tmp_10: IntArray = a
-    val tmp_11: Int = 6
-    val tmp_12: Int = tmp_10.get(index = tmp_11)
-    tmp_10.set(index = tmp_11, value = tmp_12.inc())
-    tmp_12
-  } /*~> Unit */
-  { // BLOCK
-    val tmp_13: IntArray = a
-    val tmp_14: Int = 7
-    tmp_13.set(index = tmp_14, value = tmp_13.get(index = tmp_14).inc())
-    tmp_13.get(index = tmp_14)
-  } /*~> Unit */
-  { // BLOCK
-    val tmp_15: IntArray = a
-    val tmp_16: Int = 8
-    val tmp_17: Int = tmp_15.get(index = tmp_16)
-    tmp_15.set(index = tmp_16, value = tmp_17.dec())
-    tmp_17
-  } /*~> Unit */
-  { // BLOCK
-    val tmp_18: IntArray = a
-    val tmp_19: Int = 9
-    tmp_18.set(index = tmp_19, value = tmp_18.get(index = tmp_19).dec())
-    tmp_18.get(index = tmp_19)
-  } /*~> Unit */
+  val tmp_10: IntArray = a
+  val tmp_11: Int = 6
+  val tmp_12: Int = tmp_10.get(index = tmp_11)
+  tmp_10.set(index = tmp_11, value = tmp_12.inc())
+  tmp_12 /*~> Unit */
+  val tmp_13: IntArray = a
+  val tmp_14: Int = 7
+  tmp_13.set(index = tmp_14, value = tmp_13.get(index = tmp_14).inc())
+  tmp_13.get(index = tmp_14) /*~> Unit */
+  val tmp_15: IntArray = a
+  val tmp_16: Int = 8
+  val tmp_17: Int = tmp_15.get(index = tmp_16)
+  tmp_15.set(index = tmp_16, value = tmp_17.dec())
+  tmp_17 /*~> Unit */
+  val tmp_18: IntArray = a
+  val tmp_19: Int = 9
+  tmp_18.set(index = tmp_19, value = tmp_18.get(index = tmp_19).dec())
+  tmp_18.get(index = tmp_19) /*~> Unit */
 }

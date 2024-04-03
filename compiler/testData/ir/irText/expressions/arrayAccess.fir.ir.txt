@@ -99,67 +99,63 @@ FILE fqName:<root> fileName:/arrayAccess.kt
         $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
         index: CONST Int type=kotlin.Int value=5
         value: CONST Int type=kotlin.Int value=6
+      VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.IntArray [val]
+        GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.Int [val]
+        CONST Int type=kotlin.Int value=6
+      VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Int [val]
+        CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_INCR
+          $this: GET_VAR 'val tmp_10: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+          index: GET_VAR 'val tmp_11: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_INCR
+        $this: GET_VAR 'val tmp_10: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+        index: GET_VAR 'val tmp_11: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+          $this: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.IntArray [val]
-            GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=6
-          VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Int [val]
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_10: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-              index: GET_VAR 'val tmp_11: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_INCR
-            $this: GET_VAR 'val tmp_10: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_11: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_12: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=kotlin.Int origin=PREFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:kotlin.IntArray [val]
-            GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=7
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_INCR
-            $this: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
-                $this: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-                index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
+        GET_VAR 'val tmp_12: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:kotlin.IntArray [val]
+        GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:kotlin.Int [val]
+        CONST Int type=kotlin.Int value=7
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_INCR
+        $this: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+        index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+          $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
             $this: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
             index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=kotlin.Int origin=POSTFIX_DECR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:kotlin.IntArray [val]
-            GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=8
-          VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlin.Int [val]
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_15: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-              index: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_DECR
-            $this: GET_VAR 'val tmp_15: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-              $this: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+        CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_INCR
+          $this: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+          index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:kotlin.IntArray [val]
+        GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:kotlin.Int [val]
+        CONST Int type=kotlin.Int value=8
+      VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlin.Int [val]
+        CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=POSTFIX_DECR
+          $this: GET_VAR 'val tmp_15: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+          index: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=POSTFIX_DECR
+        $this: GET_VAR 'val tmp_15: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+        index: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+        value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+          $this: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=kotlin.Int origin=PREFIX_DECR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_18 type:kotlin.IntArray [val]
-            GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_19 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=9
-          CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_DECR
+        GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_18 type:kotlin.IntArray [val]
+        GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_19 type:kotlin.Int [val]
+        CONST Int type=kotlin.Int value=9
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PREFIX_DECR
+        $this: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+        index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+        value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+          $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
             $this: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
             index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-            value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-              $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
-                $this: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-                index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
-            $this: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
-            index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PREFIX_DECR
+          $this: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
+          index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null

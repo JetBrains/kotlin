@@ -48,15 +48,15 @@ FILE fqName:<root> fileName:/augmentedAssignment1.kt
         CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUSEQ
           $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=MINUSEQ
           other: CONST Int type=kotlin.Int value=2
-      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=EQ
+      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=MULTEQ
         CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MULTEQ
           $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=MULTEQ
           other: CONST Int type=kotlin.Int value=3
-      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=EQ
+      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=DIVEQ
         CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIVEQ
           $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=DIVEQ
           other: CONST Int type=kotlin.Int value=4
-      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=EQ
+      SET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Unit origin=PERCEQ
         CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PERCEQ
           $this: GET_VAR 'var x: kotlin.Int declared in <root>.testVariable' type=kotlin.Int origin=PERCEQ
           other: CONST Int type=kotlin.Int value=5
