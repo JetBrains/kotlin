@@ -31,6 +31,13 @@ internal fun BuildResult.assertTaskSkipped(task: String) {
     assertTaskOutcome(TaskOutcome.SKIPPED, task)
 }
 
+/**
+ * Helper `fun` for asserting a [TaskOutcome] to be equal to [TaskOutcome.UP_TO_DATE]
+ */
+internal fun BuildResult.assertTaskUpToDate(task: String) {
+    assertTaskOutcome(TaskOutcome.UP_TO_DATE, task)
+}
+
 private fun BuildResult.assertTaskOutcome(taskOutcome: TaskOutcome, taskName: String) {
     assertEquals(taskOutcome, task(taskName)?.outcome)
 }
