@@ -1083,7 +1083,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 "\n" + """
                 publishing {
                     repositories {
-                        maven { url "file://${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/../sample-lib/repo" }
+                        maven { url "${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/../sample-lib/repo" }
                     }
                 }
                 """.trimIndent()
@@ -1108,7 +1108,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 version = "1.0"
                 publishing {
                     repositories {
-                        maven { url "file://${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/repo" }
+                        maven { url "${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/repo" }
                     }
                 }
                 """.trimIndent()
@@ -1118,7 +1118,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             gradleBuildScript("sample-app").appendText(
                 "\n" + """
                 repositories {
-                    maven { url "file://${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/repo" }
+                    maven { url "${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/repo" }
                 }
                 dependencies {
                     commonMainApi 'com.external.dependency:external:1.2.3'
