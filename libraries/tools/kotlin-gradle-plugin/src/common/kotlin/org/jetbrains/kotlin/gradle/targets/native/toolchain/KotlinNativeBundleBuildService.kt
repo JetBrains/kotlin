@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.BufferedInputStream
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import java.util.zip.GZIPInputStream
@@ -220,6 +221,8 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
 
         private fun unzipTarGz(archive: File, targetDir: File) {
             GZIPInputStream(BufferedInputStream(archive.inputStream())).use { gzipInputStream ->
+                val hardLinks = HashMap<Path, Path>()
+
                 TarArchiveInputStream(gzipInputStream).use { tarInputStream ->
                     generateSequence {
                         tarInputStream.nextEntry
@@ -230,6 +233,8 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
                         } else {
                             if (entry.isSymbolicLink) {
                                 Files.createSymbolicLink(outputFile.toPath(), Paths.get(entry.linkName))
+                            } else if (entry.isLink) {
+                                hardLinks.put(outputFile.toPath(), targetDir.resolve(entry.linkName).toPath())
                             } else {
                                 outputFile.outputStream().use {
                                     tarInputStream.copyTo(it)
@@ -238,6 +243,9 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
                             }
                         }
                     }
+                }
+                hardLinks.forEach {
+                    Files.createLink(it.key, it.value)
                 }
             }
         }
