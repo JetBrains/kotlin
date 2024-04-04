@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -126,10 +127,12 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunction
@@ -370,7 +373,7 @@ abstract class AbstractComposeLowering(
 
         is Stability.Parameter -> resolve(parameter)
         is Stability.Runtime -> {
-            val stableField = makeStabilityField().also { it.parent = declaration }
+            val stableField = declaration.makeStabilityField()
             IrGetFieldImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
@@ -880,24 +883,69 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    fun makeStabilityField(): IrField {
+    private fun IrClass.uniqueStabilityFieldName(): Name = Name.identifier(
+        kotlinFqName.asString().replace(".", "_") + KtxNameConventions.STABILITY_FLAG
+    )
+
+    private fun IrClass.uniqueStabilityPropertyName(): Name = Name.identifier(
+        kotlinFqName.asString().replace(".", "_") + KtxNameConventions.STABILITY_PROP_FLAG
+    )
+
+    fun IrClass.makeStabilityField(): IrField {
+        return if (context.platform.isJvm()) {
+            this.makeStabilityFieldJvm()
+        } else {
+            this.makeStabilityFieldNonJvm()
+        }
+    }
+
+    private fun IrClass.makeStabilityFieldJvm(): IrField {
         return context.irFactory.buildField {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = KtxNameConventions.STABILITY_FLAG
-            isStatic = context.platform.isJvm()
+            isStatic = true
             isFinal = true
             type = context.irBuiltIns.intType
             visibility = DescriptorVisibilities.PUBLIC
+        }.also { stabilityField ->
+            stabilityField.parent = this@makeStabilityFieldJvm
         }
     }
 
-    protected fun makeStabilityProp(): IrProperty {
+    private fun IrClass.makeStabilityFieldNonJvm(): IrField {
+        val stabilityFieldName = this.uniqueStabilityFieldName()
+        val fieldParent = this.getPackageFragment()
+
+        return context.irFactory.buildField {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = stabilityFieldName
+            isStatic = true
+            isFinal = true
+            type = context.irBuiltIns.intType
+            visibility = DescriptorVisibilities.PUBLIC
+        }.also { stabilityField ->
+            stabilityField.parent = fieldParent
+            makeStabilityProp(stabilityField, fieldParent)
+        }
+    }
+
+    private fun IrClass.makeStabilityProp(
+        stabilityField: IrField,
+        fieldParent: IrDeclarationContainer
+    ): IrProperty {
         return context.irFactory.buildProperty {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
-            name = KtxNameConventions.STABILITY_PROP_FLAG
-            visibility = DescriptorVisibilities.PRIVATE
+            name = this@makeStabilityProp.uniqueStabilityPropertyName()
+            visibility = DescriptorVisibilities.PUBLIC
+            isConst = true
+        }.also { property ->
+            property.parent = fieldParent
+            stabilityField.correspondingPropertySymbol = property.symbol
+            property.backingField = stabilityField
+            fieldParent.addChild(property)
         }
     }
 
