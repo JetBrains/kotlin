@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
+import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
@@ -37,7 +38,6 @@ import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransfo
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.RecordDecoySignaturesTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.SubstituteDecoyCallsTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCLowering
-import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.HideFromObjCDeclarationsSet
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
@@ -67,7 +67,7 @@ class ComposeIrGenerationExtension(
     private val strongSkippingEnabled: Boolean = false,
     private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
     private val moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null,
-    private val hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet? = null,
+    private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
         private set
@@ -104,12 +104,13 @@ class ComposeIrGenerationExtension(
             }
         }
 
-        if (pluginContext.platform.isNative() && hideFromObjCDeclarationsSet != null) {
+        if (pluginContext.platform.isNative() &&
+            descriptorSerializerContext?.hideFromObjCDeclarationsSet != null) {
             AddHiddenFromObjCLowering(
                 pluginContext,
                 symbolRemapper,
                 metrics,
-                hideFromObjCDeclarationsSet,
+                descriptorSerializerContext.hideFromObjCDeclarationsSet,
                 stabilityInferencer
             ).lower(moduleFragment)
         }
@@ -119,7 +120,11 @@ class ComposeIrGenerationExtension(
             pluginContext,
             symbolRemapper,
             metrics,
-            stabilityInferencer
+            stabilityInferencer,
+            classStabilityInferredCollection = descriptorSerializerContext
+                ?.classStabilityInferredCollection?.takeIf {
+                    !pluginContext.platform.isJvm()
+                }
         ).lower(moduleFragment)
 
         LiveLiteralTransformer(

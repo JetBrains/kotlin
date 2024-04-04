@@ -16,9 +16,11 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ComposeClassIds.StabilityInferred
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags.HAS_ANNOTATIONS
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -36,8 +38,30 @@ import org.jetbrains.kotlin.serialization.SerializerExtension
  * another module, so we have to use this plugin to flip the flag for all classes that we
  * synthesize the annotation on, even if the source of the class didn't have any annotations.
  */
-class ClassStabilityFieldSerializationPlugin : DescriptorSerializerPlugin {
+class ClassStabilityFieldSerializationPlugin(
+    val classStabilityInferredCollection: ClassStabilityInferredCollection? = null
+) : DescriptorSerializerPlugin {
     private val hasAnnotationFlag = HAS_ANNOTATIONS.toFlags(true)
+
+    private fun createAnnotationProto(
+        extension: SerializerExtension,
+        value: Int
+    ): ProtoBuf.Annotation {
+        return ProtoBuf.Annotation.newBuilder().apply {
+            id = extension.stringTable.getQualifiedClassNameIndex(StabilityInferred)
+            // Same as in StabilityInferred definition
+            val ix = extension.stringTable.getStringIndex("parameters")
+            addArgument(ProtoBuf.Annotation.Argument.newBuilder().apply {
+                setNameId(ix)
+                setValue(
+                    ProtoBuf.Annotation.Argument.Value.newBuilder()
+                        .setIntValue(value.toLong())
+                        .setType(ProtoBuf.Annotation.Argument.Value.Type.INT)
+                )
+            })
+        }.build()
+    }
+
     override fun afterClass(
         descriptor: ClassDescriptor,
         proto: ProtoBuf.Class.Builder,
@@ -59,6 +83,14 @@ class ClassStabilityFieldSerializationPlugin : DescriptorSerializerPlugin {
 
         if (proto.flags and hasAnnotationFlag == 0) {
             proto.flags = proto.flags or hasAnnotationFlag
+        }
+
+        val parametersValue = classStabilityInferredCollection?.getParametersValue(descriptor)
+        if (parametersValue != null) {
+            proto.addExtension(
+                KlibMetadataSerializerProtocol.classAnnotation,
+                createAnnotationProto(extension, parametersValue)
+            )
         }
     }
 }
