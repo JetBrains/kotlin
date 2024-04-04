@@ -425,6 +425,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         expression: IrExpression,
     ): IrExpressionBody =
         IrExpressionBodyImpl(
+            constructorIndicator = null,
             startOffset = startOffset,
             endOffset = endOffset,
             expression = expression
@@ -435,6 +436,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         endOffset: Int,
     ): IrBlockBody =
         IrBlockBodyImpl(
+            constructorIndicator = null,
             startOffset = startOffset,
             endOffset = endOffset
         )

@@ -31,7 +31,12 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
     protected abstract fun makeFieldPrinter(printer: SmartPrinter): AbstractFieldPrinter<ImplementationField>
 
     context(ImportCollector)
-    protected open fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {}
+    protected open fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {
+    }
+
+    context(ImportCollector)
+    protected open fun SmartPrinter.printAdditionalConstructorParameters(implementation: Implementation) {
+    }
 
     context(ImportCollector)
     fun printImplementation(implementation: Implementation) {
@@ -66,11 +71,23 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
             val fieldPrinter = makeFieldPrinter(this)
 
             if (!isInterface && !isAbstract && implementation.fieldsInConstructor.isNotEmpty()) {
-                if (implementation.isPublic && implementation.putImplementationOptInInConstructor) {
-                    print(" @", implementationOptInAnnotation.render(), " constructor")
+                var printConstructor = false
+                if (implementation.isPublic && implementation.isConstructorPublic && implementation.putImplementationOptInInConstructor) {
+                    print(" @", implementationOptInAnnotation.render())
+                    printConstructor = true
                 }
+                if (implementation.isPublic && !implementation.isConstructorPublic) {
+                    print(" internal")
+                    printConstructor = true
+                }
+
+                if (printConstructor) {
+                    print(" constructor")
+                }
+
                 println("(")
                 withIndent {
+                    printAdditionalConstructorParameters(implementation)
                     implementation.fieldsInConstructor
                         .reorderFieldsIfNecessary(implementation.constructorParameterOrderOverride)
                         .forEachIndexed { _, field ->

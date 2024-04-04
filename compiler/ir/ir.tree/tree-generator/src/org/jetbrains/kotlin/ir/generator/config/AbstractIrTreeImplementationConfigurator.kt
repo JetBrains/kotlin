@@ -19,4 +19,9 @@ abstract class AbstractIrTreeImplementationConfigurator : AbstractImplementation
         "UNDEFINED_OFFSET".also {
             additionalImports(ArbitraryImportable(Packages.tree, it))
         }
+
+    protected fun ImplementationContext.smartList(): String =
+        "SmartList()".also {
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.utils", "SmartList"))
+        }
 }

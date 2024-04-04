@@ -65,6 +65,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     override val hasTransformChildrenMethod: Boolean
         get() = true
     var isPublic = false
+    var isConstructorPublic = true
 
     var putImplementationOptInInConstructor = true
 
