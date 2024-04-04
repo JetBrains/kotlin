@@ -11,5 +11,8 @@
 int main(int argc, char** argv) {
     T_(ObjectForExample) instance = __ kotlin.root.ObjectForExample._instance ();
     T_(Example)          value =    __ kotlin.root.ObjectForExample.get_example (instance);
-    printf("%x\n", value.pinned);
+    printf("%td\n", value.pinned - NULL);
+
+    // Make sure all printf output is flushed.
+    fflush(NULL);
 }

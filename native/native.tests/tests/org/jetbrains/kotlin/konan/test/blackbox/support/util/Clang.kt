@@ -86,6 +86,8 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
             add("-lpthread") // libpthread.so.0: error adding symbols: DSO missing from command line. Maybe because of old llvm.
         if (configurables is MingwConfigurables) {
             add("-femulated-tls") // https://youtrack.jetbrains.com/issue/KT-46612
+            // error: argument unused during compilation: '-static-libstdc++'
+            add("-Wno-unused-command-line-argument")
             addAll(configurables.linkerKonanFlags)
         }
         addAll(additionalClangFlags)

@@ -110,6 +110,9 @@ int main(void) {
     __ kotlin.root.setCErrorHandler(&errorHandler);
     __ kotlin.root.throwException();
 
+    // Make sure all printf output is flushed.
+    fflush(NULL);
+
     return 0;
 }
 

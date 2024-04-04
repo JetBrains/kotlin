@@ -22,4 +22,7 @@ int main(int argc, char** argv) {
 
     T_(TestInterface) tiFromInnerPackage = __ kotlin.root.TestPackage_ (__ kotlin.root.TestPackage.identity(19.0));
     printf("TestInterface initialized from inner package: %.1f\n", __ kotlin.root.TestInterface.doSomething(tiFromInnerPackage));
+
+    // Make sure all printf output is flushed.
+    fflush(NULL);
 }

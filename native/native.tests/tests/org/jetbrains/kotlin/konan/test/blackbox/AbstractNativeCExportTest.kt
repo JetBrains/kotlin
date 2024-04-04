@@ -140,7 +140,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
             outputFile = executableFile,
             libraryDirectories = listOf(binaryLibrary.libraryFile.parentFile),
             libraries = listOf(libraryName),
-            additionalClangFlags = getKindSpecificClangFlags(binaryLibrary),
+            additionalClangFlags = getKindSpecificClangFlags(binaryLibrary) + listOf("-Wall", "-Werror"),
         ).assertSuccess()
 
         val testExecutable = TestExecutable(
