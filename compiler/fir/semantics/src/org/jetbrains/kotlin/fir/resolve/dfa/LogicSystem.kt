@@ -73,10 +73,15 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     fun addImplication(flow: MutableFlow, implication: Implication) {
         val effect = implication.effect
-        if (effect == implication.condition) return
-        if (effect is TypeStatement &&
-            (effect.isEmpty || flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true)
-        ) return
+        val redundant = effect == implication.condition || when (effect) {
+            is TypeStatement ->
+                effect.isEmpty || flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true
+            // Synthetic variables can only be referenced in tree order, so implications with synthetic variables can
+            // only look like "if <expression> is A, then <part of that expression> is B". If we don't already have any
+            // statements about a part of the expression, then we never will, as we're already exiting the entire expression.
+            else -> effect.variable is SyntheticVariable && effect.variable !in flow.implications
+        }
+        if (redundant) return
         val variable = implication.condition.variable
         flow.implications[variable] = flow.implications[variable]?.add(implication) ?: persistentListOf(implication)
     }
@@ -219,8 +224,6 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 assert(variable !in implications)
                 assert(variable !in approvedTypeStatements)
             }
-            // `variable.dependentVariables` is not separated by flow, so it may be non-empty if aliasing of this variable
-            // was broken in another flow. However, in *this* flow dependent variables should have no information attached to them.
             val siblings = backwardsAliasMap.getValue(original)
             if (siblings.size > 1) {
                 backwardsAliasMap[original] = siblings.remove(variable)
@@ -234,11 +237,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             val aliases = backwardsAliasMap.remove(variable)
             // If asked to remove the variable but there are aliases, replace with a new representative for the alias group instead.
             val replacementOrNext = replacement ?: aliases?.first()
-            for (dependent in variable.dependentVariables) {
-                replaceVariable(dependent, replacementOrNext?.let {
-                    variableStorage.copyRealVariableWithRemapping(dependent, variable, it)
-                })
-            }
+            variableStorage.replaceReceiverReferencesInMembers(variable, replacementOrNext) { old, new -> replaceVariable(old, new) }
             implications.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements.replaceVariable(variable, replacementOrNext)
             if (aliases != null && replacementOrNext != null) {

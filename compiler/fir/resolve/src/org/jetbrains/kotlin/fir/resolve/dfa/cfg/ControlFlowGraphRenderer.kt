@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.Printer
 
@@ -69,32 +68,20 @@ private class ControlFlowGraphRenderer(
                 color = BLUE
             }
             val attributes = mutableListOf<String>()
-            if (options.renderFlow) {
-                // To maintain compatibility with existing CFG renders, only use HTML-like rendering if flow details are enabled.
+
+            val nodeName = node.render()
+            val nodeHeader = if (options.renderLevels) "$nodeName [${node.level}]" else nodeName
+            val flowInfo = node.takeIf { options.renderFlow && it.flowInitialized }?.flow?.renderHtmlLike()
+            if (!flowInfo.isNullOrEmpty()) {
                 val label = buildString {
                     append("<TABLE BORDER=\"0\">")
-                    append("<TR><TD><B>")
-                    append(node.render().toHtmlLikeString())
-                    if (options.renderLevels) {
-                        append(" [${node.level}]")
-                    }
-                    append("</B></TD></TR>")
-                    if (node.flowInitialized) {
-                        append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">")
-                        append(node.renderFlowHtmlLike())
-                        append("</TD></TR>")
-                    }
+                    append("<TR><TD>").append(nodeHeader.renderHtmlLike()).append("</TD></TR>")
+                    append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">").append(flowInfo).append("</TD></TR>")
                     append("</TABLE>")
                 }
                 attributes += "label=< $label >"
             } else {
-                val label = buildString {
-                    append(node.render().replace("\"", ""))
-                    if (options.renderLevels) {
-                        append(" [${node.level}]")
-                    }
-                }
-                attributes += "label=\"$label\""
+                attributes += "label=\"${nodeHeader.replace("\"", "")}\""
             }
 
             when {
@@ -160,71 +147,51 @@ private class ControlFlowGraphRenderer(
         println("}")
     }
 
-    private fun CFGNode<*>.renderFlowHtmlLike(): String {
-        val flow = flow
-        val variables = flow.knownVariables + flow.implications.keys +
-                flow.implications.flatMap { it.value }.map { it.condition.variable } +
-                flow.implications.flatMap { it.value }.map { it.effect.variable }
-        return variables.sorted().joinToString(separator = "<BR/><BR/>") { variable ->
-            buildString {
-                append(variable.renderHtmlLike())
+    private fun PersistentFlow.renderHtmlLike(): String {
+        return buildString {
+            for ((variable, variableName) in allVariablesForDebug.map { it to it.renderHtmlLike() }.sortedBy { it.second }) {
+                append("<BR/>")
+                append("<B>").append(variableName).append("</B>")
                 if (variable is RealVariable) {
-                    flow.getTypeStatement(variable)?.let {
-                        append("<BR/><B>types</B> ")
-                        append(it.exactType.toHtmlLikeString())
-                    }
-                    flow.implications[flow.unwrapVariable(variable)]?.let {
-                        for (implication in it) {
-                            append("<BR/><B>implication</B> ")
-                            append(implication.toHtmlLikeString())
+                    val aliased = unwrapVariable(variable)
+                    if (aliased != variable) {
+                        append(" = ").append(aliased.renderHtmlLike())
+                    } else {
+                        getTypeStatement(variable)?.let {
+                            append(": ").append(it.exactType.renderHtmlLike())
                         }
                     }
+                } else if (variable is SyntheticVariable) {
+                    append(" = '").append(variable.fir.render().renderHtmlLike()).append("'")
                 }
-                flow.implications[variable]?.let {
-                    for (implication in it) {
-                        append("<BR/><B>implication</B> ")
-                        append(implication.toHtmlLikeString())
-                    }
+                getImplications(variable)?.forEach {
+                    append("<BR/> ").append(it.condition.operation.renderHtmlLike())
+                    append(" =&gt; ").append(it.effect.renderHtmlLike())
                 }
+                append("<BR/>")
             }
         }
     }
 
-    private fun DataFlowVariable.renderHtmlLike(): String {
-        val variable = this
-        return buildString {
-            append("<B>")
-            append(variable)
-            append("</B>")
+    private val firElementIndices = mutableMapOf<FirElement, Int>()
 
-            val callableId = variable.callableId
-            if (variable is RealVariable && callableId != null) {
-                append(" = ")
-                val receivers = listOfNotNull(
-                    variable.dispatchReceiver?.callableId?.toHtmlLikeString(),
-                    variable.extensionReceiver?.callableId?.toHtmlLikeString(),
-                )
-                when (receivers.size) {
-                    2 -> append(receivers.joinToString(prefix = "(", postfix = ")."))
-                    1 -> append(receivers.joinToString(postfix = "."))
-                }
-                append(callableId.toHtmlLikeString())
-            }
-            if (variable is SyntheticVariable) {
-                append(" = '")
-                append(variable.fir.render().toHtmlLikeString())
-                append("'")
-            }
-        }
+    private fun DataFlowVariable.renderHtmlLike(): String = when (this) {
+        is RealVariable -> toString().renderHtmlLike()
+        is SyntheticVariable -> "#${firElementIndices.getOrPut(fir) { firElementIndices.size }}"
     }
 
-    private val DataFlowVariable.callableId: CallableId?
-        get() = ((this as? RealVariable)?.symbol as? FirCallableSymbol<*>)?.callableId
+    private fun Statement.renderHtmlLike(): String = when (this) {
+        is OperationStatement -> "${variable.renderHtmlLike()} ${operation.renderHtmlLike()}"
+        is TypeStatement -> "${variable.renderHtmlLike()}: ${exactType.renderHtmlLike()}"
+    }
+
+    private fun Set<ConeKotlinType>.renderHtmlLike(): String =
+        joinToString(separator = " & ").renderHtmlLike()
 
     /**
      * Sanitize string for rendering with HTML-like syntax.
      */
-    private fun Any.toHtmlLikeString(): String = toString()
+    private fun Any.renderHtmlLike(): String = toString()
         .replace("&", "&amp;")
         .replace(">", "&gt;")
         .replace("<", "&lt;")

@@ -34,8 +34,8 @@ sealed class TypeStatement : Statement() {
     val isNotEmpty: Boolean
         get() = !isEmpty
 
-    override fun toString(): String {
-        return "$variable: $exactType"
+    final override fun toString(): String {
+        return "$variable: ${exactType.joinToString(separator = " & ")}"
     }
 }
 

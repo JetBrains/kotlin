@@ -14,128 +14,102 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.util.SetMultimap
+import org.jetbrains.kotlin.fir.util.setMultimapOf
 
 class VariableStorage(private val session: FirSession) {
-    // These are basically hash sets, since they map each key to itself. The only point of having them as maps
+    // This is basically a set, since it maps each key to itself. The only point of having it as a map
     // is to deduplicate equal instances with lookups. The impact of that is questionable, but whatever.
     private val realVariables: MutableMap<RealVariable, RealVariable> = HashMap()
-    private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
 
-    private val nextVariableIndex: Int
-        get() = realVariables.size + syntheticVariables.size + 1
+    private val memberVariables: SetMultimap<RealVariable, RealVariable> = setMultimapOf()
 
-    fun getLocalVariable(symbol: FirBasedSymbol<*>, originalType: ConeKotlinType, isReceiver: Boolean): RealVariable? =
-        RealVariable(symbol, isReceiver, null, null, originalType, nextVariableIndex).takeIfKnown()
-
-    fun getOrCreateLocalVariable(symbol: FirBasedSymbol<*>, originalType: ConeKotlinType, isReceiver: Boolean): RealVariable =
-        RealVariable(symbol, isReceiver, null, null, originalType, nextVariableIndex).remember()
-
-    fun getAllLocalVariables(): List<RealVariable> =
-        realVariables.values.filter { (it.symbol as? FirPropertySymbol)?.isLocal == true }
-
-    // Use this when making non-type statements, such as `variable eq true`.
-    // Returns null if the statement would be useless (the variable has not been used in any implications).
-    fun getIfUsed(fir: FirElement, unwrapAlias: (RealVariable, FirElement) -> RealVariable?): DataFlowVariable? =
-        getImpl(fir, createReal = false, unwrapAlias)?.takeSyntheticIfKnown()
-
-    // Use this when making type statements, such as `variable typeEq ...` or `variable notEq null`.
-    // Returns null if the statement would be useless (the variable is synthetic and has not been used in any implications).
-    fun getOrCreateIfReal(fir: FirElement, unwrapAlias: (RealVariable, FirElement) -> RealVariable?): DataFlowVariable? =
-        getImpl(fir, createReal = true, unwrapAlias)?.takeSyntheticIfKnown()
-
-    // Use this for variables on the left side of an implication.
-    // Returns null only if the variable is an unstable alias, and so cannot be used at all.
-    fun getOrCreate(fir: FirElement, unwrapAlias: (RealVariable, FirElement) -> RealVariable?): DataFlowVariable? =
-        getImpl(fir, createReal = true, unwrapAlias)?.rememberSynthetic()
-
-    // Use this for calling `getTypeStatement` or accessing reassignment information.
-    // Returns null if it's already known that no statements about the variable were made ever.
-    fun getRealVariableWithoutUnwrappingAlias(fir: FirElement, unwrapAlias: (RealVariable, FirElement) -> RealVariable?): RealVariable? =
-        getImpl(fir, createReal = false, unwrapAlias = { variable, _ -> variable }, unwrapAlias) as? RealVariable
-
-    // Use this when adding statements to a variable initialization.
-    // Returns null only if `fir` is not a variable declaration or assignment. Ideally, that shouldn't happen.
-    fun getOrCreateRealVariableWithoutUnwrappingAlias(fir: FirElement, unwrapAlias: (RealVariable, FirElement) -> RealVariable?): RealVariable? =
-        getImpl(fir, createReal = true, unwrapAlias = { variable, _ -> variable }, unwrapAlias) as? RealVariable
-
-    // Use this for variables on the left side of an implication if `fir` is known to not be a variable access.
-    // Equivalent to `getOrCreate` in those cases, but doesn't spend time validating the precondition.
-    fun createSynthetic(fir: FirElement): SyntheticVariable =
-        fir.unwrapElement().let { syntheticVariables.getOrPut(it) { SyntheticVariable(it, nextVariableIndex) } }
-
-
-    // Looking up real variables has two "failure modes": when the FIR statement cannot have a real variable in the first place,
-    // and when it could if not for `createReal = false`. Having one `null` value does not help us here, so to tell those two
-    // situations apart this function has somewhat inconsistent return values:
-    //   1. if `fir` maps to a real variable, and `createReal` is true, it returns `RealVariable`
-    //      that IS in the `realVariables` map (possibly just added there);
-    //   2. if `fir` maps to a real variable, but it's not in the map and `createReal` is false,
-    //      OR if that variable is an unstable alias, it returns `null`;
-    //   3. if `fir` does not map to a real variable, it returns a `SyntheticVariable`
-    //      that IS NOT in the `syntheticVariables` map, so either `takeIfKnown` or `remember` should be called.
-    // This way synthetic variables can always be recognized 100% precisely, but using this function requires a bit of care.
-    private fun getImpl(
+    /**
+     * Retrieve a [DataFlowVariable] representing the given [FirElement]. If [fir] is a property access (read, assignment, or
+     * declaration), return a [RealVariable], otherwise a [SyntheticVariable].
+     *
+     * @param fir An expression, a variable assignment, or a variable declaration. Although it is technically allowed to create
+     * variables for other kinds of statements, it is meaningless.
+     *
+     * @param createReal Whether to create a new [RealVariable] for [fir] if one has never been created before. This is a
+     * performance optimization: always setting this to true is semantically correct, so it should be set to false whenever
+     * this does not result in missing statements.
+     *
+     * @param unwrapAlias When multiple [RealVariable]s are known to have the same value in every execution, this lambda
+     * can map them to some "representative" variable so that type information about all these variables is shared. It can also
+     * return null to abort the entire [get] operation, making it also return null.
+     *
+     * @param unwrapAliasInReceivers Same as [unwrapAlias], but used when looking up [RealVariable]s for receivers of [fir]
+     * if it is a qualified access expression.
+     */
+    fun get(
         fir: FirElement,
         createReal: Boolean,
-        unwrapAlias: (RealVariable, FirElement) -> RealVariable?,
-        unwrapAliasInReceivers: (RealVariable, FirElement) -> RealVariable? = unwrapAlias,
+        unwrapAlias: (RealVariable) -> RealVariable?,
+        unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
     ): DataFlowVariable? {
         val unwrapped = fir.unwrapElement()
-        val synthetic = SyntheticVariable(unwrapped, nextVariableIndex)
-        val symbol = unwrapped.extractSymbol() ?: return synthetic
+        val isReceiver = unwrapped is FirThisReceiverExpression
+        val symbol = when (unwrapped) {
+            is FirDeclaration -> unwrapped.symbol
+            is FirResolvedQualifier -> unwrapped.symbol?.fullyExpandedClass(session)
+            is FirResolvable -> unwrapped.calleeReference.symbol
+            else -> null
+        }?.takeIf {
+            isReceiver || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)
+        }?.unwrapFakeOverridesIfNecessary() ?: return SyntheticVariable(unwrapped)
+
         val qualifiedAccess = unwrapped as? FirQualifiedAccessExpression
         val dispatchReceiverVar = qualifiedAccess?.dispatchReceiver?.let {
-            (getImpl(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return synthetic
+            (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
         }
         val extensionReceiverVar = qualifiedAccess?.extensionReceiver?.let {
-            (getImpl(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return synthetic
+            (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
         }
-        val isReceiver = unwrapped is FirThisReceiverExpression
         val originalType = when (unwrapped) {
             is FirExpression -> unwrapped.resolvedType
             is FirVariableAssignment -> unwrapped.unwrapLValue()?.resolvedType
             is FirProperty -> unwrapped.returnTypeRef.coneType
             else -> null
         }
-        val prototype = RealVariable(symbol, isReceiver, dispatchReceiverVar, extensionReceiverVar, originalType, nextVariableIndex)
-        val real = if (createReal) prototype.remember() else prototype.takeIfKnown() ?: return null
-        return unwrapAlias(real, unwrapped)
+        val prototype = RealVariable(symbol, isReceiver, dispatchReceiverVar, extensionReceiverVar, originalType)
+        val real = if (createReal) rememberWithKnownReceivers(prototype) else realVariables[prototype] ?: return null
+        return unwrapAlias(real)
     }
 
-    private fun DataFlowVariable.takeSyntheticIfKnown(): DataFlowVariable? =
-        if (this is SyntheticVariable) syntheticVariables[fir] else this
+    fun getKnown(variable: RealVariable): RealVariable? =
+        realVariables[variable]
 
-    private fun DataFlowVariable.rememberSynthetic(): DataFlowVariable =
-        if (this is SyntheticVariable) syntheticVariables.getOrPut(fir) { this } else this
+    /** Store a reference to a variable so that [get] can return it even if `createReal` is false. */
+    fun remember(variable: RealVariable): RealVariable =
+        rememberWithKnownReceivers(variable.mapReceivers(::remember))
 
-    private fun RealVariable.takeIfKnown(): RealVariable? =
-        realVariables[this]
-
-    private fun RealVariable.remember(): RealVariable =
-        realVariables.getOrPut(this) {
-            dispatchReceiver?.dependentVariables?.add(this)
-            extensionReceiver?.dependentVariables?.add(this)
-            this
+    private fun rememberWithKnownReceivers(variable: RealVariable): RealVariable =
+        realVariables.getOrPut(variable) {
+            variable.dispatchReceiver?.let { memberVariables.put(it, variable) }
+            variable.extensionReceiver?.let { memberVariables.put(it, variable) }
+            variable
         }
 
-    fun copyRealVariableWithRemapping(variable: RealVariable, from: RealVariable, to: RealVariable): RealVariable {
-        // Precondition: `variable in from.dependentVariables`, so at least one of the receivers is `from`.
-        return with(variable) {
-            val newDispatchReceiver = if (dispatchReceiver == from) to else dispatchReceiver
-            val newExtensionReceiver = if (extensionReceiver == from) to else extensionReceiver
-            RealVariable(symbol, isReceiver, newDispatchReceiver, newExtensionReceiver, originalType, nextVariableIndex).remember()
-        }
-    }
+    private inline fun RealVariable.mapReceivers(block: (RealVariable) -> RealVariable): RealVariable =
+        RealVariable(symbol, isReceiver, dispatchReceiver?.let(block), extensionReceiver?.let(block), originalType)
 
-    fun getOrPut(variable: RealVariable): RealVariable {
-        return with(variable) {
-            val newDispatchReceiver = dispatchReceiver?.let(::getOrPut)
-            val newExtensionReceiver = extensionReceiver?.let(::getOrPut)
-            RealVariable(symbol, isReceiver, newDispatchReceiver, newExtensionReceiver, originalType, nextVariableIndex).remember()
+    /**
+     * Call a lambda with every known [RealVariable] that represents a member property of another [RealVariable].
+     *
+     * @param to If not null, additionally replace these variables' receivers with the new value, and pass the modified member
+     * to the lambda as the second argument.
+     *
+     * For example, if [from] represents `x`, [to] represents `y`, and there is a known [RealVariable] representing `x.p`, then
+     * [processMember] will be called that variable as the first argument and a new variable representing `y.p` as the second.
+     */
+    fun replaceReceiverReferencesInMembers(from: RealVariable, to: RealVariable?, processMember: (RealVariable, RealVariable?) -> Unit) {
+        for (member in memberVariables[from]) {
+            val remapped = to?.let { rememberWithKnownReceivers(member.mapReceivers { if (it == from) to else it }) }
+            processMember(member, remapped)
         }
     }
 
@@ -152,16 +126,7 @@ class VariableStorage(private val session: FirSession) {
         }
     }
 
-    private fun FirElement.extractSymbol(): FirBasedSymbol<*>? = when (this) {
-        is FirResolvable -> calleeReference.symbol
-        is FirDeclaration -> symbol
-        is FirResolvedQualifier -> symbol?.fullyExpandedClass(session)
-        else -> null
-    }?.takeIf {
-        this is FirThisReceiverExpression || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)
-    }?.unwrapFakeOverridesIfNecessary()
-
-    private fun FirBasedSymbol<*>?.unwrapFakeOverridesIfNecessary(): FirBasedSymbol<*>? {
+    private fun FirBasedSymbol<*>.unwrapFakeOverridesIfNecessary(): FirBasedSymbol<*> {
         if (this !is FirCallableSymbol) return this
         // This is necessary only for sake of optimizations necessary because this is a really hot place.
         // Not having `dispatchReceiverType` means that this is a local/top-level property that can't be a fake override.

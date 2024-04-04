@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDecla
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
-import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -30,22 +29,13 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
-        val variableStorage =
-            (graph.declaration as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.dataFlowInfo?.variableStorage ?: return
-        val logicSystem = object : LogicSystem(context.session.typeContext) {
-            override val variableStorage = variableStorage
-        }
-
         // Not quadratic since we don't traverse the graph, we only care about (declaration, exit node) pairs.
         for (subGraph in graph.subGraphs) {
             analyze(subGraph, reporter, context)
@@ -56,22 +46,18 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         val contractDescription = function.contractDescription ?: return
         val effects = contractDescription.effects ?: return
 
-        // Creating variables can be needed in two cases:
-        //   1. trivial contracts: `returns() implies (x is T)` when `x`'s original type is `T`
-        //   2. tautological contracts: `returnsNotNull() implies (x != null)` with a `return x`
-        // In both cases `x` must not have been used in data flow analysis in any way, otherwise it would already have a variable.
+        val logicSystem = object : LogicSystem(context.session.typeContext) {
+            override val variableStorage = VariableStorage(context.session)
+        }
         val argumentVariables = Array(function.valueParameters.size + 1) { i ->
-            val parameterSymbol = if (i > 0) {
-                function.valueParameters[i - 1].symbol
+            if (i > 0) {
+                RealVariable.local(function.valueParameters[i - 1].symbol)
             } else {
-                if (function.symbol is FirPropertyAccessorSymbol) {
-                    context.containingProperty?.symbol
-                } else {
-                    null
-                } ?: function.symbol
-            }
-            parameterSymbol.correspondingParameterType?.let {
-                logicSystem.variableStorage.getOrCreateLocalVariable(parameterSymbol, it, isReceiver = i == 0)
+                val receiverOwnerSymbol =
+                    if (function.symbol is FirPropertyAccessorSymbol) context.containingProperty?.symbol ?: function.symbol
+                    else function.symbol
+                val type = receiverOwnerSymbol.resolvedReceiverTypeRef?.coneType ?: return@Array null
+                RealVariable.receiver(receiverOwnerSymbol, type)
             }
         }
 
@@ -119,9 +105,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                 if (!operation.isTrueFor(resultExpression.value)) return false
             } else {
                 if (expressionType != null && !operation.canBeTrueFor(context.session, expressionType)) return false
-                val resultVar = logicSystem.variableStorage.getOrCreateIfReal(
-                    resultExpression, unwrapAlias = { variable, _ -> flow.unwrapVariable(variable) }
-                )
+                val resultVar = logicSystem.variableStorage.get(resultExpression, createReal = true, unwrapAlias = flow::unwrapVariable)
                 if (resultVar != null) {
                     val impliedByReturnValue = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
                     if (impliedByReturnValue.isNotEmpty()) {
@@ -166,11 +150,4 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
 
     private val CheckerContext.containingProperty: FirProperty?
         get() = (containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty)
-
-    private val FirBasedSymbol<*>.correspondingParameterType: ConeKotlinType?
-        get() = when (this) {
-            is FirValueParameterSymbol -> resolvedReturnType
-            is FirCallableSymbol<*> -> resolvedReceiverTypeRef?.coneType
-            else -> null
-        }
 }
