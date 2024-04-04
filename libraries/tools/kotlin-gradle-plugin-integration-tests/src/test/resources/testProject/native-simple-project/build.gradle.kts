@@ -10,5 +10,6 @@ repositories {
 kotlin {
     linuxX64()
     linuxArm64()
+//    macosArm64()
     <SingleNativeTarget>()
 }
