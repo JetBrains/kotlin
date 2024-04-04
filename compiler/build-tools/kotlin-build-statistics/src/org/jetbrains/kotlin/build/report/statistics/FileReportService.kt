@@ -11,32 +11,48 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 abstract class FileReportService<T>(
-    buildReportDir: File,
-    projectName: String,
-    fileSuffix: String,
+    private val buildReportDir: File,
+    private val projectName: String,
+    private val fileSuffix: String,
 ) : BuildReportService<T> {
     companion object {
         internal val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
+        private const val MAX_ATTEMPTS = 10
     }
 
     private val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
-    private val outputFile = buildReportDir.resolve("$projectName-build-$ts.$fileSuffix")
 
     abstract fun printBuildReport(data: T, outputFile: File)
 
     override fun process(data: T, log: KotlinLogger) {
-        val buildReportPath = outputFile.toPath().toUri().toString()
         try {
-            outputFile.parentFile.mkdirs()
-            if (!(outputFile.parentFile.exists() && outputFile.parentFile.isDirectory)) {
-                log.error("Kotlin build report cannot be created: '${outputFile.parentFile}' is a file or do not have permissions to create")
+            buildReportDir.mkdirs()
+            if (!(buildReportDir.exists() && buildReportDir.isDirectory)) {
+                log.error("Kotlin build report cannot be created: '$buildReportDir' is a file or do not have permissions to create")
                 return
             }
-            printBuildReport(data, outputFile)
 
-            log.lifecycle("Kotlin build report is written to $buildReportPath")
+            val outputFile = createReportFile(log)
+            if (outputFile != null) {
+                val buildReportPath = outputFile.toPath().toUri().toString()
+                printBuildReport(data, outputFile)
+
+                log.lifecycle("Kotlin build report is written to $buildReportPath")
+            }
         } catch (e: Exception) {
-            log.error("Could not write Kotlin build report to $buildReportPath", e)
+            log.error("Could not create Kotlin build report in $buildReportDir", e)
         }
+    }
+
+    private fun createReportFile(log: KotlinLogger): File? {
+        for (index in 0..MAX_ATTEMPTS) {
+            val outputFile = buildReportDir.resolve("$projectName-build-$ts-$index.$fileSuffix")
+            if (outputFile.createNewFile()) {
+                return outputFile
+            }
+        }
+
+        log.error("Failed to create report file after $MAX_ATTEMPTS attempts")
+        return null
     }
 }
