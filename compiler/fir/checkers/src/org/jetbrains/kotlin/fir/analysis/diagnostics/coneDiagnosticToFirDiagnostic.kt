@@ -174,7 +174,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeNotAnnotationContainer -> null // Reported in FirAnnotationExpressionChecker.checkAnnotationUsedAsAnnotationArgument
     is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name)
     is ConeUnsupported -> FirErrors.UNSUPPORTED.createOn(this.source ?: source, this.reason)
-    is ConeLocalVariableNoTypeOrInitializer -> runIf(variable.isLocalMember) {
+    is ConeLocalVariableNoTypeOrInitializer -> runIf(variable.isLocalMember) { // Top/Class-level declarations are handled in FirTopLevelPropertiesChecker
         FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source)
     }
     is ConeForbiddenIntersection -> null // reported in FirDefinitelyNotNullableChecker
