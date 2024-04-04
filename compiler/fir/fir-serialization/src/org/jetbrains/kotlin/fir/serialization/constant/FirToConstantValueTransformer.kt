@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -67,7 +68,7 @@ internal data class FirToConstantValueTransformerData(
     val constValueProvider: ConstValueProvider?,
 )
 
-private val constantIntrinsicCalls = setOf("toByte", "toLong", "toShort", "toFloat", "toDouble", "toChar", "unaryMinus")
+private val constantIntrinsicCalls = OperatorNameConventions.NUMBER_CONVERSIONS + OperatorNameConventions.UNARY_MINUS
 
 @PrivateForInline
 internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, FirToConstantValueTransformerData>() {
@@ -321,7 +322,7 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
-                when (symbol.callableId.callableName.asString()) {
+                when (symbol.callableId.callableName) {
                     !in constantIntrinsicCalls -> false
                     else -> dispatchReceiver?.accept(this, data) ?: false
                 }

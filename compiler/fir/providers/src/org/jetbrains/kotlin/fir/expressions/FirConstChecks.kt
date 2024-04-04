@@ -117,10 +117,6 @@ private class FirConstCheckVisitor(
         )
 
         private val compileTimeExtensionFunctions = listOf("floorDiv", "mod", "code").mapTo(hashSetOf()) { Name.identifier(it) }
-
-        private val compileTimeConversionFunctions = listOf(
-            "toInt", "toLong", "toShort", "toByte", "toFloat", "toDouble", "toChar", "toBoolean"
-        ).mapTo(hashSetOf()) { Name.identifier(it) }
     }
 
     private val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
@@ -478,7 +474,7 @@ private class FirConstCheckVisitor(
             name in compileTimeFunctions ||
             name in compileTimeExtensionFunctions ||
             name == OperatorNameConventions.TO_STRING ||
-            name in compileTimeConversionFunctions
+            name in OperatorNameConventions.NUMBER_CONVERSIONS
         ) return true
 
         if (calleeReference.name == OperatorNameConventions.GET && receiverClassId == StandardClassIds.String) return true
