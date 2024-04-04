@@ -9,18 +9,20 @@ set -e # Exit if one of commands exit with non-zero exit code
 set -u # Treat unset variables and parameters other than the special parameters ‘@’ or ‘*’ as an error
 set -x # Print commands and their output
 
-if [ $# -ne 3 ]; then
+if [ $# -ne 2 ]; then
     echo "Usage cherry-pick-compose-from-androidx-to-kotlin /path/to/androidx androidxSince androidxUntil destinationDir"
     echo "! Script should be started from the directory with the destination repository !"
     echo "  androidxPath         - path to the androidx repository"
     echo "  androidxUntil        - androidx until commit (including)"
-    echo "  destinationDir       - destination directory related to the root of the Kotlin repository"
     exit 1
 fi
 
 kotlinComposeRepo="$(pwd)"
 androidxRepo="$1"
-destinationDir=$3
+
+# Last update:
+# Original commit: https://github.com/androidx/androidx/commit/17d501c22d8a529df7a9ffe14e859016cb6fa354
+since=6c705a8c # Resulting commit in the temp directory (Is it stay the same on other machines?)
 
 echo "--- First phase. Moving compose files to new positions and deleting other unrelated files."
 
@@ -37,12 +39,11 @@ git checkout "move-branch"
 #  - Leave only relevant directories with commits rewrite
 #  - Rewrite commits
 #    - Add information about origin commit
-#    - TODO: add links to external issues and change ID?
 git-filter-repo \
   --path compose/plugins/cli/ --path-rename compose/plugins/cli/:plugins/cli/ \
   --path compose/plugins/cli-tests/ --path-rename compose/plugins/cli-tests/:plugins/cli-tests/ \
   --path compose/compose-compiler-hosted/ --path-rename compose/compose-compiler-hosted/:compose-compiler-hosted/ \
-  --path compose/compiler/ --path-rename compose/compiler/:${destinationDir} \
+  --path compose/compiler/ --path-rename compose/compiler/:plugins/compose/ \
   --preserve-commit-hashes \
   --commit-callback '
 
@@ -80,8 +81,11 @@ git-filter-repo \
 echo "--- Second phase. Merge everything to the destination repository"
 cd $kotlinComposeRepo
 
+git remote remove androidx || true
 git remote add "androidx" $androidxRepo
-trap 'git remote remove androidx' EXIT
 
 git fetch "androidx" "move-branch"
-git merge --allow-unrelated-histories "androidx/move-branch" -m "Merge compose compiler plugin into Kotlin"
+echo "--- Update to commit"
+git log --pretty=format:'%h' -n 1 androidx/move-branch
+
+git cherry-pick $since..androidx/move-branch
