@@ -799,6 +799,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         }
 
         @Test
+        @TestMetadata("WildcardWithNullableUpperBoundInOutPosition.kt")
+        public void testWildcardWithNullableUpperBoundInOutPosition() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardWithNullableUpperBoundInOutPosition.kt");
+        }
+
+        @Test
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");
@@ -908,6 +914,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/UnannotatedWildcard.kt");
+        }
+
+        @Test
+        @TestMetadata("WildcardWithNullableUpperBoundInOutPosition.kt")
+        public void testWildcardWithNullableUpperBoundInOutPosition() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardWithNullableUpperBoundInOutPosition.kt");
         }
 
         @Test
