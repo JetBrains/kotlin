@@ -500,6 +500,23 @@ open class DeepCopyIrTreeWithSymbols(
             expression.arguments.memoryOptimizedMap { it.transform() }
         ).processAttributes(expression)
 
+    override fun visitSuspendableExpression(expression: IrSuspendableExpression): IrSuspendableExpression =
+        IrSuspendableExpressionImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.suspensionPointId.transform(),
+            expression.result.transform()
+        )
+
+    override fun visitSuspensionPoint(expression: IrSuspensionPoint): IrSuspensionPoint =
+        IrSuspensionPointImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.suspensionPointIdParameter.transform(),
+            expression.result.transform(),
+            expression.resumeResult.transform()
+        )
+
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrGetObjectValue =
         IrGetObjectValueImpl(
             expression.startOffset, expression.endOffset,
