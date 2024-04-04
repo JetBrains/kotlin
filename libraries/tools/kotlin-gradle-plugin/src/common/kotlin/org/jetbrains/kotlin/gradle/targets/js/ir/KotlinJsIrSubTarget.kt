@@ -211,8 +211,13 @@ abstract class KotlinJsIrSubTarget(
                         DISTRIBUTION_TASK_NAME
                     )
                 ) {
-                    it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
-                    it.from(binary.linkSyncTask)
+                    if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                        it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
+                        it.from(binary.linkSyncTask)
+                    } else {
+                        it.from(binary.linkTask)
+                        it.from(project.tasks.named(compilation.processResourcesTaskName))
+                    }
 
                     it.into(binary.distribution.outputDirectory)
                 }

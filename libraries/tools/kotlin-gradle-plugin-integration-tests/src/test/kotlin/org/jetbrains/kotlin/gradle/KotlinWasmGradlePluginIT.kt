@@ -199,4 +199,25 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Wasi library")
+    @GradleTest
+    fun wasiLibrary(gradleVersion: GradleVersion) {
+        project("wasm-wasi-library", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build(":build") {
+                assertTasksExecuted(":compileProductionLibraryKotlinWasmWasi")
+                assertTasksExecuted(":compileKotlinWasmWasi")
+                assertTasksExecuted(":wasmWasiNodeTest")
+                assertTasksExecuted(":wasmWasiNodeProductionLibraryDistribution")
+
+                val dist = "build/dist/wasmWasi/productionLibrary"
+                assertFileExists(projectPath.resolve("$dist/foo.txt"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.wasm"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.wasm.map"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.mjs"))
+            }
+        }
+    }
 }
