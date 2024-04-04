@@ -467,6 +467,27 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("build report should not be overridden")
+    @GradleTest
+    fun testMultipleRuns(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+                buildReport = listOf(BuildReportType.FILE)
+            )
+        ) {
+            val reportFolder = projectPath.resolve("build/reports/kotlin-build").toFile()
+            reportFolder.mkdirs()
+            assertEquals(0, reportFolder.listFiles()?.size)
+            for (i in 1..10) {
+                build("assemble") {
+                    assertOutputContains("Kotlin build report is written to")
+                }
+            }
+            assertEquals(10, reportFolder.listFiles()?.size)
+        }
+    }
+
 }
 
 data class BuildOperationRecordImpl(
