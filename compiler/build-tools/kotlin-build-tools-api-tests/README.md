@@ -35,6 +35,7 @@ Few rules you should follow while writing tests:
 - Don't create one big test suit. Consider grouping test classes semantically into test suits. Adding a new test suit is as easy as adding
   an entry to `businessLogicTestSuits` in the [build.gradle.kts](./build.gradle.kts)
 - All test classes should extend [BaseTest](./src/main/kotlin/BaseTest.kt)
+- Set the `@TestMetadata(...)` annotation to provide convenient Intellij IDEA navigation to the test data. It does not support navigation to multiple test data locations, thus please put a link to at least one tested module
 
 The rules specific to compilation tests:
 
