@@ -586,9 +586,31 @@ class BuildReportsIT : KGPBaseTest() {
                 val buildExecutionData = jsonReport.bufferedReader().use {
                     gsonBuilder.create().fromJson(JsonReader(it), BuildExecutionData::class.java) as BuildExecutionData
                 }
-                val buildOperationRecords = buildExecutionData.buildOperationRecord.first { it.path == ":compileKotlin" } as BuildOperationRecordImpl
+                val buildOperationRecords =
+                    buildExecutionData.buildOperationRecord.first { it.path == ":compileKotlin" } as BuildOperationRecordImpl
                 assertEquals(KotlinVersion.DEFAULT, buildOperationRecords.kotlinLanguageVersion)
             }
+        }
+    }
+
+    @DisplayName("build report should not be overridden")
+    @GradleTest
+    fun testMultipleRuns(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+                buildReport = listOf(BuildReportType.FILE)
+            )
+        ) {
+            val reportFolder = projectPath.resolve("build/reports/kotlin-build").toFile()
+            reportFolder.mkdirs()
+            assertEquals(0, reportFolder.listFiles()?.size)
+            for (i in 1..10) {
+                build("assemble") {
+                    assertOutputContains("Kotlin build report is written to")
+                }
+            }
+            assertEquals(10, reportFolder.listFiles()?.size)
         }
     }
 
@@ -609,4 +631,4 @@ data class BuildOperationRecordImpl(
     val changedFiles: SourcesChanges? = null,
     val compilerArguments: Array<String> = emptyArray(),
     val statTags: Set<StatTag> = emptySet(),
-): BuildOperationRecord
+) : BuildOperationRecord
