@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
@@ -31,6 +37,7 @@ internal interface IrJvmFlexibleType : FlexibleTypeMarker {
 private class IrJvmFlexibleTypeImpl(
     val irType: IrSimpleType,
     val builtIns: IrBuiltIns,
+    val specialAnnotations: JvmIrSpecialAnnotationSymbolProvider,
     val nullability: Boolean,
     val mutability: Boolean,
     val arrayVariance: Boolean,
@@ -64,6 +71,9 @@ private class IrJvmFlexibleTypeImpl(
             }
             if (arrayVariance) {
                 arguments = listOf(makeTypeProjection(irType.getArrayElementType(), Variance.INVARIANT))
+            }
+            if (raw) {
+                annotations = listOf(specialAnnotations.rawTypeAnnotation.createAnnotation())
             }
         }
 
@@ -101,6 +111,11 @@ private class IrJvmFlexibleTypeImpl(
             is IrStarProjection -> error("Star projection is not possible for the argument of Array type: ${irType.render()}")
             null -> error("Flexible variance is only possible for Array types: ${irType.render()}")
         }
+
+    private fun IrClassSymbol.createAnnotation(): IrConstructorCall =
+        IrConstructorCallImpl.fromSymbolOwner(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, owner.thisReceiver!!.type, owner.constructors.single<IrConstructor>().symbol
+        )
 }
 
 fun IrType.isWithFlexibleNullability(): Boolean =
@@ -109,7 +124,7 @@ fun IrType.isWithFlexibleNullability(): Boolean =
 internal fun IrType.isWithFlexibleMutability(): Boolean =
     hasAnnotation(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME)
 
-internal fun IrType.asJvmFlexibleType(builtIns: IrBuiltIns): FlexibleTypeMarker? {
+internal fun IrType.asJvmFlexibleType(builtIns: IrBuiltIns, specialAnnotations: JvmIrSpecialAnnotationSymbolProvider): FlexibleTypeMarker? {
     if (this !is IrSimpleType || annotations.isEmpty()) return null
 
     var nullability = false
@@ -132,5 +147,5 @@ internal fun IrType.asJvmFlexibleType(builtIns: IrBuiltIns): FlexibleTypeMarker?
     if (!nullability && !mutability && !flexibleVariance && !raw) return null
 
     val baseType = toBuilder().apply { annotations = filteredAnnotations }.buildSimpleType()
-    return IrJvmFlexibleTypeImpl(baseType, builtIns, nullability, mutability, flexibleVariance, raw)
+    return IrJvmFlexibleTypeImpl(baseType, builtIns, specialAnnotations, nullability, mutability, flexibleVariance, raw)
 }

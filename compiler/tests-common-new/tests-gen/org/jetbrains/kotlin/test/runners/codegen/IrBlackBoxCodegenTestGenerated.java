@@ -33626,6 +33626,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Test
+    @TestMetadata("rawTypeArgumentInJavaSuperType.kt")
+    public void testRawTypeArgumentInJavaSuperType() {
+      runTest("compiler/testData/codegen/box/javaInterop/rawTypeArgumentInJavaSuperType.kt");
+    }
+
+    @Test
     @TestMetadata("samTypeParameter.kt")
     public void testSamTypeParameter() {
       runTest("compiler/testData/codegen/box/javaInterop/samTypeParameter.kt");

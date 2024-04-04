@@ -191,7 +191,8 @@ class Fir2IrTypeConverter(
                 if (upperBound is ConeClassLikeType) {
                     val upper = upperBound as ConeClassLikeType
                     val lower = lowerBound
-                    val intermediate = if (lower is ConeClassLikeType && lower.lookupTag == upper.lookupTag) {
+                    val isRaw = attributes.contains(CompilerConeAttributes.RawType)
+                    val intermediate = if (lower is ConeClassLikeType && lower.lookupTag == upper.lookupTag && !isRaw) {
                         lower.replaceArguments(upper.getArguments())
                     } else lower
                     (intermediate.withNullability(upper.isNullable) as ConeKotlinType)
@@ -202,6 +203,7 @@ class Fir2IrTypeConverter(
                             hasFlexibleNullability = lower.nullability != upper.nullability,
                             hasFlexibleMutability = isMutabilityFlexible(),
                             hasFlexibleArrayElementVariance = hasFlexibleArrayElementVariance(),
+                            addRawTypeAnnotation = isRaw,
                         )
                 } else {
                     upperBound.toIrType(
@@ -210,6 +212,7 @@ class Fir2IrTypeConverter(
                         hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
                         hasFlexibleMutability = isMutabilityFlexible(),
                         hasFlexibleArrayElementVariance = false,
+                        addRawTypeAnnotation = false,
                     )
                 }
             }

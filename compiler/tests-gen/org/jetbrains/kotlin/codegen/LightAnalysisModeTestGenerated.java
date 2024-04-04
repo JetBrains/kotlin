@@ -28494,6 +28494,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");
     }
 
+    @TestMetadata("rawTypeArgumentInJavaSuperType.kt")
+    public void testRawTypeArgumentInJavaSuperType() {
+      runTest("compiler/testData/codegen/box/javaInterop/rawTypeArgumentInJavaSuperType.kt");
+    }
+
     @TestMetadata("samTypeParameter.kt")
     public void testSamTypeParameter() {
       runTest("compiler/testData/codegen/box/javaInterop/samTypeParameter.kt");
