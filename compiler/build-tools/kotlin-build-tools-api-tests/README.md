@@ -18,6 +18,8 @@ The module defines test suites using the `jvm-test-suite` plugin.
       to run the tests against the current BTA implementation
     * Avoid adding new tests here unless you can articulate their necessity as they will be executed multiple times significantly increasing
       the overall test execution time.
+* Escapable characters: a special test suit that runs against classpath and module paths containing symbols that typically should be escaped (whitespaces, hashes, etc)
+    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testEscapableCharacters` to run them
 * Example: provides examples of the DSL usage. Excluded from the `check` task
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testExample` to run them
 
