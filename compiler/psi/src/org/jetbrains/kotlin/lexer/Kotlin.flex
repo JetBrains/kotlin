@@ -19,14 +19,26 @@ import org.jetbrains.kotlin.lexer.KtTokens;
         final int lBraceCount;
         final int state;
 
-        public State(int state, int lBraceCount) {
+        final int dollarCount;
+        final int quotesCount;
+
+        public State(int state, int lBraceCount, int dollarCount, int quotesCount) {
             this.state = state;
             this.lBraceCount = lBraceCount;
+            this.dollarCount = dollarCount;
+            this.quotesCount = quotesCount;
+        }
+
+        public State(int state, int lBraceCount) {
+            this(state, lBraceCount, 0, 0);
         }
 
         @Override
         public String toString() {
-            return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
+            return "yystate = " + state
+              + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount)
+              + (dollarCount == 0 ? "" : "dollarCount = " + dollarCount)
+              + (quotesCount == 0 ? "" : "quotesCount = " + quotesCount);
         }
     }
 
@@ -37,9 +49,24 @@ import org.jetbrains.kotlin.lexer.KtTokens;
     private int commentDepth;
 
     private void pushState(int state) {
-        states.push(new State(yystate(), lBraceCount));
+        states.push(new State(yystate(), lBraceCount, 0, 0));
         lBraceCount = 0;
         yybegin(state);
+    }
+
+    private void pushState(int state, int dollarCount, int quotesCount) {
+        states.push(new State(yystate(), lBraceCount, dollarCount, quotesCount));
+        lBraceCount = 0;
+        yybegin(state);
+    }
+
+    private int peekQuotes() {
+        return states.peek().quotesCount;
+    }
+
+    private int peekDollars() {
+        // we should always have at least one dollar
+        return Math.max(1, states.peek().dollarCount);
     }
 
     private void popState() {
@@ -114,45 +141,70 @@ CHARACTER_LITERAL="'"([^\\\'\n]|{ESCAPE_SEQUENCE})*("'"|\\)?
 ESCAPE_SEQUENCE=\\(u{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}|[^\n])
 
 // ANY_ESCAPE_SEQUENCE = \\[^]
-THREE_QUO = (\"\"\")
-THREE_OR_MORE_QUO = ({THREE_QUO}\"*)
 
 REGULAR_STRING_PART=[^\\\"\n\$]+
-SHORT_TEMPLATE_ENTRY=\${IDENTIFIER}
+SHORT_TEMPLATE_ENTRY=\$+{IDENTIFIER}
 LONELY_DOLLAR=\$
-LONG_TEMPLATE_ENTRY_START=\$\{
+LONG_TEMPLATE_ENTRY_START=\$+\{
 LONELY_BACKTICK=`
 
 %%
 
 // String templates
 
-{THREE_QUO}                      { pushState(RAW_STRING); return KtTokens.OPEN_QUOTE; }
-<RAW_STRING> \n                  { return KtTokens.REGULAR_STRING_PART; }
-<RAW_STRING> \"                  { return KtTokens.REGULAR_STRING_PART; }
-<RAW_STRING> \\                  { return KtTokens.REGULAR_STRING_PART; }
-<RAW_STRING> {THREE_OR_MORE_QUO} {
-                                    int length = yytext().length();
-                                    if (length <= 3) { // closing """
-                                        popState();
-                                        return KtTokens.CLOSING_QUOTE;
-                                    }
-                                    else { // some quotes at the end of a string, e.g. """ "foo""""
-                                        yypushback(3); // return the closing quotes (""") to the stream
-                                        return KtTokens.REGULAR_STRING_PART;
-                                    }
-                                 }
+\$*\"{3}\"*                 {
+                              String matched = yytext().toString();
+                              int dollarCount = matched.lastIndexOf('$') + 1;
+                              int quotesCount = matched.length() - dollarCount;
+                              pushState(RAW_STRING, dollarCount, quotesCount);
+                              return KtTokens.OPEN_QUOTE;
+                            }
+<RAW_STRING> \n             { return KtTokens.REGULAR_STRING_PART; }
+<RAW_STRING> \"             { return KtTokens.REGULAR_STRING_PART; }
+<RAW_STRING> \\             { return KtTokens.REGULAR_STRING_PART; }
+<RAW_STRING> \"{3}\"*       {
+                              int length = yytext().length();
+                              int closingQuotes = peekQuotes();
+                              if (length < closingQuotes) {
+                                // not enough quotes
+                                return KtTokens.REGULAR_STRING_PART;
+                              }
+                              else if (length == closingQuotes) { // closing """
+                                popState();
+                                return KtTokens.CLOSING_QUOTE;
+                              }
+                              else { // some quotes at the end of a string, e.g. """ "foo""""
+                                yypushback(closingQuotes); // return the closing quotes (""") to the stream
+                                return KtTokens.REGULAR_STRING_PART;
+                              }
+                            }
 
-\"                          { pushState(STRING); return KtTokens.OPEN_QUOTE; }
+\$*\"                       {
+                              pushState(STRING, yytext().length() - 1, 1);
+                              return KtTokens.OPEN_QUOTE;
+                            }
 <STRING> \n                 { popState(); yypushback(1); return KtTokens.DANGLING_NEWLINE; }
 <STRING> \"                 { popState(); return KtTokens.CLOSING_QUOTE; }
 <STRING> {ESCAPE_SEQUENCE}  { return KtTokens.ESCAPE_SEQUENCE; }
 
 <STRING, RAW_STRING> {REGULAR_STRING_PART}         { return KtTokens.REGULAR_STRING_PART; }
 <STRING, RAW_STRING> {SHORT_TEMPLATE_ENTRY}        {
-                                                        pushState(SHORT_TEMPLATE_ENTRY);
-                                                        yypushback(yylength() - 1);
-                                                        return KtTokens.SHORT_TEMPLATE_ENTRY_START;
+                                                     int dollarCount = yytext().toString().lastIndexOf('$') + 1;
+                                                     int escape = peekDollars();
+                                                     if (dollarCount < escape) {
+                                                       // not enough dollars
+                                                       return KtTokens.REGULAR_STRING_PART;
+                                                     }
+                                                     else if (dollarCount == escape) {
+                                                       pushState(SHORT_TEMPLATE_ENTRY);
+                                                       yypushback(yylength() - dollarCount);
+                                                       return KtTokens.SHORT_TEMPLATE_ENTRY_START;
+                                                     }
+                                                     else {
+                                                       // too many dollars
+                                                       yypushback(yylength() - dollarCount + escape);
+                                                       return KtTokens.REGULAR_STRING_PART;
+                                                     }
                                                    }
 // Only *this* keyword is itself an expression valid in this position
 // *null*, *true* and *false* are also keywords and expression, but it does not make sense to put them
@@ -161,7 +213,23 @@ LONELY_BACKTICK=`
 <SHORT_TEMPLATE_ENTRY> {IDENTIFIER}    { popState(); return KtTokens.IDENTIFIER; }
 
 <STRING, RAW_STRING> {LONELY_DOLLAR}               { return KtTokens.REGULAR_STRING_PART; }
-<STRING, RAW_STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return KtTokens.LONG_TEMPLATE_ENTRY_START; }
+<STRING, RAW_STRING> {LONG_TEMPLATE_ENTRY_START}   {
+                                                      int dollarCount = yytext().toString().lastIndexOf('$') + 1;
+                                                      int escape = peekDollars();
+                                                      if (dollarCount < escape) {
+                                                        // not enough dollars
+                                                        return KtTokens.REGULAR_STRING_PART;
+                                                      }
+                                                      else if (dollarCount == escape) {
+                                                        pushState(LONG_TEMPLATE_ENTRY);
+                                                        return KtTokens.LONG_TEMPLATE_ENTRY_START;
+                                                      }
+                                                      else {
+                                                        // too many dollars
+                                                        yypushback(yylength() - dollarCount + escape);
+                                                        return KtTokens.REGULAR_STRING_PART;
+                                                      }
+                                                   }
 
 <LONG_TEMPLATE_ENTRY> "{"              { lBraceCount++; return KtTokens.LBRACE; }
 <LONG_TEMPLATE_ENTRY> "}"              {
