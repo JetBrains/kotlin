@@ -924,6 +924,16 @@ fun IrDelegatingConstructorCallImpl.Companion.fromSymbolOwner(
 
 
 @ObsoleteDescriptorBasedAPI
+fun IrEnumConstructorCallImpl.Companion.fromSymbolDescriptor(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int
+) = IrEnumConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
+
+
+@ObsoleteDescriptorBasedAPI
 fun IrFunctionReferenceImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
     endOffset: Int,
