@@ -41,7 +41,8 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var isFakeOverride: Boolean,
     override var isOperator: Boolean,
     override var isInfix: Boolean,
-) : IrFunctionWithLateBinding() {
+) : IrFunctionWithLateBinding(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

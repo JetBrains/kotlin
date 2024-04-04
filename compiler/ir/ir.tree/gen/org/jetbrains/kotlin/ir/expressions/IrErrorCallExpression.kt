@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -15,10 +16,20 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorCallExpression]
  */
-abstract class IrErrorCallExpression : IrErrorExpression() {
-    abstract var explicitReceiver: IrExpression?
+abstract class IrErrorCallExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    description: String,
+) : IrErrorExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    description = description,
+) {
+    var explicitReceiver: IrExpression? = null
 
-    abstract val arguments: MutableList<IrExpression>
+    val arguments: MutableList<IrExpression> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorCallExpression(this, data)

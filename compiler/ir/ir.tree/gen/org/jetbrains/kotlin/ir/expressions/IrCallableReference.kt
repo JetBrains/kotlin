@@ -9,10 +9,25 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.callableReference]
  */
-abstract class IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S>() {
+abstract class IrCallableReference<S : IrSymbol>(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+    valueArguments: Array<IrExpression?>,
+    typeArguments: Array<IrType?>,
+) : IrMemberAccessExpression<S>(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+    valueArguments = valueArguments,
+    typeArguments = typeArguments,
+) {
     abstract override var symbol: S
 }

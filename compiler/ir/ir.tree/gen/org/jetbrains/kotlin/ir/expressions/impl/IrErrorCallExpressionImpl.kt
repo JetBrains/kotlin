@@ -10,9 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 import org.jetbrains.kotlin.utils.SmartList
@@ -20,16 +18,14 @@ import org.jetbrains.kotlin.utils.SmartList
 class IrErrorCallExpressionImpl internal constructor(
     @Suppress("UNUSED_PARAMETER")
     constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var description: String,
-) : IrErrorCallExpression() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
-    override var explicitReceiver: IrExpression? = null
-
-    override val arguments: MutableList<IrExpression> = ArrayList()
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    description: String,
+) : IrErrorCallExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    description = description,
+) {
 }

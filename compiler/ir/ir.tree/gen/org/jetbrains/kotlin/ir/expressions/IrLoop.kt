@@ -8,15 +8,24 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
+
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.loop]
  */
-abstract class IrLoop : IrExpression() {
-    abstract var origin: IrStatementOrigin?
+abstract class IrLoop(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var origin: IrStatementOrigin?,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    var body: IrExpression? = null
 
-    abstract var body: IrExpression?
+    lateinit var condition: IrExpression
 
-    abstract var condition: IrExpression
-
-    abstract var label: String?
+    var label: String? = null
 }

@@ -17,12 +17,19 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constantObject]
  */
-abstract class IrConstantObject : IrConstantValue() {
-    abstract var constructor: IrConstructorSymbol
+abstract class IrConstantObject(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var constructor: IrConstructorSymbol,
+) : IrConstantValue(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    val valueArguments: MutableList<IrConstantValue> = ArrayList()
 
-    abstract val valueArguments: MutableList<IrConstantValue>
-
-    abstract val typeArguments: MutableList<IrType>
+    val typeArguments: MutableList<IrType> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstantObject(this, data)

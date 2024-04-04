@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.name.FqName
 class IrExternalPackageFragmentImpl(
     override val symbol: IrExternalPackageFragmentSymbol,
     override var packageFqName: FqName,
-) : IrExternalPackageFragment() {
+) : IrExternalPackageFragment(
+) {
     override val startOffset: Int
         get() = UNDEFINED_OFFSET
 

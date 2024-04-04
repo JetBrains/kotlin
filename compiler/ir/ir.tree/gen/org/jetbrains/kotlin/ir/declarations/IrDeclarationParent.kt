@@ -13,4 +13,5 @@ import org.jetbrains.kotlin.ir.IrElement
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationParent]
  */
-interface IrDeclarationParent : IrElement
+interface IrDeclarationParent : IrElement {
+}

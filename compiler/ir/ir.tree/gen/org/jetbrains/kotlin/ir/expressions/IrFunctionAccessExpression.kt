@@ -9,10 +9,27 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionAccessExpression]
  */
-abstract class IrFunctionAccessExpression : IrMemberAccessExpression<IrFunctionSymbol>() {
-    abstract var contextReceiversCount: Int
+abstract class IrFunctionAccessExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+    valueArguments: Array<IrExpression?>,
+    typeArguments: Array<IrType?>,
+) : IrMemberAccessExpression<IrFunctionSymbol>(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+    valueArguments = valueArguments,
+    typeArguments = typeArguments,
+) {
+    abstract override val symbol: IrFunctionSymbol
+
+    var contextReceiversCount: Int = 0
 }

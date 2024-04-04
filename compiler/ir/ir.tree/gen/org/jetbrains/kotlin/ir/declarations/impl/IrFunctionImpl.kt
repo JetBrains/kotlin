@@ -42,7 +42,8 @@ class IrFunctionImpl @IrImplementationDetail constructor(
     override var isFakeOverride: Boolean,
     override var isOperator: Boolean,
     override var isInfix: Boolean,
-) : IrSimpleFunction() {
+) : IrSimpleFunction(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

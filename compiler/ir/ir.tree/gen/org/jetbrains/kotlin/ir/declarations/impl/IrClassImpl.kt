@@ -32,7 +32,8 @@ open class IrClassImpl @IrImplementationDetail constructor(
     override var kind: ClassKind,
     override var modality: Modality,
     override val source: SourceElement,
-) : IrClass() {
+) : IrClass(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

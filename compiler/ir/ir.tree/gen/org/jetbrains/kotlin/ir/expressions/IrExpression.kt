@@ -17,8 +17,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
  */
-abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrAttributeContainer {
-    abstract var type: IrType
+abstract class IrExpression(
+    override val startOffset: Int,
+    override val endOffset: Int,
+    var type: IrType,
+) : IrElementBase(), IrStatement, IrVarargElement, IrAttributeContainer {
+    override var attributeOwnerId: IrAttributeContainer = this
+
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =
         accept(transformer, data) as IrExpression

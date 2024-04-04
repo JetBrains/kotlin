@@ -36,6 +36,10 @@ class Element(
 
     override val fields = mutableSetOf<Field>()
 
+    override val allFields: List<Field> by lazy {
+        super.allFields.map { if (it in fields) it else it.copy() }
+    }
+
     val additionalIrFactoryMethodParameters = mutableListOf<Field>()
     var generateIrFactoryMethod = category == Category.Declaration
     val fieldsToSkipInIrFactoryMethod = hashSetOf<String>()

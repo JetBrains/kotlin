@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.name.FqName
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.packageFragment]
  */
-abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSymbolOwner {
+abstract class IrPackageFragment(
+) : IrElementBase(), IrDeclarationContainer, IrSymbolOwner {
     abstract override val symbol: IrPackageFragmentSymbol
 
     abstract var packageFqName: FqName

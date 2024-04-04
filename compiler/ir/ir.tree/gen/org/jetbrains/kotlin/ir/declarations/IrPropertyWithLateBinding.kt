@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding]
  */
-abstract class IrPropertyWithLateBinding : IrProperty() {
+abstract class IrPropertyWithLateBinding(
+) : IrProperty(
+) {
     abstract val isBound: Boolean
 
     abstract fun acquireSymbol(symbol: IrPropertySymbol): IrPropertyWithLateBinding

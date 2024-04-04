@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.generators.tree.printer.braces
-import org.jetbrains.kotlin.generators.tree.printer.printBlock
-import org.jetbrains.kotlin.generators.tree.printer.printKDoc
-import org.jetbrains.kotlin.generators.tree.printer.typeParameters
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
@@ -70,7 +67,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
             val fieldPrinter = makeFieldPrinter(this)
 
-            if (!isInterface && !isAbstract && implementation.fieldsInConstructor.isNotEmpty()) {
+            if (!isInterface && !isAbstract) {
                 var printConstructor = false
                 if (implementation.isPublic && implementation.isConstructorPublic && implementation.putImplementationOptInInConstructor) {
                     print(" @", implementationOptInAnnotation.render())
@@ -88,16 +85,20 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
                 println("(")
                 withIndent {
                     printAdditionalConstructorParameters(implementation)
-                    implementation.fieldsInConstructor
-                        .reorderFieldsIfNecessary(implementation.constructorParameterOrderOverride)
-                        .forEachIndexed { _, field ->
-                            if (field.isParameter) {
-                                print(field.name, ": ", field.typeRef.render())
-                                println(",")
-                            } else if (!field.isFinal) {
-                                fieldPrinter.printField(field, inImplementation = true, override = true, inConstructor = true)
-                            }
+                    for (field in implementation.allFields.reorderFieldsIfNecessary(implementation.constructorParameterOrderOverride)) {
+                        val fieldImplementation = field.implementation
+                        if (field.isParameter || fieldImplementation is AbstractField.ImplementationStrategy.ForwardValueToParent && fieldImplementation.defaultValue == null) {
+                            printPropertyDeclaration(field.name, field.typeRef, VariableKind.PARAMETER, inConstructor = true)
+                            println()
+                        } else if (fieldImplementation is AbstractField.ImplementationStrategy.RegularField && fieldImplementation.defaultValue == null) {
+                            fieldPrinter.printField(
+                                field,
+                                inImplementation = false,
+                                inConstructor = true,
+                                override = true,
+                            )
                         }
+                    }
                 }
                 print(")")
             }
@@ -105,21 +106,46 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
             print(" : ")
             if (implementation.needPureAbstractElement) {
                 print(pureAbstractElementType.render(), "(), ")
-            }
-            print(implementation.allParents.joinToString { "${it.render()}${it.kind.braces()}" })
-            printBlock {
-                val fields = if (isInterface || isAbstract) implementation.allFields
-                else implementation.fieldsInBody
-                fields.forEachIndexed { index, field ->
-                    if (index > 0 && separateFieldsWithBlankLine) {
-                        println()
+            } else {
+                val element = implementation.element
+                print(element.render())
+
+                if (element.element.kind!!.typeKind == TypeKind.Class) {
+                    print("(")
+                    println()
+                    withIndent {
+                        for (field in implementation.allFields) {
+                            val fieldImplementation = field.implementation
+                            if (fieldImplementation is AbstractField.ImplementationStrategy.ForwardValueToParent) {
+                                print("${field.name} = ")
+                                if (fieldImplementation.defaultValue != null) {
+                                    print(fieldImplementation.defaultValue)
+                                } else {
+                                    print(field.name)
+                                }
+                                println(",")
+                            }
+                        }
                     }
-                    fieldPrinter.printField(
-                        field,
-                        inImplementation = true,
-                        override = true,
-                        modality = Modality.ABSTRACT.takeIf { isAbstract }
-                    )
+                    print(")")
+                }
+            }
+
+            printBlock {
+                var index = 0
+                for (field in implementation.allFields) {
+                    val fieldImplementation = field.implementation
+                    if (fieldImplementation is AbstractField.ImplementationStrategy.LateinitField
+                        || fieldImplementation is AbstractField.ImplementationStrategy.ComputedProperty
+                        || fieldImplementation is AbstractField.ImplementationStrategy.RegularField && fieldImplementation.defaultValue != null
+                    ) {
+                        if (separateFieldsWithBlankLine && index++ > 0) println()
+                        fieldPrinter.printField(
+                            field,
+                            inImplementation = false,
+                            override = true,
+                        )
+                    }
                 }
 
                 printAdditionalMethods(implementation)

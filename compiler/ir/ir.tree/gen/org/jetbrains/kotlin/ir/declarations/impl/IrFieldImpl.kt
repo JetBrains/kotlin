@@ -34,7 +34,8 @@ class IrFieldImpl @IrImplementationDetail constructor(
     override var type: IrType,
     override var isFinal: Boolean,
     override var isStatic: Boolean,
-) : IrField() {
+) : IrField(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -19,12 +18,14 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 class IrGetEnumValueImpl internal constructor(
     @Suppress("UNUSED_PARAMETER")
     constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var symbol: IrEnumEntrySymbol,
-) : IrGetEnumValue() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrEnumEntrySymbol,
+) : IrGetEnumValue(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+) {
 }

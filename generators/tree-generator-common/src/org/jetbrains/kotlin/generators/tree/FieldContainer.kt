@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-interface FieldContainer<out Field : AbstractField<*>> {
+sealed interface FieldContainer<out Field : AbstractField<*>> {
 
     /**
      * All the fields of this element, including the fields of all its parents.
@@ -19,7 +19,7 @@ interface FieldContainer<out Field : AbstractField<*>> {
     operator fun get(fieldName: String): Field {
         val result = getOrNull(fieldName)
         requireNotNull(result) {
-            "Field \"$fieldName\" not found in fields of $this\nExisting fields:\n" +
+            "Property \"$fieldName\" not found in fields of $this\nExisting fields:\n" +
                     allFields.joinToString(separator = "\n  ", prefix = "  ") { it.name }
         }
         return result

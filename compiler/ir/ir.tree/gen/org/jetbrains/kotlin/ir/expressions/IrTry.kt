@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -15,12 +16,20 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.try]
  */
-abstract class IrTry : IrExpression() {
-    abstract var tryResult: IrExpression
+abstract class IrTry(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    lateinit var tryResult: IrExpression
 
-    abstract val catches: MutableList<IrCatch>
+    val catches: MutableList<IrCatch> = ArrayList()
 
-    abstract var finallyExpression: IrExpression?
+    var finallyExpression: IrExpression? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTry(this, data)

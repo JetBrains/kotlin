@@ -30,7 +30,8 @@ class IrTypeAliasImpl @IrImplementationDetail constructor(
     override val symbol: IrTypeAliasSymbol,
     override var isActual: Boolean,
     override var expandedType: IrType,
-) : IrTypeAlias() {
+) : IrTypeAlias(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

@@ -26,7 +26,8 @@ class IrEnumEntryImpl @IrImplementationDetail constructor(
     override val factory: IrFactory,
     override var name: Name,
     override val symbol: IrEnumEntrySymbol,
-) : IrEnumEntry() {
+) : IrEnumEntry(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

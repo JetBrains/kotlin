@@ -97,10 +97,9 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
         detectBaseTransformerTypes(model)
     }
     initializeSubElements(model.elements)
-    implementationConfigurator.configureImplementations(model)
-    val implementations = model.elements.flatMap { it.implementations }
-    InterfaceAndAbstractClassConfigurator((model.elements + implementations))
+    InterfaceAndAbstractClassConfigurator(model.elements)
         .configureInterfacesAndAbstractClasses()
+    implementationConfigurator.configureImplementations(model)
     addPureAbstractElement(model.elements, pureAbstractElement)
     builderConfigurator?.configureBuilders()
     val generatedFiles = mutableListOf<GeneratedFile>()
@@ -116,6 +115,7 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
         }
     }
 
+    val implementations = model.elements.flatMap { it.implementations }
     implementations.filter { it.doPrint }.mapTo(generatedFiles) { implementation ->
         printGeneratedType(
             generationPath,

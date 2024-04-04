@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.enumEntry]
  */
-abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
+abstract class IrEnumEntry(
+) : IrDeclarationBase(
+), IrDeclarationWithName {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
 

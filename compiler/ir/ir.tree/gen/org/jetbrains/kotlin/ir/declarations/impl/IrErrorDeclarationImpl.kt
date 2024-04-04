@@ -25,7 +25,8 @@ class IrErrorDeclarationImpl @IrImplementationDetail constructor(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory,
-) : IrErrorDeclaration() {
+) : IrErrorDeclaration(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI

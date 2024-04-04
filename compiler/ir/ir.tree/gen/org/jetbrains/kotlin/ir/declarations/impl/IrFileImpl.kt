@@ -24,7 +24,8 @@ class IrFileImpl(
     override var fileEntry: IrFileEntry,
     override val symbol: IrFileSymbol,
     override var packageFqName: FqName,
-) : IrFile() {
+) : IrFile(
+) {
     override val startOffset: Int
         get() = 0
 

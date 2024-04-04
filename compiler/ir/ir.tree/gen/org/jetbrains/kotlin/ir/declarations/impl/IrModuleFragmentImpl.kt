@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.name.Name
 class IrModuleFragmentImpl(
     override val descriptor: ModuleDescriptor,
     override val irBuiltins: IrBuiltIns,
-) : IrModuleFragment() {
+) : IrModuleFragment(
+) {
     override val startOffset: Int
         get() = UNDEFINED_OFFSET
 

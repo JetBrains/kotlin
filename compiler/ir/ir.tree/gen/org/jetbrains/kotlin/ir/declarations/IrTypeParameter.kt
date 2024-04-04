@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.types.Variance
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeParameter]
  */
-abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
+abstract class IrTypeParameter(
+) : IrDeclarationBase(
+), IrDeclarationWithName {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeParameterDescriptor
 

@@ -28,7 +28,8 @@ class IrAnonymousInitializerImpl @IrImplementationDetail constructor(
     override val factory: IrFactory,
     override val symbol: IrAnonymousInitializerSymbol,
     override var isStatic: Boolean,
-) : IrAnonymousInitializer() {
+) : IrAnonymousInitializer(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

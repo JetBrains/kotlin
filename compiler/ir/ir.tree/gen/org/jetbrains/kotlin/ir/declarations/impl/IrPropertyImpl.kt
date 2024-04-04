@@ -38,7 +38,8 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
     override var isFakeOverride: Boolean,
-) : IrProperty() {
+) : IrProperty(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

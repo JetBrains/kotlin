@@ -72,7 +72,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     var constructorParameterOrderOverride: List<String>? = null
 
     private fun withDefault(field: Field) =
-        !field.isFinal && field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
+        field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
 
     val fieldsInConstructor by lazy { allFields.filterNot(::withDefault) }
 
@@ -98,4 +98,8 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
 
     open val doPrint: Boolean
         get() = true
+
+    init {
+        kind = ImplementationKind.FinalClass
+    }
 }

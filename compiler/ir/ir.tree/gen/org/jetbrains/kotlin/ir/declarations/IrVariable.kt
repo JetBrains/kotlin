@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.variable]
  */
-abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
+abstract class IrVariable(
+) : IrDeclarationBase(
+), IrValueDeclaration {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptor
 

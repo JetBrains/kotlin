@@ -27,7 +27,8 @@ class IrScriptImpl(
     override val factory: IrFactory,
     override val startOffset: Int,
     override val endOffset: Int,
-) : IrScript() {
+) : IrScript(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN

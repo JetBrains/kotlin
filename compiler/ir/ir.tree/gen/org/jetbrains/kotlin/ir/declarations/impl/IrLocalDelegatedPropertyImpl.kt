@@ -28,7 +28,8 @@ class IrLocalDelegatedPropertyImpl @IrImplementationDetail constructor(
     override val symbol: IrLocalDelegatedPropertySymbol,
     override var type: IrType,
     override var isVar: Boolean,
-) : IrLocalDelegatedProperty() {
+) : IrLocalDelegatedProperty(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

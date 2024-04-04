@@ -10,16 +10,22 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.fieldAccessExpression]
  */
-abstract class IrFieldAccessExpression : IrDeclarationReference() {
-    abstract override var symbol: IrFieldSymbol
-
-    abstract var superQualifierSymbol: IrClassSymbol?
-
-    abstract var receiver: IrExpression?
-
-    abstract var origin: IrStatementOrigin?
+abstract class IrFieldAccessExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override var symbol: IrFieldSymbol,
+    var superQualifierSymbol: IrClassSymbol?,
+    var origin: IrStatementOrigin?,
+) : IrDeclarationReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    var receiver: IrExpression? = null
 }

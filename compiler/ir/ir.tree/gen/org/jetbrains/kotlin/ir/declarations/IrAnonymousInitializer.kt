@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.anonymousInitializer]
  */
-abstract class IrAnonymousInitializer : IrDeclarationBase() {
+abstract class IrAnonymousInitializer(
+) : IrDeclarationBase(
+) {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
 

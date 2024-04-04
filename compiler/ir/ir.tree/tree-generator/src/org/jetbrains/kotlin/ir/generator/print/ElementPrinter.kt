@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,16 +28,6 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
 
     override val separateFieldsWithBlankLine: Boolean
         get() = true
-
-    // In IR classes we only print fields that are either declared in this element, or refine the type of a parent field
-    // and thus need an override.
-    override fun filterFields(element: Element): Collection<Field> = element.fields.map { field ->
-        field.copy().apply {
-            if (field in element.parentFields) {
-                fromParent = true
-            }
-        }
-    }
 
     context(ImportCollector)
     override fun SmartPrinter.printAdditionalMethods(element: Element) {

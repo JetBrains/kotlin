@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -15,12 +16,19 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.dynamicOperatorExpression]
  */
-abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
-    abstract var operator: IrDynamicOperator
+abstract class IrDynamicOperatorExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var operator: IrDynamicOperator,
+) : IrDynamicExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    lateinit var receiver: IrExpression
 
-    abstract var receiver: IrExpression
-
-    abstract val arguments: MutableList<IrExpression>
+    val arguments: MutableList<IrExpression> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitDynamicOperatorExpression(this, data)

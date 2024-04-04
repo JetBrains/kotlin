@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constructor]
  */
-abstract class IrConstructor : IrFunction() {
+abstract class IrConstructor(
+) : IrFunction(
+) {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassConstructorDescriptor
 

@@ -9,10 +9,19 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationReference]
  */
-abstract class IrDeclarationReference : IrExpression() {
+abstract class IrDeclarationReference(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     abstract val symbol: IrSymbol
 }

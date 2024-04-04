@@ -13,4 +13,5 @@ import org.jetbrains.kotlin.ir.IrElement
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.varargElement]
  */
-interface IrVarargElement : IrElement
+interface IrVarargElement : IrElement {
+}

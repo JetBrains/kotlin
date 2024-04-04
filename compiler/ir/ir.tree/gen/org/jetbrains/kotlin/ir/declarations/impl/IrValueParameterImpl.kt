@@ -37,7 +37,8 @@ class IrValueParameterImpl @IrImplementationDetail constructor(
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
-) : IrValueParameter() {
+) : IrValueParameter(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

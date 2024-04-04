@@ -17,18 +17,23 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.memberAccessExpression]
  */
-abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
-    abstract var dispatchReceiver: IrExpression?
+abstract class IrMemberAccessExpression<S : IrSymbol>(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var origin: IrStatementOrigin?,
+    protected val valueArguments: Array<IrExpression?>,
+    protected val typeArguments: Array<IrType?>,
+) : IrDeclarationReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    var dispatchReceiver: IrExpression? = null
 
-    abstract var extensionReceiver: IrExpression?
+    var extensionReceiver: IrExpression? = null
 
     abstract override val symbol: S
-
-    abstract var origin: IrStatementOrigin?
-
-    protected abstract val valueArguments: Array<IrExpression?>
-
-    protected abstract val typeArguments: Array<IrType?>
 
     val valueArgumentsCount: Int
         get() = valueArguments.size

@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.ir.generator.model.Implementation
 abstract class AbstractIrTreeImplementationConfigurator : AbstractImplementationConfigurator<Implementation, Element, Field, Field>() {
     override fun createImplementation(element: Element, name: String?) = Implementation(element, name)
 
+    override val doHoistFieldsInBaseClasses: Boolean
+        get() = true
+
     protected fun ImplementationContext.undefinedOffset(): String =
         "UNDEFINED_OFFSET".also {
             additionalImports(ArbitraryImportable(Packages.tree, it))

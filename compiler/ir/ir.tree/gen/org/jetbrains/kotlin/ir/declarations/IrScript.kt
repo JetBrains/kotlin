@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.script]
  */
-abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationParent, IrStatementContainer, IrMetadataSourceOwner {
+abstract class IrScript(
+) : IrDeclarationBase(
+), IrDeclarationWithName, IrDeclarationParent, IrStatementContainer, IrMetadataSourceOwner {
     abstract override val symbol: IrScriptSymbol
 
     @ObsoleteDescriptorBasedAPI

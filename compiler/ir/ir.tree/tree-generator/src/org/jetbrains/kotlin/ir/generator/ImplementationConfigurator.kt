@@ -238,12 +238,19 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("descriptor", "symbol.descriptor", withGetter = true)
         }
 
+        impl(block)
+
+        impl(branch)
+
+        impl(errorExpression)
 
         impl(composite) {
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir", "IrStatement"))
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                     // A temporary API for compatibility with Flysto user project, see KQA-1254
                     constructor(
                         startOffset: Int,
@@ -260,7 +267,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                     ) {
                         this.statements.addAll(statements)
                     }
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
 
@@ -268,7 +276,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                     // A temporary API for compatibility with Flysto user project, see KQA-1254
                     constructor(
                         startOffset: Int,
@@ -284,7 +293,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         returnTargetSymbol = returnTargetSymbol,
                         value = value,
                     )
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
 
@@ -301,7 +311,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                 companion object {
                     // Temporary API for compatible-compose, to be removed soon.
                     // Note: It cannot be marked with @Deprecated, because some usages in kotlin compiler pick this declaration up while it still exists.
@@ -317,7 +328,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                     ) =
                         IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
                 }
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
 
@@ -327,7 +339,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                 companion object {
                     // Temporary API for compatible-compose, to be removed soon.
                     // Note: It cannot be marked with @Deprecated, because some usages in kotlin compiler pick this declaration up while it still exists.
@@ -341,7 +354,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                             origin
                         )
                 }
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
 
@@ -377,7 +391,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                     companion object {
                         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl<String> =
                             IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
@@ -430,7 +445,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                             }
                         }
                     }
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
     }
@@ -488,6 +504,16 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             for (implementation in element.implementations) {
                 if (element.category == Element.Category.Expression) {
                     implementation.isConstructorPublic = false
+                }
+            }
+        }
+
+        for (element in model.elements) {
+            for (implementation in element.implementations) {
+                if (element.category == Element.Category.Declaration) {
+                    for (field in implementation.allFields) {
+                        field.allowHoistingToBaseClass = false
+                    }
                 }
             }
         }

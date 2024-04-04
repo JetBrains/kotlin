@@ -35,7 +35,8 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override var isExpect: Boolean,
     override val symbol: IrConstructorSymbol,
     override var isPrimary: Boolean,
-) : IrConstructor() {
+) : IrConstructor(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

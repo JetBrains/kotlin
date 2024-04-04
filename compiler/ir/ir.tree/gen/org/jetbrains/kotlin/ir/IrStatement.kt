@@ -11,4 +11,5 @@ package org.jetbrains.kotlin.ir
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.statement]
  */
-interface IrStatement : IrElement
+interface IrStatement : IrElement {
+}

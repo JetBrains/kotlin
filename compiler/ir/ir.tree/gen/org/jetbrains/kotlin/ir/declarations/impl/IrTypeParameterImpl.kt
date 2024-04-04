@@ -33,7 +33,8 @@ class IrTypeParameterImpl @IrImplementationDetail constructor(
     override var variance: Variance,
     override var index: Int,
     override var isReified: Boolean,
-) : IrTypeParameter() {
+) : IrTypeParameter(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

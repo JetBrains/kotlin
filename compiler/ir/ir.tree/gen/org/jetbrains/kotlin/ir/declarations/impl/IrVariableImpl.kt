@@ -32,7 +32,8 @@ class IrVariableImpl(
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,
-) : IrVariable() {
+) : IrVariable(
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override lateinit var parent: IrDeclarationParent

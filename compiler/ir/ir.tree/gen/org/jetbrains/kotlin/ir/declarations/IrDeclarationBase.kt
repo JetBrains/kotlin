@@ -13,4 +13,6 @@ import org.jetbrains.kotlin.ir.IrElementBase
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationBase]
  */
-abstract class IrDeclarationBase : IrElementBase(), IrDeclaration
+abstract class IrDeclarationBase(
+) : IrElementBase(), IrDeclaration {
+}
