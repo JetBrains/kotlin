@@ -5,29 +5,26 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.typeParametersCount
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.allTypeParameters
 import org.jetbrains.kotlin.ir.util.initializeParameterArguments
 import org.jetbrains.kotlin.ir.util.initializeTypeArguments
 
-class IrDelegatingConstructorCallImpl(
+class IrCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override var symbol: IrConstructorSymbol,
+    override var symbol: IrSimpleFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
-) : IrDelegatingConstructorCall() {
-    override var origin: IrStatementOrigin? = null
-
+    override var origin: IrStatementOrigin? = null,
+    override var superQualifierSymbol: IrClassSymbol? = null
+) : IrCall() {
     override val typeArguments: Array<IrType?> = initializeTypeArguments(typeArgumentsCount)
 
     override var dispatchReceiver: IrExpression? = null
