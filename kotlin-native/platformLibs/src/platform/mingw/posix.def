@@ -18,6 +18,9 @@ static void set_posix_errno(int value) {
         errno = value;
 }
 
+// Not declared in the included headers.
+__declspec(dllimport) short htons(short);
+
 static short posix_htons(short x) {
     return htons(x);
 }
