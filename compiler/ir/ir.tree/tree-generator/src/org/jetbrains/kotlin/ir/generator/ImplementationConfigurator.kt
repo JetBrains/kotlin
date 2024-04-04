@@ -190,6 +190,103 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 }
             }
         }
+
+        allImplOf(loop) {
+            isLateinit("condition")
+            defaultNull("label", "body")
+        }
+
+        allImplOf(breakContinue) {
+            defaultNull("label")
+        }
+
+        impl(catch) {
+            isLateinit("result")
+        }
+
+        impl(`try`) {
+            isLateinit("tryResult")
+            defaultNull("finallyExpression")
+        }
+
+        impl(constantObject) {
+            default("typeArguments", smartList())
+        }
+
+        impl(dynamicOperatorExpression) {
+            isLateinit("receiver")
+        }
+
+        impl(errorCallExpression) {
+            defaultNull("explicitReceiver")
+            default("arguments", smartList())
+        }
+
+        allImplOf(fieldAccessExpression) {
+            defaultNull("receiver")
+        }
+
+        impl(setField) {
+            isLateinit("value")
+        }
+
+        impl(stringConcatenation) {
+            default("arguments", "ArrayList(2)")
+        }
+
+        impl(returnableBlock) {
+            default("descriptor", "symbol.descriptor", withGetter = true)
+        }
+
+
+        impl(composite) {
+            implementation.generationCallback = {
+                println()
+                print()
+                println("""
+                    // A temporary API for compatibility with Flysto user project, see KQA-1254
+                    constructor(
+                        startOffset: Int,
+                        endOffset: Int,
+                        type: IrType,
+                        origin: IrStatementOrigin?,
+                        statements: List<IrStatement>,
+                    ) : this(
+                        constructorIndicator = null,
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = type,
+                        origin = origin,
+                    ) {
+                        this.statements.addAll(statements)
+                    }
+                """.replaceIndent(currentIndent))
+            }
+        }
+
+        impl(`return`) {
+            implementation.generationCallback = {
+                println()
+                print()
+                println("""
+                    // A temporary API for compatibility with Flysto user project, see KQA-1254
+                    constructor(
+                        startOffset: Int,
+                        endOffset: Int,
+                        type: IrType,
+                        returnTargetSymbol: IrReturnTargetSymbol,
+                        value: IrExpression,
+                    ) : this(
+                        constructorIndicator = null,
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = type,
+                        returnTargetSymbol = returnTargetSymbol,
+                        value = value,
+                    )
+                """.replaceIndent(currentIndent))
+            }
+        }
     }
 
     private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: ClassRef<*>) {
@@ -241,11 +338,15 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default(it, "ArrayList()")
         }
 
-        // Generation of implementation classes of IrExpression are left out for subsequent MR, as a part of KT-65773.
         for (element in model.elements) {
-            if (element.category == Element.Category.Expression) {
-                for (implementation in element.implementations) {
+            for (implementation in element.implementations) {
+                // Generation of implementation classes of IrMemberAccessExpression are left out for subsequent MR, as a part of KT-65773.
+                if (element == IrTree.const || element.elementAncestorsAndSelfDepthFirst().any { it == IrTree.memberAccessExpression }) {
                     implementation.doPrint = false
+                }
+
+                if (element.category == Element.Category.Expression) {
+                    implementation.isConstructorPublic = false
                 }
             }
         }

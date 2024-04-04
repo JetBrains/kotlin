@@ -81,6 +81,19 @@ fun IrBreakImpl(
     loop = loop,
 )
 
+fun IrCompositeImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin? = null,
+) = IrCompositeImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+)
+
 fun IrCatchImpl(
     startOffset: Int,
     endOffset: Int,
@@ -162,6 +175,7 @@ fun IrConstantPrimitiveImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     value = value,
+    type = value.type,
 )
 
 fun <T> IrConstImpl(

@@ -46,4 +46,17 @@ internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementa
             }
         }
     }
+
+    context(ImportCollector)
+    override fun SmartPrinter.printAdditionalConstructorParameters(implementation: Implementation) {
+        if (implementation.element.category == Element.Category.Expression) {
+            print()
+            println(
+                """
+    @Suppress("UNUSED_PARAMETER")
+    constructorIndicator: ${type("org.jetbrains.kotlin.ir.util", "IrElementConstructorIndicator").render()}?,
+            """.replaceIndent(currentIndent)
+            )
+        }
+    }
 }
