@@ -287,6 +287,84 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 """.replaceIndent(currentIndent))
             }
         }
+
+
+        allImplOf(memberAccessExpression) {
+            defaultNull("dispatchReceiver", "extensionReceiver")
+        }
+
+        allImplOf(functionAccessExpression) {
+            default("contextReceiversCount", "0")
+        }
+
+        impl(call) {
+            implementation.generationCallback = {
+                println()
+                print()
+                println("""
+                companion object {
+                    // Temporary API for compatible-compose, to be removed soon.
+                    // Note: It cannot be marked with @Deprecated, because some usages in kotlin compiler pick this declaration up while it still exists.
+                    fun fromSymbolOwner(
+                        startOffset: Int,
+                        endOffset: Int,
+                        type: IrType,
+                        symbol: IrSimpleFunctionSymbol,
+                        typeArgumentsCount: Int = symbol.owner.typeParameters.size,
+                        valueArgumentsCount: Int = symbol.owner.valueParameters.size,
+                        origin: IrStatementOrigin? = null,
+                        superQualifierSymbol: IrClassSymbol? = null,
+                    ) =
+                        IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
+                }
+                """.replaceIndent(currentIndent))
+            }
+        }
+
+        impl(constructorCall) {
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
+            undefinedOffset()
+            implementation.generationCallback = {
+                println()
+                print()
+                println("""
+                companion object {
+                    // Temporary API for compatible-compose, to be removed soon.
+                    // Note: It cannot be marked with @Deprecated, because some usages in kotlin compiler pick this declaration up while it still exists.
+                    fun fromSymbolOwner(
+                        type: IrType,
+                        constructorSymbol: IrConstructorSymbol,
+                        origin: IrStatementOrigin? = null
+                    ): IrConstructorCallImpl =
+                        fromSymbolOwner(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size,
+                            origin
+                        )
+                }
+                """.replaceIndent(currentIndent))
+            }
+        }
+
+        impl(delegatingConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(enumConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(functionReference) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
     }
 
     private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: ClassRef<*>) {
@@ -340,8 +418,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         for (element in model.elements) {
             for (implementation in element.implementations) {
-                // Generation of implementation classes of IrMemberAccessExpression are left out for subsequent MR, as a part of KT-65773.
-                if (element == IrTree.const || element.elementAncestorsAndSelfDepthFirst().any { it == IrTree.memberAccessExpression }) {
+                if (element == IrTree.const) {
                     implementation.doPrint = false
                 }
 
