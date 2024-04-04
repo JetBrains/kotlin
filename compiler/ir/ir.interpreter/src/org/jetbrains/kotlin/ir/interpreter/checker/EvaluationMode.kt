@@ -16,15 +16,39 @@ import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
 import org.jetbrains.kotlin.ir.interpreter.isConst
 import org.jetbrains.kotlin.ir.interpreter.property
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.isString
-import org.jetbrains.kotlin.ir.types.isUnsignedType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-enum class EvaluationMode {
-    FULL {
+sealed class EvaluationMode {
+
+    open fun canEvaluateFunction(function: IrFunction): Boolean = false
+    open fun canEvaluateEnumValue(enumEntry: IrGetEnumValue): Boolean = false
+    open fun canEvaluateFunctionExpression(expression: IrFunctionExpression): Boolean = false
+    open fun canEvaluateCallableReference(reference: IrCallableReference<*>): Boolean = false
+    open fun canEvaluateClassReference(reference: IrDeclarationReference): Boolean = false
+
+    open fun canEvaluateBlock(block: IrBlock): Boolean = false
+    open fun canEvaluateComposite(composite: IrComposite): Boolean {
+        return composite.origin == IrStatementOrigin.DESTRUCTURING_DECLARATION || composite.origin == null
+    }
+
+    open fun canEvaluateExpression(expression: IrExpression): Boolean = false
+
+    open fun mustCheckBodyOf(function: IrFunction): Boolean {
+        return function.property != null
+    }
+
+    protected fun IrDeclaration.isMarkedAsIntrinsicConstEvaluation() = isMarkedWith(intrinsicConstEvaluationAnnotation)
+
+    protected fun IrDeclaration.isMarkedWith(annotation: FqName): Boolean {
+        if (this is IrClass && this.isCompanion) return false
+        if (this.hasAnnotation(annotation)) return true
+        return (this.parent as? IrClass)?.isMarkedWith(annotation) ?: false
+    }
+
+    data object Full : EvaluationMode() {
         override fun canEvaluateFunction(function: IrFunction): Boolean = true
         override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue): Boolean = true
         override fun canEvaluateFunctionExpression(expression: IrFunctionExpression): Boolean = true
@@ -37,9 +61,9 @@ enum class EvaluationMode {
         override fun canEvaluateExpression(expression: IrExpression): Boolean = true
 
         override fun mustCheckBodyOf(function: IrFunction): Boolean = true
-    },
+    }
 
-    ONLY_BUILTINS {
+    data object OnlyBuiltins : EvaluationMode() {
         private val allowedMethodsOnPrimitives = setOf(
             "not", "unaryMinus", "unaryPlus", "inv",
             "toString", "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
@@ -96,9 +120,9 @@ enum class EvaluationMode {
             if ((0 until this.valueArgumentsCount).any { getValueArgument(it)?.type?.isUnsigned() == true }) return true
             return false
         }
-    },
+    }
 
-    ONLY_INTRINSIC_CONST {
+    data object OnlyIntrinsicConst : EvaluationMode() {
         override fun canEvaluateFunction(function: IrFunction): Boolean {
             return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation()
         }
@@ -111,32 +135,7 @@ enum class EvaluationMode {
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.origin == IrStatementOrigin.WHEN || block.statements.size == 1
 
         override fun canEvaluateExpression(expression: IrExpression): Boolean {
-            return ONLY_BUILTINS.canEvaluateExpression(expression) || expression is IrWhen
+            return OnlyBuiltins.canEvaluateExpression(expression) || expression is IrWhen
         }
-    };
-
-    open fun canEvaluateFunction(function: IrFunction): Boolean = false
-    open fun canEvaluateEnumValue(enumEntry: IrGetEnumValue): Boolean = false
-    open fun canEvaluateFunctionExpression(expression: IrFunctionExpression): Boolean = false
-    open fun canEvaluateCallableReference(reference: IrCallableReference<*>): Boolean = false
-    open fun canEvaluateClassReference(reference: IrDeclarationReference): Boolean = false
-
-    open fun canEvaluateBlock(block: IrBlock): Boolean = false
-    open fun canEvaluateComposite(composite: IrComposite): Boolean {
-        return composite.origin == IrStatementOrigin.DESTRUCTURING_DECLARATION || composite.origin == null
-    }
-
-    open fun canEvaluateExpression(expression: IrExpression): Boolean = false
-
-    open fun mustCheckBodyOf(function: IrFunction): Boolean {
-        return function.property != null
-    }
-
-    protected fun IrDeclaration.isMarkedAsIntrinsicConstEvaluation() = isMarkedWith(intrinsicConstEvaluationAnnotation)
-
-    protected fun IrDeclaration.isMarkedWith(annotation: FqName): Boolean {
-        if (this is IrClass && this.isCompanion) return false
-        if (this.hasAnnotation(annotation)) return true
-        return (this.parent as? IrClass)?.isMarkedWith(annotation) ?: false
     }
 }
