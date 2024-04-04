@@ -88,7 +88,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val `class`: Element by element {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
-        parent(mutableDeclarationContainer)
+        parent(declarationContainer)
     }
 
     val callable by sealedElement {

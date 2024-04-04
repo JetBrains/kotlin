@@ -434,7 +434,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
 // Swift Export modules
 include ":native:swift:sir",
         ":native:swift:sir:tree-generator",
-        ":native:swift:sir-passes",
+        ":native:swift:sir-light-classes",
         ":native:swift:sir-printer",
         ":native:swift:sir-compiler-bridge",
         ":native:swift:sir-providers",
