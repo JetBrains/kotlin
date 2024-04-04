@@ -124,42 +124,27 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
             output: Path, fullBitcode: Boolean = false
     ) {
-        val platform = project.platformManager.platform(target)
+        val dist = Distribution(project.currentKotlinNativeDist.absolutePath)
+        val depenendciesDir = File(dist.dependenciesDir).absolutePath
+        val platformManager = PlatformManager(dist)
+        val platform = platformManager.platform(target)
+
+        println()
+        println("zzz find $depenendciesDir -ls")
+        println(arrayOf("find", depenendciesDir, "-ls").runCommand())
+        println()
+
+        println("zzzz download platform")
         platform.downloadDependencies()
+
+        println()
+        println("zzz find $depenendciesDir -ls")
+        println(arrayOf("find", depenendciesDir, "-ls").runCommand())
+        println()
+
         assert(platform.configurables is AppleConfigurables)
         val configs = platform.configurables as AppleConfigurables
         val compiler = configs.absoluteTargetToolchain + "/bin/swiftc"
-
-        if (!File(compiler).exists()) {
-            println(
-                """
-                    swiftc doesn't exists at $compiler
-                """
-            )
-
-            println()
-
-            println("ls -al \$absoluteTargetToolchain")
-            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain).runCommand())
-            println()
-
-            println("ls -al \$absoluteTargetToolchain/bin")
-            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain + "/bin").runCommand())
-            println()
-
-            println("ls -al \$absoluteTargetToolchain/..")
-            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain + "/..").runCommand())
-            println()
-
-            println("ls -al \$absoluteTargetToolchain/../..")
-            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain + "/../..").runCommand())
-            println()
-
-            println("ls -al \$absoluteTargetToolchain/../../..")
-            println(arrayOf("ls", "-al", configs.absoluteTargetToolchain + "/../../..").runCommand())
-            println()
-        }
-
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
         val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
