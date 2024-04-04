@@ -1,5 +1,11 @@
 import kotlin.native.internal.ExportedBridge
 
+@ExportedBridge("__root___foo")
+public fun __root___foo(): Int {
+    val _result = foo()
+    return _result
+}
+
 @ExportedBridge("namespace1_local_functions_foo")
 public fun namespace1_local_functions_foo(): Unit {
     val _result = namespace1.local_functions.foo()
@@ -54,12 +60,6 @@ public fun overload_foo(arg1: Int): Int {
 public fun overload_foo(arg1: Double): Int {
     val __arg1 = arg1
     val _result = overload.foo(__arg1)
-    return _result
-}
-
-@ExportedBridge("__root___foo")
-public fun __root___foo(): Int {
-    val _result = foo()
     return _result
 }
 

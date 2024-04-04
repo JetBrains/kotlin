@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+int32_t __root___foo();
+
 void namespace1_local_functions_foo();
 
 int32_t namespace1_main_foobar__TypesOfArguments__int32_t__(int32_t param);
@@ -13,6 +15,4 @@ int32_t namespace2_foo__TypesOfArguments__int32_t__(int32_t arg1);
 int32_t overload_foo__TypesOfArguments__int32_t__(int32_t arg1);
 
 int32_t overload_foo__TypesOfArguments__double__(double arg1);
-
-int32_t __root___foo();
 
