@@ -5,19 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import com.intellij.lang.LighterASTNode
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.findDescendantByType
-import org.jetbrains.kotlin.diagnostics.traverseDescendants
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.toKtLightSourceElement
-import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 
 /**
@@ -45,4 +41,13 @@ fun KtSourceElement.findContextReceiverListSource(): KtLightSourceElement? {
         KtNodeTypes.CONTEXT_RECEIVER_LIST,
         false
     )?.toKtLightSourceElement(treeStructure)
+}
+
+internal fun KtSourceElement.delegatedPropertySourceOrThis(context: CheckerContext): KtSourceElement {
+    if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
+        val property = context.containingDeclarations.lastIsInstanceOrNull<FirProperty>()
+        property?.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor)?.let { return it }
+    }
+
+    return this
 }
