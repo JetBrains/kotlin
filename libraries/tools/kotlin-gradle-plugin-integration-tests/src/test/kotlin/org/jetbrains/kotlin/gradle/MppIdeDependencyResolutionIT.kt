@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
-import org.jetbrains.kotlin.gradle.idea.tcs.*
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -98,6 +101,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
             resolveIdeDependencies("dep-with-cinterop") { dependencies ->
+                dependencies.assertResolvedDependenciesOnly()
+
                 dependencies["commonMain"].cinteropDependencies()
                     .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
                 dependencies["commonTest"].cinteropDependencies()
@@ -107,12 +112,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 dependencies["linuxX64Test"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
                 dependencies["linuxArm64Test"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
 
-                val iosX64MainDependencies = dependencies["iosX64Main"].cinteropDependencies()
                 if (HostManager.hostIsMac) {
-                    iosX64MainDependencies.assertMatches(binaryCoordinates(Regex("a:dep.*ios_x64")))
-                } else {
-                    if (iosX64MainDependencies.isNotEmpty())
-                        fail("Expected no dependencies (resolved & unresolved) for iosX64Cinterops on non-MacOS Host")
+                    dependencies["iosX64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*ios_x64")))
                 }
             }
 
@@ -147,10 +148,12 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             }
 
             resolveIdeDependencies("client-for-project-to-project-dep") { dependencies ->
+                dependencies.assertResolvedDependenciesOnly()
+
                 dependencies["commonMain"].cinteropDependencies()
-                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
                 dependencies["commonTest"].cinteropDependencies()
-                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
 
                 dependencies["linuxX64Main"].cinteropDependencies()
                     .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_x64")))
@@ -160,9 +163,15 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_arm64")))
                 dependencies["linuxArm64Test"].cinteropDependencies()
                     .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_arm64")))
+
+                if (HostManager.hostIsMac) {
+                    dependencies["iosX64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*ios_x64")))
+                }
             }
 
             resolveIdeDependencies("client-with-complex-hierarchy") { dependencies ->
+                dependencies.assertResolvedDependenciesOnly()
+
                 dependencies["commonMain"].cinteropDependencies().assertMatches()
                 dependencies["commonTest"].cinteropDependencies().assertMatches()
                 dependencies["nativeMain"].cinteropDependencies().assertMatches(
