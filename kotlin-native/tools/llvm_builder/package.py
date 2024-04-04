@@ -338,7 +338,7 @@ def build_distribution(args):
             build_targets = ["install"]
 
         projects = ["clang", "lld", "compiler-rt"]
-        runtimes = ["libcxx"] if host_is_windows() else ["libcxx", "libcxxabi"]
+        runtimes = [] if host_is_windows() else ["libcxx", "libcxxabi"]
 
         build_dir = force_create_directory(current_dir, f"llvm-stage-{stage}-build")
         intermediate_build_results.append(build_dir)
