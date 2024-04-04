@@ -1,5 +1,17 @@
 KtUsualClassType:
-  abbreviatedType: null
+  abbreviatedType: KtUsualClassType:
+    abbreviatedType: null
+    annotationsList: []
+    classId: library1/TransitiveStringAlias
+    classSymbol: KtTypeAliasSymbol(library1/TransitiveStringAlias)
+    nullability: NON_NULLABLE
+    ownTypeArguments: []
+    qualifiers: [
+      qualifier:
+        name: TransitiveStringAlias
+        symbol: KtTypeAliasSymbol(library1/TransitiveStringAlias)
+        typeArguments: []
+    ]
   annotationsList: []
   classId: kotlin/String
   classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
@@ -13,4 +25,4 @@ KtUsualClassType:
   ]
 
 Rendered type:
-kotlin.String?
+library1.TransitiveStringAlias

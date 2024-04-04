@@ -188,11 +188,12 @@ internal class StubBasedFirTypeDeserializer(
     }
 
     private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
-        if (typeReference.typeElement?.unwrapNullability() is KtDynamicType) {
+        val unwrappedTypeElement = typeReference.typeElement?.unwrapNullability()
+        if (unwrappedTypeElement is KtDynamicType) {
             return ConeDynamicType.create(moduleData.session)
         }
 
-        val userType = typeReference.typeElement as? KtUserType
+        val userType = unwrappedTypeElement as? KtUserType
         val userTypeStub = userType?.let { it.stub ?: loadStubByElement(it) } as? KotlinUserTypeStubImpl
 
         val abbreviatedType = userTypeStub?.abbreviatedType?.let { deserializeClassType(it) }
