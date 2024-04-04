@@ -71,6 +71,11 @@
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>compose-compiler-gradle-plugin</artifactId>
+        <version>ArtifactsTest.version</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-allopen</artifactId>
         <version>ArtifactsTest.version</version>
       </dependency>

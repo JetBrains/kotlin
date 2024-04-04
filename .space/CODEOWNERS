@@ -300,6 +300,7 @@
 /libraries/tools/kotlin-annotations-jvm/ "Kotlin Libraries"
 /libraries/tools/kotlin-assignment/ "Kotlin Build Tools"
 /libraries/tools/kotlin-bom/ "Kotlin Build Infrastructure"
+/libraries/tools/kotlin-compose-compiler/ "Kotlin Build Tools"
 /libraries/tools/kotlin-dist-for-jps-meta/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-build-metrics/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-compiler-types/ "Kotlin Build Tools"

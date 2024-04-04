@@ -512,6 +512,7 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin-model",
     ":kotlin-gradle-plugin-tcs-android",
+    ":compose-compiler-gradle-plugin",
     ":kotlin-allopen",
     ":kotlin-noarg",
     ":kotlin-power-assert",
