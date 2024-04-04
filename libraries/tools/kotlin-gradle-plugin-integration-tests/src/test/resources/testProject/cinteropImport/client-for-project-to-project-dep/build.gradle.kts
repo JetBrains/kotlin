@@ -11,6 +11,7 @@ allprojects {
 kotlin {
     linuxX64()
     linuxArm64()
+    iosX64()
 
     sourceSets.getByName("commonMain").dependencies {
         implementation(project(":dep-with-cinterop"))
