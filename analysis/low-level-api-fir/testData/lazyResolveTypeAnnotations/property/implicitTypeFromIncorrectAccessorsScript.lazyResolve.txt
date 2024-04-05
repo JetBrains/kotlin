@@ -425,7 +425,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
         [ResolvedTo(BODY_RESOLVE)] init {
-            <Unresolved name: set>#(<Unresolved name: value>#)
+            this@R|?|.R|kotlin/text/set<None of the following candidates is applicable because of receiver type mismatch: [kotlin/text/set]>#|(<Unresolved name: value>#)
         }
 
         [ResolvedTo(BODY_RESOLVE)] init {
