@@ -763,6 +763,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt")
+        public void testNullableProjectionOfWildcardWithNonNullBoundsInOutPosition() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
+        }
+
+        @Test
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.kt");
@@ -872,6 +878,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         @TestMetadata("NullMarkedWithStarType.kt")
         public void testNullMarkedWithStarType() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedWithStarType.kt");
+        }
+
+        @Test
+        @TestMetadata("NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt")
+        public void testNullableProjectionOfWildcardWithNonNullBoundsInOutPosition() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
         }
 
         @Test
