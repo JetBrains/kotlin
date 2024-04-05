@@ -361,8 +361,11 @@ class GccBasedLinker(targetProperties: GccConfigurables)
         require(!isDynamic) {
             "Dynamic compiler rt librares are unsupported"
         }
-        val dir = File("$absoluteLlvmHome/lib/clang/").listFiles.firstOrNull()?.absolutePath
-        return if (dir != null) "$dir/lib/x86_64-unknown-linux-gnu/libclang_rt.$libraryName.a" else null
+        // Flexibility required in upgrade from LLVM-11 to LLVM-16
+        val clangdir = File("$absoluteLlvmHome/lib/clang/").listFiles.firstOrNull()?.absolutePath ?: return null
+        val libdir = File("$clangdir/lib/").listFiles.firstOrNull()?.absolutePath ?: return null
+        val llvm11lib = File("$libdir/libclang_rt.$libraryName-x86_64.a")
+        return if (llvm11lib.exists) llvm11lib.absolutePath else "$libdir/libclang_rt.$libraryName.a"
     }
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
