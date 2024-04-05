@@ -398,12 +398,12 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         this is IrType && isNullable()
 
     @Suppress("UNCHECKED_CAST")
-    override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker =
-        makeTypeIntersection(types as List<IrType>) as SimpleTypeMarker
+    override fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker =
+        makeTypeIntersection(types as Collection<IrType>) as SimpleTypeMarker
 
     @Suppress("UNCHECKED_CAST")
-    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker =
-        makeTypeIntersection(types as List<IrType>)
+    override fun intersectTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker =
+        makeTypeIntersection(types as Collection<IrType>)
 
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean =
         this is IrSimpleType && irTypePredicates_isPrimitiveType()

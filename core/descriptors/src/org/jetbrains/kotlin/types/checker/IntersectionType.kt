@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 fun intersectWrappedTypes(types: Collection<KotlinType>) = intersectTypes(types.map { it.unwrap() })
 
 
-fun intersectTypes(types: List<SimpleType>) = intersectTypes(types as List<UnwrappedType>) as SimpleType
+fun intersectTypes(types: Collection<SimpleType>) = intersectTypes(types as Collection<UnwrappedType>) as SimpleType
 
-fun intersectTypes(types: List<UnwrappedType>): UnwrappedType {
+fun intersectTypes(types: Collection<UnwrappedType>): UnwrappedType {
     when (types.size) {
         0 -> error("Expected some types")
         1 -> return types.single()

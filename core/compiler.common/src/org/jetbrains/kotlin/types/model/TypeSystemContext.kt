@@ -544,8 +544,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
      */
     fun SimpleTypeMarker.isSingleClassifierType(): Boolean
 
-    fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker
-    fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker
+    fun intersectTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker
+    fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker
 
     fun KotlinTypeMarker.isSimpleType(): Boolean = asSimpleType() != null
 
