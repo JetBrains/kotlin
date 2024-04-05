@@ -17,7 +17,7 @@ fun main() {
 
 annotation class DummyAnnotation
 
-<!OPT_IN_ARGUMENT_IS_NOT_MARKER("a.b.c.DummyAnnotation")!>@SubclassOptInRequired(DummyAnnotation::class)<!>
+<!SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER!>@SubclassOptInRequired(DummyAnnotation::class)<!>
 open class IncorrectSubclassOptInArgumentMarker
 
 internal fun interface StableInterface {

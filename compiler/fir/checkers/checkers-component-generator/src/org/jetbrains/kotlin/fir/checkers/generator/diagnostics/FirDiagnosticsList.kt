@@ -466,6 +466,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SUBCLASS_OPT_IN_INAPPLICABLE by error<KtAnnotationEntry> {
             parameter<String>("target")
         }
+        val SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER by error<KtAnnotationEntry> {
+            parameter<ClassId>("notMarkerClassId")
+        }
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

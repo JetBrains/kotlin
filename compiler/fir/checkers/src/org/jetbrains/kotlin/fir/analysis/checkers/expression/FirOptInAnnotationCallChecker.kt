@@ -28,8 +28,11 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_ANNOTATION_CLASS
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_CLASS_ID
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID
 
 object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -47,7 +50,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
                 } else {
                     val annotationClasses = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
                     for (classSymbol in annotationClasses?.extractClassesFromArgument(context.session).orEmpty()) {
-                        checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
+                        checkOptInArgumentIsMarker(classSymbol, classId, expression.source, reporter, context)
                     }
                 }
             }
@@ -80,7 +83,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
                 }
             }
             val classSymbol = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)?.extractClassFromArgument(context.session) ?: return
-            checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
+            checkOptInArgumentIsMarker(classSymbol, classId, expression.source, reporter, context)
         }
     }
 
@@ -106,15 +109,21 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
 
     private fun checkOptInArgumentIsMarker(
         classSymbol: FirRegularClassSymbol,
+        annotationClassId: ClassId,
         source: KtSourceElement?,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
         with(FirOptInUsageBaseChecker) {
             if (classSymbol.loadExperimentalityForMarkerAnnotation(context.session) == null) {
+                val diagnostic = when (annotationClassId) {
+                    OPT_IN_CLASS_ID -> FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER
+                    SUBCLASS_OPT_IN_REQUIRED_CLASS_ID -> FirErrors.SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER
+                    else -> return
+                }
                 reporter.reportOn(
                     source,
-                    FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER,
+                    diagnostic,
                     classSymbol.classId,
                     context
                 )

@@ -339,6 +339,7 @@ object FirErrors {
     val OPT_IN_MARKER_ON_OVERRIDE: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
     val OPT_IN_MARKER_ON_OVERRIDE_WARNING: KtDiagnosticFactory0 by warning0<KtAnnotationEntry>()
     val SUBCLASS_OPT_IN_INAPPLICABLE: KtDiagnosticFactory1<String> by error1<KtAnnotationEntry, String>()
+    val SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER: KtDiagnosticFactory1<ClassId> by error1<KtAnnotationEntry, ClassId>()
 
     // Exposed visibility
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE: KtDiagnosticFactory3<EffectiveVisibility, FirBasedSymbol<*>, EffectiveVisibility> by error3<KtNamedDeclaration, EffectiveVisibility, FirBasedSymbol<*>, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)

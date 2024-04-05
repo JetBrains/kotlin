@@ -1096,6 +1096,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val target: String
     }
 
+    interface SubclassOptArgumentIsNotMarker : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = SubclassOptArgumentIsNotMarker::class
+        val notMarkerClassId: ClassId
+    }
+
     interface ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExposedTypealiasExpandedType::class
         val elementVisibility: EffectiveVisibility
