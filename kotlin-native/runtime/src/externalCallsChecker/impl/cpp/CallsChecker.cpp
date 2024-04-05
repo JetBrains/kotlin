@@ -9,6 +9,7 @@
 #include <cstring>
 #include <unordered_set>
 
+#include "Common.h"
 #include "KAssert.h"
 #include "Memory.h"
 #include "Porting.h"
@@ -335,7 +336,7 @@ private:
 constexpr int MSG_SEND_TO_NULL = -1;
 constexpr int CALLED_LLVM_BUILTIN = -2;
 
-thread_local size_t ignoreGuardsCount = 0;
+THREAD_LOCAL_VARIABLE size_t ignoreGuardsCount = 0;
 
 } // namespace
 
