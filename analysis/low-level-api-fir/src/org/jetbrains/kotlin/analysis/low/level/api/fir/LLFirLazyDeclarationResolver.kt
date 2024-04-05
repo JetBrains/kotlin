@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.types.toClassSymbol
 
 @ThreadSafeMutableState
 internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
@@ -33,6 +36,13 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
             target = fir,
             toPhase = toPhase,
         )
+
+        if (toPhase == FirResolvePhase.STATUS && fir.declarations.none { it is FirCallableDeclaration }) {
+            for (superType in fir.superConeTypes) {
+                val classSymbol = superType.toClassSymbol(session) ?: continue
+                lazyResolveToPhaseWithCallableMembers(classSymbol.fir, toPhase)
+            }
+        }
     }
 
     override fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase) {

@@ -2,21 +2,21 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] preresolvedEmptyInterfaceWithSuper.kt
     public abstract [ResolvedTo(STATUS)] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+        public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+        public open [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
-        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
 
-        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
-        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
 
     }
 
@@ -24,21 +24,21 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] preresolvedEmptyInterfaceWithSuper.kt
     public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+        public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+        public open [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
-        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
 
-        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
-        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
 
     }
 

@@ -105,6 +105,9 @@ fun FirElementWithResolveState.lazyResolveToPhase(toPhase: FirResolvePhase) {
  *
  * Might resolve additional required declarations.
  *
+ * Note: for the [STATUS][FirResolvePhase.STATUS] phase it guarantees
+ * that all callables in [this] or superclasses are resolved to at least the [STATUS][FirResolvePhase.STATUS] phase.
+ *
  * @receiver [FirClassSymbol] which should be resolved and which callable members should be resolved
  * @param toPhase the minimum phase, the declaration and callable members should be resolved
  * to after an execution of the [lazyResolveToPhaseWithCallableMembers]
