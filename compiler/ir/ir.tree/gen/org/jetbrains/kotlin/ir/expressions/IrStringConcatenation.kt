@@ -31,12 +31,12 @@ abstract class IrStringConcatenation(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
+    val arguments: MutableList<IrExpression>,
 ) : IrExpression(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ) {
-    val arguments: MutableList<IrExpression> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitStringConcatenation(this, data)

@@ -27,5 +27,6 @@ class IrDynamicOperatorExpressionImpl internal constructor(
     endOffset = endOffset,
     type = type,
     operator = operator,
+    arguments = ArrayList(),
 ) {
 }

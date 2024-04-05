@@ -5,10 +5,19 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 
-abstract class AbstractIrLazyFunction : IrSimpleFunction(), IrLazyFunctionBase {
+abstract class AbstractIrLazyFunction(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+) : IrSimpleFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), IrLazyFunctionBase {
     abstract val isDeserializationEnabled: Boolean
 
     fun tryLoadIr(): Boolean {

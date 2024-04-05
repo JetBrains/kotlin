@@ -21,11 +21,14 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 class IrErrorDeclarationImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
 ) : IrErrorDeclaration(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ) {
     override var annotations: List<IrConstructorCall> = emptyList()
 

@@ -22,16 +22,18 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrScriptImpl(
-    override val symbol: IrScriptSymbol,
+    symbol: IrScriptSymbol,
     override var name: Name,
     override val factory: IrFactory,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
 ) : IrScript(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = SCRIPT_ORIGIN,
+    symbol = symbol,
 ) {
     override var annotations: List<IrConstructorCall> = emptyList()
-
-    override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
 
     override lateinit var parent: IrDeclarationParent
 

@@ -30,13 +30,18 @@ import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyField(
     private val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val fir: FirField,
     val containingClass: FirRegularClass?,
-    override val symbol: IrFieldSymbol,
-) : IrField(), AbstractFir2IrLazyDeclaration<FirField>, Fir2IrComponents by c {
+    symbol: IrFieldSymbol,
+) : IrField(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
+), AbstractFir2IrLazyDeclaration<FirField>, Fir2IrComponents by c {
     init {
         symbol.bind(this)
     }

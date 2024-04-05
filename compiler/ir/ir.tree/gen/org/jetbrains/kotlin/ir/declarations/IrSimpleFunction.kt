@@ -16,7 +16,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.simpleFunction]
  */
 abstract class IrSimpleFunction(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
 ) : IrFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ), IrOverridableDeclaration<IrSimpleFunctionSymbol>, IrAttributeContainer {
     abstract override val symbol: IrSimpleFunctionSymbol
 

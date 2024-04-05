@@ -21,6 +21,7 @@ abstract class IrErrorCallExpression(
     endOffset: Int,
     type: IrType,
     description: String,
+    val arguments: MutableList<IrExpression>,
 ) : IrErrorExpression(
     startOffset = startOffset,
     endOffset = endOffset,
@@ -28,8 +29,6 @@ abstract class IrErrorCallExpression(
     description = description,
 ) {
     var explicitReceiver: IrExpression? = null
-
-    val arguments: MutableList<IrExpression> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorCallExpression(this, data)

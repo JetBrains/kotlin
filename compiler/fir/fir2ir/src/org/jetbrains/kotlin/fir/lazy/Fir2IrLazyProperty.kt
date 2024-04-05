@@ -40,15 +40,19 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @OptIn(FirBasedFakeOverrideGenerator::class)
 class Fir2IrLazyProperty(
     private val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val fir: FirProperty,
     val containingClass: FirRegularClass?,
     symbols: PropertySymbols,
     override var parent: IrDeclarationParent,
     override var isFakeOverride: Boolean
-) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by c {
+) : IrProperty(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by c {
     override val symbol: IrPropertySymbol = symbols.propertySymbol
 
     init {

@@ -18,10 +18,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.file]
  */
 abstract class IrFile(
+    override val symbol: IrFileSymbol,
 ) : IrPackageFragment(
 ), IrMutableAnnotationContainer, IrMetadataSourceOwner {
-    abstract override val symbol: IrFileSymbol
-
     abstract var module: IrModuleFragment
 
     abstract var fileEntry: IrFileEntry

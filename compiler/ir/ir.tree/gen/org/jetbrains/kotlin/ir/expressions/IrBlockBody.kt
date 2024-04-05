@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrBlockBody(
     startOffset: Int,
     endOffset: Int,
+    override val statements: MutableList<IrStatement>,
 ) : IrBody(
     startOffset = startOffset,
     endOffset = endOffset,
 ), IrStatementContainer {
-    override val statements: MutableList<IrStatement> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBlockBody(this, data)

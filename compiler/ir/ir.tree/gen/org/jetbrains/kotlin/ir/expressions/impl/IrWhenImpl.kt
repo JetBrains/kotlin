@@ -27,5 +27,6 @@ class IrWhenImpl internal constructor(
     endOffset = endOffset,
     type = type,
     origin = origin,
+    branches = ArrayList(),
 ) {
 }

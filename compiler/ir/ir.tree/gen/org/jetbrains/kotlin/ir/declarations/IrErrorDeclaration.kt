@@ -14,7 +14,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorDeclaration]
  */
 abstract class IrErrorDeclaration(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
 ) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ) {
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

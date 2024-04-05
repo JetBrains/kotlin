@@ -161,18 +161,9 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
 
     protected fun hoistFieldsInAbstractClasses(model: Model<Element>) {
         for (element in model.elements) {
-            /* when (element.typeKind) {
-                 TypeKind.Class -> {*/
             for (field in element.allFields) {
                 field.implementation = AbstractField.ImplementationStrategy.Abstract(field.isMutable)
             }
-            /*}
-            TypeKind.Interface -> {
-                for (field in element.fields) {
-                    field.implementation = AbstractField.ImplementationStrategy.Abstract(field.isMutable)
-                }
-            }
-        }*/
 
             for (impl in element.implementations) {
                 for (field in impl.allFields) {
@@ -192,6 +183,8 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
                 }
             }
         }
+
+
 
         val subclassesPerElement = model.elements.associateWith { mutableListOf<FieldContainer<AbstractField<*>>>() }
         for (element in model.elements) {
@@ -272,7 +265,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
             val isMutable = fieldInParent.isMutable || fieldsOfSubclasses.any { it.second.isMutable }
             val liftedDefaultValue = fieldsOfSubclasses.map { (clazz, field) ->
                 (field.implementation as AbstractField.ImplementationStrategy.RegularField).defaultValue
-            }.distinct().singleOrNull()
+            }.distinct().singleOrNull().takeIf { it == "this" || it == "null" || it == "0" || it == "false" }
 
             fieldInParent.implementation = AbstractField.ImplementationStrategy.RegularField(isMutable, liftedDefaultValue)
 

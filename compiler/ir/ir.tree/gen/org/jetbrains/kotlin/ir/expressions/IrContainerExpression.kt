@@ -21,13 +21,13 @@ abstract class IrContainerExpression(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
+    override val statements: MutableList<IrStatement>,
     var origin: IrStatementOrigin?,
 ) : IrExpression(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ), IrStatementContainer {
-    override val statements: MutableList<IrStatement> = ArrayList()
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }

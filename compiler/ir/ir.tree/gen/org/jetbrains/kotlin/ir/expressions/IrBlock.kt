@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -18,11 +19,13 @@ abstract class IrBlock(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
+    statements: MutableList<IrStatement>,
     origin: IrStatementOrigin?,
 ) : IrContainerExpression(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
+    statements = statements,
     origin = origin,
 ) {
 

@@ -26,5 +26,6 @@ class IrVarargImpl internal constructor(
     endOffset = endOffset,
     type = type,
     varargElementType = varargElementType,
+    elements = ArrayList(),
 ) {
 }

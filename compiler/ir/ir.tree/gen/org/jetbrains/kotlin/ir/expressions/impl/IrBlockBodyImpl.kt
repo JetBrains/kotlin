@@ -21,5 +21,6 @@ class IrBlockBodyImpl internal constructor(
 ) : IrBlockBody(
     startOffset = startOffset,
     endOffset = endOffset,
+    statements = ArrayList(),
 ) {
 }

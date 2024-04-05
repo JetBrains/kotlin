@@ -24,10 +24,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.script]
  */
 abstract class IrScript(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrScriptSymbol,
 ) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ), IrDeclarationWithName, IrDeclarationParent, IrStatementContainer, IrMetadataSourceOwner {
-    abstract override val symbol: IrScriptSymbol
-
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ScriptDescriptor
 

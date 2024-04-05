@@ -21,12 +21,12 @@ abstract class IrVararg(
     endOffset: Int,
     type: IrType,
     var varargElementType: IrType,
+    val elements: MutableList<IrVarargElement>,
 ) : IrExpression(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ) {
-    val elements: MutableList<IrVarargElement> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitVararg(this, data)

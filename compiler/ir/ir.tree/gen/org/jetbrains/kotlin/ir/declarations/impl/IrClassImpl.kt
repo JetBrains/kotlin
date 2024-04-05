@@ -22,17 +22,21 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 open class IrClassImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val symbol: IrClassSymbol,
+    symbol: IrClassSymbol,
     override var kind: ClassKind,
     override var modality: Modality,
     override val source: SourceElement,
 ) : IrClass(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
 ) {
     override var annotations: List<IrConstructorCall> = emptyList()
 

@@ -14,7 +14,13 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding]
  */
 abstract class IrPropertyWithLateBinding(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
 ) : IrProperty(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ) {
     abstract val isBound: Boolean
 

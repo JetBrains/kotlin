@@ -22,13 +22,17 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 
 class IrAnonymousInitializerImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
-    override val symbol: IrAnonymousInitializerSymbol,
+    symbol: IrAnonymousInitializerSymbol,
     override var isStatic: Boolean,
 ) : IrAnonymousInitializer(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
 ) {
     override var annotations: List<IrConstructorCall> = emptyList()
 

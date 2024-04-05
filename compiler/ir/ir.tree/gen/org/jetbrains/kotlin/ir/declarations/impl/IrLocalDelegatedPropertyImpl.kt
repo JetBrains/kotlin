@@ -20,15 +20,19 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrLocalDelegatedPropertyImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
-    override val symbol: IrLocalDelegatedPropertySymbol,
+    symbol: IrLocalDelegatedPropertySymbol,
     override var type: IrType,
     override var isVar: Boolean,
 ) : IrLocalDelegatedProperty(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
 ) {
     override var annotations: List<IrConstructorCall> = emptyList()
 

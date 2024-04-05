@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var isExternal: Boolean,
@@ -38,6 +38,9 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
     override var isExpect: Boolean,
     override var isFakeOverride: Boolean,
 ) : IrPropertyWithLateBinding(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ) {
     override var annotations: List<IrConstructorCall> = emptyList()
 

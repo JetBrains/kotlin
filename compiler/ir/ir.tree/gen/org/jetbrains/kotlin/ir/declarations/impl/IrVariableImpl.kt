@@ -23,16 +23,20 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrVariableImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val symbol: IrVariableSymbol,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    symbol: IrVariableSymbol,
     override var name: Name,
     override var type: IrType,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,
 ) : IrVariable(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
 ) {
     override var annotations: List<IrConstructorCall> = emptyList()
 

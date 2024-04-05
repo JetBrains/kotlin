@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyFunction(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     override val descriptor: FunctionDescriptor,
     override var name: Name,
@@ -43,7 +43,11 @@ class IrLazyFunction(
     override var isInfix: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : AbstractIrLazyFunction(), IrLazyFunctionBase {
+) : AbstractIrLazyFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), IrLazyFunctionBase {
     override var parent: IrDeclarationParent by createLazyParent()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

@@ -20,12 +20,12 @@ abstract class IrConstantArray(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
+    val elements: MutableList<IrConstantValue>,
 ) : IrConstantValue(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ) {
-    val elements: MutableList<IrConstantValue> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstantArray(this, data)

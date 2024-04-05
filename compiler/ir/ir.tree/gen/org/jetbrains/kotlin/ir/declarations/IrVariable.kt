@@ -19,12 +19,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.variable]
  */
 abstract class IrVariable(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrVariableSymbol,
 ) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ), IrValueDeclaration {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptor
-
-    abstract override val symbol: IrVariableSymbol
 
     abstract var isVar: Boolean
 

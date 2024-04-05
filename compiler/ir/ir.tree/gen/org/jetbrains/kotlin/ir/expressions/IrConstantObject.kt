@@ -22,14 +22,13 @@ abstract class IrConstantObject(
     endOffset: Int,
     type: IrType,
     var constructor: IrConstructorSymbol,
+    val valueArguments: MutableList<IrConstantValue>,
+    val typeArguments: MutableList<IrType>,
 ) : IrConstantValue(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ) {
-    val valueArguments: MutableList<IrConstantValue> = ArrayList()
-
-    val typeArguments: MutableList<IrType> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstantObject(this, data)

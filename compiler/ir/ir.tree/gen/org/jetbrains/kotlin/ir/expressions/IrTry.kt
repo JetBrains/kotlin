@@ -20,14 +20,13 @@ abstract class IrTry(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
+    val catches: MutableList<IrCatch>,
 ) : IrExpression(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ) {
     lateinit var tryResult: IrExpression
-
-    val catches: MutableList<IrCatch> = ArrayList()
 
     var finallyExpression: IrExpression? = null
 

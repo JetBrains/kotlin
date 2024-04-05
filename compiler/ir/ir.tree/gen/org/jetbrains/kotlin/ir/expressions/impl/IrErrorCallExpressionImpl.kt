@@ -27,5 +27,6 @@ class IrErrorCallExpressionImpl internal constructor(
     endOffset = endOffset,
     type = type,
     description = description,
+    arguments = ArrayList(),
 ) {
 }

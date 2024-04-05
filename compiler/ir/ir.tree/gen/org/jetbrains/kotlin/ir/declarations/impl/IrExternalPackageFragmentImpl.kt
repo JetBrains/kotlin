@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.name.FqName
 
 class IrExternalPackageFragmentImpl(
-    override val symbol: IrExternalPackageFragmentSymbol,
+    symbol: IrExternalPackageFragmentSymbol,
     override var packageFqName: FqName,
 ) : IrExternalPackageFragment(
+    symbol = symbol,
 ) {
     override val startOffset: Int
         get() = UNDEFINED_OFFSET

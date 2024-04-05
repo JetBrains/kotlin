@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.name.FqName
 
 class IrFileImpl(
     override var fileEntry: IrFileEntry,
-    override val symbol: IrFileSymbol,
+    symbol: IrFileSymbol,
     override var packageFqName: FqName,
 ) : IrFile(
+    symbol = symbol,
 ) {
     override val startOffset: Int
         get() = 0

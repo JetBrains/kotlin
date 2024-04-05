@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -19,6 +20,7 @@ abstract class IrInlinedFunctionBlock(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
+    statements: MutableList<IrStatement>,
     origin: IrStatementOrigin?,
     var inlineCall: IrFunctionAccessExpression,
     var inlinedElement: IrElement,
@@ -26,6 +28,7 @@ abstract class IrInlinedFunctionBlock(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
+    statements = statements,
     origin = origin,
 ) {
 

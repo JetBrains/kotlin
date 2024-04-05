@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 class IrLazyProperty(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val symbol: IrPropertySymbol,
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor,
@@ -37,7 +37,11 @@ class IrLazyProperty(
     override var isFakeOverride: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrProperty(), IrLazyDeclarationBase {
+) : IrProperty(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }

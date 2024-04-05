@@ -24,5 +24,6 @@ class IrTryImpl internal constructor(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
+    catches = ArrayList(),
 ) {
 }

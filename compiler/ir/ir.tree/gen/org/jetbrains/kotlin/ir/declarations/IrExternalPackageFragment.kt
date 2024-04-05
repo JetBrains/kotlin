@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.externalPackageFragment]
  */
 abstract class IrExternalPackageFragment(
+    override val symbol: IrExternalPackageFragmentSymbol,
 ) : IrPackageFragment(
 ) {
-    abstract override val symbol: IrExternalPackageFragmentSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragment(this, data)

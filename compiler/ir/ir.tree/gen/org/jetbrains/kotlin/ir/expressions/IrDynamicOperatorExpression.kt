@@ -21,14 +21,13 @@ abstract class IrDynamicOperatorExpression(
     endOffset: Int,
     type: IrType,
     var operator: IrDynamicOperator,
+    val arguments: MutableList<IrExpression>,
 ) : IrDynamicExpression(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ) {
     lateinit var receiver: IrExpression
-
-    val arguments: MutableList<IrExpression> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitDynamicOperatorExpression(this, data)

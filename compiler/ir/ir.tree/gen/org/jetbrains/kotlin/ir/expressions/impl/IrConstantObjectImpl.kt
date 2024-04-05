@@ -28,5 +28,7 @@ class IrConstantObjectImpl internal constructor(
     endOffset = endOffset,
     type = type,
     constructor = constructor,
+    valueArguments = ArrayList(),
+    typeArguments = ArrayList(),
 ) {
 }

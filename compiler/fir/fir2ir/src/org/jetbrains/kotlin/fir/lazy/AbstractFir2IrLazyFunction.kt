@@ -29,13 +29,17 @@ import kotlin.properties.ReadWriteProperty
 
 abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     protected val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     override var parent: IrDeclarationParent,
     override var isFakeOverride: Boolean
-) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
+) : AbstractIrLazyFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
     Fir2IrComponents by c {
 
     override lateinit var typeParameters: List<IrTypeParameter>

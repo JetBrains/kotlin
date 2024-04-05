@@ -30,6 +30,7 @@ class IrInlinedFunctionBlockImpl internal constructor(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
+    statements = ArrayList(),
     origin = origin,
     inlineCall = inlineCall,
     inlinedElement = inlinedElement,

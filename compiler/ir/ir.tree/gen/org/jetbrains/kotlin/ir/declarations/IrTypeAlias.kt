@@ -20,12 +20,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeAlias]
  */
 abstract class IrTypeAlias(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrTypeAliasSymbol,
 ) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ), IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeAliasDescriptor
-
-    abstract override val symbol: IrTypeAliasSymbol
 
     abstract var isActual: Boolean
 

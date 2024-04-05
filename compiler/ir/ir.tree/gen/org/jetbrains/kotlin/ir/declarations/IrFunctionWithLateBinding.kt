@@ -14,7 +14,13 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionWithLateBinding]
  */
 abstract class IrFunctionWithLateBinding(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
 ) : IrSimpleFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
 ) {
     abstract val isBound: Boolean
 

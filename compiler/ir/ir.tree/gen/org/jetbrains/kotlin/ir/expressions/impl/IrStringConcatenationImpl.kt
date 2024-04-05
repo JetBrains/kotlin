@@ -24,5 +24,6 @@ class IrStringConcatenationImpl internal constructor(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
+    arguments = ArrayList(),
 ) {
 }

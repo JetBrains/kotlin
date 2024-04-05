@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
@@ -21,12 +22,14 @@ abstract class IrReturnableBlock(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
+    statements: MutableList<IrStatement>,
     origin: IrStatementOrigin?,
     override val symbol: IrReturnableBlockSymbol,
 ) : IrBlock(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
+    statements = statements,
     origin = origin,
 ), IrSymbolOwner, IrReturnTarget {
 

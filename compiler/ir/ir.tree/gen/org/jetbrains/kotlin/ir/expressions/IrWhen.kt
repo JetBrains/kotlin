@@ -21,12 +21,12 @@ abstract class IrWhen(
     endOffset: Int,
     type: IrType,
     var origin: IrStatementOrigin?,
+    val branches: MutableList<IrBranch>,
 ) : IrExpression(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
 ) {
-    val branches: MutableList<IrBranch> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitWhen(this, data)

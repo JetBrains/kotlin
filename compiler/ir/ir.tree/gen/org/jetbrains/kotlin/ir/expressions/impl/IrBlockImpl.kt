@@ -26,6 +26,7 @@ class IrBlockImpl internal constructor(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
+    statements = ArrayList(),
     origin = origin,
 ) {
 }

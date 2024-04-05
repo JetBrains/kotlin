@@ -24,5 +24,6 @@ class IrConstantArrayImpl internal constructor(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
+    elements = ArrayList(),
 ) {
 }

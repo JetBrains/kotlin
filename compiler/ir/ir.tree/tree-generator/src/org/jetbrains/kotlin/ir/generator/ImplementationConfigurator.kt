@@ -512,7 +512,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             for (implementation in element.implementations) {
                 if (element.category == Element.Category.Declaration) {
                     for (field in implementation.allFields) {
-                        field.allowHoistingToBaseClass = false
+                        if (!field.name.let { it == "startOffset" || it == "endOffset"  || it == "origin" || it == "symbol" }) {
+                            field.allowHoistingToBaseClass = false
+                        }
                     }
                 }
             }
