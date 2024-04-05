@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.bir.backend
 
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
-import org.jetbrains.kotlin.bir.expressions.BirGetValue
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
@@ -246,15 +245,14 @@ abstract class BirLoweringPhase : BirPhase {
     protected fun <E : BirElement> getAllElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
         var elements: Sequence<E> = compiledBir.getElementsWithIndex(key)
         if (externalModulesBir.hasIndex(key)) {
-
             elements += externalModulesBir.getElementsWithIndex(key)
         }
         return elements
     }
 
 
-    protected fun <E : BirElement, T> acquireTemporaryProperty(elementType: BirElementType<E>): BirDynamicPropertyAccessToken<E, T> {
-        return TemporaryBirDynamicProperty<E, T>(elementType, dynamicPropertyManager, this)
+    protected fun <E : BirElement, T> createLocalIrProperty(elementType: BirElementType<E>): BirDynamicPropertyAccessToken<E, T> {
+        return PhaseLocalBirDynamicProperty<E, T>(elementType, dynamicPropertyManager, this)
     }
 
 

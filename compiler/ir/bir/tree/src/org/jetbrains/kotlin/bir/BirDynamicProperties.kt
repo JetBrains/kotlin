@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.bir
 
+import java.lang.ref.WeakReference
+
 interface BirDynamicPropertyKey<E : BirElement, T> {
     val elementType: BirElementType<E>
 }
@@ -21,14 +23,16 @@ class GlobalBirDynamicProperty<E : BirElement, T>(
         get() = this
 }
 
-class TemporaryBirDynamicProperty<E : BirElement, T>(
+class PhaseLocalBirDynamicProperty<E : BirElement, T>(
     override val elementType: BirElementType<E>,
-    internal val manager: BirDynamicPropertiesManager,
-    internal val validInPhase: BirPhase,
+    private val manager: BirDynamicPropertiesManager,
+    validInPhase: BirPhase,
 ) : BirDynamicPropertyAccessToken<E, T>(), BirDynamicPropertyKey<E, T> {
     override val key: BirDynamicPropertyKey<E, T>
         get() = this
 
+    internal val validInPhase = WeakReference(validInPhase)
+
     val isValid: Boolean
-        get() = manager.currentPhase === validInPhase
+        get() = manager.currentPhase === validInPhase.get()
 }

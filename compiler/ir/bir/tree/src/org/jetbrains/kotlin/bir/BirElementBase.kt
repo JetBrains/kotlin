@@ -34,7 +34,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
     private var relatedElementsFullness = SmallFixedPointFraction.ZERO
 
     // Array of form [key, value, key, value, ...]
-    internal var dynamicProperties: Array<Any?>? = null
+    private var dynamicProperties: Array<Any?>? = null
 
 
     internal val elementClass
@@ -122,7 +122,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         recordPropertyRead()
 
         val arrayMap = dynamicProperties ?: return null
-        val keyIndex = findDynamicPropertyIndex(arrayMap, token.key)
+        val keyIndex = findDynamicPropertyIndex(arrayMap, token.key, false)
         if (keyIndex < 0) {
             return null
         } else {
@@ -146,10 +146,10 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
                 changed = true
             }
         } else {
-            val foundIndex = findDynamicPropertyIndex(arrayMap, token.key)
+            val foundIndex = findDynamicPropertyIndex(arrayMap, token.key, true)
             if (foundIndex >= 0) {
                 if (value == null) {
-                    removeDynamicPropertyAtPruningSubsequent(arrayMap, foundIndex)
+                    removeDynamicPropertyAt(arrayMap, foundIndex)
                     changed = true
                 } else {
                     val valueIndex = foundIndex + 1
@@ -176,19 +176,20 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
 
         val arrayMap = dynamicProperties
         val foundIndex = if (arrayMap != null)
-            findDynamicPropertyIndex(arrayMap, token.key)
+            findDynamicPropertyIndex(arrayMap, token.key, true)
         else -1
+
         if (foundIndex >= 0) {
             @Suppress("UNCHECKED_CAST")
             return arrayMap!![foundIndex + 1] as T
         } else {
             val newValue = compute()
 
-            if (arrayMap != null) {
+            if (arrayMap == null) {
+                initializeDynamicProperties(token, newValue)
+            } else {
                 val entryIndex = -(foundIndex + 1)
                 addDynamicProperty(arrayMap, entryIndex, token.key, newValue)
-            } else {
-                initializeDynamicProperties(token, newValue)
             }
 
             invalidate()
@@ -196,17 +197,11 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         }
     }
 
-    // todo: fine-grained control of which data to copy
-    internal fun copyDynamicProperties(from: BirElementBase) {
-        invalidate()
-        dynamicProperties = from.dynamicProperties?.copyOf()
-    }
-
-    private fun <T> initializeDynamicProperties(token: BirDynamicPropertyAccessToken<*, T>, value: T?) {
-        val size = 2
-        val arrayMap = arrayOfNulls<Any?>(size * 2)
-        arrayMap[0] = token.key
-        arrayMap[1] = value
+    private fun <T> initializeDynamicProperties(firstToken: BirDynamicPropertyAccessToken<*, T>, firstValue: T?) {
+        val initialSlots = 1
+        val arrayMap = arrayOfNulls<Any?>(initialSlots * 2)
+        arrayMap[0] = firstToken.key
+        arrayMap[1] = firstValue
         this.dynamicProperties = arrayMap
     }
 
@@ -217,7 +212,8 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
 
         var arrayMap = arrayMap
         if (arrayMap.size <= index) {
-            arrayMap = arrayMap.copyOf(arrayMap.size * 2)
+            val newSlots = 2
+            arrayMap = arrayMap.copyOf(arrayMap.size + newSlots * 2)
             this.dynamicProperties = arrayMap
         }
 
@@ -226,49 +222,46 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         return true
     }
 
-    private fun findDynamicPropertyIndex(arrayMap: Array<Any?>, propertyKey: BirDynamicPropertyKey<*, *>): Int {
+    private fun findDynamicPropertyIndex(arrayMap: Array<Any?>, propertyKey: BirDynamicPropertyKey<*, *>, pruneOutdated: Boolean): Int {
         var i = 0
-        var foundAnyOutdated = false
         while (i < arrayMap.size) {
             val key = arrayMap[i]
             if (key == null) {
                 return -i - 1
             }
-
-            if (key === propertyKey) return i
-            if (!foundAnyOutdated && (key is TemporaryBirDynamicProperty<*, *> && !key.isValid)) {
-                foundAnyOutdated = true
-                removeDynamicPropertyAtPruningSubsequent(arrayMap, i)
+            if (key === propertyKey) {
+                return i
             }
 
-            i += 2
+            if (pruneOutdated && key is PhaseLocalBirDynamicProperty<*, *> && !key.isValid) {
+                removeDynamicPropertyAt(arrayMap, i)
+            } else {
+                i += 2
+            }
         }
         return -i - 1
     }
 
-    private fun removeDynamicPropertyAtPruningSubsequent(arrayMap: Array<Any?>, keyIndex: Int) {
-        var i = keyIndex + 2
-        var j = keyIndex
-        while (true) {
-            val key = arrayMap.getOrNull(i)
-            arrayMap[j] = key
-            arrayMap[j + 1] = arrayMap.getOrNull(i + 1)
-
-            if (key == null) {
-                return
-            }
-
-            i += 2
-            if (!(key is TemporaryBirDynamicProperty<*, *> && !key.isValid)) {
-                j += 2
-            }
+    private fun removeDynamicPropertyAt(arrayMap: Array<Any?>, keyIndex: Int) {
+        val lastKeyIndex = arrayMap.size - 2
+        if (lastKeyIndex > keyIndex) {
+            arrayMap[keyIndex] = arrayMap[lastKeyIndex]
+            arrayMap[keyIndex + 1] = arrayMap[lastKeyIndex + 1]
         }
+        arrayMap[lastKeyIndex] = null
+        arrayMap[lastKeyIndex + 1] = null
     }
 
     private fun BirDynamicPropertyAccessToken<*, *>.requireValid() {
-        if (this is TemporaryBirDynamicProperty<*, *>) {
+        if (this is PhaseLocalBirDynamicProperty<*, *>) {
             require(isValid) { "The property token can only be used within the phase $validInPhase" }
         }
+    }
+
+    // todo: fine-grained control of which data to copy
+    internal fun copyDynamicProperties(from: BirElementBase) {
+        invalidate()
+        dynamicProperties = from.dynamicProperties?.copyOf()
     }
 
 

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.BirClassImpl
 import org.jetbrains.kotlin.bir.expressions.BirClassReference
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
-import org.jetbrains.kotlin.bir.get
 import org.jetbrains.kotlin.bir.getOrPutDynamicProperty
 import org.jetbrains.kotlin.bir.set
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
@@ -40,7 +39,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
         it.annotations.size >= 2
     }
 
-    private val repeatedAnnotationSyntheticContainerKey = acquireTemporaryProperty<_, BirClass>(BirClass)
+    private val repeatedAnnotationSyntheticContainerKey = createLocalIrProperty<_, BirClass>(BirClass)
 
     override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(declaredAnnotations).forEach { annotationClass ->
