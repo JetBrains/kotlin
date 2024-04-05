@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
 import org.jetbrains.kotlin.native.interop.indexer.Location
 import org.jetbrains.kotlin.native.interop.indexer.NativeLibrary
 import org.jetbrains.kotlin.native.interop.tool.CInteropArguments
+import org.junit.Rule
 import kotlin.test.*
 import java.io.File
 import java.nio.file.Paths
@@ -25,6 +26,12 @@ abstract class InteropTestsBase {
     init {
         System.load(System.getProperty("kotlin.native.llvm.libclang"))
     }
+
+    @Rule
+    @JvmField
+    val testFilesFactory = TestFilesFactory()
+
+    fun testFiles() = testFilesFactory.tempFiles()
 
     @BeforeTest
     fun init() {
@@ -36,19 +43,6 @@ abstract class InteropTestsBase {
     fun dispose() {
         JvmCInteropCallbacks.dispose()
         NativeMemoryAllocator.dispose()
-    }
-
-    class TempFiles(name: String) {
-        private val tempRootDir = System.getProperty("kotlin.native.interop.stubgenerator.temp") ?: System.getProperty("java.io.tmpdir") ?: "."
-
-        val directory: File = File(tempRootDir, name).canonicalFile.also {
-            it.mkdirs()
-        }
-
-        fun file(relativePath: String, contents: String): File = File(directory, relativePath).canonicalFile.apply {
-            parentFile.mkdirs()
-            writeText(contents)
-        }
     }
 
     protected fun buildNativeLibraryFrom(defFile: File, headersDirectory: File, imports: Imports = ImportsMock()): NativeLibrary {
