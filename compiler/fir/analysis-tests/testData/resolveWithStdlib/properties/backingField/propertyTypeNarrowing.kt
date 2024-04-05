@@ -9,7 +9,7 @@ class A {
 }
 
 fun test() {
-    val c = A().it <!UNRESOLVED_REFERENCE!>+<!> 1
+    val c = A().it <!NONE_APPLICABLE!>+<!> 1
     val d = test()
     val b = A().p + 2
 }

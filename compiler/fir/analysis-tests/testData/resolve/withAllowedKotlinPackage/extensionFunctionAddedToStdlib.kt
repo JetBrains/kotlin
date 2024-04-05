@@ -3,7 +3,7 @@ package test
 
 class TestClass {
     fun test() {
-        <!UNRESOLVED_REFERENCE!>extensionFun<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extensionFun<!>()
     }
 }
 

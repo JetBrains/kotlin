@@ -15,26 +15,26 @@ class A {
         <!WRONG_MODIFIER_TARGET!>public<!> field = 5
 
     fun rest() {
-        val aI = A().a <!UNRESOLVED_REFERENCE!>+<!> 10
-        val bI = A().b <!UNRESOLVED_REFERENCE!>+<!> 20
-        val cI = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
-        val dI = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
+        val aI = A().a <!NONE_APPLICABLE!>+<!> 10
+        val bI = A().b <!NONE_APPLICABLE!>+<!> 20
+        val cI = A().c <!NONE_APPLICABLE!>+<!> 30
+        val dI = A().d <!NONE_APPLICABLE!>+<!> 40
     }
 }
 
 fun test() {
-    val aA = A().a <!UNRESOLVED_REFERENCE!>+<!> 10
-    val bA = A().b <!UNRESOLVED_REFERENCE!>+<!> 20
-    val cA = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
-    val dA = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
+    val aA = A().a <!NONE_APPLICABLE!>+<!> 10
+    val bA = A().b <!NONE_APPLICABLE!>+<!> 20
+    val cA = A().c <!NONE_APPLICABLE!>+<!> 30
+    val dA = A().d <!NONE_APPLICABLE!>+<!> 40
 }
 
 // MODULE: main(lib)
 // FILE: B.kt
 
 fun main() {
-    val aB = A().a <!UNRESOLVED_REFERENCE!>+<!> 10
-    val bB = A().b <!UNRESOLVED_REFERENCE!>+<!> 20
-    val cB = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
-    val dB = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
+    val aB = A().a <!NONE_APPLICABLE!>+<!> 10
+    val bB = A().b <!NONE_APPLICABLE!>+<!> 20
+    val cB = A().c <!NONE_APPLICABLE!>+<!> 30
+    val dB = A().d <!NONE_APPLICABLE!>+<!> 40
 }

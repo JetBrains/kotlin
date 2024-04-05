@@ -1,6 +1,8 @@
-/otherOperators.fir.kt:(456,458): error: Unresolved reference 'plusAssign'.
+/otherOperators.fir.kt:(456,458): error: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun String?.plus(other: Any?): String
 
-/otherOperators.fir.kt:(502,504): error: Unresolved reference 'plusAssign'.
+/otherOperators.fir.kt:(502,504): error: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun String?.plus(other: Any?): String
 
 /otherOperators.fir.kt:(560,562): error: Unresolved reference 'compareTo'.
 

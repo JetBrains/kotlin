@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-64640, KT-65441
 
 fun bar(x: List<String>) {

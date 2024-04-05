@@ -172,7 +172,7 @@ FILE: forLoopChecker.kt
     }
     public final fun test(notRange1: R|NotRange1|, notRange2: R|NotRange2|, notRange3: R|NotRange3|, notRange4: R|NotRange4|, notRange5: R|NotRange5|, notRange6: R|NotRange6|, notRange7: R|NotRange7|, notRange8: R|NotRange8|, notRange9: R|NotRange9|, range0: R|Range0|, range1: R|Range1|): R|kotlin/Unit| {
          {
-            lval <iterator>: <ERROR TYPE REF: Unresolved name: iterator> = R|<local>/notRange1|.<Unresolved name: iterator>#()
+            lval <iterator>: <ERROR TYPE REF: Ambiguity: iterator, [kotlin/collections/iterator, kotlin/collections/iterator, kotlin/collections/iterator, kotlin/collections/iterator, kotlin/text/iterator, kotlin/io/iterator]> = R|<local>/notRange1|.<Ambiguity: iterator, [kotlin/collections/iterator, kotlin/collections/iterator, kotlin/collections/iterator, kotlin/collections/iterator, kotlin/text/iterator, kotlin/io/iterator]>#()
             while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
                 lval i: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
                  {

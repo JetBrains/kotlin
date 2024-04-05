@@ -97,7 +97,7 @@ fun test(
     range0: Range0,
     range1: Range1
 ) {
-    for (i in <!ITERATOR_MISSING!>notRange1<!>);
+    for (i in <!ITERATOR_AMBIGUITY!>notRange1<!>);
     for (i in <!HAS_NEXT_MISSING, NEXT_MISSING!>notRange2<!>);
     for (i in <!NEXT_MISSING!>notRange3<!>);
     for (i in <!HAS_NEXT_MISSING!>notRange4<!>);

@@ -7,7 +7,7 @@ FILE: main.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            <Unresolved name: extensionFun>#()
+            this@R|test/TestClass|.R|kotlin/extensionFun<None of the following candidates is applicable because of receiver type mismatch: [kotlin/extensionFun]>#|()
         }
 
     }
