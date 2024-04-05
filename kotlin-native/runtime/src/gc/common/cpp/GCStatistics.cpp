@@ -78,7 +78,7 @@ struct RootSetStatistics {
     KLong stackReferences;
     KLong globalReferences;
     KLong stableReferences;
-    KLong total() const { return threadLocalReferences + stableReferences + globalReferences + stableReferences; }
+    KLong total() const { return threadLocalReferences + stackReferences + globalReferences + stableReferences; }
 };
 
 struct GCInfo {
