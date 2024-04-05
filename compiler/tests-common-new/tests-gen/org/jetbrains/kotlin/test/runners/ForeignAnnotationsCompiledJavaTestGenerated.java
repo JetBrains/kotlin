@@ -811,6 +811,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt")
+        public void testWildcardWithSameTypeButDifferentNullabilitiesAsBounds() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt");
+        }
+
+        @Test
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/WildcardsWithDefault.kt");
@@ -932,6 +938,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         @TestMetadata("WildcardWithNullableUpperBoundInOutPosition.kt")
         public void testWildcardWithNullableUpperBoundInOutPosition() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardWithNullableUpperBoundInOutPosition.kt");
+        }
+
+        @Test
+        @TestMetadata("WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt")
+        public void testWildcardWithSameTypeButDifferentNullabilitiesAsBounds() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardWithSameTypeButDifferentNullabilitiesAsBounds.kt");
         }
 
         @Test
