@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
+import org.jetbrains.kotlin.fir.java.enhancement.enhancedTypeForWarning
 import org.jetbrains.kotlin.fir.java.enhancement.isEnhancedTypeForWarningDeprecation
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
@@ -29,12 +30,20 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         val symbol = expression.toResolvedCallableSymbol() ?: return
         val substitutor = buildSubstitutor(expression, symbol, context.session)
 
-        expression.dispatchReceiver?.checkExpressionForEnhancedTypeMismatch(
-            expectedType = symbol.dispatchReceiverType,
-            reporter,
-            context,
-            FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
-        )
+        // This `if` shouldn't be necessary because we should get a type mismatch for the dispatch receiver iff the type for warning
+        // has nullability NULLABLE.
+        // Unfortunately, we can get situations when that's not true, when the expected type has captured arguments, see KT-66947.
+        // As a workaround, we do an explicit check for the nullability.
+        if (symbol.dispatchReceiverType != null &&
+            expression.dispatchReceiver?.resolvedType?.enhancedTypeForWarning?.nullability == ConeNullability.NULLABLE
+        ) {
+            expression.dispatchReceiver?.checkExpressionForEnhancedTypeMismatch(
+                expectedType = symbol.dispatchReceiverType,
+                reporter,
+                context,
+                FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+            )
+        }
 
         val receiverType = symbol.receiverParameter?.typeRef?.coneType
         expression.extensionReceiver?.checkExpressionForEnhancedTypeMismatch(
