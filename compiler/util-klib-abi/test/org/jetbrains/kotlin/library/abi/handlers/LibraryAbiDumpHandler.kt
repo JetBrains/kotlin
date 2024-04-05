@@ -48,7 +48,7 @@ class LibraryAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         assertions.assertAll(
             dumpers.map { (abiSignatureVersion, dumper) ->
-                {
+                val lambda = {
                     val expectedFile = testServices
                         .moduleStructure
                         .originalTestDataFiles
@@ -56,6 +56,7 @@ class LibraryAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<
                         .withExtension("v${abiSignatureVersion.versionNumber}.txt")
                     assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
                 }
+                lambda
             }
         )
     }
