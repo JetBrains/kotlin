@@ -500,6 +500,7 @@ open class SymbolTable(
                 slice.unboundSymbols.filterTo(this) { !it.isBound }
             }
 
+            addUnbound(scriptSlice)
             addUnbound(classSlice)
             addUnbound(constructorSlice)
             addUnbound(functionSlice)
@@ -507,6 +508,7 @@ open class SymbolTable(
             addUnbound(enumEntrySlice)
             addUnbound(typeAliasSlice)
             addUnbound(fieldSlice)
+            addUnbound(globalTypeParameterSlice)
         }
 }
 
