@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
     public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {

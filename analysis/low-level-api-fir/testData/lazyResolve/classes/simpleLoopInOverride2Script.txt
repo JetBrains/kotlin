@@ -269,7 +269,7 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         }
 
@@ -304,3 +304,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] simpleLoopInOverride2Script.kts
             public abstract override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
         }
+
