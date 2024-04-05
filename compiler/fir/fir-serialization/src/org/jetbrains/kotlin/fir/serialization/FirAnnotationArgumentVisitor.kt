@@ -77,20 +77,7 @@ internal object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, F
                 }
             }
             is KClassValue.Value.LocalClass -> {
-                var arrayDimensions = 0
-                var type = classValue.coneType<ConeKotlinType>()
-                while (true) {
-                    type = type.arrayElementType() ?: break
-                    arrayDimensions++
-                }
-
-                //val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor
-                //    ?: error("Type parameters are not allowed in class literal annotation arguments: $classValue")
-                // TODO: classId = stringTable.getFqNameIndex(descriptor)
-
-                if (arrayDimensions > 0) {
-                    data.builder.arrayDimensionCount = arrayDimensions
-                }
+                error("Cannot serialize KClass value for local class")
             }
         }
     }

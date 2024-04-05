@@ -5,15 +5,10 @@
 
 package org.jetbrains.kotlin.fir.serialization.constant
 
-import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.constant.KClassValue
 import org.jetbrains.kotlin.fir.types.*
 
-inline fun <reified T : ConeKotlinType> KClassValue.Value.LocalClass.coneType(): T {
-    return this.type as T
-}
-
-internal fun create(argumentType: ConeKotlinType): ConstantValue<*>? {
+internal fun create(argumentType: ConeKotlinType): KClassValue? {
     if (argumentType is ConeErrorType) return null
     if (argumentType !is ConeClassLikeType) return null
     var type = argumentType

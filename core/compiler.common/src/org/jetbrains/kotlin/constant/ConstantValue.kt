@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.constant
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 // Note 1: can be combined with org.jetbrains.kotlin.resolve.constants.ConstantValue but where is some questions to `AnnotationValue`.
 // Note 2: if we are not going to implement previous idea, then this class can be moved to `fir` module.
@@ -137,7 +136,7 @@ class KClassValue private constructor(value: Value) : ConstantValue<KClassValue.
             val arrayDimensions: Int get() = value.arrayNestedness
         }
 
-        data class LocalClass(val type: KotlinTypeMarker) : Value()
+        data object LocalClass : Value()
     }
 
     constructor(value: ClassLiteralValue) : this(Value.NormalClass(value))
