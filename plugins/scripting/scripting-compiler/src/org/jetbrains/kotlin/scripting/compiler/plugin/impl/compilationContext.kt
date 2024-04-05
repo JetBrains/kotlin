@@ -210,7 +210,7 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     configureKlibPaths(compilerArguments)
 }
 
-private fun makeScriptCompilerArguments(compilerOptions: List<String>): K2JVMCompilerArguments {
+fun makeScriptCompilerArguments(compilerOptions: List<String>): K2JVMCompilerArguments {
 
     val compilerArguments = K2JVMCompilerArguments()
     val argumentsWithExternalProp =
