@@ -287,7 +287,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Annotation]
       KotlinStub$CLASS_BODY
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.annotationArrayWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotationArrayWithDefault]
-          initializer: [Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.A, e1=E.B}), Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.B, e1=E.A})]
+          initializer: [Value(classId=test/A1, argumentsMapping={e=E.A, e1=E.B}), Value(classId=test/A1, argumentsMapping={e=E.B, e1=E.A})]
           KotlinStub$MODIFIER_LIST[public final]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
@@ -303,7 +303,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                       KotlinStub$REFERENCE_EXPRESSION[referencedName=A1]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.annotationWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotationWithDefault]
-          initializer: Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.A, e1=E.B})
+          initializer: Value(classId=test/A1, argumentsMapping={e=E.A, e1=E.B})
           KotlinStub$MODIFIER_LIST[public final]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE

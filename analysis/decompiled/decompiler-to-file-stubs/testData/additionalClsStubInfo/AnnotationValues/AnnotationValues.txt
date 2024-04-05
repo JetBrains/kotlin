@@ -55,7 +55,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
     KotlinStub$CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
         KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
-          valueArguments: (some = "value", nested = Value(type=KotlinClassTypeBean(classId=test/Nested, arguments=[], nullable=false), argumentsMapping={i=12, s="nested value"}))
+          valueArguments: (some = "value", nested = Value(classId=test/Nested, argumentsMapping={i=12, s="nested value"}))
           KotlinStub$CONSTRUCTOR_CALLEE
             KotlinStub$TYPE_REFERENCE
               KotlinStub$USER_TYPE

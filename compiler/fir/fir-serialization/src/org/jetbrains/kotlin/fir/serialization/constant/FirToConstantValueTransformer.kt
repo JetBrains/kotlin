@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
@@ -117,7 +118,12 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         data: FirToConstantValueTransformerData,
     ): ConstantValue<*> {
         val mapping = annotation.convertMapping(data)
-        return AnnotationValue.create(annotation.annotationTypeRef.coneType, mapping)
+        val coneClassType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(data.session)
+        val classId = coneClassType?.lookupTag?.classId
+            ?: errorWithAttachment("Annotation without proper lookup tag }") {
+                withFirEntry("annotation", annotation)
+            }
+        return AnnotationValue.create(classId, mapping)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirToConstantValueTransformerData): ConstantValue<*> {

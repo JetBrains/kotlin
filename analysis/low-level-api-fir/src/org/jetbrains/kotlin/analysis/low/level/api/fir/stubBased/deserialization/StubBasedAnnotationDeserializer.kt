@@ -126,7 +126,7 @@ class StubBasedAnnotationDeserializer(
             is AnnotationValue -> {
                 deserializeAnnotation(
                     sourceElement,
-                    (value.value.type as KotlinClassTypeBean).classId,
+                    value.value.classId,
                     value.value.argumentsMapping
                 )
             }
