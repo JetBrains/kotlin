@@ -104,3 +104,20 @@ include(
 project(":dokka-subprojects:core").name = "dokka-core"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+// OVERWRITING CATALOG VERSIONS
+// for testing against the latest dev version of Analysis API
+// currently, Analysis API is used only in the analysis-kotlin-symbols project
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            val kotlinCompilerK2Version = providers.gradleProperty(
+                "org.jetbrains.dokka.build.overrideAnalysisAPIVersion"
+            ).orNull
+            if (kotlinCompilerK2Version != null) {
+                logger.lifecycle("Using the override version $kotlinCompilerK2Version of Analysis API")
+                version("kotlin-compiler-k2", kotlinCompilerK2Version)
+            }
+        }
+    }
+}
