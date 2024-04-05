@@ -68,4 +68,16 @@ public class FirIdeNormalAnalysisSourceModuleSymbolRenderingByReferenceTestGener
   public void testJavaMethodWithTypeParametersBound() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/javaMethodWithTypeParametersBound.kt");
   }
+
+  @Test
+  @TestMetadata("jsrAnnotation.kt")
+  public void testJsrAnnotation() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/jsrAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("jsrAnnotationInsideLibrary.kt")
+  public void testJsrAnnotationInsideLibrary() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/symbolRenderingByReference/jsrAnnotationInsideLibrary.kt");
+  }
 }

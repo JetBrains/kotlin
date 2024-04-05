@@ -15,12 +15,12 @@ public interface KtRendererTypeApproximator {
     public object TO_DENOTABLE : KtRendererTypeApproximator {
         override fun approximateType(analysisSession: KtAnalysisSession, type: KtType, position: Variance): KtType {
             with(analysisSession) {
-                type.getEnhancedType()?.let { return it }
+                val effectiveType = type.getEnhancedType() ?: type
 
                 return when (position) {
-                    Variance.INVARIANT -> type
-                    Variance.IN_VARIANCE -> type.approximateToSubPublicDenotableOrSelf(approximateLocalTypes = false)
-                    Variance.OUT_VARIANCE -> type.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes = false)
+                    Variance.INVARIANT -> effectiveType
+                    Variance.IN_VARIANCE -> effectiveType.approximateToSubPublicDenotableOrSelf(approximateLocalTypes = false)
+                    Variance.OUT_VARIANCE -> effectiveType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes = false)
                 }
             }
         }
