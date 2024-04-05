@@ -35,11 +35,11 @@ class A<T> : ArrayList<T>() {
 
 abstract class B<T>: List<T> {
     override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): T {
-        return super.<!UNRESOLVED_REFERENCE!>getFirst<!>()
+        return super.<!DEPRECATION_ERROR!>getFirst<!>()
     }
 
     override fun <!OVERRIDE_DEPRECATION!>getLast<!>(): T{
-        return super.<!UNRESOLVED_REFERENCE!>getLast<!>()
+        return super.<!DEPRECATION_ERROR!>getLast<!>()
     }
 }
 
