@@ -839,7 +839,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         return ObjCBlockPointer(nullability, functionType.parameterTypes, functionType.returnType)
     }
 
-    private val TARGET_ATTRIBUTE = "__target__"
+    private val TARGET_ATTRIBUTE_NAMES = setOf("__target__", "target")
 
     private fun isSuitableFunction(cursor: CValue<CXCursor>): Boolean {
         if (!isAvailable(cursor)) return false
@@ -866,7 +866,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun isTargetAttribute(cursor: CValue<CXCursor>): Boolean = clang_isAttribute(cursor.kind) != 0 &&
-            getExtentFirstToken(cursor) == TARGET_ATTRIBUTE
+            getExtentFirstToken(cursor) in TARGET_ATTRIBUTE_NAMES
 
     private fun getExtentFirstToken(cursor: CValue<CXCursor>) =
             getToken(clang_Cursor_getTranslationUnit(cursor)!!, clang_getRangeStart(clang_getCursorExtent(cursor)))
