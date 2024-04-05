@@ -29,7 +29,7 @@ abstract class LightClassGenerationSupport {
     protected abstract fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport
 
     fun createConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator = getUltraLightClassSupport(expression).run {
-        ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings, expression.project)
+        ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings)
     }
 
     fun createUltraLightClassForFacade(facadeClassFqName: FqName, files: Collection<KtFile>): KtUltraLightClassForFacade {

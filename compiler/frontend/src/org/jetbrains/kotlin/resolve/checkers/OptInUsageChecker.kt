@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -58,9 +57,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class OptInUsageChecker(project: Project) : CallChecker {
-    private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
-
+class OptInUsageChecker : CallChecker {
     interface OptInDiagnosticReporter {
         fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?)
     }
@@ -84,7 +81,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
         val resultingDescriptor = resolvedCall.resultingDescriptor
         val bindingContext = context.trace.bindingContext
         val languageVersionSettings = context.languageVersionSettings
-        val optIns = resultingDescriptor.loadOptIns(moduleAnnotationsResolver, bindingContext, languageVersionSettings)
+        val optIns = resultingDescriptor.loadOptIns(bindingContext, languageVersionSettings)
         if (resultingDescriptor is FunctionDescriptor &&
             resultingDescriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
         ) {
@@ -92,7 +89,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
             if (propertyDescriptor != null) {
                 reportNotAllowedOptIns(
                     optIns + propertyDescriptor.loadOptIns(
-                        moduleAnnotationsResolver, bindingContext, languageVersionSettings
+                        bindingContext, languageVersionSettings
                     ), reportOn, context
                 )
                 return
@@ -101,7 +98,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
         if (resultingDescriptor is SamConstructorDescriptor) {
             // KT-47708 special case (warning only)
             val methodDescriptor = resultingDescriptor.getSingleAbstractMethod()
-            val samOptIns = methodDescriptor.loadOptIns(moduleAnnotationsResolver, bindingContext, languageVersionSettings)
+            val samOptIns = methodDescriptor.loadOptIns(bindingContext, languageVersionSettings)
                 .map { (fqName, _, message) ->
                     OptInDescription(fqName, OptInDescription.Severity.WARNING, message, subclassesOnly = false)
                 }
@@ -175,7 +172,6 @@ class OptInUsageChecker(project: Project) : CallChecker {
         }
 
         fun DeclarationDescriptor.loadOptIns(
-            moduleAnnotationsResolver: ModuleAnnotationsResolver,
             context: BindingContext,
             languageVersionSettings: LanguageVersionSettings,
             visited: MutableSet<DeclarationDescriptor> = mutableSetOf(),
@@ -189,7 +185,6 @@ class OptInUsageChecker(project: Project) : CallChecker {
                 for (overridden in overriddenDescriptors) {
                     result.addAll(
                         overridden.loadOptIns(
-                            moduleAnnotationsResolver,
                             context,
                             languageVersionSettings,
                             visited,
@@ -200,7 +195,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
                     if (useMarkersFromContainer) {
                         (containingDeclaration as? ClassDescriptor)?.let {
                             result.addAll(
-                                it.loadOptIns(moduleAnnotationsResolver, context, languageVersionSettings, visited, useFutureError)
+                                it.loadOptIns(context, languageVersionSettings, visited, useFutureError)
                             )
                         }
                     }
@@ -217,11 +212,11 @@ class OptInUsageChecker(project: Project) : CallChecker {
 
             if (this is CallableDescriptor && this !is ClassConstructorDescriptor) {
                 result.addAll(
-                    returnType.loadOptIns(moduleAnnotationsResolver, context, languageVersionSettings, visited)
+                    returnType.loadOptIns(context, languageVersionSettings, visited)
                 )
                 result.addAll(
                     extensionReceiverParameter?.type.loadOptIns(
-                        moduleAnnotationsResolver, context, languageVersionSettings, visited
+                        context, languageVersionSettings, visited
                     )
                 )
             }
@@ -229,7 +224,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
                 valueParameters.forEach {
                     result.addAll(
                         it.type.loadOptIns(
-                            moduleAnnotationsResolver, context, languageVersionSettings, visited,
+                            context, languageVersionSettings, visited,
                             warningsOnly = this is ConstructorDescriptor
                         )
                     )
@@ -237,7 +232,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
             }
 
             if (this is TypeAliasDescriptor) {
-                result.addAll(expandedType.loadOptIns(moduleAnnotationsResolver, context, languageVersionSettings, visited))
+                result.addAll(expandedType.loadOptIns(context, languageVersionSettings, visited))
             }
 
             if (annotations.any { it.fqName == WAS_EXPERIMENTAL_FQ_NAME }) {
@@ -249,14 +244,13 @@ class OptInUsageChecker(project: Project) : CallChecker {
 
             val container = containingDeclaration
             if (useMarkersFromContainer && container is ClassDescriptor && this !is ConstructorDescriptor) {
-                result.addAll(container.loadOptIns(moduleAnnotationsResolver, context, languageVersionSettings, visited, useFutureError))
+                result.addAll(container.loadOptIns(context, languageVersionSettings, visited, useFutureError))
             }
 
             return result
         }
 
         private fun KotlinType?.loadOptIns(
-            moduleAnnotationsResolver: ModuleAnnotationsResolver,
             context: BindingContext,
             languageVersionSettings: LanguageVersionSettings,
             visitedClassifiers: MutableSet<DeclarationDescriptor>,
@@ -265,17 +259,17 @@ class OptInUsageChecker(project: Project) : CallChecker {
             when {
                 this?.isError != false -> emptySet()
                 this is AbbreviatedType -> abbreviation.constructor.declarationDescriptor?.loadOptIns(
-                    moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers,
+                    context, languageVersionSettings, visitedClassifiers,
                     useFutureError = warningsOnly || !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + expandedType.loadOptIns(
-                    moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers
+                    context, languageVersionSettings, visitedClassifiers
                 )
                 else -> constructor.declarationDescriptor?.loadOptIns(
-                    moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers,
+                    context, languageVersionSettings, visitedClassifiers,
                     useFutureError = warningsOnly || !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + arguments.flatMap {
                     if (it.isStarProjection) emptySet()
-                    else it.type.loadOptIns(moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers)
+                    else it.type.loadOptIns(context, languageVersionSettings, visitedClassifiers)
                 }
             }
 
@@ -435,9 +429,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
         }
     }
 
-    class ClassifierUsage(project: Project) : ClassifierUsageChecker {
-        private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
-
+    class ClassifierUsage() : ClassifierUsageChecker {
         override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
             val name = targetDescriptor.name
             if (name == REQUIRES_OPT_IN_FQ_NAME.shortName() || name == OPT_IN_FQ_NAME.shortName()) {
@@ -467,7 +459,6 @@ class OptInUsageChecker(project: Project) : CallChecker {
             if (element.getParentOfType<KtImportDirective>(false) == null) {
                 val containingClass = element.getParentOfType<KtClassOrObject>(strict = true)
                 val descriptions = targetDescriptor.loadOptIns(
-                    moduleAnnotationsResolver,
                     bindingContext,
                     context.languageVersionSettings,
                     fromSupertype = containingClass != null && containingClass.superTypeListEntries.any {
@@ -518,14 +509,12 @@ class OptInUsageChecker(project: Project) : CallChecker {
         }
     }
 
-    class Overrides(project: Project) : DeclarationChecker {
-        private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
-
+    class Overrides() : DeclarationChecker {
         override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
             if (descriptor !is CallableMemberDescriptor) return
 
             val optInOverriddenDescriptorMap = descriptor.overriddenDescriptors.flatMap { overriddenMember ->
-                overriddenMember.loadOptIns(moduleAnnotationsResolver, context.trace.bindingContext, context.languageVersionSettings)
+                overriddenMember.loadOptIns(context.trace.bindingContext, context.languageVersionSettings)
                     .map { description -> description to overriddenMember }
             }.toMap()
 

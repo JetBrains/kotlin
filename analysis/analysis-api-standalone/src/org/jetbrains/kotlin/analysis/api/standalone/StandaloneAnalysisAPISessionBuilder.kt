@@ -174,7 +174,6 @@ public class StandaloneAnalysisAPISessionBuilder(
             kotlinCoreProjectEnvironment,
             projectStructureProvider,
         )
-        val project = kotlinCoreProjectEnvironment.project
         val sourceKtFiles = projectStructureProvider.allSourceFiles.filterIsInstance<KtFile>()
         val libraryRoots = StandaloneProjectFactory.getAllBinaryRoots(
             projectStructureProvider.allKtModules,
@@ -182,7 +181,6 @@ public class StandaloneAnalysisAPISessionBuilder(
         )
         val createPackagePartProvider =
             StandaloneProjectFactory.createPackagePartsProvider(
-                project,
                 libraryRoots,
             )
         registerProjectServices(

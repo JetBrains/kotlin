@@ -48,7 +48,7 @@ internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out
         }, { throw ProcessCanceledException(it) }),
         DefaultBuiltIns.Instance
     )
-    val evaluator = ConstantExpressionEvaluator(module, LanguageVersionSettingsImpl.DEFAULT, project)
+    val evaluator = ConstantExpressionEvaluator(module, LanguageVersionSettingsImpl.DEFAULT)
     val trace = BindingTraceContext(project)
 
     val valueArguments = psi.valueArguments.map { arg ->

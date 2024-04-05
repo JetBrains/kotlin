@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
@@ -57,11 +56,8 @@ import java.math.BigInteger
 class ConstantExpressionEvaluator(
     internal val module: ModuleDescriptor,
     internal val languageVersionSettings: LanguageVersionSettings,
-    project: Project,
     internal val inlineConstTracker: InlineConstTracker = InlineConstTracker.DoNothing
 ) {
-    private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
-
     fun updateNumberType(
         numberType: KotlinType,
         expression: KtExpression?,
@@ -323,7 +319,7 @@ class ConstantExpressionEvaluator(
 
         with(OptInUsageChecker) {
             val descriptor = constantType.constructor.declarationDescriptor ?: return
-            val optInDescriptions = descriptor.loadOptIns(moduleAnnotationsResolver, trace.bindingContext, languageVersionSettings)
+            val optInDescriptions = descriptor.loadOptIns(trace.bindingContext, languageVersionSettings)
 
             reportNotAllowedOptIns(
                 optInDescriptions, expression, languageVersionSettings, trace, EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS
