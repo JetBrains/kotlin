@@ -5,20 +5,15 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -27,7 +22,6 @@ import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
@@ -141,19 +135,6 @@ open class JvmGeneratorExtensionsImpl(
     override fun getParentClassStaticScope(descriptor: ClassDescriptor): MemberScope? =
         descriptor.getParentJavaStaticClassScope()
 
-    private val kotlinIrInternalPackage =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)
-
-    private val kotlinJvmInternalPackage =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
-
-    private val specialAnnotationConstructors = mutableListOf<IrConstructor>()
-
-    private fun createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
-        IrFactoryImpl.createSpecialAnnotationClass(fqn, parent).apply {
-            specialAnnotationConstructors.add(constructors.single())
-        }
-
     override fun createCustomSuperConstructorCall(
         ktPureClassOrObject: KtPureClassOrObject,
         descriptor: ClassDescriptor,
@@ -176,35 +157,22 @@ open class JvmGeneratorExtensionsImpl(
         )
     }
 
-    override fun registerDeclarations(symbolTable: SymbolTable) {
-        val signatureComputer = PublicIdSignatureComputer(JvmIrMangler)
-        specialAnnotationConstructors.forEach { constructor ->
-            symbolTable.declareConstructorWithSignature(signatureComputer.composePublicIdSignature(constructor, false), constructor.symbol)
-        }
-        super.registerDeclarations(symbolTable)
-    }
-
     override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
         get() = true
 
-    private val rawTypeAnnotationClass =
-        createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
-
-    // NB Class 'kotlin.jvm.internal.EnhancedNullability' doesn't exist anywhere in descriptors or in bytecode
-    private val enhancedNullabilityAnnotationClass =
-        createSpecialAnnotationClass(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION, kotlinJvmInternalPackage)
+    private val specialAnnotations = JvmIrSpecialAnnotationSymbolProvider(IrFactoryImpl)
 
     override val flexibleNullabilityAnnotationConstructor: IrConstructor =
-        createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()
+        specialAnnotations.flexibleNullabilityAnnotation.owner.constructors.single()
 
     override val flexibleMutabilityAnnotationConstructor: IrConstructor =
-        createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()
+        specialAnnotations.flexibleMutabilityAnnotation.owner.constructors.single()
 
     override val enhancedNullabilityAnnotationConstructor: IrConstructor =
-        enhancedNullabilityAnnotationClass.constructors.single()
+        specialAnnotations.enhancedNullabilityAnnotation.owner.constructors.single()
 
     override val rawTypeAnnotationConstructor: IrConstructor =
-        rawTypeAnnotationClass.constructors.single()
+        specialAnnotations.rawTypeAnnotation.owner.constructors.single()
 
     override fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? {
         if (descriptor is SyntheticJavaPropertyDescriptor) {
