@@ -51,11 +51,11 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
 
     completeMutatorsRootSet(mainWorker);
 
-    // global root set must be collected after all the mutator's global data have been published
-    collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
-
     barriers::enableBarriers(gcHandle().getEpoch());
     resumeTheWorld(gcHandle());
+
+    // global root set must be collected after all the mutator's global data have been published
+    collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
 
     // Mutator threads might release their internal batch at a pretty arbitrary moment (during a barrier execution with overflow).
     // So there are not so many reliable ways to track releases of new work.
