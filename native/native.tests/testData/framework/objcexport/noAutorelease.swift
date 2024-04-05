@@ -37,33 +37,41 @@ private class NoAutoreleaseSwiftHelper : NoAutoreleaseSendHelper, NoAutoreleaseR
     }
 
     func sendKotlinObject(kotlinObject: KotlinObject) {
+        blackHole(kotlinObject)
         swiftLivenessTracker.add(kotlinObject)
     }
 
     func blockReceivingKotlinObject() -> (KotlinObject) -> Void {
         return {
+            blackHole($0)
             self.swiftLivenessTracker.add($0)
         }
     }
 
     func sendSwiftObject(swiftObject: Any) {
+        blackHole(swiftObject)
         swiftLivenessTracker.add(swiftObject as AnyObject)
     }
 
     func sendList(list: [Any]) {
+        blackHole(list)
     }
 
     func sendString(string: String) {
+        blackHole(string)
     }
 
     func sendNumber(number: Any) {
+        blackHole(number)
         swiftLivenessTracker.add(number as AnyObject)
     }
 
     func sendBlock(block: @escaping () -> KotlinObject) {
+        blackHole(block)
     }
 
     func sendCompletion(completionHandler: @escaping (Any?, Error?) -> Void) {
+        blackHole(completionHandler)
         completionHandler(nil, nil)
     }
 
@@ -203,6 +211,9 @@ private func testReceiveFromKotlin<T>(flags: TestFlags = TestFlags(), receiveObj
         // Repeating twice to cover possible fast paths after caching something for an object.
         let obj1 = receiveObject(helper)
         let obj2 = receiveObject(helper)
+
+        blackHole(obj1)
+        blackHole(obj2)
 
         if flags.trackSwiftLifetime {
             swiftLivenessTracker.add(obj1 as AnyObject)
@@ -435,6 +446,14 @@ private func testReceiveBlockFromSwiftAndCall() throws {
     try testCallToSwift(flags: TestFlags(runGCTwice: true)) {
         NoAutoreleaseKt.callReceiveBlockAndCall(helper: $0, tracker: $1)
     }
+}
+
+// This function helps us to make sure Swift compiler doesn't remove certain code,
+// for example converting unused objects from Objective-C to Swift representation.
+// Otherwise, the tests wouldn't be checking the conversion code.
+@inline(never)
+@_optimize(none)
+public func blackHole<T>(_ value: T) {
 }
 
 private func createList() -> [Any] {
