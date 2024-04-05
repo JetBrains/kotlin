@@ -228,7 +228,6 @@ abstract class LlvmOptimizationPipeline(
                     passes: ${passDescription}
                 """.trimIndent()
             }
-            println("Running passes: $passDescription")
             val errorCode = LLVMRunPasses(llvmModule, passDescription, targetMachine, options)
             require(errorCode == null) {
                 LLVMGetErrorMessage(errorCode)!!.toKString()
