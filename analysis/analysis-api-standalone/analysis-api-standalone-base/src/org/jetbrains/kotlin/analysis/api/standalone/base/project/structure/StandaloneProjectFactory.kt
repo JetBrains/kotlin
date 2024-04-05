@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
-import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -194,7 +193,6 @@ object StandaloneProjectFactory {
             registerService(JavaElementSourceFactory::class.java, JavaElementSourceWithSmartPointerFactory::class.java)
 
             registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
-            registerService(ModuleAnnotationsResolver::class.java, CliModuleAnnotationsResolver())
         }
 
         val modules = projectStructureProvider.allKtModules
@@ -267,7 +265,7 @@ object StandaloneProjectFactory {
         javaFileManager.initialize(
             rootsIndex,
             listOf(
-                createPackagePartsProvider(project, libraryRoots + jdkRoots, languageVersionSettings)
+                createPackagePartsProvider(libraryRoots + jdkRoots, languageVersionSettings)
                     .invoke(ProjectScope.getLibrariesScope(project))
             ),
             SingleJavaFileRootsIndex(singleJavaFileRoots),
@@ -466,15 +464,11 @@ object StandaloneProjectFactory {
     }
 
     fun createPackagePartsProvider(
-        project: MockProject,
         libraryRoots: List<JavaRoot>,
         languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
     ): (GlobalSearchScope) -> JvmPackagePartProvider = { scope ->
         JvmPackagePartProvider(languageVersionSettings, scope).apply {
             addRoots(libraryRoots, MessageCollector.NONE)
-            (ModuleAnnotationsResolver
-                .getInstance(project) as CliModuleAnnotationsResolver)
-                .addPackagePartProvider(this)
         }
     }
 

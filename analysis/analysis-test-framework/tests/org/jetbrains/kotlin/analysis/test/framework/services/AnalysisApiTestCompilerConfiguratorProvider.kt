@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -50,9 +49,6 @@ class AnalysisApiTestCompilerConfiguratorProvider(
         return { scope ->
             JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
                 addRoots(allProjectBinaryRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
-                (ModuleAnnotationsResolver
-                    .getInstance(testServices.environmentManager.getProject()) as CliModuleAnnotationsResolver)
-                    .addPackagePartProvider(this)
             }
         }
     }

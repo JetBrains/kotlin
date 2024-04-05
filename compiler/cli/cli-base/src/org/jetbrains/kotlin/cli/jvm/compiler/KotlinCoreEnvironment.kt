@@ -89,7 +89,6 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
-import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
@@ -323,7 +322,6 @@ class KotlinCoreEnvironment private constructor(
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
             addRoots(initialRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
             packagePartProviders += this
-            (ModuleAnnotationsResolver.getInstance(project) as CliModuleAnnotationsResolver).addPackagePartProvider(this)
         }
     }
 
@@ -807,7 +805,6 @@ class KotlinCoreEnvironment private constructor(
             with(project) {
                 registerService(JavaElementSourceFactory::class.java, JavaFixedElementSourceFactory::class.java)
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
-                registerService(ModuleAnnotationsResolver::class.java, CliModuleAnnotationsResolver())
             }
         }
 
