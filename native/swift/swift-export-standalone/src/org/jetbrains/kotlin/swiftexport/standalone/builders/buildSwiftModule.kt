@@ -33,13 +33,10 @@ internal fun buildSwiftModule(
     return analyze(module) {
         with(StandaloneSirSession(this, bridgeModuleName)) {
             val result = module.sirModule()
-            val extractedDeclarations = ktFiles.flatMap {
+            ktFiles.flatMap {
                 it.getFileSymbol().getFileScope().extractDeclarations()
             }
-
-            buildModuleCopy(result) {
-                declarations += extractedDeclarations
-            }
+            result
         }
     }
 }

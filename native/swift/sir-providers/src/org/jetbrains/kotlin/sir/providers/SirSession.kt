@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.sir.*
 public interface SirSession :
     SirDeclarationNamer,
     SirDeclarationProvider,
+    SirParentProvider,
     SirModuleProvider,
     SirEnumGenerator,
     SirTypeProvider,
@@ -36,6 +37,7 @@ public interface SirSession :
 
     public val declarationNamer: SirDeclarationNamer
     public val declarationProvider: SirDeclarationProvider
+    public val parentProvider: SirParentProvider
     public val moduleProvider: SirModuleProvider
     public val enumGenerator: SirEnumGenerator
     public val typeProvider: SirTypeProvider
@@ -49,6 +51,8 @@ public interface SirSession :
     override fun KtDeclarationSymbol.sirDeclarationName(): String = with(declarationNamer) { this@sirDeclarationName.sirDeclarationName() }
 
     override fun KtDeclarationSymbol.sirDeclaration(): SirDeclaration = with(declarationProvider) { this@sirDeclaration.sirDeclaration() }
+
+    override fun KtDeclarationSymbol.getSirParent(): SirDeclarationParent = with(parentProvider) { this@getSirParent.getSirParent() }
 
     override fun KtModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
 
@@ -79,6 +83,17 @@ public interface SirDeclarationNamer {
  */
 public interface SirDeclarationProvider {
     public fun KtDeclarationSymbol.sirDeclaration(): SirDeclaration
+}
+
+/**
+ * Given [KtDeclarationSymbol] will produce [SirDeclarationParent], representing the parent for corresponding sir node.
+ *
+ * For example, given the top level function without a package - will return SirModule that should declare that declarations.
+ * Or, given the top level function with a package - will return SirExtension for that package.
+ *
+ */
+public interface SirParentProvider {
+    public fun KtDeclarationSymbol.getSirParent(): SirDeclarationParent
 }
 
 /**

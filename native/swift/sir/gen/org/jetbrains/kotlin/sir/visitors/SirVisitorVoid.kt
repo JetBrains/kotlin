@@ -22,20 +22,28 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
     open fun visitElement(element: SirElement) {
     }
 
-    final override fun visitModule(module: SirModule, data: Nothing?) {
-        visitModule(module)
-    }
-
-    open fun visitModule(module: SirModule) {
-        visitElement(module)
-    }
-
     final override fun visitDeclarationContainer(declarationContainer: SirDeclarationContainer, data: Nothing?) {
         visitDeclarationContainer(declarationContainer)
     }
 
     open fun visitDeclarationContainer(declarationContainer: SirDeclarationContainer) {
         visitElement(declarationContainer)
+    }
+
+    final override fun visitMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer, data: Nothing?) {
+        visitMutableDeclarationContainer(mutableDeclarationContainer)
+    }
+
+    open fun visitMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer) {
+        visitElement(mutableDeclarationContainer)
+    }
+
+    final override fun visitModule(module: SirModule, data: Nothing?) {
+        visitModule(module)
+    }
+
+    open fun visitModule(module: SirModule) {
+        visitElement(module)
     }
 
     final override fun visitDeclaration(declaration: SirDeclaration, data: Nothing?) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
+import org.jetbrains.kotlin.sir.util.addChild
 
 private const val KOTLIN_RUNTIME_MODULE_NAME: String = "KotlinRuntime"
 
@@ -24,18 +25,26 @@ public class SirModuleProviderImpl(
     private val sirSession: SirSession,
 ) : SirModuleProvider {
 
+    private val seenModule: MutableMap<KtModule, SirModule> = mutableMapOf()
+
     override fun KtModule.sirModule(): SirModule = withSirAnalyse(sirSession, ktAnalysisSession) {
-        buildModule {
-            name = moduleName()
-            // imports should be reworked - KT-66727
-            declarations += buildImport {
-                moduleName = bridgeModuleName
+        seenModule.getOrPut(this@sirModule) {
+            buildModule {
+                name = moduleName()
+            }.also {
+                // imports should be reworked - KT-66727
+                it.addChild {
+                    buildImport {
+                        moduleName = bridgeModuleName
+                    }
+                }
+
+                it.addChild {
+                    buildImport {
+                        moduleName = KOTLIN_RUNTIME_MODULE_NAME
+                    }
+                }
             }
-            declarations += buildImport {
-                moduleName = KOTLIN_RUNTIME_MODULE_NAME
-            }
-        }.apply {
-            declarations.forEach { it.parent = this }
         }
     }
 

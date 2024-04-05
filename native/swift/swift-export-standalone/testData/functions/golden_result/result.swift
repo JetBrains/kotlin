@@ -4,6 +4,18 @@ import KotlinRuntime
 public func foo() -> Swift.Int32 {
     return __root___foo()
 }
+public extension main.namespace1 {
+    public static func bar() -> Swift.Int32 {
+        return namespace1_bar()
+    }
+}
+public extension main.namespace2 {
+    public static func foo(
+        arg1: Swift.Int32
+    ) -> Swift.Int32 {
+        return namespace2_foo__TypesOfArguments__int32_t__(arg1)
+    }
+}
 public extension main.namespace1.local_functions {
     public static func foo() -> Swift.Void {
         namespace1_local_functions_foo()
@@ -29,18 +41,6 @@ public extension main.namespace1.main {
         arg11: Swift.Double
     ) -> Swift.Void {
         namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_uint8_t_uint16_t_uint32_t_uint64_t_float_double__(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)
-    }
-}
-public extension main.namespace1 {
-    public static func bar() -> Swift.Int32 {
-        return namespace1_bar()
-    }
-}
-public extension main.namespace2 {
-    public static func foo(
-        arg1: Swift.Int32
-    ) -> Swift.Int32 {
-        return namespace2_foo__TypesOfArguments__int32_t__(arg1)
     }
 }
 public extension main.overload {

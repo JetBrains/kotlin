@@ -6,37 +6,37 @@
 package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirEnum
 import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.builder.buildEnum
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
+import org.jetbrains.kotlin.sir.util.addChild
 
 // TODO: Handle different modules
-// Package Inflator should be rewritten to use this - during 3.1 of KT-66639
 public class SirEnumGeneratorImpl : SirEnumGenerator {
+
+    private val createdEnums: MutableMap<FqName, SirEnum> = mutableMapOf()
 
     override fun FqName.sirPackageEnum(module: SirModule): SirEnum {
         require(!this.isRoot)
-        if (this.parent().isRoot) {
-            return createEnum(this@sirPackageEnum).also {
-                it.parent = module
-                (module.declarations as MutableList<SirDeclaration>) += it
-            }
+
+        val parent: SirMutableDeclarationContainer = if (parent().isRoot) {
+            module
         } else {
-            val parent = this.parent().sirPackageEnum(module)
-            return createEnum(this@sirPackageEnum).also {
-                it.parent = parent
-                (parent.declarations as MutableList<SirDeclaration>) += it
-            }
+            parent().sirPackageEnum(module)
         }
+
+        return createEnum(this, parent)
     }
 
-    private fun createEnum(fqName: FqName): SirEnum {
-        return buildEnum {
-            origin = SirOrigin.Namespace(fqName.pathSegments().map { it.asString() })
-            name = fqName.pathSegments().last().asString()
+    private fun createEnum(fqName: FqName, parent: SirMutableDeclarationContainer): SirEnum = createdEnums.getOrPut(fqName) {
+        parent.addChild {
+            buildEnum {
+                origin = SirOrigin.Namespace(fqName.pathSegments().map { it.asString() })
+                name = fqName.pathSegments().last().asString()
+            }
         }
     }
 }
