@@ -2172,8 +2172,13 @@ internal class CodeGeneratorVisitor(
                 }
             }
 
-            assert(value.type.isUnit())
-            return codegen.theUnitInstanceRef.llvm
+            return when {
+                value.type.isUnit() -> codegen.theUnitInstanceRef.llvm
+                value.type.isNothing() -> functionGenerationContext.kNothingFakeValue
+                else -> if (value is IrInlinedFunctionBlock)
+                    LLVMGetUndef(value.type.toLLVMType(llvm))!!
+                else error(value.type.render())
+            }
         }
     }
 
@@ -2417,7 +2422,14 @@ internal class CodeGeneratorVisitor(
         require(!function.isSuspend) { "Suspend functions should be lowered out at this point"}
 
         return when {
-            function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args, resultSlot)
+            function.isTypedIntrinsic -> try {
+                intrinsicGenerator.evaluateCall(callee, args, resultSlot)
+            } catch (t: Throwable) {
+                println("BUGBUGBUG: call from ${functionGenerationContext.irFunction?.render()} to ${function.render()}")
+                println(callee.dump())
+                println(functionGenerationContext.irFunction?.dump())
+                throw t
+            }
             function.isBuiltInOperator -> evaluateOperatorCall(callee, args)
             function.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER -> evaluateFileGlobalInitializerCall(function)
             function.origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER -> evaluateFileThreadLocalInitializerCall(function)
@@ -2624,7 +2636,10 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     fun callDirect(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val functionDeclarations = codegen.llvmFunction(function.target)
+        val functionDeclarations = try { codegen.llvmFunction(function.target) } catch (t: Throwable) {
+            println("BUGBUGBUG: callee = ${function.render()}; caller = ${functionGenerationContext.irFunction?.dump()}")
+            throw t
+        }
         return call(function, functionDeclarations, args, resultLifetime, resultSlot)
     }
 

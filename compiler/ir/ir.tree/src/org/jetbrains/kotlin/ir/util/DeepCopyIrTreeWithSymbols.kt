@@ -437,7 +437,9 @@ open class DeepCopyIrTreeWithSymbols(
         IrConstantPrimitiveImpl(
             expression.startOffset, expression.endOffset,
             expression.value.transform()
-        ).processAttributes(expression)
+        ).processAttributes(expression).apply {
+            this.type = expression.type.remapType()
+        }
 
     override fun visitConstantArray(expression: IrConstantArray): IrConstantValue =
         IrConstantArrayImpl(

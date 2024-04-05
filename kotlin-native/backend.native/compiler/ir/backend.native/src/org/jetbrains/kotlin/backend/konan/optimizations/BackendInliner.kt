@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
+import org.jetbrains.kotlin.backend.konan.lower.erasure
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -39,18 +41,29 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 internal class BackendInliner(
         val generationState: NativeGenerationState,
         val moduleDFG: ModuleDFG,
+        val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
         val callGraph: CallGraph,
 ) {
     private val context = generationState.context
+    private val symbols = context.ir.symbols
+    private val invokeSuspendFunction = symbols.invokeSuspendFunction
     private val rootSet = callGraph.rootSet
 
-    fun run() {
+    private inline fun DataFlowIR.FunctionBody.forEachVirtualCall(block: (DataFlowIR.Node.VirtualCall) -> Unit) =
+            forEachNonScopeNode { node ->
+                if (node is DataFlowIR.Node.VirtualCall)
+                    block(node)
+            }
+
+    fun run(): Map<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite> {
+        val rebuiltDevirtualizedCallSites = mutableMapOf<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
         val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
         val stack = rootSet.toMutableList()
         for (root in stack)
             computationStates[root] = ComputationState.NEW
         while (stack.isNotEmpty()) {
             val functionSymbol = stack.peek()!!
+            val function = moduleDFG.functions[functionSymbol]!!
             val state = computationStates[functionSymbol]!!
             val callSites = callGraph.directEdges[functionSymbol]!!.callSites.filter {
                 !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee)
@@ -60,7 +73,7 @@ internal class BackendInliner(
                     computationStates[functionSymbol] = ComputationState.PENDING
                     for (callSite in callSites) {
                         val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
-                        if (computationStates[calleeSymbol] == null) {
+                        if (computationStates[calleeSymbol] == null || computationStates[calleeSymbol] == ComputationState.NEW) {
                             computationStates[calleeSymbol] = ComputationState.NEW
                             stack.push(calleeSymbol)
                         }
@@ -81,40 +94,94 @@ internal class BackendInliner(
 
                     val irFunction = functionSymbol.irFunction ?: continue
                     val irBody = irFunction.body ?: continue
+//                    if (irFunction.name.asString() == "foo")
+//                        println("Handling ${irFunction.render()}")
                     val functionsToInline = mutableSetOf<IrFunction>()
+                    val devirtualizedCallSitesFromFunctionsToInline = mutableMapOf<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
                     for (callSite in callSites) {
                         val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
+//                        if (irFunction.name.asString() == "foo") {
+//                            println("    call to $calleeSymbol")
+//                            println("        ${computationStates[calleeSymbol]} ${calleeSymbol.irFunction?.render()}")
+//                        }
                         if (computationStates[calleeSymbol] != ComputationState.DONE) continue
                         val calleeIrFunction = calleeSymbol.irFunction ?: continue
                         val callee = moduleDFG.functions[calleeSymbol]!!
                         val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
-                        if (calleeSize <= 100 && irFunction.fileOrNull?.path?.endsWith("z.kt") == true) // TODO: To a function. Also use relative criterion along with the absolute one.
-                            functionsToInline.add(calleeIrFunction)
+                        var isALoop = false
+                        callee.body.forEachNonScopeNode { node ->
+                            if (node is DataFlowIR.Node.Call && node.callee == calleeSymbol)
+                                isALoop = true
+                            if (node is DataFlowIR.Node.VirtualCall) {
+                                val devirtualizedCallSite = devirtualizedCallSites[node]
+                                val maxUnfoldFactor = if (node is DataFlowIR.Node.ItableCall)
+                                    DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_ITABLE_CALL else DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_VTABLE_CALL
+                                if (devirtualizedCallSite != null && devirtualizedCallSite.possibleCallees.size <= maxUnfoldFactor) {
+                                    if (devirtualizedCallSite.possibleCallees.any { it.callee == calleeSymbol })
+                                        isALoop = true
+                                }
+                            }
+                        }
+                        if (irFunction.name.asString() == "foo")
+                            println("    $isALoop $calleeSize")
+                        if (!isALoop && calleeSize <= 100 // TODO: To a function. Also use relative criterion along with the absolute one.
+                                && calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
+                                && !calleeIrFunction.overrides(invokeSuspendFunction.owner) // TODO: Is it worth trying to support?
+                                /*&& irFunction.fileOrNull?.path?.endsWith("z.kt") == true*/) {
+                            if (functionsToInline.add(calleeIrFunction)) {
+                                callee.body.forEachVirtualCall { node ->
+                                    val devirtualizedCallSite = devirtualizedCallSites[node]
+                                    if (devirtualizedCallSite != null)
+                                        devirtualizedCallSitesFromFunctionsToInline[node.irCallSite!!] = devirtualizedCallSite
+                                }
+                            }
+                        }
                     }
 
-                    if (functionsToInline.isNotEmpty()) {
-                        println("Preparing to inline to ${irFunction.render()}")
-                        functionsToInline.forEach { println("    ${it.render()}") }
+                    if (functionsToInline.isEmpty()) {
+                        //println("Nothing to inline to ${irFunction.render()}")
+                        function.body.forEachVirtualCall { node ->
+                            val devirtualizedCallSite = devirtualizedCallSites[node]
+                            if (devirtualizedCallSite != null)
+                                rebuiltDevirtualizedCallSites[node] = devirtualizedCallSite
+                        }
+                    } else {
+//                        println("Preparing to inline to ${irFunction.render()}")
+//                        functionsToInline.forEach { println("    ${it.dump()}") }
+//                        println("BEFORE: ${irFunction.dump()}")
                         val inliner = FunctionInlining(
                                 context,
                                 inlineFunctionResolver = object : InlineFunctionResolver() {
-                                    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-                                        val function = symbol.owner
-                                        return function is IrConstructor // TODO: support
-                                                || function !in functionsToInline
-                                    }
+                                    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol) =
+                                            symbol.owner !in functionsToInline
                                 },
+                                devirtualizedCallSitesFromFunctionsToInline,
                         )
-                        inliner.lower(irBody, irFunction)
+                        val devirtualizedCallSitesFromInlinedFunctions = inliner.lower(irBody, irFunction)
+
+//                        println("AFTER: ${irFunction.dump()}")
 
                         LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
                                 .forEach { (irElement, liveVariables) ->
                                     generationState.liveVariablesAtSuspensionPoints[irElement as IrSuspensionPoint] = liveVariables
                                 }
 
-                        val function = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(irFunction, irBody)
-                        moduleDFG.functions[function.symbol] = function
+                        val devirtualizedCallSitesFromFunction = mutableMapOf<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
+                        function.body.forEachVirtualCall { node ->
+                            val devirtualizedCallSite = devirtualizedCallSites[node]
+                            if (devirtualizedCallSite != null)
+                                devirtualizedCallSitesFromFunction[node.irCallSite!!] = devirtualizedCallSite
+                        }
 
+                        val rebuiltFunction = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(irFunction, irBody)
+                        moduleDFG.functions[functionSymbol] = rebuiltFunction
+                        rebuiltFunction.body.forEachVirtualCall { node ->
+                            val irCallSite = node.irCallSite!!
+                            val devirtualizedCallSite = devirtualizedCallSitesFromInlinedFunctions[irCallSite]
+                                    ?: devirtualizedCallSitesFromFunction[irCallSite]
+                            if (devirtualizedCallSite != null)
+                                rebuiltDevirtualizedCallSites[node] = devirtualizedCallSite
+                        }
 
                         /*
                         +                    val body = when (declaration) {
@@ -157,6 +224,8 @@ internal class BackendInliner(
                 }
             }
         }
+
+        return rebuiltDevirtualizedCallSites
     }
 
     private enum class ComputationState {
@@ -179,22 +248,24 @@ internal abstract class InlineFunctionResolver {
 }
 
 internal class FunctionInlining(
-        val context: Context,
+        private val context: Context,
         private val inlineFunctionResolver: InlineFunctionResolver,
-) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
+        private val devirtualizedCallSites: Map<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
+) : IrElementTransformerVoidWithContext() {
     private var containerScope: ScopeWithIr? = null
     private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
+    private val copiedDevirtualizedCallSites = mutableMapOf<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
 
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
+    fun lower(irBody: IrBody, container: IrDeclaration): Map<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite> {
         // TODO container: IrSymbolDeclaration
         containerScope = createScope(container as IrSymbolOwner)
         irBody.accept(this, null)
         containerScope = null
 
         irBody.patchDeclarationParents(container as? IrDeclarationParent ?: container.parent)
-    }
 
-    fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
+        return copiedDevirtualizedCallSites
+    }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
@@ -205,12 +276,8 @@ internal class FunctionInlining(
         }
 
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(calleeSymbol)
-        if (actualCallee?.body == null) {
+        if (actualCallee?.body == null || expression.isVirtualCall) {
             return expression
-        }
-
-        withinScope(actualCallee) {
-            actualCallee.body?.transformChildrenVoid()
         }
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
@@ -230,20 +297,20 @@ internal class FunctionInlining(
             val context: CommonBackendContext
     ) {
         val copyIrElement = run {
-            val typeParameters =
-                    if (callee is IrConstructor)
-                        callee.parentAsClass.typeParameters
-                    else callee.typeParameters
-            val typeArguments =
-                    (0 until callSite.typeArgumentsCount).associate {
-                        typeParameters[it].symbol to callSite.getTypeArgument(it)
-                    }
-            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
+//            val typeParameters =
+//                    if (callee is IrConstructor)
+//                        callee.parentAsClass.typeParameters
+//                    else callee.typeParameters
+//            val typeArguments =
+//                    (0 until callSite.typeArgumentsCount).associate {
+//                        typeParameters[it].symbol to callSite.getTypeArgument(it)
+//                    }
+            DeepCopyIrTreeWithSymbolsForInliner(/*typeArguments*/null, parent, devirtualizedCallSites, copiedDevirtualizedCallSites)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, callee.originalFunction)
+        fun inline() = inlineFunction(callSite, callee, callee/*.originalFunction*/)
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")
@@ -258,6 +325,7 @@ internal class FunctionInlining(
             val copiedCallee = callee.copy().apply {
                 parent = callee.parent
             }
+//            println("AFTER copying: ${copiedCallee.dump()}")
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as? IrBlockBody)?.statements
@@ -273,10 +341,12 @@ internal class FunctionInlining(
             val transformer = ParameterSubstitutor()
             val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
 
+            val returnType = callee.returnType.erasure()
+
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                     startOffset = callSite.startOffset,
                     endOffset = callSite.endOffset,
-                    type = callSite.type,
+                    type = returnType,
                     inlineCall = callSite,
                     inlinedElement = originalInlinedElement,
                     origin = null,
@@ -288,7 +358,7 @@ internal class FunctionInlining(
             return IrReturnableBlockImpl(
                     startOffset = callSite.startOffset,
                     endOffset = callSite.endOffset,
-                    type = callSite.type,
+                    type = returnType,
                     symbol = irReturnableBlockSymbol,
                     origin = null,
                     statements = listOf(inlinedBlock),
@@ -500,6 +570,8 @@ internal class FunctionInlining(
 internal class DeepCopyIrTreeWithSymbolsForInliner(
         val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
         val parent: IrDeclarationParent?,
+        val devirtualizedCallSites: Map<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
+        val copiedDevirtualizedCallSites: MutableMap<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
 ) {
     fun copy(irElement: IrElement): IrElement {
         // Create new symbols.
@@ -606,6 +678,12 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
     private val typeRemapper = InlinerTypeRemapper(symbolRemapper, typeArguments)
     private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
         private fun IrType.erase() = typeRemapper.remapType(this)
+
+        override fun visitCall(expression: IrCall) = super.visitCall(expression).also { copiedCall ->
+            val devirtualizedCallSite = devirtualizedCallSites[expression]
+            if (devirtualizedCallSite != null)
+                copiedDevirtualizedCallSites[copiedCall] = devirtualizedCallSite
+        }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall) =
                 IrTypeOperatorCallImpl(

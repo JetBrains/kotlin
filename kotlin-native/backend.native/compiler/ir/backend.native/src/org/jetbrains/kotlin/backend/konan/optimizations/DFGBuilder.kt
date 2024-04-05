@@ -133,9 +133,9 @@ private class ExpressionValuesExtractor(val context: Context,
             }
 
             is IrVararg, /* Sometimes, we keep vararg till codegen phase (for constant arrays). */
-            is IrMemberAccessExpression<*>, is IrGetValue, is IrGetField, is IrConst<*>,
-            is IrGetObjectValue, is IrFunctionReference, is IrSetField,
-            is IrConstantValue -> block(expression)
+            is IrClassReference, // Albeit these are lowered, they might occur after devirtualization.
+            is IrMemberAccessExpression<*>, is IrGetValue, is IrGetObjectValue,
+            is IrGetField, is IrSetField, is IrConst<*>, is IrConstantValue -> block(expression)
 
             else -> when {
                 expression.type.isUnit() -> unit
@@ -228,7 +228,8 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 is IrVararg,
                 is IrConst<*>,
                 is IrTypeOperatorCall,
-                is IrConstantPrimitive ->
+                is IrConstantPrimitive,
+                is IrClassReference ->
                     expressions += expression to currentLoop
             }
 
@@ -590,7 +591,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                         when (value) {
                             is IrGetValue -> getNode(value).value
 
-                            is IrVararg -> DataFlowIR.Node.Const(symbolTable.mapType(value.type))
+                            is IrVararg, is IrClassReference -> DataFlowIR.Node.Const(symbolTable.mapType(value.type))
 
                             is IrFunctionReference -> {
                                 val callee = value.symbol.owner

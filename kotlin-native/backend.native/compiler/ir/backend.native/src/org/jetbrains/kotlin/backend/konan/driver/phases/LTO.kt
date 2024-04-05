@@ -76,11 +76,14 @@ internal data class BackendInlinerInput(
         get() = irModule
 }
 
-internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerationState, BackendInlinerInput>(
+internal data class BackendInlinerOutput(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite>)
+
+internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerationState, BackendInlinerInput, BackendInlinerOutput>(
         name = "BackendInliner",
         description = "Backend inliner",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
+        outputIfNotEnabled = { _, _, _, _ -> BackendInlinerOutput(emptyMap()) },
         op = { generationState, (irModule, moduleDFG, devirtualizationAnalysisResult) ->
             val context = generationState.context
             val callGraph = CallGraphBuilder(
@@ -91,7 +94,9 @@ internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     devirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE, // TODO: Check if this is not too much.
                     nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE, // TODO: Check if this is not too much.
             ).build()
-            BackendInliner(generationState, moduleDFG, callGraph).run()
+            BackendInlinerOutput(
+                    BackendInliner(generationState, moduleDFG, devirtualizationAnalysisResult.devirtualizedCallSites, callGraph).run()
+            )
         }
 )
 

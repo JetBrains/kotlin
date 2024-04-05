@@ -869,8 +869,9 @@ internal object EscapeAnalysis {
                 body.forEachNonScopeNode { node ->
                     when (node) {
                         is DataFlowIR.Node.FieldWrite -> {
-                            if (node.value.node != DataFlowIR.Node.Null) {
-                                val receiver = node.receiver?.let { nodes[it.node]!! }
+                            val receiverNode = node.receiver?.node
+                            if (node.value.node != DataFlowIR.Node.Null && receiverNode != DataFlowIR.Node.Null) {
+                                val receiver = receiverNode?.let { nodes[it]!! }
                                 val value = nodes[node.value.node]!!
                                 if (receiver == null)
                                     escapeOrigins.add(value)
@@ -886,12 +887,15 @@ internal object EscapeAnalysis {
                         }
 
                         is DataFlowIR.Node.FieldRead -> {
-                            val readResult = nodes[node]!!
-                            val receiver = node.receiver?.let { nodes[it.node]!! }
-                            if (receiver == null)
-                                escapeOrigins.add(readResult)
-                            else
-                                readResult.addAssignmentEdge(receiver.getFieldNode(node.field, this))
+                            val receiverNode = node.receiver?.node
+                            if (receiverNode != DataFlowIR.Node.Null) {
+                                val readResult = nodes[node]!!
+                                val receiver = receiverNode?.let { nodes[it]!! }
+                                if (receiver == null)
+                                    escapeOrigins.add(readResult)
+                                else
+                                    readResult.addAssignmentEdge(receiver.getFieldNode(node.field, this))
+                            }
                         }
 
                         is DataFlowIR.Node.ArrayWrite -> {

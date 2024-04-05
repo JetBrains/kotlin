@@ -265,14 +265,14 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
         declaration.runTrimEnd {
-            "FUN ${renderOriginIfNonTrivial(options)}"
+            "FUN ${System.identityHashCode(declaration)} ${renderOriginIfNonTrivial(options)}"
         }
 
     override fun visitScript(declaration: IrScript, data: Nothing?) = "SCRIPT"
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
-            "FUN ${renderOriginIfNonTrivial(options)}" +
+            "FUN ${System.identityHashCode(declaration)} ${renderOriginIfNonTrivial(options)}" +
                     "name:$name " +
                     renderSignatureIfEnabled(options.printSignatures) +
                     "visibility:$visibility modality:$modality " +
