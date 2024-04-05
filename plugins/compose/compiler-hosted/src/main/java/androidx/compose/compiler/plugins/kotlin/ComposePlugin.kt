@@ -152,7 +152,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         )
         val SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION = CliOption(
             "suppressKotlinVersionCompatibilityCheck",
-            "<true|false>",
+            "<kotlin_version>",
             "Suppress Kotlin version compatibility check",
             required = false,
             allowMultipleOccurrences = false
