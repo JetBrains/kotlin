@@ -1,4 +1,5 @@
 // LANGUAGE: -SupportEffectivelyFinalInExpectActualVisibilityCheck
+// DONT_STOP_ON_FIR_ERRORS
 // MODULE: m1-common
 // FILE: common.kt
 

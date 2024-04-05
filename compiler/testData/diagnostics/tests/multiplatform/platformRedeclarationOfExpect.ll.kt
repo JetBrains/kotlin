@@ -1,3 +1,4 @@
+// DONT_STOP_ON_FIR_ERRORS
 // MODULE: common
 // FILE: common.kt
 expect class Foo

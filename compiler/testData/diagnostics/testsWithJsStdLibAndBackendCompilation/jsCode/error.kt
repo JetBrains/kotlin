@@ -3,6 +3,7 @@
 // The diagnostic is implemented as a klib check over IR.
 
 // ERROR_POLICY: SEMANTIC
+// DONT_STOP_ON_FIR_ERRORS
 val code = """
     var s = "hello"
     + );

@@ -1,3 +1,4 @@
+// DONT_STOP_ON_FIR_ERRORS
 // MODULE: m1-common
 // FILE: common.kt
 <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect var v1: Boolean<!>

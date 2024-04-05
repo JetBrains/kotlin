@@ -1,6 +1,7 @@
 // FIR_DIFFERENCE
 // The difference is okay: K1 and K2 report a bit differently
 // ERROR_POLICY: SEMANTIC
+// DONT_STOP_ON_FIR_ERRORS
 @file:Suppress("NOTHING_TO_INLINE")
 
 fun function1() = "function1"

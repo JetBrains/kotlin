@@ -1,3 +1,4 @@
+// DONT_STOP_ON_FIR_ERRORS
 // MODULE: m1-common
 // FILE: common.kt
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class Foo {

@@ -1,4 +1,5 @@
 // False-positive reports in K1, because fixed only in K2
+// DONT_STOP_ON_FIR_ERRORS
 // MODULE: m1-common
 // FILE: common.kt
 expect class Foo {

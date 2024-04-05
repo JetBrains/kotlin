@@ -1,3 +1,4 @@
+// DONT_STOP_ON_FIR_ERRORS
 interface B {
     fun getX() = 1
 }

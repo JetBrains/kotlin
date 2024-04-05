@@ -1,5 +1,6 @@
 // FIR_DIFFERENCE
 // The difference is okay: K1 and K2 report a bit differently
+// DONT_STOP_ON_FIR_ERRORS
 
 // MODULE: lib1
 // FILE: A.kt

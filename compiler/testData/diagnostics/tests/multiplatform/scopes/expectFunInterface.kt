@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
+// DONT_STOP_ON_FIR_ERRORS
 // ISSUE: KT-58845
 
 // MODULE: common
