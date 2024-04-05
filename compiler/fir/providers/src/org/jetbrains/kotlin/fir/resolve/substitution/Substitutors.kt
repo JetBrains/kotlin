@@ -43,14 +43,13 @@ inline fun ConeCapturedType.substitute(f: (ConeKotlinType) -> ConeKotlinType?): 
     //   C<CapturedType(out B)_1> <!:> C<CapturedType(out B)_2>
     //  ```
 
-    return ConeCapturedType(
-        captureStatus,
+    return copy(
         constructor = ConeCapturedTypeConstructor(
             wrapProjection(constructor.projection, substitutedInnerType),
             substitutedSuperTypes,
             typeParameterMarker = constructor.typeParameterMarker
         ),
-        lowerType = if (lowerType != null) substitutedInnerType else null
+        lowerType = if (lowerType != null) substitutedInnerType else null,
     )
 }
 
