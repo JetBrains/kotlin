@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.types.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -76,5 +75,5 @@ class IrCapturedType(
 
     override fun hashCode(): Int = System.identityHashCode(this)
 
-    override fun toString(): String = "IrCapturedType(${constructor.argument.render()}"
+    override fun toString(): String = render()
 }

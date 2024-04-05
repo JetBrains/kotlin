@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -774,6 +775,8 @@ private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, options: D
         is IrDynamicType -> "dynamic"
 
         is IrErrorType -> "IrErrorType(${options.verboseErrorTypes.ifTrue { originalKotlinType }})"
+
+        is IrCapturedType -> "IrCapturedType(${constructor.argument.render()}"
 
         is IrSimpleType -> buildTrimEnd {
             val isDefinitelyNotNullType =
