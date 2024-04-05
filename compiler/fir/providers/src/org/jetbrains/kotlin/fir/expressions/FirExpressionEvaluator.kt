@@ -32,6 +32,12 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.evalUnaryOp
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@RequiresOptIn(
+    "Internal FirExpressionEvaluator API. Should be avoided because it can be changed or dropped anytime. " +
+            "Consider using `evaluatePropertyInitializer` or `evaluateAnnotationArguments` instead."
+)
+annotation class PrivateConstantEvaluatorAPI
+
 object FirExpressionEvaluator {
     fun evaluatePropertyInitializer(property: FirProperty, session: FirSession): FirEvaluatorResult? {
         if (!property.isConst) {
@@ -61,6 +67,7 @@ object FirExpressionEvaluator {
         return argumentMapping.mapValues { (_, expression) -> expression.evaluate(session) }
     }
 
+    @PrivateConstantEvaluatorAPI
     fun evaluateExpression(expression: FirExpression, session: FirSession): FirEvaluatorResult? {
         if (!expression.canBeEvaluated(session)) return null
         return expression.evaluate(session)

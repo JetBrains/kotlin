@@ -187,7 +187,7 @@ fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
 val FirEvaluatorResult.result: FirElement?
     get() = (this as? FirEvaluatorResult.Evaluated)?.result
 
-@OptIn(PrivateForInline::class)
+@OptIn(PrivateForInline::class, PrivateConstantEvaluatorAPI::class)
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 inline fun <reified T : FirElement> FirExpression.evaluateAs(session: FirSession): @kotlin.internal.NoInfer T? {
     return FirExpressionEvaluator.evaluateExpression(this, session)?.result as? T
