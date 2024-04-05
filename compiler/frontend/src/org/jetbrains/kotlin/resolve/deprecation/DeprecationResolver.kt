@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
 import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
 import org.jetbrains.kotlin.resolve.checkSinceKotlinVersionAccessibility
 import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
@@ -171,7 +172,8 @@ class DeprecationResolver(
             }
         }
 
-        return isDeprecatedHidden(descriptor)
+        if (!isDeprecatedHidden(descriptor)) return false
+        return !isSuperCall || descriptor.containingDeclaration?.fqNameOrNull() != KOTLIN_LIST
     }
 
     private fun KotlinType.deprecationsByConstituentTypes(): List<DescriptorBasedDeprecationInfo> =
@@ -335,5 +337,7 @@ class DeprecationResolver(
         val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
 
         val LIST_DEPRECATED_PROPERTIES = listOf("first", "last")
+
+        val KOTLIN_LIST = FqName("kotlin.collections.List")
     }
 }

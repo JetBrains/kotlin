@@ -1,6 +1,6 @@
 abstract class A : List<Any> {
     override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): Any {
-        return <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.getFirst()
+        return super.<!DEPRECATION_ERROR, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>getFirst<!>()
     }
 }
 
