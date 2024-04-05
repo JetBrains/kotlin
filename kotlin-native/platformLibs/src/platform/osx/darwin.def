@@ -38,18 +38,7 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     mach_vm_region_info mach_vm_region_info_64 os_trace_info_with_payload safe_gets \
                     task_wire vm_map_64 vm_map_exec_lockdown vm_mapped_pages_info vm_region vm_region_recurse \
                     xpc_debugger_api_misuse_info \
-                    vm_stats vbfdotq_f32 vbfmlalbq_f32 vbfmlaltq_f32 vbfmmlaq_f32 vmmlaq_u32 vmmlaq_s32 vusdotq_s32 \
-                    vusmmlaq_s32 __a64_vcvtq_low_bf16_f32 \
-                    vreinterpretq_f8_bf16 vreinterpretq_f16_bf16 vreinterpretq_f32_bf16 vreinterpretq_f64_bf16 \
-                    vreinterpretq_p8_bf16 vreinterpretq_p16_bf16 vreinterpretq_p32_bf16 vreinterpretq_p64_bf16 \
-                    vreinterpretq_s8_bf16 vreinterpretq_s16_bf16 vreinterpretq_s32_bf16 vreinterpretq_s64_bf16 \
-                    vreinterpretq_u8_bf16 vreinterpretq_u16_bf16 vreinterpretq_u32_bf16 vreinterpretq_u64_bf16 \
-                    vreinterpretq_bf16_f8 vreinterpretq_bf16_f16 vreinterpretq_bf16_f32 vreinterpretq_bf16_f64 \
-                    vreinterpretq_bf16_p8 vreinterpretq_bf16_p16 vreinterpretq_bf16_p32 vreinterpretq_bf16_p64 \
-                    vreinterpretq_bf16_s8 vreinterpretq_bf16_s16 vreinterpretq_bf16_s32 vreinterpretq_bf16_s64 \
-                    vreinterpretq_bf16_u8 vreinterpretq_bf16_u16 vreinterpretq_bf16_u32 vreinterpretq_bf16_u64 \
-                    vsm3partw1q_u32 vsm3partw2q_u32 vsm3ss1q_u32 vsm4eq_u32 vsm4ekeyq_u32 \
-                    vcvtq_high_bf16_f32 vcvtq_low_bf16_f32 vcvtq_high_f32_bf16 vcvtq_low_f32_bf16
+                    vm_stats
 
 compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
 compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
