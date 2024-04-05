@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -48,6 +49,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
                 ::AnalysisApiJvmEnvironmentConfigurator,
                 ::JsEnvironmentConfigurator
             )
+            configureLibraryCompilationSupport()
         }
     }
 

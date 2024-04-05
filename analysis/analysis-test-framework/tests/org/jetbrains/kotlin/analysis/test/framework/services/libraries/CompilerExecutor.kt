@@ -5,14 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.nio.file.Path
 import kotlin.io.path.*
+
+fun TestConfigurationBuilder.configureLibraryCompilationSupport() {
+    useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
+    useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
+    useConfigurators(
+        ::CommonEnvironmentConfigurator,
+        ::AnalysisApiJvmEnvironmentConfigurator,
+        ::JsEnvironmentConfigurator
+    )
+}
 
 internal object CompilerExecutor {
     fun compileLibrary(

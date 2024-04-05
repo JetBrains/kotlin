@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configureLibraryCompilationSupport
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -25,9 +26,9 @@ open class AnalysisApiFirSourceTestConfigurator(
 
             @OptIn(TestInfrastructureInternals::class)
             useModuleStructureTransformers(DependencyKindModuleStructureTransformer)
-        }
 
-        AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.configureLibraryCompilationSupport(builder)
+            configureLibraryCompilationSupport()
+        }
     }
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
