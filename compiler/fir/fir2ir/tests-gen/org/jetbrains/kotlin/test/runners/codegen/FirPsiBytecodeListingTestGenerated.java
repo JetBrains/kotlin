@@ -2411,6 +2411,12 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
     }
 
     @Test
+    @TestMetadata("bridgeForIntersectionBetweenRenamedMethodAndProperty.kt")
+    public void testBridgeForIntersectionBetweenRenamedMethodAndProperty() {
+      runTest("compiler/testData/codegen/bytecodeListing/specialBridges/bridgeForIntersectionBetweenRenamedMethodAndProperty.kt");
+    }
+
+    @Test
     @TestMetadata("charSequence.kt")
     public void testCharSequence() {
       runTest("compiler/testData/codegen/bytecodeListing/specialBridges/charSequence.kt");

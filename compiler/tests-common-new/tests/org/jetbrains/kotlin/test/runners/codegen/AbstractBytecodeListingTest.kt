@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.BytecodeListingHandler
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -38,6 +40,10 @@ abstract class AbstractBytecodeListingTestBase<R : ResultingArtifact.FrontendOut
 
         commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, ::JvmIrBackendFacade)
         commonHandlersForCodegenTest()
+
+        configureIrHandlersStep {
+            useHandlers(::IrTextDumpHandler)
+        }
 
         configureJvmArtifactsHandlersStep {
             useHandlers(::BytecodeListingHandler)

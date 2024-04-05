@@ -1,0 +1,86 @@
+FILE fqName:<root> fileName:/kotlinSet.kt
+  CLASS CLASS name:KotlinSet modality:OPEN visibility:public superTypes:[<root>.JavaSet<kotlin.String>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinSet
+    CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinSet [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JavaSet'
+          <T>: kotlin.String
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinSet modality:OPEN visibility:public superTypes:[<root>.JavaSet<kotlin.String>]'
+    FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>, e:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun add (e: @[FlexibleNullability] T of <root>.JavaSet?): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+      VALUE_PARAMETER name:e index:0 type:@[FlexibleNullability] kotlin.String?
+    FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>, c:@[EnhancedNullability] kotlin.collections.Collection<out @[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun addAll (c: @[EnhancedNullability] kotlin.collections.Collection<out @[FlexibleNullability] T of <root>.JavaSet?>): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+      VALUE_PARAMETER name:c index:0 type:@[EnhancedNullability] kotlin.collections.Collection<out @[FlexibleNullability] kotlin.String?>
+    FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun clear (): kotlin.Unit declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+    FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>, o:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun contains (o: @[FlexibleNullability] T of <root>.JavaSet?): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+      VALUE_PARAMETER name:o index:0 type:@[FlexibleNullability] kotlin.String?
+    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>, c:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun containsAll (c: kotlin.collections.Collection<@[FlexibleNullability] T of <root>.JavaSet?>): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+      VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>) returnType:@[EnhancedNullability] kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> [fake_override,operator]
+      overridden:
+        public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[FlexibleNullability] T of <root>.JavaSet?> declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+    FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>, o:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun remove (o: @[FlexibleNullability] T of <root>.JavaSet?): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+      VALUE_PARAMETER name:o index:0 type:@[FlexibleNullability] kotlin.String?
+    FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>, c:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun removeAll (c: kotlin.collections.Collection<@[FlexibleNullability] T of <root>.JavaSet?>): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+      VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
+    FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>, c:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun retainAll (c: kotlin.collections.Collection<@[FlexibleNullability] T of <root>.JavaSet?>): kotlin.Boolean declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+      VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+      overridden:
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:<root>.JavaSet<kotlin.String>, a:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinSet.toArray?>?) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinSet.toArray?>? [fake_override]
+      overridden:
+        public open fun toArray <T> (a: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.JavaSet.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.JavaSet.toArray?>? declared in <root>.JavaSet
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
+      $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
+      VALUE_PARAMETER name:a index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinSet.toArray?>?
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.JavaSet
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open size: kotlin.Int declared in <root>.JavaSet
+      FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:<root>.JavaSet<kotlin.String>) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open fun <get-size> (): kotlin.Int declared in <root>.JavaSet
+        $this: VALUE_PARAMETER name:<this> type:<root>.JavaSet<kotlin.String>
