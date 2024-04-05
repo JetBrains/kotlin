@@ -42863,6 +42863,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class Sam extends AbstractLightAnalysisModeTest {
+    @TestMetadata("extensionLambdaWithJavaSamParameter.kt")
+    public void ignoreExtensionLambdaWithJavaSamParameter() {
+      runTest("compiler/testData/codegen/box/sam/extensionLambdaWithJavaSamParameter.kt");
+    }
+
     @TestMetadata("samAsIndexInArrayAssignment.kt")
     public void ignoreSamAsIndexInArrayAssignment() {
       runTest("compiler/testData/codegen/box/sam/samAsIndexInArrayAssignment.kt");
