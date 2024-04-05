@@ -6,11 +6,6 @@
 
 // IGNORE_BACKEND_K2: ANY
 
-// IllegalArgumentException: arg wrongly != this@Test5: arg=null, this@Test5=[object Object]
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
-// Wrong box result 'arg1 wrongly != this@Test5: arg1=Inner@1342209928, this@Test5=Test5@167512675'; Expected "OK"
-// IGNORE_BACKEND_K1: WASM
-
 // FILE: common.kt
 
 // Default parameter in inline function.

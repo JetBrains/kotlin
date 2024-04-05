@@ -159,6 +159,12 @@ open class InnerClassesMemberBodyLowering(val context: CommonBackendContext) : B
             }
         }
 
+        if (container is IrFunction) {
+            for (parameter in container.valueParameters) {
+                parameter.defaultValue?.fixThisReference(irClass, container)
+            }
+        }
+
         irBody.fixThisReference(irClass, container)
     }
 
