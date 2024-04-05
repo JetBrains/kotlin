@@ -15002,6 +15002,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("lambdaInLambda.kt")
+      public void testLambdaInLambda() {
+        runTest("compiler/testData/codegen/box/destructuringDeclInLambdaParam/lambdaInLambda.kt");
+      }
+
+      @Test
       @TestMetadata("otherParameters.kt")
       public void testOtherParameters() {
         runTest("compiler/testData/codegen/box/destructuringDeclInLambdaParam/otherParameters.kt");
