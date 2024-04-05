@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.Directives.PRE_RESOLVED_PHASE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
@@ -16,8 +17,12 @@ import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 /**
  * This test iterates over all [FirResolvePhase] for the selected declaration and dump output after each phase
@@ -40,11 +45,18 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             checkSession(firResolveSession)
             val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
 
-            testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(
+            val preresolvedElementCarets = testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(
                 files = allKtFiles,
-                caretTag = "preresolved"
-            ).forEach { (declaration, _) ->
-                declaration.resolveToFirSymbol(firResolveSession, FirResolvePhase.BODY_RESOLVE)
+                caretTag = "preresolved",
+            )
+
+            val phase = testServices.moduleStructure.allDirectives.singleOrZeroValue(PRE_RESOLVED_PHASE)
+            if (preresolvedElementCarets.isEmpty() && phase != null) {
+                error("$PRE_RESOLVED_PHASE is declared, but there is not any pre-resolved carets")
+            }
+
+            preresolvedElementCarets.forEach { (declaration, _) ->
+                declaration.resolveToFirSymbol(firResolveSession, phase ?: FirResolvePhase.BODY_RESOLVE)
             }
 
             val (elementToResolve, resolver) = resolverProvider(firResolveSession)
@@ -95,5 +107,14 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             resultBuilder.toString(),
             extension = outputExtension,
         )
+    }
+
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.useDirectives(Directives)
+    }
+
+    private object Directives : SimpleDirectivesContainer() {
+        val PRE_RESOLVED_PHASE by enumDirective<FirResolvePhase>("Describes which phase should have pre-resolved element")
     }
 }

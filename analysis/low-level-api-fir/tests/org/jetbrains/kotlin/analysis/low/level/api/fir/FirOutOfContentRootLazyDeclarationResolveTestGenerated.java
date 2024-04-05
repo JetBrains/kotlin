@@ -796,6 +796,24 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("complexEmptyInterfaceWithSuper.kt")
+    public void testComplexEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/complexEmptyInterfaceWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyClassWithSuper.kt")
+    public void testEmptyClassWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/emptyClassWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyInterfaceWithSuper.kt")
+    public void testEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/emptyInterfaceWithSuper.kt");
+    }
+
+    @Test
     @TestMetadata("functionInValueClass.kt")
     public void testFunctionInValueClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClass.kt");
@@ -841,6 +859,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("nestedClassWithPropertiesOverrides.kt")
     public void testNestedClassWithPropertiesOverrides() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassWithPropertiesOverrides.kt");
+    }
+
+    @Test
+    @TestMetadata("nonEmptyClassWithSuper.kt")
+    public void testNonEmptyClassWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nonEmptyClassWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("nonEmptyInterfaceWithSuper.kt")
+    public void testNonEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nonEmptyInterfaceWithSuper.kt");
     }
 
     @Test
@@ -1336,6 +1366,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("explicitReturnTypeRecursiveResolve.kt")
+    public void testExplicitReturnTypeRecursiveResolve() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/explicitReturnTypeRecursiveResolve.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitReturnTypeRecursiveResolveAsGetter.kt")
+    public void testExplicitReturnTypeRecursiveResolveAsGetter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/explicitReturnTypeRecursiveResolveAsGetter.kt");
+    }
+
+    @Test
     @TestMetadata("getterFromLibraryAndSetterFromSources.kt")
     public void testGetterFromLibraryAndSetterFromSources() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/getterFromLibraryAndSetterFromSources.kt");
@@ -1421,6 +1463,76 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("unresolvedAnnotationOnTypeAlias.kt")
     public void testUnresolvedAnnotationOnTypeAlias() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/unresolvedAnnotationOnTypeAlias.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithCallableMembers {
+    @Test
+    public void testAllFilesPresentInWithCallableMembers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("complexEmptyInterfaceWithSuper.kt")
+    public void testComplexEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/complexEmptyInterfaceWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyClassWithSuper.kt")
+    public void testEmptyClassWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/emptyClassWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("emptyInterfaceWithSuper.kt")
+    public void testEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/emptyInterfaceWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("nonEmptyClassWithSuper.kt")
+    public void testNonEmptyClassWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/nonEmptyClassWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("nonEmptyInterfaceWithSuper.kt")
+    public void testNonEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/nonEmptyInterfaceWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("preresolvedComplexEmptyInterfaceWithSuper.kt")
+    public void testPreresolvedComplexEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/preresolvedComplexEmptyInterfaceWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("preresolvedEmptyClassWithSuper.kt")
+    public void testPreresolvedEmptyClassWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/preresolvedEmptyClassWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("preresolvedEmptyInterfaceWithSuper.kt")
+    public void testPreresolvedEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/preresolvedEmptyInterfaceWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("preresolvedNonEmptyClassWithSuper.kt")
+    public void testPreresolvedNonEmptyClassWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/preresolvedNonEmptyClassWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("preresolvedNonEmptyInterfaceWithSuper.kt")
+    public void testPreresolvedNonEmptyInterfaceWithSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/preresolvedNonEmptyInterfaceWithSuper.kt");
     }
   }
 }

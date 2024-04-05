@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveTestCase.Directives.LAZY_MODE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
@@ -41,6 +42,12 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
             forTestsMatching("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/*") {
                 defaultDirectives {
                     +NO_RUNTIME
+                }
+            }
+
+            forTestsMatching("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/*") {
+                defaultDirectives {
+                    LAZY_MODE.with(LazyResolveMode.WithCallableMembers)
                 }
             }
         }

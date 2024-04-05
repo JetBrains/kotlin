@@ -1069,4 +1069,14 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
       runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasWithTypeParametersScript.kts");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithCallableMembers {
+    @Test
+    public void testAllFilesPresentInWithCallableMembers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
 }

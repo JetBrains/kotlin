@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -51,7 +54,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
             val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             file to fun(phase: FirResolvePhase) {
-                file.lazyResolveToPhase(phase)
+                file.lazyResolveToPhaseByDirective(phase, testServices)
             }
         }
         else -> {
@@ -62,9 +65,9 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             }
 
             val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
-            val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, testServices.moduleStructure, firResolveSession)
-            firDeclaration.fir to fun(phase: FirResolvePhase) {
-                firDeclaration.lazyResolveToPhase(phase)
+            val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, testServices.moduleStructure, firResolveSession).fir
+            firDeclaration to fun(phase: FirResolvePhase) {
+                firDeclaration.lazyResolveToPhaseByDirective(phase, testServices)
             }
         }
     }
@@ -164,7 +167,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
         }
     }
 
-    private object Directives : SimpleDirectivesContainer() {
+    protected object Directives : SimpleDirectivesContainer() {
         val MEMBER_CLASS_FILTER: ValueDirective<(FirBasedSymbol<*>) -> Boolean> by valueDirective("Choose member declaration by a declaration class") { value ->
             val clazz = Class.forName(value)
             ({ symbol: FirBasedSymbol<*> ->
@@ -182,6 +185,44 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
 
         val RESOLVE_SCRIPT by directive("Resolve script instead of declaration at caret")
         val RESOLVE_FILE by directive("Resolve file instead of declaration at caret")
+
+        val LAZY_MODE by enumDirective<LazyResolveMode>("Describes which lazy resolution call should be used")
+    }
+
+    protected enum class LazyResolveMode {
+        /**
+         * The default option.
+         *
+         * @see lazyResolveToPhase
+         */
+        Regular,
+
+        /**
+         * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
+         */
+        Recursive,
+
+        /**
+         * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
+         */
+        WithCallableMembers,
+    }
+
+    protected fun FirElementWithResolveState.lazyResolveToPhaseByDirective(toPhase: FirResolvePhase, testServices: TestServices) {
+        when (testServices.moduleStructure.allDirectives.singleOrZeroValue(Directives.LAZY_MODE)) {
+            LazyResolveMode.Regular, null -> lazyResolveToPhase(toPhase)
+            LazyResolveMode.Recursive -> lazyResolveToPhaseRecursively(toPhase)
+            LazyResolveMode.WithCallableMembers -> {
+                if (this !is FirClass) {
+                    error(
+                        "Only ${FirClass::class.simpleName} can be used with ${LazyResolveMode.WithCallableMembers} mode, " +
+                                "but ${this::class.simpleName} found"
+                    )
+                }
+
+                lazyResolveToPhaseWithCallableMembers(toPhase)
+            }
+        }
     }
 }
 
