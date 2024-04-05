@@ -18,30 +18,31 @@ package org.jetbrains.kotlin.project.model
 interface LanguageSettings {
 
     /**
-     * Provides source compatibility with the specified version of Kotlin.
+     * Provide source compatibility with the specified version of Kotlin.
      *
-     * Possible values: "1.4 (deprecated)", "1.5 (deprecated)", "1.6", "1.7", "1.8", "1.9", "2.0 (experimental)", "2.1 (experimental)".
+     * Possible values: "1.4 (deprecated)", "1.5 (deprecated)", "1.6 (deprecated)", "1.7", "1.8", "1.9", "2.0", "2.1 (experimental)"
      *
      * Default value: `null`
      */
     val languageVersion: String?
 
     /**
-     * Allows using declarations only from the specified version of bundled libraries.
+     * Allow using declarations only from the specified version of bundled libraries.
      *
-     * Possible values: "1.4 (deprecated)", "1.5 (deprecated)", "1.6", "1.7", "1.8", "1.9", "2.0 (experimental)", "2.1 (experimental)".
+     * Possible values: "1.4 (deprecated)", "1.5 (deprecated)", "1.6 (deprecated)", "1.7", "1.8", "1.9", "2.0", "2.1 (experimental)"
      *
      * Default value: `null`
      */
     val apiVersion: String?
 
     /**
-     * Enables progressive compiler mode.
+     * Enable progressive compiler mode.
      *
-     * In this mode, deprecations and bug fixes for unstable code take effect immediately,
-     * instead of going through a graceful migration cycle.
-     * Code written in progressive mode is backward compatible. However, code written in
-     * non-progressive mode may cause compilation errors in progressive mode.
+     * In this mode, deprecations and bug fixes for unstable code take effect immediately instead of
+     * going through a graceful migration cycle.
+     * Code written in progressive mode is backward compatible;
+     * however, code written without progressive mode enabled may cause compilation errors
+     * in progressive mode.
      *
      *  Default value: false
      */
@@ -53,7 +54,7 @@ interface LanguageSettings {
     val enabledLanguageFeatures: Set<String>
 
     /**
-     * Enables use of any API that requires opt-in with an opt-in requirement marker containing its fully qualified name.
+     * Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
      *
      * Default value: emptyList<String>()
      */
