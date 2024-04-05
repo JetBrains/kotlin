@@ -44,10 +44,6 @@ abstract class DeclarationStubGenerator(
 ) : IrProvider {
     protected val lazyTable = symbolTable.lazyWrapper
 
-    init {
-        extensions.registerDeclarations(symbolTable)
-    }
-
     val lock: IrLock
         get() = symbolTable.lock
 

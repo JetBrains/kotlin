@@ -78,8 +78,6 @@ open class StubGeneratorExtensions {
     open val rawTypeAnnotationConstructor: IrConstructor?
         get() = null
 
-    open fun registerDeclarations(symbolTable: SymbolTable) {}
-
     companion object {
         @JvmField
         val EMPTY = StubGeneratorExtensions()
