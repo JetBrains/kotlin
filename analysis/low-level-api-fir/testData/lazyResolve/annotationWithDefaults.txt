@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithDeault : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithDeault.a, EvaluatedValue=Int(1)] a: R|kotlin/Int| = Int(1)): R|WithDeault| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = Int(1)): R|WithDeault| {
             super<R|kotlin/Any|>()
         }
 
@@ -283,7 +283,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithDefaults.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] annotation class WithDeault : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithDeault.a, EvaluatedValue=Int(1)] a: R|kotlin/Int| = Int(1)): R|WithDeault| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = Int(1)): R|WithDeault| {
             super<R|kotlin/Any|>()
         }
 

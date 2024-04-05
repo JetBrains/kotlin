@@ -981,8 +981,6 @@ open class FirDeclarationsResolveTransformer(
             ) as FirValueParameter
         }
 
-        valueParameter.evaluatedDefaultValue = FirExpressionEvaluator.evaluateDefault(valueParameter, session)
-
         dataFlowAnalyzer.exitValueParameter(result)?.let { graph ->
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
         }

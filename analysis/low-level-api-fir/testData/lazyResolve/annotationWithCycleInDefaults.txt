@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithCycle : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param, EvaluatedValue=R|/WithCycle.WithCycle|()] param: R|WithCycle| = R|/WithCycle.WithCycle|()): R|WithCycle| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = R|/WithCycle.WithCycle|()): R|WithCycle| {
             super<R|kotlin/Any|>()
         }
 
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithCycleInDefaults.kt
     public final [ResolvedTo(BODY_RESOLVE)] annotation class WithCycle : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param, EvaluatedValue=R|/WithCycle.WithCycle|()] param: R|WithCycle| = R|/WithCycle.WithCycle|()): R|WithCycle| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = R|/WithCycle.WithCycle|()): R|WithCycle| {
             super<R|kotlin/Any|>()
         }
 

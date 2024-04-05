@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] localAnnotations.kt
         }
 
         local final [ResolvedTo(BODY_RESOLVE)] annotation class Local3 : R|kotlin/Annotation| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local3] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a, EvaluatedValue=Int(1)] a: R|kotlin/Int| = Int(1)): R|<local>/Local3| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local3] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] a: R|kotlin/Int| = Int(1)): R|<local>/Local3| {
                 super<R|kotlin/Any|>()
             }
 
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localAnnotations.kt
         }
 
         local final [ResolvedTo(BODY_RESOLVE)] annotation class Local3 : R|kotlin/Annotation| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local3] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a, EvaluatedValue=Int(1)] a: R|kotlin/Int| = Int(1)): R|<local>/Local3| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local3] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] a: R|kotlin/Int| = Int(1)): R|<local>/Local3| {
                 super<R|kotlin/Any|>()
             }
 

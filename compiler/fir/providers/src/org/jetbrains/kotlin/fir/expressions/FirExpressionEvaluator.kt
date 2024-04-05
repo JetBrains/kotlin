@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.*
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.isAnnotationConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.evalUnaryOp
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-
 object FirExpressionEvaluator {
     fun evaluatePropertyInitializer(property: FirProperty, session: FirSession): FirEvaluatorResult? {
         if (!property.isConst) {
@@ -52,17 +49,6 @@ object FirExpressionEvaluator {
         }
 
         return initializer.evaluate(session)
-    }
-
-    fun evaluateDefault(valueParameter: FirValueParameter, session: FirSession): FirEvaluatorResult? {
-        // We should evaluate default arguments for the primary constructor of an annotation
-        if (!valueParameter.containingFunctionSymbol.isAnnotationConstructor(session)) return null
-
-        val defaultValueToEvaluate = valueParameter.defaultValue ?: return null
-        if (!defaultValueToEvaluate.canBeEvaluated(session)) {
-            return null
-        }
-        return defaultValueToEvaluate.evaluate(session)
     }
 
     fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession): Map<Name, FirEvaluatorResult>? {

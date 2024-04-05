@@ -59,7 +59,6 @@ val FirBasedSymbol<out FirDeclaration>.klibSourceFile: SourceFile?
     get() = fir.klibSourceFile
 
 var FirProperty.evaluatedInitializer: FirEvaluatorResult? by FirDeclarationDataRegistry.data(EvaluatedValue)
-var FirValueParameter.evaluatedDefaultValue: FirEvaluatorResult? by FirDeclarationDataRegistry.data(EvaluatedValue)
 
 /**
  * Constraint without corresponding type argument

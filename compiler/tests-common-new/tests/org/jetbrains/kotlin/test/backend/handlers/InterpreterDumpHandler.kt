@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.utils.evaluatedDefaultValue
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -187,16 +186,6 @@ interface FirEvaluatorDumpHandler : EvaluatorHandler {
                 super.visitAnnotationCall(annotationCall, data)
                 FirExpressionEvaluator.evaluateAnnotationArguments(annotationCall, session)?.values?.forEach { evaluated ->
                     evaluated.unwrapOr<FirExpression> { }?.accept(this, data.copy(renderLiterals = true))
-                }
-            }
-
-            override fun visitConstructor(constructor: FirConstructor, data: Options) {
-                if (constructor in visitedElements) return
-                visitedElements.add(constructor)
-
-                super.visitConstructor(constructor, data)
-                constructor.valueParameters.forEach { parameter ->
-                    parameter.evaluatedDefaultValue?.unwrapOr<FirExpression> { }?.accept(this, data.copy(renderLiterals = true))
                 }
             }
 

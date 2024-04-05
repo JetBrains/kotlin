@@ -397,7 +397,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
     @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithEnumFromBody : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.a, EvaluatedValue=String()] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.b, EvaluatedValue=Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|] @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|) b: R|WithEnumFromBody.MyLevel| = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|): R|WithEnumFromBody| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.a] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.b] @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|) b: R|WithEnumFromBody.MyLevel| = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|): R|WithEnumFromBody| {
             super<R|kotlin/Any|>()
         }
 
@@ -430,7 +430,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithEnumFromBody.kt
     @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|) public final [ResolvedTo(BODY_RESOLVE)] annotation class WithEnumFromBody : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.a, EvaluatedValue=String()] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.b, EvaluatedValue=Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|] @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|) b: R|WithEnumFromBody.MyLevel| = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|): R|WithEnumFromBody| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.a] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.b] @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|) b: R|WithEnumFromBody.MyLevel| = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|): R|WithEnumFromBody| {
             super<R|kotlin/Any|>()
         }
 
