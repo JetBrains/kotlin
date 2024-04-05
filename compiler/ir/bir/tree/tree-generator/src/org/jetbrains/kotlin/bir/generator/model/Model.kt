@@ -167,6 +167,17 @@ sealed class Field(
     override val isParameter: Boolean
         get() = false
 
+    override val origin: Field
+        get() = this
+
+    override var defaultValueInBuilder: String?
+        get() = null
+        set(value) {}
+
+    override var customSetter: String?
+        get() = null
+        set(value) {}
+
     override fun copy() = internalCopy().also(::updateFieldsInCopy)
 
     override fun updateFieldsInCopy(copy: Field) {

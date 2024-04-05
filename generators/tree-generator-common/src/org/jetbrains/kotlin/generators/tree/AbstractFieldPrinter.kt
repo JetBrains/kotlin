@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.generators.tree
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
+import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -94,7 +96,7 @@ fun SmartPrinter.printField(
     inConstructor = inConstructor,
     visibility = field.visibility,
     modality = modality,
-    isLateinit = field.isLateinit,
+    isLateinit = field.implementationDefaultStrategy is AbstractField.ImplementationDefaultStrategy.Lateinit,
     isVolatile = field.isVolatile,
     kDoc = kDoc,
     optInAnnotation = optInAnnotation,
