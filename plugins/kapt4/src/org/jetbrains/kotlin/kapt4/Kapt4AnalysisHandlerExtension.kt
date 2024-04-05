@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import com.intellij.lang.java.lexer.JavaLexer
 import com.intellij.openapi.util.Disposer
+import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.impl.source.tree.ElementType
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.EfficientProcessorLoader
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.base.*
+import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation.Companion.KAPT_METADATA_EXTENSION
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.info
@@ -36,6 +40,11 @@ import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.metadataVersion
 import java.io.File
+import java.io.StringWriter
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.util.*
+import javax.tools.*
 
 private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     override fun isApplicable(configuration: CompilerConfiguration): Boolean {
@@ -124,9 +133,9 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                         configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
                         configuration.metadataVersion()
                     )
-
                 }
                 if (options.mode.runAnnotationProcessing) {
+                    (options.javacOptions as MutableMap<String, String>)["-proc:"] = "full"
                     KaptContext(
                         options,
                         false,
@@ -162,7 +171,8 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
-        val infoBuilder = if (logger.isVerbose) StringBuilder("Stubs for Kotlin classes: ") else null
+        val allJavaFiles = mutableListOf<File>()
+        val javaStubsToKotlinFiles = mutableMapOf<String, List<String>>()
 
         for ((lightClass, kaptStub) in classesToStubs) {
             if (kaptStub == null) continue
@@ -170,28 +180,128 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             val className = lightClass.name
             val packageName = (lightClass.parent as PsiJavaFile).packageName
             val stubsOutputDir = options.stubsOutputDir
-            val packageDir = if (packageName.isEmpty()) stubsOutputDir else File(stubsOutputDir, packageName.replace('.', '/'))
+            val packageRelPath = packageName.replace('.', '/')
+            val packageDir = File(stubsOutputDir, packageRelPath)
             packageDir.mkdirs()
 
             val generatedFile = File(packageDir, "$className.java")
-            generatedFile.writeText(stub)
-            infoBuilder?.append(generatedFile.path)
-            kaptStub.writeMetadata(forSource = generatedFile)
-
+            val metadataFile = File(packageDir, className + KAPT_METADATA_EXTENSION)
+            allJavaFiles.add(generatedFile)
             if (reportOutputFiles) {
-                val ktFiles = when(lightClass) {
+                val ktFiles = when (lightClass) {
                     is KtLightClassForFacade -> lightClass.files
                     else -> listOfNotNull(lightClass.kotlinOrigin?.containingKtFile)
                 }
-                val report = formatOutputMessage(ktFiles.map { it.virtualFilePath }, generatedFile.path)
-                logger.messageCollector.report(CompilerMessageSeverity.OUTPUT, report)
+                val kotlinSources = ktFiles.map { it.virtualFilePath }
+                javaStubsToKotlinFiles[generatedFile.absolutePath] = kotlinSources
+                logger.messageCollector.report(CompilerMessageSeverity.OUTPUT, formatOutputMessage(kotlinSources, generatedFile.path))
+                logger.messageCollector.report(CompilerMessageSeverity.OUTPUT, formatOutputMessage(kotlinSources, metadataFile.path))
             }
+            generatedFile.writeText(stub)
+            metadataFile.writeBytes(kaptStub.kaptMetadata)
         }
 
-        logger.info { infoBuilder.toString() }
+        if (logger.isVerbose) logger.info { allJavaFiles.joinToString(", ", "Stubs for Kotlin classes: ") { it.path } }
 
-        File(options.stubsOutputDir, "error").apply { mkdirs() }.resolve("NonExistentClass.java")
-            .writeText("package error;\npublic class NonExistentClass {}\n")
+        val nonExistentClass = File(options.stubsOutputDir, "error").apply { mkdirs() }.resolve("NonExistentClass.java")
+        allJavaFiles.add(nonExistentClass)
+        nonExistentClass.writeText("package error;\npublic class NonExistentClass {}\n")
+
+        if (options.incrementalDataOutputDir != null && allJavaFiles.isNotEmpty()) {
+            val dest = Files.createTempDirectory("build").toFile()
+            val javacOptions = buildList<String> {
+                options.javacOptions.entries.forEach { (k, v) ->
+                    if (k != "-d" && k != "-cp" && k != "-proc:" && k != "-processor" && k != "-processor-path") {
+                        add(k)
+                        if (v != k && v.isNotBlank()) add(v)
+                    }
+                }
+
+                add("-d")
+                add(dest.absolutePath)
+                add("-cp")
+                add((options.compileClasspath).joinToString(":") { it.absolutePath })
+
+                val sourcepath = options.javaSourceRoots.map { javaSourcesRoot(it) }.distinct().joinToString(":")
+                if (sourcepath.isNotEmpty()) {
+                    add("-sourcepath")
+                    add(sourcepath)
+                }
+
+                add("-proc:none")
+            }
+            val success = compileJavaFiles(allJavaFiles, javacOptions, logger)
+            dest.walkTopDown().forEach {
+                if (it.extension == "class") {
+                    if (success) {
+                        val javaFile = File(
+                            options.stubsOutputDir,
+                            it.relativeTo(dest).path.removeSuffix(".class") + ".java"
+                        )
+                        val kotlinSources = javaStubsToKotlinFiles[javaFile.absolutePath]
+                        if (!kotlinSources.isNullOrEmpty()) {
+                            val target =  File(
+                                options.incrementalDataOutputDir,
+                                it.relativeTo(dest).path
+                            )
+                            val report = formatOutputMessage(kotlinSources, target.absolutePath)
+                            logger.messageCollector.report(CompilerMessageSeverity.OUTPUT, report)
+                            target.mkdirs()
+                            it.copyTo(target, overwrite = true)
+                        }
+                    } else it.delete()
+                }
+            }
+            dest.deleteRecursively()
+        }
+    }
+
+    fun compileJavaFiles(
+        files: Collection<File>,
+        options: List<String>,
+        logger: MessageCollectorBackedKaptLogger
+    ): Boolean {
+        val javaCompiler = ToolProvider.getSystemJavaCompiler()
+        val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
+        javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, StandardCharsets.UTF_8).use { fileManager ->
+            val javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files)
+            val task = javaCompiler.getTask(
+                StringWriter(),
+                fileManager,
+                diagnosticCollector,
+                options,
+                null,
+                javaFileObjectsFromFiles
+            )
+
+            val success = task.call()
+            val error = diagnosticCollector.diagnostics.asSequence()
+                .filter { it.kind == Diagnostic.Kind.ERROR }
+                .joinToString("\n")
+            if (!success || error.isNotEmpty()) {
+                logger.warn("Couldn't compile the generated Java stubs:\n$error")
+            }
+            return success
+        }
+    }
+
+    fun javaSourcesRoot(javaFile: File): String {
+        val lexer = JavaLexer(LanguageLevel.HIGHEST)
+        lexer.start(javaFile.readText())
+        var inPackage = false
+        var dir = javaFile.parentFile
+        while (lexer.tokenType != null) {
+            if (lexer.tokenType == ElementType.PACKAGE_KEYWORD) {
+                inPackage = true;
+            } else if (inPackage) {
+                when (lexer.tokenType) {
+                    ElementType.IDENTIFIER -> dir = dir.parentFile
+                    ElementType.SEMICOLON -> break
+                }
+            }
+            lexer.advance()
+        }
+        return dir.absolutePath
     }
 
     private fun runProcessors(context: KaptContext, options: KaptOptions) {
