@@ -15242,6 +15242,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/destructuringDeclInLambdaParam/inline.kt");
     }
 
+    @TestMetadata("lambdaInLambda.kt")
+    public void testLambdaInLambda() {
+      runTest("compiler/testData/codegen/box/destructuringDeclInLambdaParam/lambdaInLambda.kt");
+    }
+
     @TestMetadata("otherParameters.kt")
     public void testOtherParameters() {
       runTest("compiler/testData/codegen/box/destructuringDeclInLambdaParam/otherParameters.kt");

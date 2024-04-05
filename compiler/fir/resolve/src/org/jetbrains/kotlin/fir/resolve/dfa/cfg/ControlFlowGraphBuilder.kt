@@ -101,7 +101,7 @@ class ControlFlowGraphBuilder {
                 // lambda@{ x } -> x
                 // lambda@{ class C } -> Unit-returning stub
                 function.isLambda -> {
-                    val lastStatement = fir.statements.lastOrNull()
+                    val lastStatement = function.lastStatement()
 
                     when {
                         // Skip last return statement because otherwise it add Nothing constraint on the lambda return type.
@@ -1619,3 +1619,18 @@ val FirControlFlowGraphOwner.isUsedInControlFlowGraphBuilderForScript: Boolean
 @OptIn(UnresolvedExpressionTypeAccess::class)
 private val FirExpression.hasNothingType: Boolean
     get() = coneTypeOrNull?.isNothing == true
+
+fun FirAnonymousFunction.lastStatement(): FirStatement? {
+    val last = this.body?.statements?.lastOrNull() ?: return null
+
+    fun FirStatement.unwrapBlocks(): FirStatement {
+        return when (this) {
+            is FirBlock -> statements.lastOrNull()?.unwrapBlocks() ?: this
+            else -> this
+        }
+    }
+
+    return last.unwrapBlocks()
+}
+
+
