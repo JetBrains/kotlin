@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashMap
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashSet
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -38,9 +40,9 @@ class MemoizedMultiFieldValueClassReplacements(
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
 
-    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    val originalConstructorForConstructorReplacement: MutableMap<IrConstructor, IrConstructor> = ConcurrentHashMap()
+    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = irIntercepted_ConcurrentHashMap()
+    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = irIntercepted_ConcurrentHashMap()
+    val originalConstructorForConstructorReplacement: MutableMap<IrConstructor, IrConstructor> = irIntercepted_ConcurrentHashMap()
 
     private fun IrValueParameter.grouped(
         name: String?,
@@ -89,7 +91,7 @@ class MemoizedMultiFieldValueClassReplacements(
     ): List<RemappedParameter> = map { it.grouped(name, substitutionMap, targetFunction, originWhenFlattened) }
 
 
-    val oldMfvcDefaultArguments = ConcurrentHashMap<IrValueParameter, IrExpression>()
+    val oldMfvcDefaultArguments = irIntercepted_ConcurrentHashMap<IrValueParameter, IrExpression>()
 
     private fun buildReplacement(
         function: IrFunction,
@@ -189,7 +191,7 @@ class MemoizedMultiFieldValueClassReplacements(
         }
     }
 
-    val bindingOldFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> = ConcurrentHashMap()
+    val bindingOldFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> = irIntercepted_ConcurrentHashMap()
     val bindingNewFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> =
         object : ConcurrentHashMap<IrFunction, List<RemappedParameter>>() {
             override fun put(key: IrFunction, value: List<RemappedParameter>): List<RemappedParameter>? {
@@ -331,10 +333,10 @@ class MemoizedMultiFieldValueClassReplacements(
         return this
     }
 
-    private val fieldsToRemove = ConcurrentHashMap<IrClass, MutableSet<IrField>>()
+    private val fieldsToRemove = irIntercepted_ConcurrentHashMap<IrClass, MutableSet<IrField>>()
     fun getFieldsToRemove(clazz: IrClass): Set<IrField> = fieldsToRemove[clazz] ?: emptySet()
     fun addFieldToRemove(clazz: IrClass, field: IrField) {
-        fieldsToRemove.getOrPut(clazz) { ConcurrentHashMap<IrField, Unit>().keySet(Unit) }.add(field.withAddedStaticReplacementIfNeeded())
+        fieldsToRemove.getOrPut(clazz) { irIntercepted_ConcurrentHashSet<IrField>() }.add(field.withAddedStaticReplacementIfNeeded())
     }
 
     fun getMfvcFieldNode(field: IrField): NameableMfvcNode? {

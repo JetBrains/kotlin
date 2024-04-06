@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.irInterceptedLocal_HashMap
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -442,7 +443,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             ?: return reference
 
         val newValueParameters = ArrayList<IrValueParameter>()
-        val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
+        val oldToNew = irInterceptedLocal_HashMap<IrValueParameter, IrValueParameter>()
         var newParameterIndex = 0
 
         lambda.valueParameters.take(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
@@ -532,7 +533,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         if (returnTypeConstraint == TypeAdaptationConstraint.CONFLICT)
             return null
 
-        val valueParameterConstraints = HashMap<IrValueParameter, TypeAdaptationConstraint>()
+        val valueParameterConstraints = irInterceptedLocal_HashMap<IrValueParameter, TypeAdaptationConstraint>()
         val adapteeParameters = collectValueParameters(adapteeFun)
         val expectedParameters = collectValueParameters(expectedFun)
         if (adapteeParameters.size != expectedParameters.size)
@@ -654,7 +655,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 sig1.valueParameters.isEmpty() -> sig2.valueParameters
                 sig2.valueParameters.isEmpty() -> sig1.valueParameters
                 else -> {
-                    val joined = HashMap<IrValueParameter, TypeAdaptationConstraint>()
+                    val joined = irInterceptedLocal_HashMap<IrValueParameter, TypeAdaptationConstraint>()
                     joined.putAll(sig1.valueParameters)
                     for ((vp2, t2) in sig2.valueParameters.entries) {
                         val tx = composeTypeAdaptationConstraints(joined[vp2], t2) ?: continue

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.irInterceptedLocal_HashMap
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -131,7 +132,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
         }
 
         private fun rewriteSharedVariables() {
-            val transformedSymbols = HashMap<IrValueSymbol, IrVariableSymbol>()
+            val transformedSymbols = irInterceptedLocal_HashMap<IrValueDeclaration, IrVariableSymbol>()
 
             irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitVariable(declaration: IrVariable): IrStatement {
@@ -141,7 +142,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
 
                     val newDeclaration = context.sharedVariablesManager.declareSharedVariable(declaration)
                     newDeclaration.parent = declaration.parent
-                    transformedSymbols[declaration.symbol] = newDeclaration.symbol
+                    transformedSymbols[declaration] = newDeclaration.symbol
 
                     return context.sharedVariablesManager.defineSharedValue(declaration, newDeclaration)
                 }
@@ -165,7 +166,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                 }
 
                 private fun getTransformedSymbol(oldSymbol: IrValueSymbol): IrVariableSymbol? =
-                    transformedSymbols.getOrElse(oldSymbol) {
+                    transformedSymbols.getOrElse(oldSymbol.owner) {
                         assert(oldSymbol.owner !in sharedVariables) {
                             "Shared variable is not transformed: ${oldSymbol.owner.dump()}"
                         }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashMap
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
@@ -34,8 +34,8 @@ class MemoizedInlineClassReplacements(
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("inline-class-replacements")) {
 
-    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
+    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = irIntercepted_ConcurrentHashMap()
+    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = irIntercepted_ConcurrentHashMap()
 
     private val mangleCallsToJavaMethodsWithValueClasses =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)

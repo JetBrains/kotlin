@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.ir.irInterceptedLocal_HashMap
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irSetField
@@ -108,7 +109,7 @@ open class InnerClassesLowering(val context: CommonBackendContext) : Declaration
 }
 
 private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstructor: IrConstructor): Map<IrValueParameter, IrValueParameter> {
-    val oldConstructorParameterToNew = HashMap<IrValueParameter, IrValueParameter>()
+    val oldConstructorParameterToNew = irInterceptedLocal_HashMap<IrValueParameter, IrValueParameter>()
 
     val loweredConstructor = getInnerClassConstructorWithOuterThisParameter(originalConstructor)
 

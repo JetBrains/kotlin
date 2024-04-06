@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
@@ -26,9 +25,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.declarations.*
@@ -123,7 +120,7 @@ class JvmBackendContext(
     // Store evaluated SMAP for anonymous classes. Used only with IR inliner.
     val typeToCachedSMAP = mutableMapOf<Type, SMAP>()
 
-    private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
+    private val localClassType = irIntercepted_ConcurrentHashMap<IrAttributeContainer, Type>()
 
     val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClassDescriptors(
         Type.getObjectType("java/lang/invoke/LambdaMetafactory")
@@ -137,27 +134,27 @@ class JvmBackendContext(
     }
 
     val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
-    val enclosingMethodOverride = ConcurrentHashMap<IrFunction, IrFunction>()
+    val enclosingMethodOverride = irIntercepted_ConcurrentHashMap<IrFunction, IrFunction>()
 
-    private val classCodegens = ConcurrentHashMap<IrClass, Any>()
+    private val classCodegens = irIntercepted_ConcurrentHashMap<IrClass, Any>()
 
     @Suppress("UNCHECKED_CAST")
     fun <ClassCodegen : Any> getOrCreateClassCodegen(klass: IrClass, create: (IrClass) -> ClassCodegen): ClassCodegen =
         classCodegens.computeIfAbsent(klass, create) as ClassCodegen
 
-    val localDelegatedProperties = ConcurrentHashMap<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>()
+    val localDelegatedProperties = irIntercepted_ConcurrentHashMap<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>()
 
     val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
     val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
     val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
-    val hiddenConstructorsWithMangledParams = ConcurrentHashMap<IrConstructor, IrConstructor>()
-    val hiddenConstructorsOfSealedClasses = ConcurrentHashMap<IrConstructor, IrConstructor>()
+    val hiddenConstructorsWithMangledParams = irIntercepted_ConcurrentHashMap<IrConstructor, IrConstructor>()
+    val hiddenConstructorsOfSealedClasses = irIntercepted_ConcurrentHashMap<IrConstructor, IrConstructor>()
 
     val collectionStubComputer = CollectionStubComputer(this)
 
-    private val overridesWithoutStubs = HashMap<IrSimpleFunction, List<IrSimpleFunctionSymbol>>()
+    private val overridesWithoutStubs = irIntercepted_HashMap<IrSimpleFunction, List<IrSimpleFunctionSymbol>>()
 
     fun recordOverridesWithoutStubs(function: IrSimpleFunction) {
         overridesWithoutStubs[function] = function.overriddenSymbols.toList()
@@ -175,8 +172,8 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
-    val suspendLambdaToOriginalFunctionMap = ConcurrentHashMap<IrAttributeContainer, IrFunction>()
-    val suspendFunctionOriginalToView = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    val suspendLambdaToOriginalFunctionMap = irIntercepted_ConcurrentHashMap<IrAttributeContainer, IrFunction>()
+    val suspendFunctionOriginalToView = irIntercepted_ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
 
     val staticDefaultStubs = ConcurrentHashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
@@ -190,7 +187,7 @@ class JvmBackendContext(
 
     val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
 
-    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = ConcurrentHashMap.newKeySet()
+    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = irIntercepted_ConcurrentHashSet()
 
     val optionalAnnotations = mutableListOf<MetadataSource.Class>()
 

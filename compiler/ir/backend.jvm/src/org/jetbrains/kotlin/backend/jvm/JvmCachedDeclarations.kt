@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashMap
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import java.util.concurrent.ConcurrentHashMap
 
 class JvmCachedDeclarations(
     private val context: JvmBackendContext,
@@ -35,16 +35,16 @@ class JvmCachedDeclarations(
 ) {
     val syntheticAccessorGenerator = JvmSyntheticAccessorGenerator(context)
 
-    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
-    private val staticCompanionDeclarations = ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
+    private val singletonFieldDeclarations = irIntercepted_ConcurrentHashMap<IrSymbolOwner, IrField>()
+    private val staticBackingFields = irIntercepted_ConcurrentHashMap<IrProperty, IrField>()
+    private val staticCompanionDeclarations = irIntercepted_ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
 
-    private val defaultImplsMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsClasses = ConcurrentHashMap<IrClass, IrClass>()
-    private val defaultImplsRedirections = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsOriginalMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsMethods = irIntercepted_ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsClasses = irIntercepted_ConcurrentHashMap<IrClass, IrClass>()
+    private val defaultImplsRedirections = irIntercepted_ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsOriginalMethods = irIntercepted_ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
 
-    private val repeatedAnnotationSyntheticContainers = ConcurrentHashMap<IrClass, IrClass>()
+    private val repeatedAnnotationSyntheticContainers = irIntercepted_ConcurrentHashMap<IrClass, IrClass>()
 
     fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
@@ -339,8 +339,8 @@ class CachedFieldsForObjectInstances(
     private val irFactory: IrFactory,
     private val languageVersionSettings: LanguageVersionSettings,
 ) {
-    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val interfaceCompanionFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
+    private val singletonFieldDeclarations = irIntercepted_ConcurrentHashMap<IrSymbolOwner, IrField>()
+    private val interfaceCompanionFieldDeclarations = irIntercepted_ConcurrentHashMap<IrSymbolOwner, IrField>()
 
     fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {

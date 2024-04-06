@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashMap
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -14,12 +15,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
 
 class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
-    private val outerThisDeclarations = ConcurrentHashMap<IrClass, IrField>()
-    private val innerClassConstructors = ConcurrentHashMap<IrConstructor, IrConstructor>()
-    private val originalInnerClassPrimaryConstructorByClass = ConcurrentHashMap<IrClass, IrConstructor>()
+    private val outerThisDeclarations = irIntercepted_ConcurrentHashMap<IrClass, IrField>()
+    private val innerClassConstructors = irIntercepted_ConcurrentHashMap<IrConstructor, IrConstructor>()
+    private val originalInnerClassPrimaryConstructorByClass = irIntercepted_ConcurrentHashMap<IrClass, IrConstructor>()
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
         outerThisDeclarations.getOrPut(innerClass) {

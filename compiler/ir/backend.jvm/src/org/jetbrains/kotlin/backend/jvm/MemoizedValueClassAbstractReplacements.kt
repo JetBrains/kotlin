@@ -8,23 +8,22 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashMap
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import java.util.concurrent.ConcurrentHashMap
 
 abstract class MemoizedValueClassAbstractReplacements(
     protected val irFactory: IrFactory,
     protected val context: JvmBackendContext,
     protected val storageManager: LockBasedStorageManager
 ) {
-    private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
+    private val propertyMap = irIntercepted_ConcurrentHashMap<IrProperty, IrProperty>()
 
     /**
      * Get a replacement for a function or a constructor.
@@ -85,7 +84,7 @@ abstract class MemoizedValueClassAbstractReplacements(
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val oldProperty = propertySymbol.owner
-                val property = propertyMap.getOrPut(propertySymbol) {
+                val property = propertyMap.getOrPut(oldProperty) {
                     irFactory.buildProperty {
                         name = oldProperty.name
                         updateFrom(oldProperty)
