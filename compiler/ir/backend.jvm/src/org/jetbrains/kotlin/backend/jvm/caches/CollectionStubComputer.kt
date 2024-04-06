@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.caches
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashMap
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import java.util.concurrent.ConcurrentHashMap
 
 class CollectionStubComputer(val context: JvmBackendContext) {
     private class LazyStubsForCollectionClass(
@@ -79,7 +79,7 @@ class CollectionStubComputer(val context: JvmBackendContext) {
         }
     }
 
-    private val stubsCache = ConcurrentHashMap<IrClass, List<StubsForCollectionClass>>()
+    private val stubsCache = irIntercepted_ConcurrentHashMap<IrClass, List<StubsForCollectionClass>>()
 
     fun stubsForCollectionClasses(irClass: IrClass): List<StubsForCollectionClass> =
         stubsCache.getOrPut(irClass) {

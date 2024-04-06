@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashMap
 import org.jetbrains.kotlin.ir.declarations.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
@@ -51,7 +51,7 @@ object DefaultDelegateFactory : DelegateFactory {
     override fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V> = newMappingImpl()
 
     private fun <K : IrDeclaration, V> newMappingImpl() = object : Mapping.Delegate<K, V>() {
-        private val map: MutableMap<K, V> = ConcurrentHashMap()
+        private val map: MutableMap<K, V> = irIntercepted_ConcurrentHashMap()
 
         override operator fun get(key: K): V? {
             return map[key]

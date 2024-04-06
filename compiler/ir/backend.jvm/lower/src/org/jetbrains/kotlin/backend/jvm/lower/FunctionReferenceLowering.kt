@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.irIntercepted_LinkedHashMap
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -889,7 +890,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             val startOffset = irCall.startOffset
             val endOffset = irCall.endOffset
 
-            val callArguments = LinkedHashMap<IrValueParameter, IrValueDeclaration>()
+            val callArguments = irIntercepted_LinkedHashMap<IrValueParameter, IrValueDeclaration>()
             val inlinedAdapterBlock = IrBlockImpl(startOffset, endOffset, irCall.type, origin = null)
             var tmpVarIndex = 0
 

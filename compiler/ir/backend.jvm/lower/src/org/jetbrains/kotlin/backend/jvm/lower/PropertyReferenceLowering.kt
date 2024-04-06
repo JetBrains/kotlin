@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.irIntercepted_ConcurrentHashMap
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -40,7 +42,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
-import java.util.concurrent.ConcurrentHashMap
 
 internal val propertyReferencePhase = makeIrFilePhase(
     ::PropertyReferenceLowering,
@@ -292,7 +293,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
     // Assuming that the only functions that take PROPERTY_REFERENCE_FOR_DELEGATE-kind references are getValue,
     // setValue, and provideDelegate, there is only one valid index for each symbol, so we don't need it in the key.
-    private val usesPropertyParameterCache = ConcurrentHashMap<IrSymbol, Boolean>()
+    private val usesPropertyParameterCache = irIntercepted_ConcurrentHashMap<IrElement, Boolean>()
 
     override fun visitCall(expression: IrCall): IrExpression {
         // Don't generate entries in `$$delegatedProperties` if they won't be used for anything. This is only possible
@@ -303,7 +304,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             val value = expression.getValueArgument(index)
             if (value is IrCallableReference<*> && value.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
                 val resolved = expression.symbol.owner.resolveFakeOverride() ?: expression.symbol.owner
-                if (!usesPropertyParameterCache.getOrPut(resolved.symbol) { resolved.usesParameter(index) }) {
+                if (!usesPropertyParameterCache.getOrPut(resolved) { resolved.usesParameter(index) }) {
                     expression.putValueArgument(index, IrConstImpl.constNull(value.startOffset, value.endOffset, value.type))
                 }
             }

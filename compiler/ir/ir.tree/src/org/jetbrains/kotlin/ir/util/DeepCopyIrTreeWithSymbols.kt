@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.irIntercepted_HashMap
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -752,7 +753,7 @@ open class DeepCopyIrTreeWithSymbols(
             branch.result.transform()
         )
 
-    private val transformedLoops = HashMap<IrLoop, IrLoop>()
+    private val transformedLoops = irIntercepted_HashMap<IrLoop, IrLoop>()
 
     private fun getTransformedLoop(irLoop: IrLoop): IrLoop =
         transformedLoops.getOrDefault(irLoop, irLoop)
