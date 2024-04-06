@@ -899,17 +899,22 @@ internal object EscapeAnalysis {
                         }
 
                         is DataFlowIR.Node.ArrayWrite -> {
-                            if (node.value.node != DataFlowIR.Node.Null) {
-                                val array = nodes[node.array.node]!!
-                                val value = nodes[node.value.node]!!
+                            val arrayNode = node.array.node
+                            val valueNode = node.value.node
+                            if (valueNode != DataFlowIR.Node.Null && arrayNode != DataFlowIR.Node.Null) {
+                                val array = nodes[arrayNode]!!
+                                val value = nodes[valueNode]!!
                                 array.getFieldNode(intestinesField, this).addAssignmentEdge(value)
                             }
                         }
 
                         is DataFlowIR.Node.ArrayRead -> {
-                            val array = nodes[node.array.node]!!
-                            val readResult = nodes[node]!!
-                            readResult.addAssignmentEdge(array.getFieldNode(intestinesField, this))
+                            val arrayNode = node.array.node
+                            if (arrayNode != DataFlowIR.Node.Null) {
+                                val array = nodes[arrayNode]!!
+                                val readResult = nodes[node]!!
+                                readResult.addAssignmentEdge(array.getFieldNode(intestinesField, this))
+                            }
                         }
 
                         is DataFlowIR.Node.SaveCoroutineState -> {

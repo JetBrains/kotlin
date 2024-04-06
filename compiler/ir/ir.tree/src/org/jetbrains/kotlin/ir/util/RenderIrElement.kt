@@ -113,6 +113,8 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
         override fun visitFunction(declaration: IrFunction, data: Nothing?) =
             buildTrimEnd {
+                append(System.identityHashCode(declaration))
+                append(' ')
                 append(declaration.visibility)
                 append(' ')
 

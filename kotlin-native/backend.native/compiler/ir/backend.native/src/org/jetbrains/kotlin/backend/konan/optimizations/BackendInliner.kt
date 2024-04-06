@@ -94,16 +94,16 @@ internal class BackendInliner(
 
                     val irFunction = functionSymbol.irFunction ?: continue
                     val irBody = irFunction.body ?: continue
-//                    if (irFunction.name.asString() == "foo")
-//                        println("Handling ${irFunction.render()}")
+////                    if (irFunction.name.asString() == "foo")
+//                    println("Handling ${irFunction.render()}")
                     val functionsToInline = mutableSetOf<IrFunction>()
                     val devirtualizedCallSitesFromFunctionsToInline = mutableMapOf<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
                     for (callSite in callSites) {
                         val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
-//                        if (irFunction.name.asString() == "foo") {
-//                            println("    call to $calleeSymbol")
-//                            println("        ${computationStates[calleeSymbol]} ${calleeSymbol.irFunction?.render()}")
-//                        }
+////                        if (irFunction.name.asString() == "foo") {
+//                        println("    call to ${calleeSymbol.irFunction?.render()}")
+////                            println("        ${computationStates[calleeSymbol]} ${calleeSymbol.irFunction?.render()}")
+////                        }
                         if (computationStates[calleeSymbol] != ComputationState.DONE) continue
                         val calleeIrFunction = calleeSymbol.irFunction ?: continue
                         val callee = moduleDFG.functions[calleeSymbol]!!
@@ -116,14 +116,17 @@ internal class BackendInliner(
                                 val devirtualizedCallSite = devirtualizedCallSites[node]
                                 val maxUnfoldFactor = if (node is DataFlowIR.Node.ItableCall)
                                     DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_ITABLE_CALL else DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_VTABLE_CALL
-                                if (devirtualizedCallSite != null && devirtualizedCallSite.possibleCallees.size <= maxUnfoldFactor) {
-                                    if (devirtualizedCallSite.possibleCallees.any { it.callee == calleeSymbol })
+                                if (devirtualizedCallSite != null) {
+                                    val possibleCallees = devirtualizedCallSite.possibleCallees.groupBy {
+                                        it.callee as? DataFlowIR.FunctionSymbol.Declared ?: return@forEachNonScopeNode
+                                    }
+                                    if (possibleCallees.size <= maxUnfoldFactor && devirtualizedCallSite.possibleCallees.any { it.callee == calleeSymbol })
                                         isALoop = true
                                 }
                             }
                         }
-                        if (irFunction.name.asString() == "foo")
-                            println("    $isALoop $calleeSize")
+//                        //if (irFunction.name.asString() == "foo")
+//                        println("        $isALoop $calleeSize")
                         if (!isALoop && calleeSize <= 100 // TODO: To a function. Also use relative criterion along with the absolute one.
                                 && calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
                                 && !calleeIrFunction.overrides(invokeSuspendFunction.owner) // TODO: Is it worth trying to support?
@@ -139,7 +142,7 @@ internal class BackendInliner(
                     }
 
                     if (functionsToInline.isEmpty()) {
-                        //println("Nothing to inline to ${irFunction.render()}")
+//                        println("Nothing to inline to ${irFunction.render()}")
                         function.body.forEachVirtualCall { node ->
                             val devirtualizedCallSite = devirtualizedCallSites[node]
                             if (devirtualizedCallSite != null)
@@ -147,7 +150,8 @@ internal class BackendInliner(
                         }
                     } else {
 //                        println("Preparing to inline to ${irFunction.render()}")
-//                        functionsToInline.forEach { println("    ${it.dump()}") }
+////                        functionsToInline.forEach { println("    ${it.dump()}") }
+//                        functionsToInline.forEach { println("    ${it.render()}") }
 //                        println("BEFORE: ${irFunction.dump()}")
                         val inliner = FunctionInlining(
                                 context,
