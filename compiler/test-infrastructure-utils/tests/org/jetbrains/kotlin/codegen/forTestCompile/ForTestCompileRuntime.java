@@ -24,12 +24,12 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeJarForTests() {
-        return envOrDist("kotlin.full.stdlib.path", "dist/kotlinc/lib/kotlin-stdlib.jar");
+        return propertyOrDist("kotlin.full.stdlib.path", "dist/kotlinc/lib/kotlin-stdlib.jar");
     }
 
     @NotNull
     public static File runtimeJarForTestsWithJdk8() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar"));
+        return propertyOrDist("kotlin.full.stdlib.path", "dist/kotlinc/lib/kotlin-stdlib-jdk8.jar");
     }
 
     @NotNull
@@ -39,17 +39,17 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File kotlinTestJarForTests() {
-        return envOrDist("kotlin.test.jar.path", "dist/kotlinc/lib/kotlin-test.jar");
+        return propertyOrDist("kotlin.test.jar.path", "dist/kotlinc/lib/kotlin-test.jar");
     }
 
     @NotNull
     public static File reflectJarForTests() {
-        return envOrDist("kotlin.reflect.jar.path", "dist/kotlinc/lib/kotlin-reflect.jar");
+        return propertyOrDist("kotlin.reflect.jar.path", "dist/kotlinc/lib/kotlin-reflect.jar");
     }
 
     @NotNull
     public static File scriptRuntimeJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-script-runtime.jar"));
+        return propertyOrDist("kotlin.script.runtime.path","dist/kotlinc/lib/kotlin-script-runtime.jar");
     }
 
     @NotNull
@@ -59,10 +59,10 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File stdlibCommonForTests() {
-        return envOrDist("kotlin.common.stdlib.path", "dist/common/kotlin-stdlib-common.jar");
+        return propertyOrDist("kotlin.common.stdlib.path", "dist/common/kotlin-stdlib-common.jar");
     }
 
-    private static File envOrDist(String property, String distPath) {
+    private static File propertyOrDist(String property, String distPath) {
         String path = getProperty(property, distPath);
         File file = new File(path);
         assert(file.exists()) : "CRISTIAN " + path + " doesn't exist";
@@ -71,7 +71,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File jvmAnnotationsForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-annotations-jvm.jar"));
+        return propertyOrDist("kotlin.annotations.path","dist/kotlinc/lib/kotlin-annotations-jvm.jar");
     }
 
     @NotNull

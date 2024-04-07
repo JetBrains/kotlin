@@ -1,0 +1,1 @@
+extensions.create("compilerTests", CompilerTestsExtension::class)

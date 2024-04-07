@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-test-setup")
 }
 
 dependencies {
@@ -56,11 +57,22 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
+compilerTests {
+    withStdlibCommon()
+    withScriptRuntime()
+    withTestJar()
+    withStdlibJsRuntime()
+    withTestJsRuntime()
+}
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+    compilerTests.setupCompilerTests(this)
+    inputs.dir(layout.projectDirectory.dir("../analysis-api/testData"))
+    inputs.file(File(rootDir, "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml"))
+    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar"))
+    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar"))
 }
 
 testsJar()

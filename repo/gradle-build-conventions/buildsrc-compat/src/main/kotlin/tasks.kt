@@ -16,6 +16,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
@@ -152,6 +153,7 @@ fun Project.projectTest(
     }
     return getOrCreateTask<Test>(taskName) {
         dependsOn(":createIdeaHomeForTests")
+        inputs.dir(File(rootDir, "build/ideaHomeForTests"))
 
         doFirst {
             if (jUnitMode == JUnitMode.JUnit5) return@doFirst
@@ -434,9 +436,14 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
     }
 
     testTask.configure {
-        dependsOn(firPluginJvmAnnotations, firPluginJsAnnotations)
         val localFirPluginJvmAnnotations: FileCollection = firPluginJvmAnnotations
         val localFirPluginJsAnnotations: FileCollection = firPluginJsAnnotations
+        inputs.files(localFirPluginJvmAnnotations)
+            .withPropertyName("localFirPluginJvmAnnotations")
+            .withNormalizer(ClasspathNormalizer::class.java)
+        inputs.files(localFirPluginJsAnnotations)
+            .withPropertyName("localFirPluginJsAnnotations")
+            .withNormalizer(ClasspathNormalizer::class.java)
         doFirst {
             systemProperty("firPluginAnnotations.jvm.path", localFirPluginJvmAnnotations.singleFile.canonicalPath)
             systemProperty("firPluginAnnotations.js.path", localFirPluginJsAnnotations.singleFile.canonicalPath)

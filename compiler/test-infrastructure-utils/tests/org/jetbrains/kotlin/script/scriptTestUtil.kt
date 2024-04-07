@@ -18,7 +18,17 @@ fun loadScriptingPlugin(configuration: CompilerConfiguration) {
             KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
             KOTLIN_SCRIPTING_COMMON_JAR,
             KOTLIN_SCRIPTING_JVM_JAR
-        ).map { File(libPath, it).path }
+        ).map {
+            val file = File(libPath, it)
+            if (!file.exists()) {
+                throw Error("CRISTIAN: Missing ${file.path}")
+            }
+            file.path
+        }
     }
+    PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration)
+}
+
+fun loadScriptingPlugin(configuration: CompilerConfiguration, pluginClasspath: Collection<String>) {
     PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration)
 }

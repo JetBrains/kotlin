@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-test-setup")
 }
 
 dependencies {
@@ -54,16 +55,40 @@ sourceSets {
     }
 }
 
+compilerTests {
+    withStdlibCommon()
+    withScriptRuntime()
+    withTestJar()
+    withAnnotations()
+    withScriptingPlugin()
+    withStdlibJsRuntime()
+    withTestJsRuntime()
+}
+
 projectTest(
     jUnitMode = JUnitMode.JUnit5,
     defineJDKEnvVariables = listOf(
+        JdkMajorVersion.JDK_1_8,
         JdkMajorVersion.JDK_11_0, // e.g. org.jetbrains.kotlin.test.runners.ForeignAnnotationsCompiledJavaTestGenerated.Java11Tests
+        JdkMajorVersion.JDK_17_0,
         JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
     )
 ) {
-    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+
+    inputs.dir(layout.projectDirectory.dir("../testData"))
+    inputs.file(File(rootDir, "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml"))
+    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar"))
+    inputs.dir(File(rootDir, "third-party/annotations"))
+    inputs.dir(File(rootDir, "third-party/java8-annotations"))
+    inputs.dir(File(rootDir, "third-party/java9-annotations"))
+    inputs.dir(File(rootDir, "third-party/jsr305"))
+    inputs.dir(File(rootDir, "libraries/stdlib/unsigned/src/kotlin"))
+    inputs.dir(File(rootDir, "libraries/stdlib/jvm/src/kotlin")) //util/UnsignedJVM.kt
+    inputs.dir(File(rootDir, "libraries/stdlib/src/kotlin")) //ranges/Progressions.kt
+    inputs.dir(File(rootDir, "libraries/stdlib/jvm/runtime/kotlin")) //TypeAliases.kt
+    compilerTests.setupCompilerTests(this)
 }
 
 testsJar()
