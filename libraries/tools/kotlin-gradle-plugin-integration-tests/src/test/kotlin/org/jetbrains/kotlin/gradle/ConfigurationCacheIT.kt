@@ -135,7 +135,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     )
     @GradleTest
     fun testWithDownloadingKotlinNativeAndDependencies(gradleVersion: GradleVersion, @TempDir konanTempDir: Path) {
-        // with Configuration Cache we currently have such a problem KT-66423
+        // with Configuration Cache we currently have such problem KT-66423
         val buildOptions = buildOptionsToAvoidKT66423(gradleVersion, konanTempDir)
         project("native-configuration-cache", gradleVersion, buildOptions = buildOptions) {
 

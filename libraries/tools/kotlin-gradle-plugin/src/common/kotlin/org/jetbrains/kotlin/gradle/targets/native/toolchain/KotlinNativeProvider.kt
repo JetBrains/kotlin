@@ -48,19 +48,11 @@ internal class KotlinNativeProvider(
     )
 
     @get:Internal
-    val overriddenKonanHome: Provider<String> = project.provider { project.kotlinPropertiesProvider.nativeHome }
-
-    @get:Internal
     val reinstallBundle: Property<Boolean> = project.objects.property(project.kotlinPropertiesProvider.nativeReinstall)
 
     @get:Input
     internal val kotlinNativeBundleVersion: Provider<String> = bundleDirectory.zip(reinstallBundle) { bundleDir, reinstallFlag ->
-        val kotlinNativeVersion =
-            if (overriddenKonanHome.isPresent)
-                overriddenKonanHome.get()
-            else
-                NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
-
+        val kotlinNativeVersion = NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
         if (project.kotlinNativeToolchainEnabled) {
             kotlinNativeBundleBuildService.get().prepareKotlinNativeBundle(
                 project,
@@ -68,8 +60,7 @@ internal class KotlinNativeProvider(
                 kotlinNativeVersion,
                 bundleDir.asFile,
                 reinstallFlag,
-                konanTargets,
-                overriddenKonanHome.orNull
+                konanTargets
             )
         }
         kotlinNativeVersion

@@ -63,30 +63,6 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-58303: Kotlin Native must not be downloaded when konan home is overridden")
-    @GradleTest
-    fun shouldNotDownloadKotlinNativeWithCustomKonanHome(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
-        val kotlinNativeVersion = System.getProperty("kotlinNativeVersion")
-        // When a Kotlin Native version has not been passed means that there was not common test directory with a preinstalled kotlin native bundle
-        if (kotlinNativeVersion != null) {
-            val bundleDirName = "kotlin-native-prebuilt-$currentPlatform-$kotlinNativeVersion"
-            val customKonanHome = konanDir.resolve(bundleDirName)
-            nativeProject(
-                "native-simple-project",
-                gradleVersion,
-                buildOptions = defaultBuildOptions.copy(
-                    freeArgs = listOf("-Pkotlin.native.home=$customKonanHome"),
-                ),
-            ) {
-                build("assemble") {
-                    assertOutputContains("A user-provided Kotlin/Native distribution configured: ${customKonanHome}. Disabling Kotlin Native Toolchain auto-provisioning.")
-                    assertOutputDoesNotContain(UNPUCK_KONAN_FINISHED_LOG)
-                    assertOutputDoesNotContain("Please wait while Kotlin/Native")
-                }
-            }
-        }
-    }
-
     @DisplayName("KT-58303: Kotlin Native must be downloaded during execution phase")
     @GradleTest
     fun shouldDownloadKotlinNativeOnExecutionPhase(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
@@ -216,6 +192,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         this.appendText(
             """
                     
+            kotlin.native.home=${konanAbsolutePathString}
             konan.data.dir=${konanAbsolutePathString}
             """.trimIndent()
         )

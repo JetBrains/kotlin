@@ -18,14 +18,12 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -87,8 +85,6 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
      * @param bundleDir The directory to store the Kotlin/Native bundle.
      * @param reinstallFlag A flag indicating whether to reinstall the bundle.
      * @param konanTargets The set of KonanTarget objects representing the targets for the Kotlin/Native bundle.
-     * @param overriddenKonanHome Overridden konan home if present.
-     * @return kotlin native version if toolchain was used, path to konan home if konan home was used
      */
     internal fun prepareKotlinNativeBundle(
         project: Project,
@@ -97,24 +93,8 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
         bundleDir: File,
         reinstallFlag: Boolean,
         konanTargets: Set<KonanTarget>,
-        overriddenKonanHome: String?,
     ) {
-        if (overriddenKonanHome != null) {
-            project.logger.info("A user-provided Kotlin/Native distribution configured: ${overriddenKonanHome}. Disabling Kotlin Native Toolchain auto-provisioning.")
-        } else {
-            processToolchain(bundleDir, project, reinstallFlag, kotlinNativeVersion, kotlinNativeBundleConfiguration)
-        }
 
-        project.setupKotlinNativePlatformLibraries(konanTargets)
-    }
-
-    private fun processToolchain(
-        bundleDir: File,
-        project: Project,
-        reinstallFlag: Boolean,
-        kotlinNativeVersion: String,
-        kotlinNativeBundleConfiguration: ConfigurableFileCollection,
-    ) {
         val lock =
             NativeDistributionCommonizerLock(bundleDir) { message -> project.logger.info("Kotlin Native Bundle: $message") }
 
@@ -139,6 +119,8 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
                 project.logger.info("Moved Kotlin/Native bundle from $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
             }
         }
+
+        project.setupKotlinNativePlatformLibraries(konanTargets)
     }
 
     /**
