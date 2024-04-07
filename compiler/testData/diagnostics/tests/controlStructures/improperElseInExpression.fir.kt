@@ -2,7 +2,7 @@
 
 fun example() {
     val a = if (true) true else false
-    val b = if (true) else false
+    val b = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) else false
     val c = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) true
     val d = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) true else;
     val e = if (true) {} else false

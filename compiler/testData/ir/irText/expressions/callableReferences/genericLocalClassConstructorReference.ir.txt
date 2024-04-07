@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
           overridden:
-            public final ll: LL of <root>.L
+            public final ll: LL of <root>.L declared in <root>.L
           FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LT of <root>.fn.FLocal>) returnType:LT of <root>.fn.FLocal [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
             overridden:
@@ -177,7 +177,7 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
             $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
             overridden:
-              public final ll: LL of <root>.L
+              public final ll: LL of <root>.L declared in <root>.L
             FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:FINAL <> ($this:<root>.L<LT of <root>.<get-p>.PLocal>) returnType:LT of <root>.<get-p>.PLocal [fake_override]
               correspondingProperty: PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:FINAL [fake_override,val]
               overridden:

@@ -6,6 +6,6 @@ FILE: main.kt
         R|<local>/map|.R|SubstitutionOverride</SomeMap.containsValue: R|kotlin/Boolean|><Inapplicable(INAPPLICABLE): /SomeMap.containsValue>#|(Int(1))
         R|<local>/map|.R|SubstitutionOverride</SomeMap.get: R|kotlin/String?|>|(Int(1))
         R|<local>/map|.R|SubstitutionOverride</SomeMap.get: R|kotlin/String?|><Inapplicable(INAPPLICABLE): /SomeMap.get>#|(String())
-        R|<local>/map|.R|SubstitutionOverride</SomeMap.remove: R|kotlin/String?|>|(Int(1))
-        R|<local>/map|.R|SubstitutionOverride</SomeMap.remove: R|kotlin/String?|><Inapplicable(INAPPLICABLE): /SomeMap.remove>#|(String())
+        R|<local>/map|.R|SubstitutionOverride</SomeMap.remove: R|@EnhancedNullability kotlin/String?|>|(Int(1))
+        R|<local>/map|.R|SubstitutionOverride</SomeMap.remove: R|@EnhancedNullability kotlin/String?|><Inapplicable(INAPPLICABLE): /SomeMap.remove>#|(String())
     }

@@ -32,7 +32,11 @@ fun useRemAssign() { a <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT, PROPERTY_AS_OPE
 
 // operators over values
 
-class E { }
+class E: Iterator<Int> {
+    override fun hasNext(): Boolean = false
+    override fun next(): Int = 0
+}
+
 val e = E()
 
 val E.unaryPlus: I get() = I()
@@ -80,3 +84,26 @@ val useRangeUntil = e <!PROPERTY_AS_OPERATOR!>..<<!> 3
 
 val E.compareTo: I get() = I()
 val useCompareTo = e <!COMPARE_TO_TYPE_MISMATCH, PROPERTY_AS_OPERATOR!>><!> 2
+
+val E.iterator: I get() = I()
+fun useIterator() {
+    for (x in e) { }
+}
+
+class P { }
+
+val A.getValue: P get() = P()
+val A.setValue: P get() = P()
+
+operator fun P.invoke(thisRef: Any?, property: Any?): Int = 0
+operator fun P.invoke(thisRef: Any?, property: Any?, newValue: Int) { }
+fun useDelegate() {
+    val m by a
+    var n by a
+}
+
+val E.component1: I get() = I()
+val E.component2: I get() = I()
+fun useComponentN() {
+    val (<!PROPERTY_AS_OPERATOR!>x<!>, <!PROPERTY_AS_OPERATOR!>y<!>) = e
+}

@@ -1,0 +1,98 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+
+@Composable
+fun Parent() {
+    with(Foo()) {
+        Test()
+        Test(a = "a")
+        Test(b = 101)
+        Test(a = "Yes", b = 10)
+    }
+}
+
+context(Foo)
+@Composable
+fun Test(a: String = "A", b: Int = 2) {
+    val combineParams = a + b
+    if (someString == combineParams) {
+        println("Same same")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Parent(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Parent)*<Test()>,<Test(a>,<Test(b>,<Test(a>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    with(Foo()) {
+      Test(%this%with, null, 0, %composer, 0, 0b0110)
+      Test(%this%with, "a", 0, %composer, 0b00110000, 0b0100)
+      Test(%this%with, null, 101, %composer, 0b000110000000, 0b0010)
+      Test(%this%with, "Yes", 10, %composer, 0b000110110000, 0)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Parent(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test(%context_receiver_0: Foo, a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(%context_receiver_0)) 0b0100 else 0b0010
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b01110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b001110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(b)) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
+    if (%default and 0b0010 != 0) {
+      a = "A"
+    }
+    if (%default and 0b0100 != 0) {
+      b = 2
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val combineParams = a + b
+    if (%context_receiver_0.someString == combineParams) {
+      println("Same same")
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%context_receiver_0, a, b, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

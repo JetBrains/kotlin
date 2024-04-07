@@ -1,5 +1,4 @@
 // ALLOW_KOTLIN_PACKAGE
-// DISABLE_SEALED_INHERITOR_CALCULATOR
 // MODULE: lib1
 // FILE: anno.kt
 package kotlin.annotation

@@ -41,6 +41,7 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         get() = "caches-js"
 
     @Disabled("compileKotlinJs's modification does not work")
+    @GradleTest
     override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
 
     @Disabled("In JS IR all dependencies effectively api, not implementation")
@@ -142,13 +143,6 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
         doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
     }
-
-    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
-    @GradleTest
-    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
-        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
-        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
-    }
 }
 
 @DisplayName("K/JS multi-project IC with disabled precise outputs backups")
@@ -158,12 +152,20 @@ abstract class IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT : Incr
 
 class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
 }
 
 class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-61153")
+    @GradleTest
     override fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
         super.testRemoveLibFromClasspath(gradleVersion)
     }
@@ -171,6 +173,13 @@ class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProj
 
 class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
 }
 
 class IncrementalCompilationK2JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
@@ -344,6 +353,7 @@ class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : Incremental
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
 
     @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
+    @GradleTest
     override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
     }
 }
@@ -352,6 +362,7 @@ class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : Incremen
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 
     @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
+    @GradleTest
     override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
     }
 }
@@ -508,13 +519,6 @@ open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilation
     override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
         // `impactedClassInAppIsRecompiled = false` for the old IC (KT-56197 was fixed for the new IC only)
         doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
-    }
-
-    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
-    @GradleTest
-    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
-        // `impactedClassInAppIsRecompiled = false` for the old IC (KT-56197 was fixed for the new IC only)
-        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
     }
 }
 

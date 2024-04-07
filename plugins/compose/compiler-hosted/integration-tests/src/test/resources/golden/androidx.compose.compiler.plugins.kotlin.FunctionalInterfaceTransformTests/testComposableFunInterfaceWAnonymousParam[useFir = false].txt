@@ -1,0 +1,91 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+fun interface Consumer {
+    @Composable operator fun invoke(t: Int)
+}
+
+@Composable fun Test(int: Int) {
+    Example { _ ->
+    }
+}
+
+@Composable fun Example(consumer: Consumer) {
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface Consumer {
+  @Composable
+  abstract fun invoke(t: Int, %composer: Composer?, %changed: Int)
+}
+@Composable
+fun Test(int: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Example(<block>{
+      class <no name provided> : Consumer {
+        @Composable
+        override fun invoke(<unused var>: Int, %composer: Composer?, %changed: Int) {
+          %composer = %composer.startRestartGroup(<>)
+          sourceInformation(%composer, "C(invoke):Test.kt")
+          val %dirty = %changed
+          if (%changed and 0b00110000 == 0) {
+            %dirty = %dirty or if (%composer.changed(<this>)) 0b00100000 else 0b00010000
+          }
+          if (%dirty and 0b00010001 != 0b00010000 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
+            Unit
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+          val tmp0_rcvr = <this>
+          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+            tmp0_rcvr.invoke(<unused var>, %composer, updateChangedFlags(%changed or 0b0001))
+          }
+        }
+      }
+      <no name provided>()
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(int, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(consumer, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -10,8 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
 abstract class AbstractKotlinNativeCompilation internal constructor(
     compilation: KotlinCompilationImpl,
     val konanTarget: KonanTarget
@@ -80,6 +79,7 @@ open class KotlinNativeCompilation @Inject internal constructor(
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilation.compilationName, "binaries")
 }
 
+@Suppress("DEPRECATION")
 open class KotlinSharedNativeCompilation @Inject internal constructor(
     val konanTargets: List<KonanTarget>,
     compilation: KotlinCompilationImpl

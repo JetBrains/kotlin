@@ -55,7 +55,7 @@ class Case8<K> {
 }
 
 // TESTCASE NUMBER: 9
-inline fun <reified L: Nothing?> case_9(x: L) = x!! as Int
+inline fun <reified L: Nothing?> case_9(x: L) = x!! <!CAST_NEVER_SUCCEEDS!>as<!> Int
 
 // TESTCASE NUMBER: 10
 fun <K> case_10(x: Nothing) = x as Iterable<K>

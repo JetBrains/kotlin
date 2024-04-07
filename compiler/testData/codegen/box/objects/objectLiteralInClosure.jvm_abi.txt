@@ -1,0 +1,15 @@
+MODULE main
+	CLASS p/C.class
+		CLASS METADATA
+			PROPERTY getInitChild()Lkotlin/jvm/functions/Function0;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function0<.p/C$initChild$1$1>
+					K2
+						kotlin/Function0<kotlin/Any>
+		METHOD getInitChild()Lkotlin/jvm/functions/Function0;
+			Property: method.signature
+				K1
+					()Lkotlin/jvm/functions/Function0<Lp/C$initChild$1$1;>;
+				K2
+					()Lkotlin/jvm/functions/Function0<Ljava/lang/Object;>;

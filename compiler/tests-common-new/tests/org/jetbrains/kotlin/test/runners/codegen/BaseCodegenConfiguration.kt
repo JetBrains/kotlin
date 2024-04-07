@@ -97,6 +97,12 @@ fun TestConfigurationBuilder.useIrInliner() {
     }
 }
 
+fun TestConfigurationBuilder.useInlineScopesNumbers() {
+    defaultDirectives {
+        +LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
+    }
+}
+
 fun TestConfigurationBuilder.applyDumpSmapDirective() {
     forTestsMatching("compiler/testData/codegen/boxInline/smap/*") {
         defaultDirectives {
@@ -108,7 +114,6 @@ fun TestConfigurationBuilder.applyDumpSmapDirective() {
 fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest() {
     configureIrHandlersStep {
         dumpHandlersForConverterStep()
-        useAfterAnalysisCheckers(::FirIrDumpIdenticalChecker)
     }
     configureJvmArtifactsHandlersStep {
         dumpHandlersForBackendStep()

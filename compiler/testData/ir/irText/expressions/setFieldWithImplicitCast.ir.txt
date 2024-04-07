@@ -33,4 +33,4 @@ FILE fqName:<root> fileName:/Derived.kt
                   GET_VAR 'v: kotlin.Any declared in <root>.Derived.setValue' type=kotlin.Any origin=null
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final value: @[FlexibleNullability] kotlin.String?
+        public final value: @[FlexibleNullability] kotlin.String? declared in <root>.Base

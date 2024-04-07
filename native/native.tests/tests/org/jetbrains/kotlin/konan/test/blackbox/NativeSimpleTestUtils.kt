@@ -78,6 +78,7 @@ internal class LibraryBuilder(
         )
 }
 
+// WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
 internal class ExecutableBuilder(
     test: AbstractNativeSimpleTest,
     rootDir: File,
@@ -91,8 +92,9 @@ internal class ExecutableBuilder(
         freeCompilerArgs.add(this)
     }
 
+    // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
     override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
-        test.compileToExecutable(
+        test.compileToExecutableInOneStage(
             sourcesDir,
             tryPassSystemCacheDirectory,
             freeCompilerArgs = if (freeCompilerArgs.isEmpty()) TestCompilerArgs.EMPTY else TestCompilerArgs(freeCompilerArgs),
@@ -101,7 +103,7 @@ internal class ExecutableBuilder(
 }
 
 internal val AbstractNativeSimpleTest.buildDir: File get() = testRunSettings.get<Binaries>().testBinariesDir
-internal val AbstractNativeSimpleTest.targets: KotlinNativeTargets get() = testRunSettings.get()
+val AbstractNativeSimpleTest.targets: KotlinNativeTargets get() = testRunSettings.get()
 
 internal fun TestCompilationArtifact.KLIB.asLibraryDependency() =
     ExistingDependency(this, TestCompilationDependencyType.Library)
@@ -161,26 +163,29 @@ internal class CompiledExecutable(
     val testExecutable by lazy { TestExecutable.fromCompilationResult(testCase, compilationResult) }
 }
 
-internal fun AbstractNativeSimpleTest.compileToExecutable(
+// WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
+internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     sourcesDir: File,
     tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
     vararg dependencies: TestCompilationArtifact.KLIB
-) = compileToExecutable(sourcesDir, tryPassSystemCacheDirectory, freeCompilerArgs, dependencies.asList())
+) = compileToExecutableInOneStage(sourcesDir, tryPassSystemCacheDirectory, freeCompilerArgs, dependencies.asList())
 
-internal fun AbstractNativeSimpleTest.compileToExecutable(
+// WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
+internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     sourcesDir: File,
     tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
     dependencies: List<TestCompilationArtifact.KLIB>
 ): CompiledExecutable {
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
-    val compilationResult = compileToExecutable(testCase, tryPassSystemCacheDirectory, dependencies.map { it.asLibraryDependency() })
+    val compilationResult = compileToExecutableInOneStage(testCase, tryPassSystemCacheDirectory, dependencies.map { it.asLibraryDependency() })
     return CompiledExecutable(testCase, compilationResult.assertSuccess())
 }
 
-internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
-    compileToExecutable(testCase, true, dependencies.asList())
+// WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
+internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
+    compileToExecutableInOneStage(testCase, true, dependencies.asList())
 
 internal fun AbstractNativeSimpleTest.compileToStaticCache(
     klib: TestCompilationArtifact.KLIB,
@@ -196,7 +201,7 @@ internal fun AbstractNativeSimpleTest.compileToStaticCache(
             this += klib.asLibraryDependency()
             dependencies.mapTo(this) { it.asStaticCacheDependency() }
         },
-        expectedArtifact = TestCompilationArtifact.KLIBStaticCache(cacheDir, klib)
+        expectedArtifact = TestCompilationArtifact.KLIBStaticCacheImpl(cacheDir, klib)
     )
     return compilation.result.assertSuccess().resultingArtifact
 }
@@ -311,7 +316,7 @@ private fun AbstractNativeSimpleTest.compileToLibrary(
     return compilation.result.assertSuccess()
 }
 
-private fun AbstractNativeSimpleTest.compileToExecutable(
+private fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     testCase: TestCase,
     tryPassSystemCacheDirectory: Boolean,
     dependencies: List<TestCompilationDependency<*>>

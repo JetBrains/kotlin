@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -563,7 +563,7 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
         value = "-Xjdk-release",
         valueDescription = "<version>",
         description = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–21.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–22.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version."""
     )
     var jdkRelease: String? = null
@@ -837,6 +837,16 @@ This option is deprecated and will be deleted in future versions."""
         }
 
     @Argument(
+        value = "-Xuse-inline-scopes-numbers",
+        description = "Use inline scopes numbers for inline marker variables."
+    )
+    var useInlineScopesNumbers: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xuse-kapt4",
         description = "Enable the experimental KAPT 4."
     )
@@ -856,7 +866,7 @@ This option is deprecated and will be deleted in future versions."""
             result[JvmAnalysisFlags.jvmDefaultMode] = it
         } ?: collector.report(
             CompilerMessageSeverity.ERROR,
-            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${JvmDefaultMode.values().map(JvmDefaultMode::description)}"
+            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
         )
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses

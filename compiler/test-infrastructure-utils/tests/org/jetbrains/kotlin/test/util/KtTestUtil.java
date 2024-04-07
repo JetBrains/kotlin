@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KtAssert;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -94,16 +95,16 @@ public class KtTestUtil {
              * This clarifies the exception by showing the full path.
              */
             String messageWithFullPath = file.getAbsolutePath() + " (No such file or directory)";
-            throw new RuntimeException(
-                    new IOException(
-                        "Ensure you have your 'Working Directory' configured correctly as the root " +
-                        "Kotlin project directory in your test configuration\n\t" +
-                        messageWithFullPath,
-                        fileNotFoundException
-                    )
+            throw ExceptionUtilsKt.rethrow(
+                new IOException(
+                    "Ensure you have your 'Working Directory' configured correctly as the root " +
+                    "Kotlin project directory in your test configuration\n\t" +
+                    messageWithFullPath,
+                    fileNotFoundException
+                )
             );
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

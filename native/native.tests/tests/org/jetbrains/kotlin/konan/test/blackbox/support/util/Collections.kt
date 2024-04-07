@@ -11,7 +11,7 @@ import java.util.*
 internal fun <T> Collection<T>.toIdentitySet(): Set<T> =
     Collections.newSetFromMap(IdentityHashMap<T, Boolean>()).apply { addAll(this@toIdentitySet) }
 
-internal class FailOnDuplicatesSet<E : Any> : Set<E> {
+class FailOnDuplicatesSet<E : Any> : Set<E> {
     private val uniqueElements: MutableSet<E> = hashSetOf()
 
     operator fun plusAssign(element: E) {

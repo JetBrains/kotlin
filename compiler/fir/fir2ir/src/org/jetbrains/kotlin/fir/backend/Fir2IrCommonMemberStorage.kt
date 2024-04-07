@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,20 +20,19 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * See `/docs/fir/k2_kmp.md`
  */
-class Fir2IrCommonMemberStorage(firMangler: FirMangler) {
-    val firSignatureComposer = FirBasedSignatureComposer(firMangler)
-
+class Fir2IrCommonMemberStorage(val firSignatureComposer: FirBasedSignatureComposer) {
     val symbolTable = SymbolTable(signaturer = null, irFactory = IrFactoryImpl)
 
-    val classCache: MutableMap<FirRegularClass, IrClass> = mutableMapOf()
+    val classCache: MutableMap<FirRegularClass, IrClassSymbol> = mutableMapOf()
 
     val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = mutableMapOf()
 
-    val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = mutableMapOf()
+    val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntrySymbol> = mutableMapOf()
 
     val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()
 
     val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunctionSymbol> = ConcurrentHashMap()
+    val dataClassGeneratedFunctionsCache: ConcurrentHashMap<FirClass, Fir2IrDeclarationStorage.DataClassGeneratedFunctionsStorage> = ConcurrentHashMap()
 
     val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructorSymbol> = ConcurrentHashMap()
 
@@ -51,14 +49,4 @@ class Fir2IrCommonMemberStorage(firMangler: FirMangler) {
     val fakeOverridesInClass: MutableMap<IrClass, MutableMap<Fir2IrDeclarationStorage.FirOverrideKey, FirCallableDeclaration>> = mutableMapOf()
 
     val irForFirSessionDependantDeclarationMap: MutableMap<Fir2IrDeclarationStorage.FakeOverrideIdentifier, IrSymbol> = mutableMapOf()
-
-    fun registerFirProvider(moduleData: FirModuleData, firProvider: FirProviderWithGeneratedFiles) {
-        require(moduleData !in _previousFirProviders) { "FirProvider for $moduleData already registered"}
-        _previousFirProviders[moduleData] = firProvider
-    }
-
-    val previousFirProviders: Map<FirModuleData, FirProviderWithGeneratedFiles>
-        get() = _previousFirProviders
-
-    private val _previousFirProviders: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
 }

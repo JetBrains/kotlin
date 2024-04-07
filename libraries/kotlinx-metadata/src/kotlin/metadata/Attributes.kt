@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION_ERROR") // flags will become internal eventually
 @file:JvmName("Attributes")
 
 package kotlin.metadata
@@ -296,18 +295,6 @@ public var KmProperty.kind: MemberKind by memberKindDelegate(KmProperty::flags)
 public var KmProperty.isVar: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_VAR))
 
 /**
- * Indicates that the corresponding property has a getter.
- */
-@Deprecated("Kotlin properties always have getters", ReplaceWith("true"), DeprecationLevel.ERROR)
-public var KmProperty.hasGetter: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_GETTER))
-
-/**
- * Indicates that the corresponding property has a setter.
- */
-@Deprecated("Check .setter for nullability instead", ReplaceWith("this.setter != null"), DeprecationLevel.ERROR)
-public var KmProperty.hasSetter: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_SETTER))
-
-/**
  * Indicates that the corresponding property is `const`.
  */
 public var KmProperty.isConst: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_CONST))
@@ -320,7 +307,7 @@ public var KmProperty.isLateinit: Boolean by propertyBooleanFlag(FlagImpl(ProtoF
 /**
  * Indicates that the corresponding property has a constant value. On JVM, this flag allows an optimization similarly to
  * [KmProperty.hasAnnotations]: constant values of properties are written to the bytecode directly, and this flag can be used to avoid
- * reading the value from the bytecode in case there isn't one.
+ * reading the value from the bytecode in case it is not there.
  *
  * Not to be confused with [KmProperty.isConst], because `const` modifier is applicable only to properties on top-level and inside objects,
  * while property in a regular class can also have constant value.
@@ -379,7 +366,7 @@ public var KmPropertyAccessorAttributes.visibility: Visibility by visibilityDele
 public var KmPropertyAccessorAttributes.modality: Modality by modalityDelegate(KmPropertyAccessorAttributes::flags)
 
 /**
- * Indicates that the corresponding property accessor is not default, i.e. it has a body and/or annotations in the source code,
+ * Indicates that the corresponding property accessor is not default, i.e., it has a body and/or annotations in the source code,
  * or the property is delegated.
  */
 public var KmPropertyAccessorAttributes.isNotDefault: Boolean by propertyAccessorBooleanFlag(FlagImpl(ProtoFlags.IS_NOT_DEFAULT))
@@ -397,7 +384,7 @@ public var KmPropertyAccessorAttributes.isInline: Boolean by propertyAccessorBoo
 // --- TYPE & TYPE_PARAM
 
 /**
- * Indicates that the corresponding type is marked as nullable, i.e. has a question mark at the end of its notation.
+ * Indicates that the corresponding type is marked as nullable, i.e., has a question mark at the end of its notation.
  */
 public var KmType.isNullable: Boolean by typeBooleanFlag(FlagImpl(0, 1, 1))
 
@@ -473,4 +460,7 @@ public var KmEffectExpression.isNegated: Boolean by BooleanFlagDelegate(KmEffect
  * may change in a subsequent release.
  */
 @ExperimentalContracts
-public var KmEffectExpression.isNullCheckPredicate: Boolean by BooleanFlagDelegate(KmEffectExpression::flags, FlagImpl(ProtoFlags.IS_NULL_CHECK_PREDICATE))
+public var KmEffectExpression.isNullCheckPredicate: Boolean by BooleanFlagDelegate(
+    KmEffectExpression::flags,
+    FlagImpl(ProtoFlags.IS_NULL_CHECK_PREDICATE)
+)

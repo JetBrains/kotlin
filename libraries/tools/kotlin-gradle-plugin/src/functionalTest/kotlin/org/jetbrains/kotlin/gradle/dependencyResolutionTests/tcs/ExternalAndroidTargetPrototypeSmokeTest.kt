@@ -16,9 +16,12 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.anyDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.getByType
+import org.jetbrains.kotlin.util.assertDoesNotThrow
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -95,5 +98,48 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             binaryCoordinates(Regex("com\\.android:sdk:.*")),
             anyDependency()
         )
+    }
+
+    @Test
+    fun `test compile task arguments created without failures`() {
+        val project = buildProject {
+            enableDefaultStdlibDependency(false)
+            enableDependencyVerification(false)
+            applyMultiplatformPlugin()
+            repositories.mavenLocal()
+            repositories.mavenCentralCacheRedirector()
+        }
+        setAndroidSdkDirProperty(project)
+        project.androidLibrary { compileSdk = 31 }
+        val androidTargetPrototype = project.multiplatformExtension.androidTargetPrototype()
+        project.evaluate()
+
+        androidTargetPrototype.compilations.forEach { compilation ->
+            val compileTask = compilation.compileTaskProvider.get() as KotlinCompile
+            assertDoesNotThrow { compileTask.createCompilerArguments(default) }
+        }
+    }
+
+    @Test
+    fun `test extra friend-path is added correctly to compiler args`() {
+        val project = buildProject {
+            enableDefaultStdlibDependency(false)
+            enableDependencyVerification(false)
+            applyMultiplatformPlugin()
+            repositories.mavenLocal()
+            repositories.mavenCentralCacheRedirector()
+        }
+        setAndroidSdkDirProperty(project)
+        project.androidLibrary { compileSdk = 31 }
+        val androidTargetPrototype = project.multiplatformExtension.androidTargetPrototype()
+        project.evaluate()
+
+        val unitTest = androidTargetPrototype.compilations.getByName("unitTest")
+        val file = project.file("foo.jar")
+        unitTest.extraFriendPaths.from(file)
+
+        val compileTask = unitTest.compileTaskProvider.get() as KotlinCompile
+        val args = compileTask.createCompilerArguments(default)
+        if (file.absolutePath !in args.friendPaths!!) fail("File $file was not found int the friend paths ${args.friendPaths!!.toList()}")
     }
 }

@@ -34,8 +34,8 @@ fun Any?.test_2() {
 }
 
 fun test_3(a: Any, b: Any, c: Any) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) wa@{
-        with(b) wb@{
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) wa@{
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(b) wb@{
             with(c) wc@{
                 this@wb as A
                 this@wb.foo()
@@ -53,7 +53,7 @@ fun Any?.test_4() {
         <!UNRESOLVED_REFERENCE!>foo<!>()
         this.<!UNRESOLVED_REFERENCE!>bar<!>()
         <!UNRESOLVED_REFERENCE!>bar<!>()
-    } else if (this !is B) {
+    } else if (<!USELESS_IS_CHECK!>this !is B<!>) {
         this.<!UNRESOLVED_REFERENCE!>bar<!>()
         <!UNRESOLVED_REFERENCE!>bar<!>()
         this.foo()
@@ -79,6 +79,6 @@ fun Any.test_5(): Int = when {
 fun Any.test_6() {
     this as List<*>
     size
-    this as String
+    this <!CAST_NEVER_SUCCEEDS!>as<!> String
     length
 }

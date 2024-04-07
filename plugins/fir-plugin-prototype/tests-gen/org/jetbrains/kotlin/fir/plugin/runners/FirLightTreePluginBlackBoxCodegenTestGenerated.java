@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -59,6 +58,18 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   @TestMetadata("composableFunction.kt")
   public void testComposableFunction() {
     runTest("plugins/fir-plugin-prototype/testData/box/composableFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("composableFunctionMultiModules.kt")
+  public void testComposableFunctionMultiModules() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionMultiModules.kt");
+  }
+
+  @Test
+  @TestMetadata("composableFunctionMultiModules2.kt")
+  public void testComposableFunctionMultiModules2() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionMultiModules2.kt");
   }
 
   @Test
@@ -131,5 +142,11 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   @TestMetadata("topLevelCallables.kt")
   public void testTopLevelCallables() {
     runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelPrivateSuspendFun.kt")
+  public void testTopLevelPrivateSuspendFun() {
+    runTest("plugins/fir-plugin-prototype/testData/box/topLevelPrivateSuspendFun.kt");
   }
 }

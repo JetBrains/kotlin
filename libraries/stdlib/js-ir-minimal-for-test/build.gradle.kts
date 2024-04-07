@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.*
 
 plugins {
     kotlin("multiplatform")
@@ -95,6 +95,7 @@ val jsMainSources by task<Sync> {
             "org.w3c/**",
             "kotlin/char.kt",
             "kotlin/collectionJs.kt",
+            "kotlin/js.collections.kt",
             "kotlin/collections/**",
             "kotlin/time/**",
             "kotlin/console.kt",
@@ -125,9 +126,11 @@ val jsMainSources by task<Sync> {
     }
     from("$jsDir/runtime") {
         exclude("collectionsHacks.kt")
+        exclude("collectionsInterop.kt")
         into("runtime")
     }
     from("$jsDir/builtins") {
+        exclude("Collections.kt")
         into("builtins")
     }
 
@@ -147,7 +150,10 @@ kotlin {
     }
 }
 
-tasks.withType<KotlinCompile<*>> {
+@Suppress("DEPRECATION")
+tasks.withType<KotlinCompile<*>>().configureEach {
+    kotlinOptions.languageVersion = "1.9"
+    kotlinOptions.apiVersion = "2.0"
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xexpect-actual-classes",
@@ -156,6 +162,7 @@ tasks.withType<KotlinCompile<*>> {
         "-opt-in=kotlin.RequiresOptIn",
         "-opt-in=kotlin.ExperimentalUnsignedTypes",
         "-opt-in=kotlin.ExperimentalStdlibApi",
+        "-Xsuppress-api-version-greater-than-language-version-error",
     )
 }
 
@@ -164,6 +171,7 @@ tasks {
         enabled = false
     }
 
+    @Suppress("DEPRECATION")
     named("compileKotlinJs", KotlinCompile::class) {
         kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
     }

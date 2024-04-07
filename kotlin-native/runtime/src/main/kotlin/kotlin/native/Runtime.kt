@@ -6,11 +6,7 @@ package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.InvalidMutabilityException
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.UnhandledExceptionHookHolder
-import kotlin.native.internal.runUnhandledExceptionHook
-import kotlin.native.internal.ReportUnhandledException
+import kotlin.native.internal.*
 
 /**
  * Initializes Kotlin runtime for the current thread, if not inited already.
@@ -19,13 +15,6 @@ import kotlin.native.internal.ReportUnhandledException
 @Deprecated("Initializing runtime is not possible in the new memory model.", level = DeprecationLevel.WARNING)
 external public fun initRuntimeIfNeeded(): Unit
 
-/**
- * Deinitializes Kotlin runtime for the current thread, if was inited.
- * Cannot be called from Kotlin frames holding references, thus deprecated.
- */
-@GCUnsafeCall("Kotlin_deinitRuntimeIfNeeded")
-@Deprecated("Deinit runtime can not be called from Kotlin", level = DeprecationLevel.ERROR)
-external public fun deinitRuntimeIfNeeded(): Unit
 
 /**
  * Exception thrown when top level variable is accessed from incorrect execution context.
@@ -67,17 +56,6 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): Repor
     }
 }
 
-@Suppress("CONFLICTING_OVERLOADS")
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
-public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
-    try {
-        return UnhandledExceptionHookHolder.hook.getAndSet(hook)
-    } catch (e: InvalidMutabilityException) {
-        throw InvalidMutabilityException("Unhandled exception hook must be frozen")
-    }
-}
-
 /**
  * Returns a user-defined unhandled exception hook set by [setUnhandledExceptionHook] or `null` if no user-defined hooks were set.
  */
@@ -98,6 +76,7 @@ public fun getUnhandledExceptionHook(): ReportUnhandledExceptionHook? {
 @ExperimentalNativeApi
 @SinceKotlin("1.6")
 @GCUnsafeCall("Kotlin_processUnhandledException")
+@Escapes(0b01) // throwable may be passed to the user code via unhandled exception hook.
 public external fun processUnhandledException(throwable: Throwable): Unit
 
 /*
@@ -109,6 +88,7 @@ public external fun processUnhandledException(throwable: Throwable): Unit
 @ExperimentalNativeApi
 @SinceKotlin("1.6")
 @GCUnsafeCall("Kotlin_terminateWithUnhandledException")
+// No need to mark throwable as @Escapes because this function never returns.
 public external fun terminateWithUnhandledException(throwable: Throwable): Nothing
 
 /**

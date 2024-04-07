@@ -7,17 +7,15 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkInitializerIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -29,19 +27,15 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
-    override fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirImplicitBodyTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
-        resolver.resolveDesignation()
-    }
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirImplicitBodyTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirCallableDeclaration) return
         checkReturnTypeRefIsResolved(target)
+
+        if (target is FirProperty && target.isConst) {
+            checkInitializerIsResolved(target)
+        }
     }
 }
 
@@ -128,28 +122,35 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
     fun popCycledSymbolIfExists(): FirCallableSymbol<*>? = cycledSymbol?.also { cycledSymbol = null }
 }
 
+/**
+ * This resolver is responsible for [IMPLICIT_TYPES_BODY_RESOLVE][FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE] phase.
+ *
+ * This resolver:
+ * - Transforms [FirImplicitTypeRef] into [FirResolvedTypeRef][org.jetbrains.kotlin.fir.types.FirResolvedTypeRef].
+ *
+ * Before the transformation, the resolver [recreates][BodyStateKeepers] all bodies
+ * to prevent corrupted states due to [PCE][com.intellij.openapi.progress.ProcessCanceledException].
+ *
+ * @see postponedSymbolsForAnnotationResolution
+ * @see BodyStateKeepers
+ * @see FirImplicitAwareBodyResolveTransformer
+ * @see FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+ */
 internal class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
-    firResolveContextCollector: FirResolveContextCollector?,
     llImplicitBodyResolveComputationSessionParameter: LLImplicitBodyResolveComputationSession? = null,
 ) : LLFirAbstractBodyTargetResolver(
     target,
-    lockProvider,
-    scopeSession,
     FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
     llImplicitBodyResolveComputationSession = llImplicitBodyResolveComputationSessionParameter ?: LLImplicitBodyResolveComputationSession(),
-    isJumpingPhase = true,
 ) {
     override val transformer = object : FirImplicitAwareBodyResolveTransformer(
         resolveTargetSession,
         implicitBodyResolveComputationSession = llImplicitBodyResolveComputationSession,
         phase = resolverPhase,
         implicitTypeOnly = true,
-        scopeSession = scopeSession,
-        firResolveContextCollector = firResolveContextCollector,
-        returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
+        scopeSession = resolveTargetScopeSession,
+        returnTypeCalculator = createReturnTypeCalculator(),
     ) {
         override val preserveCFGForClasses: Boolean get() = false
         override val buildCfgForScripts: Boolean get() = false
@@ -184,7 +185,7 @@ internal class LLFirImplicitBodyTargetResolver(
             }
 
             target is FirProperty -> {
-                if (target.returnTypeRef is FirImplicitTypeRef || target.backingField?.returnTypeRef is FirImplicitTypeRef) {
+                if (target.isConst || target.returnTypeRef is FirImplicitTypeRef || target.backingField?.returnTypeRef is FirImplicitTypeRef) {
                     resolve(target, BodyStateKeepers.PROPERTY)
                 }
             }
@@ -201,7 +202,6 @@ internal class LLFirImplicitBodyTargetResolver(
                     target is FirCodeFragment ||
                     target is FirAnonymousInitializer ||
                     target is FirDanglingModifierList ||
-                    target is FirFileAnnotationsContainer ||
                     target is FirEnumEntry ||
                     target is FirErrorProperty ||
                     target is FirScript
@@ -211,9 +211,8 @@ internal class LLFirImplicitBodyTargetResolver(
             else -> throwUnexpectedFirElementError(target)
         }
 
-        if (target is FirDeclaration) {
-            target.forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
-        }
+        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
+        (target as FirDeclaration).forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
     }
 
     private fun publishPostponedSymbols(target: FirCallableDeclaration) {

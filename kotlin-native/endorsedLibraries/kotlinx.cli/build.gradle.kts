@@ -34,9 +34,11 @@ kotlin {
             }
 
             compilations.all {
-                kotlinOptions {
-                    freeCompilerArgs += listOf("-opt-in=kotlinx.cli.ExperimentalCli")
-                    suppressWarnings = true
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        optIn.add("kotlinx.cli.ExperimentalCli")
+                        suppressWarnings = true
+                    }
                 }
             }
         }

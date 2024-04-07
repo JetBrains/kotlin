@@ -124,7 +124,7 @@ fun case_10() {
     do {
         x = null
         break
-    } while ((x as String).length > 1)
+    } while ((x <!CAST_NEVER_SUCCEEDS!>as<!> String).length > 1)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
 }

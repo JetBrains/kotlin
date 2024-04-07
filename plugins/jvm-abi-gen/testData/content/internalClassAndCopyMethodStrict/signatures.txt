@@ -1,0 +1,16 @@
+@kotlin.Metadata
+public final class test/Test$EverythingExceptTheClassAndPropertyToBeRemoved {
+    // source: 'test.kt'
+    public final inner class test/Test$EverythingExceptTheClassAndPropertyToBeRemoved
+    public final @org.jetbrains.annotations.NotNull method component1(): java.lang.Object
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getA(): java.lang.Object
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+@kotlin.Metadata
+public final class test/Test {
+    // source: 'test.kt'
+    public final inner class test/Test$EverythingExceptTheClassAndPropertyToBeRemoved
+    public method <init>(): void
+}

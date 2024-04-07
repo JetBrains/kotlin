@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     PROPERTY name:bar visibility:public modality:OPEN [var]
       overridden:
-        public abstract bar: T of <root>.Base
+        public abstract bar: T of <root>.Base declared in <root>.Base
       FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private
         EXPRESSION_BODY
           GET_VAR 'x: T of <root>.Derived1 declared in <root>.Derived1.<init>' type=T of <root>.Derived1 origin=null
@@ -118,7 +118,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
             $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.foo' type=<root>.Derived1<T of <root>.Derived1> origin=null
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: T of <root>.Base
+        public final x: T of <root>.Base declared in <root>.Base
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Derived1>) returnType:T of <root>.Derived1 [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -126,7 +126,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Derived1>
     PROPERTY name:exn visibility:public modality:OPEN [var]
       overridden:
-        public abstract exn: T of <root>.Base
+        public abstract exn: T of <root>.Base declared in <root>.Base
       FUN name:<get-exn> visibility:public modality:OPEN <Z> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <root>.Derived1.<get-exn>) returnType:T of <root>.Derived1
         correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN [var]
         overridden:

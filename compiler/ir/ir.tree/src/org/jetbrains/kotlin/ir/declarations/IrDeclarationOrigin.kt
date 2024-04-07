@@ -95,6 +95,12 @@ interface IrDeclarationOrigin {
         val LOWERED_SUSPEND_FUNCTION by IrDeclarationOriginImpl.Synthetic
 
         val SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT by IrDeclarationOriginImpl.Synthetic
+
+        /**
+         * Used on synthetic accessor functions generated in place of references to e.g. private symbols in non-private inline functions,
+         * or `super` calls from lambdas and inline functions.
+         */
+        val SYNTHETIC_ACCESSOR by IrDeclarationOriginImpl.Synthetic
     }
 
     /**

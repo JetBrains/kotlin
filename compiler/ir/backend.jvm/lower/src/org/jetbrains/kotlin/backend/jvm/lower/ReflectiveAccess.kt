@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 
-// Used from CodeFragmentCompiler for IDE Debugger Plug-In
-@Suppress("unused")
 val reflectiveAccessLowering = makeIrFilePhase(
     ::ReflectiveAccessLowering,
     name = "ReflectiveCalls",
@@ -63,9 +61,10 @@ internal class ReflectiveAccessLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
-    lateinit var inlineScopeResolver: IrInlineScopeResolver
+    private lateinit var inlineScopeResolver: IrInlineScopeResolver
 
     override fun lower(irFile: IrFile) {
+        if (context.evaluatorData == null) return
         inlineScopeResolver = irFile.findInlineCallSites(context)
         irFile.transformChildrenVoid(this)
     }
@@ -450,7 +449,7 @@ internal class ReflectiveAccessLowering(
         }
 
         val type = getDeclaredClassType(call)
-        return type to call.dispatchReceiver!!
+        return type to call.dispatchReceiver
     }
 
     private fun getDeclaredClassType(call: IrCall) =

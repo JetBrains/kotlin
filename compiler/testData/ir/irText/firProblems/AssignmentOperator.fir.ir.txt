@@ -109,7 +109,7 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
         CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
           $this: GET_VAR 'val tmp_0: foo.A declared in foo.runMe' type=foo.A origin=null
-          <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
             $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'val tmp_0: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=20
@@ -120,7 +120,7 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
         CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
           $this: GET_VAR 'val tmp_1: foo.A declared in foo.runMe' type=foo.A origin=null
-          <set-?>: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          <set-?>: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUSEQ
             $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'val tmp_1: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=20
@@ -131,7 +131,7 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
         CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
           $this: GET_VAR 'val tmp_2: foo.A declared in foo.runMe' type=foo.A origin=null
-          <set-?>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          <set-?>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MULTEQ
             $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'val tmp_2: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=2
@@ -142,7 +142,7 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
         CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
           $this: GET_VAR 'val tmp_3: foo.A declared in foo.runMe' type=foo.A origin=null
-          <set-?>: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          <set-?>: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIVEQ
             $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'val tmp_3: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=5
@@ -153,7 +153,7 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
         CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
           $this: GET_VAR 'val tmp_4: foo.A declared in foo.runMe' type=foo.A origin=null
-          <set-?>: CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          <set-?>: CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PERCEQ
             $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'val tmp_4: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=3
@@ -249,7 +249,7 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
                 $this: GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=foo.B
           CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.B' type=kotlin.Int origin=PREFIX_DECR
             $this: GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=foo.B
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=EQ
         $this: CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
           <T>: kotlin.Array<kotlin.Int>
           t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY

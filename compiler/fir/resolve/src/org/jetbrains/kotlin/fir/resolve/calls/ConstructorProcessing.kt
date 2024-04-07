@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -20,19 +22,24 @@ import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-private operator fun <T> Pair<T, *>?.component1() = this?.first
-private operator fun <T> Pair<*, T>?.component2() = this?.second
+private operator fun <T> Pair<T, *>?.component1(): T? = this?.first
+private operator fun <T> Pair<*, T>?.component2(): T? = this?.second
 
-internal fun FirScope.processConstructorsByName(
+internal enum class ConstructorFilter(val acceptInner: Boolean, val acceptNested: Boolean) {
+    OnlyInner(acceptInner = true, acceptNested = false),
+    OnlyNested(acceptInner = false, acceptNested = true),
+    Both(acceptInner = true, acceptNested = true),
+}
+
+private fun FirScope.processConstructorsByName(
     callInfo: CallInfo,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    includeInnerConstructors: Boolean,
+    constructorFilter: ConstructorFilter,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
-    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, session, bodyResolveComponents) ?: return
+    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, session, bodyResolveComponents) ?: return
     val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
 
     processConstructors(
@@ -41,7 +48,7 @@ internal fun FirScope.processConstructorsByName(
         processor,
         session,
         bodyResolveComponents,
-        includeInnerConstructors
+        constructorFilter
     )
 
     processSyntheticConstructors(
@@ -55,12 +62,12 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     callInfo: CallInfo,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    includeInnerConstructors: Boolean,
+    constructorFilter: ConstructorFilter,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
     processConstructorsByName(
         callInfo, session, bodyResolveComponents,
-        includeInnerConstructors = includeInnerConstructors,
+        constructorFilter,
         processor
     )
 
@@ -110,21 +117,29 @@ private fun FirDeclaration.isInvisibleOrHidden(session: FirSession, bodyResolveC
         }
     }
 
-    val deprecation = symbol.getDeprecationForCallSite(session)
-    return deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN
+    return symbol.isDeprecationLevelHidden(session)
 }
 
 private fun FirScope.getFirstClassifierOrNull(
     callInfo: CallInfo,
+    constructorFilter: ConstructorFilter,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents
 ): SymbolWithSubstitutor? {
     var isSuccessResult = false
     var isAmbiguousResult = false
     var result: SymbolWithSubstitutor? = null
-    processClassifiersByNameWithSubstitution(callInfo.name) { symbol, substitutor ->
+
+    fun process(symbol: FirClassifierSymbol<*>, substitutor: ConeSubstitutor) {
         val classifierDeclaration = symbol.fir
-        val isSuccessCandidate = !classifierDeclaration.isInvisibleOrHidden(session, bodyResolveComponents)
+        var isSuccessCandidate = !classifierDeclaration.isInvisibleOrHidden(session, bodyResolveComponents)
+        if (classifierDeclaration is FirClassLikeDeclaration) {
+            val acceptedByFilter = when (classifierDeclaration.isInner) {
+                true -> constructorFilter.acceptInner
+                false -> constructorFilter.acceptNested
+            }
+            isSuccessCandidate = isSuccessCandidate && acceptedByFilter
+        }
 
         when {
             isSuccessCandidate && !isSuccessResult -> {
@@ -134,8 +149,8 @@ private fun FirScope.getFirstClassifierOrNull(
                 result = SymbolWithSubstitutor(symbol, substitutor)
             }
             result?.symbol === symbol -> {
-                // miss identical results
-                return@processClassifiersByNameWithSubstitution
+                // skip identical results
+                return
             }
             result != null -> {
                 if (isSuccessResult == isSuccessCandidate) {
@@ -155,6 +170,15 @@ private fun FirScope.getFirstClassifierOrNull(
                 result = SymbolWithSubstitutor(symbol, substitutor)
             }
         }
+    }
+
+    if (this is FirDefaultStarImportingScope) {
+        processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(callInfo.name) { symbol, substitutor ->
+            process(symbol, substitutor)
+            isSuccessResult
+        }
+    } else {
+        processClassifiersByNameWithSubstitution(callInfo.name, ::process)
     }
 
     return result.takeUnless { isAmbiguousResult }
@@ -212,7 +236,7 @@ private fun processConstructors(
     processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    includeInnerConstructors: Boolean
+    constructorFilter: ConstructorFilter
 ) {
     whileAnalysing(session, matchedSymbol.fir) {
         val scope = when (matchedSymbol) {
@@ -254,10 +278,13 @@ private fun processConstructors(
             }
         }
 
-            scope?.processDeclaredConstructors {
-                if (includeInnerConstructors || !it.fir.isInner) {
-                    processor(it)
-
+        scope?.processDeclaredConstructors {
+            val shouldProcess = when (it.fir.isInner) {
+                true -> constructorFilter.acceptInner
+                false -> constructorFilter.acceptNested
+            }
+            if (shouldProcess) {
+                processor(it)
             }
         }
     }

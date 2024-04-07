@@ -44,14 +44,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion")
+                implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             }
             kotlin.srcDir("../../benchmarks/shared/src")
         }
         val jsMain by getting {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion")
-            }
             kotlin.srcDir("src/main/kotlin")
             kotlin.srcDir("../shared/src/main/kotlin")
             kotlin.srcDir("../src/main/kotlin-js")

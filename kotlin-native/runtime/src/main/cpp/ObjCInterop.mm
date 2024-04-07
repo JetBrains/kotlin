@@ -5,7 +5,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSException.h>
+#import <Foundation/Foundation.h>
 #import <objc/objc-exception.h>
 
 #include <objc/objc.h>
@@ -25,7 +25,7 @@
 #include "ObjCMMAPI.h"
 #include "StackTrace.hpp"
 #include "Types.h"
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 
 using namespace kotlin;
 

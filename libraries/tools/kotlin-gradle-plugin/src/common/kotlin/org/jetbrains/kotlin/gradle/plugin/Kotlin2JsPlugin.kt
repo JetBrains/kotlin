@@ -31,7 +31,7 @@ internal open class Kotlin2JsPlugin(
         Kotlin2JsSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
 
     override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
         val target = project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,

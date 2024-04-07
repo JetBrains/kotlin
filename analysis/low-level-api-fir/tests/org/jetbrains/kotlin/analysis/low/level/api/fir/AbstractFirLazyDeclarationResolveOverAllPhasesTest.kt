@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveMultiDesignationCollector
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.allKtFiles
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -35,13 +38,21 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
 
         resolveWithClearCaches(ktFile) { firResolveSession ->
             checkSession(firResolveSession)
+            val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
+
+            testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(
+                files = allKtFiles,
+                caretTag = "preresolved"
+            ).forEach { (declaration, _) ->
+                declaration.resolveToFirSymbol(firResolveSession, FirResolvePhase.BODY_RESOLVE)
+            }
 
             val (elementToResolve, resolver) = resolverProvider(firResolveSession)
             val filesToRender = if (renderAllFiles) {
-                testServices.allKtFiles().map(firResolveSession::getOrBuildFirFile)
+                allKtFiles.map(firResolveSession::getOrBuildFirFile)
             } else {
                 val firFile = firResolveSession.getOrBuildFirFile(ktFile)
-                val designation = LLFirResolveMultiDesignationCollector.getDesignationToResolve(elementToResolve)
+                val designation = LLFirResolveDesignationCollector.getDesignationToResolve(elementToResolve)
                 listOfNotNull(firFile, designation?.firFile).distinct()
             }
 

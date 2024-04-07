@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractDiagnosticsNativeTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsTest
+import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsWithBackendTestBase
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
@@ -357,13 +358,20 @@ fun main() {
             ) {
                 model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
+
+            testClass<AbstractFirPsiNativeDiagnosticsWithBackendTestBase>(
+                suiteTestClassName = "FirPsiNativeKlibDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir(), klib())
+            ) {
+                model("diagnostics/klibSerializationTests")
+            }
         }
 
         // Atomicfu compiler plugin native tests.
         testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "AtomicfuNativeTestGenerated",
-                annotations = listOf(atomicfuNative(), provider<UseStandardTestCaseGroupProvider>())
+                annotations = listOf(*atomicfuNative(), provider<UseStandardTestCaseGroupProvider>())
             ) {
                 model("nativeBox")
             }
@@ -459,33 +467,37 @@ fun main() {
                 model("standalone")
             }
         }
+        val binaryLibraryKinds = mapOf(
+            "Static" to binaryLibraryKind("STATIC"),
+            "Dynamic" to binaryLibraryKind("DYNAMIC"),
+        )
+        val frontendFlags = mapOf(
+            "Classic" to arrayOf(),
+            "Fir" to frontendFir(),
+        )
         // C Export
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeCExportDynamicTest>(
-                suiteTestClassName = "CExportTestDynamicGenerated"
-            ) {
-                model("CExport", pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeCExportDynamicTest>(
-                suiteTestClassName = "FirCExportTestDynamicGenerated",
-                annotations = listOf(
-                    *frontendFir()
-                ),
-            ) {
-                model("CExport", pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeCExportStaticTest>(
-                suiteTestClassName = "CExportTestStaticGenerated"
-            ) {
-                model("CExport", pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeCExportStaticTest>(
-                suiteTestClassName = "FirCExportTestStaticGenerated",
-                annotations = listOf(
-                    *frontendFir()
-                ),
-            ) {
-                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            val cinterfaceModes = mapOf(
+                "InterfaceV1" to cinterfaceMode("V1"),
+                "InterfaceNone" to cinterfaceMode("NONE")
+            )
+            binaryLibraryKinds.forEach { binaryKind ->
+                frontendFlags.forEach { frontend ->
+                    cinterfaceModes.forEach { cinterfaceMode ->
+                        val frontendKey = if (frontend.key == "Classic") "" else frontend.key
+                        val suiteTestClassName = "${frontendKey}CExport${binaryKind.key}${cinterfaceMode.key}TestGenerated"
+                        testClass<AbstractNativeCExportTest>(
+                            suiteTestClassName,
+                            annotations = listOf(
+                                binaryKind.value,
+                                cinterfaceMode.value,
+                                *frontend.value
+                            )
+                        ) {
+                            model("CExport/${cinterfaceMode.key}", pattern = "^([^_](.+))$", recursive = false)
+                        }
+                    }
+                }
             }
         }
         // Swift Export
@@ -512,6 +524,72 @@ fun main() {
                 suiteTestClassName = "SwiftExportTestGenerated",
             ) {
                 model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+        // Stress tests
+        testGroup("native/native.tests/stress/tests-gen", "native/native.tests/stress/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "NativeStressTestGenerated",
+                annotations = listOf(
+                    *stress(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                )
+            ) {
+                model("")
+            }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirNativeStressTestGenerated",
+                annotations = listOf(
+                    *stress(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    *frontendFir(),
+                )
+            ) {
+                model("")
+            }
+        }
+        // GC tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "NativeGCTestGenerated",
+                annotations = listOf(
+                    *gc(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                )
+            ) {
+                model("gc")
+            }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirNativeGCTestGenerated",
+                annotations = listOf(
+                    *gc(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    *frontendFir(),
+                )
+            ) {
+                model("gc")
+            }
+        }
+        // Test runner tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "NativeTestRunnerTestGenerated",
+                annotations = listOf(
+                    *testRunner(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                )
+            ) {
+                model("testRunner")
+            }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirNativeTestRunnerTestGenerated",
+                annotations = listOf(
+                    *testRunner(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    *frontendFir(),
+                )
+            ) {
+                model("testRunner")
             }
         }
     }
@@ -551,11 +629,13 @@ private fun frontendFir() = arrayOf(
     annotation(FirPipeline::class.java)
 )
 
+private fun klib() = annotation(Tag::class.java, "klib")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
-private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
-private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
-private fun atomicfuNative() = annotation(Tag::class.java, "atomicfu-native")
+private fun atomicfuNative() = arrayOf(
+    annotation(Tag::class.java, "atomicfu-native"),
+    annotation(EnforcedHostTarget::class.java), // TODO(KT-65977): Make atomicfu tests run on all targets.
+)
 private fun standalone() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
@@ -563,4 +643,28 @@ private fun standalone() = arrayOf(
         "property" to ClassLevelProperty.TEST_KIND,
         "propertyValue" to "STANDALONE_NO_TR"
     )
+)
+private fun binaryLibraryKind(kind: String = "DYNAMIC") = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.BINARY_LIBRARY_KIND,
+    "propertyValue" to kind
+)
+private fun cinterfaceMode(mode: String = "V1") = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.C_INTERFACE_MODE,
+    "propertyValue" to mode
+)
+private fun gc() = arrayOf(
+    annotation(Tag::class.java, "gc"),
+)
+private fun stress() = arrayOf(
+    annotation(Tag::class.java, "stress"),
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
+        "propertyValue" to "5m"
+    )
+)
+private fun testRunner() = arrayOf(
+    annotation(Tag::class.java, "testRunner"),
 )

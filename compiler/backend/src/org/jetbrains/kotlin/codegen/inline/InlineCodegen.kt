@@ -98,12 +98,15 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         val info = RootInliningContext(
             state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
-            sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
+            sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings,
+            codegen.inlineScopesGenerator
         )
 
         val sourceMapper = sourceCompiler.sourceMapper
         val sourceInfo = sourceMapper.sourceInfo!!
-        val callSite = SourcePosition(codegen.lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
+        val lastLineNumber = codegen.lastLineNumber
+        val callSite = SourcePosition(lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
+        info.inlineScopesGenerator?.apply { currentCallSiteLineNumber = lastLineNumber }
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), sourceCompiler.isCallInsideSameModuleAsCallee,
             { "Method inlining " + sourceCompiler.callElementText },

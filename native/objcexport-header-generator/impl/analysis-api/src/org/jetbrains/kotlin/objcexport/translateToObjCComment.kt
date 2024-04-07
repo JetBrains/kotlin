@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.renderAsSourceCode
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
@@ -19,7 +21,9 @@ import org.jetbrains.kotlin.backend.konan.objcexport.plus
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.effectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isSuspend
 
 
 context(KtAnalysisSession)
@@ -36,10 +40,8 @@ internal fun KtAnnotationsList.translateToObjCComment(): ObjCComment? {
  */
 context(KtAnalysisSession)
 internal fun KtFunctionLikeSymbol.translateToObjCComment(bridge: MethodBridge, parameters: List<ObjCParameter>): ObjCComment? {
-    val isSuspend: Boolean = if (this is KtFunctionSymbol) this.isSuspend else false
-
     val throwsComments = if (isSuspend || bridge.returnsError) {
-        val effectiveThrows = getEffectiveThrows(this).toSet()
+        val effectiveThrows = effectiveThrows.toSet()
         when {
             effectiveThrows.contains(StandardClassIds.Throwable) -> {
                 listOf("@note This method converts all Kotlin exceptions to errors.")
@@ -66,7 +68,7 @@ internal fun KtFunctionLikeSymbol.translateToObjCComment(bridge: MethodBridge, p
     val visibilityComments = buildObjCVisibilityComment("method")
 
     val paramComments = valueParameters.mapNotNull { parameterSymbol ->
-        parameters.find { parameter -> parameter.origin?.name == parameterSymbol.name }
+        parameters.find { parameter -> parameter.name == parameterSymbol.name.asString() }
             ?.renderedObjCDocumentedParamAnnotations(parameterSymbol)
     }
     val annotationsComments = annotationsList.translateToObjCComment()
@@ -103,14 +105,6 @@ private fun renderAnnotation(clazz: ClassId, arguments: List<KtNamedAnnotationVa
 
 private fun KtNamedAnnotationValue.render(): String {
     return "$name=${expression.renderAsSourceCode()}"
-}
-
-/**
- * Not implemented [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.getEffectiveThrows]
- */
-@Suppress("UNUSED_PARAMETER")
-private fun getEffectiveThrows(method: KtFunctionLikeSymbol): Sequence<ClassId> {
-    return emptySequence()
 }
 
 /**

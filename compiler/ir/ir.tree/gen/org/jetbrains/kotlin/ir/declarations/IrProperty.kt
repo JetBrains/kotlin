@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.property]
  */
 abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrOverridableDeclaration<IrPropertySymbol>, IrMetadataSourceOwner, IrAttributeContainer, IrMemberWithContainerSource {
@@ -24,6 +22,8 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
     abstract override val descriptor: PropertyDescriptor
 
     abstract override val symbol: IrPropertySymbol
+
+    abstract override var overriddenSymbols: List<IrPropertySymbol>
 
     abstract var isVar: Boolean
 

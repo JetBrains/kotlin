@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.sir.bridge;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,6 +21,12 @@ public class SirCompilerBridgeTestGenerated extends AbstractKotlinSirBridgeTest 
   @Test
   public void testAllFilesPresentInTestData() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/sir-compiler-bridge/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
+
+  @Test
+  @TestMetadata("class_types")
+  public void testClass_types() {
+    runTest("native/swift/sir-compiler-bridge/testData/class_types/");
   }
 
   @Test

@@ -50,11 +50,11 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.PrintWriter
 import java.io.StringWriter
 import kotlin.math.max
-import kotlin.math.min
 
 const val GENERATE_SMAP = true
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
+const val INLINE_SCOPE_NUMBER_SEPARATOR = '\\'
 
 internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
 const val SPECIAL_TRANSFORMATION_NAME = "\$special"
@@ -103,28 +103,18 @@ internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossin
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
-    return node?.let{
-        val (first, last) = listOfNotNull(it).lineNumberRange()
-        SMAPAndMethodNode(it, SMAPParser.parseOrCreateDefault(sourceMap, sourceFile, classType.internalName, first, last))
+    return node?.let {
+        val parsedSourceMap = sourceMap?.let(SMAPParser::parseOrNull)
+            ?: SMAP.identityMapping(sourceFile, classType.internalName, listOfNotNull(it))
+        SMAPAndMethodNode(it, parsedSourceMap)
     }
 }
 
 internal fun getMethodNode(classData: ByteArray, classType: Type, method: Method): SMAPAndMethodNode? =
     getMethodNode(classData, classType) { it == method }
 
-internal fun Collection<MethodNode>.lineNumberRange(): Pair<Int, Int> {
-    var minLine = Int.MAX_VALUE
-    var maxLine = Int.MIN_VALUE
-    for (node in this) {
-        for (insn in node.instructions.asSequence()) {
-            if (insn is LineNumberNode) {
-                minLine = min(minLine, insn.line)
-                maxLine = max(maxLine, insn.line)
-            }
-        }
-    }
-    return minLine to maxLine
-}
+fun argumentsSize(descriptor: String, isStatic: Boolean): Int =
+    (Type.getArgumentsAndReturnSizes(descriptor) shr 2) - (if (isStatic) 1 else 0)
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
     return VirtualFileFinder.getInstance(state.project, state.module).findVirtualFileWithHeader(classId)

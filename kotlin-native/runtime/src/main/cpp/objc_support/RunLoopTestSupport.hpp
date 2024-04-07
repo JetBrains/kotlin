@@ -9,9 +9,9 @@
 
 #include <condition_variable>
 #include <mutex>
-#include <CoreFoundation/CFRunLoop.h>
+#include <CoreFoundation/CoreFoundation.h>
 
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "Utils.hpp"
 #include "objc_support/ObjectPtr.hpp"
 

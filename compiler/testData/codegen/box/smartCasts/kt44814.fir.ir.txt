@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirLightSourceElement
     PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
       overridden:
-        public abstract lighterASTNode: <root>.LighterASTNode
+        public abstract lighterASTNode: <root>.LighterASTNode declared in <root>.FirSourceElement
       FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'lighterASTNode: <root>.LighterASTNode declared in <root>.FirLightSourceElement.<init>' type=<root>.LighterASTNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/kt44814.kt
               receiver: GET_VAR '<this>: <root>.FirLightSourceElement declared in <root>.FirLightSourceElement.<get-lighterASTNode>' type=<root>.FirLightSourceElement origin=null
     PROPERTY name:treeStructure visibility:public modality:OPEN [val]
       overridden:
-        public abstract treeStructure: <root>.FlyweightCapableTreeStructure
+        public abstract treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirSourceElement
       FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/kt44814.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final node: Node of <root>.FirModifier
+          public final node: Node of <root>.FirModifier declared in <root>.FirModifier
         FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.LighterASTNode>) returnType:<root>.LighterASTNode [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -143,7 +143,7 @@ FILE fqName:<root> fileName:/kt44814.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.LighterASTNode>
       PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final token: <root>.KtModifierKeywordToken
+          public final token: <root>.KtModifierKeywordToken declared in <root>.FirModifier
         FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.LighterASTNode>) returnType:<root>.KtModifierKeywordToken [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -175,7 +175,7 @@ FILE fqName:<root> fileName:/kt44814.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final node: Node of <root>.FirModifier
+          public final node: Node of <root>.FirModifier declared in <root>.FirModifier
         FUN FAKE_OVERRIDE name:<get-node> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.ASTNode>) returnType:<root>.ASTNode [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:node visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -183,7 +183,7 @@ FILE fqName:<root> fileName:/kt44814.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<<root>.ASTNode>
       PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final token: <root>.KtModifierKeywordToken
+          public final token: <root>.KtModifierKeywordToken declared in <root>.FirModifier
         FUN FAKE_OVERRIDE name:<get-token> visibility:public modality:FINAL <> ($this:<root>.FirModifier<<root>.ASTNode>) returnType:<root>.KtModifierKeywordToken [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:token visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -270,7 +270,7 @@ FILE fqName:<root> fileName:/kt44814.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>>
+          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>> declared in <root>.FirModifierList
         FUN FAKE_OVERRIDE name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>> [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -309,7 +309,7 @@ FILE fqName:<root> fileName:/kt44814.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>>
+          public final modifiers: kotlin.collections.List<<root>.FirModifier<*>> declared in <root>.FirModifierList
         FUN FAKE_OVERRIDE name:<get-modifiers> visibility:public modality:FINAL <> ($this:<root>.FirModifierList) returnType:kotlin.collections.List<<root>.FirModifier<*>> [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:modifiers visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -498,7 +498,7 @@ FILE fqName:<root> fileName:/kt44814.kt
               receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-psi>' type=<root>.FirPsiSourceElement origin=null
     PROPERTY name:lighterASTNode visibility:public modality:OPEN [val]
       overridden:
-        public abstract lighterASTNode: <root>.LighterASTNode
+        public abstract lighterASTNode: <root>.LighterASTNode declared in <root>.FirSourceElement
       FIELD PROPERTY_BACKING_FIELD name:lighterASTNode type:<root>.LighterASTNode visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'lighterASTNode: <root>.LighterASTNode declared in <root>.FirPsiSourceElement.<init>' type=<root>.LighterASTNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -513,7 +513,7 @@ FILE fqName:<root> fileName:/kt44814.kt
               receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-lighterASTNode>' type=<root>.FirPsiSourceElement origin=null
     PROPERTY name:treeStructure visibility:public modality:OPEN [val]
       overridden:
-        public abstract treeStructure: <root>.FlyweightCapableTreeStructure
+        public abstract treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirSourceElement
       FIELD PROPERTY_BACKING_FIELD name:treeStructure type:<root>.FlyweightCapableTreeStructure visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'treeStructure: <root>.FlyweightCapableTreeStructure declared in <root>.FirPsiSourceElement.<init>' type=<root>.FlyweightCapableTreeStructure origin=INITIALIZE_PROPERTY_FROM_PARAMETER

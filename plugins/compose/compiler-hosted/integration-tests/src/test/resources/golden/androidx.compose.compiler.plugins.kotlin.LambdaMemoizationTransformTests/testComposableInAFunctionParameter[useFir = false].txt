@@ -1,0 +1,64 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun Test(enabled: Boolean, content: @Composable () -> Unit = {
+        Display("$enabled")
+    }
+) {
+    Wrap(content)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)P(1)<{>,<Wrap(c...>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(enabled)) 0b0100 else 0b0010
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b01110000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
+    if (%default and 0b0010 != 0) {
+      content = rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+        sourceInformation(%composer, "C<Displa...>:Test.kt")
+        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          Display("%enabled", %composer, 0)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+        } else {
+          %composer.skipToGroupEnd()
+        }
+      }, %composer, 0b00110110)
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Wrap(content, %composer, 0b1110 and %dirty shr 0b0011)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(enabled, content, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

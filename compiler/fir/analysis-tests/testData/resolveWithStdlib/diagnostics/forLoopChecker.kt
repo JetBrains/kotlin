@@ -105,7 +105,7 @@ fun test(
     for (i in notRange6);
     for (i in <!CONDITION_TYPE_MISMATCH!>notRange7<!>);
     for (i in <!HAS_NEXT_MISSING!>notRange8<!>);
-    for (i in <!OPERATOR_MODIFIER_REQUIRED, OPERATOR_MODIFIER_REQUIRED, OPERATOR_MODIFIER_REQUIRED!>notRange9<!>);
+    for (i in <!OPERATOR_MODIFIER_REQUIRED!>notRange9<!>);
     for (i in range0);
     for (i in range1);
 }

@@ -28,7 +28,3 @@ sourceSets {
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-}

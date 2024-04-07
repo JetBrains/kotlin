@@ -28,7 +28,7 @@ fun main() {
 ```
 
 This leads to inconsistency on which version would be called in which cases. 
-This code already emits a warning (or error if there is reified type paramter), 
+This code already emits a warning (or error if there is reified type parameter), 
 so we are fine with this behaviour.
 
 On the other side, there is a trickier case with the same effect, which doesn't emit any warnings.

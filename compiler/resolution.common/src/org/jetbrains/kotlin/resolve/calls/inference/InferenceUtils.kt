@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.extractProjectionsForAllCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.model.*
@@ -79,5 +80,29 @@ fun NewConstraintSystemImpl.registerTypeVariableIfNotPresent(
     val builder = getBuilder()
     if (typeVariable.freshTypeConstructor(this) !in builder.currentStorage().allTypeVariables.keys) {
         builder.registerVariable(typeVariable)
+    }
+}
+
+fun TypeSystemInferenceExtensionContext.extractAllContainingTypeVariables(type: KotlinTypeMarker): Set<TypeConstructorMarker> = buildSet {
+    extractAllContainingTypeVariablesNoCaptureTypeProcessing(type, this)
+
+    val typeProjections = extractProjectionsForAllCapturedTypes(type)
+
+    typeProjections.forEach { typeProjectionsType ->
+        extractAllContainingTypeVariablesNoCaptureTypeProcessing(typeProjectionsType, this)
+    }
+}
+
+private fun TypeSystemInferenceExtensionContext.extractAllContainingTypeVariablesNoCaptureTypeProcessing(
+    type: KotlinTypeMarker,
+    result: MutableSet<TypeConstructorMarker>
+) {
+    type.contains { nestedType ->
+        nestedType.typeConstructor().unwrapStubTypeVariableConstructor().let { nestedTypeConstructor ->
+            if (nestedTypeConstructor.isTypeVariable()) {
+                result.add(nestedTypeConstructor)
+            }
+        }
+        false
     }
 }

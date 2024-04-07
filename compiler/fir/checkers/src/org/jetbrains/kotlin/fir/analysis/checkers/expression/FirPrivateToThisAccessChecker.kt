@@ -38,7 +38,8 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
             // If there was a visibility diagnostic, no need to report another one about visibility
             when (reference.diagnostic) {
                 is ConeVisibilityError,
-                is ConeSetterVisibilityError -> return
+                is ConeSetterVisibilityError
+                -> return
             }
         }
         val dispatchReceiver = expression.dispatchReceiver ?: return
@@ -140,19 +141,10 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
             }
             is ConeIntegerConstantOperatorType,
             is ConeIntegerLiteralConstantType,
-            is ConeStubTypeForChainInference,
             is ConeStubTypeForTypeVariableInSubtyping,
             is ConeTypeVariableType,
             -> return false
         }
         return false
     }
-
-    private val ConeTypeProjection.variance: Variance
-        get() = when (this.kind) {
-            ProjectionKind.STAR -> Variance.OUT_VARIANCE
-            ProjectionKind.IN -> Variance.IN_VARIANCE
-            ProjectionKind.OUT -> Variance.OUT_VARIANCE
-            ProjectionKind.INVARIANT -> Variance.INVARIANT
-        }
 }

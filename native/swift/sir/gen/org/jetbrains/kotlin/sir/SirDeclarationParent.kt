@@ -11,4 +11,4 @@ package org.jetbrains.kotlin.sir
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.declarationParent]
  */
-sealed class SirDeclarationParent : SirElementBase(), SirElement
+sealed interface SirDeclarationParent : SirElement

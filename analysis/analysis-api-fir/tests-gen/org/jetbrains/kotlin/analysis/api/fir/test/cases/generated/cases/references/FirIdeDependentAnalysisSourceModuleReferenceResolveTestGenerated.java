@@ -53,6 +53,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
   }
 
   @Test
+  @TestMetadata("AnnotationFromJava.kt")
+  public void testAnnotationFromJava() {
+    runTest("analysis/analysis-api/testData/referenceResolve/AnnotationFromJava.kt");
+  }
+
+  @Test
   @TestMetadata("AnnotationInsideFunction.kt")
   public void testAnnotationInsideFunction() {
     runTest("analysis/analysis-api/testData/referenceResolve/AnnotationInsideFunction.kt");
@@ -671,6 +677,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
   }
 
   @Test
+  @TestMetadata("UnresolvedCallArgument.kt")
+  public void testUnresolvedCallArgument() {
+    runTest("analysis/analysis-api/testData/referenceResolve/UnresolvedCallArgument.kt");
+  }
+
+  @Test
   @TestMetadata("ValueParameter.kt")
   public void testValueParameter() {
     runTest("analysis/analysis-api/testData/referenceResolve/ValueParameter.kt");
@@ -836,6 +848,18 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
       @Test
       public void testAllFilesPresentInExpressionCodeFragment() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("ArrayAssignmentOperator.kt")
+      public void testArrayAssignmentOperator() {
+        runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/ArrayAssignmentOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("ArrayPlusAssignmentOperator.kt")
+      public void testArrayPlusAssignmentOperator() {
+        runTest("analysis/analysis-api/testData/referenceResolve/codeFragment/expressionCodeFragment/ArrayPlusAssignmentOperator.kt");
       }
 
       @Test
@@ -1797,6 +1821,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
       }
 
       @Test
+      @TestMetadata("NoSyntheticFieldInClass.kt")
+      public void testNoSyntheticFieldInClass() {
+        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/NoSyntheticFieldInClass.kt");
+      }
+
+      @Test
       @TestMetadata("StaticFieldQualified.kt")
       public void testStaticFieldQualified() {
         runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFieldQualified.kt");
@@ -1830,6 +1860,24 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
       @TestMetadata("StaticFunctionQualifiedWithKotlinSubclass.kt")
       public void testStaticFunctionQualifiedWithKotlinSubclass() {
         runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFunctionQualifiedWithKotlinSubclass.kt");
+      }
+
+      @Test
+      @TestMetadata("SyntheticFieldInAnnotationInterface.kt")
+      public void testSyntheticFieldInAnnotationInterface() {
+        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/SyntheticFieldInAnnotationInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("SyntheticFieldInClass.kt")
+      public void testSyntheticFieldInClass() {
+        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/SyntheticFieldInClass.kt");
+      }
+
+      @Test
+      @TestMetadata("SyntheticPropertyInKotlinSubclass.kt")
+      public void testSyntheticPropertyInKotlinSubclass() {
+        runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/SyntheticPropertyInKotlinSubclass.kt");
       }
     }
 
@@ -2005,6 +2053,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
         @Test
         public void testAllFilesPresentInCallables() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("callableFromTypealias.kt")
+        public void testCallableFromTypealias() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/callableFromTypealias.kt");
         }
 
         @Test
@@ -2330,6 +2384,18 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
         public void testTopLevelFunctionFromStdlibByShortName() {
           runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile/TopLevelFunctionFromStdlibByShortName.kt");
         }
+
+        @Test
+        @TestMetadata("TypealiasFromOtherFileByFullName.kt")
+        public void testTypealiasFromOtherFileByFullName() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile/TypealiasFromOtherFileByFullName.kt");
+        }
+
+        @Test
+        @TestMetadata("TypealiasFromOtherFileByShortName.kt")
+        public void testTypealiasFromOtherFileByShortName() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/fromOtherFile/TypealiasFromOtherFileByShortName.kt");
+        }
       }
 
       @Nested
@@ -2375,6 +2441,18 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
         @TestMetadata("TopLevelFunctionFromStdlibByShortName.kt")
         public void testTopLevelFunctionFromStdlibByShortName() {
           runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/TopLevelFunctionFromStdlibByShortName.kt");
+        }
+
+        @Test
+        @TestMetadata("TypealiasFromStdlibByFullName.kt")
+        public void testTypealiasFromStdlibByFullName() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/TypealiasFromStdlibByFullName.kt");
+        }
+
+        @Test
+        @TestMetadata("TypealiasFromStdlibByShortName.kt")
+        public void testTypealiasFromStdlibByShortName() {
+          runTest("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/TypealiasFromStdlibByShortName.kt");
         }
       }
     }

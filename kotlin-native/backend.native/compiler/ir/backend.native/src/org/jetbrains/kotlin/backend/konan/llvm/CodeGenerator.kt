@@ -1281,15 +1281,11 @@ internal abstract class FunctionGenerationContext(
     fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
         val typeInfoOrMetaPtr = structGep(runtime.objHeaderType, objPtr, 0  /* typeInfoOrMeta_ */)
 
-        val memoryOrder = if (context.config.targetHasAddressDependency) {
-            /**
-             * Formally, this ordering is too weak, and doesn't prevent data race with installing extra object.
-             * Check comment in ObjHeader::type_info for details.
-             */
-            LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic
-        } else {
-            LLVMAtomicOrdering.LLVMAtomicOrderingAcquire
-        }
+        /**
+         * Formally, this ordering is too weak, and doesn't prevent data race with installing extra object.
+         * Check comment in ObjHeader::type_info for details.
+         */
+        val memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic
 
         // TODO: Get rid of the bitcast here by supplying the type in the GEP above.
         val typeInfoOrMetaPtrRaw = bitcast(pointerType(codegen.intPtrType), typeInfoOrMetaPtr)

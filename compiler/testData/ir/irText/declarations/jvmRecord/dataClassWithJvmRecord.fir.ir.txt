@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
             name: GET_VAR 'name: kotlin.String declared in <root>.MyRec.copy' type=kotlin.String origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.MyRec, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        public abstract fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.lang.Record
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.MyRec) returnType:kotlin.Int
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public abstract fun hashCode (): kotlin.Int declared in java.lang.Record
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.MyRec'
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
               receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.hashCode' type=<root>.MyRec origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.MyRec) returnType:kotlin.String
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public abstract fun toString (): @[EnhancedNullability] kotlin.String declared in java.lang.Record
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.MyRec'

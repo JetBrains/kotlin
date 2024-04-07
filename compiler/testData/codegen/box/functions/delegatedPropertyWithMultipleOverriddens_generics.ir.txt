@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
       overridden:
-        public abstract bar: E3 of <root>.MyMutableCollection
+        public abstract bar: E3 of <root>.MyMutableCollection declared in <root>.MyMutableCollection
       FUN DELEGATED_MEMBER name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.MC) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
         overridden:
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
       $this: VALUE_PARAMETER name:<this> type:<root>.MyAbstractCollection<E5 of <root>.MyAbstractCollection>
     PROPERTY name:bar visibility:public modality:ABSTRACT [val]
       overridden:
-        public abstract bar: E1 of <root>.MyCollection
+        public abstract bar: E1 of <root>.MyCollection declared in <root>.MyCollection
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyAbstractCollection<E5 of <root>.MyAbstractCollection>) returnType:E5 of <root>.MyAbstractCollection
         correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT [val]
         overridden:
@@ -81,8 +81,8 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
     TYPE_PARAMETER name:E6 index:0 variance: superTypes:[kotlin.Any?] reified:false
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
-        public abstract bar: E4 of <root>.MyMutableList
-        public abstract bar: E5 of <root>.MyAbstractCollection
+        public abstract bar: E4 of <root>.MyMutableList declared in <root>.MyMutableList
+        public abstract bar: E5 of <root>.MyAbstractCollection declared in <root>.MyAbstractCollection
       FIELD PROPERTY_BACKING_FIELD name:bar type:E6 of <root>.MyArrayList visibility:private [final]
         EXPRESSION_BODY
           TYPE_OP type=E6 of <root>.MyArrayList origin=CAST typeOperand=E6 of <root>.MyArrayList
@@ -171,7 +171,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
       $this: VALUE_PARAMETER name:<this> type:<root>.MyList<E2 of <root>.MyList>
     PROPERTY name:bar visibility:public modality:ABSTRACT [val]
       overridden:
-        public abstract bar: E1 of <root>.MyCollection
+        public abstract bar: E1 of <root>.MyCollection declared in <root>.MyCollection
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyList<E2 of <root>.MyList>) returnType:E2 of <root>.MyList
         correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT [val]
         overridden:
@@ -199,7 +199,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract bar: E1 of <root>.MyCollection
+        public abstract bar: E1 of <root>.MyCollection declared in <root>.MyCollection
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyCollection<E3 of <root>.MyMutableCollection>) returnType:E3 of <root>.MyMutableCollection [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
@@ -231,8 +231,8 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract bar: E2 of <root>.MyList
-        public abstract bar: E3 of <root>.MyMutableCollection
+        public abstract bar: E2 of <root>.MyList declared in <root>.MyList
+        public abstract bar: E3 of <root>.MyMutableCollection declared in <root>.MyMutableCollection
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.MyList<E4 of <root>.MyMutableList>) returnType:E4 of <root>.MyMutableList [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
         overridden:

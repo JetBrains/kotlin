@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,22 +7,19 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.fir.declarations.FirFile
 
-internal class FileStructureElementDiagnostics(
-    private val firFile: FirFile,
-    private val retriever: FileStructureElementDiagnosticRetriever,
-    private val moduleComponents: LLFirModuleResolveComponents,
-) {
+/**
+ * @see FileStructureElementDiagnosticsCollector
+ */
+internal class FileStructureElementDiagnostics(private val retriever: FileStructureElementDiagnosticRetriever) {
     private val diagnosticByCommonCheckers: FileStructureElementDiagnosticList by lazy {
-        retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR, moduleComponents)
+        retriever.retrieve(FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR)
     }
 
     private val diagnosticByExtendedCheckers: FileStructureElementDiagnosticList by lazy {
-        retriever.retrieve(firFile, FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR, moduleComponents)
+        retriever.retrieve(FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR)
     }
 
     fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =

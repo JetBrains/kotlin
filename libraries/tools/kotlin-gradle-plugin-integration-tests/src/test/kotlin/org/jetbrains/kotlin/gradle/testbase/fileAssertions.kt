@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import java.lang.StringBuilder
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
@@ -18,6 +17,7 @@ import kotlin.io.path.readText
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.asserter
+import kotlin.test.fail
 
 /**
  * Asserts file under [file] path exists and is a regular file.
@@ -357,4 +357,21 @@ fun Path.assertZipArchiveContainsFilesOnce(
             }
         }
     }
+}
+
+fun Path.allZipEntries() = ZipFile(toFile()).use { zip -> zip.entries().asSequence().map { it.name }.toSet() }
+
+fun Path.assertZipFileContains(entries: Iterable<String>) {
+    assertFileExists(this)
+    val actualEntries = allZipEntries()
+    val missingEntries = entries - actualEntries
+    if (missingEntries.isEmpty()) return
+    val failureMessage = buildString {
+        appendLine("Following entries are missing in '${this@assertZipFileContains}'")
+        missingEntries.forEach { appendLine("  * $it") }
+        appendLine()
+        appendLine("Actual entries:")
+        actualEntries.forEach { appendLine("  * $it") }
+    }
+    fail(failureMessage)
 }

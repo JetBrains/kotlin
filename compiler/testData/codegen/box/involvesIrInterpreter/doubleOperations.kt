@@ -16,14 +16,19 @@ const val longVal = <!EVALUATED("2")!>2L<!>
 const val floatVal = <!EVALUATED("2.0")!>2.0f<!>
 const val doubleVal = <!EVALUATED("2.0")!>2.0<!>
 
-const val compareTo1 = oneVal.<!EVALUATED("-1")!>compareTo(twoVal)<!>
-const val compareTo2 = twoVal.<!EVALUATED("0")!>compareTo(twoVal)<!>
-const val compareTo3 = threeVal.<!EVALUATED("1")!>compareTo(twoVal)<!>
-const val compareTo4 = twoVal.<!EVALUATED("0")!>compareTo(byteVal)<!>
-const val compareTo5 = twoVal.<!EVALUATED("0")!>compareTo(shortVal)<!>
-const val compareTo6 = twoVal.<!EVALUATED("0")!>compareTo(intVal)<!>
-const val compareTo7 = twoVal.<!EVALUATED("0")!>compareTo(longVal)<!>
-const val compareTo8 = twoVal.<!EVALUATED("0")!>compareTo(floatVal)<!>
+const val funCompareTo1 = oneVal.<!EVALUATED("-1")!>compareTo(twoVal)<!>
+const val funCompareTo2 = twoVal.<!EVALUATED("0")!>compareTo(twoVal)<!>
+const val funCompareTo3 = threeVal.<!EVALUATED("1")!>compareTo(twoVal)<!>
+const val funCompareTo4 = twoVal.<!EVALUATED("0")!>compareTo(byteVal)<!>
+const val funCompareTo5 = twoVal.<!EVALUATED("0")!>compareTo(shortVal)<!>
+const val funCompareTo6 = twoVal.<!EVALUATED("0")!>compareTo(intVal)<!>
+const val funCompareTo7 = twoVal.<!EVALUATED("0")!>compareTo(longVal)<!>
+const val funCompareTo8 = twoVal.<!EVALUATED("0")!>compareTo(floatVal)<!>
+
+const val singCompareTo1 = <!EVALUATED("false")!>oneVal >= twoVal<!>
+const val singCompareTo2 = <!EVALUATED("false")!>twoVal > twoVal<!>
+const val singCompareTo3 = <!EVALUATED("false")!>threeVal <= twoVal<!>
+const val singCompareTo4 = <!EVALUATED("false")!>twoVal < byteVal<!>
 
 const val plus1 = oneVal.<!EVALUATED("3.0")!>plus(twoVal)<!>
 const val plus2 = twoVal.<!EVALUATED("4.0")!>plus(twoVal)<!>
@@ -88,14 +93,19 @@ const val equals4 = <!EVALUATED("false")!>fourVal == twoVal<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {
-    if (compareTo1.id() != -1)   return "Fail 1.1"
-    if (compareTo2.id() != 0)    return "Fail 1.2"
-    if (compareTo3.id() != 1)    return "Fail 1.3"
-    if (compareTo4.id() != 0)    return "Fail 1.4"
-    if (compareTo5.id() != 0)    return "Fail 1.5"
-    if (compareTo6.id() != 0)    return "Fail 1.6"
-    if (compareTo7.id() != 0)    return "Fail 1.7"
-    if (compareTo8.id() != 0)    return "Fail 1.8"
+    if (funCompareTo1.id() != -1)   return "Fail 1.1"
+    if (funCompareTo2.id() != 0)    return "Fail 1.2"
+    if (funCompareTo3.id() != 1)    return "Fail 1.3"
+    if (funCompareTo4.id() != 0)    return "Fail 1.4"
+    if (funCompareTo5.id() != 0)    return "Fail 1.5"
+    if (funCompareTo6.id() != 0)    return "Fail 1.6"
+    if (funCompareTo7.id() != 0)    return "Fail 1.7"
+    if (funCompareTo8.id() != 0)    return "Fail 1.8"
+
+    if (singCompareTo1.id() != false)    return "Fail 1.9"
+    if (singCompareTo2.id() != false)    return "Fail 1.10"
+    if (singCompareTo3.id() != false)    return "Fail 1.11"
+    if (singCompareTo4.id() != false)    return "Fail 1.12"
 
     if (plus1.id() != 3.0)      return "Fail 2.1"
     if (plus2.id() != 4.0)      return "Fail 2.2"

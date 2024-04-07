@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleRe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
@@ -21,28 +20,18 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationStatus
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.platformSupertypeUpdater
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 
 internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.SUPER_TYPES) {
-    override fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirSuperTypeTargetResolver(target, lockProvider, scopeSession)
-        resolver.resolveDesignation()
-    }
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirSuperTypeTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
@@ -59,17 +48,32 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
     }
 }
 
+/**
+ * This resolver is responsible for [SUPER_TYPES][FirResolvePhase.SUPER_TYPES] phase.
+ *
+ * This resolver:
+ * - Transforms all supertypes of classes.
+ * - Performs type aliases expansion.
+ * - Breaks loops in the type hierarchy if needed.
+ *
+ * Special rules:
+ * - First resolves outer classes to this phase.
+ * - Resolves all super types recursively.
+ * - [Searches][org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirSuperTypeTargetResolver.crawlSupertype]
+ *   super types not only in the declaration site session, but also in the call site session to resolve `expect` declaration first.
+ *
+ * @see FirSupertypeResolverVisitor
+ * @see FirResolvePhase.SUPER_TYPES
+ */
 private class LLFirSuperTypeTargetResolver(
     target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    private val scopeSession: ScopeSession,
     private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(target.session),
     private val visitedElements: MutableSet<FirElementWithResolveState> = hashSetOf(),
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.SUPER_TYPES, isJumpingPhase = false) {
+) : LLFirTargetResolver(target, FirResolvePhase.SUPER_TYPES) {
     private val supertypeResolver = object : FirSupertypeResolverVisitor(
         session = resolveTargetSession,
         supertypeComputationSession = supertypeComputationSession,
-        scopeSession = scopeSession,
+        scopeSession = resolveTargetScopeSession,
     ) {
         /**
          * We can do nothing here because at a call moment we've already resolved [outerClass]
@@ -113,7 +117,7 @@ private class LLFirSuperTypeTargetResolver(
                 resolver = { supertypeResolver.resolveSpecificClassLikeSupertypes(target, it) },
                 superTypeUpdater = {
                     target.replaceSuperTypeRefs(it)
-                    resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, scopeSession)
+                    resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, resolveTargetScopeSession)
                 },
             )
             is FirTypeAlias -> performResolve(
@@ -189,13 +193,11 @@ private class LLFirSuperTypeTargetResolver(
     private fun resolveToSupertypePhase(target: LLFirSingleResolveTarget) {
         LLFirSuperTypeTargetResolver(
             target = target,
-            lockProvider = lockProvider,
-            scopeSession = target.session.getScopeSession(),
             supertypeComputationSession = supertypeComputationSession,
             visitedElements = visitedElements,
         ).resolveDesignation()
 
-        LLFirLazyPhaseResolverByPhase.getByPhase(resolverPhase).checkIsResolved(target)
+        LLFirSupertypeLazyResolver.checkIsResolved(target.target)
     }
 
     /**

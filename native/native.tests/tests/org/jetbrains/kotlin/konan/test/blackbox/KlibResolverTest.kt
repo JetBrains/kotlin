@@ -102,8 +102,10 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             testKind = TestKind.STANDALONE_NO_TR,
             extras = TestCase.NoTestRunnerExtras("main"),
         )
+        // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
+        // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
         val executableResult =
-            compileToExecutable(testCase, klibResult.resultingArtifact.asLibraryDependency()).assertSuccess()
+            compileToExecutableInOneStage(testCase, klibResult.resultingArtifact.asLibraryDependency()).assertSuccess()
         val testExecutable = TestExecutable(
             executableResult.resultingArtifact,
             executableResult.loggedData,

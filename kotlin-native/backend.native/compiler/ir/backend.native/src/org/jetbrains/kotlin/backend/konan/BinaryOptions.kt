@@ -47,6 +47,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val concurrentWeakSweep by booleanOption()
 
+    val concurrentMarkMaxIterations by uintOption()
+
     val gcMutatorsCooperate by booleanOption()
 
     val auxGCThreads by uintOption()

@@ -17,7 +17,7 @@ FILE: nestedAnnotationConstExprArguments.kt
             public get(): R|InnerAnnotation|
 
     }
-    @R|OuterAnnotation|(inner = R|/InnerAnnotation.InnerAnnotation|(text = String(x).R|kotlin/String.plus|(String(x)))) public final class Payload : R|kotlin/Any| {
+    @R|OuterAnnotation|(inner = R|/InnerAnnotation.InnerAnnotation|(String(x).R|kotlin/String.plus|(String(x)))) public final class Payload : R|kotlin/Any| {
         public constructor(): R|Payload| {
             super<R|kotlin/Any|>()
         }
@@ -29,7 +29,7 @@ FILE: nestedAnnotationConstExprArguments.kt
         }
 
     }
-    @R|OuterAnnotation|(inner = R|/InnerAnnotation.InnerAnnotation|(text = String(x))) public final class Payload3 : R|kotlin/Any| {
+    @R|OuterAnnotation|(inner = R|/InnerAnnotation.InnerAnnotation|(String(x))) public final class Payload3 : R|kotlin/Any| {
         public constructor(): R|Payload3| {
             super<R|kotlin/Any|>()
         }

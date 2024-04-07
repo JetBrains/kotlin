@@ -1,6 +1,3 @@
-// IGNORE K2
-// ^ KT-63631 K2: constant value of UByte.MAX_VALUE is incorrectly serialized to metadata
-
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.TYPE)

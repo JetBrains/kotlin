@@ -75,7 +75,7 @@ fun Project.checkIdeDependencyConfiguration() {
         }
 
         val enabledExperimentalAnnotations =
-            ExperimentalAnnotationsCollector().getUsedExperimentalAnnotations(compileTask.kotlinOptions.freeCompilerArgs)
+            ExperimentalAnnotationsCollector().getUsedExperimentalAnnotations(compileTask.compilerOptions.freeCompilerArgs.get())
 
         check(enabledExperimentalAnnotations.isEmpty()) {
             "`$name` allows using experimental kotlin stdlib API marked with ${enabledExperimentalAnnotations.joinToString()}. " +

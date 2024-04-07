@@ -1,31 +1,31 @@
 @R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
-  context -> FirPropertySymbol <local>/$$result
+  context -> FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
-  context -> FirPropertySymbol <local>/$$result
+  context -> FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
-  context -> FirPropertySymbol <local>/$$result
+  context -> FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resultWithPropagatedType.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=foo/Anno.position] position: R|kotlin/String|): R|foo/Anno| {
@@ -46,4 +46,3 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol foo/explicitType]] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>|
-

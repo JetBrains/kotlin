@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.build.report.FileReportSettings
 import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportData
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
 import org.jetbrains.kotlin.jps.build.KotlinChunk
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
@@ -143,10 +144,13 @@ class JpsStatisticsReportServiceImpl(
         httpService?.sendData(compileStatisticsData, loggerAdapter)
         fileReportSettings?.also {
             JpsFileReportService(
-                it.buildReportDir, context.projectDescriptor.project.name, true, loggerAdapter, it.changedFileListPerLimit
+                it.buildReportDir, context.projectDescriptor.project.name, true, it.changedFileListPerLimit
             ).process(
-                compileStatisticsData,
-                BuildStartParameters(tasks = listOf(jpsBuildTaskName)), emptyList(),
+                ReadableFileReportData(
+                    compileStatisticsData,
+                    BuildStartParameters(tasks = listOf(jpsBuildTaskName)), emptyList()
+                ),
+                loggerAdapter
             )
         }
     }

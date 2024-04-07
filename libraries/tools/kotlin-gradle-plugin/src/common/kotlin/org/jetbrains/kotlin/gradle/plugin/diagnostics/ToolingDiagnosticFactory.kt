@@ -30,5 +30,11 @@ abstract class ToolingDiagnosticFactory(private val predefinedSeverity: ToolingD
         return ToolingDiagnostic(id, message, severity ?: predefinedSeverity!!, throwable)
     }
 
+    internal fun build(
+        severity: ToolingDiagnostic.Severity? = null,
+        throwable: Throwable? = null,
+        builder: StringBuilder.() -> Unit,
+    ) = build(buildString(builder), severity, throwable)
+
     protected fun String.onlyIf(condition: Boolean) = if (condition) this else ""
 }

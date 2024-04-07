@@ -12,7 +12,7 @@ class CompilationToolException(val reason: String) : Exception() {
     override fun toString() = "CompilationToolException: $reason"
 }
 
-internal sealed interface TestCompilationResult<A : TestCompilationArtifact> {
+sealed interface TestCompilationResult<A : TestCompilationArtifact> {
     sealed interface ImmediateResult<A : TestCompilationArtifact> : TestCompilationResult<A> {
         val loggedData: LoggedData
     }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -58,10 +57,10 @@ private fun FirFunction.invalidateBody(body: FirBlock): FirResolvePhase? {
 
     decreasePhase(newPhase)
     replaceBody(buildLazyBlock())
-    replaceControlFlowGraphReference(null)
+    replaceControlFlowGraphReference(newControlFlowGraphReference = null)
 
     if (this is FirContractDescriptionOwner) {
-        replaceContractDescription(FirEmptyContractDescription)
+        replaceContractDescription(newContractDescription = null)
     }
 
     return newPhase

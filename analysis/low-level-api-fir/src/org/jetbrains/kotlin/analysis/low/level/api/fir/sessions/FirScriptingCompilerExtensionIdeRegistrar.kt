@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptDefinitionProviderService
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResolutionConfigurationExtensionImpl
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
@@ -39,5 +40,6 @@ internal class FirScriptingCompilerExtensionIdeRegistrar(
         }
 
         +FirScriptConfiguratorExtensionImpl.getFactory(hostConfiguration)
+        +FirScriptResolutionConfigurationExtensionImpl.getFactory(hostConfiguration)
     }
 }

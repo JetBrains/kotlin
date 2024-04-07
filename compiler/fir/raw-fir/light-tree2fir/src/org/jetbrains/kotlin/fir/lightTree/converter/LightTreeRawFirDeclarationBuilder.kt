@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -76,7 +76,7 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         val fileSymbol = FirFileSymbol()
-        var fileAnnotationContainer: FirFileAnnotationsContainer? = null
+        var fileAnnotations = mutableListOf<FirAnnotation>()
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
         val modifierList = mutableListOf<LighterASTNode>()
@@ -84,7 +84,11 @@ class LightTreeRawFirDeclarationBuilder(
         var packageDirective: FirPackageDirective? = null
         file.forEachChildren { child ->
             when (child.tokenType) {
-                FILE_ANNOTATION_LIST -> fileAnnotationContainer = convertFileAnnotationsContainer(child, fileSymbol)
+                FILE_ANNOTATION_LIST -> {
+                    withContainerSymbol(fileSymbol) {
+                        fileAnnotations += convertAnnotationList(child)
+                    }
+                }
                 PACKAGE_DIRECTIVE -> {
                     packageDirective = convertPackageDirective(child).also { context.packageFqName = it.packageFqName }
                 }
@@ -115,7 +119,7 @@ class LightTreeRawFirDeclarationBuilder(
             this.sourceFile = sourceFile
             this.sourceFileLinesMapping = linesMapping
             this.packageDirective = packageDirective ?: buildPackageDirective { packageFqName = context.packageFqName }
-            annotationsContainer = fileAnnotationContainer
+            annotations += fileAnnotations
             imports += importList
             declarations += firDeclarationList
         }
@@ -135,7 +139,7 @@ class LightTreeRawFirDeclarationBuilder(
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
                 FUN -> container += convertFunctionDeclaration(node)
                 KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
-                DESTRUCTURING_DECLARATION -> container += convertDestructingDeclaration(node).toFirDestructingDeclaration(baseModuleData)
+                DESTRUCTURING_DECLARATION -> container += convertDestructingDeclaration(node).toFirDestructingDeclaration(this, baseModuleData)
                 TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
                 CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
                 else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
@@ -316,26 +320,6 @@ class LightTreeRawFirDeclarationBuilder(
     }
 
     /*****    ANNOTATIONS    *****/
-    /**
-     * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFileAnnotationList]
-     */
-    private fun convertFileAnnotationsContainer(
-        fileAnnotationList: LighterASTNode,
-        fileSymbol: FirFileSymbol
-    ): FirFileAnnotationsContainer {
-        return buildFileAnnotationsContainer {
-            moduleData = baseModuleData
-            source = fileAnnotationList.toFirSourceElement()
-            containingFileSymbol = fileSymbol
-            withContainerSymbol(fileSymbol) {
-                annotations += convertAnnotationList(fileAnnotationList)
-            }
-
-            annotations.ifEmpty {
-                resolvePhase = FirResolvePhase.BODY_RESOLVE
-            }
-        }
-    }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationOrList
@@ -679,7 +663,7 @@ class LightTreeRawFirDeclarationBuilder(
                     symbol = FirAnonymousObjectSymbol(context.packageFqName)
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
-                    val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
+                    val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
                     registerSelfType(delegatedSelfType)
 
                     var modifiers = Modifier()
@@ -1320,7 +1304,9 @@ class LightTreeRawFirDeclarationBuilder(
                     BACKING_FIELD -> fieldDeclaration = it
                     else -> if (it.isExpression()) {
                         context.calleeNamesForLambda += null
-                        propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                        propertyInitializer = withForcedLocalContext {
+                            expressionConverter.getAsFirExpression(it, "Should have initializer")
+                        }
                         context.calleeNamesForLambda.removeLast()
                     }
                 }

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -95,7 +94,7 @@ class SerializableIrGenerator(
                         }
                     }
                     it is IrAnonymousInitializer -> {
-                        val statements = it.body.deepCopyWithVariables().statements
+                        val statements = it.body.deepCopyWithoutPatchingParents().statements
                         statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
                             .addAll(statements)
                     }

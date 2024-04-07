@@ -1,0 +1,74 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test(s: String) {
+  remember<@Composable () -> Unit> { { Text(s) } }()
+  currentComposer.cache<@Composable () -> Unit>(false) { { Text(s) } }()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(s: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>,<rememb...>,<curren...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(s)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp0_group = %composer.cache(false) {
+      composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+        sourceInformation(%composer, "C<Text(s...>:Test.kt")
+        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          Text(s, %composer, 0)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+        } else {
+          %composer.skipToGroupEnd()
+        }
+      }
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp0_group(%composer, 6)
+    %composer.cache(false) {
+      composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+        sourceInformation(%composer, "C<Text(s...>:Test.kt")
+        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          Text(s, %composer, 0)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+        } else {
+          %composer.skipToGroupEnd()
+        }
+      }
+    }
+    (%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(s, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

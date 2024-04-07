@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
@@ -24,12 +25,12 @@ import org.jetbrains.kotlin.name.Name
 
 class FirAnnotationSerializer(
     private val session: FirSession,
+    private val scopeSession: ScopeSession,
     internal val stringTable: FirElementAwareStringTable,
     private val constValueProvider: ConstValueProvider?
 ) {
     fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation {
-        // TODO this logic can be significantly simplified if we will find the way to convert `IrAnnotation` to `AnnotationValue`
-        val annotationValue = annotation.toConstantValue<AnnotationValue>(session, constValueProvider)
+        val annotationValue = annotation.toConstantValue<AnnotationValue>(session, scopeSession, constValueProvider)
             ?: error("Cannot serialize annotation ${annotation.render()}")
         return serializeAnnotation(annotationValue)
     }

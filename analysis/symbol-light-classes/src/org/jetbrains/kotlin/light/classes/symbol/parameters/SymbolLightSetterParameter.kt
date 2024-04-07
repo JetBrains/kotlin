@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.analysis.api.annotations.SetterParameterAnnotationUs
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
@@ -56,13 +56,15 @@ internal class SymbolLightSetterParameter(
                         annotationUseSiteTargetFilter = SetterParameterAnnotationUseSiteTargetFilter,
                     ),
                 ),
-                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::nullabilityType),
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
             ),
         )
     }
 
-    override fun nullabilityType(): NullabilityType =
-        if (containingPropertySymbolPointer.withSymbol(ktModule) { it.isLateInit }) NullabilityType.NotNull else super.nullabilityType()
+    override fun typeNullability(): KtTypeNullability {
+        val isLateInit = containingPropertySymbolPointer.withSymbol(ktModule) { it.isLateInit }
+        return if (isLateInit) KtTypeNullability.NON_NULLABLE else super.typeNullability()
+    }
 
     override fun isDeclaredAsVararg(): Boolean = false
 

@@ -18,7 +18,7 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      is String -> 1
+      <!USELESS_IS_CHECK!>is String<!> -> 1
       <!USELESS_IS_CHECK!>!is Int<!> -> 1
       <!USELESS_IS_CHECK!>is Any?<!> -> 1
       <!USELESS_IS_CHECK!>is Any<!> -> 1

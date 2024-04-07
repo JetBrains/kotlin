@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.render
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMultiplatformSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
@@ -42,6 +43,11 @@ public interface KtRendererOtherModifiersProvider {
     public object ALL : KtRendererOtherModifiersProvider {
         context(KtAnalysisSession)
         override fun getOtherModifiers(symbol: KtDeclarationSymbol): List<KtModifierKeywordToken> = buildList {
+            if (symbol is KtPossibleMultiplatformSymbol) {
+                if (symbol.isActual) add(KtTokens.ACTUAL_KEYWORD)
+                if (symbol.isExpect) add(KtTokens.EXPECT_KEYWORD)
+            }
+
             if (symbol is KtFunctionSymbol) {
                 if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
                 if (symbol.isOverride) add(KtTokens.OVERRIDE_KEYWORD)

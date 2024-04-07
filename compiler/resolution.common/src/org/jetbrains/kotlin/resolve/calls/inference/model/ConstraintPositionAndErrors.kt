@@ -62,15 +62,6 @@ abstract class KnownTypeParameterConstraintPosition<T : KotlinTypeMarker>(val ty
     override fun toString(): String = "TypeArgument $typeArgument"
 }
 
-abstract class LHSArgumentConstraintPosition<T, R>(
-    val argument: T,
-    val receiver: R
-) : ConstraintPosition() {
-    override fun toString(): String {
-        return "LHS receiver $receiver"
-    }
-}
-
 abstract class LambdaArgumentConstraintPosition<T>(val lambda: T) : ConstraintPosition() {
     override fun toString(): String {
         return "LambdaArgument $lambda"

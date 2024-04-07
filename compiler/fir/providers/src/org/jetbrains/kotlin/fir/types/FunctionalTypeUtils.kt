@@ -59,6 +59,11 @@ fun ConeKotlinType.isBasicFunctionType(session: FirSession): Boolean {
     return isFunctionTypeWithPredicate(session) { it == FunctionTypeKind.Function }
 }
 
+// Function, SuspendFunction, KSuspendFunction, [Custom]Function, K[Custom]Function
+fun ConeKotlinType.isNonKFunctionType(session: FirSession): Boolean {
+    return isFunctionTypeWithPredicate(session) { it != FunctionTypeKind.KFunction }
+}
+
 // SuspendFunction, KSuspendFunction
 fun ConeKotlinType.isSuspendOrKSuspendFunctionType(session: FirSession): Boolean {
     return isFunctionTypeWithPredicate(session) {
@@ -108,11 +113,16 @@ fun ConeKotlinType.customFunctionTypeToSimpleFunctionType(session: FirSession): 
     return createFunctionTypeWithNewKind(session, newKind)
 }
 
-private fun ConeKotlinType.createFunctionTypeWithNewKind(session: FirSession, kind: FunctionTypeKind): ConeClassLikeType {
+fun ConeKotlinType.createFunctionTypeWithNewKind(
+    session: FirSession,
+    kind: FunctionTypeKind,
+    updateTypeArguments: (Array<out ConeTypeProjection>.() -> Array<out ConeTypeProjection>)? = null,
+): ConeClassLikeType {
     val expandedType = fullyExpandedType(session)
     val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArguments.size - 1))
+    val typeArguments = expandedType.typeArguments
     return functionTypeId.toLookupTag().constructClassType(
-        expandedType.typeArguments,
+        updateTypeArguments?.let { typeArguments.updateTypeArguments() } ?: typeArguments,
         isNullable = expandedType.isNullable,
         attributes = expandedType.attributes
     )

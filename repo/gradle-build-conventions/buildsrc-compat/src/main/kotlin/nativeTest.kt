@@ -28,6 +28,7 @@ private enum class TestProperty(shortName: String) {
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
     SHARED_TEST_EXECUTION("sharedTestExecution"),
+    EAGER_GROUP_CREATION("eagerGroupCreation"),
     TEAMCITY("teamcity");
 
     val fullName = "kotlin.internal.native.test.$shortName"
@@ -89,6 +90,7 @@ private fun Test.ComputedTestProperties(init: ComputedTestProperties.() -> Unit)
  *   along with Kotlin/Native stdlib KLIB and Kotlin/Native platform KLIBs (the latter only if [requirePlatformLibs] is `true`).
  * @param compilerPluginDependencies The [Configuration]s that provide compiler plugins to be enabled for the Kotlin/Native compiler
  *   for the duration of test execution.
+ * @param allowParallelExecution if false, force junit to execute test sequentially
  */
 fun Project.nativeTest(
     taskName: String,
@@ -97,6 +99,7 @@ fun Project.nativeTest(
     customCompilerDependencies: List<Configuration> = emptyList(),
     customTestDependencies: List<Configuration> = emptyList(),
     compilerPluginDependencies: List<Configuration> = emptyList(),
+    allowParallelExecution: Boolean = true,
     body: Test.() -> Unit = {},
 ) = projectTest(
     taskName,
@@ -122,7 +125,7 @@ fun Project.nativeTest(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
-        val availableCpuCores: Int = Runtime.getRuntime().availableProcessors()
+        val availableCpuCores: Int = if (allowParallelExecution) Runtime.getRuntime().availableProcessors() else 1
         if (!kotlinBuildProperties.isTeamcityBuild
             && minOf(kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: 16, availableCpuCores) > 4
         ) {
@@ -197,6 +200,7 @@ fun Project.nativeTest(
             compute(EXECUTION_TIMEOUT)
             compute(SANITIZER)
             compute(SHARED_TEST_EXECUTION)
+            compute(EAGER_GROUP_CREATION)
 
             // Pass whether tests are running at TeamCity.
             computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }
@@ -207,6 +211,10 @@ fun Project.nativeTest(
 
         useJUnitPlatform {
             tag?.let { includeTags(it) }
+        }
+
+        if (!allowParallelExecution) {
+            systemProperty("junit.jupiter.execution.parallel.enabled", "false")
         }
 
         doFirst {

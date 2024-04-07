@@ -108,6 +108,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass<[ResolvedTo(CONSTANT_EVALUATION)] Type> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(CONSTANT_EVALUATION)] Type>(): R|MyClass<Type>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type> : R|kotlin/Any| {

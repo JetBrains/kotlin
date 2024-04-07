@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
  * [IncludedLibrary] - similarly but included modules (-Xinclude).
  * Note: there cannot be DependsOnLibrary type, since `dependsOn` dependency works only within a KLIB, not between KLIBs.
  */
-internal sealed class TestCompilationDependencyType<A : TestCompilationArtifact>(private val artifactClass: Class<A>) {
+sealed class TestCompilationDependencyType<A : TestCompilationArtifact>(private val artifactClass: Class<A>) {
     object Library : TestCompilationDependencyType<KLIB>(KLIB::class.java)
     object FriendLibrary : TestCompilationDependencyType<KLIB>(KLIB::class.java)
     object IncludedLibrary : TestCompilationDependencyType<KLIB>(KLIB::class.java)
@@ -26,7 +26,7 @@ internal sealed class TestCompilationDependencyType<A : TestCompilationArtifact>
     object LibraryStaticCache : TestCompilationDependencyType<KLIBStaticCache>(KLIBStaticCache::class.java)
 }
 
-internal sealed interface TestCompilationDependency<A : TestCompilationArtifact> {
+sealed interface TestCompilationDependency<A : TestCompilationArtifact> {
     val artifact: A
     val type: TestCompilationDependencyType<A>
 }

@@ -6,54 +6,50 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.ir.util.copyAnnotations
+import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-// This is basically modelled after the inliner copier.
 class CopyIrTreeWithSymbolsForFakeOverrides(
     private val overridableMember: IrOverridableMember,
-    typeArguments: Map<IrTypeParameterSymbol, IrType>,
-    private val parent: IrClass,
-    unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
+    private val substitution: Map<IrTypeParameterSymbol, IrType>,
+    private val parentClass: IrClass,
+    private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
-    private val symbolRemapper = FakeOverrideSymbolRemapperImpl(typeArguments, NullDescriptorsRemapper)
-
-    private val copier = FakeOverrideCopier(
-        symbolRemapper,
-        FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
-        SymbolRenamer.DEFAULT,
-        parent,
-        unimplementedOverridesStrategy
-    )
-
     fun copy(): IrOverridableMember {
-        overridableMember.acceptVoid(symbolRemapper)
+        val typeParameters = HashMap<IrTypeParameterSymbol, IrTypeParameterSymbol>()
+        val valueParameters = HashMap<IrValueParameterSymbol, IrValueParameterSymbol>()
 
-        val result = overridableMember.transform(copier, null) as IrOverridableMember
+        val copier = FakeOverrideCopier(
+            valueParameters,
+            typeParameters,
+            FakeOverrideTypeRemapper(typeParameters, substitution),
+            parentClass,
+            unimplementedOverridesStrategy
+        )
 
-        result.patchDeclarationParents(parent)
-
-        return result
+        return when (overridableMember) {
+            is IrSimpleFunction -> copier.copySimpleFunction(overridableMember)
+            is IrProperty -> copier.copyProperty(overridableMember)
+            else -> error("Unsupported member: ${overridableMember.render()}")
+        }
     }
 
-    private inner class FakeOverrideTypeRemapper(
-        val symbolRemapper: SymbolRemapper,
-        val typeArguments: Map<IrTypeParameterSymbol, IrType>
+    private class FakeOverrideTypeRemapper(
+        val typeParameters: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>,
+        val substitution: Map<IrTypeParameterSymbol, IrType>
     ) : TypeRemapper {
-
         override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
 
         override fun leaveScope() {}
@@ -82,40 +78,23 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
         override fun remapType(type: IrType): IrType {
             if (type !is IrSimpleType) return type
 
-            return when (val substitutedType = typeArguments[type.classifier]) {
+            return when (val substitutedType = substitution[type.classifier]) {
                 is IrDynamicType -> substitutedType
                 is IrSimpleType -> substitutedType.mergeNullability(type).mergeTypeAnnotations(type)
                 else -> type.buildSimpleType {
                     kotlinType = null
-                    classifier = symbolRemapper.getReferencedClassifier(type.classifier)
+                    classifier = remapClassifier(type.classifier)
                     arguments = remapTypeArguments(type.arguments)
-                    annotations = type.annotations.memoryOptimizedMap { it.transform(copier, null) as IrConstructorCall }
+                    annotations = type.copyAnnotations()
                 }
             }
         }
-    }
 
-    private class FakeOverrideSymbolRemapperImpl(
-        private val typeArguments: Map<IrTypeParameterSymbol, IrType>,
-        descriptorsRemapper: DescriptorsRemapper
-    ) : DeepCopySymbolRemapper(descriptorsRemapper) {
-
-        // We need to avoid visiting parts of the tree that would not be visited by [FakeOverrideCopier]
-        // Otherwise, we can record symbols inside them for rebinding, but would not actually copy them.
-        // Normally, this is not important, as these local symbols would not be used anyway
-        // But they can be used in return values of functions/accessors if it is effectively a private declaration,
-        // e.g. public declaration inside a private class.
-
-        override fun visitField(declaration: IrField) {} // don't visit property backing field
-        override fun visitBlockBody(body: IrBlockBody) {} // don't visit function body and parameter default values
-        override fun visitExpressionBody(body: IrExpressionBody) {} // don't visit function body and parameter default values
-
-        override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
-            val result = super.getReferencedClassifier(symbol)
-            if (result !is IrTypeParameterSymbol)
-                return result
-            return typeArguments[result]?.classifierOrNull ?: result
-        }
+        private fun remapClassifier(classifier: IrClassifierSymbol): IrClassifierSymbol =
+            if (classifier is IrTypeParameterSymbol)
+                typeParameters.getOrElse(classifier) { classifier }
+            else
+                classifier
     }
 
     private companion object {

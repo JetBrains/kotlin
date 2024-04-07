@@ -1,0 +1,4 @@
+compiler/testData/javaModules/unnamedDependsOnNamed/moduleB/usage.kt:7:5: error: symbol is declared in module 'moduleA' which does not export package 'foo.impl'.
+    Impl()  // should be error
+    ^^^^
+COMPILATION_ERROR

@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
@@ -26,10 +28,26 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.plugin.services.PluginRuntimeAnnotationsProvider
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -37,6 +55,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -47,6 +66,11 @@ import java.io.File
 import kotlin.test.assertFalse
 
 abstract class AbstractMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest()
+
+abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
+    override fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> =
+        arrayOf(::PluginRuntimeAnnotationsProvider)
+}
 
 abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     private companion object {
@@ -67,18 +91,19 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         ).map { it.name }
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val testFile = mainModule.files.single { it.name == mainFile.name }
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val testFile = mainModule.testModule.files.single { it.name == mainFile.name }
 
-        val irCollector = CollectingIrGenerationExtension()
+        val annotationToCheckCalls = mainModule.testModule.directives[Directives.CHECK_CALLS_WITH_ANNOTATION].singleOrNull()
+        val irCollector = CollectingIrGenerationExtension(annotationToCheckCalls)
 
         val project = mainFile.project
         project.extensionArea.getExtensionPoint(IrGenerationExtension.extensionPointName)
             .registerExtension(irCollector, LoadingOrder.LAST, project)
 
         val compilerConfiguration = CompilerConfiguration().apply {
-            put(CommonConfigurationKeys.MODULE_NAME, mainModule.name)
-            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.languageVersionSettings)
+            put(CommonConfigurationKeys.MODULE_NAME, mainModule.testModule.name)
+            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
             put(JVMConfigurationKeys.IR, true)
 
             testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
@@ -104,8 +129,16 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             if (result is KtCompilationResult.Success) {
                 testServices.assertions.assertEqualsToTestDataFileSibling(irCollector.result, extension = ".ir.txt")
             }
+
+            if (annotationToCheckCalls != null) {
+                testServices.assertions.assertEqualsToTestDataFileSibling(
+                    irCollector.functionsWithAnnotationToCheckCalls.joinToString("\n"), extension = ".check_calls.txt"
+                )
+            }
         }
     }
+
+    open fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> = emptyArray()
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
@@ -116,6 +149,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 +ConfigurationDirectives.WITH_STDLIB
                 +JvmEnvironmentConfigurationDirectives.FULL_JDK
             }
+            useCustomRuntimeClasspathProviders(*extraCustomRuntimeClasspathProviders())
         }
     }
 
@@ -179,6 +213,10 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         val ATTACH_DUPLICATE_STDLIB by directive(
             "Attach the 'stdlib-jvm-minimal-for-test' library to simulate duplicate stdlib dependency"
         )
+
+        val CHECK_CALLS_WITH_ANNOTATION by stringDirective(
+            "Check whether all functions of calls and getters of properties with a given annotation are listed in *.check_calls.txt or not"
+        )
     }
 }
 
@@ -212,9 +250,11 @@ internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices
     }
 }
 
-private class CollectingIrGenerationExtension : IrGenerationExtension {
+private class CollectingIrGenerationExtension(private val annotationToCheckCalls: String?) : IrGenerationExtension {
     lateinit var result: String
         private set
+
+    val functionsWithAnnotationToCheckCalls: MutableSet<String> = mutableSetOf()
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         assertFalse { ::result.isInitialized }
@@ -227,5 +267,49 @@ private class CollectingIrGenerationExtension : IrGenerationExtension {
         )
 
         result = moduleFragment.dump(dumpOptions)
+
+        annotationToCheckCalls?.let { annotationFqName ->
+            moduleFragment.accept(
+                CheckCallsWithAnnotationVisitor(annotationFqName) { functionsWithAnnotationToCheckCalls.add(it.name.asString()) }, null
+            )
+        }
+    }
+
+    /**
+     * This class recursively visits all calls of functions and getters, and if the function or the getter used for a call has
+     * an annotation whose FqName is [annotationFqName], it runs [handleFunctionWithAnnotation] for the function or the getter.
+     */
+    private class CheckCallsWithAnnotationVisitor(
+        private val annotationFqName: String,
+        private val handleFunctionWithAnnotation: (declaration: IrDeclarationWithName) -> Unit,
+    ) : IrElementVisitorVoid {
+        val annotationClassId by lazy {
+            val annotationFqNameUnsafe = FqNameUnsafe(annotationFqName)
+            ClassId(FqName(annotationFqNameUnsafe.parent()), FqName(annotationFqNameUnsafe.shortName().asString()), false)
+        }
+
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            val function = expression.symbol.owner
+            if (function.containsAnnotationToCheckCalls()) {
+                handleFunctionWithAnnotation(function)
+            }
+        }
+
+        override fun visitFieldAccess(expression: IrFieldAccessExpression) {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            val field = expression.symbol.owner
+            if (field.containsAnnotationToCheckCalls()) {
+                handleFunctionWithAnnotation(field)
+            }
+        }
+
+        private fun IrAnnotationContainer.containsAnnotationToCheckCalls() =
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            annotations.any { it.symbol.owner.parentClassId == annotationClassId }
     }
 }

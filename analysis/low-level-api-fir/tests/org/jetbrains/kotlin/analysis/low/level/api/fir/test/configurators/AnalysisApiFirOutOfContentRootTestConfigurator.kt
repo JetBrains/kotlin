@@ -9,13 +9,14 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import java.nio.file.Path
 
 object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLikeTestConfigurator(false) {
     override val testPrefix: String
@@ -36,7 +38,7 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
 
         builder.apply {
             useDirectives(Directives)
-            useAdditionalService<KtModuleFactory> { KtOutOfContentRootModuleFactory }
+            useAdditionalService<KtTestModuleFactory> { KtOutOfContentRootTestModuleFactory }
         }
     }
 
@@ -44,7 +46,7 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
+    ): KtTestModuleStructure {
         if (Directives.SKIP_WHEN_OUT_OF_CONTENT_ROOT in moduleStructure.allDirectives) {
             throw SkipWhenOutOfContentRootException()
         }
@@ -62,17 +64,18 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
 
 private class SkipWhenOutOfContentRootException : SkipTestException()
 
-private object KtOutOfContentRootModuleFactory : KtModuleFactory {
+private object KtOutOfContentRootTestModuleFactory : KtTestModuleFactory {
     override fun createModule(
         testModule: TestModule,
-        contextModule: KtModuleWithFiles?,
+        contextModule: KtTestModule?,
+        dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
         project: Project,
-    ): KtModuleWithFiles {
+    ): KtTestModule {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
         val platform = testModule.targetPlatform
-        val module = KtNotUnderContentRootModuleForTest(testModule.name, psiFiles.first(), platform)
-        return KtModuleWithFiles(module, psiFiles)
+        val ktModule = KtNotUnderContentRootModuleForTest(testModule.name, psiFiles.first(), platform)
+        return KtTestModule(TestModuleKind.NotUnderContentRoot, testModule, ktModule, psiFiles)
     }
 }
 

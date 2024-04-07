@@ -140,8 +140,8 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int
-        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int declared in <root>.Foo.A
+        public abstract size: kotlin.Int declared in <root>.Foo.B
       FUN DELEGATED_MEMBER name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
         overridden:

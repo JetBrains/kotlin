@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractDanglingFileReferenceResolveTest.Directives.COPY_RESOLUTION_MODE
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResolveTest() {
@@ -47,21 +47,21 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
         return containingFile.name
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile)
 
         val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
         val fakeKtFile = ktPsiFactory.createFile("fake.kt", mainFile.text)
 
-        if (mainModule.directives.contains(COPY_RESOLUTION_MODE)) {
+        if (mainModule.testModule.directives.contains(COPY_RESOLUTION_MODE)) {
             fakeKtFile.originalFile = mainFile
         }
 
         doTestByFileStructure(fakeKtFile, caretPositions, mainModule, testServices)
     }
 
-    override fun <R> analyzeReferenceElement(element: KtElement, mainModule: TestModule, action: KtAnalysisSession.() -> R): R {
-        val resolutionMode = mainModule.directives.singleOrZeroValue(COPY_RESOLUTION_MODE)
+    override fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KtAnalysisSession.() -> R): R {
+        val resolutionMode = mainModule.testModule.directives.singleOrZeroValue(COPY_RESOLUTION_MODE)
         return if (resolutionMode != null) {
             analyzeCopy(element, resolutionMode) { action() }
         } else {

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
-import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 /**
  * Test that we do not resolve declarations we do not need & do not build bodies for them
@@ -44,17 +44,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBasedTest() {
     protected fun findFirDeclarationToResolve(
         ktFile: KtFile,
-        moduleStructure: TestModuleStructure,
         testServices: TestServices,
         firResolveSession: LLFirResolveSession,
     ): Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)> = when {
-        Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives -> {
-            val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer!!
-            annotationContainer to fun(phase: FirResolvePhase) {
-                annotationContainer.lazyResolveToPhase(phase)
-            }
-        }
-        Directives.RESOLVE_FILE in moduleStructure.allDirectives -> {
+        Directives.RESOLVE_FILE in testServices.moduleStructure.allDirectives -> {
             val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
             val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             file to fun(phase: FirResolvePhase) {
@@ -62,14 +55,14 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             }
         }
         else -> {
-            val ktDeclaration = if (Directives.RESOLVE_SCRIPT in moduleStructure.allDirectives) {
+            val ktDeclaration = if (Directives.RESOLVE_SCRIPT in testServices.moduleStructure.allDirectives) {
                 ktFile.script!!
             } else {
                 testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
             }
 
             val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
-            val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure, firResolveSession)
+            val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, testServices.moduleStructure, firResolveSession)
             firDeclaration.fir to fun(phase: FirResolvePhase) {
                 firDeclaration.lazyResolveToPhase(phase)
             }
@@ -187,7 +180,6 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
 
         val IS_GETTER by valueDirective("Choose getter/setter in the case of property", parser = String::toBooleanStrict)
 
-        val RESOLVE_FILE_ANNOTATIONS by directive("Resolve file annotations instead of declaration at caret")
         val RESOLVE_SCRIPT by directive("Resolve script instead of declaration at caret")
         val RESOLVE_FILE by directive("Resolve file instead of declaration at caret")
     }
@@ -198,7 +190,6 @@ internal fun lazyResolveRenderer(builder: StringBuilder): FirRenderer = FirRende
     declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
     resolvePhaseRenderer = FirResolvePhaseRenderer(),
     errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
-    fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
 )
 
 internal operator fun List<FirFile>.contains(element: FirElementWithResolveState): Boolean = if (element is FirFile) {

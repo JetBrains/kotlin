@@ -10,6 +10,9 @@ import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
 

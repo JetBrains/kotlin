@@ -12,7 +12,7 @@ import java.io.File
 /**
  * All instances of test classes.
  *
- * [allInstances] - all test class instances ordered from innermost to outermost
+ * [allInstances] - all test class instances ordered from outermost to innermost
  * [enclosingTestInstance] - the outermost test instance
  */
 internal class BlackBoxTestInstances(val allInstances: List<Any>) {

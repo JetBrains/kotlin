@@ -21,7 +21,7 @@
 #include "MarkAndSweepUtils.hpp"
 #include "ObjectData.hpp"
 #include "ConcurrentMark.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 #include "Utils.hpp"
@@ -40,7 +40,7 @@ public:
 
         void OnSuspendForGC() noexcept;
 
-        void safePoint() noexcept { barriers_.onSafePoint(); }
+        void safePoint() noexcept { mark_.onSafePoint(); }
 
         void onThreadRegistration() noexcept { barriers_.onThreadRegistration(); }
 
@@ -76,6 +76,8 @@ public:
     alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& mainThreadFinalizerProcessor() noexcept {
         return mainThreadFinalizerProcessor_;
     }
+
+    auto& mark() noexcept { return markDispatcher_; }
 
 private:
     void mainGCThreadBody();

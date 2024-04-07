@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -59,9 +59,14 @@ abstract class AbstractDiagnosticsWasmTestBase(
                 ::ClassicDiagnosticsHandler,
             )
         }
+
+        forTestsMatching("compiler/testData/diagnostics/wasmTests/multiplatform/*") {
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE + "+MultiPlatformProjects"
+            }
+        }
     }
 }
 
 abstract class AbstractDiagnosticsWasmTest : AbstractDiagnosticsWasmTestBase(::WasmEnvironmentConfiguratorJs)
 abstract class AbstractDiagnosticsWasmWasiTest : AbstractDiagnosticsWasmTestBase(::WasmEnvironmentConfiguratorWasi)
-

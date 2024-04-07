@@ -12,18 +12,14 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
@@ -44,18 +40,30 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     propertyConstantRenderer = { _ -> COMPILED_DEFAULT_INITIALIZER }
 }
 
+/**
+ * @see org.jetbrains.kotlin.analysis.decompiler.stub.mustNotBeWrittenToStubs
+ */
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {
     return when (kind) {
         CallableMemberDescriptor.Kind.DECLARATION, CallableMemberDescriptor.Kind.DELEGATION -> false
         CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> true
-        CallableMemberDescriptor.Kind.SYNTHESIZED -> {
-            // Of all synthesized functions, only `component*` functions are rendered (for historical reasons)
-            !DataClassDescriptorResolver.isComponentLike(name) && name !in listOf(
-                OperatorNameConventions.EQUALS,
-                StandardNames.HASHCODE_NAME,
-                OperatorNameConventions.TO_STRING
+        CallableMemberDescriptor.Kind.SYNTHESIZED -> syntheticMemberMustNotBeWrittenToDecompiledText()
+    }
+}
+
+private fun CallableMemberDescriptor.syntheticMemberMustNotBeWrittenToDecompiledText(): Boolean {
+    val containingClass = containingDeclaration as? ClassDescriptor ?: return false
+
+    return when {
+        containingClass.kind == ClassKind.ENUM_CLASS -> {
+            name in arrayOf(
+                StandardNames.ENUM_VALUES,
+                StandardNames.ENUM_ENTRIES,
+                StandardNames.ENUM_VALUE_OF,
             )
         }
+
+        else -> false
     }
 }
 

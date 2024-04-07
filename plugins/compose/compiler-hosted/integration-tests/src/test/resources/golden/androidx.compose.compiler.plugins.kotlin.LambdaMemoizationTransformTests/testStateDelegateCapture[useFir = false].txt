@@ -1,0 +1,59 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+
+@Composable fun A() {
+    val x by mutableStateOf("abc")
+    B {
+        print(x)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun A(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)<{>,<B>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val x by {
+      val x%delegate = mutableStateOf(
+        value = "abc"
+      )
+      get() {
+        return x%delegate.getValue(null, ::x%delegate)
+      }
+    }
+    B(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C:Test.kt")
+      if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        print(<get-x>())
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

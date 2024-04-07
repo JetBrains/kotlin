@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditi
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
@@ -89,7 +90,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         withClassOrObjectSymbol { classOrObjectSymbol ->
             buildList {
                 addCompanionObjectFieldIfNeeded(this, classOrObjectSymbol)
-                addFieldsFromCompanionIfNeeded(this, classOrObjectSymbol)
+                addFieldsFromCompanionIfNeeded(this, classOrObjectSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }

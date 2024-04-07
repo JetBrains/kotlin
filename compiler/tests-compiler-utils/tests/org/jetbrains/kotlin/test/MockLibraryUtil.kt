@@ -130,6 +130,8 @@ object MockLibraryUtil {
                     add("--module-path")
                     add(extraModulepath.joinToString(File.pathSeparator))
                 }
+                add("-encoding")
+                add("utf8")
             }
 
             val compile =

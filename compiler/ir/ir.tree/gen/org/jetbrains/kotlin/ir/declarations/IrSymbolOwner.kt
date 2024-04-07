@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.symbolOwner]
  */
 interface IrSymbolOwner : IrElement {

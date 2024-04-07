@@ -153,6 +153,23 @@ private val allPackageMetadataCheckers = listOf(
     fileFacadeMetadataListChecker("localDelegatedProperties") { loadLocalDelegatedProperties(it).keys.toList() }
 )
 
+@OptIn(UnstableMetadataApi::class)
+private val allPackagePartsMetadataCheckers = listOf(
+    packagePartsPropertyChecker("multiFileParts") {
+        it.multiFileClassParts.toList().map { filePart -> "(${filePart.first}, ${filePart.second})" }.toList().sorted()
+            .joinToString(prefix = "[", postfix = "]")
+    },
+    packagePartsPropertyChecker("fileFacades") { it.fileFacades.toList().sorted().joinToString(prefix = "[", postfix = "]") }
+)
+
+@OptIn(UnstableMetadataApi::class)
+private val allModuleMetadataCheckers = listOf(
+    moduleMetadataPropertyChecker("optionalAnnotations") {
+        it.optionalAnnotationClasses.map { clazz -> clazz.name }.sorted().joinToString(prefix = "[", postfix = "]")
+    },
+    moduleMetadataPropertyChecker("packageParts") { it.packageParts.keys.toList().sorted().joinToString(prefix = "[", postfix = "]") }
+)
+
 private val allMultifileClassFacadeMetadataCheckers = listOf(
     multiFileClassFacadeMetadataListChecker("partClassNames") { it.partClassNames }
 )
@@ -190,6 +207,7 @@ inline fun checkerConfiguration(b: CheckerConfigurationBuilder.() -> Unit): Chec
     return builder.build()
 }
 
+@OptIn(UnstableMetadataApi::class)
 class CheckerConfiguration(private val enabledExclusively: Set<String>, private val disabled: Set<String>) {
 
     private fun <T : Checker> List<T>.filterOutDisabled() = filter { it.isEnabled() }
@@ -206,6 +224,8 @@ class CheckerConfiguration(private val enabledExclusively: Set<String>, private 
     val enabledMultifileClassFacadeMetadataCheckers = allMultifileClassFacadeMetadataCheckers.filterOutDisabled()
     val enabledMultifileClassPartMetadataCheckers = allMultifileClassPartMetadataCheckers.filterOutDisabled()
     val enabledAllSyntheticClassMetadataCheckers = allSyntheticClassMetadataCheckers.filterOutDisabled()
+    val enabledModuleMetadataCheckers = allModuleMetadataCheckers.filterOutDisabled()
+    val enabledPackagePartsMetadataCheckers = allPackagePartsMetadataCheckers.filterOutDisabled()
 
     private fun Checker.isEnabled(): Boolean {
         if (enabledExclusively.isNotEmpty() && name !in enabledExclusively) return false

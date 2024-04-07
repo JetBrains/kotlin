@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface I1
 interface I2
 

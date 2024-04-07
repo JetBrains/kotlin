@@ -64,6 +64,8 @@ class KtFe10AnalysisSession(
     override val symbolProviderByJavaPsiImpl: KtSymbolProviderByJavaPsi = KtFe10SymbolProviderByJavaPsi(this)
     override val resolveExtensionInfoProviderImpl: KtResolveExtensionInfoProvider = KtFe10ResolveExtensionInfoProvider(this)
     override val compilerFacilityImpl: KtCompilerFacility = KtFe10CompilerFacility(this)
+    override val dataFlowInfoProviderImpl: KtDataFlowInfoProvider = KtFe10DataFlowInfoProvider(this)
+    override val klibSourceFileProviderImpl: KtKlibSourceFileNameProvider = KtFe10KlibSourceFileNameProvider(this)
 
     override val metadataCalculatorImpl: KtMetadataCalculator
         get() = throw NotSupportedForK1Exception()

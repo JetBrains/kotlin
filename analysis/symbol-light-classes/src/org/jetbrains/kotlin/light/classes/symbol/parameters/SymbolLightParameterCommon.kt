@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtParameter
 
@@ -52,8 +53,8 @@ internal abstract class SymbolLightParameterCommon(
         // true only if this is "last" `vararg`
         containingMethod.parameterList.parameters.lastOrNull() == this && isDeclaredAsVararg()
 
-    protected open fun nullabilityType(): NullabilityType {
-        if (isDeclaredAsVararg()) return NullabilityType.NotNull
+    protected open fun typeNullability(): KtTypeNullability {
+        if (isDeclaredAsVararg()) return KtTypeNullability.NON_NULLABLE
 
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
                 !containingMethod.containingClass.isAnnotationType &&
@@ -66,7 +67,7 @@ internal abstract class SymbolLightParameterCommon(
         return if (nullabilityApplicable) {
             parameterSymbolPointer.withSymbol(ktModule) { getTypeNullability(it.returnType) }
         } else {
-            NullabilityType.Unknown
+            KtTypeNullability.UNKNOWN
         }
     }
 
@@ -77,13 +78,12 @@ internal abstract class SymbolLightParameterCommon(
             val convertedType = run {
                 val ktType = parameterSymbol.returnType
 
-                ktType.asPsiTypeElement(
+                ktType.asPsiType(
                     this@SymbolLightParameterCommon,
                     allowErrorTypes = true,
-                    ktType.typeMappingMode()
-                )?.let {
-                    annotateByKtType(it.type, ktType, it, modifierList)
-                }
+                    ktType.typeMappingMode(),
+                    suppressWildcards = parameterSymbol.suppressWildcardMode(),
+                )
             } ?: nonExistentType()
 
             if (isDeclaredAsVararg()) {

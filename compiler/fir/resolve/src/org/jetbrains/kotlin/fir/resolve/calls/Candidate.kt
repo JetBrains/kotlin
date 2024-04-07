@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.util.CodeFragmentAdjustment
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -112,7 +112,7 @@ class Candidate(
 
     var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
     var numDefaults: Int = 0
-    var functionTypesOfSamConversions: HashMap<FirExpression, ConeKotlinType>? = null
+    var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 
@@ -124,7 +124,7 @@ class Candidate(
     // See the call sites of [FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot]
     val onPCLACompletionResultsWritingCallbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
 
-    var currentApplicability = CandidateApplicability.RESOLVED
+    var lowestApplicability = CandidateApplicability.RESOLVED
         private set
 
     override var chosenExtensionReceiver: FirExpression? = givenExtensionReceiverOptions.singleOrNull()
@@ -132,7 +132,7 @@ class Candidate(
     var contextReceiverArguments: List<FirExpression>? = null
 
     override val applicability: CandidateApplicability
-        get() = currentApplicability
+        get() = lowestApplicability
 
     private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
     override val diagnostics: List<ResolutionDiagnostic>
@@ -140,26 +140,30 @@ class Candidate(
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
         _diagnostics += diagnostic
-        if (diagnostic.applicability < currentApplicability) {
-            currentApplicability = diagnostic.applicability
+        if (diagnostic.applicability < lowestApplicability) {
+            lowestApplicability = diagnostic.applicability
         }
     }
 
     @CodeFragmentAdjustment
     internal fun resetToResolved() {
-        currentApplicability = CandidateApplicability.RESOLVED
+        lowestApplicability = CandidateApplicability.RESOLVED
         _diagnostics.clear()
     }
 
     /**
-     * Note that [currentApplicability]`.isSuccessful == true` doesn't imply [isSuccessful].
+     * Note that [lowestApplicability]`.isSuccess == true` doesn't imply [isSuccessful].
      *
-     * This is because [currentApplicability] is equal to the lowest [ResolutionDiagnostic.applicability] of all [diagnostics],
+     * This is because [lowestApplicability] is equal to the lowest [ResolutionDiagnostic.applicability] of all [diagnostics],
      * but in presence of more than one diagnostic, the lowest one can be successful while a higher one isn't, e.g., the combination
      * of [CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY] and [CandidateApplicability.RESOLVED_WITH_ERROR].
+     *
+     * Also see [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.toResolvedReference]
+     * as it contains conditions that rely on subtle differences between the implementation of this property and
+     * [org.jetbrains.kotlin.resolve.calls.tower.isSuccess].
      */
     val isSuccessful: Boolean
-        get() = diagnostics.all { it.applicability.isSuccess } && (!systemInitialized || !system.hasContradiction)
+        get() = diagnostics.allSuccessful && (!systemInitialized || !system.hasContradiction)
 
     var passedStages: Int = 0
 
@@ -222,7 +226,7 @@ class Candidate(
     }
 
     override fun toString(): String {
-        val okOrFail = if (applicability.isSuccess) "OK" else "FAIL"
+        val okOrFail = if (isSuccessful) "OK" else "FAIL"
         val step = "$passedStages/${callInfo.callKind.resolutionSequence.size}"
         return "$okOrFail($step): $symbol"
     }

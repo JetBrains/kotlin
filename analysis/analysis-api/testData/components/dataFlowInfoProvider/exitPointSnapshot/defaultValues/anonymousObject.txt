@@ -1,0 +1,14 @@
+KtDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = object {
+            fun foo() {}
+        }
+    type = <anonymous>
+  hasEscapingJumps = false
+  hasJumps = false
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = false
+  loopJumpExpressions = []
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

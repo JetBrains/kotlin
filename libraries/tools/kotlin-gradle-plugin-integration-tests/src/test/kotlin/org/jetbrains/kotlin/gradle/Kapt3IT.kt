@@ -121,42 +121,52 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     )
 
     @Disabled("classloaders cache is incompatible with AP discovery in classpath")
+    @GradleTest
     override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun testKt19179andKt37241(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun testKt33847(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun testRepeatableAnnotations(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    @GradleTest
     override fun useK2KaptProperty(gradleVersion: GradleVersion) {
     }
 

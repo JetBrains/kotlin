@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
-import org.jetbrains.kotlin.fir.resolve.getAsForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.fir.resolve.forbiddenNamedArgumentsTargetOrNull
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -75,7 +75,7 @@ fun BodyResolveComponents.mapArguments(
     val excessLambdaArguments: MutableList<FirExpression> = mutableListOf()
     var externalArgument: FirExpression? = null
     for (argument in arguments) {
-        if (argument is FirLambdaArgumentExpression) {
+        if (argument is FirAnonymousFunctionExpression && argument.isTrailingLambda) {
             if (externalArgument == null) {
                 externalArgument = argument
             } else {
@@ -124,7 +124,7 @@ private class FirCallArgumentsProcessor(
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
-        function.getAsForbiddenNamedArgumentsTarget(useSiteSession, originScope as? FirTypeScope)
+        function.forbiddenNamedArgumentsTargetOrNull(useSiteSession, originScope as? FirTypeScope)
     }
 
     private enum class State {
@@ -135,19 +135,7 @@ private class FirCallArgumentsProcessor(
 
     fun processNonLambdaArguments(arguments: List<FirExpression>) {
         for ((argumentIndex, argument) in arguments.withIndex()) {
-            if (argument is FirVarargArgumentsExpression) {
-                // If the argument list was already resolved, any arguments for a vararg parameter will be in a FirVarargArgumentsExpression.
-                // This can happen when getting all the candidates for an already resolved function call.
-                val varargArguments = argument.arguments
-                for ((varargArgumentIndex, varargArgument) in varargArguments.withIndex()) {
-                    processNonLambdaArgument(
-                        varargArgument,
-                        isLastArgument = argumentIndex == arguments.lastIndex && varargArgumentIndex == varargArguments.lastIndex
-                    )
-                }
-            } else {
-                processNonLambdaArgument(argument, isLastArgument = argumentIndex == arguments.lastIndex)
-            }
+            processNonLambdaArgument(argument, isLastArgument = argumentIndex == arguments.lastIndex)
         }
         if (state == State.VARARG_POSITION) {
             completeVarargPositionArguments()
@@ -358,7 +346,7 @@ private class FirCallArgumentsProcessor(
             if (symbol != null && function.isSubstitutionOrIntersectionOverride) {
                 var allowedParameters: List<FirValueParameterSymbol>? = null
                 (originScope as? FirTypeScope)?.processOverriddenFunctions(symbol) {
-                    if (it.fir.getAsForbiddenNamedArgumentsTarget(useSiteSession) != null) {
+                    if (it.fir.forbiddenNamedArgumentsTargetOrNull(useSiteSession) != null) {
                         return@processOverriddenFunctions ProcessorAction.NEXT
                     }
                     val someParameterSymbols = it.valueParameterSymbols
@@ -396,7 +384,7 @@ private class FirCallArgumentsProcessor(
                 }
                 if (matchedIndex != -1) {
                     (originScope as? FirTypeScope)?.processOverriddenFunctions(symbol) {
-                        if (it.fir.getAsForbiddenNamedArgumentsTarget(useSiteSession) != null) {
+                        if (it.fir.forbiddenNamedArgumentsTargetOrNull(useSiteSession) != null) {
                             return@processOverriddenFunctions ProcessorAction.NEXT
                         }
                         it.valueParameterSymbols.findAndReportValueParameterWithDifferentName()

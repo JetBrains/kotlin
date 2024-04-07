@@ -47,6 +47,14 @@ package
 @kotlin.Throws(exceptionClasses = {}) public fun throwsUnresolved(): kotlin.Unit
 public fun withLocalClass(): kotlin.Unit
 
+public final class Bar</*0*/ K> : Foo<K> {
+    public constructor Bar</*0*/ K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.Throws(exceptionClasses = {kotlin.IllegalArgumentException::class}) public open override /*1*/ fun f(/*0*/ data: K): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface Base0 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Unit
@@ -149,6 +157,13 @@ public final class Exception3 : kotlin.Throwable {
     invisible_fake final override /*1*/ /*fake_override*/ fun getStackTraceAddressesInternal(): kotlin.collections.List<kotlin.Long>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Foo</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.Throws(exceptionClasses = {kotlin.IllegalArgumentException::class}) public open fun f(/*0*/ data: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

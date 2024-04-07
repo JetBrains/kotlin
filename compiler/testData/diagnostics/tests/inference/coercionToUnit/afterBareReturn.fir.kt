@@ -29,7 +29,7 @@ fun test3() = run {
 
 fun test4() = run {
     if (p) return@run
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>incompatibleC<!>() // ? either uninferred T or error (Unit </: C)
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>incompatibleC<!>() // ? either uninferred T or error (Unit </: C)
 }
 
 fun main() {

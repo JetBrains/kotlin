@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.name.Name
@@ -22,9 +23,16 @@ class JvmFileFacadeClass(
     source: SourceElement,
     private val deserializeIr: (IrClass) -> Boolean,
 ) : IrClassImpl(
-    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
-    IrClassSymbolImpl(), name, ClassKind.CLASS, DescriptorVisibilities.PUBLIC, Modality.FINAL,
-    source = source
+    startOffset = UNDEFINED_OFFSET,
+    endOffset = UNDEFINED_OFFSET,
+    origin = origin,
+    symbol = IrClassSymbolImpl(),
+    name = name,
+    kind = ClassKind.CLASS,
+    visibility = DescriptorVisibilities.PUBLIC,
+    modality = Modality.FINAL,
+    source = source,
+    factory = IrFactoryImpl
 ), DeserializableClass {
 
     private var irLoaded: Boolean? = null

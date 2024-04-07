@@ -2,7 +2,7 @@ public open class RawOverrides : R|kotlin/Any| {
     public constructor(): R|test/RawOverrides|
 
     public abstract interface A<T : R|kotlin/Any!|> : R|kotlin/Any| {
-        public abstract fun <E : R|kotlin/CharSequence!|> foo(x: R|ft<T & Any, T?>|, y: R|ft<kotlin/collections/MutableList<out ft<T & Any, T?>>, kotlin/collections/List<out ft<T & Any, T?>>?>|): R|ft<E & Any, E?>|
+        public abstract fun <E : R|kotlin/CharSequence!|> foo(x: R|T!|, y: R|ft<kotlin/collections/MutableList<out T!>, kotlin/collections/List<out T!>?>|): R|E!|
 
     }
     public open inner class B : R|kotlin/Any|, R|Raw type test/RawOverrides.A<kotlin/Any!>| {
@@ -12,7 +12,7 @@ public open class RawOverrides : R|kotlin/Any| {
 
     }
     public open inner class C : R|kotlin/Any| {
-        public/*package*/ open fun <E : R|kotlin/CharSequence!|, F : R|ft<E & Any, E?>|> bar(x: R|ft<F & Any, F?>|, y: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableMap<ft<E & Any, E?>, ft<F & Any, F?>>, kotlin/collections/Map<ft<E & Any, E?>, ft<F & Any, F?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableMap<ft<E & Any, E?>, ft<F & Any, F?>>, kotlin/collections/Map<ft<E & Any, E?>, ft<F & Any, F?>>?>>?>|): R|ft<E & Any, E?>|
+        public/*package*/ open fun <E : R|kotlin/CharSequence!|, F : R|E!|> bar(x: R|F!|, y: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableMap<E!, F!>, kotlin/collections/Map<E!, F!>?>>, kotlin/collections/List<ft<kotlin/collections/MutableMap<E!, F!>, kotlin/collections/Map<E!, F!>?>>?>|): R|E!|
 
         public test/RawOverrides.constructor(): R|test/RawOverrides.C|
 
@@ -20,7 +20,7 @@ public open class RawOverrides : R|kotlin/Any| {
     public open inner class D : R|test/RawOverrides.C| {
         @R|java/lang/Override|() public open fun bar(x: R|kotlin/CharSequence!|, y: R|ft<Raw type kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|): R|kotlin/String!|
 
-        public/*package*/ open fun <E : R|kotlin/CharSequence!|, F : R|ft<E & Any, E?>|> bar(x: R|ft<F & Any, F?>|, y: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableMap<ft<E & Any, E?>, ft<F & Any, F?>>, kotlin/collections/Map<ft<E & Any, E?>, ft<F & Any, F?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableMap<ft<E & Any, E?>, ft<F & Any, F?>>, kotlin/collections/Map<ft<E & Any, E?>, ft<F & Any, F?>>?>>?>|): R|ft<E & Any, E?>|
+        public/*package*/ open fun <E : R|kotlin/CharSequence!|, F : R|E!|> bar(x: R|F!|, y: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableMap<E!, F!>, kotlin/collections/Map<E!, F!>?>>, kotlin/collections/List<ft<kotlin/collections/MutableMap<E!, F!>, kotlin/collections/Map<E!, F!>?>>?>|): R|E!|
 
         public test/RawOverrides.constructor(): R|test/RawOverrides.D|
 

@@ -116,7 +116,7 @@ fun buildKotlinLibrary(
     nopack: Boolean,
     perFile: Boolean,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?,
+    dataFlowGraph: ByteArray?, // TODO (KT-66218): remove this property
     builtInsPlatform: BuiltInsPlatform,
     nativeTargets: List<String> = emptyList()
 ): KotlinLibraryLayout {

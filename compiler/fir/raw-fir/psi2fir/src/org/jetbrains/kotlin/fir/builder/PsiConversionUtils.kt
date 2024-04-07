@@ -122,36 +122,46 @@ internal fun generateTemporaryVariable(
         extractAnnotationsTo,
     )
 
-context(AbstractRawFirBuilder<*>, DestructuringContext<KtDestructuringDeclarationEntry>)
-internal fun generateDestructuringBlock(
+internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
+    c: DestructuringContext<KtDestructuringDeclarationEntry>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
-    localEntries: Boolean,
 ): FirBlock {
     return buildBlock {
         source = multiDeclaration.toKtPsiSourceElement()
-        statements.addDestructuringVariables(
+        addDestructuringVariables(
+            statements,
+            c,
             moduleData,
             multiDeclaration,
             container,
             tmpVariable,
-            localEntries
+            forceLocal = false,
         )
     }
 }
 
-context(AbstractRawFirBuilder<*>, DestructuringContext<KtDestructuringDeclarationEntry>)
-internal fun MutableList<in FirVariable>.addDestructuringVariables(
+internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
+    destination: MutableList<in FirVariable>,
+    c: DestructuringContext<KtDestructuringDeclarationEntry>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
-    localEntries: Boolean,
+    forceLocal: Boolean,
     configure: (FirVariable) -> Unit = {}
 ) {
-    this@addDestructuringVariables.addDestructuringVariables(
-        moduleData, container, multiDeclaration.entries, multiDeclaration.isVar, tmpVariable, localEntries, configure
+    addDestructuringVariables(
+        destination,
+        c,
+        moduleData,
+        container,
+        multiDeclaration.entries,
+        multiDeclaration.isVar,
+        tmpVariable,
+        forceLocal,
+        configure
     )
 }

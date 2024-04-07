@@ -11,7 +11,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -37,17 +36,15 @@ abstract class KtModuleByCompilerConfiguration(
     val psiFiles: List<PsiFile>,
     val testServices: TestServices,
 ) {
-    private val moduleProvider = testServices.ktModuleProvider
     private val compilerConfigurationProvider = testServices.compilerConfigurationProvider
     private val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
-
 
     val moduleName: String
         get() = testModule.name
 
     val directRegularDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
-            testModule.allDependencies.mapTo(this) { moduleProvider.getModule(it.moduleName) }
+            testModule.allDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
             addAll(computeLibraryDependencies())
         }
     }
@@ -88,14 +85,14 @@ abstract class KtModuleByCompilerConfiguration(
     @Suppress("MemberVisibilityCanBePrivate") // used for overrides in subclasses
     val directDependsOnDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         testModule.dependsOnDependencies
-            .map { moduleProvider.getModule(it.moduleName) }
+            .map { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
     }
 
     val transitiveDependsOnDependencies: List<KtModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
 
     val directFriendDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
-            testModule.friendDependencies.mapTo(this) { moduleProvider.getModule(it.moduleName) }
+            testModule.friendDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
             addAll(
                 librariesByRoots(configuration[JVMConfigurationKeys.FRIEND_PATHS].orEmpty().map(Paths::get))
             )

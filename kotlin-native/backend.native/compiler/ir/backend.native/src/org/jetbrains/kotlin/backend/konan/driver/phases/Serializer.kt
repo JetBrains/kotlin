@@ -48,7 +48,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
                 sourceBaseDirs = relativePathBase,
                 languageVersionSettings = config.languageVersionSettings,
                 bodiesOnlyForInlines = input.produceHeaderKlib,
-                skipPrivateApi = input.produceHeaderKlib,
+                publicAbiOnly = input.produceHeaderKlib,
         ).serializedIrModule(ir)
     }
 

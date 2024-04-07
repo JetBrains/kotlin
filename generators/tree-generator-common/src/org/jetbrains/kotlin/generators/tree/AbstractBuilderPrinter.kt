@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         where Element : AbstractElement<Element, ElementField, Implementation>,
               Implementation : AbstractImplementation<Implementation, Element, BuilderField>,
               BuilderField : AbstractField<*>,
-              BuilderField : AbstractFieldWithDefaultValue<*>,
               ElementField : AbstractField<ElementField> {
 
     companion object {
@@ -202,7 +201,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
 
     private fun BuilderField.needBackingField(fieldIsUseless: Boolean) =
         !nullable && origin !is ListField && if (fieldIsUseless) {
-            defaultValueInImplementation == null
+            implementationDefaultStrategy?.defaultValue == null
         } else {
             defaultValueInBuilder == null
         }
@@ -216,14 +215,17 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         builder: Builder<BuilderField, Element>,
         fieldIsUseless: Boolean,
     ): Pair<Boolean, Boolean> {
-        if (field.withGetter && !fieldIsUseless || field.invisibleField) return false to false
+        if (
+            field.implementationDefaultStrategy?.withGetter == true
+            && !fieldIsUseless || field.invisibleField
+        ) return false to false
         if (field.origin is ListField) {
             @Suppress("UNCHECKED_CAST")
             printFieldListInBuilder(field.origin as ElementField, builder, fieldIsUseless)
             return true to false
         }
         val defaultValue = if (fieldIsUseless)
-            field.defaultValueInImplementation.also { requireNotNull(it) }
+            field.implementationDefaultStrategy!!.defaultValue
         else
             field.defaultValueInBuilder
 
@@ -308,7 +310,6 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
         @Suppress("UNCHECKED_CAST")
         if (builder is LeafBuilder<*, *, *> &&
-            field is AbstractFieldWithDefaultValue<*> &&
             (field as BuilderField).needBackingField(fieldIsUseless) &&
             !fieldIsUseless &&
             !field.needNotNullDelegate(fieldIsUseless = false)

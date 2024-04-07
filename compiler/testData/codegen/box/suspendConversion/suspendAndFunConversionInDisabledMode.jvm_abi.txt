@@ -2,6 +2,5 @@ MODULE main
 	Missing in K1
 		Test1$Scope$bar$1.class
 		Test2$Scope$bar$1.class
-		SuspendAndFunConversionInDisabledModeKt$sam$SuspendRunnable$0.class
 	Missing in K2
 		SuspendAndFunConversionInDisabledModeKt$sam$Runnable$0.class

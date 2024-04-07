@@ -26,7 +26,8 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     lateinit var outputDir: File
     lateinit var klibPath: String
 
-    override val backend = TargetBackend.JVM_IR
+    override val backend
+        get() = TargetBackend.JVM_IR
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         outputDir = javaSourcesOutputDirectory
@@ -36,7 +37,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         val classpath: MutableList<File> = ArrayList()
         classpath.add(KtTestUtil.getAnnotationsJar())
         val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files), backend, classpath, listOf(outputDir), files
+            configurationKind, getTestJdkKind(files), classpath, listOf(outputDir), files
         )
         myEnvironment = createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES

@@ -162,6 +162,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/hmpp/sameSourceInDifferentFragments.args");
     }
 
+    @TestMetadata("scriptInCommonFragment.args")
+    public void testScriptInCommonFragment() {
+      runTest("compiler/testData/cli/jvm/hmpp/scriptInCommonFragment.args");
+    }
+
     @TestMetadata("sourceNotInAnyFragment.args")
     public void testSourceNotInAnyFragment() {
       runTest("compiler/testData/cli/jvm/hmpp/sourceNotInAnyFragment.args");
@@ -175,6 +180,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("successfulCompilation2.args")
     public void testSuccessfulCompilation2() {
       runTest("compiler/testData/cli/jvm/hmpp/successfulCompilation2.args");
+    }
+
+    @TestMetadata("successfulCompilationWithScript.args")
+    public void testSuccessfulCompilationWithScript() {
+      runTest("compiler/testData/cli/jvm/hmpp/successfulCompilationWithScript.args");
     }
   }
 
@@ -755,6 +765,36 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/jdkRelease.args");
     }
 
+    @TestMetadata("jdkRelease6WithJvmTarget8Jdk11.args")
+    public void testJdkRelease6WithJvmTarget8Jdk11() {
+      runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget8Jdk11.args");
+    }
+
+    @TestMetadata("jdkRelease6WithJvmTarget8Jdk8.args")
+    public void testJdkRelease6WithJvmTarget8Jdk8() {
+      runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget8Jdk8.args");
+    }
+
+    @TestMetadata("jdkRelease6WithJvmTarget9.args")
+    public void testJdkRelease6WithJvmTarget9() {
+      runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget9.args");
+    }
+
+    @TestMetadata("jdkRelease6WithoutExplicitJvmTarget.args")
+    public void testJdkRelease6WithoutExplicitJvmTarget() {
+      runTest("compiler/testData/cli/jvm/jdkRelease6WithoutExplicitJvmTarget.args");
+    }
+
+    @TestMetadata("jdkRelease7WithJvmTarget8Jdk11.args")
+    public void testJdkRelease7WithJvmTarget8Jdk11() {
+      runTest("compiler/testData/cli/jvm/jdkRelease7WithJvmTarget8Jdk11.args");
+    }
+
+    @TestMetadata("jdkRelease7WithJvmTarget8Jdk8.args")
+    public void testJdkRelease7WithJvmTarget8Jdk8() {
+      runTest("compiler/testData/cli/jvm/jdkRelease7WithJvmTarget8Jdk8.args");
+    }
+
     @TestMetadata("jdkRelease8.args")
     public void testJdkRelease8() {
       runTest("compiler/testData/cli/jvm/jdkRelease8.args");
@@ -975,6 +1015,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/modulesWithDependencyCycle.args");
     }
 
+    @TestMetadata("multiplatformCompilationWithCommonScript.args")
+    public void testMultiplatformCompilationWithCommonScript() {
+      runTest("compiler/testData/cli/jvm/multiplatformCompilationWithCommonScript.args");
+    }
+
+    @TestMetadata("multiplatformCompilationWithScript.args")
+    public void testMultiplatformCompilationWithScript() {
+      runTest("compiler/testData/cli/jvm/multiplatformCompilationWithScript.args");
+    }
+
     @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
     public void testMultipleTextRangesInDiagnosticsOrder() {
       runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
@@ -1088,6 +1138,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("recordAsSingleFileRoot.args")
     public void testRecordAsSingleFileRoot() {
       runTest("compiler/testData/cli/jvm/recordAsSingleFileRoot.args");
+    }
+
+    @TestMetadata("reportAllWarnings.args")
+    public void testReportAllWarnings() {
+      runTest("compiler/testData/cli/jvm/reportAllWarnings.args");
     }
 
     @TestMetadata("reportInternalDiagnosticNames.args")
@@ -1205,6 +1260,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.args");
     }
 
+    @TestMetadata("version.args")
+    public void testVersion() {
+      runTest("compiler/testData/cli/jvm/version.args");
+    }
+
     @TestMetadata("warningJdkWithNoJdk.args")
     public void testWarningJdkWithNoJdk() {
       runTest("compiler/testData/cli/jvm/warningJdkWithNoJdk.args");
@@ -1291,6 +1351,11 @@ public class CliTestGenerated extends AbstractCliTest {
 
     public void testAllFilesPresentInJs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("compilationErrorConstDivByZero.args")
+    public void testCompilationErrorConstDivByZero() {
+      runTest("compiler/testData/cli/js/compilationErrorConstDivByZero.args");
     }
 
     @TestMetadata("compilationErrorK2.args")
@@ -1547,6 +1612,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("anonymousObjectType.args")
     public void testAnonymousObjectType() {
       runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
+    }
+
+    @TestMetadata("complexAnnotationArgument.args")
+    public void testComplexAnnotationArgument() {
+      runTest("compiler/testData/cli/metadata/complexAnnotationArgument.args");
     }
 
     @TestMetadata("getOrDefault.args")

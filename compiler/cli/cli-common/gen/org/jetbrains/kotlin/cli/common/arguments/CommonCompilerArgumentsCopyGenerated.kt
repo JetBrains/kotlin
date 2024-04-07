@@ -18,6 +18,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.checkPhaseConditions = from.checkPhaseConditions
     to.checkStickyPhaseConditions = from.checkStickyPhaseConditions
     to.commonSources = from.commonSources?.copyOf()
+    to.consistentDataClassCopyVisibility = from.consistentDataClassCopyVisibility
     to.contextReceivers = from.contextReceivers
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disablePhases = from.disablePhases?.copyOf()
@@ -64,6 +65,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.progressiveMode = from.progressiveMode
     to.relativePathBases = from.relativePathBases?.copyOf()
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
+    to.reportAllWarnings = from.reportAllWarnings
     to.reportOutputFiles = from.reportOutputFiles
     to.reportPerf = from.reportPerf
     to.script = from.script
@@ -75,9 +77,9 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
     to.useExperimental = from.useExperimental?.copyOf()
     to.useFirExtendedCheckers = from.useFirExtendedCheckers
+    to.useFirFakeOverrideBuilder = from.useFirFakeOverrideBuilder
     to.useFirIC = from.useFirIC
     to.useFirLT = from.useFirLT
-    to.useIrFakeOverrideBuilder = from.useIrFakeOverrideBuilder
     to.useK2 = from.useK2
     to.verbosePhases = from.verbosePhases?.copyOf()
 

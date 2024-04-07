@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
@@ -63,8 +62,8 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?
         get() = null
 
-    override val contractDescription: FirContractDescription
-        get() = FirEmptyContractDescription
+    override val contractDescription: FirContractDescription?
+        get() = null
 
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
@@ -83,7 +82,6 @@ class FirJavaMethod @FirImplementationDetail constructor(
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         status.accept(visitor, data)
-        contractDescription.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
     }
@@ -163,7 +161,8 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override fun replaceBody(newBody: FirBlock?) {
     }
 
-    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+    override fun replaceContractDescription(newContractDescription: FirContractDescription?) {
+        error("Contract description cannot be replaced for FirJavaMethod")
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {

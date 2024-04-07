@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -453,8 +453,8 @@ They should be a subset of sources passed as free arguments."""
 
     @GradleDeprecatedOption(
         message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        level = DeprecationLevel.WARNING,
-        removeAfter = "2.0.0",
+        level = DeprecationLevel.WARNING, // TODO: KT-65990 switch to ERROR in 2.1
+        removeAfter = LanguageVersion.KOTLIN_2_1,
     )
     @GradleOption(
         DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -503,10 +503,10 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
-        value = "-Xuse-ir-fake-override-builder",
-        description = "Generate fake overrides via IR. See KT-61514"
+        value = "-Xuse-fir-fake-override-builder",
+        description = "Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved."
     )
-    var useIrFakeOverrideBuilder = false
+    var useFirFakeOverrideBuilder = false
         set(value) {
             checkFrozen()
             field = value
@@ -591,6 +591,17 @@ Warning: This mode is not backward compatible and might cause compilation errors
 Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning."""
     )
     var expectActualClasses = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xconsistent-data-class-copy-visibility",
+        description = "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. " +
+                "See https://youtrack.jetbrains.com/issue/KT-11914"
+    )
+    var consistentDataClassCopyVisibility = false
         set(value) {
             checkFrozen()
             field = value
@@ -688,6 +699,13 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(value = "-Xreport-all-warnings", description = "Report all warnings even if errors are found.")
+    var reportAllWarnings = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xfragments",
         valueDescription = "<fragment name>",
@@ -759,6 +777,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
+            put(AnalysisFlags.consistentDataClassCopyVisibility, consistentDataClassCopyVisibility)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
         }
@@ -1027,7 +1046,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         if (value == null) null
         else LanguageVersion.fromVersionString(value)
             ?: run {
-                val versionStrings = LanguageVersion.values().filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
+                val versionStrings = LanguageVersion.entries.filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
                 val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
                 collector.report(CompilerMessageSeverity.ERROR, message, null)
                 null

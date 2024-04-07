@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             value: GET_VAR '<set-?>: kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl.<set-data>' type=kotlin.Array<kotlin.Any?> origin=null
     PROPERTY name:size visibility:public modality:OPEN [var]
       overridden:
-        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int declared in <root>.ArrayMap
       FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       PROPERTY name:key visibility:public modality:OPEN [val]
         overridden:
-          public abstract key: K of kotlin.collections.Map.Entry
+          public abstract key: K of kotlin.collections.Map.Entry declared in kotlin.collections.Map.Entry
         FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'key: kotlin.Int declared in <root>.ArrayMapImpl.Entry.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.<get-key>' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
       PROPERTY name:value visibility:public modality:OPEN [val]
         overridden:
-          public abstract value: V of kotlin.collections.Map.Entry
+          public abstract value: V of kotlin.collections.Map.Entry declared in kotlin.collections.Map.Entry
         FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'value: T of <root>.ArrayMapImpl.Entry declared in <root>.ArrayMapImpl.Entry.<init>' type=T of <root>.ArrayMapImpl.Entry origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -741,7 +741,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int declared in <root>.ArrayMap
       FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.OneElementArrayMap<T of <root>.OneElementArrayMap>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:
@@ -837,7 +837,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int declared in <root>.ArrayMap
       FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.EmptyArrayMap) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:

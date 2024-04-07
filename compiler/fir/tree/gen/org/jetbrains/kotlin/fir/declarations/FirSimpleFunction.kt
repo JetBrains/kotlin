@@ -41,7 +41,7 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
-    abstract override val contractDescription: FirContractDescription
+    abstract override val contractDescription: FirContractDescription?
     abstract val name: Name
     abstract override val symbol: FirNamedFunctionSymbol
     abstract override val annotations: List<FirAnnotation>
@@ -70,7 +70,7 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
 
     abstract override fun replaceBody(newBody: FirBlock?)
 
-    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
+    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

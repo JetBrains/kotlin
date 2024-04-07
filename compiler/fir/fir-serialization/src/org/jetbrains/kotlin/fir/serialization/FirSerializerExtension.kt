@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProviderInternals
 import org.jetbrains.kotlin.fir.types.ConeErrorType
@@ -19,14 +20,15 @@ import org.jetbrains.kotlin.name.FqName
 
 abstract class FirSerializerExtension {
     abstract val session: FirSession
+    abstract val scopeSession: ScopeSession
 
     abstract val stringTable: FirElementAwareStringTable
 
     abstract val metadataVersion: BinaryVersion
 
-    val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable, constValueProvider) }
+    val annotationSerializer by lazy { FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider) }
 
-    protected abstract val constValueProvider: ConstValueProvider?
+    abstract val constValueProvider: ConstValueProvider?
     protected abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?
 
     @OptIn(ConstValueProviderInternals::class)

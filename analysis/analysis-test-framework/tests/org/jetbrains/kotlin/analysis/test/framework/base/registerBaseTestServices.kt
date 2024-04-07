@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtModuleProvider
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtModuleProviderImpl
+import org.jetbrains.kotlin.analysis.test.framework.directives.ModificationEventDirectives
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtTestModuleStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtTestModuleStructureProviderImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiTestCodeFragmentDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -26,13 +27,12 @@ fun TestConfigurationBuilder.registerAnalysisApiBaseTestServices(
     configurator: AnalysisApiTestConfigurator,
 ) {
     useAdditionalService<TestDisposableProvider>(::TestDisposableProviderImpl)
-    useAdditionalService<AnalysisApiKtModuleProvider>(::AnalysisApiKtModuleProviderImpl)
+    useAdditionalService<AnalysisApiKtTestModuleStructureProvider>(::AnalysisApiKtTestModuleStructureProviderImpl)
     useAdditionalService<AnalysisApiEnvironmentManager>(::AnalysisApiEnvironmentManagerImpl.bind(testDisposable))
     useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
     useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
 
     useCustomCompilerConfigurationProvider(::AnalysisApiTestCompilerConfiguratorProvider)
     usePreAnalysisHandlers(::ProjectStructureInitialisationPreAnalysisHandler.bind(configurator))
-    useDirectives(AnalysisApiTestDirectives)
-    useDirectives(AnalysisApiTestCodeFragmentDirectives)
+    useDirectives(AnalysisApiTestDirectives, AnalysisApiTestCodeFragmentDirectives, ModificationEventDirectives)
 }

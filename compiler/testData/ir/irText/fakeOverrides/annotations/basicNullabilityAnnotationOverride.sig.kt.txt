@@ -1,0 +1,101 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}kotlin.String?{EnhancedNullability}
+  //   Public signature: /A.bar|7290041286951472444[0]
+  //   Public signature debug description: bar(){}kotlin.String?{EnhancedNullability}
+  /* fake */ override fun bar(): @EnhancedNullability String?
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.String?{EnhancedNullability}){}
+  //   Public signature: /A.foo|5501098881315880089[0]
+  //   Public signature debug description: foo(kotlin.String?{EnhancedNullability}){}
+  /* fake */ override fun foo(s: @EnhancedNullability String?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}kotlin.String
+  //   Public signature: /B.bar|1214702899383694193[0]
+  //   Public signature debug description: bar(){}kotlin.String
+  override fun bar(): String
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.String?){}
+  //   Public signature: /B.foo|-7402282804178432687[0]
+  //   Public signature debug description: foo(kotlin.String?){}
+  override fun foo(s: String?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+abstract class C : Java2 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}kotlin.String{EnhancedNullability}
+  //   Public signature: /C.bar|-4383985778696477509[0]
+  //   Public signature debug description: bar(){}kotlin.String{EnhancedNullability}
+  abstract /* fake */ override fun bar(): @EnhancedNullability String
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.String{EnhancedNullability}){}
+  //   Public signature: /C.foo|-6237292312337226907[0]
+  //   Public signature debug description: foo(kotlin.String{EnhancedNullability}){}
+  abstract /* fake */ override fun foo(s: @EnhancedNullability String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java2 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar(){}kotlin.String
+  //   Public signature: /D.bar|1214702899383694193[0]
+  //   Public signature debug description: bar(){}kotlin.String
+  override fun bar(): String
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.String){}
+  //   Public signature: /D.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(s: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D){}
+//   Public signature: /test|7656439746344069424[0]
+//   Public signature debug description: test(A;B;C;D){}
+fun test(a: A, b: B, c: C, d: D): Unit

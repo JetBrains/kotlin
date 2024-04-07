@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.project.structure.*
 
 abstract class KtModuleWithModifiableDependencies {
+    abstract val project: Project
+
     abstract val directRegularDependencies: MutableList<KtModule>
     abstract val directDependsOnDependencies: MutableList<KtModule>
     abstract val directFriendDependencies: MutableList<KtModule>

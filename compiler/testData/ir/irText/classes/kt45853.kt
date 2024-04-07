@@ -1,10 +1,8 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 // DUMP_EXTERNAL_CLASS: X
 // DUMP_EXTERNAL_CLASS: AX
-
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ Fake overrides have divirging @EnhancedNullability in K1 and K2
 
 // FILE: kt45853.kt
 

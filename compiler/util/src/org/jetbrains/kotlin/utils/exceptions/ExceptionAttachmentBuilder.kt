@@ -60,7 +60,7 @@ inline fun KotlinExceptionWithAttachments.buildAttachment(
 
 inline fun Logger.logErrorWithAttachment(
     message: String,
-    cause: Exception? = null,
+    cause: Throwable? = null,
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
@@ -69,7 +69,7 @@ inline fun Logger.logErrorWithAttachment(
 
 inline fun buildErrorWithAttachment(
     message: String,
-    cause: Exception? = null,
+    cause: Throwable? = null,
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Throwable {
@@ -80,7 +80,7 @@ inline fun buildErrorWithAttachment(
 
 inline fun errorWithAttachment(
     message: String,
-    cause: Exception? = null,
+    cause: Throwable? = null,
     attachmentName: String = "info.txt",
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ): Nothing {

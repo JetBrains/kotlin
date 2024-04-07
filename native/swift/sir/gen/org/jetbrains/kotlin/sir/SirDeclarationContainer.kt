@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.declarationContainer]
  */
-sealed class SirDeclarationContainer : SirDeclarationParent() {
+sealed class SirDeclarationContainer : SirElementBase(), SirDeclarationParent {
     abstract val declarations: List<SirDeclaration>
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =

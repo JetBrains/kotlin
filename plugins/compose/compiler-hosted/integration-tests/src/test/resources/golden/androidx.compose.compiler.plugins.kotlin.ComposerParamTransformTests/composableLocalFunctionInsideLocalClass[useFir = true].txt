@@ -1,0 +1,70 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+fun test() {
+    object: C() {
+        @Composable
+        override fun Render() {
+            @Composable
+            fun B() {
+                Button({}) {}
+            }
+
+            B()
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun test() {
+  object : C {
+    @Composable
+    override fun Render(%composer: Composer?, %changed: Int) {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C(Render)<B()>:Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      @Composable
+      fun B(%composer: Composer?, %changed: Int) {
+        sourceInformationMarkerStart(%composer, <>, "C(B)<Button...>:Test.kt")
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        Button({
+        }, ComposableSingletons%TestKt.lambda-1, %composer, 0b00110110)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        sourceInformationMarkerEnd(%composer)
+      }
+      B(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      %composer.endReplaceGroup()
+    }
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

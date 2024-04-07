@@ -50,8 +50,8 @@ where advanced options include:
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. This is available in the IR backend only.
   -Xtyped-arrays             Translate primitive arrays into JS typed arrays.
-  -Xes-classes               Let generated JavaScript code use ES2015 classes.
-  -Xes-generators            Enable ES2015 generator functions usage inside the compiled code
+  -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
+  -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
   -Xwasm                     Use the experimental WebAssembly compiler backend.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-enable-array-range-checks
@@ -70,6 +70,8 @@ where advanced options include:
                              Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
+  -Xconsistent-data-class-copy-visibility
+                             The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
   -Xcontext-receivers        Enable experimental context receivers.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
@@ -124,6 +126,7 @@ where advanced options include:
   -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
+  -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
   -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.
@@ -137,10 +140,11 @@ where advanced options include:
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-extended-checkers Use extended analysis mode based on the frontend IR.
                              Warning: This feature is not yet production-ready.
+  -Xuse-fir-fake-override-builder
+                             Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              Warning: This feature is not yet production-ready.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
-  -Xuse-ir-fake-override-builder Generate fake overrides via IR. See KT-61514
   -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
   -Xverbose-phases           Be verbose while performing the given backend phases.
 

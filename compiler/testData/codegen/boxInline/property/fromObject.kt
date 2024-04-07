@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-62465
+// CHECK_BYTECODE_TEXT
 
 // FILE: 1.kt
 package test
@@ -26,3 +26,6 @@ fun box(): String {
 
     return y.result
 }
+
+// 0 INVOKEVIRTUAL test/B.setY
+// 0 INVOKEVIRTUAL test/B.getY

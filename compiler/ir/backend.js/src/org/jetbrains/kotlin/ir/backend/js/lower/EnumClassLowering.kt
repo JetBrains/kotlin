@@ -112,7 +112,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
 
                     context.fixReferencesToConstructorParameters(enumClass, this)
 
-                    acceptVoid(PatchDeclarationParentsVisitor(enumClass))
+                    patchDeclarationParents(enumClass)
 
                     body = this
                 }

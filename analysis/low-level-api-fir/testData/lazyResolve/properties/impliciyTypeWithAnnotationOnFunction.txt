@@ -162,6 +162,26 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnFunction.kt
         ^resolveMe R|/typeWithAnnotation|()
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnFunction.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(value#)  kotlin/String| {
+        ^typeWithAnnotation String()
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] fun resolveMe(): R|@R|Anno|(value#)  kotlin/String| {
+        ^resolveMe R|/typeWithAnnotation|()
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnFunction.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -213,7 +233,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] impliciyTypeWithAnnotationOnFunction.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val value: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val value: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] fun typeWithAnnotation(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
         ^typeWithAnnotation String()

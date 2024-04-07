@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -65,17 +63,14 @@ val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl
   semantically incorrect (TODO: needs further fix), but code generation seems
   to proceed nevertheless.
 */
-class LocalDeclarationsLowering(
+open class LocalDeclarationsLowering(
     val context: CommonBackendContext,
     val localNameSanitizer: (String) -> String = { it },
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
     val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
     val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
-    private val postLocalDeclarationLoweringCallback: ((IntermediateDatastructures) -> Unit)? = null,
-    private val getConstructorsThatCouldCaptureParamsWithoutFieldCreating: IrClass.() -> Iterable<IrConstructor> = { listOfNotNull(primaryConstructor) }
-) :
-    BodyLoweringPass {
+) : BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -112,6 +107,16 @@ class LocalDeclarationsLowering(
             .filter { context.mapping.capturedConstructors[it] != null }
             .forEach { context.mapping.capturedConstructors[it] = null }
     }
+
+    protected open fun postLocalDeclarationLoweringCallback(
+        localFunctions: Map<IrFunction, LocalFunctionContext>,
+        newParameterToOld: Map<IrValueParameter, IrValueParameter>,
+        newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>,
+    ) {
+    }
+
+    protected open fun IrClass.getConstructorsThatCouldCaptureParamsWithoutFieldCreating(): Iterable<IrConstructor> =
+        listOfNotNull(primaryConstructor)
 
     internal class ScopeWithCounter(val irElement: IrElement) {
         // Continuous numbering across all declarations in the container.
@@ -296,9 +301,7 @@ class LocalDeclarationsLowering(
 
             insertLoweredDeclarationForLocalFunctions()
 
-            postLocalDeclarationLoweringCallback?.invoke(
-                IntermediateDatastructures(localFunctions, newParameterToOld, newParameterToCaptured)
-            )
+            postLocalDeclarationLoweringCallback(localFunctions, newParameterToOld, newParameterToCaptured)
         }
 
         private fun insertLoweredDeclarationForLocalFunctions() {
@@ -1090,12 +1093,6 @@ class LocalDeclarationsLowering(
             }, Data(null, false))
         }
     }
-
-    data class IntermediateDatastructures(
-        val localFunctions: Map<IrFunction, LocalFunctionContext>,
-        val newParameterToOld: Map<IrValueParameter, IrValueParameter>,
-        val newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>
-    )
 }
 
 // Local inner classes capture anything through outer

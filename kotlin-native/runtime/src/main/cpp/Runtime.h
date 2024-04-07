@@ -21,7 +21,7 @@ struct InitNode {
 
 // For experimental MM, if runtime gets initialized, it will be in the native state after this.
 RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded();
-void Kotlin_deinitRuntimeIfNeeded();
+void deinitRuntimeIfNeeded();
 
 // Can only be called once.
 // No new runtimes can be initialized on any thread after this.

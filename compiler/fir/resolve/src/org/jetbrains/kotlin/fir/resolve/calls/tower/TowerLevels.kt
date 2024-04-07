@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.builder.buildTypeOperatorCall
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -28,12 +25,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 enum class ProcessResult {
@@ -233,15 +228,6 @@ class MemberScopeTowerLevel(
                 val dispatchReceiver = when {
                     isFromOriginalTypeInPresenceOfSmartCast ->
                         getOriginalReceiverExpressionIfStableSmartCast()
-                    // For a chain inference stub in dispatch receiver, we have to provide an explicit cast to Any
-                    // See KT-63932
-                    dispatchReceiverValue.type is ConeStubTypeForChainInference -> buildTypeOperatorCall {
-                        source = dispatchReceiverValue.receiverExpression.source?.fakeElement(KtFakeSourceElementKind.CastToAnyForStubTypes)
-                        operation = FirOperation.AS
-                        conversionTypeRef = FirImplicitAnyTypeRef(source)
-                        argumentList = buildUnaryArgumentList(dispatchReceiverValue.receiverExpression)
-                        coneTypeOrNull = session.builtinTypes.anyType.coneType
-                    }
                     else -> dispatchReceiverValue.receiverExpression
                 }
 
@@ -277,17 +263,16 @@ class MemberScopeTowerLevel(
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         return processMembers(info, processor) { consumer ->
-            withMemberCallLookup(lookupTracker, info) { lookupCtx ->
-                this.processFunctionsAndConstructorsByName(
-                    info, session, bodyResolveComponents,
-                    includeInnerConstructors = true,
-                    processor = {
-                        lookupCtx.recordCallableMemberLookup(it)
-                        // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
-                        consumer(it as FirFunctionSymbol<*>)
-                    }
-                )
-            }
+            lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
+            this.processFunctionsAndConstructorsByName(
+                info, session, bodyResolveComponents,
+                ConstructorFilter.OnlyInner,
+                processor = {
+                    lookupTracker?.recordCallableCandidateAsLookup(it, info.callSite.source, info.containingFile.source)
+                    // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
+                    consumer(it as FirFunctionSymbol<*>)
+                }
+            )
         }
     }
 
@@ -297,12 +282,10 @@ class MemberScopeTowerLevel(
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         return processMembers(info, processor) { consumer ->
-            withMemberCallLookup(lookupTracker, info) { lookupCtx ->
-                lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
-                this.processPropertiesByName(info.name) {
-                    lookupCtx.recordCallableMemberLookup(it)
-                    consumer(it)
-                }
+            lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
+            this.processPropertiesByName(info.name) {
+                lookupTracker?.recordCallableCandidateAsLookup(it, info.callSite.source, info.containingFile.source)
+                consumer(it)
             }
         }
     }
@@ -312,28 +295,6 @@ class MemberScopeTowerLevel(
         processor: TowerScopeLevelProcessor<FirBasedSymbol<*>>
     ): ProcessResult {
         return ProcessResult.FOUND
-    }
-
-    private inline fun withMemberCallLookup(
-        lookupTracker: FirLookupTrackerComponent?,
-        info: CallInfo,
-        body: (Triple<FirLookupTrackerComponent?, SmartList<String>, CallInfo>) -> Unit
-    ) {
-        lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
-        val lookupScopes = SmartList<String>()
-        body(Triple(lookupTracker, lookupScopes, info))
-        if (lookupScopes.isNotEmpty()) {
-            lookupTracker?.recordCallLookup(info, lookupScopes)
-        }
-    }
-
-    private fun Triple<FirLookupTrackerComponent?, SmartList<String>, CallInfo>.recordCallableMemberLookup(callable: FirCallableSymbol<*>) {
-        first?.run {
-            recordTypeResolveAsLookup(callable.fir.returnTypeRef, third.callSite.source, third.containingFile.source)
-            callable.callableId.className?.let { lookupScope ->
-                second.add(lookupScope.asString())
-            }
-        }
     }
 
     private fun FirCallableSymbol<*>.hasConsistentExtensionReceiver(givenExtensionReceivers: List<FirExpression>): Boolean {
@@ -370,12 +331,12 @@ class ContextReceiverGroupMemberScopeTowerLevel(
 // So: dispatch receiver = strictly none (EXCEPTIONS: importing scopes with import from objects, synthetic field variable)
 // So: extension receiver = either none or explicit
 // (if explicit receiver exists, it always *should* be an extension receiver)
-class ScopeTowerLevel(
+internal class ScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val scope: FirScope,
     private val givenExtensionReceiverOptions: List<FirExpression>,
     private val withHideMembersOnly: Boolean,
-    private val includeInnerConstructors: Boolean,
+    private val constructorFilter: ConstructorFilter,
     private val dispatchReceiverForStatics: ExpressionReceiverValue?
 ) : TowerScopeLevel() {
     private val session: FirSession get() = bodyResolveComponents.session
@@ -389,7 +350,7 @@ class ScopeTowerLevel(
             this.symbol = this@toResolvedQualifierExpressionReceiver
             this.source = source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
         }.apply {
-            setTypeOfQualifier(bodyResolveComponents.session)
+            setTypeOfQualifier(bodyResolveComponents)
         }
         return ExpressionReceiverValue(resolvedQualifier)
     }
@@ -480,14 +441,16 @@ class ScopeTowerLevel(
         info: CallInfo,
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessResult {
+        val lookupTracker = session.lookupTracker
         var empty = true
-        session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
+        lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
         scope.processFunctionsAndConstructorsByName(
             info,
             session,
             bodyResolveComponents,
-            includeInnerConstructors = includeInnerConstructors
+            constructorFilter
         ) { candidate ->
+            lookupTracker?.recordCallableCandidateAsLookup(candidate, info.callSite.source, info.containingFile.source)
             empty = false
             consumeCallableCandidate(candidate, info, processor)
         }
@@ -498,9 +461,11 @@ class ScopeTowerLevel(
         info: CallInfo,
         processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
     ): ProcessResult {
+        val lookupTracker = session.lookupTracker
         var empty = true
-        session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
+        lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
         scope.processPropertiesByName(info.name) { candidate ->
+            lookupTracker?.recordCallableCandidateAsLookup(candidate, info.callSite.source, info.containingFile.source)
             empty = false
             consumeCallableCandidate(candidate, info, processor)
         }

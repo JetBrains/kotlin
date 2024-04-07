@@ -1,0 +1,42 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable fun Test(param: String, unstable: List<*>) {
+    println(unstable)
+    InlineWrapper {
+        remember(param) { param }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Inline...>:Test.kt")
+  val %dirty = %changed
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %dirty, -1, <>)
+  }
+  println(unstable)
+  InlineWrapper({ %composer: Composer?, %changed: Int ->
+    sourceInformationMarkerStart(%composer, <>, "C<rememb...>:Test.kt")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    %composer.cache(%changed@Test and 0b1110 xor 0b0110 > 4 && %composer@Test.changed(param) || %changed@Test and 0b0110 == 0b0100) {
+      param
+    }
+    sourceInformationMarkerEnd(%composer)
+    sourceInformationMarkerEnd(%composer)
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(param, unstable, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

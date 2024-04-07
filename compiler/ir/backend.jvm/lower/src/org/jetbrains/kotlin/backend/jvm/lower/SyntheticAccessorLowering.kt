@@ -41,6 +41,19 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
     }
 
     companion object {
+        /**
+         * Whether `this` is accessible in [currentScope], according to the platform rules, and with respect to function inlining.
+         *
+         * @param context The backend context.
+         * @param currentScope The scope in which `this` is to be accessed.
+         * @param inlineScopeResolver The helper that allows to find the places from which private inline functions are called (useful if
+         *   `this` is accessed from a private inline function).
+         * @param withSuper If an access to this symbol (like [IrCall]) has a `super` qualifier, the access rules will be stricter.
+         * @param thisObjReference If this is a member access, the class symbol of the receiver.
+         * @param fromOtherClassLoader If `this` is a protected declaration being accessed from the same package but not from a subclass,
+         *   setting this parameter to `true` marks this declaration as inaccessible, since JVM `protected`, unlike Kotlin `protected`,
+         *   permits accesses from the same package, _provided the call is not across class loader boundaries_.
+         */
         fun IrSymbol.isAccessible(
             context: JvmBackendContext,
             currentScope: ScopeWithIr?,
@@ -84,8 +97,6 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
             return when {
                 jvmVisibility == Opcodes.ACC_PRIVATE -> ownerClass == scopeClassOrPackage
                 !withSuper && samePackage && jvmVisibility == 0 /* package only */ -> true
-                // JVM `protected`, unlike Kotlin `protected`, permits accesses from the same package,
-                // provided the call is not across class loader boundaries.
                 !withSuper && samePackage && !fromOtherClassLoader -> true
                 // Super calls and cross-package protected accesses are both only possible from a subclass of the declaration
                 // owner. Also, the target of a non-static call must be assignable to the current class. This is a verification
@@ -220,7 +231,7 @@ private class SyntheticAccessorTransformer(
     override fun visitGetField(expression: IrGetField): IrExpression {
         val dispatchReceiverType = expression.receiver?.type
         val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
-        if (expression.symbol.isAccessible(false, dispatchReceiverClassSymbol)) {
+        if (expression.symbol.isAccessible(withSuper = false, dispatchReceiverClassSymbol)) {
             return super.visitExpression(expression)
         }
 
@@ -303,6 +314,45 @@ private class SyntheticAccessorTransformer(
         return super.visitBlock(expression)
     }
 
+    /**
+     * Produces a call to the synthetic accessor [accessorSymbol] to replace the call expression [oldExpression].
+     *
+     * Before:
+     * ```kotlin
+     * class C protected constructor(val value: Int) {
+     *
+     *     protected fun protectedFun(a: Int): String = a.toString()
+     *
+     *     internal inline fun foo(x: Int) {
+     *         println(protectedFun(x))
+     *     }
+     *
+     *     internal inline fun copy(): C = C(value)
+     * }
+     * ```
+     *
+     * After:
+     * ```kotlin
+     * class C protected constructor(val value: Int) {
+     *
+     *     public constructor(
+     *         value: Int,
+     *         constructor_marker: kotlin.jvm.internal.DefaultConstructorMarker?
+     *     ) : this(value)
+     *
+     *     protected fun protectedFun(a: Int): String = a.toString()
+     *
+     *     public static fun access$protectedFun($this: C, a: Int): String =
+     *         $this.protectedFun(a)
+     *
+     *     internal inline fun foo(x: Int) {
+     *         println(C.access$protectedFun(this, x))
+     *     }
+     *
+     *     internal inline fun copy(): C = C(value, null)
+     * }
+     * ```
+     */
     private fun modifyFunctionAccessExpression(
         oldExpression: IrFunctionAccessExpression,
         accessorSymbol: IrFunctionSymbol
@@ -342,6 +392,31 @@ private class SyntheticAccessorTransformer(
     private fun createAccessorMarkerArgument() =
         IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable())
 
+    /**
+     * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _read_ expression [oldExpression].
+     *
+     * Before:
+     * ```kotlin
+     * class C {
+     *     protected /*field*/ val myField: Int
+     *
+     *     internal inline fun foo(): Int = myField + 1
+     * }
+     * ```
+     *
+     * After:
+     * ```kotlin
+     * class C {
+     *     protected /*field*/ val myField: Int
+     *
+     *     public static fun access$getMyField$p($this: C): Int =
+     *         $this.myField
+     *
+     *     internal inline fun foo(): Int =
+     *         C.access$getMyField$p(this) + 1
+     * }
+     * ```
+     */
     private fun modifyGetterExpression(
         oldExpression: IrGetField,
         accessorSymbol: IrSimpleFunctionSymbol
@@ -358,6 +433,35 @@ private class SyntheticAccessorTransformer(
         return call
     }
 
+    /**
+     * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _write_ expression [oldExpression].
+     *
+     * Before:
+     * ```kotlin
+     * class C {
+     *     protected var myField: Int = 0
+     *
+     *     internal inline fun foo(x: Int) {
+     *         myField = x
+     *     }
+     * }
+     * ```
+     *
+     * After:
+     * ```kotlin
+     * class C {
+     *     protected var myField: Int = 0
+     *
+     *     public static fun access$setMyField$p($this: C, <set-?>: Int) {
+     *         $this.myField = <set-?>
+     *     }
+     *
+     *     internal inline fun foo(x: Int) {
+     *         access$setMyField$p(this, x)
+     *     }
+     * }
+     * ```
+     */
     private fun modifySetterExpression(
         oldExpression: IrSetField,
         accessorSymbol: IrSimpleFunctionSymbol

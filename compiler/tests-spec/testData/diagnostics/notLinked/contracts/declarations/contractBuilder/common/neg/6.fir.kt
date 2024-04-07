@@ -45,7 +45,7 @@ class case_2(value_5: Boolean, val value_1: Boolean) {
 
     init {
         fun case_2_1(): Boolean {
-            <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(false) implies (value_5)<!> }
+            <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(false) implies (value_5) }
             return !(value_5)
         }
     }

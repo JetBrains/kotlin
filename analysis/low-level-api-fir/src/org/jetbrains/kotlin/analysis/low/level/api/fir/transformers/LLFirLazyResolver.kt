@@ -1,26 +1,43 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
-    abstract fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    )
+/**
+ * This class is responsible for [LLFirResolveTarget] resolution and "is resolved" check after that.
+ *
+ * @see LLFirLazyResolverRunner
+ * @see LLFirTargetResolver
+ */
+internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
+    fun resolve(target: LLFirResolveTarget) {
+        val resolver = createTargetResolver(target)
+        requireWithAttachment(
+            resolverPhase == resolver.resolverPhase,
+            {
+                """
+                Phase mismatch between ${this::class.simpleName} and ${resolver::class.simpleName}.
+                The resolver phase is ${resolver.resolverPhase}, but $resolverPhase is expected
+                """.trimIndent()
+            },
+        )
+
+        resolver.resolveDesignation()
+        target.forEachTarget(::checkIsResolved)
+
+        checkCanceled()
+    }
+
+    protected abstract fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver
 
     fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(resolverPhase)
@@ -33,19 +50,7 @@ internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
      * Will be performed to resolved declaration and its nested declarations
      * @see checkNestedDeclarationsAreResolved
      */
-    protected open fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {}
-
-    fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
-            target = target,
-            newPhase = resolverPhase,
-            updateForLocalDeclarations = resolverPhase == FirResolvePhase.BODY_RESOLVE,
-        )
-    }
-
-    fun checkIsResolved(designation: LLFirResolveTarget) {
-        designation.forEachTarget(::checkIsResolved)
-    }
+    protected abstract fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState)
 
     private fun checkNestedDeclarationsAreResolved(target: FirElementWithResolveState) {
         if (target !is FirDeclaration) return

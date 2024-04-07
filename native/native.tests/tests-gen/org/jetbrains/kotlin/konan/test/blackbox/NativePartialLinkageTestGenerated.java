@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -64,6 +63,12 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
   @TestMetadata("externalDeclarations")
   public void testExternalDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/externalDeclarations/");
+  }
+
+  @Test
+  @TestMetadata("externalDeclarationsKJS")
+  public void testExternalDeclarationsKJS() {
+    runTest("compiler/testData/klib/partial-linkage/externalDeclarationsKJS/");
   }
 
   @Test

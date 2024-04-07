@@ -21,6 +21,6 @@ object FirCustomEnumEntriesMigrationQualifierChecker : FirResolvedQualifierCheck
         if (expression.symbol?.name != StandardNames.ENUM_ENTRIES) return
         if (expression.nonFatalDiagnostics.none { it is ConeResolutionResultOverridesOtherToPreserveCompatibility }) return
 
-        reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM, context)
+        reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER, context)
     }
 }

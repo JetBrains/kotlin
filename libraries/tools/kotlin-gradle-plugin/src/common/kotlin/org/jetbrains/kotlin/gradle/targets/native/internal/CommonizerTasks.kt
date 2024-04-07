@@ -133,7 +133,7 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
 internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
     get() {
         if (!isAllowCommonizer()) return null
-        if (project.kotlinNativeToolchainEnabled) {
+        if (rootProject.kotlinNativeToolchainEnabled) {
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(rootProject.dependencies.attributesSchema)
             KotlinNativeBundleArtifactFormat.setupTransform(rootProject)
             addKotlinNativeBundleConfiguration(rootProject)

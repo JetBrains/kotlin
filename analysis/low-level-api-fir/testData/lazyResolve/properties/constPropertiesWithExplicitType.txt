@@ -1,0 +1,83 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] constPropertiesWithExplicitType.kt
+    public? final? const [ResolvedTo(RAW_FIR)] var simple: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public? final? const [ResolvedTo(RAW_FIR)] var simple: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public? final? const [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var simple: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: Int): R|kotlin/Unit|
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public? final? const [ResolvedTo(COMPANION_GENERATION)] var simple: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): Int
+        public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] value: Int): R|kotlin/Unit|
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public? final? const [ResolvedTo(SUPER_TYPES)] var simple: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(SUPER_TYPES)] get(): Int
+        public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] value: Int): R|kotlin/Unit|
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public? final? const [ResolvedTo(TYPES)] var simple: R|kotlin/Int| = LAZY_EXPRESSION
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|
+        public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public final const [ResolvedTo(STATUS)] var simple: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+        public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public final const [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var simple: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public final const [ResolvedTo(CONTRACTS)] var simple: R|kotlin/Int| = IntegerLiteral(24)
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var simple: R|kotlin/Int| = Int(24)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public final const [ResolvedTo(CONSTANT_EVALUATION)] [EvaluatedValue=Int(24)] var simple: R|kotlin/Int| = Int(24)
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
+        public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] [EvaluatedValue=Int(24)] var simple: R|kotlin/Int| = Int(24)
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] constPropertiesWithExplicitType.kt
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(24)] var simple: R|kotlin/Int| = Int(24)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] constPropertiesWithExplicitType.kt
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(24)] var simple: R|kotlin/Int| = Int(24)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|

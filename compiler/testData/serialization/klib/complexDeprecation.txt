@@ -1,0 +1,4 @@
+package test
+
+public const val MSG: kotlin.String = "Hello World"
+@kotlin.Deprecated(message = "Hello World") public fun foo(): kotlin.Unit

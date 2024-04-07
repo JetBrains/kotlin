@@ -43,6 +43,6 @@ object FirContractNotFirstStatementChecker : FirFunctionCallChecker(MppCheckerKi
                 && !(functionDeclaration is FirContractDescriptionOwner && functionDeclaration.contractDescription.isNonFirstStatement)
     }
 
-    private val FirContractDescription.isNonFirstStatement: Boolean
+    private val FirContractDescription?.isNonFirstStatement: Boolean
         get() = this is FirResolvedContractDescription && diagnostic == ConeContractShouldBeFirstStatement
 }

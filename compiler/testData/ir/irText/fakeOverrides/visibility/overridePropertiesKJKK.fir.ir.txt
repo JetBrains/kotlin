@@ -1,0 +1,241 @@
+FILE fqName:<root> fileName:/test.kt
+  CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    PROPERTY name:a1 visibility:public modality:OPEN [var]
+      FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a1> visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a1 visibility:public modality:OPEN [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-a1> (): kotlin.Int declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a1>' type=<root>.A origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a1> visibility:public modality:OPEN <> ($this:<root>.A, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:a1 visibility:public modality:OPEN [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-a1>' type=<root>.A origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.A.<set-a1>' type=kotlin.Int origin=null
+    PROPERTY name:a2 visibility:protected modality:OPEN [var]
+      FIELD PROPERTY_BACKING_FIELD name:a2 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a2> visibility:protected modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a2 visibility:protected modality:OPEN [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='protected open fun <get-a2> (): kotlin.Int declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a2 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a2>' type=<root>.A origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a2> visibility:protected modality:OPEN <> ($this:<root>.A, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:a2 visibility:protected modality:OPEN [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-a2>' type=<root>.A origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.A.<set-a2>' type=kotlin.Int origin=null
+    PROPERTY name:a3 visibility:internal modality:OPEN [var]
+      FIELD PROPERTY_BACKING_FIELD name:a3 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a3> visibility:internal modality:OPEN <> ($this:<root>.A) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a3 visibility:internal modality:OPEN [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='internal open fun <get-a3> (): kotlin.Int declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a3 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a3>' type=<root>.A origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a3> visibility:internal modality:OPEN <> ($this:<root>.A, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:a3 visibility:internal modality:OPEN [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a3 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-a3>' type=<root>.A origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.A.<set-a3>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.A]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    PROPERTY name:a1 visibility:public modality:OPEN [var]
+      overridden:
+        public open a1: kotlin.Int declared in <root>.A
+      FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a1> visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a1 visibility:public modality:OPEN [var]
+        overridden:
+          public open fun <get-a1> (): kotlin.Int declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-a1> (): kotlin.Int declared in <root>.B'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-a1>' type=<root>.B origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a1> visibility:public modality:OPEN <> ($this:<root>.B, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:a1 visibility:public modality:OPEN [var]
+        overridden:
+          public open fun <set-a1> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-a1>' type=<root>.B origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.B.<set-a1>' type=kotlin.Int origin=null
+    PROPERTY name:a2 visibility:protected modality:OPEN [var]
+      overridden:
+        protected open a2: kotlin.Int declared in <root>.A
+      FIELD PROPERTY_BACKING_FIELD name:a2 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a2> visibility:protected modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a2 visibility:protected modality:OPEN [var]
+        overridden:
+          protected open fun <get-a2> (): kotlin.Int declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='protected open fun <get-a2> (): kotlin.Int declared in <root>.B'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a2 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-a2>' type=<root>.B origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a2> visibility:protected modality:OPEN <> ($this:<root>.B, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:a2 visibility:protected modality:OPEN [var]
+        overridden:
+          protected open fun <set-a2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-a2>' type=<root>.B origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.B.<set-a2>' type=kotlin.Int origin=null
+    PROPERTY name:a3 visibility:internal modality:OPEN [var]
+      overridden:
+        internal open a3: kotlin.Int declared in <root>.A
+      FIELD PROPERTY_BACKING_FIELD name:a3 type:kotlin.Int visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a3> visibility:internal modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a3 visibility:internal modality:OPEN [var]
+        overridden:
+          internal open fun <get-a3> (): kotlin.Int declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='internal open fun <get-a3> (): kotlin.Int declared in <root>.B'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a3 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-a3>' type=<root>.B origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a3> visibility:internal modality:OPEN <> ($this:<root>.B, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:a3 visibility:internal modality:OPEN [var]
+        overridden:
+          internal open fun <set-a3> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a3 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-a3>' type=<root>.B origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.B.<set-a3>' type=kotlin.Int origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.A]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.J]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.J]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.J
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.J
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.J
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a1 visibility:public modality:OPEN [fake_override,var]
+      overridden:
+        public open a1: kotlin.Int declared in <root>.J
+      FUN FAKE_OVERRIDE name:<get-a1> visibility:public modality:OPEN <> ($this:<root>.J) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a1 visibility:public modality:OPEN [fake_override,var]
+        overridden:
+          public open fun <get-a1> (): kotlin.Int declared in <root>.J
+        $this: VALUE_PARAMETER name:<this> type:<root>.J
+      FUN FAKE_OVERRIDE name:<set-a1> visibility:public modality:OPEN <> ($this:<root>.J, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a1 visibility:public modality:OPEN [fake_override,var]
+        overridden:
+          public open fun <set-a1> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.J
+        $this: VALUE_PARAMETER name:<this> type:<root>.J
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:a2 visibility:protected modality:OPEN [fake_override,var]
+      overridden:
+        protected open a2: kotlin.Int declared in <root>.J
+      FUN FAKE_OVERRIDE name:<get-a2> visibility:protected modality:OPEN <> ($this:<root>.J) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a2 visibility:protected modality:OPEN [fake_override,var]
+        overridden:
+          protected open fun <get-a2> (): kotlin.Int declared in <root>.J
+        $this: VALUE_PARAMETER name:<this> type:<root>.J
+      FUN FAKE_OVERRIDE name:<set-a2> visibility:protected modality:OPEN <> ($this:<root>.J, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a2 visibility:protected modality:OPEN [fake_override,var]
+        overridden:
+          protected open fun <set-a2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.J
+        $this: VALUE_PARAMETER name:<this> type:<root>.J
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:a3 visibility:internal modality:OPEN [fake_override,var]
+      overridden:
+        internal open a3: kotlin.Int declared in <root>.J
+      FUN FAKE_OVERRIDE name:<get-a3> visibility:internal modality:OPEN <> ($this:<root>.J) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a3 visibility:internal modality:OPEN [fake_override,var]
+        overridden:
+          internal open fun <get-a3> (): kotlin.Int declared in <root>.J
+        $this: VALUE_PARAMETER name:<this> type:<root>.J
+      FUN FAKE_OVERRIDE name:<set-a3> visibility:internal modality:OPEN <> ($this:<root>.J, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a3 visibility:internal modality:OPEN [fake_override,var]
+        overridden:
+          internal open fun <set-a3> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.J
+        $this: VALUE_PARAMETER name:<this> type:<root>.J
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+  FUN name:test visibility:public modality:FINAL <> (c:<root>.C) returnType:kotlin.Unit
+    VALUE_PARAMETER name:c index:0 type:<root>.C
+    BLOCK_BODY
+      CALL 'public open fun <set-a1> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        <set-?>: CONST Int type=kotlin.Int value=1
+      CALL 'internal open fun <set-a3> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        <set-?>: CONST Int type=kotlin.Int value=2

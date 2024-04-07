@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/kt16904.kt
           x: CONST Int type=kotlin.Int value=42
         CALL 'public final fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Test1' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
-          <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
             $this: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.Test1' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
             other: CONST Int type=kotlin.Int value=42
@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/kt16904.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: <root>.B
+        public final x: <root>.B declared in <root>.A
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/kt16904.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final y: kotlin.Int
+        public final y: kotlin.Int declared in <root>.A
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:

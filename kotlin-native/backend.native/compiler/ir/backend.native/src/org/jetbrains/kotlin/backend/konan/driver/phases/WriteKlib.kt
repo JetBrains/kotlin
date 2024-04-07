@@ -12,21 +12,24 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import java.util.*
 
 internal data class KlibWriterInput(
         val serializerOutput: SerializerOutput,
-        val customOutputPath: String?
+        val customOutputPath: String?,
+        val produceHeaderKlib: Boolean
 )
 internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
         "WriteKlib", "Write klib output",
 ) { context, input ->
     val config = context.config
     val configuration = config.configuration
-    val outputFiles = OutputFiles(input.customOutputPath?.removeSuffixIfPresent(".klib")
+    val outputFiles = OutputFiles(input.customOutputPath
             ?: config.outputPath, config.target, config.produce)
     val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
     val output = outputFiles.klibOutputFileName(!nopack)
@@ -43,7 +46,11 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
             metadataVersion = metadataVersion,
     )
     val target = config.target
-    val manifestProperties = config.manifestProperties
+    val manifestProperties = config.manifestProperties ?: Properties()
+
+    if (input.produceHeaderKlib) {
+        manifestProperties.setProperty(KLIB_PROPERTY_HEADER, "true")
+    }
 
     if (!nopack) {
         val suffix = outputFiles.produce.suffix(target)
@@ -80,6 +87,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
 internal fun <T : PhaseContext> PhaseEngine<T>.writeKlib(
         serializationOutput: SerializerOutput,
         customOutputPath: String? = null,
+        produceHeaderKlib: Boolean = false,
 ) {
-    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath))
+    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath, produceHeaderKlib))
 }

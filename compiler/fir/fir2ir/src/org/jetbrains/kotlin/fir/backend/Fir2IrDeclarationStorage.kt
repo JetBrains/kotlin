@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
+import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
@@ -16,10 +17,7 @@ import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
@@ -27,6 +25,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -53,16 +53,17 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.concurrent.ConcurrentHashMap
 
 class Fir2IrDeclarationStorage(
-    private val components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     private val sourceModuleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage
-) : Fir2IrComponents by components {
+) : Fir2IrComponents by c {
 
     private val fragmentCache: ConcurrentHashMap<FqName, ExternalPackageFragments> = ConcurrentHashMap()
     private val moduleDescriptorCache: ConcurrentHashMap<FirModuleData, FirModuleDescriptor> = ConcurrentHashMap()
@@ -77,7 +78,14 @@ class Fir2IrDeclarationStorage(
 
     private val scriptCache: ConcurrentHashMap<FirScript, IrScript> = ConcurrentHashMap()
 
+    class DataClassGeneratedFunctionsStorage {
+        var hashCodeSymbol: IrSimpleFunctionSymbol? = null
+        var toStringSymbol: IrSimpleFunctionSymbol? = null
+        var equalsSymbol: IrSimpleFunctionSymbol? = null
+    }
+
     private val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunctionSymbol> = commonMemberStorage.functionCache
+    private val dataClassGeneratedFunctionsCache: ConcurrentHashMap<FirClass, DataClassGeneratedFunctionsStorage> = commonMemberStorage.dataClassGeneratedFunctionsCache
 
     private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructorSymbol> = commonMemberStorage.constructorCache
 
@@ -108,6 +116,7 @@ class Fir2IrDeclarationStorage(
             }
         }
     }
+
     private val propertyCache = PropertyCacheStorage(commonMemberStorage.propertyCache, commonMemberStorage.syntheticPropertyCache)
     private val getterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> =
         commonMemberStorage.getterForPropertyCache
@@ -190,15 +199,15 @@ class Fir2IrDeclarationStorage(
         val parentIsExpect: Boolean,
     ) {
         companion object {
-            context(Fir2IrComponents)
             operator fun invoke(
                 originalSymbol: FirCallableSymbol<*>,
                 dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+                c: Fir2IrComponents
             ): FakeOverrideIdentifier {
                 return FakeOverrideIdentifier(
                     originalSymbol,
                     dispatchReceiverLookupTag,
-                    dispatchReceiverLookupTag.toFirRegularClass(session)?.isExpect == true
+                    dispatchReceiverLookupTag.toFirRegularClass(c.session)?.isExpect == true
                 )
             }
         }
@@ -295,9 +304,16 @@ class Fir2IrDeclarationStorage(
         name: Name,
         source: SourceElement,
     ) : IrClassImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrClassSymbolImpl(), name,
-        ClassKind.CLASS, DescriptorVisibilities.PUBLIC, Modality.FINAL,
-        source = source
+        startOffset = UNDEFINED_OFFSET,
+        endOffset = UNDEFINED_OFFSET,
+        origin = origin,
+        symbol = IrClassSymbolImpl(),
+        name = name,
+        kind = ClassKind.CLASS,
+        visibility = DescriptorVisibilities.PUBLIC,
+        modality = Modality.FINAL,
+        source = source,
+        factory = IrFactoryImpl,
     )
 
     private class NonCachedSourceFacadeContainerSource(
@@ -338,6 +354,17 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunctionSymbol? {
         if (function.visibility == Visibilities.Local) {
             return localStorage.getLocalFunctionSymbol(function)
+        }
+        runIf(function.origin.generatedAnyMethod) {
+            val containingClass = function.getContainingClass(session)!!
+            val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
+            val cachedFunction = when (function.nameOrSpecialName) {
+                OperatorNameConventions.EQUALS -> cache.equalsSymbol
+                OperatorNameConventions.HASH_CODE -> cache.hashCodeSymbol
+                OperatorNameConventions.TO_STRING -> cache.toStringSymbol
+                else -> return@runIf // componentN functions are the same for all sessions
+            }
+            return cachedFunction?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
         }
         val cachedIrCallable = getCachedIrCallableSymbol(
             function,
@@ -387,7 +414,7 @@ class Fir2IrDeclarationStorage(
         parentIsExternal: Boolean
     ): IrSimpleFunctionSymbol {
         if (
-            !configuration.useIrFakeOverrideBuilder ||
+            configuration.useFirBasedFakeOverrideGenerator ||
             parentIsExternal ||
             function !is FirSimpleFunction ||
             !function.isFakeOverride(fakeOverrideOwnerLookupTag)
@@ -410,7 +437,7 @@ class Fir2IrDeclarationStorage(
             else -> shouldNotBeCalled()
         }
         requireNotNull(containingClassLookupTag) { "Containing class not found for ${callable.render()}"}
-        return classifierStorage.findIrClass(containingClassLookupTag)?.symbol
+        return classifierStorage.getIrClassSymbol(containingClassLookupTag)
             ?: error("IR class for $containingClassLookupTag not found")
     }
 
@@ -428,9 +455,18 @@ class Fir2IrDeclarationStorage(
                 val originalFunction = function.unwrapFakeOverridesOrDelegated()
                 val key = FakeOverrideIdentifier(
                     originalFunction.symbol,
-                    fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!
+                    fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!,
+                    c
                 )
                 irForFirSessionDependantDeclarationMap[key] = irFunctionSymbol
+            }
+
+            function.origin.generatedAnyMethod -> {
+                val name = function.nameOrSpecialName
+                require(OperatorNameConventions.isComponentN(name) || name == DATA_CLASS_COPY) {
+                    "Only componentN functions should be cached this way, but got: $name"
+                }
+                functionCache[function] = irFunctionSymbol
             }
 
             else -> {
@@ -455,7 +491,15 @@ class Fir2IrDeclarationStorage(
     }
 
     internal fun cacheGeneratedFunction(firFunction: FirSimpleFunction, irFunction: IrSimpleFunction) {
-        functionCache[firFunction] = irFunction.symbol
+        val containingClass = firFunction.getContainingClass(session)!!
+        val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
+        val irSymbol = irFunction.symbol
+        when (val name = firFunction.nameOrSpecialName) {
+            OperatorNameConventions.EQUALS -> cache.equalsSymbol = irSymbol
+            OperatorNameConventions.HASH_CODE -> cache.hashCodeSymbol = irSymbol
+            OperatorNameConventions.TO_STRING -> cache.toStringSymbol = irSymbol
+            else -> error("Only toString, hashCode and equals should be cached this way, but got $name")
+        }
     }
 
     // ------------------------------------ constructors ------------------------------------
@@ -470,7 +514,7 @@ class Fir2IrDeclarationStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
     ): IrConstructor {
-        val symbol = getIrConstructorSymbol(constructor.symbol, isLocal)
+        val symbol = getIrConstructorSymbol(constructor.symbol, potentiallyExternal = !isLocal)
         return callablesGenerator.createIrConstructor(
             constructor,
             irParent(),
@@ -484,13 +528,13 @@ class Fir2IrDeclarationStorage(
         constructorCache[constructor] = irConstructorSymbol
     }
 
-    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, isLocal: Boolean = false): IrConstructorSymbol {
+    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, potentiallyExternal: Boolean = true): IrConstructorSymbol {
         val constructor = firConstructorSymbol.fir
         getCachedIrConstructorSymbol(constructor)?.let { return it }
 
         // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
         val symbol = IrConstructorSymbolImpl()
-        if (!isLocal) {
+        if (potentiallyExternal) {
             val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null)
             val isIntrinsicConstEvaluation =
                 constructor.returnTypeRef.coneType.classId == StandardClassIds.Annotations.IntrinsicConstEvaluation
@@ -584,21 +628,19 @@ class Fir2IrDeclarationStorage(
         parentIsExternal: Boolean
     ): PropertySymbols {
         if (
-            configuration.useIrFakeOverrideBuilder &&
+            !configuration.useFirBasedFakeOverrideGenerator &&
             !parentIsExternal &&
             property.isFakeOverride(fakeOverrideOwnerLookupTag)
         ) {
             return createFakeOverridePropertySymbols(property, fakeOverrideOwnerLookupTag)
         }
 
+        val isJavaOrigin = property.origin is FirDeclarationOrigin.Java
         val propertySymbol = IrPropertySymbolImpl()
-        val getterSymbol = createFunctionSymbol(signature = null)
+        val getterSymbol = runIf(!isJavaOrigin) { createFunctionSymbol(signature = null) }
+        val setterSymbol = runIf(!isJavaOrigin && property.isVar) { createFunctionSymbol(signature = null) }
 
-        val setterSymbol = runIf(property.isVar) {
-            createFunctionSymbol(signature = null)
-        }
-
-        val backingFieldSymbol = runIf(property.delegate != null || property.hasBackingField) {
+        val backingFieldSymbol = runIf(property.delegate != null || extensions.hasBackingField(property, session)) {
             createFieldSymbol()
         }
 
@@ -617,7 +659,9 @@ class Fir2IrDeclarationStorage(
 
         val containingClassSymbol = findContainingIrClassSymbol(property, fakeOverrideOwnerLookupTag)
         val propertySymbol = IrPropertyFakeOverrideSymbol(originalSymbols.propertySymbol, containingClassSymbol, idSignature = null)
-        val getterSymbol = IrFunctionFakeOverrideSymbol(originalSymbols.getterSymbol, containingClassSymbol, idSignature = null)
+        val getterSymbol = originalSymbols.getterSymbol?.let {
+            IrFunctionFakeOverrideSymbol(it, containingClassSymbol, idSignature = null)
+        }
 
         val setterSymbol = runIf(property.isVar) {
             val setterIsVisible = property.setter?.let { setter ->
@@ -640,7 +684,7 @@ class Fir2IrDeclarationStorage(
             backingFieldForPropertyCache[irPropertySymbol] = it
             propertyForBackingFieldCache[it] = irPropertySymbol
         }
-        symbols.getterSymbol.let {
+        symbols.getterSymbol?.let {
             getterForPropertyCache[irPropertySymbol] = it
         }
         symbols.setterSymbol?.let {
@@ -650,7 +694,8 @@ class Fir2IrDeclarationStorage(
             val originalProperty = property.unwrapFakeOverridesOrDelegated()
             val key = FakeOverrideIdentifier(
                 originalProperty.symbol,
-                fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!
+                fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!,
+                c
             )
             irForFirSessionDependantDeclarationMap[key] = irPropertySymbol
         } else {
@@ -992,26 +1037,12 @@ class Fir2IrDeclarationStorage(
 
     fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return when (val firDeclaration = firVariableSymbol.fir) {
-            is FirEnumEntry -> {
-                classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
-                val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.findIrClass(it) }!!
+            is FirEnumEntry -> classifierStorage.getIrEnumEntrySymbol(firDeclaration)
 
-                val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
+            is FirValueParameter -> localStorage.getParameter(firDeclaration)
+                ?: getIrVariableSymbol(firDeclaration) // catch parameter is FirValueParameter in FIR but IrVariable in IR
 
-                classifierStorage.getOrCreateIrEnumEntry(
-                    firDeclaration,
-                    irParent = irParentClass,
-                    predefinedOrigin = if (containingFile != null) IrDeclarationOrigin.DEFINED else irParentClass.origin
-                ).symbol
-            }
-            is FirValueParameter -> {
-                localStorage.getParameter(firDeclaration)
-                // catch parameter is FirValueParameter in FIR but IrVariable in IR
-                    ?: return getIrVariableSymbol(firDeclaration)
-            }
-            else -> {
-                getIrVariableSymbol(firDeclaration)
-            }
+            else -> getIrVariableSymbol(firDeclaration)
         }
     }
 
@@ -1143,7 +1174,8 @@ class Fir2IrDeclarationStorage(
         if (isFakeOverride) {
             val key = FakeOverrideIdentifier(
                 declaration.unwrapFakeOverridesOrDelegated().symbol,
-                fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!
+                fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!,
+                c
             )
             irForFirSessionDependantDeclarationMap[key]?.let { return it as IS }
         } else {
@@ -1191,11 +1223,12 @@ class Fir2IrDeclarationStorage(
                 isFakeOverride -> {
                     val key = FakeOverrideIdentifier(
                         declaration.symbol.unwrapFakeOverrides(),
-                        fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!
+                        fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!,
+                        c
                     )
                     irForFirSessionDependantDeclarationMap[key] = cachedInSymbolTable
                 }
-                configuration.useIrFakeOverrideBuilder -> {
+                !configuration.useFirBasedFakeOverrideGenerator -> {
                     /*
                      * If IR fake override builder is used for building fake-overrides, they are generated bypassing Fir2IrDeclarationStorage,
                      *   and are written directly to SymbolTable. So in this case it is normal to save the result from symbol table into
@@ -1247,9 +1280,9 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun generateLazyFakeOverrides(name: Name, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
-        val firClassSymbol = fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol
+        val firClassSymbol = fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol<*>
         if (firClassSymbol != null) {
-            val irClass = classifierStorage.getOrCreateIrClass(firClassSymbol)
+            val irClass = classifierStorage.getIrClass(firClassSymbol.fir)
             if (irClass is Fir2IrLazyClass) {
                 irClass.getFakeOverridesByName(name)
             }
@@ -1427,7 +1460,9 @@ class Fir2IrDeclarationStorage(
         firOrigin: FirDeclarationOrigin
     ): IrDeclarationParent? {
         if (parentLookupTag != null) {
-            return classifierStorage.findIrClass(parentLookupTag)
+            // At this point all source classes should be already created and bound to symbols
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            return classifierStorage.getIrClassSymbol(parentLookupTag)?.owner
         }
 
 
@@ -1445,11 +1480,11 @@ class Fir2IrDeclarationStorage(
          */
         val firProvider = if (configuration.allowNonCachedDeclarations) {
             when {
-                firBasedSymbol.moduleData == session.moduleData -> components.firProvider
+                firBasedSymbol.moduleData == session.moduleData -> c.firProvider
                 else -> firBasedSymbol.moduleData.session.firProvider
             }
         } else {
-            components.firProvider
+            c.firProvider
         }
 
         val containerFile = when (firBasedSymbol) {
@@ -1496,7 +1531,7 @@ class Fir2IrDeclarationStorage(
         return parentPackage
     }
 
-    private fun findIrParent(
+    internal fun findIrParent(
         callableDeclaration: FirCallableDeclaration,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
     ): IrDeclarationParent? {
@@ -1566,7 +1601,7 @@ internal fun <D : IrDeclaration> IrBindableSymbol<*, D>.ownerIfBound(): D? {
 
 data class PropertySymbols(
     val propertySymbol: IrPropertySymbol,
-    val getterSymbol: IrSimpleFunctionSymbol,
+    val getterSymbol: IrSimpleFunctionSymbol?,
     val setterSymbol: IrSimpleFunctionSymbol?,
     val backingFieldSymbol: IrFieldSymbol?,
 )

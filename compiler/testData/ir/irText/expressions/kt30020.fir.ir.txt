@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/kt30020.kt
         BLOCK_BODY
           CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=PLUSEQ
             <T>: kotlin.Int
-            $receiver: GET_VAR '<this>: <root>.AML declared in <root>.AML' type=<root>.AML origin=null
+            $receiver: GET_VAR '<this>: <root>.AML declared in <root>.AML' type=<root>.AML origin=PLUSEQ
             element: CONST Int type=kotlin.Int value=300
     CONSTRUCTOR visibility:public <> () returnType:<root>.AML [primary]
       BLOCK_BODY
@@ -150,16 +150,16 @@ FILE fqName:<root> fileName:/kt30020.kt
       BLOCK_BODY
         CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=PLUSEQ
           <T>: kotlin.Int
-          $receiver: GET_VAR '<this>: <root>.AML declared in <root>.AML.testExplicitThis' type=<root>.AML origin=null
+          $receiver: GET_VAR '<this>: <root>.AML declared in <root>.AML.testExplicitThis' type=<root>.AML origin=PLUSEQ
           element: CONST Int type=kotlin.Int value=200
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int
-      FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Int [fake_override]
+        public abstract size: kotlin.Int declared in kotlin.collections.MutableList
+      FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableList<kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.MutableList
-        $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int>
+        $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int>
   CLASS INTERFACE name:X modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/kt30020.kt
         element: CONST Int type=kotlin.Int value=1
       CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=PLUSEQ
         <T>: kotlin.Int
-        $receiver: CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+        $receiver: CALL 'public abstract fun f (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.X' type=kotlin.collections.MutableList<kotlin.Any> origin=PLUSEQ
           $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
         element: CONST Int type=kotlin.Int value=2
       CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=PLUSEQ
@@ -248,5 +248,5 @@ FILE fqName:<root> fileName:/kt30020.kt
     BLOCK_BODY
       CALL 'public final fun plusAssign <T> (element: T of kotlin.collections.plusAssign): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=PLUSEQ
         <T>: kotlin.Int
-        $receiver: GET_VAR '<this>: kotlin.collections.MutableList<kotlin.Any> declared in <root>.testExtensionReceiver' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+        $receiver: GET_VAR '<this>: kotlin.collections.MutableList<kotlin.Any> declared in <root>.testExtensionReceiver' type=kotlin.collections.MutableList<kotlin.Any> origin=PLUSEQ
         element: CONST Int type=kotlin.Int value=100

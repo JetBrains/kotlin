@@ -85,7 +85,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 builtinTypes,
                 scope
             ),
-            LLFirDependenciesSymbolProvider(session) { listOf(builtinSymbolProvider) },
+            LLFirDependenciesSymbolProvider(session) {
+                buildList {
+                    addAll(collectDependencySymbolProviders(moduleData.ktModule))
+                    add(builtinSymbolProvider)
+                }
+            },
         )
     }
 
@@ -435,6 +440,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(ProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
+            registerDefaultComponents()
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
@@ -609,6 +615,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         // Please update KmpModuleSorterTest#buildDependenciesToTest if the logic of collecting dependencies changes
         val dependencyModules = buildSet {
             addAll(module.directRegularDependencies)
+            addAll(module.directFriendDependencies)
 
             // The dependency provider needs to have access to all direct and indirect `dependsOn` dependencies, as `dependsOn`
             // dependencies are transitive.

@@ -90,6 +90,10 @@ open class PsiRawFirBuilder(
         }
     }
 
+    fun buildTypeReference(reference: KtTypeReference): FirTypeRef {
+        return reference.accept(Visitor(), null) as FirTypeRef
+    }
+
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
         val actualKind = kind ?: KtRealSourceElementKind
         return this.toKtPsiSourceElement(actualKind)
@@ -904,9 +908,10 @@ open class PsiRawFirBuilder(
                     val argumentExpression =
                         buildOrLazyExpression((argument as? PsiElement)?.toFirSourceElement()) { argument.toFirExpression() }
                     arguments += when (argument) {
-                        is KtLambdaArgument -> buildLambdaArgumentExpression {
-                            source = argument.toFirSourceElement()
-                            expression = argumentExpression
+                        is KtLambdaArgument -> argumentExpression.apply {
+                            // TODO(KT-66553) remove and set in builder
+                            @OptIn(RawFirApi::class)
+                            (this as? FirAnonymousFunctionExpression)?.replaceIsTrailingLambda(true)
                         }
                         else -> argumentExpression
                     }
@@ -1183,7 +1188,6 @@ open class PsiRawFirBuilder(
                 BodyBuildingMode.LAZY_BODIES -> file.packageFqName
             }
             return buildFile {
-                symbol = FirFileSymbol()
                 source = file.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -1194,19 +1198,11 @@ open class PsiRawFirBuilder(
                     packageFqName = context.packageFqName
                     source = file.packageDirective?.toKtPsiSourceElement()
                 }
-                annotationsContainer = file.fileAnnotationList?.let {
-                    buildFileAnnotationsContainer {
-                        moduleData = baseModuleData
-                        containingFileSymbol = this@buildFile.symbol
-                        source = it.toKtPsiSourceElement()
-                        withContainerSymbol(containingFileSymbol) {
-                            for (annotationEntry in it.annotationEntries) {
-                                annotations += annotationEntry.convert<FirAnnotation>()
-                            }
-                        }
 
-                        annotations.ifEmpty {
-                            resolvePhase = FirResolvePhase.BODY_RESOLVE
+                file.fileAnnotationList?.let {
+                    withContainerSymbol(symbol) {
+                        for (annotationEntry in it.annotationEntries) {
+                            annotations += annotationEntry.convert<FirAnnotation>()
                         }
                     }
                 }
@@ -1305,6 +1301,9 @@ open class PsiRawFirBuilder(
                                     // the last one need to be analyzed in script configurator to decide on result property
                                     // therefore no lazy conversion in this case
                                     allowLazyBody = !isLast,
+                                    // the last anonymous initializer could be converted to a property and its symbol will be dropped
+                                    // therefore we should not rely on it as a containing declaration symbol, and use the parent one instead
+                                    isLocal = isLast,
                                 )
 
                                 declarations.add(initializer)
@@ -1313,12 +1312,14 @@ open class PsiRawFirBuilder(
                                 val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
                                 declarations.add(destructuringContainerVar)
 
-                                declarations.addDestructuringVariables(
+                                addDestructuringVariables(
+                                    declarations,
+                                    this@Visitor,
                                     moduleData,
                                     declaration,
                                     destructuringContainerVar,
                                     tmpVariable = false,
-                                    localEntries = false,
+                                    forceLocal = false,
                                 ) {
                                     configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
                                 }
@@ -1336,7 +1337,7 @@ open class PsiRawFirBuilder(
                     setup()
                     if (sourceFile != null) {
                         for (configurator in baseSession.extensionService.scriptConfigurators) {
-                            with(configurator) { configure(sourceFile) }
+                            with(configurator) { configure(sourceFile, context) }
                         }
                     }
                 }
@@ -1882,12 +1883,14 @@ open class PsiRawFirBuilder(
                             isNoinline = false
                             isVararg = false
                         }
-                        destructuringVariables.addDestructuringVariables(
+                        addDestructuringVariables(
+                            destructuringVariables,
+                            this@Visitor,
                             baseModuleData,
                             multiDeclaration,
                             multiParameter,
                             tmpVariable = false,
-                            localEntries = true,
+                            forceLocal = true,
                         )
                         multiParameter
                     } else {
@@ -2043,7 +2046,9 @@ open class PsiRawFirBuilder(
                 this@PsiRawFirBuilder.context.calleeNamesForLambda += null
 
                 val expression = buildOrLazyExpression(null) {
-                    initializer.toFirExpression("Should have initializer")
+                    withForcedLocalContext {
+                        initializer.toFirExpression("Should have initializer")
+                    }
                 }
 
                 this@PsiRawFirBuilder.context.calleeNamesForLambda.removeLast()
@@ -2212,12 +2217,21 @@ open class PsiRawFirBuilder(
             return buildAnonymousInitializer(initializer, containingDeclarationSymbol = null)
         }
 
+        /**
+         * Builds [FirAnonymousInitializer] from [KtAnonymousInitializer]
+         *
+         * @param initializer Source [KtAnonymousInitializer]
+         * @param containingDeclarationSymbol containing declaration symbol, if any
+         * @param allowLazyBody if `true`, [FirLazyBlock] is used in the IDE mode
+         * @param isLocal if `true`, the initializer is not used as a containing declaration for the contents of the initializer
+         */
         protected fun buildAnonymousInitializer(
             initializer: KtAnonymousInitializer,
             containingDeclarationSymbol: FirBasedSymbol<*>?,
             allowLazyBody: Boolean = true,
+            isLocal: Boolean = false,
         ) = buildAnonymousInitializer {
-            withContainerSymbol(symbol) {
+            withContainerSymbol(symbol, isLocal) {
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -2552,26 +2566,18 @@ open class PsiRawFirBuilder(
             return buildWhenExpression {
                 source = expression.toFirSourceElement()
 
-                var ktLastIf: KtIfExpression = expression
-                whenBranches@ while (true) {
-                    val ktCondition = ktLastIf.condition
-                    branches += buildWhenBranch {
-                        source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
-                        condition = ktCondition.toFirExpression("If statement should have condition")
-                        result = ktLastIf.then.toFirBlock()
-                    }
+                val ktCondition = expression.condition
+                branches += buildWhenBranch {
+                    source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+                    condition = ktCondition.toFirExpression("If statement should have condition")
+                    result = expression.then.toFirBlock()
+                }
 
-                    when (val ktElse = ktLastIf.`else`) {
-                        null -> break@whenBranches
-                        is KtIfExpression -> ktLastIf = ktElse
-                        else -> {
-                            branches += buildWhenBranch {
-                                source = ktLastIf.elseKeyword?.toKtPsiSourceElement()
-                                condition = buildElseIfTrueCondition()
-                                result = ktLastIf.`else`.toFirBlock()
-                            }
-                            break@whenBranches
-                        }
+                if (expression.`else` != null) {
+                    branches += buildWhenBranch {
+                        source = expression.elseKeyword?.toKtPsiSourceElement()
+                        condition = buildElseIfTrueCondition()
+                        result = expression.`else`.toFirBlock()
                     }
                 }
 
@@ -2690,17 +2696,33 @@ open class PsiRawFirBuilder(
                 ) {
                     parent = parent.parent
                 }
-                if (parent is KtBlockExpression) return false
+
                 when (parent.elementType) {
                     KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.WHEN_ENTRY -> {
                         return (parent.parent as? KtExpression)?.usedAsExpression != false
                     }
                 }
-                if (parent is KtScriptInitializer) return false
-                // Here we check that when used is a single statement of a loop
-                if (parent !is KtContainerNodeForControlStructureBody) return true
-                val type = parent.parent.elementType
-                return !(type == KtNodeTypes.FOR || type == KtNodeTypes.WHILE || type == KtNodeTypes.DO_WHILE)
+
+                fun PsiElement.getLastChildExpression() = children.asList().asReversed().firstIsInstanceOrNull<KtExpression>()
+
+                return when (parent) {
+//                  todo KT-62472 Replace with the following when K2 is used in TeamCity
+//                    is KtBlockExpression, is KtTryExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                    is KtBlockExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                    is KtTryExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                    is KtCatchClause -> (parent.parent as? KtTryExpression)?.usedAsExpression == true
+                    is KtClassInitializer, is KtScriptInitializer, is KtSecondaryConstructor, is KtFunctionLiteral, is KtFinallySection -> false
+                    is KtDotQualifiedExpression -> parent.firstChild == this
+//                  todo KT-62472 Replace with the following when K2 is used in TeamCity
+//                    is KtFunction, is KtPropertyAccessor -> parent.hasBody() && !parent.hasBlockBody()
+                    is KtFunction -> parent.hasBody() && !parent.hasBlockBody()
+                    is KtPropertyAccessor -> parent.hasBody() && !parent.hasBlockBody()
+                    is KtContainerNodeForControlStructureBody -> when (parent.parent.elementType) {
+                        KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> false
+                        else -> true
+                    }
+                    else -> true
+                }
             }
 
         override fun visitDoWhileExpression(expression: KtDoWhileExpression, data: FirElement?): FirElement {
@@ -2743,6 +2765,7 @@ open class PsiRawFirBuilder(
                             name = OperatorNameConventions.ITERATOR
                         }
                         explicitReceiver = rangeExpression
+                        origin = FirFunctionCallOrigin.Operator
                     },
                 )
                 statements += iteratorVal
@@ -2755,6 +2778,7 @@ open class PsiRawFirBuilder(
                             name = OperatorNameConventions.HAS_NEXT
                         }
                         explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
+                        origin = FirFunctionCallOrigin.Operator
                     }
                     // break/continue in the for loop condition will refer to an outer loop if any.
                     // So, prepare the loop target after building the condition.
@@ -2776,17 +2800,20 @@ open class PsiRawFirBuilder(
                                     name = OperatorNameConventions.NEXT
                                 }
                                 explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
+                                origin = FirFunctionCallOrigin.Operator
                             },
                             typeRef = ktParameter.typeReference.toFirOrImplicitType(),
                             extractedAnnotations = ktParameter.modifierList?.annotationEntries?.map { it.convert<FirAnnotation>() },
                         )
                         if (multiDeclaration != null) {
-                            blockBuilder.statements.addDestructuringVariables(
+                            addDestructuringVariables(
+                                blockBuilder.statements,
+                                this@Visitor,
                                 baseModuleData,
                                 multiDeclaration = multiDeclaration,
                                 container = firLoopParameter,
                                 tmpVariable = true,
-                                localEntries = true,
+                                forceLocal = true,
                             )
                         } else {
                             blockBuilder.statements.add(firLoopParameter)
@@ -3167,11 +3194,11 @@ open class PsiRawFirBuilder(
                 extractAnnotationsTo = { extractAnnotationsTo(it) }
             )
             return generateDestructuringBlock(
+                this@Visitor,
                 baseModuleData,
                 multiDeclaration,
                 baseVariable,
                 tmpVariable = true,
-                localEntries = true,
             )
         }
 

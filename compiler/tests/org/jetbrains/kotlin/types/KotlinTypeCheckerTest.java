@@ -563,7 +563,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         KotlinType type = expressionTypingServices.getType(
                 scope, ktExpression, TypeUtils.NO_EXPECTED_TYPE,
                 DataFlowInfoFactory.EMPTY, InferenceSession.Companion.getDefault(),
-                new BindingTraceContext()
+                new BindingTraceContext(project)
         );
         KotlinType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);

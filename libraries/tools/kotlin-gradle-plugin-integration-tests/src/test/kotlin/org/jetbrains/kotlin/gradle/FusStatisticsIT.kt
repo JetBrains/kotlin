@@ -18,8 +18,7 @@ import kotlin.streams.toList
 import kotlin.test.assertTrue
 
 @DisplayName("FUS statistic")
-//Tests for FUS statistics have to create new instance of KotlinBuildStatsService
-class FusStatisticsIT : KGPDaemonsBaseTest() {
+class FusStatisticsIT : KGPBaseTest() {
     private val expectedMetrics = arrayOf(
         "OS_TYPE",
         "BUILD_FAILED=false",
@@ -34,6 +33,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     private val GradleProject.fusStatisticsPath: Path
         get() = projectPath.getSingleFileInDir("kotlin-profile")
 
+    @JvmGradlePluginTests
     @DisplayName("for dokka")
     @GradleTest
     @GradleTestVersions(
@@ -55,6 +55,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @NativeGradlePluginTests
     @DisplayName("Verify that the metric for applying the Cocoapods plugin is being collected")
     @GradleTest
     fun testMetricCollectingOfApplyingCocoapodsPlugin(gradleVersion: GradleVersion) {
@@ -65,6 +66,24 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @NativeGradlePluginTests
+    @DisplayName("Verify that the metric for native incremental compilation")
+    @GradleTest
+    fun testMetricCollectingForNative(gradleVersion: GradleVersion) {
+        nativeProject(
+            "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    incremental = true
+                )
+            )
+        ) {
+            build("linkDebugExecutableHost", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertFileContains(fusStatisticsPath, "KOTLIN_INCREMENTAL_NATIVE_ENABLED=true")
+            }
+        }
+    }
+
+    @JsGradlePluginTests
     @DisplayName("Verify that the metric for applying the Kotlin JS plugin is being collected")
     @GradleTest
     fun testMetricCollectingOfApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
@@ -76,6 +95,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     }
 
 
+    @JvmGradlePluginTests
     @DisplayName("Ensure that the metric are not collected if plugins were not applied to simple project")
     @GradleTest
     fun testAppliedPluginsMetricsAreNotCollectedInSimpleProject(gradleVersion: GradleVersion) {
@@ -95,6 +115,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("for project with buildSrc")
     @GradleTest
     @OsCondition(
@@ -122,6 +143,11 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
 
     @DisplayName("for project with included build")
     @GradleTest
+    @JvmGradlePluginTests
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+        enabledOnCI = [OS.LINUX, OS.MAC], //Fails on windows KT-65227
+    )
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_6,
         maxVersion = TestVersions.Gradle.G_8_0
@@ -152,6 +178,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("for failed build")
     @GradleTest
     @GradleTestVersions(
@@ -185,6 +212,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
     )
+    @JvmGradlePluginTests
     fun testFusStatisticsForMultiproject(gradleVersion: GradleVersion) {
         project(
             "incrementalMultiproject", gradleVersion,
@@ -204,6 +232,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache")
     @GradleTest
     @GradleTestVersions(
@@ -213,6 +242,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         testFusStatisticsWithConfigurationCache(gradleVersion, false)
     }
 
+    @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache and project isolation")
     @GradleTest
     @GradleTestVersions(
@@ -243,7 +273,9 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
                     *expectedMetrics,
                     "CONFIGURATION_IMPLEMENTATION_COUNT=1",
                     "NUMBER_OF_SUBPROJECTS=1",
-                    "COMPILATIONS_COUNT=1"
+                    "COMPILATIONS_COUNT=1",
+                    "GRADLE_CONFIGURATION_CACHE_ENABLED=true",
+                    "GRADLE_PROJECT_ISOLATION_ENABLED=$isProjectIsolationEnabled",
                 )
             }
 
@@ -266,6 +298,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("configuration type metrics")
     @GradleTest
     @GradleTestVersions(

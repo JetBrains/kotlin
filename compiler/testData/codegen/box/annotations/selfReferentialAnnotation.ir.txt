@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
         annotations:
           IntrinsicConstEvaluation
         overridden:
-          public final name: kotlin.String
+          public final name: kotlin.String declared in kotlin.Enum
         FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.MyRequiresOptIn.MyLevel>) returnType:kotlin.String [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.MyRequiresOptIn.MyLevel>
       PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final ordinal: kotlin.Int
+          public final ordinal: kotlin.Int declared in kotlin.Enum
         FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.MyRequiresOptIn.MyLevel>) returnType:kotlin.Int [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -143,5 +143,22 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
+      VAR name:result type:kotlin.String [val]
+        CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections' type=kotlin.String origin=null
+          <T>: <root>.MyRequiresOptIn.MyLevel
+          $receiver: CALL 'public final fun values (): kotlin.Array<<root>.MyRequiresOptIn.MyLevel> declared in <root>.MyRequiresOptIn.MyLevel' type=kotlin.Array<<root>.MyRequiresOptIn.MyLevel> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value="OK"
+        BLOCK type=kotlin.String origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String [val]
+            GET_VAR 'val result: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+          WHEN type=kotlin.String origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_0: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+                arg1: CONST String type=kotlin.String value="WARNING, ERROR"
+              then: CONST String type=kotlin.String value="OK"
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="Fail: "
+                GET_VAR 'val result: kotlin.String declared in <root>.box' type=kotlin.String origin=null

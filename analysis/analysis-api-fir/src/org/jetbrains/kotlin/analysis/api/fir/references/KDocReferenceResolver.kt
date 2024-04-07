@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.load.java.possibleGetMethodNames
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object KDocReferenceResolver {
@@ -122,7 +123,7 @@ internal object KDocReferenceResolver {
     }
 
     context(KtAnalysisSession)
-    private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
+    private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement, trySyntheticGetters: Boolean = true): Collection<ResolveResult> {
         getExtensionReceiverSymbolByThisQualifier(fqName, contextElement).ifNotEmpty { return this }
 
         buildList {
@@ -135,7 +136,19 @@ internal object KDocReferenceResolver {
 
         AdditionalKDocResolutionProvider.resolveKdocFqName(fqName, contextElement).map { it.toResolveResult() }.ifNotEmpty { return this }
 
+        if (trySyntheticGetters) {
+            getSymbolsFromSyntheticProperty(fqName, contextElement).ifNotEmpty { return this }
+        }
+
         return emptyList()
+    }
+
+    context(KtAnalysisSession)
+    private fun getSymbolsFromSyntheticProperty(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
+        val getterNames = possibleGetMethodNames(fqName.shortNameOrSpecial())
+        return getterNames.flatMap { getterName ->
+            resolveKdocFqName(fqName.parent().child(getterName), contextElement, trySyntheticGetters = false)
+        }
     }
 
     context(KtAnalysisSession)
@@ -407,7 +420,7 @@ internal object KDocReferenceResolver {
 
     context(KtAnalysisSession)
     private fun MutableCollection<KtSymbol>.collectSymbolsByClassId(classId: ClassId) {
-        getClassOrObjectSymbolByClassId(classId)?.let(::add)
+        (getClassOrObjectSymbolByClassId(classId) ?: getTypeAliasByClassId(classId))?.let(::add)
     }
 
     context(KtAnalysisSession)

@@ -12,13 +12,10 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorDeclaration]
  */
 abstract class IrErrorDeclaration : IrDeclarationBase() {
-    override val symbol: IrSymbol
-        get() = error("Should never be called")
+    abstract override val symbol: IrSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorDeclaration(this, data)

@@ -7,6 +7,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.jpa'
     id 'org.jetbrains.kotlin.plugin.atomicfu'
     id 'org.jetbrains.kotlin.plugin.lombok'
+    id 'org.jetbrains.kotlin.plugin.power-assert'
     id 'org.jetbrains.kotlin.plugin.sam.with.receiver'
     id 'org.jetbrains.kotlin.plugin.serialization'
 }

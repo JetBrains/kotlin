@@ -513,7 +513,7 @@ object AbstractTypeChecker {
     private fun TypeSystemContext.isCommonDenotableType(type: KotlinTypeMarker): Boolean =
         type.typeConstructor().isDenotable() &&
                 !type.isDynamic() && !type.isDefinitelyNotNullType() && !type.isNotNullTypeParameter() &&
-                type.lowerBoundIfFlexible().typeConstructor() == type.upperBoundIfFlexible().typeConstructor()
+                !type.isFlexibleWithDifferentTypeConstructors()
 
     fun effectiveVariance(declared: TypeVariance, useSite: TypeVariance): TypeVariance? {
         if (declared == TypeVariance.INV) return useSite

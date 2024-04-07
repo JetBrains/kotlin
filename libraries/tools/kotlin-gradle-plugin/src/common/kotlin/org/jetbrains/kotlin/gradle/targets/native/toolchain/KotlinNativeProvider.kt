@@ -29,6 +29,7 @@ internal class KotlinNativeProvider(
     project: Project,
     konanTargets: Set<KonanTarget>,
     kotlinNativeBundleBuildService: Provider<KotlinNativeBundleBuildService>,
+    enableDependenciesDownloading: Boolean = true,
 ) {
     constructor(
         project: Project,
@@ -47,11 +48,19 @@ internal class KotlinNativeProvider(
     )
 
     @get:Internal
+    val overriddenKonanHome: Provider<String> = project.provider { project.kotlinPropertiesProvider.nativeHome }
+
+    @get:Internal
     val reinstallBundle: Property<Boolean> = project.objects.property(project.kotlinPropertiesProvider.nativeReinstall)
 
     @get:Input
     internal val kotlinNativeBundleVersion: Provider<String> = bundleDirectory.zip(reinstallBundle) { bundleDir, reinstallFlag ->
-        val kotlinNativeVersion = NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
+        val kotlinNativeVersion =
+            if (overriddenKonanHome.isPresent)
+                overriddenKonanHome.get()
+            else
+                NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
+
         if (project.kotlinNativeToolchainEnabled) {
             kotlinNativeBundleBuildService.get().prepareKotlinNativeBundle(
                 project,
@@ -59,11 +68,29 @@ internal class KotlinNativeProvider(
                 kotlinNativeVersion,
                 bundleDir.asFile,
                 reinstallFlag,
-                konanTargets
+                konanTargets,
+                overriddenKonanHome.orNull
             )
         }
         kotlinNativeVersion
     }
+
+    @get:Input
+    val kotlinNativeDependencies: Provider<Set<String>> =
+        kotlinNativeBundleVersion
+            .zip(bundleDirectory) { _, bundleDir ->
+                if (project.kotlinNativeToolchainEnabled && enableDependenciesDownloading) {
+                    kotlinNativeBundleBuildService.get()
+                        .downloadNativeDependencies(
+                            bundleDir.asFile,
+                            konanDataDir.orNull,
+                            konanTargets,
+                            project.logger
+                        )
+                } else {
+                    emptySet()
+                }
+            }
 
     // Gradle tries to evaluate this val during configuration cache,
     // which lead to resolving configuration, even if k/n bundle is in konan home directory.

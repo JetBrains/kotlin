@@ -120,8 +120,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression) = visitWrappedExpression(wrappedArgumentExpression)
 
-    override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression) = visitWrappedArgumentExpression(lambdaArgumentExpression)
-
     override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression) = visitWrappedArgumentExpression(spreadArgumentExpression)
 
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) = visitWrappedArgumentExpression(namedArgumentExpression)
@@ -151,8 +149,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitNamedReference(namedReference: FirNamedReference) = visitReference(namedReference)
 
     override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase) = visitNamedReference(namedReferenceWithCandidateBase)
-
-    override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference) = visitNamedReference(fromMissingDependenciesNamedReference)
 
     override fun visitSuperReference(superReference: FirSuperReference) = visitReference(superReference)
 

@@ -133,7 +133,6 @@ internal class Linker(
         File(executable).delete()
 
         val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
-                BitcodeEmbedding.getLinkerOptions(config) +
                 caches.dynamic +
                 libraryProvidedLinkerFlags + additionalLinkerArgs
 

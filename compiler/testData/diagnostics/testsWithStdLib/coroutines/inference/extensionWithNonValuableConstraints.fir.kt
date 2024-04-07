@@ -50,10 +50,10 @@ val test6 = generate {
     invNullableAnyExtension()
 }
 
-val test7 = <!NEW_INFERENCE_ERROR!>generate {
+val test7 = generate {
     yield("baz")
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>genericExtension<!><Int>()
-}<!>
+    <!ARGUMENT_TYPE_MISMATCH("kotlin.String; kotlin.Int"), ARGUMENT_TYPE_MISMATCH("kotlin.String; kotlin.Int"), ARGUMENT_TYPE_MISMATCH("kotlin.String; kotlin.Int")!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun <S> Controller<S>.genericExtension(): Unit")!>genericExtension<!><Int>()<!>
+}
 
 val test8 = generate {
     safeExtension()

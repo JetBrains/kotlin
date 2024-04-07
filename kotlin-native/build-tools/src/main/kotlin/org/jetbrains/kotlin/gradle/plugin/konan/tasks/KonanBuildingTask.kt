@@ -9,21 +9,14 @@ import org.gradle.api.tasks.Console
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
-import org.jetbrains.kotlin.dependsOnDist
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanBuildingConfig
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanBuildingSpec
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanToolRunner
-import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
 
 /** Base class for both interop and compiler tasks. */
 abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildingSpec {
-
-    @get:Internal
-    internal abstract val toolRunner: KonanToolRunner
-
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
     }
@@ -31,11 +24,8 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
     @Console
     var dumpParameters: Boolean = false
 
-    @Input
+    @get:Input
     val extraOpts = mutableListOf<String>()
-
-    val konanHome
-        @Input get() = project.konanHome
 
     @TaskAction
     abstract fun run()

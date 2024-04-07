@@ -181,8 +181,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 superInterfaceAsmTypes
         );
 
-        initDefaultSourceMappingIfNeeded();
-
         v.visitSource(element.getContainingFile().getName(), null);
     }
 

@@ -1,31 +1,31 @@
 @R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>
-  context -> FirPropertySymbol <local>/$$result
+  context -> FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>
-  context -> FirPropertySymbol <local>/$$result
+  context -> FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String
-  context -> FirPropertySymbol <local>/$$result
+  context -> FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 @R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resultWithPropagatedType.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
@@ -46,4 +46,3 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol foo/explicitType]] val $$result: R|@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>| = R|foo/explicitType|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>|
-

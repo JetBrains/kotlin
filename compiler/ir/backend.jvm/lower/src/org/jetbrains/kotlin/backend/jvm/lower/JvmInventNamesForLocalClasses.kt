@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalClasses
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -28,16 +26,15 @@ val inventNamesForLocalClassesPhase = makeIrFilePhase(
 )
 
 val inventNamesForInlinedLocalClassesPhase = makeIrFilePhase(
-    { context ->
-        if (!context.irInlinerIsEnabled()) return@makeIrFilePhase FileLoweringPass.Empty
-        JvmInventNamesForInlinedAnonymousObjects(context)
-    },
+    ::JvmInventNamesForInlinedAnonymousObjects,
     name = "InventNamesForInlinedLocalClasses",
     description = "Invent names for INLINED local classes and anonymous objects",
     prerequisite = setOf(inventNamesForLocalClassesPhase, removeDuplicatedInlinedLocalClasses)
 )
 
-open class JvmInventNamesForLocalClasses(
+class JvmInventNamesForLocalClasses(context: JvmBackendContext) : JvmInventNamesForLocalClassesImpl(context, false)
+
+open class JvmInventNamesForLocalClassesImpl(
     protected val context: JvmBackendContext,
     generateNamesForRegeneratedObjects: Boolean = false
 ) : InventNamesForLocalClasses(allowTopLevelCallables = true, generateNamesForRegeneratedObjects) {
@@ -65,7 +62,13 @@ open class JvmInventNamesForLocalClasses(
 }
 
 // TODO try to use only one "InventNames"
-class JvmInventNamesForInlinedAnonymousObjects(context: JvmBackendContext) : JvmInventNamesForLocalClasses(context, true) {
+class JvmInventNamesForInlinedAnonymousObjects(context: JvmBackendContext) : JvmInventNamesForLocalClassesImpl(context, true) {
+    override fun lower(irFile: IrFile) {
+        if (context.config.enableIrInliner) {
+            super.lower(irFile)
+        }
+    }
+
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
         if (declaration.originalBeforeInline == null) return
         context.putLocalClassType(declaration, Type.getObjectType(localClassName))

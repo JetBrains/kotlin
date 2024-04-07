@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
-import kotlin.io.path.exists
+import java.nio.file.Path
 
 @DisplayName("Compiler plugin incremental compilation")
 @OtherGradlePluginTests
@@ -26,44 +27,35 @@ abstract class CompilerPluginsIncrementalIT : KGPBaseTest() {
     @GradleTest
     open fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
         project("incrementalChangeInPlugin".prefix, gradleVersion) {
-            build("assemble")
-
-            val genDir = subProject("library").projectPath.resolve("build/sample-dir/plugin/test/gen")
-            assert(genDir.exists()) { "$genDir does not exists!" }
-
-            val generatedFiles = genDir.toFile()
-                .walkTopDown()
-                .asSequence()
-                .filterNot { it.isDirectory }
-                .associate {
-                    it.absolutePath to it.readBytes()
-                }
+            val classesDirectory = subProject("library").kotlinClassesDir("main")
+            build("assemble") {
+                assertClassDeclarationsContain(
+                    classesDirectory, "library.SomeClass",
+                    "public java.lang.String myMethod();"
+                )
+                assertClassDeclarationsContain(
+                    classesDirectory, "library.SomeInterface",
+                    "public abstract java.lang.String myMethod();"
+                )
+            }
 
             subProject("plugin")
                 .kotlinSourcesDir()
-                .resolve("test/compiler/plugin/TestComponentRegistrar.kt")
+                .resolve("test/compiler/plugin/MyMethodGenerator.kt")
                 .modify {
-                    it.replace("world.", "something else.")
+                    it.replace("\"myMethod\"", "\"myNewMethod\"")
                 }
 
             build("assemble") {
-                assert(genDir.exists()) { "$genDir does not exists!" }
+                assertClassDeclarationsContain(
+                    classesDirectory, "library.SomeClass",
+                    "public java.lang.String myNewMethod();"
+                )
+                assertClassDeclarationsContain(
+                    classesDirectory, "library.SomeInterface",
+                    "public abstract java.lang.String myNewMethod();"
+                )
             }
-
-            genDir.toFile()
-                .walkTopDown()
-                .asSequence()
-                .filterNot { it.isDirectory }
-                .forEach {
-                    assert(!it.readBytes().contentEquals(generatedFiles[it.absolutePath])) {
-                        """
-                        
-                        File ${it.absolutePath} content is equals to previous one!
-                        New content:
-                        ${it.readText()}
-                        """.trimIndent()
-                    }
-                }
         }
     }
 
@@ -76,11 +68,6 @@ class CompilerPluginsK1IncrementalIT : CompilerPluginsIncrementalIT() {
 
 class CompilerPluginsK2IncrementalIT : CompilerPluginsIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("KT-61171")
-    override fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
-        super.afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion)
-    }
 }
 
 @DisplayName("Compiler plugin incremental compilation with disabled precise compilation outputs backup")
@@ -95,9 +82,4 @@ class CompilerPluginsK1IncrementalWithoutPreciseBackupIT : CompilerPluginsIncrem
 
 class CompilerPluginsK2IncrementalWithoutPreciseBackupIT : CompilerPluginsIncrementalWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("KT-61171")
-    override fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
-        super.afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion)
-    }
 }

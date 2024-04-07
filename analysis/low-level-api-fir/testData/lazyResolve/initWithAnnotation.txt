@@ -238,6 +238,30 @@ FILE: [ResolvedTo(IMPORTS)] initWithAnnotation.kt
     public? final? [ResolvedTo(RAW_FIR)] fun anotherFun(): String { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun funInsideInit(): <implicit> { LAZY_BLOCK }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] initWithAnnotation.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|low/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        [ResolvedTo(CONSTANT_EVALUATION)] @R|low/Anno|[Types](LAZY_EXPRESSION) init { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun anotherFun(): String { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun funInsideInit(): <implicit> { LAZY_BLOCK }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] initWithAnnotation.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -303,7 +327,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] initWithAnnotation.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|low/MyClass| {

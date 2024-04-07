@@ -6,9 +6,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class EnumCompanion, Enum<E>, Foo, Array<T>;
+@class KotlinEnumCompanion, KotlinEnum<E>, Foo, KotlinArray<T>;
 
-@protocol Comparable, Iterator;
+@protocol KotlinComparable, KotlinIterator;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -22,19 +22,14 @@ NS_ASSUME_NONNULL_BEGIN
 #define _Nullable_result _Nullable
 #endif
 
-@protocol Comparable
+@protocol KotlinComparable
 @required
 - (int32_t)compareToOther:(id _Nullable)other __attribute__((swift_name("compareTo(other:)")));
 @end
 
-@interface Enum<E> : Base <Comparable>
+@interface KotlinEnum<E> : Base <KotlinComparable>
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) EnumCompanion *companion __attribute__((swift_name("companion")));
-
-/**
- * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
-*/
-- (id)clone __attribute__((swift_name("clone()")));
+@property (class, readonly, getter=companion) KotlinEnumCompanion *companion __attribute__((swift_name("companion")));
 - (int32_t)compareToOther:(E)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
@@ -44,37 +39,37 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 __attribute__((objc_subclassing_restricted))
-@interface Foo : Enum<Foo *>
+@interface Foo : KotlinEnum<Foo *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) Foo *a __attribute__((swift_name("a")));
 @property (class, readonly) Foo *b __attribute__((swift_name("b")));
 @property (class, readonly) Foo *c __attribute__((swift_name("c")));
-+ (Array<Foo *> *)values __attribute__((swift_name("values()")));
++ (KotlinArray<Foo *> *)values __attribute__((swift_name("values()")));
 @property (class, readonly) NSArray<Foo *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))
-@interface EnumCompanion : Base
+@interface KotlinEnumCompanion : Base
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) EnumCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinEnumCompanion *shared __attribute__((swift_name("shared")));
 @end
 
 __attribute__((objc_subclassing_restricted))
-@interface Array<T> : Base
+@interface KotlinArray<T> : Base
 + (instancetype)arrayWithSize:(int32_t)size init:(T _Nullable (^)(Int *))init __attribute__((swift_name("init(size:init:)")));
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (id<Iterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
 @property (readonly) int32_t size __attribute__((swift_name("size")));
 @end
 
-@protocol Iterator
+@protocol KotlinIterator
 @required
 - (BOOL)hasNext __attribute__((swift_name("hasNext()")));
 - (id _Nullable)next __attribute__((swift_name("next()")));

@@ -1,0 +1,13 @@
+/test.kt:29:30: error: type mismatch: inferred type is String? but String was expected
+            if (true) return foo()
+                             ^^^^^
+/test.kt:35:9: error: type mismatch: inferred type is () -> String? but () -> String was expected
+        fun(): String? {
+        ^^^^^^^^^^^^^^^^
+/test.kt:66:29: error: return type of 'get' is not a subtype of the return type of the overridden member 'public abstract fun get(): String defined in java.util.function.Supplier'
+        override fun get(): String? = foo()
+                            ^^^^^^^
+/test.kt:70:22: error: return type of 'get' is not a subtype of the return type of the overridden member 'public abstract fun get(): String defined in java.util.function.Supplier'
+        override fun get() = foo()
+                     ^^^
+

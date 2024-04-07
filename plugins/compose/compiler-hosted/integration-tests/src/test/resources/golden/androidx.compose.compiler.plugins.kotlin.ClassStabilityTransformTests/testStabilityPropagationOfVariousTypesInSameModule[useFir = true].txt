@@ -1,0 +1,83 @@
+//
+// Source
+// ------------------------------------------
+
+import a.*
+import androidx.compose.runtime.Composable
+
+class X<T>(val p1: List<T>)
+class StableDelegateProp {
+    var p1 by StableDelegate()
+}
+class UnstableDelegateProp {
+    var p1 by UnstableDelegate()
+}
+@Composable fun A(y: Any) {
+    used(y)
+    A(X(listOf(StableClass())))
+    A(StableDelegateProp())
+    A(UnstableDelegateProp())
+    A(SingleParamProp(0))
+    A(SingleParamNonProp(0))
+    A(SingleParamProp(Any()))
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 0)
+class X<T> (val p1: List<T>) {
+  static val %stable: Int = 8
+}
+@StabilityInferred(parameters = 1)
+class StableDelegateProp {
+  var p1: StableDelegate = StableDelegate()
+    get() {
+      return <this>.p1%delegate.getValue(<this>, ::p1)
+    }
+    set(value) {
+      return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+    }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 0)
+class UnstableDelegateProp {
+  var p1: UnstableDelegate = UnstableDelegate()
+    get() {
+      return <this>.p1%delegate.getValue(<this>, ::p1)
+    }
+    set(value) {
+      return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+    }
+  static val %stable: Int = UnstableDelegate.%stable
+}
+@Composable
+fun A(y: Any, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>,<A(Sing...>,<A(Sing...>,<A(Sing...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(y)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(y)
+    A(X(listOf(StableClass())), %composer, 0)
+    A(StableDelegateProp(), %composer, 0)
+    A(UnstableDelegateProp(), %composer, UnstableDelegate.%stable)
+    A(SingleParamProp(0), %composer, SingleParamProp.%stable)
+    A(SingleParamNonProp(0), %composer, SingleParamNonProp.%stable)
+    A(SingleParamProp(Any()), %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(y, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

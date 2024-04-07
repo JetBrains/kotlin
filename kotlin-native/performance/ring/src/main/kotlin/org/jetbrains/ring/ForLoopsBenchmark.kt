@@ -16,6 +16,10 @@ class ForLoopsBenchmark {
 
     private val string: String = charArray.joinToString()
 
+    private val stringArray: Array<String> = Array(BENCHMARK_SIZE) {
+        it.toString()
+    }
+
     private val floatArray: FloatArray = FloatArray(BENCHMARK_SIZE) {
         it.toFloat()
     }
@@ -60,6 +64,14 @@ class ForLoopsBenchmark {
         var sum = 0L
         for (e in string) {
             sum += e.hashCode()
+        }
+        return sum
+    }
+
+    fun stringArrayLoop(): Long {
+        var sum = 0L
+        for (e in stringArray) {
+            sum += e.length.toLong()
         }
         return sum
     }

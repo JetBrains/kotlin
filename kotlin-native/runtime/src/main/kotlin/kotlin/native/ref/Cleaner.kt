@@ -122,5 +122,6 @@ private class CleanerImpl(
 
 
 @GCUnsafeCall("CreateStablePointer")
+@Escapes(0b01) // obj escapes into stable ref.
 external private fun createStablePointer(obj: Any): NativePtr
 

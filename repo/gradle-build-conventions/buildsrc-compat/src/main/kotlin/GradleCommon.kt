@@ -35,7 +35,7 @@ import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import java.net.URL
@@ -45,6 +45,7 @@ import java.net.URL
  *
  * [minimalSupportedGradleVersion] - minimal Gradle version that is supported in this variant
  * [gradleApiVersion] - Gradle API dependency version. Usually should be the same as [minimalSupportedGradleVersion].
+ * [gradleApiJavadocUrl] - Gradle URL for the given API. Last enum entry should always point to 'current'.
  */
 enum class GradlePluginVariant(
     val sourceSetName: String,
@@ -61,6 +62,7 @@ enum class GradlePluginVariant(
     GRADLE_80("gradle80", "8.0", "8.0", "https://docs.gradle.org/8.0.2/javadoc/"),
     GRADLE_81("gradle81", "8.1", "8.1", "https://docs.gradle.org/8.1.1/javadoc/"),
     GRADLE_82("gradle82", "8.2", "8.2", "https://docs.gradle.org/8.2.1/javadoc/"),
+    GRADLE_85("gradle85", "8.5", "8.5", "https://docs.gradle.org/current/javadoc/"),
 }
 
 val commonSourceSetName = "common"
@@ -79,16 +81,15 @@ fun Project.configureCommonPublicationSettingsForGradle(
                 .configureEach {
                     configureKotlinPomAttributes(project)
                     if (sbom && project.name !in internalPlugins) {
-                        val buildDirectory = project.layout.buildDirectory
                         if (name == "pluginMaven") {
                             val sbomTask = configureSbom(target = "PluginMaven")
-                            artifact(buildDirectory.file("spdx/PluginMaven/PluginMaven.spdx.json")) {
+                            artifact(sbomTask) {
                                 extension = "spdx.json"
                                 builtBy(sbomTask)
                             }
                         } else if (name == "Main") {
                             val sbomTask = configureSbom()
-                            artifact(buildDirectory.file("spdx/MainPublication/MainPublication.spdx.json")) {
+                            artifact(sbomTask) {
                                 extension = "spdx.json"
                                 builtBy(sbomTask)
                             }
@@ -155,7 +156,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName(kotlinStdlib())
-            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:8.5")
+            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:8.6")
             if (this@createGradleCommonSourceSet.name !in testPlugins) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
                     capabilities {
@@ -177,11 +178,8 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
     // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
     // files clash
-    tasks.named<KotlinCompile>("compile${commonSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
-        @Suppress("DEPRECATION")
-        kotlinOptions {
-            moduleName = "${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}"
-        }
+    tasks.named<KotlinJvmCompile>("compile${commonSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+        compilerOptions.moduleName.set("${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}")
     }
 
     registerValidatePluginTasks(commonSourceSet)
@@ -506,11 +504,8 @@ fun Project.createGradlePluginVariant(
     }
 
     // KT-52138: Make module name the same for all variants, so KSP could access internal methods/properties
-    tasks.named<KotlinCompile>("compile${variantSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
-        @Suppress("DEPRECATION")
-        kotlinOptions {
-            moduleName = this@createGradlePluginVariant.name
-        }
+    tasks.named<KotlinJvmCompile>("compile${variantSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+        compilerOptions.moduleName.set(this@createGradlePluginVariant.name)
     }
 
     dependencies {
@@ -544,7 +539,7 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
 }
 
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
-    tasks.withType<KotlinCompile>().configureEach {
+    tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
             // check https://docs.gradle.org/current/userguide/compatibility.html#kotlin for Kotlin-Gradle versions matrix
             @Suppress("DEPRECATION") // we can't use language version greater than 1.5 as minimal supported Gradle embeds Kotlin 1.4
@@ -589,7 +584,7 @@ fun Project.publishShadowedJar(
         // which leads to the content of that JAR being excluded as well:
         exclude {
             // Docstring says `file` never returns null, but it does
-            @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY")
+            @Suppress("UNNECESSARY_SAFE_CALL")
             it.file?.name?.startsWith("kotlin-compiler-embeddable") ?: false
         }
     }
@@ -689,13 +684,13 @@ fun Project.configureDokkaPublication(
             } else {
                 tasks.register<DokkaTask>(dokkaTaskName)
             }
+
+            val javaDocDokkaDependency = project.dependencies.create("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
             dokkaTask.configure {
                 description = "Generates documentation in 'javadoc' format for '${variantSourceSet.javadocTaskName}' variant"
                 notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
 
-                plugins.dependencies.add(
-                    project.dependencies.create("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
-                )
+                plugins.dependencies.add(javaDocDokkaDependency)
 
                 dokkaSourceSets {
                     named(commonSourceSet.name) {
@@ -737,6 +732,7 @@ fun Project.configureDokkaPublication(
 
             tasks.register<DokkaTask>("dokkaKotlinlangDocumentation") {
                 description = "Generates documentation reference for Kotlinlang"
+                notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
 
                 dokkaSourceSets {
                     pluginsMapConfiguration.put(

@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
@@ -197,6 +198,32 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testErrorDiagnosticUpToDateIfNoErrors(gradleVersion: GradleVersion) {
         project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {
             build("assemble") {
+                assertTasksSkipped(":checkKotlinGradlePluginConfigurationErrors")
+            }
+        }
+    }
+
+    @DisplayName("checkKotlinGradlePluginConfigurationErrors does not cause a false positive configuration cache warning")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5) // STABLE_CONFIGURATION_CACHE was introduced in 7.5
+    fun testKt63165(gradleVersion: GradleVersion) {
+        // the false positive warning is https://github.com/gradle/gradle/issues/22481
+        project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {
+            //language=Gradle
+            settingsGradleKts.appendText(
+                """
+
+                enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+                """.trimIndent()
+            )
+            settingsGradleKts.modify {
+                val pluginApplyString = "id(\"org.jetbrains.kotlin.test.gradle-warnings-detector\")"
+                val startingIndex = it.lastIndexOf(pluginApplyString)
+                // workaround for a Gradle bug: https://github.com/gradle/gradle/issues/28533
+                it.replaceRange(startingIndex, startingIndex + pluginApplyString.length, "")
+            }
+            build("assemble") {
+                // expect no deprecation warnings failing the build
                 assertTasksSkipped(":checkKotlinGradlePluginConfigurationErrors")
             }
         }

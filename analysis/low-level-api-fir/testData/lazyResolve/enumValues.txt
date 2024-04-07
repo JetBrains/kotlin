@@ -188,6 +188,25 @@ FILE: [ResolvedTo(IMPORTS)] enumValues.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] enumValues.kt
+    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] enumValues.kt
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {

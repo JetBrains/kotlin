@@ -108,6 +108,17 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] constructor([ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Boolean|, [ResolvedTo(CONSTANT_EVALUATION)] param: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONSTANT_EVALUATION)] c: R|kotlin/Long|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {

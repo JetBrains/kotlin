@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterSupertype
@@ -41,7 +43,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -450,16 +452,6 @@ open class FirSupertypeResolverVisitor(
         supertypeRefs: List<FirTypeRef>,
     ): List<FirResolvedTypeRef> {
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scopeDeclaration ->
-            if (!classLikeDeclaration.isLocalClassOrAnonymousObject()) {
-                session.lookupTracker?.let {
-                    val fileSource = getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.source
-                    for (supertypeRef in supertypeRefs) {
-                        val scopeOwnerLookupNames = scopeDeclaration.scopes.flatMap { scope -> scope.scopeOwnerLookupNames }
-                        it.recordTypeLookup(supertypeRef, scopeOwnerLookupNames, fileSource)
-                    }
-                }
-            }
-
             supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = it.transform<FirTypeRef, ScopeClassDeclaration>(transformer, scopeDeclaration)
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
@@ -492,11 +484,9 @@ open class FirSupertypeResolverVisitor(
     ) {
         if (supertypeGenerationExtensions.isEmpty()) return
         val typeResolveService = TypeResolveServiceForPlugins(typeResolveTransformer, scopeDeclaration)
-        with(FirSupertypeGenerationExtension.TypeResolveServiceContainer(typeResolveService)) {
-            for (extension in supertypeGenerationExtensions) {
-                if (extension.needTransformSupertypes(klass)) {
-                    supertypeRefs += extension.computeAdditionalSupertypes(klass, supertypeRefs)
-                }
+        for (extension in supertypeGenerationExtensions) {
+            if (extension.needTransformSupertypes(klass)) {
+                supertypeRefs += extension.computeAdditionalSupertypes(klass, supertypeRefs, typeResolveService)
             }
         }
     }

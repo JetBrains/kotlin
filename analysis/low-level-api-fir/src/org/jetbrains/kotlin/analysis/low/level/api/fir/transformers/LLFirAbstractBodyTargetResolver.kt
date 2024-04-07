@@ -8,31 +8,21 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-internal abstract class LLFirAbstractBodyTargetResolver(
+internal sealed class LLFirAbstractBodyTargetResolver(
     resolveTarget: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    private val scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
     protected val llImplicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession = LLImplicitBodyResolveComputationSession(),
-    isJumpingPhase: Boolean = false,
-) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase, isJumpingPhase) {
-    protected fun createReturnTypeCalculator(
-        firResolveContextCollector: FirResolveContextCollector?,
-    ): LLFirReturnTypeCalculatorWithJump = LLFirReturnTypeCalculatorWithJump(
-        scopeSession,
+) : LLFirTargetResolver(resolveTarget, resolvePhase) {
+    protected fun createReturnTypeCalculator(): LLFirReturnTypeCalculatorWithJump = LLFirReturnTypeCalculatorWithJump(
+        resolveTargetScopeSession,
         llImplicitBodyResolveComputationSession,
-        lockProvider,
-        firResolveContextCollector,
     )
 
     abstract val transformer: FirAbstractBodyResolveTransformerDispatcher

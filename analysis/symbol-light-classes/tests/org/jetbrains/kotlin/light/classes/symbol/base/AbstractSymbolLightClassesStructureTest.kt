@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.base
 
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -18,7 +18,7 @@ abstract class AbstractSymbolLightClassesStructureTest(
     stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesStructureTestBase(configurator, testPrefix, stopIfCompilationErrorDirectivePresent) {
 
-    override fun doLightClassTest(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+    override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
         val result = prettyPrint {
             for (ktFile in ktFiles.sortedBy(KtFile::getName)) {
                 if (ktFiles.size > 1) {

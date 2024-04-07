@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.tooling.core.Extras
 
 internal fun IdeaKotlinSerializationContext(
-    logger: Logger, extrasSerializationExtensions: List<IdeaKotlinExtrasSerializationExtension>
+    logger: Logger, extrasSerializationExtensions: List<IdeaKotlinExtrasSerializationExtension>,
 ): IdeaKotlinSerializationContext {
     return IdeaKotlinSerializationContextImpl(
         extrasSerializationExtension = IdeaKotlinExtrasSerializationExtensionImpl(logger, extrasSerializationExtensions),
@@ -23,7 +23,7 @@ internal fun IdeaKotlinSerializationContext(
 
 private class IdeaKotlinSerializationContextImpl(
     override val extrasSerializationExtension: IdeaKotlinExtrasSerializationExtension,
-    override val logger: IdeaKotlinSerializationLogger
+    override val logger: IdeaKotlinSerializationLogger,
 ) : IdeaKotlinSerializationContext
 
 
@@ -31,9 +31,9 @@ private class IdeaKotlinSerializationContextImpl(
 
 private class IdeaKotlinExtrasSerializationExtensionImpl(
     private val logger: Logger,
-    private val extensions: List<IdeaKotlinExtrasSerializationExtension>
+    private val extensions: List<IdeaKotlinExtrasSerializationExtension>,
 ) : IdeaKotlinExtrasSerializationExtension {
-    override fun <T : Any> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? {
+    override fun <T> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? {
         val serializers = extensions.mapNotNull { it.serializer(key) }
 
         if (serializers.size == 1) {

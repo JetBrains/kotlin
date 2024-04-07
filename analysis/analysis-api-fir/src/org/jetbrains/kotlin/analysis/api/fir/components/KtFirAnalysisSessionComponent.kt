@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirGenericSubstitutor
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -24,15 +22,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.expressions.createConeSubstitutorFromTypeArguments
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.convertVariance
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal interface KtFirAnalysisSessionComponent {
     val analysisSession: KtFirAnalysisSession
@@ -80,39 +75,14 @@ internal interface KtFirAnalysisSessionComponent {
     }
 
     fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(discardErrorTypes: Boolean = false): KtSubstitutor? {
-        return createConeSubstitutorFromTypeArguments(discardErrorTypes)?.toKtSubstitutor()
+        return createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes)?.toKtSubstitutor()
     }
 
     fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(
         callableSymbol: FirCallableSymbol<*>,
         discardErrorTypes: Boolean = false
     ): KtSubstitutor {
-        return createConeSubstitutorFromTypeArguments(callableSymbol, discardErrorTypes).toKtSubstitutor()
-    }
-
-    fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(discardErrorTypes: Boolean = false): ConeSubstitutor? {
-        val symbol = calleeReference.toResolvedCallableSymbol() ?: return null
-        return createConeSubstitutorFromTypeArguments(symbol, discardErrorTypes)
-    }
-
-    /**
-     * @param discardErrorTypes if true, then type arguments with error types are not added in substitution map
-     */
-    fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(
-        callableSymbol: FirCallableSymbol<*>,
-        discardErrorTypes: Boolean = false
-    ): ConeSubstitutor {
-        val typeArgumentMap = buildMap {
-            // Type arguments are ignored defensively if `callableSymbol` can't provide enough type parameters (and vice versa). For
-            // example, when call candidates are collected, the candidate's `callableSymbol` might have fewer type parameters than the
-            // inferred call's type arguments.
-            typeArguments.zip(callableSymbol.typeParameterSymbols).forEach { (typeArgument, typeParameterSymbol) ->
-                val type = typeArgument.safeAs<FirTypeProjectionWithVariance>()?.typeRef?.coneType ?: return@forEach
-                if (type is ConeErrorType && discardErrorTypes) return@forEach
-                put(typeParameterSymbol, type)
-            }
-        }
-        return substitutorByMap(typeArgumentMap, rootModuleSession)
+        return createConeSubstitutorFromTypeArguments(callableSymbol, rootModuleSession, discardErrorTypes).toKtSubstitutor()
     }
 
     fun ConeSubstitutor.toKtSubstitutor(): KtSubstitutor {

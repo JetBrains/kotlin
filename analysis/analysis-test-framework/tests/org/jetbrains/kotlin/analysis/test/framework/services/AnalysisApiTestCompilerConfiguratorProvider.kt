@@ -9,10 +9,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
@@ -29,7 +28,7 @@ class AnalysisApiTestCompilerConfiguratorProvider(
 
     private val allProjectBinaryRoots by lazy {
         StandaloneProjectFactory.getAllBinaryRoots(
-            testServices.ktModuleProvider.getModuleStructure().allKtModules(),
+            testServices.ktTestModuleStructure.mainAndBinaryKtModules,
             testServices.environmentManager.getProjectEnvironment()
         )
     }

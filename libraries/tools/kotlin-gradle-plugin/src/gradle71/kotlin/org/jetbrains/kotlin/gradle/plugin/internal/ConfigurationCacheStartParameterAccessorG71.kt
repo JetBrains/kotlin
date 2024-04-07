@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
+import org.gradle.api.Project
 import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.invocation.Gradle
 
@@ -12,11 +13,13 @@ internal class ConfigurationCacheStartParameterAccessorG71(
     private val gradle: Gradle,
 ) : ConfigurationCacheStartParameterAccessor {
     @Suppress("DEPRECATION")
-    override val isConfigurationCacheRequested by lazy {
+    override val isConfigurationCacheEnabled by lazy {
         (gradle.startParameter as StartParameterInternal).isConfigurationCache
     }
+    override val isConfigurationCacheRequested: Boolean
+        get() = isConfigurationCacheEnabled
 
     internal class Factory : ConfigurationCacheStartParameterAccessor.Factory {
-        override fun getInstance(gradle: Gradle) = ConfigurationCacheStartParameterAccessorG71(gradle)
+        override fun getInstance(project: Project) = ConfigurationCacheStartParameterAccessorG71(project.gradle)
     }
 }

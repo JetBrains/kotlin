@@ -38,7 +38,7 @@ interface E {
 
 }
 
-class Test2 : A.APublicI, <!FINAL_SUPERTYPE, UNRESOLVED_REFERENCE!>B.BInner<!>() {
+class Test2 : A.APublicI, <!FINAL_SUPERTYPE, INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B.BInner<!>() {
 
 }
 
@@ -50,7 +50,7 @@ class Test4 : E, A.<!INVISIBLE_REFERENCE!>AProtectedI<!> {
 
 }
 
-class Test5 : C.CPublicI, <!FINAL_SUPERTYPE, UNRESOLVED_REFERENCE!>B.BInner<!>() {
+class Test5 : C.CPublicI, <!FINAL_SUPERTYPE, INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B.BInner<!>() {
 
 }
 

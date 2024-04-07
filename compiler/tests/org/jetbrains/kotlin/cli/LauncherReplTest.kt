@@ -107,14 +107,11 @@ class LauncherReplTest : TestCaseWithTmpdir() {
     }
 
     private fun writeInputsToOutStream(dataOutStream: OutputStream, inputIter: Iterator<Pair<String?, String>>) {
-        val writer = dataOutStream.writer()
-        val eol = System.getProperty("line.separator")
+        val writer = PrintWriter(/* out = */ dataOutStream.writer(), /* autoFlush = */ true)
 
         fun writeNextInput(nextInput: String) {
             with(writer) {
-                write(nextInput)
-                write(eol)
-                flush()
+                println(nextInput)
             }
         }
 
@@ -123,6 +120,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             writeNextInput(nextInput)
         }
         writeNextInput(":quit")
+        writer.close()
     }
 
     private fun assertOutputMatches(
@@ -160,6 +158,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
 
     val replOutHeader = arrayOf(
         null to "Welcome to Kotlin version .*",
+        null to "Warning: REPL is not yet compatible with the Kotlin version .*, using '-language-version 1.9'.",
         null to "Type :help for help, :quit for quit"
     )
 

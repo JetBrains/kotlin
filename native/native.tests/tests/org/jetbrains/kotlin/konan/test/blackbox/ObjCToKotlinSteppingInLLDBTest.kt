@@ -246,12 +246,8 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             modules = setOf(moduleForTestCase),
             freeCompilerArgs = freeCompilerArgs,
             nominalPackageName = PackageName.EMPTY,
-            checks = TestRunChecks(
-                executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(testRunSettings.get<Timeouts>().executionTimeout),
-                exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
-                outputDataFile = null,
-                outputMatcher = spec.let { TestRunCheck.OutputMatcher { output -> spec.checkLLDBOutput(output, testRunSettings.get()) } },
-                fileCheckMatcher = null,
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                outputMatcher = spec.let { TestRunCheck.OutputMatcher { output -> spec.checkLLDBOutput(output, testRunSettings.get()) } }
             ),
             extras = TestCase.NoTestRunnerExtras(
                 "main",

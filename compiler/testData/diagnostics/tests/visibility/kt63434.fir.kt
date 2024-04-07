@@ -11,7 +11,7 @@ fun checkCannotAccess() {
     object : InlineCompletionSessionManager() {
         fun chch() {
             val b: Proto = Proto()
-            if (b is Proto.Some) return
+            if (<!USELESS_IS_CHECK!>b is Proto.Some<!>) return
         }
     }
 }

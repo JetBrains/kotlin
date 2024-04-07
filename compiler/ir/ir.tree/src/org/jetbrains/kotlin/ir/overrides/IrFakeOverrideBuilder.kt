@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
@@ -68,7 +67,7 @@ class IrFakeOverrideBuilder(
             val (staticMembers, instanceMembers) =
                 clazz.declarations.filterIsInstance<IrOverridableMember>().partition { it.isStaticMember }
 
-            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, clazz.superTypes) { !it.isStaticMember }
+            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, clazz.superTypes, isStaticMembers = false)
 
             // Static Java members from the superclass need fake overrides in the subclass, to support the case when the static member is
             // declared in an inaccessible grandparent class but is exposed as public in the parent. For example:
@@ -81,7 +80,7 @@ class IrFakeOverrideBuilder(
             // we need to generate a fake override in class B. This is only possible in case of superclasses, as static _interface_ members
             // are not inherited (see JLS 8.4.8 and 9.4.1).
             val superClass = clazz.superTypes.filter { it.classOrFail.owner.isClass }
-            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass) { it.isStaticMember }
+            buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass, isStaticMembers = true)
         }
     }
 
@@ -90,11 +89,11 @@ class IrFakeOverrideBuilder(
         allFromCurrent: List<IrOverridableMember>,
         oldSignatures: Boolean,
         supertypes: List<IrType>,
-        declarationFilter: (IrOverridableMember) -> Boolean,
+        isStaticMembers: Boolean,
     ) {
         val allFromSuper = supertypes.flatMap { superType ->
             superType.classOrFail.owner.declarations
-                .filterIsInstanceAnd<IrOverridableMember>(declarationFilter)
+                .filterIsInstanceAnd<IrOverridableMember> { it.isStaticMember == isStaticMembers }
                 .mapNotNull {
                     val fakeOverride = strategy.fakeOverrideMember(superType, it, clazz) ?: return@mapNotNull null
                     FakeOverride(fakeOverride, it)
@@ -105,11 +104,14 @@ class IrFakeOverrideBuilder(
         val allFromCurrentByName = allFromCurrent.groupBy { it.name }
 
         allFromSuperByName.forEach { (name, superMembers) ->
+            val isIntersectionOverrideForbiddenByGenericClash: Boolean = when {
+                superMembers.size <= 1 -> false // fast-path. Not important in that case
+                !strategy.isGenericClashFromSameSupertypeAllowed -> false // workaround is disabled
+                else -> superMembers.all { it.original.parent == superMembers[0].original.parent }
+            }
+            val isIntersectionOverrideForbidden = isStaticMembers || isIntersectionOverrideForbiddenByGenericClash
             generateOverridesInFunctionGroup(
-                superMembers,
-                allFromCurrentByName[name] ?: emptyList(),
-                clazz,
-                oldSignatures
+                superMembers, allFromCurrentByName[name] ?: emptyList(), clazz, oldSignatures, isIntersectionOverrideForbidden
             )
         }
 
@@ -165,7 +167,8 @@ class IrFakeOverrideBuilder(
         membersFromSupertypes: List<FakeOverride>,
         membersFromCurrent: List<IrOverridableMember>,
         current: IrClass,
-        compatibilityMode: Boolean
+        compatibilityMode: Boolean,
+        isIntersectionOverrideForbidden: Boolean,
     ) {
         val notOverridden = membersFromSupertypes.toMutableSet()
 
@@ -175,7 +178,13 @@ class IrFakeOverrideBuilder(
         }
 
         val addedFakeOverrides = mutableListOf<IrOverridableMember>()
-        createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
+        if (isIntersectionOverrideForbidden) {
+            for (member in notOverridden) {
+                createAndBindFakeOverride(listOf(member), current, addedFakeOverrides, compatibilityMode)
+            }
+        } else {
+            createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
+        }
         current.declarations.addAll(addedFakeOverrides)
     }
 
@@ -233,7 +242,6 @@ class IrFakeOverrideBuilder(
         return member ?: error("Could not find a visible member")
     }
 
-
     private fun createAndBindFakeOverrides(
         current: IrClass,
         notOverridden: Collection<FakeOverride>,
@@ -242,9 +250,9 @@ class IrFakeOverrideBuilder(
     ) {
         val fromSuper = notOverridden.toMutableSet()
         while (fromSuper.isNotEmpty()) {
-            val notOverriddenFromSuper = findMemberWithMaxVisibility(filterOutCustomizedFakeOverrides(fromSuper))
+            val notOverriddenFromSuper = filterOutCustomizedFakeOverrides(fromSuper)
             val overridables = extractMembersOverridableInBothWays(
-                notOverriddenFromSuper,
+                notOverriddenFromSuper.first(),
                 fromSuper
             )
             createAndBindFakeOverride(overridables, current, addedFakeOverrides, compatibilityMode)
@@ -266,7 +274,6 @@ class IrFakeOverrideBuilder(
 
     private fun determineModalityForFakeOverride(
         members: List<FakeOverride>,
-        current: IrClass
     ): Modality {
         // Optimization: avoid creating hash sets in frequent cases when modality can be computed trivially
         var hasOpen = false
@@ -280,34 +287,25 @@ class IrFakeOverrideBuilder(
             }
         }
 
-        // Fake overrides of abstract members in non-abstract expected classes should not be abstract, because otherwise it would be
-        // impossible to inherit a non-expected class from that expected class in common code.
-        // We're making their modality that of the containing class, because this is the least confusing behavior for the users.
-        // However, it may cause problems if we reuse resolution results of common code when compiling platform code (see KT-15220)
-        val transformAbstractToClassModality =
-            current.isExpect && current.modality !== Modality.ABSTRACT && current.modality !== Modality.SEALED
         if (hasOpen && !hasAbstract) {
             return Modality.OPEN
         }
         if (!hasOpen && hasAbstract) {
-            return if (transformAbstractToClassModality) current.modality else Modality.ABSTRACT
+            return Modality.ABSTRACT
         }
 
         val realOverrides = members
             .map { it.original }
             .collectAndFilterRealOverrides()
-        return getMinimalModality(realOverrides, transformAbstractToClassModality, current.modality)
+        return getMinimalModality(realOverrides)
     }
 
     private fun getMinimalModality(
         members: Collection<IrOverridableMember>,
-        transformAbstractToClassModality: Boolean,
-        classModality: Modality
     ): Modality {
         var result = Modality.ABSTRACT
         for (member in members) {
-            val effectiveModality =
-                if (transformAbstractToClassModality && member.modality === Modality.ABSTRACT) classModality else member.modality
+            val effectiveModality = member.modality
             if (effectiveModality < result) {
                 result = effectiveModality
             }
@@ -336,20 +334,25 @@ class IrFakeOverrideBuilder(
         addedFakeOverrides: MutableList<IrOverridableMember>,
         compatibilityMode: Boolean
     ) {
-        val modality = determineModalityForFakeOverride(overridables, currentClass)
-        val visibility = findMemberWithMaxVisibility(overridables).override.visibility
+        val modality = determineModalityForFakeOverride(overridables)
+        val maxVisibilityMember = findMemberWithMaxVisibility(overridables).override
         val mostSpecific = selectMostSpecificMember(overridables)
 
         val fakeOverride = mostSpecific.override.apply {
             when (this) {
                 is IrPropertyWithLateBinding -> {
-                    this.visibility = visibility
+                    this.visibility = maxVisibilityMember.visibility
                     this.modality = modality
-                    this.getter = this.getter?.updateAccessorModalityAndVisibility(modality, visibility)
-                    this.setter = this.setter?.updateAccessorModalityAndVisibility(modality, visibility)
+                    maxVisibilityMember as IrProperty
+                    this.getter = this.getter?.updateAccessorModalityAndVisibility(
+                        modality, (maxVisibilityMember.getter ?: maxVisibilityMember).visibility
+                    )
+                    this.setter = this.setter?.updateAccessorModalityAndVisibility(
+                        modality, (maxVisibilityMember.setter ?: maxVisibilityMember).visibility
+                    )
                 }
                 is IrFunctionWithLateBinding -> {
-                    this.visibility = visibility
+                    this.visibility = maxVisibilityMember.visibility
                     this.modality = modality
                 }
                 else -> error("Unexpected fake override kind: $this")
@@ -367,73 +370,38 @@ class IrFakeOverrideBuilder(
         strategy.postProcessGeneratedFakeOverride(fakeOverride, currentClass)
     }
 
-    private fun isVisibilityMoreSpecific(
+    private fun isReturnTypeIsSubtypeOfOtherReturnType(
         a: IrOverridableMember,
-        b: IrOverridableMember
+        b: IrOverridableMember,
     ): Boolean {
-        val result =
-            DescriptorVisibilities.compare(a.visibility, b.visibility)
+        val typeCheckerState = createIrTypeCheckerState(
+            IrTypeSystemContextWithAdditionalAxioms(typeSystem, a.typeParameters, b.typeParameters)
+        )
+        return AbstractTypeChecker.isSubtypeOf(typeCheckerState, a.returnType, b.returnType)
+    }
+
+    private fun isMoreSpecific(a: IrOverridableMember, b: IrOverridableMember): Boolean {
+        if (!isVisibilityMoreSpecific(a, b)) return false
+
+        if (a is IrProperty) {
+            check(b is IrProperty) { "b is not a property: $b" }
+            if (!isAccessorMoreSpecific(a.setter, b.setter)) return false
+            if (!a.isVar && b.isVar) return false
+        }
+
+        return isReturnTypeIsSubtypeOfOtherReturnType(a, b)
+    }
+
+    private fun isVisibilityMoreSpecific(a: IrOverridableMember, b: IrOverridableMember): Boolean {
+        val result = DescriptorVisibilities.compare(a.visibility, b.visibility)
         return result == null || result >= 0
     }
 
-    private fun isAccessorMoreSpecific(
-        a: IrSimpleFunction?,
-        b: IrSimpleFunction?
-    ): Boolean {
-        return if (a == null || b == null) true else isVisibilityMoreSpecific(a, b)
-    }
+    private fun isAccessorMoreSpecific(a: IrSimpleFunction?, b: IrSimpleFunction?): Boolean =
+        a == null || b == null || isVisibilityMoreSpecific(a, b)
 
-    private fun TypeCheckerState.isSubtypeOf(a: IrType, b: IrType) =
-        AbstractTypeChecker.isSubtypeOf(this, a, b)
-
-    private fun TypeCheckerState.equalTypes(a: IrType, b: IrType) =
-        AbstractTypeChecker.equalTypes(this, a, b)
-
-    private fun createTypeCheckerState(a: List<IrTypeParameter>, b: List<IrTypeParameter>): TypeCheckerState =
-        createIrTypeCheckerState(IrTypeSystemContextWithAdditionalAxioms(typeSystem, a, b))
-
-    private fun isReturnTypeMoreSpecific(
-        a: IrOverridableMember,
-        aReturnType: IrType,
-        b: IrOverridableMember,
-        bReturnType: IrType
-    ): Boolean {
-        val typeCheckerState = createTypeCheckerState(a.typeParameters, b.typeParameters)
-        return typeCheckerState.isSubtypeOf(aReturnType, bReturnType)
-    }
-
-    private fun isMoreSpecific(
-        a: IrOverridableMember,
-        b: IrOverridableMember
-    ): Boolean {
-        val aReturnType = a.returnType
-        val bReturnType = b.returnType
-        if (!isVisibilityMoreSpecific(a, b)) return false
-        if (a is IrSimpleFunction) {
-            require(b is IrSimpleFunction) { "b is " + b.javaClass }
-            return isReturnTypeMoreSpecific(a, aReturnType, b, bReturnType)
-        }
-        if (a is IrProperty) {
-            require(b is IrProperty) { "b is " + b.javaClass }
-            if (!isAccessorMoreSpecific(
-                    a.setter,
-                    b.setter
-                )
-            ) return false
-            return if (a.isVar && b.isVar) {
-                createTypeCheckerState(
-                    a.getter!!.typeParameters,
-                    b.getter!!.typeParameters
-                ).equalTypes(aReturnType, bReturnType)
-            } else {
-                // both vals or var vs val: val can't be more specific then var
-                !(!a.isVar && b.isVar) && isReturnTypeMoreSpecific(
-                    a, aReturnType,
-                    b, bReturnType
-                )
-            }
-        }
-        error("Unexpected callable: $a")
+    private fun IrType.isFlexible(): Boolean {
+        return with(typeSystem) { isFlexible() }
     }
 
     private fun isMoreSpecificThenAllOf(
@@ -450,29 +418,19 @@ class IrFakeOverrideBuilder(
         return true
     }
 
-    private fun selectMostSpecificMember(
-        overridables: Collection<FakeOverride>
-    ): FakeOverride {
+    private fun selectMostSpecificMember(overridables: Collection<FakeOverride>): FakeOverride {
         require(!overridables.isEmpty()) { "Should have at least one overridable member" }
         if (overridables.size == 1) {
             return overridables.first()
         }
         val candidates = mutableListOf<FakeOverride>()
         var transitivelyMostSpecific = overridables.first()
-        val transitivelyMostSpecificMember = transitivelyMostSpecific
         for (overridable in overridables) {
-            if (isMoreSpecificThenAllOf(overridable, overridables)
-            ) {
+            if (isMoreSpecificThenAllOf(overridable, overridables)) {
                 candidates.add(overridable)
             }
-            if (isMoreSpecific(
-                    overridable.override,
-                    transitivelyMostSpecificMember.override
-                )
-                && !isMoreSpecific(
-                    transitivelyMostSpecificMember.override,
-                    overridable.override
-                )
+            if (isMoreSpecific(overridable.override, transitivelyMostSpecific.override)
+                && !isMoreSpecific(transitivelyMostSpecific.override, overridable.override)
             ) {
                 transitivelyMostSpecific = overridable
             }
@@ -484,7 +442,7 @@ class IrFakeOverrideBuilder(
         }
         var firstNonFlexible: FakeOverride? = null
         for (candidate in candidates) {
-            if (candidate.override.returnType !is IrDynamicType) {
+            if (!candidate.override.returnType.isFlexible()) {
                 firstNonFlexible = candidate
                 break
             }

@@ -1,0 +1,105 @@
+FILE: postfixPrefixIncrementDecrement.kt
+    public final fun prefixIncrement(): R|kotlin/Unit| {
+        lval intArray: R|kotlin/IntArray| = R|kotlin/IntArray.IntArray|(Int(10))
+        lval a1: R|kotlin/Array<kotlin/Function0<kotlin/Int>>| = R|kotlin/Array.Array|<R|() -> kotlin/Int|>(Int(10), <L> = Array@fun <anonymous>(i: R|kotlin/Int|): R|() -> kotlin/Int| <inline=Inline>  {
+            ^ Array@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                lval <array>: R|kotlin/IntArray| = R|<local>/intArray|
+                lval <index_0>: R|kotlin/Int| = R|<local>/i|
+                R|<local>/<array>|.R|kotlin/IntArray.set|(R|<local>/<index_0>|, R|<local>/<array>|.R|kotlin/IntArray.get|(R|<local>/<index_0>|).R|kotlin/Int.inc|())
+                ^ R|<local>/<array>|.R|kotlin/IntArray.get|(R|<local>/<index_0>|)
+            }
+
+        }
+        )
+        lvar x: R|kotlin/Int| = Int(0)
+        lval a2: R|kotlin/Array<kotlin/Function0<kotlin/Int>>| = R|kotlin/Array.Array|<R|() -> kotlin/Int|>(Int(10), <L> = Array@fun <anonymous>(i: R|kotlin/Int|): R|() -> kotlin/Int| <inline=Inline>  {
+            ^ Array@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                ^  {
+                    R|<local>/x| = R|<local>/x|.R|kotlin/Int.inc|()
+                    R|<local>/x|
+                }
+
+            }
+
+        }
+        )
+    }
+    public final fun prefixDecrement(): R|kotlin/Unit| {
+        lval intArray: R|kotlin/IntArray| = R|kotlin/IntArray.IntArray|(Int(10))
+        lval a1: R|kotlin/Array<kotlin/Function0<kotlin/Int>>| = R|kotlin/Array.Array|<R|() -> kotlin/Int|>(Int(10), <L> = Array@fun <anonymous>(i: R|kotlin/Int|): R|() -> kotlin/Int| <inline=Inline>  {
+            ^ Array@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                lval <array>: R|kotlin/IntArray| = R|<local>/intArray|
+                lval <index_0>: R|kotlin/Int| = R|<local>/i|
+                R|<local>/<array>|.R|kotlin/IntArray.set|(R|<local>/<index_0>|, R|<local>/<array>|.R|kotlin/IntArray.get|(R|<local>/<index_0>|).R|kotlin/Int.dec|())
+                ^ R|<local>/<array>|.R|kotlin/IntArray.get|(R|<local>/<index_0>|)
+            }
+
+        }
+        )
+        lvar x: R|kotlin/Int| = Int(0)
+        lval a2: R|kotlin/Array<kotlin/Function0<kotlin/Int>>| = R|kotlin/Array.Array|<R|() -> kotlin/Int|>(Int(10), <L> = Array@fun <anonymous>(i: R|kotlin/Int|): R|() -> kotlin/Int| <inline=Inline>  {
+            ^ Array@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                ^  {
+                    R|<local>/x| = R|<local>/x|.R|kotlin/Int.dec|()
+                    R|<local>/x|
+                }
+
+            }
+
+        }
+        )
+    }
+    public final fun postfixIncrement(): R|kotlin/Unit| {
+        lval intArray: R|kotlin/IntArray| = R|kotlin/IntArray.IntArray|(Int(10))
+        lval a1: R|kotlin/Array<kotlin/Function0<kotlin/Int>>| = R|kotlin/Array.Array|<R|() -> kotlin/Int|>(Int(10), <L> = Array@fun <anonymous>(i: R|kotlin/Int|): R|() -> kotlin/Int| <inline=Inline>  {
+            ^ Array@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                lval <array>: R|kotlin/IntArray| = R|<local>/intArray|
+                lval <index_0>: R|kotlin/Int| = R|<local>/i|
+                lval <unary>: R|kotlin/Int| = R|<local>/<array>|.R|kotlin/IntArray.get|(R|<local>/<index_0>|)
+                R|<local>/<array>|.R|kotlin/IntArray.set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|kotlin/Int.inc|())
+                ^ R|<local>/<unary>|
+            }
+
+        }
+        )
+        lvar x: R|kotlin/Int| = Int(0)
+        lval a2: R|kotlin/Array<kotlin/Function0<kotlin/Int>>| = R|kotlin/Array.Array|<R|() -> kotlin/Int|>(Int(10), <L> = Array@fun <anonymous>(i: R|kotlin/Int|): R|() -> kotlin/Int| <inline=Inline>  {
+            ^ Array@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                ^  {
+                    lval <unary>: R|kotlin/Int| = R|<local>/x|
+                    R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                    R|<local>/<unary>|
+                }
+
+            }
+
+        }
+        )
+    }
+    public final fun postfixDecrement(): R|kotlin/Unit| {
+        lval intArray: R|kotlin/IntArray| = R|kotlin/IntArray.IntArray|(Int(10))
+        lval a1: R|kotlin/Array<kotlin/Function0<kotlin/Int>>| = R|kotlin/Array.Array|<R|() -> kotlin/Int|>(Int(10), <L> = Array@fun <anonymous>(i: R|kotlin/Int|): R|() -> kotlin/Int| <inline=Inline>  {
+            ^ Array@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                lval <array>: R|kotlin/IntArray| = R|<local>/intArray|
+                lval <index_0>: R|kotlin/Int| = R|<local>/i|
+                lval <unary>: R|kotlin/Int| = R|<local>/<array>|.R|kotlin/IntArray.get|(R|<local>/<index_0>|)
+                R|<local>/<array>|.R|kotlin/IntArray.set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|kotlin/Int.dec|())
+                ^ R|<local>/<unary>|
+            }
+
+        }
+        )
+        lvar x: R|kotlin/Int| = Int(0)
+        lval a2: R|kotlin/Array<kotlin/Function0<kotlin/Int>>| = R|kotlin/Array.Array|<R|() -> kotlin/Int|>(Int(10), <L> = Array@fun <anonymous>(i: R|kotlin/Int|): R|() -> kotlin/Int| <inline=Inline>  {
+            ^ Array@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                ^  {
+                    lval <unary>: R|kotlin/Int| = R|<local>/x|
+                    R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.dec|()
+                    R|<local>/<unary>|
+                }
+
+            }
+
+        }
+        )
+    }

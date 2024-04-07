@@ -110,6 +110,12 @@ public class IrLocalVariableBytecodeInlinerTestGenerated extends AbstractIrLocal
   }
 
   @Test
+  @TestMetadata("manyInlineFunsInObject.kt")
+  public void testManyInlineFunsInObject() {
+    runTest("compiler/testData/debug/localVariables/manyInlineFunsInObject.kt");
+  }
+
+  @Test
   @TestMetadata("tryFinally.kt")
   public void testTryFinally() {
     runTest("compiler/testData/debug/localVariables/tryFinally.kt");
@@ -330,6 +336,156 @@ public class IrLocalVariableBytecodeInlinerTestGenerated extends AbstractIrLocal
     @TestMetadata("lambdaMultipleDestructs.kt")
     public void testLambdaMultipleDestructs() {
       runTest("compiler/testData/debug/localVariables/destructuring/lambdaMultipleDestructs.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/debug/localVariables/inlineScopes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InlineScopes {
+    @Test
+    public void testAllFilesPresentInInlineScopes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/inlineScopes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NewFormatToOld {
+      @Test
+      public void testAllFilesPresentInNewFormatToOld() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("inlineScopes1.kt")
+      public void testInlineScopes1() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes1.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes10.kt")
+      public void testInlineScopes10() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes10.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes2.kt")
+      public void testInlineScopes2() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes2.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes3.kt")
+      public void testInlineScopes3() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes3.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes4.kt")
+      public void testInlineScopes4() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes4.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes5.kt")
+      public void testInlineScopes5() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes5.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes6.kt")
+      public void testInlineScopes6() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes6.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes7.kt")
+      public void testInlineScopes7() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes7.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes8.kt")
+      public void testInlineScopes8() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes8.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes9.kt")
+      public void testInlineScopes9() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/inlineScopes9.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew")
+    @TestDataPath("$PROJECT_ROOT")
+    public class OldFormatToNew {
+      @Test
+      public void testAllFilesPresentInOldFormatToNew() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("inlineScopes1.kt")
+      public void testInlineScopes1() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes1.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes10.kt")
+      public void testInlineScopes10() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes10.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes2.kt")
+      public void testInlineScopes2() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes2.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes3.kt")
+      public void testInlineScopes3() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes3.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes4.kt")
+      public void testInlineScopes4() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes4.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes5.kt")
+      public void testInlineScopes5() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes5.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes6.kt")
+      public void testInlineScopes6() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes6.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes7.kt")
+      public void testInlineScopes7() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes7.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes8.kt")
+      public void testInlineScopes8() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes8.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineScopes9.kt")
+      public void testInlineScopes9() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes9.kt");
+      }
     }
   }
 

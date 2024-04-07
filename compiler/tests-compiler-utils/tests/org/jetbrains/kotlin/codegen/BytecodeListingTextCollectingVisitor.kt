@@ -305,7 +305,7 @@ class BytecodeListingTextCollectingVisitor(
                         if (name != null) "$name=$rendered" else rendered
                 }
 
-            override fun visitArray(name: String): AnnotationVisitor? =
+            override fun visitArray(name: String?): AnnotationVisitor? =
                 visitAnnotationImpl { args ->
                     arguments += "$name=[${args.joinToString(", ")}]"
                 }

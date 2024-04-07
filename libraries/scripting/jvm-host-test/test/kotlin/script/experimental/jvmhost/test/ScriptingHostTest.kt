@@ -292,6 +292,61 @@ class ScriptingHostTest : TestCase() {
         Assert.assertEquals(result, output)
     }
 
+    fun testScriptWithImplicitReceiversWithSameNamedProperty() {
+        val result = listOf("first")
+        val script = "println(v)"
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.TestClass1>())
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.TestClass1::class,
+                    kotlin.script.experimental.jvmhost.test.forScript.TestClass2::class
+                )
+            },
+            evaluation = {
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.TestClass1("first"),
+                    kotlin.script.experimental.jvmhost.test.forScript.TestClass2("second")
+                )
+            }
+        )
+        val output = captureOut {
+            val retVal = BasicJvmScriptingHost().eval(
+                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
+            ).valueOrThrow().returnValue
+            if (retVal is ResultValue.Error) throw retVal.error
+        }.lines()
+        Assert.assertEquals(result, output)
+    }
+
+    fun testScriptWithImplicitReceiverAndBaseClassWithSameNamedProperty() {
+        val result = listOf("base")
+        val script = "println(v)"
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.TestClass1>())
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.TestClass1::class
+                )
+                baseClass(
+                    kotlin.script.experimental.jvmhost.test.forScript.Base::class
+                )
+            },
+            evaluation = {
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.TestClass1("receiver")
+                )
+            }
+        )
+        val output = captureOut {
+            val retVal = BasicJvmScriptingHost().eval(
+                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
+            ).valueOrThrow().returnValue
+            if (retVal is ResultValue.Error) throw retVal.error
+        }.lines()
+        Assert.assertEquals(result, output)
+    }
+
     fun testScriptImplicitReceiversTransitiveVisibility() {
         val result = listOf("42")
         val script = """

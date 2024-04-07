@@ -1,0 +1,2 @@
+error: '-Xjdk-release=7' option is not supported by used JDK: $JDK_1_8
+COMPILATION_ERROR

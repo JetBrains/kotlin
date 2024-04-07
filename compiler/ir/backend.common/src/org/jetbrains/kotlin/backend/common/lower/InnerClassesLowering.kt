@@ -29,7 +29,9 @@ interface InnerClassesSupport {
     fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor?
 }
 
-class InnerClassesLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : DeclarationTransformer {
+open class InnerClassesLowering(val context: CommonBackendContext) : DeclarationTransformer {
+    private val innerClassesSupport = context.innerClassesSupport
+
     override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -126,7 +128,9 @@ private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstruct
 }
 
 
-class InnerClassesMemberBodyLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : BodyLoweringPass {
+open class InnerClassesMemberBodyLowering(val context: CommonBackendContext) : BodyLoweringPass {
+    private val innerClassesSupport = context.innerClassesSupport
+
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, true)
     }
@@ -207,7 +211,9 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
     }
 }
 
-class InnerClassConstructorCallsLowering(val context: BackendContext, val innerClassesSupport: InnerClassesSupport) : BodyLoweringPass {
+open class InnerClassConstructorCallsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+    private val innerClassesSupport: InnerClassesSupport = context.innerClassesSupport
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {

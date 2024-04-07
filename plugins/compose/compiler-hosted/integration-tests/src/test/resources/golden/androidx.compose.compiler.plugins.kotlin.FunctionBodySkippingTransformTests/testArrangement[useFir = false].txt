@@ -1,0 +1,51 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Vertical
+
+@Composable
+fun A(
+    arrangement: Vertical = Arrangement.Top
+) {
+    used(arrangement)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun A(arrangement: Vertical?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(arrangement)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      arrangement = Arrangement.Top
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(arrangement)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(arrangement, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

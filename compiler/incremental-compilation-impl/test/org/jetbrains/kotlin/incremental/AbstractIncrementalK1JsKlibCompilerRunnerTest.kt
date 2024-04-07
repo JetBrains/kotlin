@@ -22,6 +22,7 @@ abstract class AbstractIncrementalK1JsKlibCompilerRunnerTest : AbstractIncrement
 
     override val buildLogFinder: BuildLogFinder
         get() = super.buildLogFinder.copy(
+            isFirEnabled = false,
             isKlibEnabled = true,
             isJsEnabled = true,
             isScopeExpansionEnabled = scopeExpansionMode != CompileScopeExpansionMode.NEVER,

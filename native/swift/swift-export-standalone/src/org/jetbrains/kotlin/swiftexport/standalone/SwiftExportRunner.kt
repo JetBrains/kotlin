@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.D
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildFunctionBridges
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
-import org.jetbrains.kotlin.swiftexport.standalone.transformation.transformToSwift
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Path
@@ -38,6 +37,7 @@ public data class SwiftExportConfig(
 }
 
 public data class SwiftExportInput(
+    val moduleName: String = "main",
     val sourceRoot: Path, // todo: we do not support multi-modules currently. see KT-65220
     val libraries: List<Path> = emptyList(), // todo: not supported currently. see KT-65221
 )
@@ -95,7 +95,6 @@ public fun runSwiftExport(
         isDebugModeEnabled,
         bridgeModuleName
     )
-        .transformToSwift()
     val bridgeRequests = module.buildFunctionBridges()
     module.dumpResultToFiles(bridgeRequests, output)
 }

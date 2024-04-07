@@ -124,6 +124,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("fileAnnotation2.kt")
+    public void testFileAnnotation2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotation2.kt");
+    }
+
+    @Test
     @TestMetadata("jvmFieldAnnotationOnConstructorProperty.kt")
     public void testJvmFieldAnnotationOnConstructorProperty() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/jvmFieldAnnotationOnConstructorProperty.kt");
@@ -291,6 +297,18 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     @Test
     public void testAllFilesPresentInCalls() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/calls"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("arrayAssignOperatorAsSingleExpressionInIf.kt")
+    public void testArrayAssignOperatorAsSingleExpressionInIf() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayAssignOperatorAsSingleExpressionInIf.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAssignOperatorAsSingleExpressionInWhen.kt")
+    public void testArrayAssignOperatorAsSingleExpressionInWhen() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayAssignOperatorAsSingleExpressionInWhen.kt");
     }
 
     @Test
@@ -1300,6 +1318,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("fileAnnotation.kt")
+    public void testFileAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("fileAnnotationList.kt")
     public void testFileAnnotationList() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotationList.kt");
@@ -1321,6 +1345,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     @TestMetadata("getter.kt")
     public void testGetter() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/getter.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteFunctionTypeParemeter.kt")
+    public void testIncompleteFunctionTypeParemeter() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/incompleteFunctionTypeParemeter.kt");
     }
 
     @Test

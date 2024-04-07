@@ -79,12 +79,39 @@ abstract class ExecClang @Inject constructor(
     // The target can be specified as KonanTarget or as a
     // (nullable, which means host) target name.
 
+    // FIXME: See KT-65542 for details
+    private fun fixBrokenMacroExpansionInXcode15_3(target: String?) = fixBrokenMacroExpansionInXcode15_3(platformManager.targetManager(target).target)
+
+    private fun fixBrokenMacroExpansionInXcode15_3(target: KonanTarget): List<String> {
+        return when (target) {
+            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
+                "TARGET_OS_OSX" to "1",
+            )
+            KonanTarget.IOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_IOS" to "1",
+            )
+            KonanTarget.TVOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_TV" to "1",
+            )
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_WATCH" to "1",
+            )
+            else -> emptyMap()
+        }.map { "-D${it.key}=${it.value}" }
+    }
+
     fun execKonanClang(target: String?, action: Action<in ExecSpec>): ExecResult {
-        return this.execClang(clangArgsForCppRuntime(target), action)
+        return this.execClang(clangArgsForCppRuntime(target) + fixBrokenMacroExpansionInXcode15_3(target), action)
     }
 
     fun execKonanClang(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
-        return this.execClang(clangArgsForCppRuntime(target), action)
+        return this.execClang(clangArgsForCppRuntime(target) + fixBrokenMacroExpansionInXcode15_3(target), action)
     }
 
     /**
@@ -134,12 +161,6 @@ abstract class ExecClang @Inject constructor(
     }
 
     companion object {
-        @JvmStatic
-        fun create(project: Project): ExecClang = create(
-                project.objects,
-                project.project(":kotlin-native").findProperty("platformManager") as PlatformManager,
-        )
-
         @JvmStatic
         fun create(objects: ObjectFactory, platformManager: PlatformManager) =
                 objects.newInstance(ExecClang::class.java, platformManager)

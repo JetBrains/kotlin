@@ -1,0 +1,2 @@
+KtType: @MyAnno(value = "outer") kotlin.collections.(Mutable)List<@MyAnno(value = "middle") kotlin.collections.(Mutable)List<@MyAnno(value = "nested") kotlin.String!>!>!
+PsiType: @MyAnno(value = "outer") java.util.List<? extends @MyAnno(value = "middle") java.util.List<? extends @MyAnno(value = "nested") java.lang.String>>

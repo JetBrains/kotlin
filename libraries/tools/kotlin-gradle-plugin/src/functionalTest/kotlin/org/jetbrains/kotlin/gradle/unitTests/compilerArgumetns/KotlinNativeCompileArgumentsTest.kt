@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRe
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.Primitive
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
@@ -23,6 +22,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.gradle.util.mockXcodeVersion
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import kotlin.test.*
 
@@ -239,6 +240,8 @@ class KotlinNativeCompileArgumentsTest {
     @Test
     fun `native compile tasks SHOULD NOT have native platform dependencies but SHOULD have stdlib`() {
         val project = buildProjectWithMPP()
+
+        project.mockXcodeVersion()
         project.repositories.mavenLocal()
         project.repositories.mavenCentralCacheRedirector()
         val kotlin = project.multiplatformExtension

@@ -11,4 +11,7 @@ class A
 fun main(args: Array<String>) {
     <!EQUALITY_NOT_APPLICABLE!>(1 to A()) == A()<!>
     <!EQUALITY_NOT_APPLICABLE!>(1 to B()) == B()<!>
+
+    <!EQUALITY_NOT_APPLICABLE!>(1 to A()) === A()<!>
+    <!EQUALITY_NOT_APPLICABLE!>(1 to B()) === B()<!>
 }

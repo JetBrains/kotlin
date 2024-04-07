@@ -101,7 +101,6 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
 ) {
     useAfterAnalysisCheckers(
-        ::FirIdenticalChecker,
         ::FirFailingTestSuppressor,
         testDataConsistencyHandler,
     )

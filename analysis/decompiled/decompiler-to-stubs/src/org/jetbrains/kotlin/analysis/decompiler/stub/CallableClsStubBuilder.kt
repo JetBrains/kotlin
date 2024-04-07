@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -26,12 +25,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -55,14 +52,18 @@ fun createDeclarationsStubs(
     propertyProtos: List<ProtoBuf.Property>,
 ) {
     for (propertyProto in propertyProtos) {
-        if (!shouldSkip(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name))) {
-            PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
+        if (mustNotBeWrittenToStubs(propertyProto.flags)) {
+            continue
         }
+
+        PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
     }
     for (functionProto in functionProtos) {
-        if (!shouldSkip(functionProto.flags, outerContext.nameResolver.getName(functionProto.name))) {
-            FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
+        if (mustNotBeWrittenToStubs(functionProto.flags)) {
+            continue
         }
+
+        FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
     }
 }
 
@@ -86,17 +87,11 @@ fun createConstructorStub(
     ConstructorClsStubBuilder(parentStub, outerContext, protoContainer, constructorProto).build()
 }
 
-private fun shouldSkip(flags: Int, name: Name): Boolean {
-    return when (Flags.MEMBER_KIND.get(flags)) {
-        MemberKind.FAKE_OVERRIDE -> true
-        //TODO: fix decompiler to use sane criteria
-        MemberKind.SYNTHESIZED -> !DataClassResolver.isComponentLike(name) && name !in listOf(
-            OperatorNameConventions.EQUALS,
-            StandardNames.HASHCODE_NAME,
-            OperatorNameConventions.TO_STRING
-        )
-        else -> false
-    }
+/**
+ * @see org.jetbrains.kotlin.analysis.decompiler.psi.text.mustNotBeWrittenToDecompiledText
+ */
+private fun mustNotBeWrittenToStubs(flags: Int): Boolean {
+    return Flags.MEMBER_KIND.get(flags) == MemberKind.FAKE_OVERRIDE
 }
 
 abstract class CallableClsStubBuilder(

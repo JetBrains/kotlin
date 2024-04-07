@@ -136,7 +136,8 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 }
 
 abstract class AbstractIrCustomScriptCodegenTest : AbstractCustomScriptCodegenTest() {
-    override val backend: TargetBackend = TargetBackend.JVM_IR
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
 }
 
 object TestScriptWithReceiversConfiguration : ScriptCompilationConfiguration(

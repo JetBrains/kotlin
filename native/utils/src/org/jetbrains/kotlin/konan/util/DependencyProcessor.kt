@@ -65,9 +65,6 @@ private fun Properties.findCandidates(dependencies: List<String>): Map<String, L
 
 
 private val KonanPropertiesLoader.dependenciesUrl : String            get() = properties.dependenciesUrl
-private val KonanPropertiesLoader.airplaneMode : Boolean              get() = properties.airplaneMode
-private val KonanPropertiesLoader.downloadingAttempts : Int           get() = properties.downloadingAttempts
-private val KonanPropertiesLoader.downloadingAttemptIntervalMs : Long get() = properties.downloadingAttemptIntervalMs
 
 sealed class DependencySource {
     data class Local(val path: File) : DependencySource()
@@ -112,7 +109,6 @@ class DependencyProcessor(
     private var isInfoShown = false
 
     private val downloader = DependencyDownloader(maxAttempts, attemptIntervalMs, customProgressCallback)
-    private val extractor = DependencyExtractor(archiveType)
 
     constructor(dependenciesRoot: File,
                 properties: KonanPropertiesLoader,
@@ -175,7 +171,7 @@ class DependencyProcessor(
         }
     }
 
-    private fun downloadDependency(dependency: String, baseUrl: String) {
+    private fun downloadDependency(dependency: String, baseUrl: String, archiveExtractor: ArchiveExtractor) {
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
 
@@ -214,7 +210,7 @@ class DependencyProcessor(
             downloader.download(url, archive)
         }
         println("Extracting dependency: $archive into $dependenciesDirectory")
-        extractor.extract(archive, dependenciesDirectory)
+        archiveExtractor.extract(archive, dependenciesDirectory, archiveType)
         if (deleteArchives) {
             archive.delete()
         }
@@ -278,7 +274,7 @@ class DependencyProcessor(
         }
     }
 
-    fun run() {
+    fun run(archiveExtractor: ArchiveExtractor = DependencyExtractor()) {
         // We need a lock that can be shared between different classloaders (KT-39781).
         // TODO: Rework dependencies downloading to avoid storing the lock in the system properties.
         val lock = System.getProperties().computeIfAbsent("kotlin.native.dependencies.lock") {
@@ -303,7 +299,7 @@ class DependencyProcessor(
                             DependencySource.Remote.Internal -> InternalServer.url
                         }
                         // TODO: consider using different caches for different remotes.
-                        downloadDependency(dependency, baseUrl)
+                        downloadDependency(dependency, baseUrl, archiveExtractor)
                     }
                 }
             }

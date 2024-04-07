@@ -115,8 +115,12 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
     private fun KtDiagnosticFactoryForDeprecation<*>.warningMessage(errorMessage: String): String {
         return buildString {
             append(errorMessage)
-            if (!errorMessage.endsWith(".")) append(".")
-            append(" This will become an error")
+            when {
+                errorMessage.endsWith(".") -> append(" ")
+                errorMessage.lastOrNull()?.isWhitespace() == true -> {}
+                else -> append(". ")
+            }
+            append("This will become an error")
             val sinceVersion = deprecatingFeature.sinceVersion
             if (sinceVersion != null) {
                 append(" in Kotlin ")

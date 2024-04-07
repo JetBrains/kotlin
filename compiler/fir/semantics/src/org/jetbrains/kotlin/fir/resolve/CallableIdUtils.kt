@@ -14,24 +14,35 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 
+// TODO: rename to `isFunctionOrKFunctionInvoke` when the compose builds will be stabilized, KT-67002
 fun CallableId.isInvoke(): Boolean =
-    isKFunctionInvoke()
-            || callableName.asString() == "invoke"
+    isFunctionInvoke() || isKFunctionInvoke()
+
+fun CallableId.isFunctionOrSuspendFunctionInvoke(): Boolean =
+    isFunctionInvoke() || isSuspendFunctionInvoke()
+
+fun CallableId.isSuspendFunctionInvoke(): Boolean =
+    callableName.asString() == "invoke"
+            && className?.asString()?.startsWith("SuspendFunction") == true
+            && packageName == StandardClassIds.BASE_COROUTINES_PACKAGE
+
+fun CallableId.isFunctionInvoke(): Boolean =
+    callableName.asString() == "invoke"
             && className?.asString()?.startsWith("Function") == true
             && packageName == StandardClassIds.BASE_KOTLIN_PACKAGE
 
 fun CallableId.isKFunctionInvoke(): Boolean =
     callableName.asString() == "invoke"
             && className?.asString()?.startsWith("KFunction") == true
-            && packageName.asString() == "kotlin.reflect"
+            && packageName == StandardClassIds.BASE_REFLECT_PACKAGE
 
 fun CallableId.isIteratorNext(): Boolean =
     callableName.asString() == "next" && className?.asString()?.endsWith("Iterator") == true
-            && packageName.asString() == "kotlin.collections"
+            && packageName == StandardClassIds.BASE_COLLECTIONS_PACKAGE
 
 fun CallableId.isIteratorHasNext(): Boolean =
     callableName.asString() == "hasNext" && className?.asString()?.endsWith("Iterator") == true
-            && packageName.asString() == "kotlin.collections"
+            && packageName == StandardClassIds.BASE_COLLECTIONS_PACKAGE
 
 fun CallableId.isIterator(): Boolean =
     callableName.asString() == "iterator" && packageName.asString() in arrayOf("kotlin", "kotlin.collections", "kotlin.ranges")

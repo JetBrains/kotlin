@@ -66,6 +66,8 @@ class SpecialRefRegistry : private Pinned {
             RuntimeAssert(rc >= 0, "Creating StableRef with negative rc %d", rc);
         }
 
+        Node() noexcept : obj_(nullptr), rc_(disposedMarker) {}
+
         ~Node() {
             if (compiler::runtimeAssertsEnabled()) {
                 auto rc = rc_.load(std::memory_order_relaxed);
@@ -165,10 +167,10 @@ class SpecialRefRegistry : private Pinned {
         //   Synchronization between GC and mutators happens via enabling/disabling
         //   the barriers.
         // TODO: Try to handle it atomically only when the GC is in progress.
-        std::atomic<ObjHeader*> obj_ = nullptr;
+        std::atomic<ObjHeader*> obj_;
         // Only ever updated using relaxed memory ordering. Any synchronization
         // with nextRoot_ is achieved via acquire-release of nextRoot_.
-        std::atomic<Rc> rc_ = 0; // After dispose() will be disposedMarker.
+        std::atomic<Rc> rc_; // After dispose() will be disposedMarker.
         // Singly linked lock free list. Using acquire-release throughout.
         std::atomic<Node*> nextRoot_ = nullptr;
         // This and the next one only serve fast deletion optimization for shortly lived StableRefs.
@@ -278,9 +280,9 @@ public:
 
     class RootsIterable : private MoveOnly {
     public:
-        RootsIterator begin() const noexcept { return RootsIterator(*owner_, owner_->nextRoot(owner_->rootsHead())); }
+        RootsIterator begin() const noexcept { return RootsIterator(*owner_, owner_->nextRoot(&owner_->rootsHead_)); }
 
-        RootsIterator end() const noexcept { return RootsIterator(*owner_, owner_->rootsTail()); }
+        RootsIterator end() const noexcept { return RootsIterator(*owner_, &owner_->rootsTail_); }
 
     private:
         friend class SpecialRefRegistry;
@@ -327,14 +329,14 @@ public:
         std::unique_lock<Mutex> guard_;
     };
 
-    SpecialRefRegistry() noexcept { rootsHead()->nextRoot_.store(rootsTail(), std::memory_order_relaxed); }
+    SpecialRefRegistry() noexcept { rootsHead_.nextRoot_.store(&rootsTail_, std::memory_order_relaxed); }
 
     ~SpecialRefRegistry() = default;
 
     static SpecialRefRegistry& instance() noexcept;
 
     void clearForTests() noexcept {
-        rootsHead()->nextRoot_ = rootsTail();
+        rootsHead_.nextRoot_ = &rootsTail_;
         for (auto& node : all_) {
             // Allow the tests not to run the finalizers for weaks.
             node.rc_ = Node::disposedMarker;
@@ -362,17 +364,13 @@ private:
     void insertIntoRootsHead(Node& node) noexcept;
     std::list<Node>::iterator findAliveNode(std::list<Node>::iterator it) noexcept;
 
-    Node* rootsHead() noexcept { return reinterpret_cast<Node*>(rootsHeadStorage_); }
-    const Node* rootsHead() const noexcept { return reinterpret_cast<const Node*>(rootsHeadStorage_); }
-    static Node* rootsTail() noexcept { return reinterpret_cast<Node*>(rootsTailStorage_); }
-
     // TODO: Iteration over `all_` will be slow, because it's `std::list`
     //       collected at different times from different threads, and so the nodes
     //       are all over the memory. Consider using custom allocator for that.
     std::list<Node> all_;
     Mutex mutex_;
-    alignas(Node) char rootsHeadStorage_[sizeof(Node)] = {0};
-    alignas(Node) static inline char rootsTailStorage_[sizeof(Node)] = {0};
+    Node rootsHead_{};
+    static inline Node rootsTail_{};
 };
 
 } // namespace kotlin::mm

@@ -18,8 +18,8 @@ FILE: copy.kt
 
     }
     public final fun test(some: R|Some|): R|kotlin/Unit| {
-        lval other: R|Some| = R|<local>/some|.R|/Some.copy|(y = String(123))
-        lval another: R|Some| = R|<local>/some|.R|/Some.copy|(x = Int(123))
+        lval other: R|Some| = R|<local>/some|.R|/Some.copy|(String(123))
+        lval another: R|Some| = R|<local>/some|.R|/Some.copy|(Int(123))
         lval same: R|Some| = R|<local>/some|.R|/Some.copy|()
         lval different: R|Some| = R|<local>/some|.R|/Some.copy|(Int(456), String(456))
     }

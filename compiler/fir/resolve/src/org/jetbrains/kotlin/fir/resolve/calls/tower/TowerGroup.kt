@@ -29,9 +29,7 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     data object Start : TowerGroupKind(0b0)
 
-    data object Qualifier : TowerGroupKind(1)
-
-    data object Classifier : TowerGroupKind(2)
+    data object QualifierOrClassifier : TowerGroupKind(1)
 
     class TopPrioritized(depth: Int) : WithDepth(3, depth)
 
@@ -176,9 +174,7 @@ private constructor(
 
         val Start = kindOf(TowerGroupKind.Start)
 
-        val Qualifier = kindOf(TowerGroupKind.Qualifier)
-
-        val Classifier = kindOf(TowerGroupKind.Classifier)
+        val QualifierOrClassifier = kindOf(TowerGroupKind.QualifierOrClassifier)
 
         val QualifierValue = kindOf(TowerGroupKind.QualifierValue)
 

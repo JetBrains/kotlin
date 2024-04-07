@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt.cli.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,6 +21,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   @Test
   public void testAllFilesPresentInIntegration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
+
+  @Test
+  @TestMetadata("aptError")
+  public void testAptError() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/aptError/");
   }
 
   @Test

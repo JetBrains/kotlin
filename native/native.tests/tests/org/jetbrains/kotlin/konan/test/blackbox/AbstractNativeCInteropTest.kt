@@ -127,30 +127,23 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             KonanTarget.ANDROID_ARM64 -> "ARM64"
             KonanTarget.ANDROID_X64 -> "X64"
             KonanTarget.ANDROID_X86 -> "CPointerByteVar"
-            KonanTarget.IOS_ARM32 -> "COpaquePointer"
             KonanTarget.IOS_ARM64 -> "CPointerByteVar"
             KonanTarget.IOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.IOS_X64 -> "X64"
             KonanTarget.LINUX_ARM32_HFP -> "ARM32"
             KonanTarget.LINUX_ARM64 -> "ARM64"
-            KonanTarget.LINUX_MIPS32 -> "COpaquePointer"
-            KonanTarget.LINUX_MIPSEL32 -> "COpaquePointer"
             KonanTarget.LINUX_X64 -> "X64"
             KonanTarget.MACOS_ARM64 -> "CPointerByteVar"
             KonanTarget.MACOS_X64 -> "X64"
             KonanTarget.MINGW_X64 -> "CPointerByteVar"
-            KonanTarget.MINGW_X86 -> "CPointerByteVar"
             KonanTarget.TVOS_ARM64 -> "CPointerByteVar"
             KonanTarget.TVOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.TVOS_X64 -> "X64"
-            KonanTarget.WASM32 -> "COpaquePointer"
             KonanTarget.WATCHOS_ARM32 -> "CPointerByteVar"
             KonanTarget.WATCHOS_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_DEVICE_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_X64 -> "X64"
-            KonanTarget.WATCHOS_X86 -> "CPointerByteVar"
-            is KonanTarget.ZEPHYR -> "COpaquePointer"
         }
         return testPathFull.resolve("contents.gold.${goldenFilePart}.txt")
     }
@@ -172,4 +165,3 @@ internal fun muteCInteropTestIfNecessary(defFile: File, target: KonanTarget) {
     }
 }
 //Assumptions.assumeFalse(defHasObjC && !targets.testTarget.family.isAppleFamily)
-

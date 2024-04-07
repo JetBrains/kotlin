@@ -9,17 +9,13 @@ import org.jetbrains.kotlin.generators.model.DefaultTargetBackendComputer
 import org.jetbrains.kotlin.generators.model.TargetBackendComputer
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.RunnerWithTargetBackendForTestGeneratorMarker
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.isSubclassOf
+import java.lang.reflect.Modifier
 
 object ReflectionBasedTargetBackendComputer : TargetBackendComputer {
-    private val runnerMarkerKClass = RunnerWithTargetBackendForTestGeneratorMarker::class
-    private const val TARGET_BACKEND_PROPERTY_NAME = "targetBackend"
+    private val runnerMarkerKClass = RunnerWithTargetBackendForTestGeneratorMarker::class.java
 
-    override fun compute(definedTargetBackend: TargetBackend?, testKClass: KClass<*>): TargetBackend {
-        if (!testKClass.isSubclassOf(runnerMarkerKClass)) return DefaultTargetBackendComputer.compute(definedTargetBackend, testKClass)
+    override fun compute(definedTargetBackend: TargetBackend?, testKClass: Class<*>): TargetBackend {
+        if (!runnerMarkerKClass.isAssignableFrom(testKClass)) return DefaultTargetBackendComputer.compute(definedTargetBackend, testKClass)
         require(definedTargetBackend == null) {
             """
                 Test ${testKClass.simpleName} is inheritor of ${runnerMarkerKClass.simpleName} which means that
@@ -27,14 +23,13 @@ object ReflectionBasedTargetBackendComputer : TargetBackendComputer {
                    read from test runner class itself
             """.trimIndent()
         }
-        require(testKClass.isOpen) {
+        require(!Modifier.isFinal(testKClass.modifiers)) {
             """
                 Test runner ${testKClass.simpleName} which inherits from ${runnerMarkerKClass.simpleName} and used as base class
                   for real test should have `open` modality 
             """.trimIndent()
         }
-        val instance = testKClass.createInstance() as RunnerWithTargetBackendForTestGeneratorMarker
-        val kProperty = runnerMarkerKClass.declaredMemberProperties.single { it.name == TARGET_BACKEND_PROPERTY_NAME }
-        return kProperty.get(instance) as TargetBackend
+        val instance = testKClass.newInstance() as RunnerWithTargetBackendForTestGeneratorMarker
+        return instance.targetBackend
     }
 }

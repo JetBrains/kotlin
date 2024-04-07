@@ -4,19 +4,19 @@
 abstract class Base(val baseProp: String)
 
 open class Foo1(val prop: Int, baseProp: String) : Base(baseProp) {
-    companion object : Foo1(prop, baseProp)
+    companion object : Foo1(<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>prop<!>, <!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>baseProp<!>)
 }
 
 open class Foo2(val prop: Int, baseProp: String) : Base(baseProp) {
-    companion object : Foo2(this.prop, this.baseProp)
+    companion object : Foo2(<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>this<!>.prop, <!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>this<!>.baseProp)
 }
 
 open class Foo3(val prop: Int, baseProp: String) : Base(baseProp) {
-    companion object : Foo3(Companion.prop, Companion.baseProp)
+    companion object : Foo3(<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>Companion<!>.prop, <!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>Companion<!>.baseProp)
 }
 
 open class Foo4(val prop: Int, baseProp: String) : Base(baseProp) {
-    object MyObject : Foo4(MyObject.prop, MyObject.baseProp)
+    object MyObject : Foo4(<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>MyObject<!>.prop, <!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>MyObject<!>.baseProp)
 }
 
 open class CheckNested(a: Any) {
@@ -26,5 +26,5 @@ open class CheckNested(a: Any) {
 }
 
 open class Foo5(val prop: Int) {
-    object MyObject : Foo5(with(MyObject) { prop })
+    object MyObject : Foo5(with(<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>MyObject<!>) { prop })
 }

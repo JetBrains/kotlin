@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -93,7 +94,7 @@ fun ConeDefinitelyNotNullType.Companion.create(
         is ConeDefinitelyNotNullType -> original
         is ConeFlexibleType -> create(original.lowerBound, typeContext, avoidComprehensiveCheck)
         is ConeSimpleKotlinType -> runIf(typeContext.makesSenseToBeDefinitelyNotNull(original, avoidComprehensiveCheck)) {
-            ConeDefinitelyNotNullType(original.coneLowerBoundIfFlexible())
+            ConeDefinitelyNotNullType(original)
         }
     }
 }
@@ -215,7 +216,6 @@ fun <T : ConeKotlinType> T.withNullability(
             ConeNullability.NOT_NULL -> this
         }
 
-        is ConeStubTypeForChainInference -> ConeStubTypeForChainInference(constructor, nullability)
         is ConeStubTypeForTypeVariableInSubtyping -> ConeStubTypeForTypeVariableInSubtyping(constructor, nullability)
         is ConeDefinitelyNotNullType -> when (nullability) {
             ConeNullability.NOT_NULL -> this
@@ -360,8 +360,7 @@ fun FirDeclaration.visibilityForApproximation(container: FirDeclaration?): Visib
     val containerVisibility =
         if (container == null || container is FirFile || container is FirScript) Visibilities.Public
         else (container as? FirRegularClass)?.visibility ?: Visibilities.Local
-    if (containerVisibility == Visibilities.Local || visibility == Visibilities.Local) return Visibilities.Local
-    if (containerVisibility == Visibilities.Private) return Visibilities.Private
+    if (containerVisibility == Visibilities.Local) return Visibilities.Local
     return visibility
 }
 
@@ -583,12 +582,19 @@ fun FirCallableDeclaration.isSubtypeOf(
     )
 }
 
-fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
+fun ConeKotlinType.canHaveSubtypesAccordingToK1(session: FirSession): Boolean =
+    hasSubtypesAboveNothingAccordingToK1(session)
+
+/**
+ * The original K1 function: [org.jetbrains.kotlin.types.TypeUtils.canHaveSubtypes].
+ */
+private fun ConeKotlinType.hasSubtypesAboveNothingAccordingToK1(session: FirSession): Boolean {
     if (this.isMarkedNullable) {
         return true
     }
     val expandedType = fullyExpandedType(session)
-    val classSymbol = expandedType.toSymbol(session) as? FirRegularClassSymbol ?: return true
+    val classSymbol = expandedType.toSymbol(session) as? FirClassSymbol ?: return true
+    // In K2 enum classes are final, though enum entries are their subclasses (which is a compiler implementation detail).
     if (classSymbol.isEnumClass || classSymbol.isExpect || classSymbol.modality != Modality.FINAL) {
         return true
     }
@@ -602,49 +608,19 @@ fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
 
         val argument = typeProjection.type!! //safe because it is not a star
 
-        when (typeParameterSymbol.variance) {
-            Variance.INVARIANT ->
-                when (typeProjection.kind) {
-                    ProjectionKind.INVARIANT ->
-                        if (lowerThanBound(session.typeContext, argument, typeParameterSymbol) || argument.canHaveSubtypes(session)) {
-                            return true
-                        }
+        val canHaveSubtypes = when (typeProjection.variance) {
+            Variance.OUT_VARIANCE -> argument.hasSubtypesAboveNothingAccordingToK1(session)
+            Variance.IN_VARIANCE -> argument.hasSupertypesBelowParameterBoundsAccordingToK1(typeParameterSymbol, session)
+            Variance.INVARIANT -> when (typeParameterSymbol.variance) {
+                Variance.OUT_VARIANCE -> argument.hasSubtypesAboveNothingAccordingToK1(session)
+                Variance.IN_VARIANCE -> argument.hasSupertypesBelowParameterBoundsAccordingToK1(typeParameterSymbol, session)
+                Variance.INVARIANT -> argument.hasSubtypesAboveNothingAccordingToK1(session)
+                        || argument.hasSupertypesBelowParameterBoundsAccordingToK1(typeParameterSymbol, session)
+            }
+        }
 
-                    ProjectionKind.IN ->
-                        if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                            return true
-                        }
-
-                    ProjectionKind.OUT ->
-                        if (argument.canHaveSubtypes(session)) {
-                            return true
-                        }
-
-                    ProjectionKind.STAR ->
-                        return true
-                }
-
-            Variance.IN_VARIANCE ->
-                if (typeProjection.kind != ProjectionKind.OUT) {
-                    if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                        return true
-                    }
-                } else {
-                    if (argument.canHaveSubtypes(session)) {
-                        return true
-                    }
-                }
-
-            Variance.OUT_VARIANCE ->
-                if (typeProjection.kind != ProjectionKind.IN) {
-                    if (argument.canHaveSubtypes(session)) {
-                        return true
-                    }
-                } else {
-                    if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                        return true
-                    }
-                }
+        if (canHaveSubtypes) {
+            return true
         }
     }
 
@@ -667,9 +643,17 @@ fun ConeClassLikeType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
     return fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
 }
 
-private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinType, typeParameterSymbol: FirTypeParameterSymbol): Boolean {
+/**
+ * The original K1 function: [org.jetbrains.kotlin.types.TypeUtils.lowerThanBound].
+ * This function returns `true` if `argument` suits any bound rather than the
+ * intersection of them all, and it expects there to be at least a single bound.
+ */
+private fun ConeKotlinType.hasSupertypesBelowParameterBoundsAccordingToK1(
+    typeParameterSymbol: FirTypeParameterSymbol,
+    session: FirSession,
+): Boolean {
     typeParameterSymbol.resolvedBounds.forEach { boundTypeRef ->
-        if (argument != boundTypeRef.coneType && argument.isSubtypeOf(context, boundTypeRef.coneType)) {
+        if (this != boundTypeRef.coneType && isSubtypeOf(session.typeContext, boundTypeRef.coneType)) {
             return true
         }
     }
@@ -688,14 +672,31 @@ fun List<FirTypeParameterSymbol>.eraseToUpperBoundsAssociated(
     }
 }
 
-fun List<FirTypeParameterSymbol>.getProjectionsForRawType(session: FirSession): Array<ConeTypeProjection> {
+fun List<FirTypeParameterSymbol>.getProjectionsForRawType(session: FirSession, nullabilities: BooleanArray?): Array<ConeKotlinType> {
     val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
     return Array(size) { index ->
-        this[index].fir.eraseToUpperBound(
-            session, cache, mode = EraseUpperBoundMode.FOR_RAW_TYPE_ERASURE
-        )
+        this[index].getProjectionForRawType(session, cache, nullabilities?.get(index) == true)
     }
 }
+
+fun FirTypeParameterSymbol.getProjectionForRawType(
+    session: FirSession,
+    makeNullable: Boolean,
+): ConeKotlinType {
+    return getProjectionForRawType(session, mutableMapOf(), makeNullable)
+}
+
+private fun FirTypeParameterSymbol.getProjectionForRawType(
+    session: FirSession,
+    cache: MutableMap<FirTypeParameter, ConeKotlinType>,
+    makeNullable: Boolean,
+): ConeKotlinType {
+    return fir.eraseToUpperBound(session, cache, mode = EraseUpperBoundMode.FOR_RAW_TYPE_ERASURE)
+        .applyIf(makeNullable) {
+            withNullability(ConeNullability.NULLABLE, session.typeContext)
+        }
+}
+
 
 private enum class EraseUpperBoundMode {
     FOR_RAW_TYPE_ERASURE,

@@ -33,11 +33,13 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 @Suppress("DuplicatedCode")
-object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirMemberDeclaration) return
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-            if ((declaration.isExpect || declaration.isActual) && containsExpectOrActualModifier(declaration)) {
+            if ((declaration.isExpect || declaration.isActual) && containsExpectOrActualModifier(declaration) &&
+                declaration.source?.kind?.shouldSkipErrorTypeReporting == false
+            ) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION,

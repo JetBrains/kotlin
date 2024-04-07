@@ -434,18 +434,28 @@ class TestProject(
     fun includeOtherProjectAsIncludedBuild(
         otherProjectName: String,
         pathPrefix: String,
+        newProjectName: String = otherProjectName,
     ) {
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
-        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+        otherProjectPath.copyRecursively(projectPath.resolve(newProjectName))
 
-        projectPath.resolve(otherProjectName).addDefaultSettingsToSettingsGradle(gradleVersion)
+        projectPath.resolve(newProjectName).addDefaultSettingsToSettingsGradle(gradleVersion)
 
-        settingsGradle.append(
-            """
-            
-            includeBuild '$otherProjectName'
-            """.trimIndent()
-        )
+        if (settingsGradle.exists()) {
+            settingsGradle.append(
+                """
+                
+                    includeBuild '$newProjectName'
+                """.trimIndent()
+            )
+        } else {
+            settingsGradleKts.append(
+                """
+                    
+                    includeBuild("$newProjectName")
+                """.trimIndent()
+            )
+        }
     }
 }
 
@@ -776,9 +786,14 @@ private fun TestProject.agreeToBuildScanService() {
 private fun BuildResult.printBuildScanUrl() {
     val buildScanUrl = output
         .lineSequence()
-        .first { it.contains("https://gradle.com/s/") }
-        .replaceBefore("https://gradle", "")
-    println("Build scan url: $buildScanUrl")
+        .firstOrNull { it.contains("https://gradle.com/s/") }
+        ?.replaceBefore("https://gradle", "")
+    if (buildScanUrl != null) {
+        println("Build scan url: $buildScanUrl")
+    } else {
+        printBuildOutput()
+        throw IllegalStateException("Build scan was not published")
+    }
 }
 
 private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
@@ -902,7 +917,7 @@ private fun TestProject.configureSingleNativeTargetInSubFolders(preset: String =
         }
 }
 
-private fun GradleProject.configureLocalRepository(localRepoDir: Path) {
+internal fun GradleProject.configureLocalRepository(localRepoDir: Path) {
     projectPath.toFile().walkTopDown()
         .filter { it.isFile && it.name in buildFileNames }
         .forEach { file ->

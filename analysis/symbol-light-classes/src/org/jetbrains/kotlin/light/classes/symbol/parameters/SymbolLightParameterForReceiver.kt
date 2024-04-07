@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -77,7 +78,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
-                        receiver.type.let { if (it.isPrimitiveBacked) NullabilityType.Unknown else it.nullabilityType }
+                        receiver.type.let { if (it.isPrimitiveBacked) KtTypeNullability.UNKNOWN else it.nullability }
                     }
                 },
             ),
@@ -87,13 +88,13 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
             val ktType = receiver.type
-            val psiType = ktType.asPsiTypeElement(
+            val psiType = ktType.asPsiType(
                 this,
                 allowErrorTypes = true,
-                ktType.typeMappingMode()
-            )?.let {
-                annotateByKtType(it.type, ktType, it, modifierList)
-            }
+                ktType.typeMappingMode(),
+                suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
+            )
+
             if (method is SymbolLightAnnotationsMethod) {
                 val erased = TypeConversionUtil.erasure(psiType)
                 val name = erased.canonicalText

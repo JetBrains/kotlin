@@ -1,0 +1,52 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+fun interface Consumer {
+    fun consume(t: Int)
+}
+
+@Composable fun Test(int: Int) {
+    Example {
+        println(it)
+    }
+}
+
+@Composable inline fun Example(consumer: Consumer) {
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface Consumer {
+  abstract fun consume(t: Int)
+}
+@Composable
+fun Test(int: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Example(Consumer { it: Int ->
+      println(it)
+    }, %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(int, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Example):Test.kt")
+  sourceInformationMarkerEnd(%composer)
+}

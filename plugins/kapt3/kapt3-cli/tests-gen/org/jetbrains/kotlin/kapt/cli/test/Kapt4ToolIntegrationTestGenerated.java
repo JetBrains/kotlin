@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt.cli.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -25,6 +24,12 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
   }
 
   @Test
+  @TestMetadata("aptError")
+  public void testAptError() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/aptError/");
+  }
+
+  @Test
   @TestMetadata("argfile")
   public void testArgfile() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/argfile/");
@@ -37,9 +42,21 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
   }
 
   @Test
+  @TestMetadata("correctErrorTypesOff")
+  public void testCorrectErrorTypesOff() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/correctErrorTypesOff/");
+  }
+
+  @Test
   @TestMetadata("correctErrorTypesOn")
   public void testCorrectErrorTypesOn() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/correctErrorTypesOn/");
+  }
+
+  @Test
+  @TestMetadata("defaultMethods")
+  public void testDefaultMethods() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethods/");
   }
 
   @Test
@@ -52,12 +69,6 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
   @TestMetadata("defaultMethodsAllNoWarning")
   public void testDefaultMethodsAllNoWarning() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsAllNoWarning/");
-  }
-
-  @Test
-  @TestMetadata("defaultMethodsWarning")
-  public void testDefaultMethodsWarning() {
-    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/defaultMethodsWarning/");
   }
 
   @Test

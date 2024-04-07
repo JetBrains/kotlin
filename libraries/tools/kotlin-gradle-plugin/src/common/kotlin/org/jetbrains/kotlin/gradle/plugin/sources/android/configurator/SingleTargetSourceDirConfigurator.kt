@@ -16,6 +16,5 @@ internal object SingleTargetSourceDirConfigurator : KotlinAndroidSourceSetConfig
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) {
         kotlinSourceSet.kotlin.srcDir("src/${androidSourceSet.name}/kotlin")
-        kotlinSourceSet.kotlin.srcDir(target.project.provider { androidSourceSet.java.srcDirs })
     }
 }

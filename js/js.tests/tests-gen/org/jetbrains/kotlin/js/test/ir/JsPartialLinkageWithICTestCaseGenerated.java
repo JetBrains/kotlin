@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -65,6 +64,12 @@ public class JsPartialLinkageWithICTestCaseGenerated extends AbstractJsPartialLi
   @TestMetadata("externalDeclarations")
   public void testExternalDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/externalDeclarations/");
+  }
+
+  @Test
+  @TestMetadata("externalDeclarationsKJS")
+  public void testExternalDeclarationsKJS() {
+    runTest("compiler/testData/klib/partial-linkage/externalDeclarationsKJS/");
   }
 
   @Test

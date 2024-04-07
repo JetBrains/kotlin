@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/typeParameterInDelegatedProperty.kt
           CALL 'public open fun getValue (t: kotlin.Any?, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in <root>.property$delegate.<no name provided>' type=T of <root>.<get-property> origin=null
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:property$delegate type:<root>.property$delegate.<no name provided><T of <root>.<get-property>> visibility:private [final,static]' type=<root>.property$delegate.<no name provided><T of <root>.<get-property>> origin=null
             t: GET_VAR '<this>: T of <root>.<get-property> declared in <root>.<get-property>' type=T of <root>.<get-property> origin=null
-            p: PROPERTY_REFERENCE 'public final property: T of <root>.<get-property>' field=null getter='public final fun <get-property> <T> (): T of <root>.<get-property> declared in <root>' setter=null type=kotlin.reflect.KProperty1<T of <root>.<get-property>, T of <root>.<get-property>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'public final property: T of <root>.<get-property> declared in <root>' field=null getter='public final fun <get-property> <T> (): T of <root>.<get-property> declared in <root>' setter=null type=kotlin.reflect.KProperty1<T of <root>.<get-property>, T of <root>.<get-property>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: T of <root>.<get-property>
   PROPERTY name:property2 visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:property2$delegate type:<root>.IDelegate<T of <root>.<get-property2>> visibility:private [final,static]
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/typeParameterInDelegatedProperty.kt
           CALL 'public abstract fun getValue (t: T of <root>.IDelegate, p: kotlin.reflect.KProperty<*>): T of <root>.IDelegate declared in <root>.IDelegate' type=T of <root>.<get-property2> origin=null
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:property2$delegate type:<root>.IDelegate<T of <root>.<get-property2>> visibility:private [final,static]' type=<root>.IDelegate<T of <root>.<get-property2>> origin=null
             t: GET_VAR '<this>: T of <root>.<get-property2> declared in <root>.<get-property2>' type=T of <root>.<get-property2> origin=null
-            p: PROPERTY_REFERENCE 'public final property2: T of <root>.<get-property2>' field=null getter='public final fun <get-property2> <T> (): T of <root>.<get-property2> declared in <root>' setter=null type=kotlin.reflect.KProperty1<T of <root>.<get-property2>, T of <root>.<get-property2>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'public final property2: T of <root>.<get-property2> declared in <root>' field=null getter='public final fun <get-property2> <T> (): T of <root>.<get-property2> declared in <root>' setter=null type=kotlin.reflect.KProperty1<T of <root>.<get-property2>, T of <root>.<get-property2>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: T of <root>.<get-property2>
   CLASS INTERFACE name:IDelegate modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IDelegate<T of <root>.IDelegate>

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.*
@@ -60,7 +62,11 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             when {
                 lowerResult == null && upperResult == null -> null
                 this is ConeRawType -> ConeRawType.create(lowerResult ?: lowerBound, upperResult ?: upperBound)
-                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound)
+                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound).let {
+                    it.applyIf(it !is ConeFlexibleType) {
+                        it.withAttributes(it.attributes + CompilerConeAttributes.EnhancedNullability)
+                    }
+                }
             }
         }
         is ConeSimpleKotlinType -> enhanceInflexibleType(
@@ -156,17 +162,31 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     }
 
     var globalArgIndex = index + 1
-    val enhancedArguments = typeArguments.map { arg ->
-        val argIndex = globalArgIndex.also { globalArgIndex += subtreeSizes[it] }
-        arg.type?.enhanceConeKotlinType(session, qualifiers, argIndex, subtreeSizes, convertErrorsToWarnings = convertNestedErrorsToWarnings)
-            ?.let {
-                when (arg.kind) {
-                    ProjectionKind.IN -> ConeKotlinTypeProjectionIn(it)
-                    ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(it)
-                    ProjectionKind.STAR -> ConeStarProjection
-                    ProjectionKind.INVARIANT -> it
-                }
+    val enhancedArguments = typeArguments.mapIndexed { currentArgLocalIndex, arg ->
+        val currentArgGlobalIndex = globalArgIndex.also { globalArgIndex += subtreeSizes[it] }
+        if (arg.type == null && qualifiers(currentArgGlobalIndex).nullability == NullabilityQualifier.FORCE_FLEXIBILITY) {
+            // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
+            val typeParameters = (this.lookupTag.toSymbol(session)?.fir as? FirClassLikeDeclaration)?.typeParameters
+            if (typeParameters != null) {
+                val bound = typeParameters[currentArgLocalIndex].symbol.fir.bounds.first().coneType
+                return@mapIndexed ConeKotlinTypeProjectionOut(
+                    ConeFlexibleType(
+                        bound.lowerBoundIfFlexible().withNullability(ConeNullability.NOT_NULL, session.typeContext),
+                        bound.upperBoundIfFlexible().withNullability(ConeNullability.NULLABLE, session.typeContext)
+                    )
+                )
             }
+        }
+        arg.type?.enhanceConeKotlinType(
+            session, qualifiers, currentArgGlobalIndex, subtreeSizes, convertErrorsToWarnings = convertNestedErrorsToWarnings
+        )?.let {
+            when (arg.kind) {
+                ProjectionKind.IN -> ConeKotlinTypeProjectionIn(it)
+                ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(it)
+                ProjectionKind.STAR -> ConeStarProjection
+                ProjectionKind.INVARIANT -> it
+            }
+        }
     }
 
     val shouldAddAttribute = nullabilityFromQualifiers == NullabilityQualifier.NOT_NULL && !hasEnhancedNullability

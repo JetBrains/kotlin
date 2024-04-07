@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
@@ -19,9 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -38,6 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
@@ -77,7 +75,6 @@ open class FirDeclarationsResolveTransformer(
     }
 
     protected fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
-        transformer.firResolveContextCollector?.addDeclarationContext(declaration, context)
         return transformer.transformDeclarationContent(declaration, data)
     }
 
@@ -126,16 +123,6 @@ open class FirDeclarationsResolveTransformer(
         return danglingModifierList
     }
 
-    override fun transformFileAnnotationsContainer(
-        fileAnnotationsContainer: FirFileAnnotationsContainer,
-        data: ResolutionMode
-    ): FirFileAnnotationsContainer {
-        if (implicitTypeOnly) return fileAnnotationsContainer
-
-        fileAnnotationsContainer.transformAnnotations(transformer, data)
-        return fileAnnotationsContainer
-    }
-
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty = whileAnalysing(session, property) {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transformers" }
 
@@ -155,7 +142,7 @@ open class FirDeclarationsResolveTransformer(
 
         val returnTypeRefBeforeResolve = property.returnTypeRef
         val cannotHaveDeepImplicitTypeRefs = property.backingField?.returnTypeRef !is FirImplicitTypeRef
-        if (implicitTypeOnly && returnTypeRefBeforeResolve !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
+        if (!property.isConst && implicitTypeOnly && returnTypeRefBeforeResolve !is FirImplicitTypeRef && cannotHaveDeepImplicitTypeRefs) {
             return property
         }
 
@@ -556,7 +543,9 @@ open class FirDeclarationsResolveTransformer(
             .transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
 
         context.storeVariable(variable, session)
-        if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter) {
+        if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter &&
+            variable.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass)
+        {
             // script parameters should not be added to CFG to avoid graph building compilations
             dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
         }
@@ -678,7 +667,7 @@ open class FirDeclarationsResolveTransformer(
         context.withContainingClass(regularClass) {
             val isLocal = regularClass.isLocal
             if (isLocal && regularClass !in context.targetedLocalClasses) {
-                return regularClass.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
+                return regularClass.runAllPhasesForLocalClass(components, data)
             }
 
             if (isLocal || !implicitTypeOnly) {
@@ -724,14 +713,13 @@ open class FirDeclarationsResolveTransformer(
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias = whileAnalysing(session, typeAlias) {
         if (implicitTypeOnly) return typeAlias
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
-            return typeAlias.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
+            return typeAlias.runAllPhasesForLocalClass(components, data)
         }
 
         @OptIn(PrivateForInline::class)
         context.withContainer(typeAlias) {
             doTransformTypeParameters(typeAlias)
             typeAlias.transformAnnotations(transformer, data)
-            transformer.firResolveContextCollector?.addDeclarationContext(typeAlias, context)
             typeAlias.transformExpandedTypeRef(transformer, data)
         }
 
@@ -742,8 +730,6 @@ open class FirDeclarationsResolveTransformer(
         file: FirFile,
         data: ResolutionMode,
     ): FirFile = withFile(file) {
-        transformer.firResolveContextCollector?.addFileContext(file, context.towerDataContext)
-
         transformDeclarationContent(file, data) as FirFile
     }
 
@@ -798,7 +784,7 @@ open class FirDeclarationsResolveTransformer(
     ): FirAnonymousObject = whileAnalysing(session, anonymousObject) {
         context.withContainingClass(anonymousObject) {
             if (anonymousObject !in context.targetedLocalClasses) {
-                return anonymousObject.runAllPhasesForLocalClass(components, data, transformer.firResolveContextCollector)
+                return anonymousObject.runAllPhasesForLocalClass(components, data)
             }
 
             require(anonymousObject.controlFlowGraphReference == null)
@@ -838,7 +824,7 @@ open class FirDeclarationsResolveTransformer(
                 prepareSignatureForBodyResolve(simpleFunction)
                 simpleFunction.transformStatus(this, simpleFunction.resolveStatus().mode())
 
-                if (simpleFunction.contractDescription != FirEmptyContractDescription) {
+                if (simpleFunction.contractDescription != null) {
                     simpleFunction.runContractResolveForFunction(session, scopeSession, context)
                 }
             }
@@ -895,7 +881,6 @@ open class FirDeclarationsResolveTransformer(
         val bodyResolved = function.bodyResolved
         dataFlowAnalyzer.enterFunction(function)
 
-        transformer.firResolveContextCollector?.addDeclarationContext(function, context)
         if (shouldResolveEverything) {
             // Annotations here are required only in the case of a local class member function.
             // Separate annotation transformers are responsible in the case of non-local functions.
@@ -996,6 +981,8 @@ open class FirDeclarationsResolveTransformer(
             ) as FirValueParameter
         }
 
+        valueParameter.evaluatedDefaultValue = FirExpressionEvaluator.evaluateDefault(valueParameter, session)
+
         dataFlowAnalyzer.exitValueParameter(result)?.let { graph ->
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
         }
@@ -1015,7 +1002,7 @@ open class FirDeclarationsResolveTransformer(
             anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
         }
 
-        if (anonymousFunction.contractDescription != FirEmptyContractDescription) {
+        if (anonymousFunction.contractDescription != null) {
             anonymousFunction.runContractResolveForFunction(session, scopeSession, context)
         }
 
@@ -1120,18 +1107,14 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private fun FirAnonymousFunction.computeReturnTypeRef(expected: FirResolvedTypeRef?): FirResolvedTypeRef {
-        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this)
-        // Any lambda expression assigned to `(...) -> Unit` returns Unit if all return expressions are implicit
-        // `lambda@ { return@lambda }` always returns Unit
-        if (isLambda && expected?.type?.isUnit == true && returnExpressions.all { !it.isExplicit }) return expected
-        if (shouldReturnUnit(returnExpressions.map { it.expression })) return session.builtinTypes.unitType
-        // Here is a questionable moment where we could prefer the expected type over an inferred one.
-        // In correct code this doesn't matter, as all return expression types should be subtypes of the expected type.
-        // In incorrect code, this would change diagnostics: we can get errors either on the entire lambda, or only on its
-        // return statements. The former kind of makes more sense, but the latter is more readable.
-        val inferredFromReturnExpressions = session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.expression.resolvedType })
-        return inferredFromReturnExpressions?.let { returnTypeRef.resolvedTypeFromPrototype(it) }
-            ?: session.builtinTypes.unitType // Empty lambda returns Unit
+        return returnTypeRef.resolvedTypeFromPrototype(
+            computeReturnType(
+                session,
+                expected?.type,
+                isPassedAsFunctionArgument = false,
+                dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this),
+            )
+        )
     }
 
     private fun obtainValueParametersFromResolvedLambdaAtom(

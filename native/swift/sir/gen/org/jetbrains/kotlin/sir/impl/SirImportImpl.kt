@@ -6,7 +6,7 @@
 // This file was generated automatically. See native/swift/sir/tree-generator/Readme.md.
 // DO NOT MODIFY IT MANUALLY.
 
-@file:Suppress("DuplicatedCode", "unused")
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.sir.impl
 
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 internal class SirImportImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
+    override var documentation: String?,
     override val moduleName: String,
 ) : SirImport() {
     override lateinit var parent: SirDeclarationParent

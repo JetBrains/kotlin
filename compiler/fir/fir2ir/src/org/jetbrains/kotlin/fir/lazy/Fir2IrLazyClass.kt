@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
 class Fir2IrLazyClass(
-    components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
@@ -41,10 +41,10 @@ class Fir2IrLazyClass(
     override val symbol: IrClassSymbol,
     override var parent: IrDeclarationParent,
 ) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass>, Fir2IrTypeParametersContainer,
-    IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by components {
+    IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by c {
     init {
         symbol.bind(this)
-        classifierStorage.preCacheTypeParameters(fir, symbol)
+        classifierStorage.preCacheTypeParameters(fir)
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -61,7 +61,7 @@ class Fir2IrLazyClass(
         get() = fir.name
         set(_) = mutationNotSupported()
 
-    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) = mutationNotSupported()
 
     override var modality: Modality
@@ -120,7 +120,7 @@ class Fir2IrLazyClass(
 
     override var sealedSubclasses: List<IrClassSymbol> by lazyVar(lock) {
         if (fir.isSealed) {
-            fir.getIrSymbolsForSealedSubclasses()
+            fir.getIrSymbolsForSealedSubclasses(c)
         } else {
             emptyList()
         }
@@ -135,6 +135,7 @@ class Fir2IrLazyClass(
             )
         }
         val receiver = declareThisReceiverParameter(
+            c,
             thisType = IrSimpleTypeImpl(symbol, hasQuestionMark = false, arguments = typeArguments, annotations = emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )
@@ -158,7 +159,7 @@ class Fir2IrLazyClass(
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
-        val scope = fir.unsubstitutedScope()
+        val scope = fir.unsubstitutedScope(c)
         val lookupTag = fir.symbol.toLookupTag()
         scope.processDeclaredConstructors {
             val constructor = it.fir
@@ -173,7 +174,7 @@ class Fir2IrLazyClass(
             scope.processClassifiersByName(name) {
                 val declaration = it.fir as? FirRegularClass ?: return@processClassifiersByName
                 if (declaration.classId.outerClassId == fir.classId && shouldBuildStub(declaration)) {
-                    result += classifierStorage.getOrCreateIrClass(declaration.symbol)
+                    result += classifierStorage.getIrClassSymbol(declaration.symbol).owner
                 }
             }
         }
@@ -181,7 +182,7 @@ class Fir2IrLazyClass(
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
                 if (declaration is FirEnumEntry && shouldBuildStub(declaration)) {
-                    result += classifierStorage.getOrCreateIrEnumEntry(declaration, this, origin)
+                    result += classifierStorage.getIrEnumEntrySymbol(declaration).owner
                 }
             }
         }
@@ -229,13 +230,20 @@ class Fir2IrLazyClass(
     }
 
     private fun shouldBuildStub(fir: FirDeclaration): Boolean {
-        if (fir is FirCallableDeclaration && fir.originalOrSelf().origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) return false
+        if (fir is FirCallableDeclaration) {
+            if (fir.originalOrSelf().origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
+                return false
+            }
+            if (fir.isHiddenToOvercomeSignatureClash == true && fir.isFinal) {
+                return false
+            }
+        }
         if (fir !is FirMemberDeclaration) return true
         return when {
             fir is FirConstructor -> isObject || isEnumClass || !Visibilities.isPrivate(fir.visibility) // This special case seams to be not needed anymore - KT-65172
             fir is FirCallableDeclaration && fir.isFakeOverride(this.fir) -> session.visibilityChecker.isVisibleForOverriding(
                 this.fir.moduleData,
-                this.fir.classId.packageFqName,
+                this.fir.symbol,
                 fir
             )
             else -> !Visibilities.isPrivate(fir.visibility)

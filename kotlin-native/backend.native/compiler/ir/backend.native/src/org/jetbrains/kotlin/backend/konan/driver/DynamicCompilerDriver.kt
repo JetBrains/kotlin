@@ -44,7 +44,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.BITCODE -> error("Bitcode output kind is obsolete.")
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
+                        CompilerOutputKind.HEADER_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
                     }
                 }
@@ -118,7 +118,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             val headerKlibPath = config.headerKlibPath
             if (!headerKlibPath.isNullOrEmpty()) {
                 val headerKlib = engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
-                engine.writeKlib(headerKlib, headerKlibPath)
+                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                // Don't overwrite the header klib with the full klib and stop compilation here.
+                // By providing the same path for both regular output and header klib we can skip emitting the full klib.
+                if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
             }
 
             engine.runK2SpecialBackendChecks(fir2IrOutput)
@@ -137,9 +140,14 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         } else {
             engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
         }
-        if (!config.headerKlibPath.isNullOrEmpty()) {
+
+        val headerKlibPath = config.headerKlibPath
+        if (!headerKlibPath.isNullOrEmpty()) {
             val headerKlib = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
-            engine.writeKlib(headerKlib, config.headerKlibPath)
+            engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+            // Don't overwrite the header klib with the full klib and stop compilation here.
+            // By providing the same path for both regular output and header klib we can skip emitting the full klib.
+            if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
         }
         return engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
     }

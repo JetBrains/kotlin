@@ -1,6 +1,6 @@
-import java.io.File
-import java.time.*
-import java.util.concurrent.*
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 
 plugins {
     id "org.jetbrains.kotlin.js"
@@ -132,7 +132,7 @@ class NodeJsPlatform {
 }
 
 afterEvaluate {
-    project.kotlinNodeJs.nodeVersion = "14.16.0"
+    project.kotlinNodeJs.nodeVersion = "18.19.1"
 
     project.tasks.nodeKotlinClean.dependsOn(checkDownloadedFolder)
     project.tasks.testCleanTask.dependsOn(nodeKotlinClean)

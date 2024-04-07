@@ -14,15 +14,13 @@ typealias PathAwareControlFlowInfo<I> = PersistentMap<EdgeLabel, I>
 
 fun <I : ControlFlowInfo<I, *, *>> PathAwareControlFlowInfo<I>.join(
     other: PathAwareControlFlowInfo<I>,
-    union: Boolean
+    node: CFGNode<*>
 ): PathAwareControlFlowInfo<I> = mutate {
     for ((label, rightValue) in other) {
         // disjoint merging to preserve paths. i.e., merge the property initialization info if and only if both have the key.
         // merge({ |-> I1 }, { |-> I2, l1 |-> I3 })
         //   == { |-> merge(I1, I2), l1 |-> I3 }
-        it[label] = this[label]?.let { leftValue ->
-            if (union) leftValue.plus(rightValue) else leftValue.merge(rightValue)
-        } ?: rightValue
+        it[label] = this[label]?.merge(rightValue, node) ?: rightValue
     }
 }
 
@@ -61,7 +59,7 @@ abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
             // Labeled edge from a jump statement to a `finally` block forks flow. Usually we'd only have
             // NormalPath data here, but technically it's possible (though questionable) to jump from a `finally`
             // (discarding the exception or aborting a previous jump in the process) so merge all data just in case.
-            else -> persistentMapOf(label to data.values.reduce { a, b -> a.merge(b) })
+            else -> persistentMapOf(label to data.values.reduce { a, b -> a.merge(b, to) })
         }
     }
 

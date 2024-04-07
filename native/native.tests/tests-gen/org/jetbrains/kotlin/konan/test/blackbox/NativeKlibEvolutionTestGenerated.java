@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -118,6 +117,12 @@ public class NativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutio
   @TestMetadata("changeConstInitialization.kt")
   public void testChangeConstInitialization() {
     runTest("compiler/testData/klib/evolution/changeConstInitialization.kt");
+  }
+
+  @Test
+  @TestMetadata("changeFakeOverrides.kt")
+  public void testChangeFakeOverrides() {
+    runTest("compiler/testData/klib/evolution/changeFakeOverrides.kt");
   }
 
   @Test

@@ -6,7 +6,7 @@
 // This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
 // DO NOT MODIFY IT MANUALLY.
 
-@file:Suppress("DuplicatedCode", "unused")
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
@@ -44,7 +44,7 @@ internal class FirConstructorImpl(
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
-    override var contractDescription: FirContractDescription,
+    override var contractDescription: FirContractDescription?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirConstructorSymbol,
     override var delegatedConstructor: FirDelegatedConstructorCall?,
@@ -67,7 +67,7 @@ internal class FirConstructorImpl(
         contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
-        contractDescription.accept(visitor, data)
+        contractDescription?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         delegatedConstructor?.accept(visitor, data)
         body?.accept(visitor, data)
@@ -114,7 +114,7 @@ internal class FirConstructorImpl(
     }
 
     override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
-        contractDescription = contractDescription.transform(transformer, data)
+        contractDescription = contractDescription?.transform(transformer, data)
         return this
     }
 
@@ -162,7 +162,7 @@ internal class FirConstructorImpl(
         valueParameters.addAll(newValueParameters)
     }
 
-    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+    override fun replaceContractDescription(newContractDescription: FirContractDescription?) {
         contractDescription = newContractDescription
     }
 

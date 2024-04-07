@@ -17,8 +17,14 @@ private val AT_OUTPUT_FILE_PATTERN = Pattern.compile("^\\s*//\\s*@(.*):$")
 private val EXPECTED_OCCURRENCES_PATTERN = Pattern.compile("^\\s*//\\s*(\\d+)\\s*(.*)$")
 private const val JVM_TEMPLATES = "// JVM_TEMPLATES"
 private const val JVM_IR_TEMPLATES = "// JVM_IR_TEMPLATES"
+private const val JVM_IR_TEMPLATES_WITH_INLINE_SCOPES = "// JVM_IR_TEMPLATES_WITH_INLINE_SCOPES"
 
-class OccurrenceInfo constructor(private val numberOfOccurrences: Int, private val needle: String, val backend: TargetBackend) {
+class OccurrenceInfo constructor(
+    private val numberOfOccurrences: Int,
+    private val needle: String,
+    val backend: TargetBackend,
+    val inlineScopesNumbersEnabled: Boolean
+) {
     private val pattern = Pattern.compile("($needle)")
 
     fun getActualOccurrence(text: String): String {
@@ -39,13 +45,26 @@ fun readExpectedOccurrences(filename: String): List<OccurrenceInfo> {
 fun readExpectedOccurrences(lines: List<String>): List<OccurrenceInfo> {
     val result = ArrayList<OccurrenceInfo>()
     var backend = TargetBackend.ANY
+    var inlineScopesNumbersEnabled = false
     for (line in lines) {
-        if (line.contains(JVM_TEMPLATES)) backend = TargetBackend.JVM
-        else if (line.contains(JVM_IR_TEMPLATES)) backend = TargetBackend.JVM_IR
+        when {
+            line.contains(JVM_IR_TEMPLATES_WITH_INLINE_SCOPES) -> {
+                backend = TargetBackend.JVM_IR
+                inlineScopesNumbersEnabled = true
+            }
+            line.contains(JVM_IR_TEMPLATES) -> {
+                backend = TargetBackend.JVM_IR
+                inlineScopesNumbersEnabled = false
+            }
+            line.contains(JVM_TEMPLATES) -> {
+                backend = TargetBackend.JVM
+                inlineScopesNumbersEnabled = false
+            }
+        }
 
         val matcher = EXPECTED_OCCURRENCES_PATTERN.matcher(line)
         if (matcher.matches()) {
-            result.add(parseOccurrenceInfo(matcher, backend))
+            result.add(parseOccurrenceInfo(matcher, backend, inlineScopesNumbersEnabled))
         }
     }
 
@@ -60,9 +79,23 @@ fun readExpectedOccurrencesForMultiFileTest(
 ) {
     var currentOccurrenceInfos: MutableList<OccurrenceInfo> = global
     var backend = TargetBackend.ANY
+    var inlineScopesNumbersEnabled = false
     for (line in fileContent.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
-        if (line.contains(JVM_TEMPLATES)) backend = TargetBackend.JVM
-        else if (line.contains(JVM_IR_TEMPLATES)) backend = TargetBackend.JVM_IR
+        when {
+            line.contains(JVM_IR_TEMPLATES_WITH_INLINE_SCOPES) -> {
+                backend = TargetBackend.JVM_IR
+                inlineScopesNumbersEnabled = true
+            }
+            line.contains(JVM_IR_TEMPLATES) -> {
+                backend = TargetBackend.JVM_IR
+                inlineScopesNumbersEnabled = false
+            }
+            line.contains(JVM_TEMPLATES) -> {
+                backend = TargetBackend.JVM
+                inlineScopesNumbersEnabled = false
+            }
+        }
+
 
         val atOutputFileMatcher = AT_OUTPUT_FILE_PATTERN.matcher(line)
         if (atOutputFileMatcher.matches()) {
@@ -76,16 +109,16 @@ fun readExpectedOccurrencesForMultiFileTest(
 
         val expectedOccurrencesMatcher = EXPECTED_OCCURRENCES_PATTERN.matcher(line)
         if (expectedOccurrencesMatcher.matches()) {
-            val occurrenceInfo = parseOccurrenceInfo(expectedOccurrencesMatcher, backend)
+            val occurrenceInfo = parseOccurrenceInfo(expectedOccurrencesMatcher, backend, inlineScopesNumbersEnabled)
             currentOccurrenceInfos.add(occurrenceInfo)
         }
     }
 }
 
-private fun parseOccurrenceInfo(matcher: Matcher, backend: TargetBackend): OccurrenceInfo {
+private fun parseOccurrenceInfo(matcher: Matcher, backend: TargetBackend, inlineScopesNumbersEnabled: Boolean): OccurrenceInfo {
     val numberOfOccurrences = Integer.parseInt(matcher.group(1))
     val needle = matcher.group(2)
-    return OccurrenceInfo(numberOfOccurrences, needle, backend)
+    return OccurrenceInfo(numberOfOccurrences, needle, backend, inlineScopesNumbersEnabled)
 }
 
 fun checkGeneratedTextAgainstExpectedOccurrences(
@@ -93,16 +126,24 @@ fun checkGeneratedTextAgainstExpectedOccurrences(
     expectedOccurrences: List<OccurrenceInfo>,
     currentBackend: TargetBackend,
     reportProblems: Boolean,
-    assertions: Assertions
+    assertions: Assertions,
+    inlineScopesNumbersEnabled: Boolean = false
 ) {
     val expected = StringBuilder()
     val actual = StringBuilder()
     var lastBackend = TargetBackend.ANY
+    val noScopesNumbersEntries = expectedOccurrences.none { it.inlineScopesNumbersEnabled }
     for (info in expectedOccurrences) {
         if (lastBackend != info.backend) {
             when (info.backend) {
                 TargetBackend.JVM -> JVM_TEMPLATES
-                TargetBackend.JVM_IR -> JVM_IR_TEMPLATES
+                TargetBackend.JVM_IR -> {
+                    if (inlineScopesNumbersEnabled) {
+                        JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
+                    } else {
+                        JVM_IR_TEMPLATES
+                    }
+                }
                 else -> error("Common part should be first one: ${expectedOccurrences.joinToString("\n")}")
             }.also {
                 actual.append("\n$it\n")
@@ -112,7 +153,8 @@ fun checkGeneratedTextAgainstExpectedOccurrences(
         }
 
         expected.append(info).append("\n")
-        if (info.backend == TargetBackend.ANY || info.backend == currentBackend) {
+        val hasAppropriateScopesNumbersSetting = info.inlineScopesNumbersEnabled == inlineScopesNumbersEnabled || noScopesNumbersEntries
+        if (info.backend == TargetBackend.ANY || (info.backend == currentBackend && hasAppropriateScopesNumbersSetting)) {
             actual.append(info.getActualOccurrence(text)).append("\n")
         } else {
             actual.append(info).append("\n")
@@ -139,4 +181,3 @@ fun assertTextWasGenerated(expectedOutputFile: String, generated: Map<String, St
         assertions.fail { failMessage.toString() }
     }
 }
-

@@ -82,7 +82,7 @@ FILE fqName:<root> fileName:/expectMemberInNotExpectClass.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:p visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final p: kotlin.Int
+        public final p: kotlin.Int declared in <root>.C1
       FUN FAKE_OVERRIDE name:<get-p> visibility:public modality:FINAL <> ($this:<root>.C1) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:p visibility:public modality:FINAL [fake_override,val]
         overridden:

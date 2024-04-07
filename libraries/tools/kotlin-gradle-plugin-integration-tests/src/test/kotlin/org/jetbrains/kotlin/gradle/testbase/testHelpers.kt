@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import kotlin.io.path.*
+import kotlin.test.fail
 
 /**
  * Makes a snapshot of the current state of [TestProject] into [destinationPath].
@@ -19,6 +21,8 @@ import kotlin.io.path.*
  * To run task with the same build option as test - use `run.sh` (or `run.bat`) script.
  */
 fun TestProject.makeSnapshotTo(destinationPath: String) {
+    if (isTeamCityRun) fail("Please remove `makeSnapshotTo()` call from test. It is utility for local debugging only!")
+
     val dest = Paths
         .get(destinationPath)
         .resolve(projectName)

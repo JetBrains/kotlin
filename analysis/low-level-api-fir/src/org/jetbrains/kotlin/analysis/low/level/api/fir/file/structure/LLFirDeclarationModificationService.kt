@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KotlinCodeFragmentImportModificationListener
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
  *
  * In case of non-local changes (out-of-block modification), this service will publish event to [MODULE_OUT_OF_BLOCK_MODIFICATION].
  *
+ * @see getNonLocalReanalyzableContainingDeclaration
  * @see MODULE_OUT_OF_BLOCK_MODIFICATION
  * @see org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
  */
@@ -67,6 +69,11 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
                 }
             },
             this,
+        )
+
+        project.messageBus.connect(this).subscribe(
+            KtCodeFragment.IMPORT_MODIFICATION,
+            KotlinCodeFragmentImportModificationListener { codeFragment -> outOfBlockModification(codeFragment) }
         )
     }
 
@@ -113,7 +120,8 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 
     /**
-     * Force the service to publish delayed modifications. This action is required to fix inconsistencies in FirFile tree.
+     * Force the service to publish delayed modifications.
+     * This action is required to fix inconsistencies in [FirFile][org.jetbrains.kotlin.fir.declarations.FirFile] tree.
      */
     fun flushModifications() {
         ApplicationManager.getApplication().assertIsWriteThread()

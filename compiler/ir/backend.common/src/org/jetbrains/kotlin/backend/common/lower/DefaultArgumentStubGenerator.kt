@@ -479,7 +479,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
 }
 
 // Remove default argument initializers.
-class DefaultParameterCleaner(
+open class DefaultParameterCleaner(
     val context: CommonBackendContext,
     val replaceDefaultValuesWithStubs: Boolean = false
 ) : DeclarationTransformer {

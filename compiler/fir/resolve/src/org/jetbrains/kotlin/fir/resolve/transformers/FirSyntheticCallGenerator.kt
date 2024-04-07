@@ -378,7 +378,7 @@ class FirSyntheticCallGenerator(
         val candidate = generateCandidate(callInfo, function, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         val source = callSite.source?.fakeElement(KtFakeSourceElementKind.SyntheticCall)
-        if (!applicability.isSuccess) {
+        if (!candidate.isSuccessful) {
             return createErrorReferenceWithExistingCandidate(
                 candidate,
                 ConeInapplicableCandidateError(applicability, candidate),
@@ -430,7 +430,7 @@ class FirSyntheticCallGenerator(
         val typeParameter =
             buildTypeParameter {
                 moduleData = session.moduleData
-                origin = FirDeclarationOrigin.Library
+                origin = FirDeclarationOrigin.Synthetic.FakeFunction
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 name = Name.identifier("K")
                 symbol = typeParameterSymbol
@@ -550,7 +550,7 @@ class FirSyntheticCallGenerator(
         return buildValueParameter {
             moduleData = session.moduleData
             containingFunctionSymbol = functionSymbol
-            origin = FirDeclarationOrigin.Library
+            origin = FirDeclarationOrigin.Synthetic.FakeFunction
             this.name = name
             returnTypeRef = this@toValueParameter
             isCrossinline = false

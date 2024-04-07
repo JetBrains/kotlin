@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension.Factory
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -50,29 +53,11 @@ class FirScriptConfiguratorExtensionImpl(
     @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration,
 ) : FirScriptConfiguratorExtension(session) {
 
-    @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
-        val sourceFile = fileBuilder.sourceFile ?: return
-        val configuration = getOrLoadConfiguration(sourceFile) ?: run {
-            log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
-            return
-        }
-
-        configuration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
-            val trimmed = defaultImport.trim()
-            val endsWithStar = trimmed.endsWith("*")
-            val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
-            val fqName = FqName.fromSegments(stripped.split("."))
-            fileBuilder.imports += buildImport {
-                source = fileBuilder.source?.fakeElement(KtFakeSourceElementKind.ImplicitImport)
-                importedFqName = fqName
-                isAllUnder = endsWithStar
-            }
-        }
     }
 
     @OptIn(SymbolInternals::class)
-    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile) {
+    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile, context: Context<PsiElement>) {
         val configuration = getOrLoadConfiguration(sourceFile) ?: run {
             log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
             return
@@ -93,7 +78,7 @@ class FirScriptConfiguratorExtensionImpl(
                         buildProperty {
                             moduleData = session.moduleData
                             source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
-                            origin = FirDeclarationOrigin.ScriptCustomization.Parameter
+                            origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
                             // TODO: copy type parameters?
                             returnTypeRef = baseCtorParameter.returnTypeRef
                             name = baseCtorParameter.name
@@ -155,7 +140,7 @@ class FirScriptConfiguratorExtensionImpl(
                 declarations.add(
                     buildProperty {
                         this.name = Name.identifier(resultFieldName)
-                        this.symbol = FirPropertySymbol(this.name)
+                        this.symbol = FirPropertySymbol(CallableId(context.packageFqName, this.name))
                         source = lastScriptBlock?.source
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty
@@ -196,7 +181,7 @@ class FirScriptConfiguratorExtensionImpl(
 
     private fun buildContextReceiverWithFqName(classFqn: FqName, customName: Name? = null) =
         buildContextReceiver {
-            typeRef = buildUserTypeRef {
+            val userTypeRef = buildUserTypeRef {
                 isMarkedNullable = false
                 qualifier.addAll(
                     classFqn.pathSegments().map {
@@ -204,9 +189,9 @@ class FirScriptConfiguratorExtensionImpl(
                     }
                 )
             }
-            if (customName != null) {
-                customLabelName = customName
-            }
+            typeRef = userTypeRef
+            labelNameFromTypeRef = userTypeRef.qualifier.lastOrNull()?.name
+            customLabelName = customName
         }
 
     private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()

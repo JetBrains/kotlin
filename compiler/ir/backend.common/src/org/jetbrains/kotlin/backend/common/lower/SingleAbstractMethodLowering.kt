@@ -299,7 +299,9 @@ class SamEqualsHashCodeMethodsGenerator(
         klass.addFunction(getFunctionDelegate.name.asString(), getFunctionDelegate.returnType).apply {
             overriddenSymbols = listOf(getFunctionDelegate.symbol)
             body = context.createIrBuilder(symbol).run {
-                irExprBody(obtainFunctionDelegate(irGet(dispatchReceiverParameter!!)))
+                irBlockBody {
+                    +irReturn(obtainFunctionDelegate(irGet(dispatchReceiverParameter!!)))
+                }
             }
         }
     }
@@ -308,26 +310,28 @@ class SamEqualsHashCodeMethodsGenerator(
         anyGenerator.createEqualsMethodDeclaration().apply {
             val other = valueParameters[0]
             body = context.createIrBuilder(symbol).run {
-                irExprBody(
-                    irIfThenElse(
-                        builtIns.booleanType,
-                        irIs(irGet(other), samSuperType),
+                irBlockBody {
+                    +irReturn(
                         irIfThenElse(
                             builtIns.booleanType,
-                            irIs(irGet(other), functionAdapterClass.typeWith()),
-                            irEquals(
-                                irCall(getFunctionDelegate).also {
-                                    it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
-                                },
-                                irCall(getFunctionDelegate).also {
-                                    it.dispatchReceiver = irImplicitCast(irGet(other), functionAdapterClass.typeWith())
-                                }
+                            irIs(irGet(other), samSuperType),
+                            irIfThenElse(
+                                builtIns.booleanType,
+                                irIs(irGet(other), functionAdapterClass.typeWith()),
+                                irEquals(
+                                    irCall(getFunctionDelegate).also {
+                                        it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                                    },
+                                    irCall(getFunctionDelegate).also {
+                                        it.dispatchReceiver = irImplicitCast(irGet(other), functionAdapterClass.typeWith())
+                                    }
+                                ),
+                                irFalse()
                             ),
                             irFalse()
-                        ),
-                        irFalse()
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -336,13 +340,15 @@ class SamEqualsHashCodeMethodsGenerator(
         anyGenerator.createHashCodeMethodDeclaration().apply {
             val hashCode = context.irBuiltIns.functionClass.owner.functions.single { it.isHashCode() }.symbol
             body = context.createIrBuilder(symbol).run {
-                irExprBody(
-                    irCall(hashCode).also {
-                        it.dispatchReceiver = irCall(getFunctionDelegate).also {
-                            it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                irBlockBody {
+                    +irReturn(
+                        irCall(hashCode).also {
+                            it.dispatchReceiver = irCall(getFunctionDelegate).also {
+                                it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

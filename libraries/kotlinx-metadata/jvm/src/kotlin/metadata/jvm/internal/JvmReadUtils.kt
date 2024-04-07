@@ -5,7 +5,6 @@
 
 package kotlin.metadata.jvm.internal
 
-import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmLambda
 import kotlin.metadata.KmPackage
@@ -67,11 +66,6 @@ internal object JvmReadUtils {
                 fileFacades.toMutableList(),
                 multiFileClassParts.associateWith { parts.getMultifileFacadeName(it)!! }.toMutableMap()
             )
-        }
-
-        for (annotation in data.moduleData.annotations) {
-            @Suppress("DEPRECATION_ERROR")
-            v.annotations.add(KmAnnotation(annotation, emptyMap()))
         }
 
         for (classProto in data.moduleData.optionalAnnotations) {

@@ -38,7 +38,7 @@ class KlibKotlinp(
                     appendCommentedLine("class name: ", it)
                 }
             }
-            moduleFragment.classes.forEach { appendLine(); renderClass(it, printer) }
+            moduleFragment.classes.sortIfNeeded { it.sortedBy(KmClass::name) }.forEach { appendLine(); renderClass(it, printer) }
             moduleFragment.pkg?.let { appendLine(); renderPackage(it, printer) }
         }
         appendLine("}")

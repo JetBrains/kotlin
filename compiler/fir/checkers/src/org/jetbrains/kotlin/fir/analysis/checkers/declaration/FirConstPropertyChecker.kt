@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.expressions.ConstantArgumentKind
+import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
+import org.jetbrains.kotlin.fir.expressions.computeConstantExpressionKind
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -60,8 +63,8 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             return
         }
 
-        val errorKind = when (checkConstantArguments(initializer, context.session)) {
-            ConstantArgumentKind.VALID_CONST -> return
+        val errorKind = when (computeConstantExpressionKind(initializer, context.session, calledOnCheckerStage = true)) {
+            ConstantArgumentKind.VALID_CONST, ConstantArgumentKind.RESOLUTION_ERROR -> return
             ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
             else -> FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
         }

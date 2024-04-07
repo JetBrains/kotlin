@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -31,8 +32,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -43,21 +42,21 @@ abstract class AbstractInBlockModificationTest : AbstractAnalysisApiBasedTest() 
         builder.useDirectives(Directives)
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(
             ktFile = mainFile,
             module = mainModule,
         )
 
-        doTest(mainFile, selectedElement, testServices.moduleStructure, testServices)
+        doTest(mainFile, selectedElement, testServices)
     }
 
-    protected fun doTest(ktFile: KtFile, selectedElement: PsiElement, moduleStructure: TestModuleStructure, testServices: TestServices) {
+    protected fun doTest(ktFile: KtFile, selectedElement: PsiElement, testServices: TestServices) {
         val actual = testInBlockModification(
             file = ktFile,
             elementToModify = selectedElement,
             testServices = testServices,
-            dumpFirFile = Directives.DUMP_FILE in moduleStructure.allDirectives,
+            dumpFirFile = Directives.DUMP_FILE in testServices.moduleStructure.allDirectives,
         )
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

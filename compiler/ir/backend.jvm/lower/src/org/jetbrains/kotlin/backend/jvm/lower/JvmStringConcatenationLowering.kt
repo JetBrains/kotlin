@@ -27,12 +27,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val jvmStringConcatenationLowering = makeIrFilePhase(
-    { context: JvmBackendContext ->
-        if (!context.config.runtimeStringConcat.isDynamic)
-            JvmStringConcatenationLowering(context)
-        else
-            JvmDynamicStringConcatenationLowering(context)
-    },
+    ::JvmStringConcatenationLowering,
     name = "StringConcatenation",
     description = "Replace IrStringConcatenation with string builders",
     // flattenStringConcatenationPhase consolidates string concatenation expressions.
@@ -185,42 +180,55 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
             when {
                 arguments.isEmpty() ->
                     irString("")
-
                 arguments.size == 1 ->
                     lowerInlineClassArgument(arguments[0]) ?: callToString(arguments[0].unwrapImplicitNotNull())
-
-                arguments.size < MAX_STRING_CONCAT_DEPTH -> {
-                    irCall(toStringFunction).apply {
-                        dispatchReceiver = appendWindow(arguments, irCall(constructor))
-                    }
-                }
-
-                else -> {
-                    // arguments.size >= MAX_STRING_CONCAT_DEPTH. Prevent SOE in ExpressionCodegen.
-                    // Generates:
-                    //  {
-                    //      val tmp = StringBuilder()
-                    //      tmp.append(a0).append(a1) /* ... */ .append(a21).append(a22)
-                    //      /* ... repeat for each possibly partial MAX_STRING_CONCAT_DEPTH-element window ... */
-                    //      tmp.toString()
-                    //  }
-                    irBlock {
-                        val tmpStringBuilder = irTemporary(irCall(constructor))
-                        val argsWindowed =
-                            arguments.windowed(
-                                size = MAX_STRING_CONCAT_DEPTH,
-                                step = MAX_STRING_CONCAT_DEPTH,
-                                partialWindows = true
-                            )
-                        for (argsWindow in argsWindowed) {
-                            +appendWindow(argsWindow, irGet(tmpStringBuilder))
-                        }
-                        +irCall(toStringFunction).apply { dispatchReceiver = irGet(tmpStringBuilder) }
-                    }
-                }
+                this@JvmStringConcatenationLowering.context.config.runtimeStringConcat.isDynamic ->
+                    lowerConcatenationDynamic(expression, arguments)
+                else ->
+                    lowerConcatenationPlain(arguments)
             }
         }
     }
+
+    private fun JvmIrBuilder.lowerConcatenationPlain(arguments: MutableList<IrExpression>): IrExpression =
+        if (arguments.size < MAX_STRING_CONCAT_DEPTH) {
+            irCall(toStringFunction).apply {
+                dispatchReceiver = appendWindow(arguments, irCall(constructor))
+            }
+        } else {
+            // arguments.size >= MAX_STRING_CONCAT_DEPTH. Prevent SOE in ExpressionCodegen.
+            // Generates:
+            //  {
+            //      val tmp = StringBuilder()
+            //      tmp.append(a0).append(a1) /* ... */ .append(a21).append(a22)
+            //      /* ... repeat for each possibly partial MAX_STRING_CONCAT_DEPTH-element window ... */
+            //      tmp.toString()
+            //  }
+            irBlock {
+                val tmpStringBuilder = irTemporary(irCall(constructor))
+                val argsWindowed =
+                    arguments.windowed(
+                        size = MAX_STRING_CONCAT_DEPTH,
+                        step = MAX_STRING_CONCAT_DEPTH,
+                        partialWindows = true
+                    )
+                for (argsWindow in argsWindowed) {
+                    +appendWindow(argsWindow, irGet(tmpStringBuilder))
+                }
+                +irCall(toStringFunction).apply { dispatchReceiver = irGet(tmpStringBuilder) }
+            }
+        }
+
+    private fun JvmIrBuilder.lowerConcatenationDynamic(
+        expression: IrStringConcatenation, arguments: MutableList<IrExpression>,
+    ): IrExpression =
+        IrStringConcatenationImpl(
+            expression.startOffset,
+            expression.endOffset,
+            expression.type,
+            arguments.map { argument ->
+                lowerInlineClassArgument(argument) ?: argument.unwrapImplicitNotNull()
+            })
 
     private fun JvmIrBuilder.appendWindow(arguments: List<IrExpression>, stringBuilder0: IrExpression): IrExpression {
         return arguments.fold(stringBuilder0) { stringBuilder, arg ->
@@ -235,42 +243,3 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
         }
     }
 }
-
-/**
- * This lowering pass lowers inline classes arguments of [IrStringConcatenation].
- * Transformed [IrStringConcatenation] would be used as is in [ExpressionCodegen] for makeConcat/makeConcatWithConstants bytecode generation
- */
-private class JvmDynamicStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformerVoidWithContext() {
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
-
-    override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
-        expression.transformChildrenVoid(this)
-        return context.createJvmIrBuilder(currentScope!!, expression).run {
-            // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this could
-            // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend currently does NOT insert this
-            // check (see KT-36625, pending language design decision). To maintain compatibility with the non-IR backend, we remove
-            // IMPLICIT_NOTNULL casts from all arguments (nullability checks are generated in JvmArgumentNullabilityAssertionsLowering).
-
-            val arguments = expression.arguments
-            when {
-                arguments.isEmpty() ->
-                    irString("")
-
-                arguments.size == 1 ->
-                    lowerInlineClassArgument(arguments[0]) ?: callToString(arguments[0].unwrapImplicitNotNull())
-
-                else -> {
-                    IrStringConcatenationImpl(
-                        expression.startOffset,
-                        expression.endOffset,
-                        expression.type,
-                        arguments.map { argument ->
-                            lowerInlineClassArgument(argument) ?: argument.unwrapImplicitNotNull()
-                        })
-                }
-            }
-        }
-    }
-}
-

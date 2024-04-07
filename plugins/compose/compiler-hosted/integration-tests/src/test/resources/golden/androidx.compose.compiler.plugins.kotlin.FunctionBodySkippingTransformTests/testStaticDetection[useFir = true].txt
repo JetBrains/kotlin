@@ -1,0 +1,111 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+// all of these should result in 0b0110
+@Composable fun A() {
+    val x = 123
+    D {}
+    C({})
+    C(stableFun(123))
+    C(16.dp + 10.dp)
+    C(Dp(16))
+    C(16.dp)
+    C(normInt)
+    C(Int.MAX_VALUE)
+    C(stableTopLevelProp)
+    C(Modifier)
+    C(Foo.Bar)
+    C(constInt)
+    C(123)
+    C(123 + 345)
+    C(x)
+    C(x * 123)
+}
+// all of these should result in 0b0000
+@Composable fun B() {
+    C(Math.random())
+    C(Math.random() / 100f)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun A(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)<D>,<C({})>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val x = 123
+    D(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
+    C({
+    }, %composer, 0b0110)
+    C(stableFun(123), %composer, 0b0110)
+    C(16.dp + 10.dp, %composer, 0b0110)
+    C(Dp(16), %composer, 0b0110)
+    C(16.dp, %composer, 0b0110)
+    C(normInt, %composer, 0b0110)
+    C(2147483647, %composer, 0b0110)
+    C(stableTopLevelProp, %composer, 0b0110)
+    C(Companion, %composer, 0b0110)
+    C(Foo.Bar, %composer, 0b0110)
+    C(123, %composer, 0b0110)
+    C(123, %composer, 0b0110)
+    C(123 + 345, %composer, 0b0110)
+    C(x, %composer, 0b0110)
+    C(x * 123, %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun B(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(B)<C(Math...>,<C(Math...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    C(random(), %composer, 0)
+    C(random() / 100.0f, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    B(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

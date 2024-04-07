@@ -1,0 +1,141 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+class ScrollState {
+    fun test(index: Int, default: Int = 0): Int = 0
+    fun testExact(index: Int): Int = 0
+}
+fun scrollState(): ScrollState = TODO()
+
+@Composable fun rememberFooInline() = fooInline(scrollState()::test)
+@Composable fun rememberFoo() = foo(scrollState()::test)
+@Composable fun rememberFooExactInline() = fooInline(scrollState()::testExact)
+@Composable fun rememberFooExact() = foo(scrollState()::testExact)
+
+@Composable
+inline fun fooInline(block: (Int) -> Int) = block(0)
+
+@Composable
+fun foo(block: (Int) -> Int) = block(0)
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class ScrollState {
+  fun test(index: Int, default: Int = 0): Int {
+    return 0
+  }
+  fun testExact(index: Int): Int {
+    return 0
+  }
+  static val %stable: Int = 0
+}
+fun scrollState(): ScrollState {
+  return TODO()
+}
+@Composable
+fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFooInline)<fooInl...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = fooInline(<block>{
+    fun ScrollState.test(p0: Int): Int {
+      val tmp0_return = receiver.test(
+        index = p0
+      )
+      tmp0_return
+    }
+    scrollState()::test
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun rememberFoo(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFoo)<scroll...>,<foo(sc...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = foo(<block>{
+    val tmp0 = scrollState()
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
+      fun ScrollState.test(p0: Int): Int {
+        receiver.test(
+          index = p0
+        )
+      }
+      tmp0::test
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp1_group
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFooExactInline)<fooInl...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = fooInline(scrollState()::testExact, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFooExact)<scroll...>,<foo(sc...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = foo(<block>{
+    val tmp0 = scrollState()
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
+      tmp0::testExact
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp1_group
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun fooInline(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "CC(fooInline):Test.kt")
+  val tmp0 = block(0)
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun foo(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(foo):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = block(0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

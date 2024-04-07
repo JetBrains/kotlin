@@ -8,6 +8,9 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
+import org.jetbrains.kotlin.objcexport.extras.originClassId
+import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
@@ -19,18 +22,18 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     val name = getObjCClassOrProtocolName()
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
     val comment: ObjCComment? = annotationsList.translateToObjCComment()
-    val origin: ObjCExportStubOrigin = getObjCExportStubOrigin()
+    val origin = getObjCExportStubOrigin()
     val superProtocols: List<String> = superProtocols()
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()
-    val objectMembers = getDefaultMembers().toMutableList()
-
     val superClass = translateSuperClass()
 
-    getMemberScope().getCallableSymbols()
+    val objectMembers = mutableListOf<ObjCExportStub>()
+    objectMembers += translateToObjCConstructors()
+    objectMembers += getDefaultMembers()
+    objectMembers += getDeclaredMemberScope().getCallableSymbols()
         .sortedWith(StableCallableOrder)
-        .flatMap { it.translateToObjCExportStubs() }
-        .forEach { objectMembers.add(it) }
+        .flatMap { it.translateToObjCExportStub() }
 
     return ObjCInterfaceImpl(
         name = name.objCName,
@@ -50,15 +53,6 @@ context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
 
     val result = mutableListOf<ObjCExportStub>()
-    val allocWithZoneParameter = ObjCParameter("zone", null, ObjCRawType("struct _NSZone *"), null)
-
-    result.add(
-        ObjCMethod(null, null, false, ObjCInstanceType, listOf("alloc"), emptyList(), listOf("unavailable"))
-    )
-
-    result.add(
-        ObjCMethod(null, null, false, ObjCInstanceType, listOf("allocWithZone:"), listOf(allocWithZoneParameter), listOf("unavailable"))
-    )
 
     result.add(
         ObjCMethod(
@@ -93,9 +87,12 @@ private fun KtClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
  */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(
-    getObjCClassOrProtocolName().objCName,
-    emptyList(),
-    classIdIfNonLocal!!
+    className = getObjCClassOrProtocolName().objCName,
+    typeArguments = emptyList(),
+    extras = objCTypeExtras {
+        requiresForwardDeclaration = true
+        originClassId = classIdIfNonLocal
+    }
 )
 
 /**

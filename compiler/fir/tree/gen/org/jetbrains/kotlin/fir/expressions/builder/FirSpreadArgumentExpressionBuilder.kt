@@ -26,12 +26,16 @@ class FirSpreadArgumentExpressionBuilder : FirAnnotationContainerBuilder, FirExp
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var expression: FirExpression
+    var isNamed: Boolean = false
+    var isFakeSpread: Boolean = false
 
     override fun build(): FirSpreadArgumentExpression {
         return FirSpreadArgumentExpressionImpl(
             source,
             annotations.toMutableOrEmpty(),
             expression,
+            isNamed,
+            isFakeSpread,
         )
     }
 

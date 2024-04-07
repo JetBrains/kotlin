@@ -15,11 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
-import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -61,14 +58,7 @@ fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<
     val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument(flattenArrays = true).orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
-        val calleeReference = argument.toReference(session)
-        val targetName =
-            calleeReference?.resolved?.name?.asString()
-            //for java annotations mappings: if java annotation is found in sdk and no kotlin dependency there is provided
-            //works fine with `FirBuiltinSymbolProvider`, because it also returns classes from stdlib even if library is not accessible
-            //but `JvmStubBasedFirDeserializedSymbolProvider` which works in IDE over stubs, misses classes   
-                ?: (calleeReference as? FirFromMissingDependenciesNamedReference)?.name?.asString()
-                ?: return@mapNotNullTo null
+        val targetName = argument.extractEnumValueArgumentInfo()?.enumEntryName?.asString() ?: return@mapNotNullTo null
         KotlinTarget.entries.firstOrNull { target -> target.name == targetName }
     }
 }

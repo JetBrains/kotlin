@@ -35,6 +35,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuring.kts
 
         [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|MyPair| = R|/pair|
         public final [ResolvedTo(BODY_RESOLVE)] val first: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component1|()
-
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final [ResolvedTo(BODY_RESOLVE)] val last: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component2|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+

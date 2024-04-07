@@ -163,8 +163,9 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected fun Project.configureNativeTarget(hostPreset: AbstractKotlinNativeTargetPreset<*>) {
         kotlin.targetFromPreset(hostPreset, NATIVE_TARGET_NAME) {
             compilations.named("main").configure {
-                @Suppress("DEPRECATION")
-                kotlinOptions.freeCompilerArgs = benchmark.compilerOpts + project.compilerArgs
+                compileTaskProvider.configure {
+                    compilerOptions.freeCompilerArgs.addAll(benchmark.compilerOpts + project.compilerArgs)
+                }
                 dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
                 }

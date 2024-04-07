@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BlackBoxTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SharedExecutionTestRunner
@@ -24,21 +25,23 @@ import java.util.concurrent.ConcurrentHashMap
  * @see SharedExecutionTestRunner
  */
 internal object SharedExecutionBuilder {
-    private val executionResults: ConcurrentHashMap<TestExecutable, AbstractRunner<Unit>> = ConcurrentHashMap()
+    private val executableToSharedRun: ConcurrentHashMap<TestCompilationArtifact.Executable, TestRun> = ConcurrentHashMap()
     private val testCasesToExecuteSeparately: ConcurrentHashMap<TestExecutable, MutableList<TestCase>> = ConcurrentHashMap()
 
     fun buildRunner(settings: Settings, executor: Executor, testRun: TestRun): AbstractRunner<Unit> {
-        if (testRun.testCase.kind != TestKind.REGULAR) {
+        if (testRun.testCase.kind !in listOf(TestKind.REGULAR, TestKind.STANDALONE)) {
             return RunnerWithExecutor(executor, testRun)
         }
 
-        val separateTestCases = settings.computeSeparateTestCases(testRun)
+        val separateTestCases = if (testRun.testCase.kind == TestKind.REGULAR)
+            settings.computeSeparateTestCases(testRun)
+        else emptyList()
 
         if (testRun.testCase in separateTestCases) {
             return RunnerWithExecutor(executor, testRun)
         }
 
-        return executionResults.computeIfAbsent(testRun.executable) {
+        val sharedTestRun = executableToSharedRun.computeIfAbsent(testRun.executable.executable) {
             // Get ignored tests to exclude them from run by adding the test filtering option
             val ignoredTests = if (testRun.testCase.extras is TestCase.WithTestRunnerExtras) {
                 testRun.testCase.extras.ignoredTests
@@ -60,7 +63,7 @@ internal object SharedExecutionBuilder {
                 executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(timeout)
             )
 
-            val sharedTestRun = TestRun(
+            TestRun(
                 displayName = "Shared TestRun for ${testRun.executable.executable.path} made from ${testRun.displayName}",
                 executable = testRun.executable,
                 runParameters = runParameters,
@@ -68,8 +71,9 @@ internal object SharedExecutionBuilder {
                 checks = checks,
                 expectedFailure = false
             )
-            CachedRunResultRunner(executor, sharedTestRun)
         }
+
+        return CachedRunResultRunner(executor, testRun, sharedTestRun)
     }
 
     private fun Settings.computeSeparateTestCases(testRun: TestRun): MutableList<TestCase> =
@@ -89,10 +93,6 @@ internal object SharedExecutionBuilder {
                 "Should be not empty and contain at least $testRun"
             }
 
-            check(testCases.all { it.id.testCaseGroupId == testCaseGroupId }) {
-                "Got TestCases with different group ids. TestCases: $testCases"
-            }
-
             // If the test run is expected to fail or timeout, it should not be executed with others.
             // Add it to the map of ignored test cases for the executable
             testCases.filter {
@@ -100,11 +100,22 @@ internal object SharedExecutionBuilder {
             }.toMutableList()
         }
 
-    private class CachedRunResultRunner(executor: Executor, testRun: TestRun) : RunnerWithExecutor(executor, testRun) {
-        private val cachedRunResult by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            super.buildRun().run()
+    private val cachedRunResult = ConcurrentHashMap<TestRun, RunResult>()
+
+    private class CachedRunResultRunner(executor: Executor, private val testRun: TestRun, private val sharedTestRun: TestRun) :
+        RunnerWithExecutor(executor, sharedTestRun) {
+
+        override fun buildRun() = AbstractRun {
+            cachedRunResult.computeIfAbsent(sharedTestRun) { super.buildRun().run() }
         }
 
-        override fun buildRun() = AbstractRun { cachedRunResult }
+        override fun buildResultHandler(runResult: RunResult): ResultHandler = ResultHandler(
+            runResult = runResult,
+            checks = sharedTestRun.checks,
+            testRun = testRun.copy(
+                runParameters = sharedTestRun.runParameters
+            ),
+            loggedParameters = getLoggedParameters()
+        )
     }
 }

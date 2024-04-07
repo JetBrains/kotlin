@@ -24,17 +24,17 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyTypeAlias(
-    components: Fir2IrComponents,
+    c: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirTypeAlias,
     override val symbol: IrTypeAliasSymbol,
     override var parent: IrDeclarationParent
-) : IrTypeAlias(), AbstractFir2IrLazyDeclaration<FirTypeAlias>, Fir2IrTypeParametersContainer, Fir2IrComponents by components {
+) : IrTypeAlias(), AbstractFir2IrLazyDeclaration<FirTypeAlias>, Fir2IrTypeParametersContainer, Fir2IrComponents by c {
     init {
         symbol.bind(this)
-        classifierStorage.preCacheTypeParameters(fir, symbol)
+        classifierStorage.preCacheTypeParameters(fir)
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -48,7 +48,7 @@ class Fir2IrLazyTypeAlias(
         get() = fir.name
         set(_) = mutationNotSupported()
 
-    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+    override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) = mutationNotSupported()
 
     override var isActual: Boolean

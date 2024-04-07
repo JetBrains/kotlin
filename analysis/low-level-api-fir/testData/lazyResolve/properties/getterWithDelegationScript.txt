@@ -154,7 +154,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-getterWithDelegationScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
@@ -173,10 +173,29 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-getterWithDelegationScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
+
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-getterWithDelegationScript.kts>
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+            @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
         public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -192,7 +211,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-getterWithDelegationScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
@@ -211,7 +230,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-getterWithDelegationScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int|by R|/Prp.Prp|()
             @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
@@ -251,4 +270,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] getterWithDelegationScript.kts
             }
 
         }
-

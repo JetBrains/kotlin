@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -37,9 +38,14 @@ class IrEnumConstructorCallImpl(
 
     override val typeArguments: Array<IrType?> = initializeTypeArguments(typeArgumentsCount)
 
+    override var dispatchReceiver: IrExpression? = null
+    override var extensionReceiver: IrExpression? = null
     override val valueArguments: Array<IrExpression?> = initializeParameterArguments(valueArgumentsCount)
 
     override var contextReceiversCount = 0
+
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     companion object {
         @ObsoleteDescriptorBasedAPI

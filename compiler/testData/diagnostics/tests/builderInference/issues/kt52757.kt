@@ -1,11 +1,10 @@
 // ISSUE: KT-52757
-// FIR_IDENTICAL
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
     val buildee = build {
         typeVariableConsumer = ::consumeTargetType
-        typeVariableConsumer = {}
+        typeVariableConsumer = <!BUILDER_INFERENCE_STUB_PARAMETER_TYPE!>{}<!>
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

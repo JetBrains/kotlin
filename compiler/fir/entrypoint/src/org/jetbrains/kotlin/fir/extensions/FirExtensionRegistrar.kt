@@ -33,10 +33,13 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirSamConversionTransformerExtension::class,
             FirAssignExpressionAltererExtension::class,
             FirScriptConfiguratorExtension::class,
+            FirScriptResolutionConfigurationExtension::class,
             Fir2IrScriptConfiguratorExtension::class,
             FirFunctionTypeKindExtension::class,
             @OptIn(FirExtensionApiInternals::class)
             FirMetadataSerializerPlugin::class,
+            @OptIn(FirExtensionApiInternals::class)
+            FirFunctionCallRefinementExtension::class,
         )
 
         internal val ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION = listOf(
@@ -100,6 +103,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirScriptConfiguratorExtension::class, this)
         }
 
+        @JvmName("plusFirScriptResolutionConfigurationExtension")
+        operator fun (FirScriptResolutionConfigurationExtension.Factory).unaryPlus() {
+            registerExtension(FirScriptResolutionConfigurationExtension::class, this)
+        }
+
         @JvmName("plusFir2IrScriptConfiguratorExtension")
         operator fun (Fir2IrScriptConfiguratorExtension.Factory).unaryPlus() {
             registerExtension(Fir2IrScriptConfiguratorExtension::class, this)
@@ -114,6 +122,12 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusMetadataSerializerPlugin")
         operator fun (FirMetadataSerializerPlugin.Factory).unaryPlus() {
             registerExtension(FirMetadataSerializerPlugin::class, this)
+        }
+
+        @FirExtensionApiInternals
+        @JvmName("plusFunctionCallRefinementExtension")
+        operator fun (FirFunctionCallRefinementExtension.Factory).unaryPlus() {
+            registerExtension(FirFunctionCallRefinementExtension::class, this)
         }
 
         // ------------------ reference methods ------------------
@@ -168,6 +182,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirScriptConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
+        @JvmName("plusFirScriptResolutionConfigurationExtension")
+        operator fun ((FirSession) -> FirScriptResolutionConfigurationExtension).unaryPlus() {
+            FirScriptResolutionConfigurationExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
         @JvmName("plusFir2IrScriptConfiguratorExtension")
         operator fun ((FirSession) -> Fir2IrScriptConfiguratorExtension).unaryPlus() {
             Fir2IrScriptConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
@@ -182,6 +201,12 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusMetadataSerializerPlugin")
         operator fun ((FirSession) -> FirMetadataSerializerPlugin).unaryPlus() {
             FirMetadataSerializerPlugin.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @FirExtensionApiInternals
+        @JvmName("plusFunctionCallRefinementExtension")
+        operator fun ((FirSession) -> FirFunctionCallRefinementExtension).unaryPlus() {
+            FirFunctionCallRefinementExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         // ------------------ utilities ------------------

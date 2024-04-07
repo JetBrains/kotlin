@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -921,10 +921,8 @@ fun IrValueParameter.copyTo(
         factory.createExpressionBody(
             startOffset = originalDefault.startOffset,
             endOffset = originalDefault.endOffset,
-            expression = originalDefault.expression.deepCopyWithVariables(),
-        ).apply {
-            expression.patchDeclarationParents(irFunction)
-        }
+            expression = originalDefault.expression.deepCopyWithSymbols(irFunction),
+        )
     }
     return factory.createValueParameter(
         startOffset = startOffset,
@@ -1033,13 +1031,10 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     }
 }
 
-fun IrAnnotationContainer.copyAnnotations(): List<IrConstructorCall> {
-    return annotations.memoryOptimizedMap { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
-}
-
-fun IrAnnotationContainer.copyAnnotationsWhen(filter: IrConstructorCall.() -> Boolean): List<IrConstructorCall> {
-    return annotations.mapNotNull { if (it.filter()) it.deepCopyWithSymbols(this as? IrDeclarationParent) else null }
-}
+fun IrAnnotationContainer.copyAnnotations(): List<IrConstructorCall> =
+    annotations.memoryOptimizedMap {
+        it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrConstructorCall
+    }
 
 fun IrMutableAnnotationContainer.copyAnnotationsFrom(source: IrAnnotationContainer) {
     annotations = annotations memoryOptimizedPlus source.copyAnnotations()
@@ -1280,40 +1275,16 @@ val IrFunction.allParameters: List<IrValueParameter>
 val IrFunction.allParametersCount: Int
     get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
 
-private object BindToNewEmptySymbols : FakeOverrideBuilderStrategy(
+private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols(
     friendModules = emptyMap(), // TODO: this is probably not correct. Should be fixed by KT-61384. But it's not important for current usages
-    unimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
-) {
-    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
-        function.acquireSymbol(IrSimpleFunctionSymbolImpl())
-    }
-
-    override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean) {
-        val propertySymbol = IrPropertySymbolImpl()
-        property.getter?.let { it.correspondingPropertySymbol = propertySymbol }
-        property.setter?.let { it.correspondingPropertySymbol = propertySymbol }
-
-        property.acquireSymbol(propertySymbol)
-
-        property.getter?.let {
-            it.correspondingPropertySymbol = property.symbol
-            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), manglerCompatibleMode)
-        }
-        property.setter?.let {
-            it.correspondingPropertySymbol = property.symbol
-            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), manglerCompatibleMode)
-        }
-    }
-
-    override fun <R> inFile(file: IrFile?, block: () -> R): R = block()
-}
+)
 
 fun IrClass.addFakeOverrides(
     typeSystem: IrTypeSystemContext,
     implementedMembers: List<IrOverridableMember> = emptyList(),
     ignoredParentSymbols: List<IrSymbol> = emptyList()
 ) {
-    val fakeOverrides = IrFakeOverrideBuilder(typeSystem, BindToNewEmptySymbols, emptyList())
+    val fakeOverrides = IrFakeOverrideBuilder(typeSystem, LoweringsFakeOverrideBuilderStrategy, emptyList())
         .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false, ignoredParentSymbols)
     for (fakeOverride in fakeOverrides) {
         addChild(fakeOverride)
@@ -1620,3 +1591,13 @@ fun IrElement.sourceElement(): AbstractKtSourceElement? =
 
 fun IrFunction.isTopLevelInPackage(name: String, packageFqName: FqName) =
     this.name.asString() == name && parent.kotlinFqName == packageFqName
+
+val IrValueDeclaration.isAssignable: Boolean
+    get() = when (this) {
+        is IrValueParameter -> isAssignable
+        // Variables are assignable by default. This means that they can be used in [IrSetValue].
+        // Variables are assigned in the IR even though they are not 'var' in the input. Hence
+        // the separate assignability flag.
+        is IrVariable -> true
+        else -> error("Unexpected IrValueDeclaration class $this")
+    }

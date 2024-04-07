@@ -15,13 +15,15 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 
 abstract class ResolutionDiagnostic(val applicability: CandidateApplicability)
@@ -136,7 +138,7 @@ class OperatorCallOfConstructor(val constructor: FirConstructorSymbol) : Resolut
 class InferenceError(val constraintError: ConstraintSystemError) : ResolutionDiagnostic(constraintError.applicability)
 class Unsupported(val message: String, val source: KtSourceElement?) : ResolutionDiagnostic(K2_UNSUPPORTED)
 
-class PropertyAsOperator(val propertySymbol: FirPropertySymbol) : ResolutionDiagnostic(K2_PROPERTY_AS_OPERATOR)
+class NotFunctionAsOperator(val symbol: FirBasedSymbol<*>) : ResolutionDiagnostic(K2_NOT_FUNCTION_AS_OPERATOR)
 
 class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
@@ -166,3 +168,14 @@ class TypeVariableAsExplicitReceiver(
 ) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
 object CallToDeprecatedOverrideOfHidden : ResolutionDiagnostic(RESOLVED)
+
+class AmbiguousInterceptedSymbol(val pluginNames: List<String>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
+
+class MissingInnerClassConstructorReceiver(val candidateSymbol: FirRegularClassSymbol) : ResolutionDiagnostic(INAPPLICABLE)
+
+@OptIn(ApplicabilityDetail::class)
+val Collection<ResolutionDiagnostic>.allSuccessful: Boolean get() = all { it.applicability.isSuccess }
+val Collection<ResolutionDiagnostic>.anyUnsuccessful: Boolean get() = !allSuccessful
+
+@OptIn(ApplicabilityDetail::class)
+val ResolutionDiagnostic.isSuccess get() = applicability.isSuccess

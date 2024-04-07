@@ -2,37 +2,28 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
+import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSwiftNames
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.objcexport.extras.objCExportStubExtras
+import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 
 internal val KtCallableSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
 
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionSymbol.translateToObjCMethod(
-): ObjCMethod? {
+fun KtFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
     if (!isVisibleInObjC()) return null
-    if (anyMethodSelectors.containsKey(this.name)) return null //temp, find replacement for org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.isReal
-    if (isClone) return null
-
+    if (isFakeOverride) return null
+    if (this is KtFunctionSymbol && isClone) return null
     return buildObjCMethod()
-}
-
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtFileSymbol.getObjCFileClassOrProtocolName(): ObjCExportFileName? {
-    val ktFile = this.psi as? KtFile ?: return null
-    val name = NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(ktFile.name)) + "Kt"
-    return name.toIdentifier().getObjCFileName()
 }
 
 /**
@@ -42,15 +33,26 @@ context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
-    val bridge = getFunctionMethodBridge()
+
+    val bridge = if (this is KtFunctionSymbol) {
+        /**
+         * Unlike constructor, a function can have base return type.
+         * So in case of function we need to call [getFunctionMethodBridge] on [baseMethod]
+         */
+        baseMethod.getFunctionMethodBridge()
+    } else {
+        this.getFunctionMethodBridge()
+    }
+
     val returnType: ObjCType = mapReturnType(bridge.returnBridge)
     val parameters = translateToObjCParameters(bridge)
     val selector = getSelector(bridge)
-    val selectors: List<String> = splitSelector(selector)
+    val selectors = splitSelector(selector)
     val swiftName = getSwiftName(bridge)
     val attributes = mutableListOf<String>()
     val returnBridge = bridge.returnBridge
-    val comment = this.translateToObjCComment(bridge, parameters)
+    val comment = translateToObjCComment(bridge, parameters)
+    val throws = definedThrows.map { it }.toList()
 
     attributes += getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName)
 
@@ -81,10 +83,12 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
         returnType = returnType,
         selectors = selectors,
         parameters = parameters,
-        attributes = attributes
+        attributes = attributes,
+        extras = objCExportStubExtras {
+            throwsAnnotationClassIds = throws
+        }
     )
 }
-
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerKt.toValidObjCSwiftIdentifier]
@@ -110,9 +114,10 @@ internal fun KtCallableSymbol.isRefinedInSwift(): Boolean = when {
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): String {
-
     //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
-    getPredefined(this, Predefined.anyMethodSwiftNames)?.let { return it }
+    if (this is KtNamedSymbol) {
+        anyMethodSwiftNames[name]?.let { return it }
+    }
 
     val parameters = methodBridge.valueParametersAssociated(this)
     val method = this
@@ -121,15 +126,18 @@ internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): Stri
         append(getMangledName(forSwift = true))
         append("(")
 
-        parameters@ for ((bridge, symbol) in parameters) {
+        parameters@ for ((bridge, parameter: KtObjCParameterData?) in parameters) {
             val label = when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> when {
-                    //it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(true) { "_" }
+                    parameter?.isReceiver == true -> "_"
                     method is KtPropertySetterSymbol -> when (parameters.size) {
                         1 -> "_"
                         else -> "value"
                     }
-                    else -> symbol!!.name
+                    else -> {
+                        if (parameter == null) continue@parameters
+                        else if (parameter.isReceiver) "_" else parameter.name
+                    }
                 }
                 MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
                 is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
@@ -143,7 +151,6 @@ internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): Stri
     }
 
     return sb.toString()
-
 }
 
 
@@ -172,12 +179,6 @@ private fun splitSelector(selector: String): List<String> {
     }
 }
 
-/**
- * Not implemented [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getPredefined]
- */
-private fun <T : Any> getPredefined(method: KtFunctionLikeSymbol, predefinedForAny: Map<Name, T>): T? {
-    return null
-}
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
@@ -185,26 +186,28 @@ private fun <T : Any> getPredefined(method: KtFunctionLikeSymbol, predefinedForA
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 
-    getPredefined(this, anyMethodSelectors)?.let { return it }
+    if (this is KtNamedSymbol) {
+        anyMethodSelectors[this.name]?.let { return it }
+    }
 
     val parameters = methodBridge.valueParametersAssociated(this)
-
     val method = this
-
     val sb = StringBuilder()
 
     sb.append(method.getMangledName(forSwift = false))
 
-    parameters.forEachIndexed { index, (bridge, typeParameterSymbol) ->
+    parameters.forEachIndexed { index, (bridge, parameter) ->
         val name = when (bridge) {
 
             is MethodBridgeValueParameter.Mapped -> when {
+                parameter?.isReceiver == true -> ""
                 method is KtPropertySetterSymbol -> when (parameters.size) {
                     1 -> ""
                     else -> "value"
                 }
                 else -> {
-                    typeParameterSymbol!!.name.toString()
+                    if (parameter == null) return@forEachIndexed
+                    else if (parameter.isReceiver) "" else parameter.name.toString()
                 }
             }
             MethodBridgeValueParameter.ErrorOutParameter -> "error"
@@ -251,27 +254,6 @@ private fun String.handleSpecialNames(prefix: String): String {
         }
     }
     return this
-}
-
-/**
- * [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
- */
-@InternalKotlinNativeApi
-fun MethodBridge.valueParametersAssociated(
-    function: KtFunctionLikeSymbol,
-): List<Pair<MethodBridgeValueParameter, KtValueParameterSymbol?>> {
-    val allParameters = function.valueParameters
-    if (allParameters.isEmpty()) return emptyList()
-
-    return this.valueParameters.mapIndexed { index, valueParameterBridge ->
-        when (valueParameterBridge) {
-            is MethodBridgeValueParameter.Mapped -> valueParameterBridge to allParameters[index]
-
-            is MethodBridgeValueParameter.SuspendCompletion,
-            is MethodBridgeValueParameter.ErrorOutParameter,
-            -> valueParameterBridge to null
-        }
-    }
 }
 
 private fun String.startsWithWords(words: String) = this.startsWith(words) &&

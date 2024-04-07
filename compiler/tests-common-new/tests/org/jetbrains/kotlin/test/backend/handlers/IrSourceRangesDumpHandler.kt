@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SOURCE_RANGES_IR
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -37,11 +40,23 @@ class IrSourceRangesDumpHandler(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
 
+    override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
+        get() = listOf(::IdenticalChecker)
+
+    class IdenticalChecker(testServices: TestServices) : SimpleFirIrIdenticalChecker(testServices) {
+        override val dumpExtension: String
+            get() = DUMP_EXTENSION
+
+        override fun shouldRun(): Boolean {
+            return DUMP_SOURCE_RANGES_IR in testServices.moduleStructure.allDirectives
+        }
+    }
+
     private val baseDumper = MultiModuleInfoDumper()
     private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (CodegenTestDirectives.DUMP_SOURCE_RANGES_IR !in module.directives) return
+        if (DUMP_SOURCE_RANGES_IR !in module.directives) return
         val builder = baseDumper.builderForModule(module.name)
         for (irFile in info.irModuleFragment.files) {
             builder.append(irFile.dumpWithSourceLocations(irFile.fileEntry))
@@ -108,6 +123,8 @@ class IrSourceRangesDumpHandler(
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
         if (actualDump.isNotEmpty()) {
             assertions.assertEqualsToFile(expectedFile, actualDump)
+        } else {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_SOURCE_RANGES_IR)
         }
     }
 

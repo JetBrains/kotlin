@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -150,7 +151,8 @@ internal class KtFirExpressionTypeProvider(
         expression: KtExpression,
         fir: FirFunctionCall,
     ): KtType? {
-        if (fir.calleeReference !is FirResolvedNamedReference) return null
+        // When we're in a call like `a[x] = y`, we want to get the `set` call's last argument's type.
+        if (fir.calleeReference !is FirResolvedNamedReference || fir.calleeReference.name != OperatorNameConventions.SET) return null
         if (expression !is KtArrayAccessExpression) return null
         val assignment = expression.parent as? KtBinaryExpression ?: return null
         if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
@@ -165,7 +167,7 @@ internal class KtFirExpressionTypeProvider(
         substituteWithErrorTypes: Boolean = true,
     ): LinkedHashMap<FirExpression, SubstitutedValueParameter>? {
         val substitutor = (this as? FirQualifiedAccessExpression)
-            ?.createConeSubstitutorFromTypeArguments(discardErrorTypes = !substituteWithErrorTypes)
+            ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = !substituteWithErrorTypes)
             ?: ConeSubstitutor.Empty
 
         return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { (_, parameter) ->
@@ -225,7 +227,7 @@ internal class KtFirExpressionTypeProvider(
         val callee = (firCall.toReference(firResolveSession.useSiteFirSession) as? FirResolvedNamedReference)?.resolvedSymbol
         if (callee?.fir?.origin == FirDeclarationOrigin.SamConstructor) {
             val substitutor = (firCall as? FirQualifiedAccessExpression)
-                ?.createConeSubstitutorFromTypeArguments(discardErrorTypes = true)
+                ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = true)
                 ?: ConeSubstitutor.Empty
             return substitutor.substituteOrSelf((callee.fir as FirSimpleFunction).returnTypeRef.coneType).asKtType()
         }
@@ -235,7 +237,7 @@ internal class KtFirExpressionTypeProvider(
             argumentsToParameters.entries.firstOrNull { (arg, _) ->
                 when (arg) {
                     // TODO: better to utilize. See `createArgumentMapping` in [KtFirCallResolver]
-                    is FirLambdaArgumentExpression, is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
+                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
                         arg.psi == argumentExpression.parent
                     else ->
                         arg.psi == argumentExpression

@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -221,6 +222,11 @@ internal object FirReferenceResolveHelper {
         val expression = ref.expression
         if (expression.isSyntheticOperatorReference()) return emptyList()
         val symbolBuilder = analysisSession.firSymbolBuilder
+
+        if (expression is KtNameReferenceExpression && expression.parent is KtValueArgumentName) {
+            return getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
+        }
+
         val adjustedResolutionExpression = adjustResolutionExpression(expression)
         val fir = when (val baseFir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveSession)) {
             is FirSmartCastExpression -> baseFir.originalExpression
@@ -246,7 +252,6 @@ internal object FirReferenceResolveHelper {
             is FirDelegatedConstructorCall ->
                 getSymbolByDelegatedConstructorCall(expression, adjustedResolutionExpression, fir, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
-            is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             is FirEqualityOperatorCall -> getSymbolsByEqualsName(fir, session, analysisSession, symbolBuilder)
             is FirTypeParameter -> getSybmolsByTypeParameter(symbolBuilder, fir)
             is FirResolvedReifiedParameterReference -> getSymbolsByResolvedReifiedTypeParameterReference(symbolBuilder, fir)
@@ -371,15 +376,13 @@ internal object FirReferenceResolveHelper {
         val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return emptyList()
 
         val firCall = ktCallExpression.getOrBuildFir(analysisSession.firResolveSession)?.unwrapSafeCall() as? FirCall ?: return emptyList()
-        val parameter = firCall.findCorrespondingParameter(ktValueArgument) ?: return emptyList()
+        val parameter = firCall.findCorrespondingParameter(ktValueArgumentName.asName) ?: return emptyList()
         return listOfNotNull(parameter.buildSymbol(symbolBuilder))
     }
 
-    private fun FirCall.findCorrespondingParameter(ktValueArgument: KtValueArgument): FirValueParameter? =
-        resolvedArgumentMapping?.entries?.firstNotNullOfOrNull { (firArgument, firParameter) ->
-            if (firArgument.psi == ktValueArgument) firParameter
-            else null
-        }
+    private fun FirCall.findCorrespondingParameter(name: Name): FirValueParameter? {
+        return resolvedArgumentMapping?.values?.firstOrNull { it.name == name }
+    }
 
     private fun handleUnknownFirElement(
         expression: KtSimpleNameExpression,

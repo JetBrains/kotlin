@@ -348,6 +348,41 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final const [ResolvedTo(STATUS)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Nested : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -439,7 +474,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithConstantFromNestedClass.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
             @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION|) public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {

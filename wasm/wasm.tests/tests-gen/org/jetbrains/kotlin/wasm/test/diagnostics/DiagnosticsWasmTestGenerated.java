@@ -40,9 +40,27 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
     }
 
     @Test
+    @TestMetadata("associatedObjects.kt")
+    public void testAssociatedObjects() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/associatedObjects.kt");
+    }
+
+    @Test
     @TestMetadata("body.kt")
     public void testBody() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/body.kt");
+    }
+
+    @Test
+    @TestMetadata("complexCasesWithJsInteropTypes.kt")
+    public void testComplexCasesWithJsInteropTypes() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/complexCasesWithJsInteropTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("correctJsInteropTypes.kt")
+    public void testCorrectJsInteropTypes() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/correctJsInteropTypes.kt");
     }
 
     @Test
@@ -118,9 +136,9 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
     }
 
     @Test
-    @TestMetadata("types.kt")
-    public void testTypes() {
-      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/types.kt");
+    @TestMetadata("wrongJsInteropTypes.kt")
+    public void testWrongJsInteropTypes() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/wrongJsInteropTypes.kt");
     }
 
     @Test
@@ -217,6 +235,22 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
       public void testWhenIsNativeInterface() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/whenIsNativeInterface.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/wasmTests/multiplatform")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Multiplatform {
+    @Test
+    @TestMetadata("ActualExternalTypeAsJsInteropType.kt")
+    public void testActualExternalTypeAsJsInteropType() {
+      runTest("compiler/testData/diagnostics/wasmTests/multiplatform/ActualExternalTypeAsJsInteropType.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInMultiplatform() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
   }
 

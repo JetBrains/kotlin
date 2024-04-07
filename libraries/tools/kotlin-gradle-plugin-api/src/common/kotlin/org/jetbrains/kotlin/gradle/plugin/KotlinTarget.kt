@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
@@ -19,6 +21,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @KotlinGradlePluginDsl
 interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val targetName: String
@@ -71,6 +76,9 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {
     /** The container with the test run executions.
      * A target may automatically create and configure a test run by the name [DEFAULT_TEST_RUN_NAME]. */

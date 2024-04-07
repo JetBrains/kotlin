@@ -26,9 +26,6 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
         override fun forceMutable(field: Field) = field.isMutable
     }
 
-    override fun defaultElementKDoc(element: Element) =
-        "A ${if (element.isLeaf) "leaf" else "non-leaf"} IR tree element."
-
     override val separateFieldsWithBlankLine: Boolean
         get() = true
 

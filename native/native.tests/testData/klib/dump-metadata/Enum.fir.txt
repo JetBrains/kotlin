@@ -12,7 +12,7 @@ library {
 
       public open fun enumFun(): kotlin/Int
 
-      public final val enumVal: kotlin/Int /* = 0 */
+      public final val enumVal: kotlin/Int /* = ... */
         public final get
 
       public final var enumVar: kotlin/String

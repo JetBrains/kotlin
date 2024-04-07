@@ -28,7 +28,6 @@ inline fun foo() = {
 // test.kt:8 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:6 $box
 // test1.kt:12 $box
 // test.kt:7 $box

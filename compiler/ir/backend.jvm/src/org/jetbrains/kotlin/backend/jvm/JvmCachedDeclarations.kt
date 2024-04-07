@@ -33,7 +33,7 @@ class JvmCachedDeclarations(
     private val context: JvmBackendContext,
     val fieldsForObjectInstances: CachedFieldsForObjectInstances,
 ) {
-    val syntheticAccessorGenerator = CachedSyntheticDeclarations(context)
+    val syntheticAccessorGenerator = JvmSyntheticAccessorGenerator(context)
 
     private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
     private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()

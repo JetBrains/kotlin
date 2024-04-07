@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -156,5 +159,12 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         ) && overrideCandidate.contextReceivers.zip(baseDeclaration.contextReceivers).all { (memberParam, selfParam) ->
             isEqualTypes(memberParam.typeRef, selfParam.typeRef, substitutor)
         }
+    }
+
+    override fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
+        dispatchClassSymbol: FirRegularClassSymbol?,
+    ): Visibility {
+        return chooseIntersectionVisibilityOrNull(overrides) ?: Visibilities.Unknown
     }
 }

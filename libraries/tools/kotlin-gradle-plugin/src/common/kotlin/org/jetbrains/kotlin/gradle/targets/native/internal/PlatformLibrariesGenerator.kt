@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.compilerRunner.konanDataDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.addArg
@@ -127,7 +126,7 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
     }
 
     fun generatePlatformLibsIfNeeded(): Unit = with(project) {
-        if (!HostManager(distribution).isEnabled(konanTarget)) {
+        if (!HostManager().isEnabled(konanTarget)) {
             // We cannot generate libs on a machine that doesn't support the requested target.
             return
         }

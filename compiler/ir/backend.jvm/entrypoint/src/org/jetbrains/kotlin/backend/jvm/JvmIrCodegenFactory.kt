@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.codegen.CodegenFactory
+import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
+import org.jetbrains.kotlin.codegen.loadCompiledModule
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -43,6 +45,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -53,6 +56,7 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
+import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.utils.IDEAPlatforms
 import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
@@ -124,7 +128,7 @@ open class JvmIrCodegenFactory(
         val extensions: JvmGeneratorExtensions,
         val backendExtension: JvmBackendExtension,
         val pluginContext: IrPluginContext?,
-        val notifyCodegenStart: () -> Unit
+        val notifyCodegenStart: () -> Unit,
     ) : CodegenFactory.BackendInput
 
     private data class JvmIrCodegenInput(
@@ -313,11 +317,11 @@ open class JvmIrCodegenFactory(
 
         val moduleChunk = sourceFiles.toSet()
         val wholeModule = wholeBackendInput.irModuleFragment
-        return wholeBackendInput.copy(
-            IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins, wholeModule.files.filter { file ->
-                file.getKtFile() in moduleChunk
-            })
-        )
+        val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins)
+        wholeModule.files.filterTo(moduleCopy.files) { file ->
+            file.getKtFile() in moduleChunk
+        }
+        return wholeBackendInput.copy(moduleCopy)
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
@@ -328,14 +332,13 @@ open class JvmIrCodegenFactory(
         )
             JvmIrSerializerImpl(state.configuration)
         else null
-        val phases = if (evaluatorFragmentInfoForPsi2Ir != null) jvmFragmentLoweringPhases else jvmLoweringPhases
-        val phaseConfig = customPhaseConfig ?: PhaseConfig(phases)
+        val phaseConfig = customPhaseConfig ?: PhaseConfig(jvmLoweringPhases)
         val context = JvmBackendContext(
             state, irModuleFragment.irBuiltins, symbolTable, phaseConfig, extensions,
             backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
         )
         if (evaluatorFragmentInfoForPsi2Ir != null) {
-            context.localDeclarationsLoweringData = mutableMapOf()
+            context.evaluatorData = JvmEvaluatorData(mutableMapOf())
         }
         val generationExtensions = IrGenerationExtension.getInstances(state.project)
             .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }
@@ -351,7 +354,7 @@ open class JvmIrCodegenFactory(
 
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getIoFile))
 
-        phases.invokeToplevel(phaseConfig, context, irModuleFragment)
+        jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
 
         return JvmIrCodegenInput(state, context, irModuleFragment, notifyCodegenStart)
     }
@@ -370,6 +373,50 @@ open class JvmIrCodegenFactory(
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`
         state.afterIndependentPart()
+
+        generateModuleMetadata(input)
+    }
+
+    private fun generateModuleMetadata(result: CodegenFactory.CodegenInput) {
+        val backendContext = (result as JvmIrCodegenInput).context
+        val builder = JvmModuleProtoBuf.Module.newBuilder()
+        val stringTable = StringTableImpl()
+
+        backendContext.state.loadCompiledModule()?.moduleData?.run {
+            // In incremental compilation scenario, we might already have some serialized optionalAnnotations from the previous run
+            // In this case, we first initialize string table with the serialized one
+            // See jps/jps-plugin/testData/incremental/multiModule/multiplatform/custom/modifyOptionalAnnotationUsage for example
+            val nameResolver = nameResolver
+            repeat(nameResolver.strings.stringCount) { stringIndex ->
+                stringTable.addString(nameResolver.strings.getString(stringIndex))
+            }
+            repeat(nameResolver.qualifiedNames.qualifiedNameCount) { nameIndex ->
+                val qualifiedName = nameResolver.qualifiedNames.getQualifiedName(nameIndex)
+                stringTable.addQualifiedName(qualifiedName)
+            }
+            // Then add the annotations themselves, unless they are in dirty sources, i.e. contained in backendContext.optionalAnnotations
+            for (proto in optionalAnnotations) {
+                val name = nameResolver.getQualifiedClassName(proto.fqName)
+                if (backendContext.optionalAnnotations.none { metadata -> metadata.name?.asString() == name }) {
+                    builder.addOptionalAnnotationClass(proto)
+                }
+            }
+        }
+
+        for (part in backendContext.state.factory.packagePartRegistry.parts.values.addCompiledPartsAndSort(backendContext.state)) {
+            part.addTo(builder)
+        }
+
+        for (metadata in backendContext.optionalAnnotations) {
+            val serializer = backendContext.backendExtension.createModuleMetadataSerializer(backendContext)
+            builder.addOptionalAnnotationClass(serializer.serializeOptionalAnnotationClass(metadata, stringTable))
+        }
+
+        val (stringTableProto, qualifiedNameTableProto) = stringTable.buildProto()
+        builder.setStringTable(stringTableProto)
+        builder.setQualifiedNameTable(qualifiedNameTableProto)
+
+        backendContext.state.factory.setModuleMapping(builder.build())
     }
 
     fun generateModuleInFrontendIRMode(
@@ -380,7 +427,7 @@ open class JvmIrCodegenFactory(
         extensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
         irPluginContext: IrPluginContext,
-        notifyCodegenStart: () -> Unit = {}
+        notifyCodegenStart: () -> Unit = {},
     ) {
         generateModule(
             state,

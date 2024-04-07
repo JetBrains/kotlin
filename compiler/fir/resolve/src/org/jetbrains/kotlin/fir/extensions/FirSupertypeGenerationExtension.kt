@@ -23,16 +23,13 @@ abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtensi
 
     abstract fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean
 
-    context(TypeResolveServiceContainer)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     abstract fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
-        resolvedSupertypes: List<FirResolvedTypeRef>
+        resolvedSupertypes: List<FirResolvedTypeRef>,
+        typeResolver: TypeResolveService
     ): List<FirResolvedTypeRef>
 
     fun interface Factory : FirExtension.Factory<FirSupertypeGenerationExtension>
-
-    class TypeResolveServiceContainer(val typeResolver: TypeResolveService)
 
     abstract class TypeResolveService {
         abstract fun resolveUserType(type: FirUserTypeRef): FirResolvedTypeRef

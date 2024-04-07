@@ -57,6 +57,7 @@ object FirJvmErrors {
     val JAVA_TYPE_MISMATCH: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
     val RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String> by warning3<PsiElement, ConeKotlinType, ConeKotlinType, String>()
     val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String> by warning3<PsiElement, ConeKotlinType, ConeKotlinType, String>()
+    val TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
 
     // Type parameters
     val UPPER_BOUND_CANNOT_BE_ARRAY: KtDiagnosticFactory0 by error0<PsiElement>()
@@ -99,6 +100,11 @@ object FirJvmErrors {
     val JVM_RECORD_EXTENDS_CLASS: KtDiagnosticFactory1<ConeKotlinType> by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
     val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE: KtDiagnosticFactory0 by error0<PsiElement>()
 
+    // JVM Modules
+    val JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE: KtDiagnosticFactory1<String> by error1<PsiElement, String>()
+    val JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE: KtDiagnosticFactory0 by error0<PsiElement>()
+    val JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE: KtDiagnosticFactory2<String, String> by error2<PsiElement, String, String>()
+
     // JVM Default
     val JVM_DEFAULT_IN_DECLARATION: KtDiagnosticFactory1<String> by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION: KtDiagnosticFactory0 by error0<KtElement>()
@@ -121,6 +127,9 @@ object FirJvmErrors {
 
     // Suspension Point
     val SUSPENSION_POINT_INSIDE_CRITICAL_SECTION: KtDiagnosticFactory1<FirCallableSymbol<*>> by error1<PsiElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+
+    // Inline
+    val INLINE_FROM_HIGHER_PLATFORM: KtDiagnosticFactory2<String, String> by error2<PsiElement, String, String>()
 
     // Misc
     val INAPPLICABLE_JVM_FIELD: KtDiagnosticFactory1<String> by error1<KtAnnotationEntry, String>()

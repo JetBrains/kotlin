@@ -2,6 +2,11 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // DIAGNOSTICS: -SUPER_CANT_BE_EXTENSION_RECEIVER
 // ^Otherwise only K1 errors are written to .diag file.
+// IGNORE_REVERSED_RESOLVE
+// IGNORE_NON_REVERSED_RESOLVE
+// ^Mute is required because in AA, parameter names differ in RENDER_DIAGNOSTICS_FULL_TEXT output
+
+import java.util.function.IntFunction
 
 class A<T> : ArrayList<T>() {
     override fun addFirst(t: T) {
@@ -22,6 +27,20 @@ class A<T> : ArrayList<T>() {
     override fun removeLast(): T = super.removeLast()
 
     override fun reversed(): List<T> = super.reversed()
+
+    override fun <R> <!OVERRIDE_DEPRECATION!>toArray<!>(generator: IntFunction<Array<R>>): Array<R> {
+        return super.<!DEPRECATION!>toArray<!>(generator)
+    }
+}
+
+abstract class B<T>: List<T> {
+    override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): T {
+        return super.<!DEPRECATION!>getFirst<!>()
+    }
+
+    override fun <!OVERRIDE_DEPRECATION!>getLast<!>(): T{
+        return super.<!DEPRECATION!>getLast<!>()
+    }
 }
 
 fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {

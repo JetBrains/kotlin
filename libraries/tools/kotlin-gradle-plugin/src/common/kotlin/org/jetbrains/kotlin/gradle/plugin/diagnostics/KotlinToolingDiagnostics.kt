@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByK
 import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -98,6 +99,66 @@ object KotlinToolingDiagnostics {
         }
     }
 
+    object MultipleSourceSetRootsInCompilation : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(
+            kotlinCompilation: KotlinCompilation<*>,
+            unexpectedSourceSetRoot: String,
+            expectedRoot: String,
+        ): ToolingDiagnostic = build(
+            """
+            Kotlin Source Set '$unexpectedSourceSetRoot' is included to '${kotlinCompilation.name}' compilation of '${kotlinCompilation.target.name}' target,
+            but it doesn't depend on '$expectedRoot'.
+            
+            Please remove '$unexpectedSourceSetRoot' and include its sources to the compilation's default source set:
+            
+                kotlin.sourceSets["${kotlinCompilation.defaultSourceSet.name}"].kotlin.srcDir() // <-- pass sources directory of '$unexpectedSourceSetRoot'                     
+
+            Or provide explicit dependency if the solution above is not applicable
+            
+                kotlin.sourceSets["$unexpectedSourceSetRoot"].dependsOn($expectedRoot)    
+
+            See https://kotl.in/connecting-source-sets for more details.
+            """.trimIndent()
+        )
+
+        operator fun invoke(
+            targetNames: Collection<String>,
+            unexpectedSourceSetRoot: String,
+            expectedRoot: String,
+        ): ToolingDiagnostic = build(
+            """
+            Kotlin Source Set '$unexpectedSourceSetRoot' is included in compilations of Kotlin Targets: ${targetNames.joinToString(", ") { "'$it'" }}  
+            but it doesn't depend on '$expectedRoot'
+            
+            Please remove '$unexpectedSourceSetRoot' and include its sources to one of the default source set: https://kotl.in/hierarchy-template
+            For example:
+
+                kotlin.sourceSets.commonMain.kotlin.srcDir() // <-- pass here sources directory
+            
+            Or add explicit dependency if the solution above is not applicable:
+            
+                kotlin.sourceSets["$unexpectedSourceSetRoot"].dependsOn($expectedRoot)
+            
+            See https://kotl.in/connecting-source-sets for more details.
+            """.trimIndent()
+        )
+
+        operator fun invoke(kotlinCompilation: KotlinCompilation<*>, sourceSetRoots: Collection<String>) = build(
+            """
+            Kotlin Source Sets: ${sourceSetRoots.joinToString(", ") { "'$it'" }} 
+            are included to '${kotlinCompilation.name}' compilation of '${kotlinCompilation.target.name}' target.
+            However, they have no common source set root between them.
+            
+            Please remove these kotlin source sets and include their source directories to the compilation's default source set.
+            
+                kotlin.sourceSets["${kotlinCompilation.defaultSourceSet.name}"].kotlin.srcDir() // <-- pass sources directories here 
+            
+            Or, if the solution above is not applicable, specify `dependsOn` edges between these source sets so that there are no multiple roots.
+            See https://kotl.in/connecting-source-sets for more details.
+            """.trimIndent()
+        )
+    }
+
     object AndroidSourceSetLayoutV1Deprecation : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke() = build(
             """
@@ -148,7 +209,7 @@ object KotlinToolingDiagnostics {
                 Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
                 The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is higher 
                 than the maximum known to the Kotlin Gradle Plugin.
-                Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue"
+                Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue
                 
                 Minimum supported Android Gradle Plugin version: $minSupported
                 Maximum tested Android Gradle Plugin version: $maxTested
@@ -704,6 +765,86 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    private val resourcesBugReportRequest get() = "This is likely a bug in Kotlin Gradle Plugin configuration. Please report this issue to https://kotl.in/issue."
+    object ResourcePublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Only one resources publication per target $targetName is allowed.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
+    object AssetsPublishedMoreThanOncePerTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke() = build(
+            """
+            Only one assets publication per android target is allowed.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
+    object ResourceMayNotBePublishedForTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources publication for target $targetName is not supported yet.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
+    object ResourceMayNotBeResolvedForTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources resolution for target $targetName is not supported.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
+    object ResourceMayNotBeResolvedWithGradleVersion : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(
+            targetName: String, currentGradleVersion: String, minimumRequiredVersion: String) = build(
+            """
+            Resources for target $targetName may not be resolved. Minimum required Gradle version is ${minimumRequiredVersion} but current is ${currentGradleVersion}.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
+    object UnknownValueProvidedForResourcesStrategy : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(value: String) = build(
+            """
+            Unknown value $value provided for ${PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY}
+            """.trimIndent()
+        )
+    }
+
+    object MissingRuntimeDependencyConfigurationForWasmTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources will not be resolved for $targetName as it is missing runtimeDependencyConfiguration.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
+    object MissingResourcesConfigurationForTarget : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(targetName: String) = build(
+            """
+            Resources will not be resolved for $targetName as it is missing resourcesConfiguration.
+            
+            $resourcesBugReportRequest
+            """.trimIndent()
+        )
+    }
+
     object DependencyDoesNotPhysicallyExist : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(dependency: File) = build(
             """
@@ -711,6 +852,48 @@ object KotlinToolingDiagnostics {
                Please make sure that the dependency exists at the specified location or ensure that dependency declarations are correct in your project.
             """.trimIndent()
         )
+    }
+
+    object XcodeVersionTooHighWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(xcodeVersionString: String, maxTested: String) = build(
+            """
+                Kotlin <-> Xcode compatibility issue:
+                The selected Xcode version ($xcodeVersionString) is higher than the maximum known to the Kotlin Gradle Plugin.
+                Stability in such configuration hasn't been tested, please report encountered issues to https://kotl.in/issue
+                
+                Maximum tested Xcode version: $maxTested
+                
+                To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN}=true' to your gradle.properties
+            """.trimIndent()
+        )
+    }
+
+    object DeprecatedGradleProperties : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(usedDeprecatedProperty: String): ToolingDiagnostic {
+            return build(
+                """
+                |The `$usedDeprecatedProperty` deprecated property is used in your build.
+                |Please, stop using it as it is unsupported and may apply no effect to your build.
+                """.trimMargin()
+            )
+        }
+    }
+
+    object WasmStabilityWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build("New 'wasm' target is Work-in-Progress and is subject to change without notice. " +
+                        "Please report encountered issues to https://kotl.in/issue")
+    }
+
+    object RedundantDependsOnEdgesFound : ToolingDiagnosticFactory(WARNING) {
+        data class RedundantEdge(val from: String, val to: String)
+
+        operator fun invoke(redundantEdges: List<RedundantEdge>): ToolingDiagnostic = build {
+            appendLine("Redundant dependsOn edges between Kotlin Source Sets found.")
+            appendLine("Please remove the following dependsOn invocations from your build scripts:")
+            redundantEdges.forEach { edge -> appendLine(" * ${edge.from}.dependsOn(${edge.to})") }
+            appendLine("They are already added from Kotlin Target Hierarchy template https://kotl.in/hierarchy-template")
+        }
     }
 }
 

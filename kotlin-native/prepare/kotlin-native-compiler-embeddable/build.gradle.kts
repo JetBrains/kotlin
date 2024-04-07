@@ -48,12 +48,14 @@ dependencies {
     kotlinNativeEmbedded(project(":kotlin-native:backend.native"))
     kotlinNativeEmbedded(project(":kotlin-native:utilities:cli-runner"))
     kotlinNativeEmbedded(project(":kotlin-native:klib"))
-    kotlinNativeEmbedded(project(":kotlin-native:backend.native", "cli_bcApiElements"))
+    kotlinNativeEmbedded(project(":native:cli-native"))
     kotlinNativeEmbedded(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
     kotlinNativeEmbedded(project(":kotlin-compiler")) { isTransitive = false }
 
     kotlinNativeSources(project(":kotlin-native:backend.native"))
+    kotlinNativeSources(project(":native:cli-native"))
     kotlinNativeJavadoc(project(":kotlin-native:backend.native"))
+    kotlinNativeJavadoc(project(":native:cli-native"))
 
     testImplementation(libs.junit4)
     testImplementation(kotlinTest("junit"))

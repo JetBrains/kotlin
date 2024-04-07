@@ -466,7 +466,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     private fun createKotlinClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
         val result = context.irFactory.buildFun {
-            name = Name.identifier("__callFunction_${info.signatureString}")
+            name = Name.identifier("$CALL_FUNCTION${info.signatureString}")
             returnType = info.adaptedResultType
             origin = KOTLIN_TO_JS_CLOSURE_ORIGIN
         }
@@ -522,7 +522,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             append("(f) => (")
             appendParameterList(arity)
             append(") => wasmExports[")
-            append("__callFunction_${info.signatureString}".toJsStringLiteral())
+            append("$CALL_FUNCTION${info.signatureString}".toJsStringLiteral())
             append("](f, ")
             appendParameterList(arity)
             append(")")
@@ -910,6 +910,10 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 +irGet(newJsArrayVar)
             }
         }
+    }
+
+    companion object {
+        const val CALL_FUNCTION = "__callFunction_"
     }
 }
 

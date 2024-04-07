@@ -11,7 +11,7 @@
 #error "Assumes that ARC is not used"
 #endif
 
-#include <CoreFoundation/CFBase.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <functional>
 #include <utility>
 

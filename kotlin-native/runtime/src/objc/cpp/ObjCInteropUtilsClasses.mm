@@ -6,7 +6,7 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
 #import "Memory.h"
 #import "MemorySharedRefs.hpp"
 #import "ObjCExportPrivate.h"

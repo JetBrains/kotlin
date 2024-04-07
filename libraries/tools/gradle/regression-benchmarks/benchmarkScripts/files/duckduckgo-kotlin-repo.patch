@@ -319,6 +319,16 @@ index 59799ae04..b9acb93b8 100644
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/autofill/autofill-api/build.gradle b/autofill/autofill-api/build.gradle
+index 740c784a5..82bd3d97b 100644
+--- a/autofill/autofill-api/build.gradle
++++ b/autofill/autofill-api/build.gradle
+@@ -33,3 +33,5 @@ dependencies {
+ android {
+   namespace 'com.duckduckgo.autofill.api'
+ }
++
++kotlin.compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 diff --git a/autofill/autofill-impl/build.gradle b/autofill/autofill-impl/build.gradle
 index fc3858c2f..d02e5ac4a 100644
 --- a/autofill/autofill-impl/build.gradle
@@ -381,8 +391,8 @@ index b445a8d6a..5b66cf35c 100644
          spotless = '6.1.2'
 -        anvil_version = '2.4.4'
 -        gradle_plugin = '7.4.2' // When updating, also update lint_version
-+        anvil_version = '2.4.7'
-+        gradle_plugin = '8.2.0-rc02' // When updating, also update lint_version
++        anvil_version = '2.4.9'
++        gradle_plugin = '8.2.2' // When updating, also update lint_version
          lint_version = '30.4.2' // This value must always be gradle_plugin + 23
          min_sdk = 23
          target_sdk = 33

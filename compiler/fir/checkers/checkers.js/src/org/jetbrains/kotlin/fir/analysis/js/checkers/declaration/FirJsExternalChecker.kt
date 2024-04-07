@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNative
 import org.jetbrains.kotlin.psi.KtParameter
 
-object FirJsExternalChecker : FirWebCommonExternalChecker() {
+object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = true) {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
         return symbol.isNativeObject(session)
     }
@@ -41,20 +41,6 @@ object FirJsExternalChecker : FirWebCommonExternalChecker() {
     }
 
     override fun additionalCheck(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration is FirClass && declaration.classKind != ClassKind.ANNOTATION_CLASS) {
-            val superClasses = declaration.superInterfaces(context.session).toMutableList()
-            declaration.superClassNotAny(context.session)?.let {
-                superClasses.add(it)
-            }
-            if (declaration.classKind == ClassKind.ENUM_CLASS || declaration.classKind == ClassKind.ENUM_ENTRY) {
-                superClasses.removeAll { it.classId?.asSingleFqName()?.toUnsafe() == StandardNames.FqNames._enum }
-            }
-            val superDeclarations = superClasses.mapNotNull { it.toSymbol(context.session) }
-            if (superDeclarations.any { !it.isNativeObject(context) && it.classId.asSingleFqName() != StandardNames.FqNames.throwable }) {
-                reporter.reportOn(declaration.source, FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, context)
-            }
-        }
-
         if (declaration is FirFunction && declaration.isInline) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION, context)
         }
@@ -136,10 +122,6 @@ object FirJsExternalChecker : FirWebCommonExternalChecker() {
             else -> returnTypeRef.coneType.typeArguments.firstOrNull()?.type
         }
 
-    private fun FirClass.superInterfaces(session: FirSession) = superConeTypes
-        .filterNot { it.isAny || it.isNullableAny }
-        .filter { it.toSymbol(session)?.classKind == ClassKind.INTERFACE }
-
     private fun FirDeclaration.checkEnumEntry(context: CheckerContext, reporter: DiagnosticReporter) {
         if (this !is FirEnumEntry) return
         initializer?.let {
@@ -147,5 +129,3 @@ object FirJsExternalChecker : FirWebCommonExternalChecker() {
         }
     }
 }
-
-

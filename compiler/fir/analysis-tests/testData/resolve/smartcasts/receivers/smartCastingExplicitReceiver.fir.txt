@@ -1,0 +1,16 @@
+FILE: smartCastingExplicitReceiver.kt
+    public abstract interface I : R|kotlin/Any| {
+    }
+    public final class C : R|I| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|I|.foo(): R|kotlin/String| {
+            ^foo String(ret)
+        }
+
+    }
+    public final fun R|I|.bar(): R|kotlin/Unit| {
+        (this@R|/bar|, (this@R|/bar| as R|C|)).R|/C.foo|()
+    }

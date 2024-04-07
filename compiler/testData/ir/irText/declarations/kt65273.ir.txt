@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/kt65273.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       PROPERTY FAKE_OVERRIDE name:s visibility:public modality:FINAL [fake_override,val]
         overridden:
-          public final s: kotlin.Any
+          public final s: kotlin.Any declared in <root>.A.B
         FUN FAKE_OVERRIDE name:<get-s> visibility:public modality:FINAL <> ($this:<root>.A.B) returnType:kotlin.Any [fake_override]
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:s visibility:public modality:FINAL [fake_override,val]
           overridden:

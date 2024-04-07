@@ -16,7 +16,7 @@ FILE: inlineClasses.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Foo>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Foo>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Foo|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Foo|
@@ -50,7 +50,7 @@ FILE: inlineClasses.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Holder>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Holder>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Holder|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Holder|

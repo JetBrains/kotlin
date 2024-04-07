@@ -70,9 +70,8 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     val packageJsonTask: KotlinPackageJsonTask
         get() = project.tasks.getByName(packageJsonTaskName) as KotlinPackageJsonTask
 
-    val packageJsonTaskPath by lazy {
-        packageJsonTask.path
-    }
+    val packageJsonTaskPath: String
+        get() = packageJsonTask.path
 
     val dist: Provider<Directory>
         get() = dir.map { it.dir(DIST_FOLDER) }

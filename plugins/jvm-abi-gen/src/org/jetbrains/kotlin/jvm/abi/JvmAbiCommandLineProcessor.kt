@@ -60,6 +60,17 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
                         "private top-level classes will no longer be available from Java classes in the same package.",
                 false,
             )
+        val TREAT_INTERNAL_AS_PRIVATE_OPTION: CliOption =
+            CliOption(
+                "treatInternalAsPrivate",
+                "true/false",
+                """Treat internal declarations as private and remove from ABI. False by default due to backwards compatibility.
+                   |If enabled, internal functions are removed and will no longer be available from Java if it's compiled against abi.jar.
+                   |Works best in conjunction with flags:
+                   |  * removePrivateClasses - internal classes are being removed too;
+                   |  * removeDataClassCopyIfConstructorIsPrivate - copy method is removed along with internal constructor.""".trimMargin(),
+                false,
+            )
     }
 
     override val pluginId: String
@@ -72,6 +83,7 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
             REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION,
             PRESERVE_DECLARATION_ORDER_OPTION,
             REMOVE_PRIVATE_CLASSES_OPTION,
+            TREAT_INTERNAL_AS_PRIVATE_OPTION,
         )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
@@ -85,6 +97,10 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
             PRESERVE_DECLARATION_ORDER_OPTION -> configuration.put(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER, value == "true")
             REMOVE_PRIVATE_CLASSES_OPTION -> configuration.put(
                 JvmAbiConfigurationKeys.REMOVE_PRIVATE_CLASSES,
+                value == "true"
+            )
+            TREAT_INTERNAL_AS_PRIVATE_OPTION -> configuration.put(
+                JvmAbiConfigurationKeys.TREAT_INTERNAL_AS_PRIVATE,
                 value == "true"
             )
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")

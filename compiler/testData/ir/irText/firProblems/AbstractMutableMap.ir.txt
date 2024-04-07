@@ -142,7 +142,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
           CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open keys: kotlin.collections.MutableSet<K of kotlin.collections.AbstractMutableMap>
+        public open keys: kotlin.collections.MutableSet<K of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.collections.MutableSet<K of <root>.MyMap> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open size: kotlin.Int
+        public open size: kotlin.Int declared in kotlin.collections.AbstractMutableMap
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<K of <root>.MyMap, V of <root>.MyMap>
     PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public open values: kotlin.collections.MutableCollection<V of kotlin.collections.AbstractMutableMap>
+        public open values: kotlin.collections.MutableCollection<V of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.collections.MutableCollection<V of <root>.MyMap> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
@@ -166,7 +166,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>
     PROPERTY name:entries visibility:public modality:OPEN [val]
       overridden:
-        public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of kotlin.collections.AbstractMutableMap, V of kotlin.collections.AbstractMutableMap>>
+        public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of kotlin.collections.AbstractMutableMap, V of kotlin.collections.AbstractMutableMap>> declared in kotlin.collections.AbstractMutableMap
       FUN name:<get-entries> visibility:public modality:OPEN <> ($this:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>>
         correspondingProperty: PROPERTY name:entries visibility:public modality:OPEN [val]
         overridden:

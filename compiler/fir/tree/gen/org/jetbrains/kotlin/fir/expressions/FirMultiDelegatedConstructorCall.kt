@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -19,13 +20,13 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.multiDelegatedConstructorCall]
  */
 abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() {
-    abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
     abstract override val contextReceiverArguments: List<FirExpression>
     abstract override val constructedTypeRef: FirTypeRef
     abstract override val dispatchReceiver: FirExpression?
     abstract override val calleeReference: FirReference
+    abstract override val source: KtSourceElement?
     abstract override val isThis: Boolean
     abstract override val isSuper: Boolean
     abstract val delegatedConstructorCalls: List<FirDelegatedConstructorCall>
@@ -48,6 +49,9 @@ abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() 
     abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    @FirImplementationDetail
+    abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract fun replaceDelegatedConstructorCalls(newDelegatedConstructorCalls: List<FirDelegatedConstructorCall>)
 

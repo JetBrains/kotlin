@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -36,6 +38,28 @@ abstract class FakeOverrideBuilderStrategy(
     private val friendModules: Map<String, Collection<String>>,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
+
+    /**
+     * This flag enables workaround for KT-65504 and KT-42020.
+     *
+     * If there are several fake overrides in generic class, which becomes equivalent after
+     * generic parameter substitution in subtype, several separate equivalent fake overrides were generated
+     * because of incorrect optimization. This behavior existed for a long time, and would require some
+     * additional effort to deprecate, so we keep the ability to keep it where reasonable.
+     */
+    open val isGenericClashFromSameSupertypeAllowed: Boolean = false
+
+    /**
+     * True iff it's not allowed to override an internal `@PublishedApi` function with an internal function from another module.
+     *
+     * On JVM, internal functions in classes are mangled unless they're annotated with `@PublishedApi`. This leads to a bug KT-61132 where
+     * an internal `@PublishedApi` function can be accidentally overridden by a public function in another module. This bug should be fixed,
+     * but until it is, we're replicating this behavior in klib-based backends, basically by treating internal `@PublishedApi` functions as
+     * public. This flag controls this behavior. Note that it is enabled only on JVM, which unfortunately means that KT-67114 is still
+     * a problem on klib-based backends.
+     */
+    open val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean = false
+
     /**
      * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
      * if no fake override should be created for this member
@@ -88,8 +112,8 @@ abstract class FakeOverrideBuilderStrategy(
                 when {
                     thisModule == memberModule -> true
                     isInFriendModules(thisModule, memberModule) -> true
-                    // TODO: this is very questionable - KT-63381
-                    original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
+                    !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
+                            original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false
                 }
             }
@@ -131,6 +155,30 @@ abstract class FakeOverrideBuilderStrategy(
      *   * [IrFunctionWithLateBinding.acquireSymbol] must be called inside on getter and setter of [property] argument, if they exist
      */
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
+
+    abstract class BindToPrivateSymbols(friendModules: Map<String, Collection<String>>) : FakeOverrideBuilderStrategy(
+        friendModules = friendModules,
+        unimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
+    ) {
+        override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
+            function.acquireSymbol(IrSimpleFunctionSymbolImpl())
+        }
+
+        override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean) {
+            property.acquireSymbol(IrPropertySymbolImpl())
+
+            property.getter?.let {
+                it.correspondingPropertySymbol = property.symbol
+                linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), manglerCompatibleMode)
+            }
+            property.setter?.let {
+                it.correspondingPropertySymbol = property.symbol
+                linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), manglerCompatibleMode)
+            }
+        }
+
+        override fun <R> inFile(file: IrFile?, block: () -> R): R = block()
+    }
 }
 
 fun buildFakeOverrideMember(

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -23,7 +25,7 @@ class KotlinWasmTargetPreset(
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
         if (!PropertiesProvider(project).wasmStabilityNoWarn) {
-            project.logger.warn("New 'wasm' target is Work-in-Progress and is subject to change without notice.")
+            project.reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.WasmStabilityWarning())
         }
 
         val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm)

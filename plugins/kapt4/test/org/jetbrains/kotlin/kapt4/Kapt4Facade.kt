@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.base.KaptContext
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
 import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.Printer
@@ -47,12 +47,12 @@ internal class Kapt4Facade(private val testServices: TestServices) :
         val configuration = configurationProvider.getCompilerConfiguration(module)
         configuration.addKotlinSourceRoots(module.files.filter { it.isKtFile }.map { it.realFile().absolutePath })
         val options = testServices.kaptOptionsProvider[module]
-        val (context, stubMap) = run(
+        val (context, stubs) = run(
             configuration,
             options,
             configurationProvider.testRootDisposable
         )
-        return Kapt4ContextBinaryArtifact(context, stubMap.values.filterNotNull())
+        return Kapt4ContextBinaryArtifact(context, stubs)
     }
 
     private fun TestFile.realFile(): File {
@@ -69,7 +69,7 @@ private fun run(
     configuration: CompilerConfiguration,
     options: KaptOptions,
     projectDisposable: Disposable,
-): Pair<KaptContext, Map<KtLightClass, KaptStub?>> {
+): Pair<KaptContext, List<KaptStub>> {
     val standaloneAnalysisAPISession = buildStandaloneAnalysisAPISession(projectDisposable) {
         (project as MockProject).registerService(
             KtLifetimeTokenProvider::class.java,
@@ -111,7 +111,8 @@ private fun run(
         }
     }
 
-    return context to generateStubs(module, files, options, logger, metadataRenderer = { renderMetadata(it) })
+    val stubsMap = generateStubs(module, files, options, logger, JvmMetadataVersion.INSTANCE) { renderMetadata(it) }
+    return context to stubsMap.entries.sortedBy { it.key.qualifiedName }.mapNotNull { it.value }
 }
 
 internal data class Kapt4ContextBinaryArtifact(

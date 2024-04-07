@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.statementContainer]
  */
 interface IrStatementContainer : IrElement {

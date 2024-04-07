@@ -16,6 +16,7 @@ import java.nio.file.Files
 import java.nio.file.OpenOption
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import kotlin.contracts.*
 import kotlin.jvm.Throws
 
 /**
@@ -277,6 +278,9 @@ public inline fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Path.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
     return Files.newBufferedReader(this, charset).use { block(it.lineSequence()) }
 }
 

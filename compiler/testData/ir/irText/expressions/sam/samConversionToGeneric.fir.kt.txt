@@ -49,4 +49,3 @@ fun test8(efn: @ExtensionFunctionType Function1<String, String>): J<@FlexibleNul
 fun test9(efn: @ExtensionFunctionType Function1<String, String>) {
   bar<@FlexibleNullability String?>(j = efn /*-> J<@FlexibleNullability String?> */)
 }
-

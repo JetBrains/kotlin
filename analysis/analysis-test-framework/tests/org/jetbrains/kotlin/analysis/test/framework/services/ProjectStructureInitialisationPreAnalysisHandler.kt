@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -36,8 +36,8 @@ class ProjectStructureInitialisationPreAnalysisHandler(
     }
 
     private fun createAndRegisterKtModules(moduleStructure: TestModuleStructure, project: MockProject) {
-        val ktModules = configurator.createModules(moduleStructure, testServices, project)
-        testServices.ktModuleProvider.registerProjectStructure(ktModules)
+        val ktTestModuleStructure = configurator.createModules(moduleStructure, testServices, project)
+        testServices.ktTestModuleStructureProvider.registerModuleStructure(ktTestModuleStructure)
     }
 
     private fun checkAllModulesHaveTheSameProject(moduleStructure: TestModuleStructure) {

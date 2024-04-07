@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
-import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
@@ -21,21 +18,19 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 import org.jetbrains.kotlin.gradle.utils.getValue
-import java.nio.file.Path
 
-internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
+internal class KotlinWasmD8(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmD8"
+
+    private val testPath = kotlinJsTest.path
+
     @Transient
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
-    @Transient
-    private val project: Project = compilation.target.project
 
-    private val d8 = D8RootPlugin.apply(project.rootProject)
-    private val d8Executable by project.provider { d8.requireConfigured().executable }
-    private val npmProjectDir by project.provider { compilation.npmProject.dir }
+    private val d8 = D8RootPlugin.apply(kotlinJsTest.project.rootProject)
+    private val d8Executable by kotlinJsTest.project.provider { d8.requireConfigured().executable }
 
-    override val workingDir: Provider<Directory>
-        get() = npmProjectDir
+    override val workingDir: Provider<Directory> = compilation.npmProject.dir
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -43,10 +38,11 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(task.inputFileProperty.get().asFile)
+        val compiledFile = task.inputFileProperty.get().asFile
+        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile, compiledFile)
 
         forkOptions.executable = d8Executable
-        forkOptions.workingDir = testRunnerFile.parentFile
+        forkOptions.workingDir = compiledFile.parentFile
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -80,5 +76,5 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = emptySet()
 
-    override fun getPath(): String = "${kotlinJsTest.path}:kotlinTestFrameworkStub"
+    override fun getPath(): String = "$testPath:kotlinTestFrameworkStub"
 }

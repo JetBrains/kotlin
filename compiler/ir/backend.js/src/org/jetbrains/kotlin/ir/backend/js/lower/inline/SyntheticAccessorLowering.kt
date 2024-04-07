@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SimpleTypeRemapper
@@ -96,7 +95,7 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
                     visibility = DescriptorVisibilities.INTERNAL,
                     isInline = declaration.isInline,
                     isExpect = declaration.isExpect,
-                    returnType = IrUninitializedType,
+                    returnType = null,
                     modality = declaration.modality,
                     symbol = symbolRemapper.getDeclaredFunction(declaration.symbol),
                     isTailrec = declaration.isTailrec,

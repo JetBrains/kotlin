@@ -36,7 +36,6 @@ private fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNodeIn
             }
         }
         // TODO, KT-59670: if data for previousNodes hasn't changed, then should be no need to recompute data for this one
-        val union = node.isUnion
         val previousData = when (direction) {
             TraverseDirection.Forward -> node.previousCfgNodes
             TraverseDirection.Backward -> node.followingCfgNodes
@@ -48,7 +47,7 @@ private fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNodeIn
                 }
                 visitor.visitEdge(source, node, edge, it)
             }
-        }.reduceOrNull { a, b -> a.join(b, union) }
+        }.reduceOrNull { a, b -> a.join(b, node) }
         val newData = node.accept(visitor, previousData ?: visitor.emptyInfo)
         if (newData != nodeMap.put(node, newData)) {
             changed = true

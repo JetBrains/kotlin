@@ -71,7 +71,11 @@ fun IrAnnotationContainer.couldBeConvertedToExplicitExport(): Boolean? =
     getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getSingleConstBooleanArgument()
 
 fun IrAnnotationContainer.isJsExportIgnore(): Boolean =
-    hasAnnotation(JsAnnotations.jsExportIgnoreFqn)
+    annotations.any {
+        // Using `IrSymbol.hasEqualFqName(FqName)` instead of a usual `hasAnnotation` call, because `JsExport.Ignore` is a nested class,
+        // whose FQ name cannot be computed by traversing IR tree parents because it lacks `JsExport` for some reason.
+        it.symbol.owner.parentAsClass.symbol.hasEqualFqName(JsAnnotations.jsExportIgnoreFqn)
+    }
 
 fun IrAnnotationContainer.isJsNativeGetter(): Boolean = hasAnnotation(JsAnnotations.jsNativeGetter)
 

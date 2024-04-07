@@ -63,10 +63,10 @@ class A : Java1 {
   /* fake */ override fun ensureCapacity(p0: Int): Unit
 
   // CHECK JVM_IR:
-  //   Mangled name: A#equals(kotlin.Any?){}kotlin.Boolean
-  //   Public signature: /A.equals|722809408929142791[0]
-  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  /* fake */ override operator fun equals(p0: Any?): Boolean
+  //   Mangled name: A#equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /A.equals|4126616015386471185[0]
+  //   Public signature debug description: equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override operator fun equals(p0: @EnhancedNullability Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: A#get(kotlin.Int){}kotlin.Int{EnhancedNullability}
@@ -260,10 +260,10 @@ open class KotlinClass : ArrayList<Int> {
   /* fake */ override fun ensureCapacity(p0: Int): Unit
 
   // CHECK JVM_IR:
-  //   Mangled name: KotlinClass#equals(kotlin.Any?){}kotlin.Boolean
-  //   Public signature: /KotlinClass.equals|722809408929142791[0]
-  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
-  /* fake */ override operator fun equals(p0: Any?): Boolean
+  //   Mangled name: KotlinClass#equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /KotlinClass.equals|4126616015386471185[0]
+  //   Public signature debug description: equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override operator fun equals(p0: @EnhancedNullability Any?): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: KotlinClass#get(kotlin.Int){}kotlin.Int{EnhancedNullability}
@@ -391,3 +391,4 @@ open class KotlinClass : ArrayList<Int> {
     /* fake */ override get(): Int
 
 }
+

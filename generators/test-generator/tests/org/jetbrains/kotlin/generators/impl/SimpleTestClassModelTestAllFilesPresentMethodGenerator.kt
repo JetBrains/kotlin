@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.generators.model.SimpleTestClassModel
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import java.util.regex.Pattern
 
 object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<SimpleTestClassModel.TestAllFilesPresentMethodModel>() {
     override val kind: MethodModel.Kind
@@ -30,27 +30,54 @@ object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<
                 exclude.append(StringUtil.escapeStringCharacters(dir))
                 exclude.append("\"")
             }
-            val excludedArgument = runIf(classModel.excludePattern != null) {
-                String.format("Pattern.compile(\"%s\")", StringUtil.escapeStringCharacters(classModel.excludePattern!!.pattern()))
-            }
-            val assertTestsPresentStr = if (classModel.targetBackend === TargetBackend.ANY) {
-                String.format(
-                    "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s%s);",
+            val excludePattern = classModel.excludePattern
+            if (classModel.targetBackend === TargetBackend.ANY) {
+                p.print(
+                    "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"",
                     KtTestUtil.getFilePath(classModel.rootFile),
+                    "\"), Pattern.compile(\"",
                     StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
-                    excludedArgument,
+                    "\"), ",
+                )
+                p.printExcludePattern(excludePattern)
+                p.printlnWithNoIndent(
+                    ", ",
                     classModel.recursive,
-                    exclude
+                    exclude,
+                    ");"
                 )
             } else {
-                String.format(
-                    "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s, %s%s);",
+                p.print(
+                    "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"",
                     KtTestUtil.getFilePath(classModel.rootFile),
+                    "\"), Pattern.compile(\"",
                     StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
-                    excludedArgument, TargetBackend::class.java.simpleName, classModel.targetBackend.toString(), classModel.recursive, exclude
+                    "\"), ",
+                )
+                p.printExcludePattern(excludePattern)
+                p.printlnWithNoIndent(
+                    ", ",
+                    TargetBackend::class.java.simpleName,
+                    ".",
+                    classModel.targetBackend.toString(),
+                    ", ",
+                    classModel.recursive,
+                    exclude,
+                    ");"
                 )
             }
-            p.println(assertTestsPresentStr)
+        }
+    }
+
+    private fun Printer.printExcludePattern(excludePattern: Pattern?) {
+        if (excludePattern != null) {
+            printWithNoIndent(
+                "Pattern.compile(\"",
+                StringUtil.escapeStringCharacters(excludePattern.pattern()),
+                "\")"
+            )
+        } else {
+            printWithNoIndent("null")
         }
     }
 }

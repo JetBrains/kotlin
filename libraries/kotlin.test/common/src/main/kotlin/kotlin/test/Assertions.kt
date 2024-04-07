@@ -354,11 +354,14 @@ public fun assertContains(charSequence: CharSequence, regex: Regex, message: Str
 }
 
 /**
- * Asserts that the [expected] iterable is *structurally* equal to the [actual] iterable,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] iterable is *structurally* equal to the [actual] iterable, with an optional [message].
  *
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two iterables are considered structurally equal if they have the same size,
+ * and elements at corresponding positions, following the iteration order, are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ *
+ * The iterables are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun <@OnlyInputTypes T> assertContentEquals(expected: Iterable<T>?, actual: Iterable<T>?, message: String? = null) {
@@ -374,11 +377,14 @@ public fun <@OnlyInputTypes T> assertContentEquals(expected: Set<T>?, actual: Se
     assertContentEquals(expected, actual?.asIterable(), message)
 
 /**
- * Asserts that the [expected] sequence is *structurally* equal to the [actual] sequence,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] sequence is *structurally* equal to the [actual] sequence, with an optional [message].
  *
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two sequences are considered structurally equal if they have the same size,
+ * and elements at corresponding positions, following the iteration order, are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ *
+ * The sequences are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun <@OnlyInputTypes T> assertContentEquals(expected: Sequence<T>?, actual: Sequence<T>?, message: String? = null) {
@@ -386,11 +392,13 @@ public fun <@OnlyInputTypes T> assertContentEquals(expected: Sequence<T>?, actua
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
  *
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun <@OnlyInputTypes T> assertContentEquals(expected: Array<T>?, actual: Array<T>?, message: String? = null) {
@@ -398,8 +406,11 @@ public fun <@OnlyInputTypes T> assertContentEquals(expected: Array<T>?, actual: 
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun assertContentEquals(expected: ByteArray?, actual: ByteArray?, message: String? = null) {
@@ -407,8 +418,11 @@ public fun assertContentEquals(expected: ByteArray?, actual: ByteArray?, message
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun assertContentEquals(expected: ShortArray?, actual: ShortArray?, message: String? = null) {
@@ -416,8 +430,11 @@ public fun assertContentEquals(expected: ShortArray?, actual: ShortArray?, messa
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun assertContentEquals(expected: IntArray?, actual: IntArray?, message: String? = null) {
@@ -425,8 +442,11 @@ public fun assertContentEquals(expected: IntArray?, actual: IntArray?, message: 
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun assertContentEquals(expected: LongArray?, actual: LongArray?, message: String? = null) {
@@ -434,11 +454,13 @@ public fun assertContentEquals(expected: LongArray?, actual: LongArray?, message
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
  *
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun assertContentEquals(expected: FloatArray?, actual: FloatArray?, message: String? = null) {
@@ -446,11 +468,13 @@ public fun assertContentEquals(expected: FloatArray?, actual: FloatArray?, messa
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
  *
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun assertContentEquals(expected: DoubleArray?, actual: DoubleArray?, message: String? = null) {
@@ -458,8 +482,11 @@ public fun assertContentEquals(expected: DoubleArray?, actual: DoubleArray?, mes
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun assertContentEquals(expected: BooleanArray?, actual: BooleanArray?, message: String? = null) {
@@ -467,8 +494,11 @@ public fun assertContentEquals(expected: BooleanArray?, actual: BooleanArray?, m
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 public fun assertContentEquals(expected: CharArray?, actual: CharArray?, message: String? = null) {
@@ -476,8 +506,11 @@ public fun assertContentEquals(expected: CharArray?, actual: CharArray?, message
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 @OptIn(ExperimentalUnsignedTypes::class)
@@ -486,8 +519,11 @@ public fun assertContentEquals(expected: UByteArray?, actual: UByteArray?, messa
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 @OptIn(ExperimentalUnsignedTypes::class)
@@ -496,8 +532,11 @@ public fun assertContentEquals(expected: UShortArray?, actual: UShortArray?, mes
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 @OptIn(ExperimentalUnsignedTypes::class)
@@ -506,8 +545,11 @@ public fun assertContentEquals(expected: UIntArray?, actual: UIntArray?, message
 }
 
 /**
- * Asserts that the [expected] array is *structurally* equal to the [actual] array,
- * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array, with an optional [message].
+ *
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ *
+ * The arrays are also considered equal if both are `null`.
  */
 @SinceKotlin("1.5")
 @OptIn(ExperimentalUnsignedTypes::class)

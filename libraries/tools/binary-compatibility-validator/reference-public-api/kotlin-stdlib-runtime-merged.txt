@@ -1,6 +1,9 @@
 public abstract interface annotation class kotlin/BuilderInference : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/ConsistentCopyVisibility : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ContextFunctionTypeParams : java/lang/annotation/Annotation {
 	public abstract fun count ()I
 }
@@ -60,6 +63,9 @@ public abstract interface annotation class kotlin/ExperimentalSubclassOptIn : ja
 }
 
 public abstract interface annotation class kotlin/ExperimentalUnsignedTypes : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class kotlin/ExposedCopyVisibility : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class kotlin/ExtensionFunctionType : java/lang/annotation/Annotation {
@@ -3394,6 +3400,9 @@ public abstract interface annotation class kotlin/js/ExperimentalJsFileName : ja
 }
 
 public abstract interface annotation class kotlin/js/ExperimentalJsReflectionCreateInstance : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class kotlin/js/ExperimentalJsStatic : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class kotlin/jvm/ImplicitlyActualizedByJvmDeclaration : java/lang/annotation/Annotation {

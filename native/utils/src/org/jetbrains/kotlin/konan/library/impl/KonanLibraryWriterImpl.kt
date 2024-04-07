@@ -44,7 +44,7 @@ class KonanLibraryWriterImpl(
 fun buildLibrary(
     natives: List<String>,
     included: List<String>,
-    linkDependencies: List<KonanLibrary>,
+    linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
     ir: SerializedIrModule?,
     versions: KotlinLibraryVersioning,
@@ -54,7 +54,7 @@ fun buildLibrary(
     nopack: Boolean,
     shortName: String?,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?
+    dataFlowGraph: ByteArray? // TODO (KT-66218): remove this property
 ): KonanLibraryLayout {
 
     val libFile = File(output)

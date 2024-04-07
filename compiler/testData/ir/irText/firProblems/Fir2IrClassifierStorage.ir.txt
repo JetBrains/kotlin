@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY DELEGATED_MEMBER name:classifierStorage visibility:public modality:OPEN [val]
       overridden:
-        public abstract classifierStorage: <root>.Fir2IrClassifierStorage
+        public abstract classifierStorage: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponents
       FUN DELEGATED_MEMBER name:<get-classifierStorage> visibility:public modality:OPEN <> ($this:<root>.Fir2IrClassifierStorage) returnType:<root>.Fir2IrClassifierStorage
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:classifierStorage visibility:public modality:OPEN [val]
         overridden:
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
                 receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-classifierStorage>' type=<root>.Fir2IrClassifierStorage origin=null
     PROPERTY DELEGATED_MEMBER name:session visibility:public modality:OPEN [val]
       overridden:
-        public abstract session: <root>.FirSession
+        public abstract session: <root>.FirSession declared in <root>.Fir2IrComponents
       FUN DELEGATED_MEMBER name:<get-session> visibility:public modality:OPEN <> ($this:<root>.Fir2IrClassifierStorage) returnType:<root>.FirSession
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:session visibility:public modality:OPEN [val]
         overridden:
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Fir2IrComponentsStorage
     PROPERTY name:session visibility:public modality:OPEN [val]
       overridden:
-        public abstract session: <root>.FirSession
+        public abstract session: <root>.FirSession declared in <root>.Fir2IrComponents
       FIELD PROPERTY_BACKING_FIELD name:session type:<root>.FirSession visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'session: <root>.FirSession declared in <root>.Fir2IrComponentsStorage.<init>' type=<root>.FirSession origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
               receiver: GET_VAR '<this>: <root>.Fir2IrComponentsStorage declared in <root>.Fir2IrComponentsStorage.<get-session>' type=<root>.Fir2IrComponentsStorage origin=null
     PROPERTY name:classifierStorage visibility:public modality:OPEN [lateinit,var]
       overridden:
-        public abstract classifierStorage: <root>.Fir2IrClassifierStorage
+        public abstract classifierStorage: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponents
       FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:public
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-classifierStorage> visibility:public modality:OPEN <> ($this:<root>.Fir2IrComponentsStorage) returnType:<root>.Fir2IrClassifierStorage
         correspondingProperty: PROPERTY name:classifierStorage visibility:public modality:OPEN [lateinit,var]

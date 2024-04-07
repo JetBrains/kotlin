@@ -102,7 +102,7 @@ fun deserializeFromByteArray(
             ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
         }
     }
-    toplevelParent.acceptChildrenVoid(PatchDeclarationParentsVisitor(toplevelParent))
+    toplevelParent.patchDeclarationParents()
     buildFakeOverridesForLocalClasses(symbolTable, typeSystemContext, symbolDeserializer, toplevelParent)
 }
 

@@ -2,8 +2,6 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION_ERROR") // flags will become internal eventually
-
 package kotlin.metadata.internal
 
 import kotlin.metadata.*
@@ -73,3 +71,11 @@ internal fun valueParameterBooleanFlag(flag: Flag) = BooleanFlagDelegate(KmValue
 
 internal fun <Node> annotationsOn(flags: KMutableProperty1<Node, Int>) = BooleanFlagDelegate(flags, Flag(ProtoFlags.HAS_ANNOTATIONS))
 
+// Used for kotlin-metadata-jvm tests:
+public fun _flagAccess(kmClass: KmClass): Int = kmClass.flags
+
+public fun _flagAccess(kmFunc: KmFunction): Int = kmFunc.flags
+
+public fun _flagAccess(kmType: KmType): Int = kmType.flags
+
+public fun _flagAccess(kmConstr: KmConstructor): Int = kmConstr.flags

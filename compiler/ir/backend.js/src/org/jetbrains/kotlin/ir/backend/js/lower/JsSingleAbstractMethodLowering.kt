@@ -27,7 +27,7 @@ class JsSingleAbstractMethodLowering(context: CommonBackendContext) : SingleAbst
     override fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>): DescriptorVisibility =
         DescriptorVisibilities.LOCAL
 
-    override val IrType.needEqualsHashCodeMethods get() = false
+    override val IrType.needEqualsHashCodeMethods get() = true
 
     private var enclosingBodyContainer: IrDeclaration? = null
 

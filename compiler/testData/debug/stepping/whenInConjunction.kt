@@ -43,10 +43,8 @@ fun box() {
 // test.kt:19 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:18 $box (8, 8, 8, 8, 4)
 // test.kt:5 $foo (8, 10, 10, 10, 20, 8, 31)
-// Primitives.kt:2239 $kotlin.Float__toInt-impl (8, 38, 8, 38)
 // test.kt:6 $foo (12, 24)
 // test.kt:10 $foo
 // test.kt:11 $foo (12, 24)

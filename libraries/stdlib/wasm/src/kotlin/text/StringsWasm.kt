@@ -153,8 +153,7 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@SinceKotlin("2.0")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(
     destination: CharArray,
@@ -498,13 +497,6 @@ public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): 
     regionMatches(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 
 // From stringsCode.kt
-
-/**
- * Returns `true` if this string is empty or consists solely of whitespace characters.
- *
- * @sample samples.text.Strings.stringIsBlank
- */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
 /**
  * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.

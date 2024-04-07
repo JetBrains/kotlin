@@ -11,7 +11,6 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "Atomic.h"
 #include "TestSupport.hpp"
 #include "TestSupportCompilerGenerated.hpp"
 #include "Types.h"
@@ -38,23 +37,23 @@ TEST_F(CleanerTest, ConcurrentCreation) {
 
     EXPECT_CALL(*createCleanerWorkerMock, Call()).Times(1).WillOnce(testing::Return(workerId));
 
-    int startedThreads = 0;
-    bool allowRunning = false;
+    std::atomic startedThreads = 0;
+    std::atomic allowRunning = false;
     std::vector<std::future<KInt>> futures;
     for (int i = 0; i < threadCount; ++i) {
         auto future = std::async(std::launch::async, [&startedThreads, &allowRunning]() {
             // Thread state switching requires initilized memory subsystem.
             ScopedMemoryInit init;
-            atomicAdd(&startedThreads, 1);
-            while (!atomicGet(&allowRunning)) {
+            ++startedThreads;
+            while (!allowRunning.load()) {
             }
             return Kotlin_CleanerImpl_getCleanerWorker();
         });
         futures.push_back(std::move(future));
     }
-    while (atomicGet(&startedThreads) != threadCount) {
+    while (startedThreads.load() != threadCount) {
     }
-    atomicSet(&allowRunning, true);
+    allowRunning = true;
     std::vector<KInt> values;
     for (auto& future : futures) {
         values.push_back(future.get());

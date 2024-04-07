@@ -6,7 +6,7 @@ public abstract interface SamSubinterfaceOfTwo : R|kotlin/Any| {
 
     }
     public abstract interface Super2<T : R|kotlin/Any!|> : R|kotlin/Any| {
-        public abstract fun f(): R|ft<T & Any, T?>|
+        public abstract fun f(): R|T!|
 
     }
 }

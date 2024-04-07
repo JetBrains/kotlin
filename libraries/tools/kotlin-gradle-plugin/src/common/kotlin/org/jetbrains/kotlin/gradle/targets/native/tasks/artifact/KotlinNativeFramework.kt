@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -61,6 +59,8 @@ class KotlinNativeFrameworkImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
+    @Suppress("DEPRECATION")
+    @Deprecated("Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln")
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
@@ -110,7 +110,6 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
 ): TaskProvider<KotlinNativeLinkArtifactTask> {
     val kind = NativeOutputKind.FRAMEWORK
     val destinationDir = project.layout.buildDirectory.dir("$outDirName/${target.visibleName}/${buildType.visibleName}")
-    val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
     val resultTask = project.registerTask<KotlinNativeLinkArtifactTask>(
         lowerCamelCaseName("assemble", name, buildType.visibleName, kind.taskNameClassifier, target.presetName, taskNameSuffix),
         listOf(target, kind.compilerOutputKind)
@@ -123,13 +122,13 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.debuggable.set(buildType.debuggable)
         task.linkerOptions.set(linkerOptions)
         task.binaryOptions.set(binaryOptions)
-        task.xcodeVersion.set(xcodeVersionTask.version)
         task.staticFramework.set(isStatic)
         if (embedBitcode != null) {
             task.embedBitcode.set(embedBitcode)
         }
         task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
         task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
+        @Suppress("DEPRECATION")
         task.kotlinOptions(kotlinOptionsFn)
     }
     project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)

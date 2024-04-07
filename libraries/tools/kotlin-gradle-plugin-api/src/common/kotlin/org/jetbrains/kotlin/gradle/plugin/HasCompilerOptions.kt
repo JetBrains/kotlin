@@ -9,7 +9,7 @@ import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 
 /**
- * @suppress
+ * @suppress TODO: KT-58858 add documentation
  */
 @Deprecated(
     message = "Not consistent with other DSL to configure compiler options."

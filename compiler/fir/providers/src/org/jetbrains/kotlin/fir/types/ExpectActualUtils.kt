@@ -19,7 +19,7 @@ fun createExpectActualTypeParameterSubstitutor(
     val substitution = expectActualTypeParameters.associate { (expectedParameterSymbol, actualParameterSymbol) ->
         expectedParameterSymbol to actualParameterSymbol.toLookupTag().constructType(emptyArray(), isNullable = false)
     }
-    val substitutor = ConeSubstitutorByMap(
+    val substitutor = ConeSubstitutorByMap.create(
         substitution,
         useSiteSession
     )

@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -76,7 +73,6 @@ class ClassCodegen private constructor(
     private val parentClassCodegen by lazy {
         (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
     }
-    private val withinInline: Boolean by lazy { parentClassCodegen?.withinInline == true || parentFunction?.isInline == true }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
             context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
@@ -205,13 +201,7 @@ class ClassCodegen private constructor(
 
         generateKotlinMetadataAnnotation()
 
-        if (withinInline || !smap.isTrivial) {
-            visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
-        } else {
-            smap.sourceInfo!!.sourceFileName?.let {
-                visitor.visitSource(it, null)
-            }
-        }
+        visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
 
         reifiedTypeParametersUsages.mergeAll(irClass.reifiedTypeParameters)
 
@@ -415,11 +405,8 @@ class ClassCodegen private constructor(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
         )
         val mv = with(node) { visitor.newMethod(method.descriptorOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
-        val smapCopier = SourceMapCopier(classSMAP, smap)
-        val smapCopyingVisitor = object : MethodVisitor(Opcodes.API_VERSION, mv) {
-            override fun visitLineNumber(line: Int, start: Label) =
-                super.visitLineNumber(smapCopier.mapLineNumber(line), start)
-        }
+        val smapCopyingVisitor = SourceMapCopyingMethodVisitor(classSMAP, smap, mv)
+
         if (method.hasContinuation()) {
             // Generate a state machine within this method. The continuation class for it should be generated
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.

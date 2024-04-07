@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -112,7 +113,7 @@ open class IrFileSerializer(
     private val languageVersionSettings: LanguageVersionSettings,
     private val bodiesOnlyForInlines: Boolean = false,
     private val normalizeAbsolutePaths: Boolean = false,
-    private val skipPrivateApi: Boolean = false,
+    private val publicAbiOnly: Boolean = false,
     private val sourceBaseDirs: Collection<String>
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
@@ -140,6 +141,8 @@ open class IrFileSerializer(
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
     protected val protoDebugInfoArray = arrayListOf<String>()
+
+    private var isInsideInline: Boolean = false
 
     interface FileBackendSpecificMetadata {
         fun toByteArray(): ByteArray
@@ -184,11 +187,7 @@ open class IrFileSerializer(
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin): Int =
         serializeString(origin.debugName)
 
-    private fun serializeCoordinates(start: Int, end: Int): Long = if (skipPrivateApi) {
-        0L
-    } else {
-        BinaryCoordinates.encode(start, end)
-    }
+    private fun serializeCoordinates(start: Int, end: Int): Long = BinaryCoordinates.encode(start, end)
 
     /* ------- Strings ---------------------------------------------------------- */
 
@@ -273,7 +272,16 @@ open class IrFileSerializer(
     /* ------- IrTypes ---------------------------------------------------------- */
 
     private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
-        annotations.map { serializeConstructorCall(it) }
+        annotations.map {
+            for (index in 0 until it.valueArgumentsCount) {
+                it.getValueArgument(index)?.let { param ->
+                    require(param.isValidConstantAnnotationArgument()) {
+                        "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${it.render()}\nPARAM: ${param.render()}"
+                    }
+                }
+            }
+            serializeConstructorCall(it)
+        }
 
     private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
 
@@ -1004,7 +1012,7 @@ open class IrFileSerializer(
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
-            coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
+            coordinates = if (publicAbiOnly && !isInsideInline) 0L else serializeCoordinates(declaration.startOffset, declaration.endOffset)
             addAllAnnotation(serializeAnnotations(declaration.annotations))
             flags?.let { setFlags(it) }
             originName = serializeIrDeclarationOrigin(declaration.origin)
@@ -1041,6 +1049,9 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrFunctionBase(function: IrFunction, flags: Long): ProtoFunctionBase {
+        val isInsideInlineBefore = isInsideInline
+        isInsideInline = function.isInline || isInsideInlineBefore
+
         val proto = ProtoFunctionBase.newBuilder()
             .setBase(serializeIrDeclarationBase(function, flags))
             .setNameType(serializeNameAndType(function.name, function.returnType))
@@ -1054,13 +1065,20 @@ open class IrFileSerializer(
         if (contextReceiverParametersCount > 0) {
             proto.contextReceiverParametersCount = contextReceiverParametersCount
         }
+
         function.valueParameters.forEach {
+            if (((function as? IrConstructor)?.returnType?.classifierOrNull as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS) {
+                require(it.isValidConstantAnnotationArgument()) {
+                    "This is a compiler bug, please report it to https://kotl.in/issue : default value of annotation construction parameter must have const initializer:\n${it.render()}"
+                }
+            }
             proto.addValueParameter(serializeIrValueParameter(it))
         }
 
-        if (!bodiesOnlyForInlines || function.isInline) {
+        if (!bodiesOnlyForInlines || function.isInline || (publicAbiOnly && isInsideInline)) {
             function.body?.let { proto.body = serializeIrStatementBody(it) }
         }
+        isInsideInline = isInsideInlineBefore
 
         return proto.build()
     }
@@ -1107,9 +1125,9 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(property, PropertyFlags.encode(property)))
             .setName(serializeName(property.name))
 
-        property.backingField?.let { proto.backingField = serializeIrField(it) }
-        property.getter?.let { proto.getter = serializeIrFunction(it) }
-        property.setter?.let { proto.setter = serializeIrFunction(it) }
+        property.backingField?.takeUnless { skipIfPrivate(it) }?.let { proto.backingField = serializeIrField(it) }
+        property.getter?.takeUnless { skipIfPrivate(it) }?.let { proto.getter = serializeIrFunction(it) }
+        property.setter?.takeUnless { skipIfPrivate(it) }?.let { proto.setter = serializeIrFunction(it) }
 
         return proto.build()
     }
@@ -1123,6 +1141,11 @@ open class IrFileSerializer(
                     (field.initializer?.expression !is IrConst<*>))
         ) {
             val initializer = field.initializer?.expression
+            if (field.correspondingPropertySymbol?.owner?.isConst == true)
+                require(initializer is IrConst<*>) {
+                    "This is a compiler bug, please report it to https://kotl.in/issue : const val property must have a const initializer:\n${field.render()}"
+                }
+
             if (initializer != null) {
                 proto.initializer = serializeIrExpressionBody(initializer)
             }
@@ -1200,7 +1223,7 @@ open class IrFileSerializer(
 
     private fun serializeIrErrorDeclaration(errorDeclaration: IrErrorDeclaration): ProtoErrorDeclaration {
         val proto = ProtoErrorDeclaration.newBuilder()
-            .setCoordinates(serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset))
+            .setCoordinates(if (publicAbiOnly) 0L else serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset))
         return proto.build()
     }
 
@@ -1269,9 +1292,9 @@ open class IrFileSerializer(
     open fun backendSpecificMetadata(irFile: IrFile): FileBackendSpecificMetadata? = null
 
     private fun skipIfPrivate(declaration: IrDeclaration) =
-        skipPrivateApi && (declaration as? IrDeclarationWithVisibility)?.visibility?.isPublicAPI != true
-                // Always keep private interfaces as they can be part of public type hierarchies.
-                && (declaration as? IrClass)?.isInterface != true
+        publicAbiOnly && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
+                // Always keep private interfaces and type aliases as they can be part of public type hierarchies.
+                && (declaration as? IrClass)?.isInterface != true && declaration !is IrTypeAlias
 
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
@@ -1329,7 +1352,6 @@ open class IrFileSerializer(
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()
-            .setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = !skipPrivateApi))
             .addAllFqName(serializeFqName(file.packageFqName.asString()))
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
@@ -1355,6 +1377,8 @@ open class IrFileSerializer(
             topLevelDeclarations.add(SerializedDeclaration(sigIndex, idSig.render(), byteArray))
             proto.addDeclarationId(sigIndex)
         }
+
+        proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = !(publicAbiOnly && protoBodyArray.isEmpty())))
 
         // TODO: is it Konan specific?
 
@@ -1406,3 +1430,9 @@ open class IrFileSerializer(
 
     }
 }
+
+internal fun IrElement.isValidConstantAnnotationArgument(): Boolean =
+    this is IrConst<*> || this is IrGetEnumValue || this is IrClassReference ||
+            (this is IrVararg && elements.all { it.isValidConstantAnnotationArgument() }) ||
+            (this is IrConstructorCall &&
+                    (0 until valueArgumentsCount).all { getValueArgument(it)?.isValidConstantAnnotationArgument() ?: true })

@@ -14,7 +14,7 @@ If a type is mentioned as supertype, we see that the supertype is declared in th
 however, the supertype naming will be ordered *after* the current class 
 
 ## Rule 3
-If a type is mentioned as return or paramter type, we see a forward declaration being emitted, but the resulting order
+If a type is mentioned as return or parameter type, we see a forward declaration being emitted, but the resulting order
 of the header is unaffected. 
 
 

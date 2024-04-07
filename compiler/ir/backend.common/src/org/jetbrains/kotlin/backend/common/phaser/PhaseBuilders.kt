@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.lower
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -96,27 +95,6 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
 
 private val defaultConditions = setOf(defaultDumper, validationAction)
 
-fun <Context : CommonBackendContext> makeCustomPhase(
-    op: (Context, IrModuleFragment) -> Unit,
-    name: String,
-    description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
-    preconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
-    postconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
-): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
-    createSimpleNamedCompilerPhase(
-        name = name,
-        description = description,
-        preactions = defaultConditions + preconditions,
-        postactions = defaultConditions + postconditions,
-        prerequisite = prerequisite,
-        outputIfNotEnabled = { _, _, _, irModule -> irModule },
-        op = { context, irModule ->
-            op(context, irModule)
-            irModule
-        },
-    )
-
 fun <Context : CommonBackendContext> makeIrFilePhase(
     lowering: (Context) -> FileLoweringPass,
     name: String,
@@ -139,7 +117,7 @@ fun <Context : CommonBackendContext> makeIrFilePhase(
     )
 
 fun <Context : CommonBackendContext> makeIrModulePhase(
-    lowering: (Context) -> FileLoweringPass,
+    lowering: (Context) -> ModuleLoweringPass,
     name: String,
     description: String,
     prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),

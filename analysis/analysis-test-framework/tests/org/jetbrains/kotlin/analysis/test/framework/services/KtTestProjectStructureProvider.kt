@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 class KtTestProjectStructureProvider(
     override val globalLanguageVersionSettings: LanguageVersionSettings,
     private val builtinsModule: KtBuiltinsModule,
-    private val projectStructure: KtModuleProjectStructure,
+    private val ktTestModuleStructure: KtTestModuleStructure,
 ) : KtStaticProjectStructureProvider() {
     override fun getNotUnderContentRootModule(project: Project): KtNotUnderContentRootModule {
         error("Not-under content root modules most be initialized explicitly in tests")
@@ -35,14 +35,14 @@ class KtTestProjectStructureProvider(
                 return builtinsModule
             }
 
-            projectStructure.binaryModules
+            ktTestModuleStructure.binaryModules
                 .firstOrNull { binaryModule -> virtualFile in binaryModule.contentScope }
                 ?.let { return it }
         }
 
         computeSpecialModule(containingFile)?.let { return it }
 
-        return projectStructure.mainModules.firstOrNull { module ->
+        return ktTestModuleStructure.mainModules.firstOrNull { module ->
             element in module.ktModule.contentScope
         }?.ktModule
             ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
@@ -52,7 +52,7 @@ class KtTestProjectStructureProvider(
                 )
     }
 
-    override val allKtModules: List<KtModule> = projectStructure.allKtModules()
+    override val allKtModules: List<KtModule> = ktTestModuleStructure.mainAndBinaryKtModules
 
-    override val allSourceFiles: List<PsiFileSystemItem> = projectStructure.allSourceFiles()
+    override val allSourceFiles: List<PsiFileSystemItem> = ktTestModuleStructure.allSourceFiles
 }

@@ -1,4 +1,4 @@
-// IGNORE_INLINER_K2: IR
+// IGNORE_INLINER: IR
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 // FILE: 1.kt
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypeElement
+import com.intellij.psi.SyntheticElement
 import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperCo
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.asJava.classes.annotateByKotlinType
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
@@ -40,13 +42,15 @@ internal class KtFe10PsiTypeProvider(
 
     private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
-    override fun asPsiTypeElement(
+    override fun asPsiType(
         type: KtType,
         useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
-        allowErrorTypes: Boolean
-    ): PsiTypeElement? {
+        suppressWildcards: Boolean?,
+        preserveAnnotations: Boolean,
+    ): PsiType? {
         val kotlinType = (type as KtFe10Type).fe10Type
 
         with(typeMapper.typeContext) {
@@ -57,10 +61,23 @@ internal class KtFe10PsiTypeProvider(
 
         if (!analysisSession.useSiteModule.platform.has<JvmPlatform>()) return null
 
-        return asPsiTypeElement(simplifyType(kotlinType), useSitePosition, mode.toTypeMappingMode(type, isAnnotationMethod))
+        val typeElement = asPsiTypeElement(
+            simplifyType(kotlinType),
+            useSitePosition,
+            mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards),
+        )
+
+        val psiType = typeElement?.type ?: return null
+        if (!preserveAnnotations) return psiType
+
+        return annotateByKotlinType(psiType, kotlinType, typeElement, inferNullability = true)
     }
 
-    private fun KtTypeMappingMode.toTypeMappingMode(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode {
+    private fun KtTypeMappingMode.toTypeMappingMode(
+        type: KtType,
+        isAnnotationMethod: Boolean,
+        suppressWildcards: Boolean?,
+    ): TypeMappingMode {
         require(type is KtFe10Type)
         return when (this) {
             KtTypeMappingMode.DEFAULT -> TypeMappingMode.DEFAULT
@@ -73,6 +90,17 @@ internal class KtFe10PsiTypeProvider(
                 typeMapper.typeContext.getOptimalModeForReturnType(type.fe10Type, isAnnotationMethod)
             KtTypeMappingMode.VALUE_PARAMETER ->
                 typeMapper.typeContext.getOptimalModeForValueParameter(type.fe10Type)
+        }.let { typeMappingMode ->
+            // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
+            // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!
+            if (type.fe10Type.arguments.isEmpty())
+                typeMappingMode
+            else
+                typeMappingMode.updateArgumentModeFromAnnotations(
+                    type.fe10Type,
+                    typeMapper.typeContext,
+                    suppressWildcards,
+                )
         }
     }
 
@@ -106,7 +134,7 @@ internal class KtFe10PsiTypeProvider(
         val typeInfo = TypeInfo.fromString(javaType, false)
         val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
 
-        return ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
+        return SyntheticTypeElement(useSitePosition, typeText)
     }
 
     override fun asKtType(
@@ -116,3 +144,5 @@ internal class KtFe10PsiTypeProvider(
         throw UnsupportedOperationException("Conversion to KtType is not supported in K1 implementation")
     }
 }
+
+private class SyntheticTypeElement(parent: PsiElement, typeText: String) : ClsTypeElementImpl(parent, typeText, '\u0000'), SyntheticElement

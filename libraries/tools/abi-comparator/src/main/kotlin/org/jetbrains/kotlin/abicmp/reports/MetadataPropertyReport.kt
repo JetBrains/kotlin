@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.abicmp.reports
 import org.jetbrains.kotlin.abicmp.tag
 import java.io.PrintWriter
 
-class MetadataPropertyReport(val id: String, val header1: String, val header2: String) : ComparisonReport {
+open class MetadataPropertyReport(val id: String, val header1: String, val header2: String) : ComparisonReport {
 
-    private val propertyDiffs = ArrayList<NamedDiffEntry>()
+    protected val propertyDiffs = ArrayList<NamedDiffEntry>()
 
     override fun isEmpty() = propertyDiffs.isEmpty()
 

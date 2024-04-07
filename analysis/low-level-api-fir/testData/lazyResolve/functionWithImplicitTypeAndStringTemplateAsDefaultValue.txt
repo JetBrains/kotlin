@@ -60,6 +60,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultVa
         ^topLevelFunction Int(42)
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt
+    public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun topLevelFunction([ResolvedTo(CONSTANT_EVALUATION)] firstParam: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] secondParam: R|kotlin/String| = <strcat>(String(My str ), firstParam#.plus#(myNumber#).toString#())): R|kotlin/Int| {
+        ^topLevelFunction Int(42)
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt
     public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
@@ -78,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultVa
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt
-    public final const [ResolvedTo(BODY_RESOLVE)] val myNumber: R|kotlin/Int| = Int(1)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1)] val myNumber: R|kotlin/Int| = Int(1)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction([ResolvedTo(BODY_RESOLVE)] firstParam: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] secondParam: R|kotlin/String| = <strcat>(String(My str ), R|<local>/firstParam|.R|kotlin/Int.plus|(R|myPack/myNumber|).R|kotlin/Int.toString|())): R|kotlin/Int| {
         ^topLevelFunction Int(42)

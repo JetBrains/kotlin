@@ -1,2 +1,2 @@
-PsiType: PsiType:T
-KtType: T?
+PsiType: T
+KtType: T!

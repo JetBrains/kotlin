@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -170,6 +169,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   }
 
   @Test
+  @TestMetadata("intrinsicsConsistency.kt")
+  public void testIntrinsicsConsistency() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsConsistency.kt");
+  }
+
+  @Test
   @TestMetadata("intrinsicsNonReified.kt")
   public void testIntrinsicsNonReified() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsNonReified.kt");
@@ -179,6 +184,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   @TestMetadata("intrinsicsNullable.kt")
   public void testIntrinsicsNullable() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsNullable.kt");
+  }
+
+  @Test
+  @TestMetadata("intrinsicsPolymorphicPriority.kt")
+  public void testIntrinsicsPolymorphicPriority() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsPolymorphicPriority.kt");
   }
 
   @Test

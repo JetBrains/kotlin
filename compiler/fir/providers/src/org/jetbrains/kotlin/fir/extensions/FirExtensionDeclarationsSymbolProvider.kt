@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 
-@OptIn(FirExtensionApiInternals::class)
+@OptIn(FirExtensionApiInternals::class, ExperimentalTopLevelDeclarationsGenerationApi::class)
 class FirExtensionDeclarationsSymbolProvider private constructor(
     session: FirSession,
     cachesFactory: FirCachesFactory,

@@ -1,0 +1,22 @@
+FILE: suspendCallsInPlace.kt
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final suspend fun <Result> callOnceSuspending(block: R|suspend () -> Result|): R|Result|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|Result|>(R|<local>/block|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        try {
+            ^callOnceSuspending R|<local>/block|.R|SubstitutionOverride<kotlin/coroutines/SuspendFunction0.invoke: R|Result|>|()
+        }
+        finally {
+            R|kotlin/io/println|(String(some cleanup))
+        }
+
+    }

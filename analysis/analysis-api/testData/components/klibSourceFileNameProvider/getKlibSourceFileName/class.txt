@@ -1,0 +1,3 @@
+klib declarations:
+Classifier: other/Bar; klibSourceFile: Other.kt
+Classifier: some/Foo; klibSourceFile: Some.kt

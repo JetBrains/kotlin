@@ -2,7 +2,7 @@ RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -28,7 +28,7 @@ IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -54,7 +54,7 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -80,7 +80,7 @@ COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -106,7 +106,7 @@ SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -132,7 +132,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -158,7 +158,7 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -184,7 +184,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -210,7 +210,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -236,7 +236,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -247,7 +247,33 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    }
+
+                }
+                )
+            }
+
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -262,7 +288,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -273,7 +299,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -288,7 +314,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
@@ -299,7 +325,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -325,7 +351,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -334,3 +360,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideFunctionLiteralScript.kts
             }
 
         }
+

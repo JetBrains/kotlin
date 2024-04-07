@@ -1,0 +1,1 @@
+/deprecationWithComplexMessage.kt:(140,150): warning: '@Deprecated(...) fun deprecated(): Unit' is deprecated. Hello World.

@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] dataComponent2.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
     }
 
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
     }
 
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
         public? final operator [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun component2(): Boolean
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
     }
 
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
         public? final operator [ResolvedTo(COMPANION_GENERATION)] fun component2(): Boolean
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
     }
 
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
         public? final operator [ResolvedTo(SUPER_TYPES)] fun component2(): Boolean
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
     }
 
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
 
         public? final operator [ResolvedTo(TYPES)] fun component2(): R|kotlin/Boolean|
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
     }
 
@@ -203,6 +203,27 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
         public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component2(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2.kt
+    public final data [ResolvedTo(CONSTANT_EVALUATION)] class DataClass : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=DataClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(CONSTANT_EVALUATION)] fun component2(): R|kotlin/Boolean|
 
         public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 

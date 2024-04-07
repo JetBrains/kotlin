@@ -21,11 +21,14 @@ import kotlin.system.measureTimeMillis
  * Collect general configuration metrics
  **/
 internal fun collectGeneralConfigurationTimeMetrics(
+    project: Project,
     gradle: Gradle,
     buildReportOutputs: List<BuildReportType>,
     useClasspathSnapshot: Boolean,
     pluginVersion: String,
     isProjectIsolationEnabled: Boolean,
+    isProjectIsolationRequested: Boolean,
+    isConfigurationCacheRequested: Boolean
 ): MetricContainer {
     val configurationTimeMetrics = MetricContainer()
 
@@ -39,9 +42,10 @@ internal fun collectGeneralConfigurationTimeMetrics(
                 BuildReportType.HTTP -> configurationTimeMetrics.put(BooleanMetrics.HTTP_BUILD_REPORT, true)
                 BuildReportType.SINGLE_FILE -> configurationTimeMetrics.put(BooleanMetrics.SINGLE_FILE_BUILD_REPORT, true)
                 BuildReportType.TRY_NEXT_CONSOLE -> {}//ignore
+                BuildReportType.JSON -> configurationTimeMetrics.put(BooleanMetrics.JSON_BUILD_REPORT, true)
             }
         }
-        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
+        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH,  project.rootDir.absolutePath)
         configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
 
         //will be updated with KT-58266
@@ -51,6 +55,9 @@ internal fun collectGeneralConfigurationTimeMetrics(
                 configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
             }
         }
+
+        configurationTimeMetrics.put(BooleanMetrics.GRADLE_CONFIGURATION_CACHE_ENABLED, isConfigurationCacheRequested)
+        configurationTimeMetrics.put(BooleanMetrics.GRADLE_PROJECT_ISOLATION_ENABLED, isProjectIsolationRequested)
     }
     configurationTimeMetrics.put(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
 

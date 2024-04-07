@@ -114,7 +114,7 @@ object KotlinToJVMBytecodeCompiler {
             runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIR(environment, projectEnvironment, compilerConfiguration, chunk)
         } else {
             runFrontendAndGenerateIrUsingClassicFrontend(environment, compilerConfiguration, chunk)
-        } ?: return false
+        } ?: return true
         // K1/K2 common multi-chunk part
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
@@ -145,7 +145,7 @@ object KotlinToJVMBytecodeCompiler {
 
         for (input in codegenInputs) {
             // Codegen (per module)
-            outputs += runCodegen(input, input.state, codegenFactory, bindingContext, diagnosticsReporter, compilerConfiguration)
+            outputs += runCodegen(input, input.state, codegenFactory, diagnosticsReporter, compilerConfiguration)
         }
 
         return writeOutputsIfNeeded(project, compilerConfiguration, messageCollector, outputs, mainClassFqName)
@@ -186,7 +186,7 @@ object KotlinToJVMBytecodeCompiler {
                 factory,
                 input,
                 fir2IrAndIrActualizerResult.irModuleFragment.descriptor,
-                NoScopeRecordCliBindingTrace().bindingContext,
+                NoScopeRecordCliBindingTrace(project).bindingContext,
                 FirJvmBackendClassResolver(fir2IrAndIrActualizerResult.components),
                 FirJvmBackendExtension(
                     fir2IrAndIrActualizerResult.components,
@@ -309,7 +309,7 @@ object KotlinToJVMBytecodeCompiler {
             environment, environment.configuration, result.moduleDescriptor, result.bindingContext,
             environment.getSourceFiles(), null, codegenFactory, backendInput, diagnosticsReporter
         )
-        return runCodegen(input, input.state, codegenFactory, result.bindingContext, diagnosticsReporter, environment.configuration)
+        return runCodegen(input, input.state, codegenFactory, diagnosticsReporter, environment.configuration)
     }
 
     private fun convertToIr(environment: KotlinCoreEnvironment, result: AnalysisResult): Pair<CodegenFactory, CodegenFactory.BackendInput> {
@@ -383,7 +383,7 @@ object KotlinToJVMBytecodeCompiler {
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project,
                 sourceFiles,
-                NoScopeRecordCliBindingTrace(),
+                NoScopeRecordCliBindingTrace(project),
                 environment.configuration,
                 environment::createPackagePartProvider,
                 sourceModuleSearchScope = scope,
@@ -468,7 +468,6 @@ object KotlinToJVMBytecodeCompiler {
         codegenInput: CodegenFactory.CodegenInput,
         state: GenerationState,
         codegenFactory: CodegenFactory,
-        bindingContext: BindingContext,
         diagnosticsReporter: BaseDiagnosticsCollector,
         configuration: CompilerConfiguration,
     ): GenerationState {
@@ -489,10 +488,7 @@ object KotlinToJVMBytecodeCompiler {
 
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         AnalyzerWithCompilerReport.reportDiagnostics(
-            FilteredJvmDiagnostics(
-                state.collectedExtraJvmDiagnostics,
-                bindingContext.diagnostics
-            ),
+            state.collectedExtraJvmDiagnostics,
             messageCollector,
             configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )

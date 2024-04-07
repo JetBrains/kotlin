@@ -82,7 +82,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testCompareToNonnullableNotEq() throws Exception {
         loadText("fun foo(a: String?, b: String): Boolean = a != b");
         String text = generateToText();
-        assertTrue(text.contains("IXOR"));
+        assertTrue(text, text.contains("IXOR"));
         Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, "papa", "papa"));

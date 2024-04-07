@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.net.URLClassLoader
 import java.nio.file.Files
 
 class ScriptingWithCliCompilerTest {
 
     companion object {
         const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
+        val SIMPLE_TEST_SCRIPT = "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts"
     }
 
     init {
@@ -196,7 +198,7 @@ class ScriptingWithCliCompilerTest {
                                 "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScriptInstance.kt"
                             else
                                 "$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt",
-                            "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts"
+                            SIMPLE_TEST_SCRIPT
                         )
                     )
                 }
@@ -241,6 +243,54 @@ class ScriptingWithCliCompilerTest {
     }
 
     @Test
+    fun testAccessRegularSourceFromScript() {
+        withTempDir { tmpdir ->
+            val scriptPath = "$TEST_DATA_DIR/compiler/mixedCompilation/scriptAccessingNonScript.main.kts"
+            val ret =
+                CLITool.doMainNoExit(
+                    K2JVMCompiler(),
+                    arrayOf(
+                        "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+                        "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
+                        "-Xuse-fir-lt=false",
+                        "-Xallow-any-scripts-in-source-roots", "-verbose",
+                        "$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt",
+                        scriptPath,
+                    )
+                )
+            Assert.assertEquals(ExitCode.OK.code, ret.code)
+            val (out, _, _) = captureOutErrRet {
+                val cl = URLClassLoader((getMainKtsClassPath() + tmpdir).map { it.toURI().toURL() }.toTypedArray())
+                val klass = cl.loadClass("ScriptAccessingNonScript_main")
+                val ctor = klass.constructors.single()
+                ctor.newInstance(arrayOf<String>(), File(scriptPath))
+            }
+            Assert.assertEquals("OK", out.trim())
+        }
+    }
+
+    @Test
+    fun testAccessScriptFromRegularSource() {
+        withTempDir { tmpdir ->
+            val (_, err, ret) = captureOutErrRet {
+                CLITool.doMainNoExit(
+                    K2JVMCompiler(),
+                    arrayOf(
+                        "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+                        "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
+                        "-Xuse-fir-lt=false",
+                        "-Xallow-any-scripts-in-source-roots", "-verbose",
+                        "$TEST_DATA_DIR/compiler/mixedCompilation/nonScriptAccessingScript.kt",
+                        SIMPLE_TEST_SCRIPT
+                    )
+                )
+            }
+            println(err)
+            Assert.assertEquals(ExitCode.COMPILATION_ERROR.code, ret.code)
+        }
+    }
+
+    @Test
     fun testScriptMainKtsDiscovery() {
         withTempDir { tmpdir ->
 
@@ -256,7 +306,7 @@ class ScriptingWithCliCompilerTest {
                         )
                     )
                 }
-                Assert.assertEquals(0, ret.code)
+                Assert.assertEquals(ExitCode.OK.code, ret.code)
                 return err.linesSplitTrim()
             }
 
@@ -265,7 +315,7 @@ class ScriptingWithCliCompilerTest {
             val res1 = compileSuccessfullyGetStdErr("$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt")
             Assert.assertTrue(res1.none { it.startsWith(loadMainKtsMessage) })
 
-            val res2 = compileSuccessfullyGetStdErr("$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts")
+            val res2 = compileSuccessfullyGetStdErr(SIMPLE_TEST_SCRIPT)
             Assert.assertTrue(res2.any { it.startsWith(loadMainKtsMessage) })
         }
     }

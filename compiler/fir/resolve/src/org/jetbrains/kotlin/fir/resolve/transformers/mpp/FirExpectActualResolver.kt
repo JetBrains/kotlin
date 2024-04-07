@@ -58,8 +58,10 @@ object FirExpectActualResolver {
                             }
                         }
                     }
+                    val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
                     candidates.filter { expectSymbol ->
-                        actualSymbol != expectSymbol && (expectContainingClass != null /*match fake overrides*/ || expectSymbol.isExpect)
+                        actualSymbol != expectSymbol && (expectContainingClass != null /*match fake overrides*/ ||
+                                expectSymbol.isExpect && expectSymbol.moduleData in transitiveDependsOn)
                     }.groupBy { expectDeclaration ->
                         AbstractExpectActualMatcher.getCallablesMatchingCompatibility(
                             expectDeclaration,
@@ -79,7 +81,8 @@ object FirExpectActualResolver {
                 is FirClassLikeSymbol<*> -> {
                     val expectClassSymbol = useSiteSession.dependenciesSymbolProvider
                         .getClassLikeSymbolByClassId(actualSymbol.classId) as? FirRegularClassSymbol ?: return emptyMap()
-                    if (expectClassSymbol.isExpect) {
+                    val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
+                    if (expectClassSymbol.isExpect && expectClassSymbol.moduleData in transitiveDependsOn) {
                         val compatibility = AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol, actualSymbol, context)
                         mapOf(compatibility to listOf(expectClassSymbol))
                     } else {

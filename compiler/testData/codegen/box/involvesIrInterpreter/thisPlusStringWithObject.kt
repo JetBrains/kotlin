@@ -9,7 +9,7 @@ fun test1(): String {
     val test = Test
     val b = "test 1: " + test
 
-    if (a != b) return "<!EVALUATED("Fail 1: "")!>Fail 1: \"<!>$a<!EVALUATED("" != "")!>\" != \"<!>$b<!EVALUATED(""")!>\"<!>"
+    if (a != b) return "<!EVALUATED{IR}("Fail 1: "")!>Fail 1: \"<!>$a<!EVALUATED{IR}("" != "")!>\" != \"<!>$b<!EVALUATED{IR}(""")!>\"<!>"
     return "OK"
 }
 
@@ -19,17 +19,17 @@ fun test2(): String {
     val test = Test
     val b = "test 2: " + test.toString()
 
-    if (a != b) return "<!EVALUATED("Fail 2: "")!>Fail 2: \"<!>$a<!EVALUATED("" != "")!>\" != \"<!>$b<!EVALUATED(""")!>\"<!>"
+    if (a != b) return "<!EVALUATED{IR}("Fail 2: "")!>Fail 2: \"<!>$a<!EVALUATED{IR}("" != "")!>\" != \"<!>$b<!EVALUATED{IR}(""")!>\"<!>"
     return "OK"
 }
 
 fun test3(): String {
-    val a = "<!EVALUATED("test 3: ")!>test 3: <!>$Test"
+    val a = "<!EVALUATED{IR}("test 3: ")!>test 3: <!>$Test"
 
     val test = Test
-    val b = "<!EVALUATED("test 3: ")!>test 3: <!>$test"
+    val b = "<!EVALUATED{IR}("test 3: ")!>test 3: <!>$test"
 
-    if (a != b) return "<!EVALUATED("Fail 3: "")!>Fail 3: \"<!>$a<!EVALUATED("" != "")!>\" != \"<!>$b<!EVALUATED(""")!>\"<!>"
+    if (a != b) return "<!EVALUATED{IR}("Fail 3: "")!>Fail 3: \"<!>$a<!EVALUATED{IR}("" != "")!>\" != \"<!>$b<!EVALUATED{IR}(""")!>\"<!>"
     return "OK"
 }
 

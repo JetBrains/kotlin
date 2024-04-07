@@ -11,11 +11,17 @@ import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @KotlinTargetsDsl
 interface KotlinTargetsContainer {
     val targets: NamedDomainObjectCollection<KotlinTarget>
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @OptIn(InternalKotlinGradlePluginApi::class)
 @DeprecatedTargetPresetApi
 interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer {
@@ -26,6 +32,9 @@ interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer {
     val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface KotlinSourceSetContainer {
     val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }

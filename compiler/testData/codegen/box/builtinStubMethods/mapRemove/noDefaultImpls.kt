@@ -4,7 +4,6 @@
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // FULL_JDK
-// JVM_ABI_K1_K2_DIFF: KT-57301
 
 // There should be no DefaultImpls method for MutableMap.remove(K;V)
 interface A<K, V> : MutableMap<K, V>

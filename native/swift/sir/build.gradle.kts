@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 description = "Swift Intermediate Representation"
@@ -53,3 +54,11 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         this.module.generatedSourceDirs.add(generationRoot)
     }
 }
+
+if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
+    publish()
+}
+
+runtimeJar()
+sourcesJar()
+javadocJar()

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -38,14 +40,14 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
         )
 
         fun checkArgument(argument: FirExpression, isVararg: Boolean, expectedArrayType: ConeKotlinType) {
-            if (argument !is FirNamedArgumentExpression) return
-            if (argument.isSpread) {
+            if (!isNamedSpread(argument)) return
+            if (!argument.isFakeSpread && argument.isNamed) {
                 if (isVararg && (expression as? FirResolvable)?.calleeReference !is FirErrorNamedReference) {
                     reporter.reportOn(argument.expression.source, redundantSpreadWarningFactory, context)
                 }
                 return
             }
-            val type = argument.expression.resolvedType
+            val type = argument.expression.resolvedType.lowerBoundIfFlexible()
             if (type is ConeErrorType) return
             if (argument.expression is FirArrayLiteral) return
 
@@ -69,17 +71,25 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
 
         if (expression is FirArrayLiteral) {
             // FirArrayLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
-            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.resolvedType) }
+            expression.arguments.forEach { checkArgument(it, isVararg = isNamedSpread(it), expression.resolvedType) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return
             for ((argument, parameter) in argumentMap) {
                 if (!parameter.isVararg) continue
                 if (argument is FirVarargArgumentsExpression) {
-                    argument.arguments.forEach { checkArgument(it, true, parameter.returnTypeRef.coneType) }
+                    argument.arguments.forEach { checkArgument(it, isVararg = true, parameter.returnTypeRef.coneType) }
                 } else {
-                    checkArgument(argument, false, parameter.returnTypeRef.coneType)
+                    checkArgument(argument, isVararg = false, parameter.returnTypeRef.coneType)
                 }
             }
         }
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun isNamedSpread(expression: FirExpression): Boolean {
+        contract {
+            returns(true) implies (expression is FirSpreadArgumentExpression)
+        }
+        return expression is FirSpreadArgumentExpression && expression.isNamed
     }
 }

@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_REFERENCE
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.functionInliningPhase
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -22,15 +19,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
+import org.jetbrains.kotlin.ir.util.inlineDeclaration
+import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal val markNecessaryInlinedClassesAsRegenerated = makeIrModulePhase(
-    { context ->
-        if (!context.irInlinerIsEnabled()) return@makeIrModulePhase FileLoweringPass.Empty
-        MarkNecessaryInlinedClassesAsRegeneratedLowering(context)
-    },
+    ::MarkNecessaryInlinedClassesAsRegeneratedLowering,
     name = "MarkNecessaryInlinedClassesAsRegeneratedLowering",
     description = "Will scan all inlined functions and mark anonymous objects that must be later regenerated at backend",
     prerequisite = setOf(functionInliningPhase, createSeparateCallForInlinedLambdas)
@@ -38,7 +34,9 @@ internal val markNecessaryInlinedClassesAsRegenerated = makeIrModulePhase(
 
 class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(this)
+        if (context.config.enableIrInliner) {
+            irFile.acceptChildrenVoid(this)
+        }
     }
 
     override fun visitElement(element: IrElement) {

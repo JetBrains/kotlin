@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -81,9 +81,9 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
         // This is ok, because containerSource should be set during fir creation
         get() = fir.containerSource
 
-    fun getDeprecation(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
+    fun getDeprecation(session: FirSession): DeprecationsPerUseSite? {
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-        return fir.deprecationsProvider.getDeprecationsInfo(languageVersionSettings)
+        return fir.deprecationsProvider.getDeprecationsInfo(session)
     }
 
     private fun ensureType(typeRef: FirTypeRef?) {

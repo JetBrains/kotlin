@@ -28,10 +28,7 @@ abstract class AbstractFirParcelizeDiagnosticTestBase(val parser: FirParser) : A
 
         useConfigurators(::ParcelizeEnvironmentConfigurator)
 
-        useAfterAnalysisCheckers(
-            ::FirIdenticalChecker,
-            ::FirFailingTestSuppressor,
-        )
+        useAfterAnalysisCheckers(::FirFailingTestSuppressor)
 
         useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
     }

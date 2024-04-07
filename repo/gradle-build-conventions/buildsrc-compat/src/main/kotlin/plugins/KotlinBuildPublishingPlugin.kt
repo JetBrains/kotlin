@@ -14,8 +14,6 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
@@ -145,7 +143,38 @@ fun Project.configureDefaultPublishing(
         repositories {
             maven {
                 name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
-                url = file("${project.rootDir}/build/repo").toURI()
+
+                val repo: String? = project.properties["kotlin.build.deploy-repo"]?.toString() ?: project.properties["deploy-repo"]?.toString()
+                val repoProvider = when (repo) {
+                    "sonatype-nexus-staging" -> "sonatype"
+                    "sonatype-nexus-snapshots" -> "sonatype"
+                    else -> repo
+                }
+
+                val deployRepoUrl = (project.properties["kotlin.build.deploy-url"] ?: project.properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
+
+                val sonatypeSnapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots/".takeIf { repo == "sonatype-nexus-snapshots" }
+
+                val repoUrl: String by extra(
+                    (deployRepoUrl ?: sonatypeSnapshotsUrl ?: "file://${
+                        project.rootProject.layout.buildDirectory.dir("repo").get().asFile
+                    }").toString()
+                )
+
+                val username: String? by extra(
+                    project.properties["kotlin.build.deploy-username"]?.toString() ?: project.properties["kotlin.${repoProvider}.user"]?.toString()
+                )
+                val password: String? by extra(
+                    project.properties["kotlin.build.deploy-password"]?.toString() ?: project.properties["kotlin.${repoProvider}.password"]?.toString()
+                )
+
+                setUrl(repoUrl)
+                if (url.scheme != "file" && username != null && password != null) {
+                    credentials {
+                        this.username = username
+                        this.password = password
+                    }
+                }
             }
         }
     }
@@ -164,10 +193,6 @@ fun Project.configureDefaultPublishing(
             dependsOn(it)
         }
     }
-
-    tasks.withType<PublishToMavenRepository>()
-        .matching { it.name.endsWith("PublicationTo${KotlinBuildPublishingPlugin.REPOSITORY_NAME}Repository") }
-        .all { configureRepository() }
 }
 
 private fun Project.getSensitiveProperty(name: String): String? {
@@ -185,30 +210,6 @@ private fun Project.configureSigning() {
             useInMemoryPgpKeys(signKeyId, signKeyPrivate, signKeyPassphrase)
         } else {
             useGpgCmd()
-        }
-    }
-}
-
-fun TaskProvider<PublishToMavenRepository>.configureRepository() =
-    configure { configureRepository() }
-
-private fun PublishToMavenRepository.configureRepository() {
-    dependsOn(project.rootProject.tasks.named("preparePublication"))
-    notCompatibleWithConfigurationCache("Uses Task.project and Task.extensions")
-    doFirst {
-        val preparePublication = project.rootProject.tasks.named("preparePublication").get()
-        val username: String? by preparePublication.extra
-        val password: String? by preparePublication.extra
-        val repoUrl: String by preparePublication.extra
-
-        repository.apply {
-            url = project.uri(repoUrl)
-            if (url.scheme != "file" && username != null && password != null) {
-                credentials {
-                    this.username = username
-                    this.password = password
-                }
-            }
         }
     }
 }

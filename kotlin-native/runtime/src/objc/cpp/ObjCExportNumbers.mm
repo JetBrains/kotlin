@@ -16,14 +16,11 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSDictionary.h>
-#import <Foundation/NSError.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
 
 #import "ObjCExport.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 
 extern "C" {
 

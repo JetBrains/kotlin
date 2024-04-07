@@ -58,3 +58,4 @@ outTmp/
 /kotlin-native/dist
 kotlin-ide/
 .kotlin/
+.teamcity/

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.diagnostics.hasVar
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.canBeEvaluatedAtCompileTime
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getTargetAnnotation
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATI
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
+import org.jetbrains.kotlin.fir.expressions.canBeEvaluatedAtCompileTime
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -68,7 +68,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                         reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER, context)
                     }
                     val defaultValue = parameter.defaultValue
-                    if (defaultValue != null && !canBeEvaluatedAtCompileTime(defaultValue, context.session)) {
+                    if (defaultValue != null && !canBeEvaluatedAtCompileTime(defaultValue, context.session, allowErrors = true, calledOnCheckerStage = true)) {
                         reporter.reportOn(defaultValue.source, FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, context)
                     }
 

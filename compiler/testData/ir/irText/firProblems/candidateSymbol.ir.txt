@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/candidateSymbol.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY name:symbol visibility:public modality:ABSTRACT [val]
       overridden:
-        public abstract symbol: <root>.AbstractFirBasedSymbol<E of <root>.FirSymbolOwner>
+        public abstract symbol: <root>.AbstractFirBasedSymbol<E of <root>.FirSymbolOwner> declared in <root>.FirSymbolOwner
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-symbol> visibility:public modality:ABSTRACT <> ($this:<root>.FirCallableMemberDeclaration<F of <root>.FirCallableMemberDeclaration>) returnType:<root>.AbstractFirBasedSymbol<F of <root>.FirCallableMemberDeclaration>
         correspondingProperty: PROPERTY name:symbol visibility:public modality:ABSTRACT [val]
         overridden:

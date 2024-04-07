@@ -20,7 +20,8 @@ internal class NativeTestGroupingMessageCollector(
     delegate: MessageCollector
 ) : GroupingMessageCollector(
     delegate,
-    /*treatWarningsAsErrors =*/ false
+    /*treatWarningsAsErrors =*/ false,
+    /*reportAllWarnings =*/ false,
 ) {
     private var hasWarningsWithRaisedSeverity: Boolean = false
 

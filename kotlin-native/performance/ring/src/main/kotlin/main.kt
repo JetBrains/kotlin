@@ -142,6 +142,7 @@ class RingLauncher : Launcher() {
                     "ForLoops.floatArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { floatArrayLoop() }),
                     "ForLoops.charArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { charArrayLoop() }),
                     "ForLoops.stringLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { stringLoop() }),
+                    "ForLoops.stringArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { stringArrayLoop() }),
                     "ForLoops.uIntArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { uIntArrayLoop() }),
                     "ForLoops.uShortArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { uShortArrayLoop() }),
                     "ForLoops.uLongArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { uLongArrayLoop() }),

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference.model
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -46,14 +47,9 @@ class ConeLambdaArgumentConstraintPosition(
     }
 }
 
-
-class ConeBuilderInferenceSubstitutionConstraintPosition(initialConstraint: InitialConstraint) :
-    BuilderInferenceSubstitutionConstraintPosition<Nothing?>(null, initialConstraint) {
-    override fun toString(): String = "Incorporated builder inference constraint $initialConstraint " +
-            "into some call"
-}
-
-class ConeReceiverConstraintPosition(receiver: FirExpression) : ReceiverConstraintPosition<FirExpression>(receiver) {
+class ConeReceiverConstraintPosition(
+    receiver: FirExpression,
+    val source: KtSourceElement?,
+) : ReceiverConstraintPosition<FirExpression>(receiver) {
     override fun toString(): String = "Receiver ${argument.render()}"
-
 }

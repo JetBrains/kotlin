@@ -17,23 +17,11 @@
 package org.jetbrains.kotlin.codegen.inline
 
 object SMAPParser {
-    /*null smap means that there is no any debug info in file (e.g. sourceName)*/
-    @JvmStatic
-    fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
-        if (mappingInfo != null && mappingInfo.isNotEmpty()) {
-            parseOrNull(mappingInfo)?.let { return it }
-        }
-        if (source == null || source.isEmpty() || methodStartLine > methodEndLine) {
-            return SMAP(listOf())
-        }
-        val mapping = FileMapping(source, path).apply {
-            mapNewInterval(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1)
-        }
-        return SMAP(listOf(mapping))
-    }
-
     fun parseOrNull(mappingInfo: String): SMAP? =
-        parseStratum(mappingInfo, KOTLIN_STRATA_NAME, parseStratum(mappingInfo, KOTLIN_DEBUG_STRATA_NAME, null))
+        if (mappingInfo.isNotEmpty())
+            parseStratum(mappingInfo, KOTLIN_STRATA_NAME, parseStratum(mappingInfo, KOTLIN_DEBUG_STRATA_NAME, null))
+        else
+            null
 
     private class SMAPTokenizer(private val text: String, private val headerString: String) : Iterator<String> {
 

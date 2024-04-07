@@ -12,7 +12,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {

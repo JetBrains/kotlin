@@ -44,10 +44,10 @@ FILE fqName:test fileName:/test.kt
                       receiver: GET_VAR '<this>: test.C declared in test.C.g' type=test.C origin=null
     PROPERTY FAKE_OVERRIDE name:x visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final x: @[FlexibleNullability] kotlin.String?
+        protected/*protected and package*/ final x: @[FlexibleNullability] kotlin.String? declared in <root>.A.B
     PROPERTY FAKE_OVERRIDE name:y visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final y: @[FlexibleNullability] kotlin.String?
+        protected/*protected and package*/ final y: @[FlexibleNullability] kotlin.String? declared in <root>.A.B
   FUN name:eval visibility:public modality:FINAL <T> (f:kotlin.Function0<T of test.eval>) returnType:T of test.eval
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:f index:0 type:kotlin.Function0<T of test.eval>

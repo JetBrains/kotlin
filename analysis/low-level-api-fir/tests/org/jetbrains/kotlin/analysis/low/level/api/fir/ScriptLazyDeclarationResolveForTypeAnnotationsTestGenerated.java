@@ -632,6 +632,12 @@ public class ScriptLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
     }
 
     @Test
+    @TestMetadata("resultBodyAnnotation.kts")
+    public void testResultBodyAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/resultBodyAnnotation.kts");
+    }
+
+    @Test
     @TestMetadata("resultWithPropagatedType.kts")
     public void testResultWithPropagatedType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/resultWithPropagatedType.kts");

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
 import kotlin.io.path.writeText
@@ -147,7 +147,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             buildGradleKts.modify {
-                it.replace("wasmJs {", "wasmJs {\napplyBinaryen()")
+                it.replace("<JsEngine>", "d8")
             }
 
             build("assemble") {
@@ -161,6 +161,62 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTrue {
                     Files.size(original) > Files.size(optimized)
                 }
+            }
+        }
+    }
+
+    @DisplayName("Check js target with browser")
+    @GradleTest
+    fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "browser")
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsBrowserDistribution")
+
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/redefined-wasm-module-name.wasm")
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js")
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js.map")
+            }
+        }
+    }
+
+    @DisplayName("Check mix project with wasi only dependency works correctly")
+    @GradleTest
+    fun jsAndWasiTargetsWithDependencyOnWasiOnlyProject(gradleVersion: GradleVersion) {
+        project("wasm-wasi-js-with-wasi-only-dependency", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("build") {
+                assertTasksExecuted(":lib:compileKotlinWasmWasi")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmWasi")
+            }
+        }
+    }
+
+    @DisplayName("Wasi library")
+    @GradleTest
+    fun wasiLibrary(gradleVersion: GradleVersion) {
+        project("wasm-wasi-library", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build(":build") {
+                assertTasksExecuted(":compileProductionLibraryKotlinWasmWasi")
+                assertTasksExecuted(":compileKotlinWasmWasi")
+                assertTasksExecuted(":wasmWasiNodeTest")
+                assertTasksExecuted(":wasmWasiNodeProductionLibraryDistribution")
+
+                val dist = "build/dist/wasmWasi/productionLibrary"
+                assertFileExists(projectPath.resolve("$dist/foo.txt"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.wasm"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.wasm.map"))
+                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library-wasm-wasi.mjs"))
             }
         }
     }

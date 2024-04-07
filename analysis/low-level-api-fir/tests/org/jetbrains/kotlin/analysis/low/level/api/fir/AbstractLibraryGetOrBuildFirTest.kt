@@ -6,17 +6,16 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -24,7 +23,8 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.service
 
 abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
-    override val configurator = AnalysisApiFirLibraryBinaryTestConfigurator
+    override val configurator get() = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
+
     override fun configureTest(builder: TestConfigurationBuilder) {
         builder.forTestsMatching("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/*") {
             this.defaultsProviderBuilder.targetPlatform = JsPlatforms.defaultJsPlatform
@@ -36,12 +36,12 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
         }
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val declaration = getElementToSearch(mainFile, testServices.moduleStructure)!!
 
-        val module = ProjectStructureProvider.getModule(mainFile.project, mainFile, contextualModule = null)
-        val resolveSession = LLFirResolveSessionService.getInstance(mainFile.project).getFirResolveSessionForBinaryModule(module)
-        val symbolProvider = resolveSession.getSessionFor(module).symbolProvider
+        val ktModule = mainModule.ktModule
+        val resolveSession = LLFirResolveSessionService.getInstance(mainFile.project).getFirResolveSessionForBinaryModule(ktModule)
+        val symbolProvider = resolveSession.getSessionFor(ktModule).symbolProvider
         val fir = FirDeclarationForCompiledElementSearcher(symbolProvider).findNonLocalDeclaration(declaration)
 
         testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration, true))

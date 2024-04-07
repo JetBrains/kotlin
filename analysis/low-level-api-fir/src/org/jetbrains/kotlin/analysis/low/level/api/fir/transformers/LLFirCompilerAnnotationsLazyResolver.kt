@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeprecationProviderIsResolved
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -33,15 +30,9 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.util.PrivateForInline
 
 internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
-    override fun resolve(
+    override fun createTargetResolver(
         target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(target, lockProvider, scopeSession)
-        resolver.resolveDesignation()
-    }
+    ): LLFirTargetResolver = LLFirCompilerRequiredAnnotationsTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         when (target) {
@@ -51,12 +42,20 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
     }
 }
 
+/**
+ * This resolver is responsible for [COMPILER_REQUIRED_ANNOTATIONS][FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] phase.
+ *
+ * This resolver:
+ * - Transforms compiler required annotations of declarations.
+ * - Calculates [DeprecationsProvider].
+ *
+ * @see FirCompilerRequiredAnnotationsResolveTransformer
+ * @see FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
+ */
 private class LLFirCompilerRequiredAnnotationsTargetResolver(
     target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
     computationSession: LLFirCompilerRequiredAnnotationsComputationSession? = null,
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS, isJumpingPhase = false) {
+) : LLFirTargetResolver(target, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     inner class LLFirCompilerRequiredAnnotationsComputationSession : CompilerRequiredAnnotationsComputationSession() {
         override fun resolveAnnotationSymbol(symbol: FirRegularClassSymbol, scopeSession: ScopeSession) {
             val regularClass = symbol.fir
@@ -64,11 +63,8 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
             symbol.lazyResolveToPhase(resolverPhase.previous)
             val designation = regularClass.collectDesignation().asResolveTarget()
-            val targetSession = designation.target.llFirSession
             val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(
                 designation,
-                lockProvider,
-                targetSession.getScopeSession(),
                 this,
             )
 
@@ -80,7 +76,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
     private val transformer = FirCompilerRequiredAnnotationsResolveTransformer(
         resolveTargetSession,
-        scopeSession,
+        resolveTargetScopeSession,
         computationSession ?: LLFirCompilerRequiredAnnotationsComputationSession(),
     )
 
@@ -100,8 +96,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
         when (target) {
-            is FirFile -> return false
-            is FirRegularClass, is FirScript, is FirCodeFragment -> {}
+            is FirFile, is FirScript, is FirRegularClass, is FirCodeFragment -> {}
             else -> {
                 if (!target.isRegularDeclarationWithAnnotation) {
                     throwUnexpectedFirElementError(target)
@@ -110,13 +105,18 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         }
 
         requireIsInstance<FirAnnotationContainer>(target)
-        resolveTargetDeclaration(target)
+        if (target is FirFile) {
+            transformer.annotationTransformer.withFileAndFileScopes(target) {
+                resolveTargetDeclaration(target)
+            }
+        } else {
+            resolveTargetDeclaration(target)
+        }
 
         return true
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        if (target is FirFile) return
         throwUnexpectedFirElementError(target)
     }
 
@@ -214,7 +214,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             }
 
             for ((declaration, annotations) in annotationMap) {
-                if (declaration is FirProperty || declaration is FirFileAnnotationsContainer) continue
+                if (declaration is FirProperty || declaration is FirFile) continue
 
                 requireIsInstance<FirAnnotationContainer>(declaration)
                 deprecations[declaration] = declaration.extractDeprecationInfoPerUseSite(

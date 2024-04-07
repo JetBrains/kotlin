@@ -12,6 +12,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 import java.nio.file.Path
@@ -25,7 +26,7 @@ private const val KLIB_PROPERTY_COMPILER_VERSION = "compiler_version"
 //region Project properties.
 
 val Project.platformManager
-    get() = findProperty("platformManager") as PlatformManager
+    get() = extensions.getByType<PlatformManager>()
 
 val Project.testTarget
     get() = findProperty("target") as? KonanTarget ?: HostManager.host
@@ -324,9 +325,6 @@ fun targetSupportsLibBacktrace(targetName: String) =
 fun targetSupportsCoreSymbolication(targetName: String) =
     HostManager().targetByName(targetName).supportsCoreSymbolication()
 
-fun targetSupportsThreads(targetName: String) =
-    HostManager().targetByName(targetName).supportsThreads()
-
 fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir: File) {
     delete(objDir)
     delete(output)
@@ -334,7 +332,7 @@ fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir:
     val platform = platformManager.platform(testTarget)
 
     objDir.mkdirs()
-    ExecClang.create(project).execClangForCompilerTests(testTarget) {
+    ExecClang.create(project.objects, project.platformManager).execClangForCompilerTests(testTarget) {
         args = listOf("-c", *cSources.map { it.absolutePath }.toTypedArray())
         workingDir(objDir)
     }

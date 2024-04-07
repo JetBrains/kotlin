@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/kt16904.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: <root>.B
+        public final x: <root>.B declared in <root>.A
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -116,7 +116,7 @@ FILE fqName:<root> fileName:/kt16904.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final y: kotlin.Int
+        public final y: kotlin.Int declared in <root>.A
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:
@@ -154,4 +154,4 @@ FILE fqName:<root> fileName:/kt16904.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final field: kotlin.Int
+        public final field: kotlin.Int declared in <root>.J

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatformUnspecifiedTarget
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 
 enum class TargetPlatformEnum(val targetPlatform: TargetPlatform) {
     Common(
@@ -31,5 +32,6 @@ enum class TargetPlatformEnum(val targetPlatform: TargetPlatform) {
     JVM_1_8(JvmPlatforms.jvm8),
 
     JS(JsPlatforms.defaultJsPlatform),
+    Wasm(WasmPlatforms.Default),
     Native(NativePlatforms.unspecifiedNativePlatform)
 }

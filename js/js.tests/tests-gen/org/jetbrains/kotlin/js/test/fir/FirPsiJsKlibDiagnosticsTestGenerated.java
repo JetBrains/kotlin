@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -26,9 +25,21 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
   }
 
   @Test
-  @TestMetadata("signatureClash.kt")
-  public void testSignatureClash() {
-    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash.kt");
+  @TestMetadata("signatureClashClasses.kt")
+  public void testSignatureClashClasses() {
+    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("signatureClashFunctions.kt")
+  public void testSignatureClashFunctions() {
+    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("signatureClashVariables.kt")
+  public void testSignatureClashVariables() {
+    runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClashVariables.kt");
   }
 
   @Test

@@ -6,7 +6,7 @@
 // This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
 // DO NOT MODIFY IT MANUALLY.
 
-@file:Suppress("DuplicatedCode", "unused")
+@file:Suppress("DuplicatedCode")
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
@@ -44,7 +44,7 @@ internal class FirSimpleFunctionImpl(
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
-    override var contractDescription: FirContractDescription,
+    override var contractDescription: FirContractDescription?,
     override val name: Name,
     override val symbol: FirNamedFunctionSymbol,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -65,7 +65,7 @@ internal class FirSimpleFunctionImpl(
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
-        contractDescription.accept(visitor, data)
+        contractDescription?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
     }
@@ -110,7 +110,7 @@ internal class FirSimpleFunctionImpl(
     }
 
     override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        contractDescription = contractDescription.transform(transformer, data)
+        contractDescription = contractDescription?.transform(transformer, data)
         return this
     }
 
@@ -157,7 +157,7 @@ internal class FirSimpleFunctionImpl(
         body = newBody
     }
 
-    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+    override fun replaceContractDescription(newContractDescription: FirContractDescription?) {
         contractDescription = newContractDescription
     }
 

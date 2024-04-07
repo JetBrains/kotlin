@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.overrides
 
+import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Contract
@@ -50,15 +51,12 @@ class IrJavaIncompatibilityRulesOverridabilityCondition : IrExternalOverridabili
     }
 
     private fun isJvmParameterTypePrimitive(function: IrSimpleFunction, index: Int): Boolean {
-        // K1's JavaIncompatibilityRulesOverridabilityCondition also performs some extra checks, which are missing here:
-        // 1) isPrimitiveCompareTo. This is not needed in case of IR fake overrides as long as we're not using IrFakeOverrideBuilder
-        //    to build overrides for lazy IR, in particular for built-in classes (however this may change in KT-64352).
-        // 2) forceSingleValueParameterBoxing. This makes the only parameter of `remove(Int)` in a subclass of `MutableCollection<Int>`
-        //    non-primitive. It's unclear what exactly it affects if overrides are built over IR.
-        // TODO (KT-65100): investigate whether forceSingleValueParameterBoxing is needed here and test properly.
-
+        // K1's JavaIncompatibilityRulesOverridabilityCondition also performs an extra check in isPrimitiveCompareTo.
+        // It is not needed here as long as we're not using IrFakeOverrideBuilder to build overrides for lazy IR,
+        // in particular for built-in classes (however this may change in KT-64352).
         val type = function.valueParameters[index].type
         return type.isPrimitiveType() && !type.hasAnnotation(StandardClassIds.Annotations.FlexibleNullability)
                 && !type.hasAnnotation(StandardClassIds.Annotations.EnhancedNullability)
+                && !MethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(function)
     }
 }

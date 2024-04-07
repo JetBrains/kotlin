@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitBodyTargetResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitTypesLazyResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -23,8 +21,6 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 internal class LLFirReturnTypeCalculatorWithJump(
     scopeSession: ScopeSession,
     implicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession,
-    private val lockProvider: LLFirLockProvider,
-    private val towerDataContextCollector: FirResolveContextCollector?,
 ) : ReturnTypeCalculatorWithJump(scopeSession, implicitBodyResolveComputationSession) {
     override fun resolveDeclaration(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         if (declaration.returnTypeRef !is FirImplicitTypeRef) {
@@ -34,26 +30,25 @@ internal class LLFirReturnTypeCalculatorWithJump(
         declaration.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE.previous)
 
         val designation = declaration.collectDesignation().asResolveTarget()
-        val targetSession = designation.target.llFirSession
         val computationSession = implicitBodyResolveComputationSession as LLImplicitBodyResolveComputationSession
         val resolver = LLFirImplicitBodyTargetResolver(
             designation,
-            lockProvider = lockProvider,
-            scopeSession = targetSession.getScopeSession(),
-            firResolveContextCollector = towerDataContextCollector,
             llImplicitBodyResolveComputationSessionParameter = computationSession,
         )
 
-        lockProvider.withGlobalPhaseLock(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
-            resolver.resolveDesignation()
-        }
+        resolver.resolveDesignation()
 
         // Report recursion error if we found cycle during resolution
         if (computationSession.popCycledSymbolIfExists() == declaration.symbol) {
             return recursionInImplicitTypeRef()
         }
 
-        LLFirImplicitTypesLazyResolver.checkIsResolved(designation)
+        LLFirImplicitTypesLazyResolver.checkIsResolved(declaration)
         return declaration.returnTypeRef as FirResolvedTypeRef
+    }
+
+    override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef {
+        checkCanceled()
+        return super.tryCalculateReturnTypeOrNull(declaration)
     }
 }

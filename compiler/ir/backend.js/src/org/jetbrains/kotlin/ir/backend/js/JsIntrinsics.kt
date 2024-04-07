@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -281,7 +281,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsArrayIteratorFunction = getInternalFunction("arrayIterator")
 
     val jsPrimitiveArrayIteratorFunctions =
-        PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator") }
+        PrimitiveType.entries.associate { it to getInternalFunction("${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator") }
 
     val jsClass = getInternalFunction("jsClassIntrinsic")
     val arrayLiteral: IrSimpleFunctionSymbol = getInternalFunction("arrayLiteral")
@@ -303,10 +303,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         override val createContravariantKTypeProjection = getInternalWithoutPackageOrNull("createContravariantKTypeProjection")
         override val getKClass = getInternalWithoutPackage("getKClass")
         override val getKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
-        override val primitiveClassesObject = context.getIrClass(FqName("kotlin.reflect.js.internal.PrimitiveClasses"))
         override val kTypeClass: IrClassSymbol = context.getIrClass(FqName("kotlin.reflect.KType"))
-        override val getClassData: IrSimpleFunctionSymbol get() = jsClass
     }
+
+    val primitiveClassesObject = context.getIrClass(FqName("kotlin.reflect.js.internal.PrimitiveClasses"))
 
     internal val reflectionSymbols: JsReflectionSymbols = JsReflectionSymbols()
 
@@ -321,14 +321,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     )
 
     val primitiveToSizeConstructor =
-        PrimitiveType.values().associate { type ->
+        PrimitiveType.entries.associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
                 getInternalFunction("${it.toLowerCaseAsciiOnly()}Array")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}Array"))
         }
 
     val primitiveToLiteralConstructor =
-        PrimitiveType.values().associate { type ->
+        PrimitiveType.entries.associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
                 getInternalFunction("${it.toLowerCaseAsciiOnly()}ArrayOf")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf"))
@@ -400,10 +400,20 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsBoxApplySymbol = getInternalFunction("boxApply")
     val jsCreateExternalThisSymbol = getInternalFunction("createExternalThis")
 
-    // Helpers:
+    // Collections interop:
+    val jsCreateListFrom = getInternalCollectionFunction("createListFrom")
+    val jsCreateMutableListFrom = getInternalCollectionFunction("createMutableListFrom")
+    val jsCreateSetFrom = getInternalCollectionFunction("createSetFrom")
+    val jsCreateMutableSetFrom = getInternalCollectionFunction("createMutableSetFrom")
+    val jsCreateMapFrom = getInternalCollectionFunction("createMapFrom")
+    val jsCreateMutableMapFrom = getInternalCollectionFunction("createMutableMapFrom")
 
+    // Helpers:
     private fun getInternalFunction(name: String) =
         context.symbolTable.descriptorExtension.referenceSimpleFunction(context.getJsInternalFunction(name))
+
+    private fun getInternalCollectionFunction(name: String) =
+        context.symbolTable.descriptorExtension.referenceSimpleFunction(context.getJsInternalCollectionFunction(name))
 
     private fun getInternalProperty(name: String) =
         context.symbolTable.descriptorExtension.referenceProperty(context.getJsInternalProperty(name))

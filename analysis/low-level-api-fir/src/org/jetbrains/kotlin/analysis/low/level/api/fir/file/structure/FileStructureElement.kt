@@ -19,15 +19,42 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-internal sealed class FileStructureElement {
-    abstract val mappings: KtToFirMapping
-    abstract val diagnostics: FileStructureElementDiagnostics
+/**
+ * Collects [KT -> FIR][KtToFirMapping] mapping and [diagnostics][FileStructureElementDiagnostics] for [declaration].
+ *
+ * @param declaration is a fully resolved declaration
+ *
+ * @see FileStructure
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnosticsCollector
+ */
+internal sealed class FileStructureElement(
+    val declaration: FirDeclaration,
+    val diagnostics: FileStructureElementDiagnostics,
+) {
+    init {
+        val actualResolvePhase = declaration.resolvePhase
+        requireWithAttachment(
+            actualResolvePhase == FirResolvePhase.BODY_RESOLVE,
+            {
+                """
+                    ${this::class.simpleName} can be created only for fully resolved declaration.
+                    Actual phase: $actualResolvePhase
+                """.trimIndent()
+            },
+        ) {
+            withFirEntry("declaration", declaration)
+        }
+    }
+
+    val mappings: KtToFirMapping = KtToFirMapping(declaration)
 
     companion object {
-        fun recorderFor(fir: FirElement): FirElementsRecorder = when (fir) {
+        fun recorderFor(fir: FirDeclaration): FirElementsRecorder = when (fir) {
             is FirFile -> RootStructureElement.Recorder
             is FirScript -> RootScriptStructureElement.Recorder
             is FirRegularClass -> ClassDeclarationStructureElement.Recorder(fir)
@@ -36,7 +63,7 @@ internal sealed class FileStructureElement {
     }
 }
 
-internal class KtToFirMapping(firElement: FirElement) {
+internal class KtToFirMapping(firElement: FirDeclaration) {
     private val mapping = FirElementsRecorder.recordElementsFrom(
         firElement = firElement,
         recorder = FileStructureElement.recorderFor(firElement),
@@ -55,52 +82,52 @@ internal class KtToFirMapping(firElement: FirElement) {
             current is KtDotQualifiedExpression ||
             current is KtNullableType
         ) {
-            // We are still referring to the same element with possible type parameter/name qualification/nullability, hence it is always
-            // sane to return corresponding element if present
+            // We are still referring to the same element with possible type parameter/name qualification/nullability,
+            // hence it is always correct to return a corresponding element if present
             if (current is KtElement) getElement(current)?.let { return it }
             current = current.parent
         }
 
         // Here current is the lowest ancestor that has different corresponding text
         return when (current) {
-            // Constants with unary operation (i.e. +1 or -1) are saved as leaf element of FIR tree
+            // Constants with unary operation (i.e., +1 or -1) are saved as a leaf element of FIR tree
             is KtPrefixExpression,
-            // There is no separate element for annotation construction call
+                // There is no separate element for annotation construction call
             is KtAnnotationEntry,
-            // We replace source for selector for that of whole expression
+                // We replace a source for selector with the whole expression
             is KtSafeQualifiedExpression,
-            // Top level destructuring declarations does not have FIR for r-value at the moment, would probably be changed later
+                // Top level destructuring declarations do not have FIR for r-value at the moment, would probably be changed later
             is KtDestructuringDeclaration,
-            // There is no separate FIR node for this in this@foo expressions, same for super@Foo
+                // There is no separate FIR node for this in this@foo expressions, same for super@Foo
             is KtThisExpression,
             is KtSuperExpression,
-            // Part of path in import/package directives has no FIR node
+                // Part of the path in import/package directives has no FIR node
             is KtImportDirective,
             is KtPackageDirective,
-            // Super type refs are not recorded
+                // Super type refs are not recorded
             is KtSuperTypeCallEntry,
-            // this/super in delegation calls are not part of FIR tree, this(args) is
+                // this/super in delegation calls are not part of FIR tree, this(args) is
             is KtConstructorDelegationCall,
-            // In case of type projection we are not recording corresponding type reference
+                // In case of type projection we are not recording the corresponding type reference
             is KtTypeProjection,
-            // If we have, say, A(), reference A is not recorded, while call A() is recorded
-            is KtCallExpression ->
-                getElement(current as KtElement)
+                // If we have, say, A(), reference A is not recorded, while call A() is recorded
+            is KtCallExpression,
+            -> getElement(current as KtElement)
             is KtBinaryExpression ->
                 // Here there is no separate FIR node for partial operator calls (like for a[i] = 1, there is no separate node for a[i])
                 if (element is KtArrayAccessExpression || element is KtOperationReferenceExpression) getElement(current) else null
             is KtBlockExpression ->
-                // For script initializers we need to return FIR element for script itself
+                // For script initializers, we need to return FIR element for script itself
                 if (element is KtScriptInitializer) getElement(current.parent as KtScript) else null
             is PsiErrorElement -> {
                 val parent = current.parent
                 if (parent is KtDestructuringDeclaration) getElement(parent) else null
             }
-            // Value argument names and corresponding references are not part of FIR tree
+            // Value argument names and corresponding references are not part of the FIR tree
             is KtValueArgumentName -> getElement(current.parent as KtValueArgument)
             is KtContainerNode -> {
                 val parent = current.parent
-                // Labels in labeled expression (i.e. return@foo) has no FIR node
+                // Labels in labeled expression (i.e., return@foo) have no FIR node
                 if (parent is KtExpressionWithLabel) getElement(parent) else null
             }
             // Enum entries/annotation entries constructor calls
@@ -112,21 +139,20 @@ internal class KtToFirMapping(firElement: FirElement) {
     }
 }
 
-internal sealed class DeclarationBaseStructureElement<F : FirDeclaration>(val declaration: F) : FileStructureElement() {
-    override val mappings: KtToFirMapping = KtToFirMapping(declaration)
-}
-
 internal class RootScriptStructureElement(
     file: FirFile,
     script: FirScript,
     moduleComponents: LLFirModuleResolveComponents,
-) : DeclarationBaseStructureElement<FirScript>(script) {
-    override val diagnostics: FileStructureElementDiagnostics = FileStructureElementDiagnostics(
-        file,
-        ScriptDiagnosticRetriever(declaration),
-        moduleComponents,
-    )
-
+) : FileStructureElement(
+    declaration = script,
+    diagnostics = FileStructureElementDiagnostics(
+        ScriptDiagnosticRetriever(
+            declaration = script,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
+) {
     object Recorder : FirElementsRecorder() {
         override fun visitScript(script: FirScript, data: MutableMap<KtElement, FirElement>) {
             cacheElement(script, data)
@@ -144,13 +170,16 @@ internal class ClassDeclarationStructureElement(
     file: FirFile,
     clazz: FirRegularClass,
     moduleComponents: LLFirModuleResolveComponents,
-) : DeclarationBaseStructureElement<FirRegularClass>(clazz) {
-    override val diagnostics = FileStructureElementDiagnostics(
-        file,
-        ClassDiagnosticRetriever(declaration),
-        moduleComponents,
-    )
-
+) : FileStructureElement(
+    declaration = clazz,
+    diagnostics = FileStructureElementDiagnostics(
+        ClassDiagnosticRetriever(
+            declaration = clazz,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
+) {
     class Recorder(private val firClass: FirRegularClass) : FirElementsRecorder() {
         override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
         }
@@ -193,13 +222,16 @@ internal class DeclarationStructureElement(
     file: FirFile,
     declaration: FirDeclaration,
     moduleComponents: LLFirModuleResolveComponents,
-) : DeclarationBaseStructureElement<FirDeclaration>(declaration) {
-    override val diagnostics = FileStructureElementDiagnostics(
-        file,
-        SingleNonLocalDeclarationDiagnosticRetriever(declaration),
-        moduleComponents,
-    )
-
+) : FileStructureElement(
+    declaration = declaration,
+    diagnostics = FileStructureElementDiagnostics(
+        SingleNonLocalDeclarationDiagnosticRetriever(
+            declaration = declaration,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
+) {
     object Recorder : FirElementsRecorder() {
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
             super.visitConstructor(constructor, data)
@@ -216,12 +248,18 @@ internal class DeclarationStructureElement(
 }
 
 internal class RootStructureElement(
-    val file: FirFile,
+    file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElement() {
-    override val mappings = KtToFirMapping(file)
-    override val diagnostics = FileStructureElementDiagnostics(file, FileDiagnosticRetriever, moduleComponents)
-
+) : FileStructureElement(
+    declaration = file,
+    diagnostics = FileStructureElementDiagnostics(
+        FileDiagnosticRetriever(
+            declaration = file,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
+) {
     object Recorder : FirElementsRecorder() {
         override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
             if (element !is FirDeclaration || element is FirFile) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.deserialization.AbstractAnnotationDeserializerWithTypeAnnotations
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 
 class KlibBasedAnnotationDeserializer(session: FirSession) :

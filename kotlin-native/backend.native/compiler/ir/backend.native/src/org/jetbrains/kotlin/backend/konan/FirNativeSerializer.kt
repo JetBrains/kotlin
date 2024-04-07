@@ -71,7 +71,7 @@ internal fun PhaseContext.firSerializerBase(
                         sourceBaseDirs = sourceBaseDirs,
                         languageVersionSettings = languageVersionSettings,
                         bodiesOnlyForInlines = produceHeaderKlib,
-                        skipPrivateApi = produceHeaderKlib,
+                        publicAbiOnly = produceHeaderKlib,
                         shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
                 )
             },

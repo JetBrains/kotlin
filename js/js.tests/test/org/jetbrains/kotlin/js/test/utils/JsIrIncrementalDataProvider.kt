@@ -57,8 +57,8 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     fun getCaches() = icCache.map { it.value.fetchArtifacts() }
 
     fun getCacheForModule(module: TestModule): Map<String, ByteArray> {
-        val path = JsEnvironmentConfigurator.getJsKlibArtifactPath(testServices, module.name)
-        val canonicalPath = File(path).canonicalPath
+        val path = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
+        val canonicalPath = path.canonicalPath
         val moduleCache = icCache[canonicalPath] ?: error("No cache found for $path")
 
         val oldBinaryAsts = mutableMapOf<String, ByteArray>()
@@ -94,7 +94,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         recordIncrementalDataForRuntimeKlib(module)
 
         val dirtyFiles = module.files.map { "/${it.relativePath}" }
-        val path = JsEnvironmentConfigurator.getJsKlibArtifactPath(testServices, module.name)
+        val path = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).path
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)

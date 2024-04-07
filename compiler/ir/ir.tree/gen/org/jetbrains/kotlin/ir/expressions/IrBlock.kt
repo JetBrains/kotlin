@@ -11,8 +11,6 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.block]
  */
 abstract class IrBlock : IrContainerExpression() {

@@ -104,6 +104,11 @@ internal object FirElementFinder {
 
                     subDeclaration is FirScript -> {
                         path += subDeclaration
+                        val scriptParameters = subDeclaration.parameters
+                        if (find(scriptParameters, classIdPathIndex)) {
+                            return true
+                        }
+
                         val scriptDeclarations = subDeclaration.declarations
                         if (find(scriptDeclarations, classIdPathIndex)) {
                             return true

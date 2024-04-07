@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -184,11 +183,13 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     append(": ")
                     append(type.renderTypeWithRenderer(null, options))
                 }
+                append(' ')
 
                 if (options.printFlagsInDeclarationReferences) {
-                    append(' ')
                     append(declaration.renderPropertyFlags())
                 }
+
+                renderDeclaredIn(declaration)
             }
 
         override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
@@ -743,7 +744,7 @@ private fun IrFunction.renderTypeParameters(): String =
 private val IrFunction.safeReturnType: IrType?
     get() = try {
         returnType
-    } catch (e: ReturnTypeIsNotInitializedException) {
+    } catch (e: UninitializedPropertyAccessException) {
         null
     }
 

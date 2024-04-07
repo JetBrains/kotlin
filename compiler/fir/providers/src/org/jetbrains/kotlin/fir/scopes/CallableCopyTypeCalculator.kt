@@ -5,45 +5,59 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
+/**
+ * A utility class that, depending on the implementation, calculates the return type of callable copies,
+ * (substitution/intersection overrides, delegated members, and enhanced Java declarations) and returns it.
+ *
+ * See [FirDeclarationAttributes.deferredCallableCopyReturnType].
+ */
 abstract class CallableCopyTypeCalculator {
+    /**
+     * Returns the [FirTypeRef] for [FirCallableDeclaration.returnTypeRef] of the [declaration].
+     *
+     * Depending on the implementation, this call might invoke a deferred computation of the return type
+     * (see [FirDeclarationAttributes.deferredCallableCopyReturnType]).
+     *
+     * A return value of `null` signifies that the calculation has failed or that no deferred computation was stored
+     * and the return type could not be resolved ordinarily.
+     */
     abstract fun computeReturnType(declaration: FirCallableDeclaration): FirTypeRef?
 
+    fun computeReturnTypeOrNull(declaration: FirCallableDeclaration): ConeKotlinType? {
+        return computeReturnType(declaration)?.coneTypeOrNull
+    }
+
+    /**
+     * Doesn't perform any calculation and returns [FirCallableDeclaration.returnTypeRef].
+     */
     object DoNothing : CallableCopyTypeCalculator() {
         override fun computeReturnType(declaration: FirCallableDeclaration): FirTypeRef {
             return declaration.returnTypeRef
         }
     }
 
-    abstract class AbstractCallableCopyTypeCalculator : CallableCopyTypeCalculator() {
+    /**
+     * If necessary, runs the computation saved in [FirDeclarationAttributes.deferredCallableCopyReturnType] and returns a [FirResolvedTypeRef].
+     */
+    abstract class DeferredCallableCopyTypeCalculator : CallableCopyTypeCalculator() {
         override fun computeReturnType(declaration: FirCallableDeclaration): FirResolvedTypeRef? {
-            val callableCopyDeferredTypeCalculation = declaration.attributes.callableCopyDeferredTypeCalculation
+            val callableCopyDeferredTypeCalculation = declaration.attributes.deferredCallableCopyReturnType
                 ?: return declaration.getResolvedTypeRef()
 
             // TODO: drop synchronized in KT-60385
             synchronized(callableCopyDeferredTypeCalculation) {
-                if (declaration.attributes.callableCopyDeferredTypeCalculation == null) {
+                if (declaration.attributes.deferredCallableCopyReturnType == null) {
                     return declaration.returnTypeRef as FirResolvedTypeRef
                 }
 
-                val returnType = when (callableCopyDeferredTypeCalculation) {
-                    is CallableCopySubstitution -> computeSubstitution(callableCopyDeferredTypeCalculation)
-                    is CallableCopyIntersection -> computeIntersection(callableCopyDeferredTypeCalculation)
-                } ?: return null
+                val returnType = callableCopyDeferredTypeCalculation.computeReturnType(this) ?: return null
                 val returnTypeRef = declaration.returnTypeRef.resolvedTypeFromPrototype(returnType)
 
                 declaration.replaceReturnTypeRef(returnTypeRef)
@@ -52,33 +66,19 @@ abstract class CallableCopyTypeCalculator {
                     declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnTypeRef)
                 }
 
-                declaration.attributes.callableCopyDeferredTypeCalculation = null
+                declaration.attributes.deferredCallableCopyReturnType = null
 
                 return returnTypeRef
-            }
-        }
-
-        private fun computeSubstitution(callableCopySubstitutionForTypeUpdater: CallableCopySubstitution): ConeKotlinType? {
-            val (substitutor, baseSymbol) = callableCopySubstitutionForTypeUpdater
-            val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
-            val baseReturnType = computeReturnType(baseDeclaration)?.type ?: return null
-            val coneType = substitutor.substituteOrSelf(baseReturnType)
-
-            return coneType
-        }
-
-        private fun computeIntersection(callableCopyIntersection: CallableCopyIntersection): ConeKotlinType? {
-            val (mostSpecific, session) = callableCopyIntersection
-            return FirTypeIntersectionScopeContext.intersectReturnTypes(mostSpecific, session) {
-                computeReturnType(this)?.type
             }
         }
 
         protected abstract fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef?
     }
 
-
-    object Forced : AbstractCallableCopyTypeCalculator() {
+    /**
+     * See [DeferredCallableCopyTypeCalculator].
+     */
+    object Forced : DeferredCallableCopyTypeCalculator() {
         override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef? {
             return returnTypeRef as? FirResolvedTypeRef
         }
@@ -87,24 +87,19 @@ abstract class CallableCopyTypeCalculator {
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
-private object CallableCopyDeferredReturnTypeCalculationKey : FirDeclarationDataKey()
+private object DeferredCallableCopyReturnTypeKey : FirDeclarationDataKey()
 
-var FirDeclarationAttributes.callableCopyDeferredTypeCalculation: CallableCopyDeferredReturnTypeCalculation? by FirDeclarationDataRegistry.attributesAccessor(
-    CallableCopyDeferredReturnTypeCalculationKey
+var FirDeclarationAttributes.deferredCallableCopyReturnType: DeferredCallableCopyReturnType? by FirDeclarationDataRegistry.attributesAccessor(
+    DeferredCallableCopyReturnTypeKey
 )
 
-sealed class CallableCopyDeferredReturnTypeCalculation
-
-data class CallableCopySubstitution internal constructor(
-    val substitutor: ConeSubstitutor,
-    val baseSymbol: FirBasedSymbol<*>
-) : CallableCopyDeferredReturnTypeCalculation()
-
-data class CallableCopyIntersection internal constructor(
-    val mostSpecific: Collection<FirCallableSymbol<*>>,
-    val session: FirSession,
-) : CallableCopyDeferredReturnTypeCalculation() {
-    override fun toString(): String {
-        return "CallableCopyIntersection(mostSpecific=$mostSpecific)"
-    }
+abstract class DeferredCallableCopyReturnType {
+    /**
+     * Performs a deferred computation some declaration's return type.
+     *
+     * [calc] must be used for the return type calculation of overridden members which might recursively trigger the computation of
+     * deferred return types.
+     */
+    abstract fun computeReturnType(calc: CallableCopyTypeCalculator): ConeKotlinType?
 }
+

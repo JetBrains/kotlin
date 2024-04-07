@@ -26,14 +26,13 @@ public sealed interface EnumEntries<E : Enum<E>> : List<E>
 /**
  * Returns [EnumEntries] list containing all enum entries for the given enum type [T].
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.0")
 public inline fun <reified T : Enum<T>> enumEntries(): EnumEntries<T> = enumEntriesIntrinsic()
 
 @PublishedApi
-@ExperimentalStdlibApi
 @SinceKotlin("1.9")
-internal expect inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>
+internal expect fun <T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>
 
 @PublishedApi
 @SinceKotlin("1.8") // Used by pre-1.9.0 JVM compiler for the feature in preview mode. Can be safely removed around 2.1

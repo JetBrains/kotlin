@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
       overridden:
-        public abstract bar: kotlin.Int
+        public abstract bar: kotlin.Int declared in <root>.IBase
       FUN DELEGATED_MEMBER name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.Test<TT of <root>.Test>) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
         overridden:

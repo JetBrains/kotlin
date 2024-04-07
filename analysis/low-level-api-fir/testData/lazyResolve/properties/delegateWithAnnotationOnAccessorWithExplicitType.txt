@@ -248,6 +248,31 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
+    field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] var foo: R|kotlin/Int|by LAZY_EXPRESSION
+        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? operator [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+        public? final? operator [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var foo: R|kotlin/Int|by LAZY_EXPRESSION

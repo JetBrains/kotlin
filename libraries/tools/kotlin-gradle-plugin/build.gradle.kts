@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -24,13 +23,32 @@ kotlin {
                 "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
                 "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
+                "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             )
         )
+    }
+
+    tasks.named<Test>("test") {
+        useJUnit {
+            exclude("**/*LincheckTest.class")
+        }
+    }
+
+    tasks.register<Test>("lincheckTest") {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+
+        jvmArgs(
+            "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
+            "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
+            "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
+        )
+        filter { include("**/*LincheckTest.class") }
     }
 }
 
 apiValidation {
     publicMarkers.add("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
+    publicMarkers.add("org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi")
     publicMarkers.add("org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl")
     nonPublicMarkers.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
     additionalSourceSets.add("common")
@@ -74,6 +92,7 @@ dependencies {
     }
     commonCompileOnly(project(":kotlin-tooling-metadata"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
+    commonCompileOnly(project(":native:swift:swift-export-standalone"))
     commonCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
@@ -101,6 +120,9 @@ dependencies {
         exclude(group = "*")
     }
 
+    commonCompileOnly("org.apache.commons:commons-compress:1.26.0")
+    embedded("org.apache.commons:commons-compress:1.26.0")
+
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
         "mainEmbedded"(project(":kotlin-build-tools-enum-compat"))
@@ -121,6 +143,7 @@ dependencies {
     testImplementation(libs.junit4)
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
+    testImplementation(libs.lincheck)
 }
 
 configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
@@ -301,5 +324,6 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     tasks.named("check") {
         dependsOn("functionalTest")
+        dependsOn("lincheckTest")
     }
 }

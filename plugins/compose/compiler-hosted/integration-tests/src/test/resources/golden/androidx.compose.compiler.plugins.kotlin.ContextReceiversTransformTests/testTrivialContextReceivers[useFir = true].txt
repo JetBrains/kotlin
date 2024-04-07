@@ -1,0 +1,33 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+
+context(Foo)
+@Composable
+fun Test() { }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%context_receiver_0: Foo, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%context_receiver_0, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

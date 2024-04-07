@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 description = "Infrastructure of transformations over SIR"
@@ -12,6 +15,7 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     api(project(":native:swift:sir"))
+    api(project(":native:swift:sir-providers"))
 
     api(project(":compiler:psi"))
     api(project(":analysis:analysis-api"))
@@ -21,8 +25,14 @@ sourceSets {
     "main" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xcontext-receivers"
-    }
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
 }
+
+if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
+    publish()
+}
+
+runtimeJar()
+sourcesJar()
+javadocJar()

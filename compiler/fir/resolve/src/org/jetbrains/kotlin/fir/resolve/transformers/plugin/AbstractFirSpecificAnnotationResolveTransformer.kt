@@ -191,7 +191,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             isUsedAsGetClassReceiver: Boolean,
             callSite: FirElement,
             data: ResolutionMode,
-        ): FirStatement {
+        ): FirQualifiedAccessExpression {
             qualifiedAccessExpression.resolveFromImportScope()
             return qualifiedAccessExpression
         }
@@ -207,7 +207,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                 val receiverCalleeReference = receiver.calleeReference as? FirSimpleNamedReference ?: return
                 val receiverName = receiverCalleeReference.name.takeIf { !it.isSpecial } ?: return
 
-                val symbol = scopes.filterIsInstance<FirAbstractImportingScope>().firstNotNullOfOrNull {
+                val symbol = scopes.firstNotNullOfOrNull {
                     it.getSingleClassifier(receiverName) as? FirClassSymbol<*>
                 } ?: return
 
@@ -255,7 +255,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             calleeReference: FirSimpleNamedReference,
             calleeSymbol: FirEnumEntrySymbol
         ) {
-            session.lookupTracker?.recordLookup(
+            session.lookupTracker?.recordNameLookup(
                 calleeReference.name,
                 calleeSymbol.dispatchReceiverType?.classId?.asFqNameString() ?: calleeSymbol.callableId.packageName.asString(),
                 this.source,

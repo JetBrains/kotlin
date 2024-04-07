@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/nativeBox")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("atomicfu-native")
+@EnforcedHostTarget()
 @UseStandardTestCaseGroupProvider()
 public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
@@ -32,6 +34,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/nativeBox/atomic_extensions")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @UseStandardTestCaseGroupProvider()
   public class Atomic_extensions {
     @Test
@@ -104,6 +107,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/nativeBox/atomics_basic")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @UseStandardTestCaseGroupProvider()
   public class Atomics_basic {
     @Test
@@ -194,6 +198,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/nativeBox/delegated")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @UseStandardTestCaseGroupProvider()
   public class Delegated {
     @Test
@@ -212,6 +217,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/nativeBox/locks")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @UseStandardTestCaseGroupProvider()
   public class Locks {
     @Test
@@ -236,6 +242,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/nativeBox/top-level")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @UseStandardTestCaseGroupProvider()
   public class Top_level {
     @Test
@@ -260,6 +267,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/nativeBox/trace")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @UseStandardTestCaseGroupProvider()
   public class Trace {
     @Test

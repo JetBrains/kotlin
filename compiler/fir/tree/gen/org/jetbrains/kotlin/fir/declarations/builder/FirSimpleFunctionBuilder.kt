@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -44,7 +43,7 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
-    open var contractDescription: FirContractDescription = FirEmptyContractDescription
+    open var contractDescription: FirContractDescription? = null
     open lateinit var name: Name
     open lateinit var symbol: FirNamedFunctionSymbol
     override val annotations: MutableList<FirAnnotation> = mutableListOf()

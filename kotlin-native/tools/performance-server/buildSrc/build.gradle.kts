@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.util.Properties
 import java.io.FileReader
 
@@ -49,12 +49,15 @@ sourceSets["main"].kotlin {
     srcDir("../../../shared/src/library/kotlin")
     srcDir("../../../shared/src/main/kotlin")
     srcDir("../../benchmarks/shared/src/main/kotlin/report")
-    srcDir("../../../../native/utils/src")
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs +=
-        listOf("-opt-in=kotlin.RequiresOptIn", "-opt-in=kotlin.ExperimentalStdlibApi")
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.addAll(
+        listOf(
+                "kotlin.RequiresOptIn",
+                "kotlin.ExperimentalStdlibApi",
+        )
+    )
 }
 
 dependencies {

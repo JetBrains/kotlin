@@ -182,7 +182,7 @@ public enum class MemberKind(kind: Int) {
      * Signifies that the corresponding function or property exists in the containing class because it has been synthesized
      * by the compiler or compiler plugin and has no declaration in the source code.
      *
-     * An example of such function can be component1() of a data class.
+     * An example of such a function can be `component1()` of a data class.
      */
     SYNTHESIZED(ProtoMemberKind.SYNTHESIZED_VALUE)
     ;

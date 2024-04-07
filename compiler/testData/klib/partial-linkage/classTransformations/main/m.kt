@@ -159,10 +159,12 @@ fun box() = abiTest {
     expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatDisappearsInline' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (via annotation class 'AnnotationClassWithParameterOfParameterThatDisappears')")) { getAnnotationClassWithParameterOfParameterThatDisappearsInline() }
     expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassWithParameterThatDisappearsAsAny() }
     expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassWithParameterThatDisappearsAsAnyInline() }
-    expectSuccess("@AnnotationClassWithRenamedParameters(xi=129, xs=Banana)") { getAnnotationClassWithRenamedParameters().toString() }
-    expectSuccess("@AnnotationClassWithRenamedParameters(xi=130, xs=Pear)") { getAnnotationClassWithRenamedParametersInline().toString() }
-    expectSuccess("@AnnotationClassWithRenamedParameters(xi=131, xs=Orange)") { getAnnotationClassWithRenamedParametersAsAny().toString() }
-    expectSuccess("@AnnotationClassWithRenamedParameters(xi=132, xs=Peach)") { getAnnotationClassWithRenamedParametersAsAnyInline().toString() }
+    if (!testMode.isWasm) { //toString for annotation classes are not supported KT-66385
+        expectSuccess("@AnnotationClassWithRenamedParameters(xi=129, xs=Banana)") { getAnnotationClassWithRenamedParameters().toString() }
+        expectSuccess("@AnnotationClassWithRenamedParameters(xi=130, xs=Pear)") { getAnnotationClassWithRenamedParametersInline().toString() }
+        expectSuccess("@AnnotationClassWithRenamedParameters(xi=131, xs=Orange)") { getAnnotationClassWithRenamedParametersAsAny().toString() }
+        expectSuccess("@AnnotationClassWithRenamedParameters(xi=132, xs=Peach)") { getAnnotationClassWithRenamedParametersAsAnyInline().toString() }
+    }
     expectFailure(linkage("Constructor 'AnnotationClassWithReorderedParameters.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithReorderedParameters.<init>'")) { getAnnotationClassWithReorderedParameters() }
     expectFailure(linkage("Constructor 'AnnotationClassWithReorderedParameters.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithReorderedParameters.<init>'")) { getAnnotationClassWithReorderedParametersInline() }
     expectFailure(linkage("Constructor 'AnnotationClassWithReorderedParameters.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithReorderedParameters.<init>'")) { getAnnotationClassWithReorderedParametersAsAny() }

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTr
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEffectivelyFinal
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
@@ -93,10 +92,19 @@ private val FirBasedSymbol<*>.resolvedStatus
         else -> null
     }
 
-internal fun isExpectAndActual(declaration1: FirBasedSymbol<*>, declaration2: FirBasedSymbol<*>): Boolean {
-    val status1 = declaration1.resolvedStatus ?: return false
-    val status2 = declaration2.resolvedStatus ?: return false
-    return (status1.isExpect && status2.isActual) || (status1.isActual && status2.isExpect)
+internal fun isExpectAndNonExpect(first: FirBasedSymbol<*>, second: FirBasedSymbol<*>): Boolean {
+    val firstIsExpect = first.resolvedStatus?.isExpect == true
+    val secondIsExpect = second.resolvedStatus?.isExpect == true
+    /*
+     * this `xor` is equivalent to the following check:
+     * when {
+     *    !firstIsExpect && secondIsExpect -> true
+     *    firstIsExpect && !secondIsExpect -> true
+     *    else -> false
+     * }
+     */
+
+    return firstIsExpect xor secondIsExpect
 }
 
 private class DeclarationBuckets {
@@ -345,7 +353,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
                     conflictingFile
                 )
 
-                session.lookupTracker?.recordLookup(declarationName, file.packageFqName.asString(), declaration.source, file.source)
+                session.lookupTracker?.recordNameLookup(declarationName, file.packageFqName.asString(), declaration.source, file.source)
             }
         }
 
@@ -439,6 +447,16 @@ private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: Ch
     }
 }
 
+private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<*>, dependent: FirBasedSymbol<*>): Boolean {
+    if (dependency.moduleData !in dependent.moduleData.allDependsOnDependencies) return false
+
+    /*
+     * If one of declarations is expect and the other is not expect, ExpectActualChecker will handle this case
+     * All other cases (both are expect or both are not expect) should be reported as declarations conflict
+     */
+    return !isExpectAndNonExpect(dependency, dependent)
+}
+
 private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     declaration: FirBasedSymbol<*>,
     declarationPresentation: String,
@@ -448,7 +466,11 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     conflictingFile: FirFile? = null,
 ) {
     conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    if (conflictingSymbol == declaration || declaration.moduleData != conflictingSymbol.moduleData) return
+    if (conflictingSymbol == declaration) return
+    if (
+        declaration.moduleData != conflictingSymbol.moduleData &&
+        !shouldCheckForMultiplatformRedeclaration(declaration, conflictingSymbol)
+    ) return
     val actualConflictingPresentation = conflictingPresentation ?: FirRedeclarationPresenter.represent(conflictingSymbol)
     if (actualConflictingPresentation != declarationPresentation) return
     val actualConflictingFile =
@@ -496,7 +518,7 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
 ): Boolean {
-    if (isExpectAndActual(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
+    if (isExpectAndNonExpect(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
 
     val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)
@@ -508,10 +530,10 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     val conflictingIsFinal = conflicting.isEffectivelyFinal(session)
 
     if (declarationIsFinal && conflictingIsFinal) {
-        val declarationIsHidden = declaration.isDeprecationLevelHidden(session.languageVersionSettings)
+        val declarationIsHidden = declaration.isDeprecationLevelHidden(session)
         if (declarationIsHidden) return true
 
-        val conflictingIsHidden = conflicting.isDeprecationLevelHidden(session.languageVersionSettings)
+        val conflictingIsHidden = conflicting.isDeprecationLevelHidden(session)
         if (conflictingIsHidden) return true
     }
 

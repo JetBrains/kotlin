@@ -205,8 +205,7 @@ class DifferenceCalculatorForClass(
         }
 
         for (kind in diff) {
-            @Suppress("UNUSED_VARIABLE") // To make this 'when' exhaustive
-            val unused: Any = when (kind!!) {
+            when (kind!!) {
                 ProtoBufClassKind.COMPANION_OBJECT_NAME -> {
                     if (oldProto.hasCompanionObjectName()) oldProto.companionObjectName.oldToNames()
                     if (newProto.hasCompanionObjectName()) newProto.companionObjectName.newToNames()

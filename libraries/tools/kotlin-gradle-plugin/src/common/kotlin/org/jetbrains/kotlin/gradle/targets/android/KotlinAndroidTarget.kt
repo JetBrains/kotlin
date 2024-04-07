@@ -11,11 +11,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.attributesConfigurationHelper
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -30,7 +29,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     final override val targetName: String,
     project: Project,
 ) : AbstractKotlinTarget(project),
-    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
+    HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
 
     final override val disambiguationClassifier: String = targetName
 

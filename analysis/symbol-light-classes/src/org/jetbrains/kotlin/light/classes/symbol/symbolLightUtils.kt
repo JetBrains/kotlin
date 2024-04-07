@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClas
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.classes.modificationTrackerForClassInnerStuff
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -44,35 +43,23 @@ import java.util.*
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
+context(KtAnalysisSession)
+internal fun KtDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KtDeclarationSymbol> =
+    generateSequence(this) { it.getContainingSymbol() }
+
 internal fun KtAnalysisSession.mapType(
     type: KtType,
     psiContext: PsiElement,
-    mode: KtTypeMappingMode
+    mode: KtTypeMappingMode,
 ): PsiClassType? {
-    val psiTypeElement = type.asPsiTypeElement(
-        psiContext,
+    val psiType = type.asPsiType(
+        useSitePosition = psiContext,
         allowErrorTypes = true,
-        mode,
+        mode = mode,
     )
-    return (psiTypeElement?.type as? PsiClassType)?.let {
-        annotateByKtType(it, type, psiTypeElement, modifierListAsParent = null) as? PsiClassType
-    }
+
+    return psiType as? PsiClassType
 }
-
-
-internal enum class NullabilityType {
-    Nullable,
-    NotNull,
-    Unknown
-}
-
-//todo get rid of NullabilityType as it corresponds to KtTypeNullability
-internal val KtType.nullabilityType: NullabilityType
-    get() = when (nullability) {
-        KtTypeNullability.NULLABLE -> NullabilityType.Nullable
-        KtTypeNullability.NON_NULLABLE -> NullabilityType.NotNull
-        KtTypeNullability.UNKNOWN -> NullabilityType.Unknown
-    }
 
 internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modality) {
     Modality.SEALED -> PsiModifier.ABSTRACT
@@ -147,34 +134,35 @@ internal fun KtLightElement<*, *>.isOriginEquivalentTo(that: PsiElement?): Boole
     return kotlinOrigin?.isEquivalentTo(that) == true
 }
 
-internal fun KtAnalysisSession.getTypeNullability(type: KtType): NullabilityType {
-    if (type is KtClassErrorType) return NullabilityType.NotNull
+internal fun KtAnalysisSession.getTypeNullability(type: KtType): KtTypeNullability {
+    if (type is KtClassErrorType) return KtTypeNullability.NON_NULLABLE
 
     val ktType = type.fullyExpandedType
-    if (ktType.nullabilityType != NullabilityType.NotNull) return ktType.nullabilityType
+    if (ktType.nullability != KtTypeNullability.NON_NULLABLE) return ktType.nullability
 
-    if (ktType.isUnit) return NullabilityType.NotNull
+    if (ktType.isUnit) return KtTypeNullability.NON_NULLABLE
 
-    if (ktType.isPrimitiveBacked) return NullabilityType.Unknown
+    if (ktType.isPrimitiveBacked) return KtTypeNullability.UNKNOWN
 
     if (ktType is KtTypeParameterType) {
-        if (ktType.isMarkedNullable) return NullabilityType.Nullable
+        if (ktType.isMarkedNullable) return KtTypeNullability.NULLABLE
         val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.canBeNull }
-        return if (!subtypeOfNullableSuperType) NullabilityType.NotNull else NullabilityType.Unknown
+        return if (!subtypeOfNullableSuperType) KtTypeNullability.NON_NULLABLE else KtTypeNullability.UNKNOWN
     }
-    if (ktType !is KtNonErrorClassType) return NullabilityType.NotNull
-    if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return NullabilityType.NotNull
-    if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
 
-    return ktType.nullabilityType
+    if (ktType !is KtNonErrorClassType) return KtTypeNullability.NON_NULLABLE
+    if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return KtTypeNullability.NON_NULLABLE
+    if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return KtTypeNullability.NON_NULLABLE
+
+    return ktType.nullability
 }
 
-internal val KtType.isUnit get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
-
-internal fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
-    if (this !is KtNonErrorClassType) return false
-    return this.classId == classId
-}
+internal val KtTypeNullability.asAnnotationQualifier: String?
+    get() = when (this) {
+        KtTypeNullability.NON_NULLABLE -> JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
+        KtTypeNullability.NULLABLE -> JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
+        else -> null
+    }?.asString()
 
 private fun escapeString(s: String): String = buildString {
     s.forEach {

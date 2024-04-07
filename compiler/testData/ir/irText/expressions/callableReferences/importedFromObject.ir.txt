@@ -2,7 +2,7 @@ FILE fqName:test fileName:/importedFromObject.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KProperty0<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final a: kotlin.String' field=null getter='public final fun <get-a> (): kotlin.String declared in test.Foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
+        PROPERTY_REFERENCE 'public final a: kotlin.String declared in test.Foo' field=null getter='public final fun <get-a> (): kotlin.String declared in test.Foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.String>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
@@ -12,7 +12,7 @@ FILE fqName:test fileName:/importedFromObject.kt
   PROPERTY name:test1a visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1a type:kotlin.reflect.KProperty0<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final a: kotlin.String' field=null getter='public final fun <get-a> (): kotlin.String declared in test.Foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
+        PROPERTY_REFERENCE 'public final a: kotlin.String declared in test.Foo' field=null getter='public final fun <get-a> (): kotlin.String declared in test.Foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1a> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.String>
       correspondingProperty: PROPERTY name:test1a visibility:public modality:FINAL [val]

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
-import org.jetbrains.kotlin.resolve.multiplatform.*
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -220,9 +222,8 @@ private fun createFakeOverrideFunction(
         it.annotations = actualFunction.annotations.map { p -> p.deepCopyWithSymbols(it) }
         it.typeParameters = actualFunction.typeParameters.map { p -> p.deepCopyWithSymbols(it) }
 
-        val typeRemapper = IrTypeParameterRemapper(actualFunction.typeParameters.zip(it.typeParameters).toMap())
-        fun IrValueParameter.deepCopyWithTypeParameters(): IrValueParameter = deepCopyWithSymbols(it) { symbolRemapper, _ ->
-            DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper)
+        fun IrValueParameter.deepCopyWithTypeParameters(): IrValueParameter = deepCopyWithSymbols(it) { _ ->
+            IrTypeParameterRemapper(actualFunction.typeParameters.zip(it.typeParameters).toMap())
         }
 
         it.dispatchReceiverParameter = actualFunction.dispatchReceiverParameter?.deepCopyWithTypeParameters()

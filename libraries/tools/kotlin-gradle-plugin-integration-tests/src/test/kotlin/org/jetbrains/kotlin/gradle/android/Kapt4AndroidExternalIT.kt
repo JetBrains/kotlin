@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.forceKapt4
+import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.JdkVersions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.junit.jupiter.api.Disabled
@@ -17,6 +18,7 @@ class Kapt4AndroidExternalIT : Kapt3AndroidExternalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-62345")
+    @GradleTest
     override fun testMppAndroidKapt(
         gradleVersion: GradleVersion,
         agpVersion: String,

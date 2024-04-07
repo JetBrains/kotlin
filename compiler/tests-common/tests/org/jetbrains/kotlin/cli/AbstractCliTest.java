@@ -113,12 +113,16 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getParentFile().getAbsolutePath(), "$DIST_DIR$")
                 .replace(org.jetbrains.kotlin.konan.file.File.Companion.getUserDir().getAbsolutePath(), "$USER_DIR$")
                 .replace(tmpDirAbsoluteDir, "$TMP_DIR$")
+                .replace("\\", "/")
+                .replace(KtTestUtil.getJdk8Home().getAbsolutePath().replace("\\", "/"), "$JDK_1_8")
+                .replace(KtTestUtil.getJdk11Home().getAbsolutePath().replace("\\", "/"), "$JDK_11")
+                .replace(KtTestUtil.getJdk17Home().getAbsolutePath().replace("\\", "/"), "$JDK_17")
                 .replaceAll("info: executable production duration: \\d+ms", "info: executable production duration: [time]")
                 .replace(KotlinCompilerVersion.VERSION, "$VERSION$")
+                .replace(System.getProperty("java.runtime.version"), "$JVM_VERSION$")
                 .replace(" " + JvmMetadataVersion.INSTANCE, " $ABI_VERSION$")
                 .replace(" " + JsMetadataVersion.INSTANCE, " $ABI_VERSION$")
                 .replace(" " + JvmMetadataVersion.INSTANCE_NEXT, " $ABI_VERSION_NEXT$")
-                .replace("\\", "/")
                 .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
                 .replaceAll("log4j:WARN.*\n", "");
 
@@ -247,6 +251,9 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         if (arg.isEmpty()) {
             return null;
         }
+
+        if (arg.equals("$JDK_1_8")) return KtTestUtil.getJdk8Home().getAbsolutePath();
+        if (arg.equals("$JDK_11_0")) return KtTestUtil.getJdk11Home().getAbsolutePath();
 
         String argWithColonsReplaced = arg
                 .replace("\\:", "$COLON$")

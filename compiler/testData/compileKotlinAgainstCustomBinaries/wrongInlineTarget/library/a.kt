@@ -17,7 +17,9 @@ var allInline: Int
     inline get() = 1
     inline set(varue) { varue.hashCode() }
 
-
+inline var inlineProperty: Int
+    get() = 1
+    set(varue) { varue.hashCode() }
 
 open class Base {
     inline fun inlineFunBase(p: () -> Unit) {
@@ -35,4 +37,8 @@ open class Base {
     var allInlineBase: Int
         inline get() = 1
         inline set(varue) { varue.hashCode() }
+
+    inline var inlinePropertyBase: Int
+        get() = 1
+        set(varue) { varue.hashCode() }
 }

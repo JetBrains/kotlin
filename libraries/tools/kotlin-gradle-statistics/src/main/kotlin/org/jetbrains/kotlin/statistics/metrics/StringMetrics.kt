@@ -32,13 +32,11 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
                 "androidJvm",
                 "android_arm32",
                 "android_arm64",
-                "ios_arm32",
                 "ios_arm64",
                 "ios_simulator_arm64",
                 "ios_x64",
                 "watchos_arm32",
                 "watchos_arm64",
-                "watchos_x86",
                 "watchos_x64",
                 "watchos_simulator_arm64",
                 "watchos_device_arm64",
@@ -46,15 +44,11 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
                 "tvos_x64",
                 "tvos_simulator_arm64",
                 "linux_arm32_hfp",
-                "linux_mips32",
-                "linux_mipsel32",
                 "linux_arm64",
                 "linux_x64",
                 "macos_x64",
                 "macos_arm64",
                 "mingw_x64",
-                "mingw_x86",
-                "wasm32",
                 "wasm"
             )
         )
@@ -91,6 +85,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
     companion object {
-        const val VERSION = 1
+        // Version 2: removed deprecated K/N targets from MPP_PLATFORMS
+        const val VERSION = 2
     }
 }

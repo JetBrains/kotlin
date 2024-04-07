@@ -12,6 +12,31 @@ import kotlin.internal.getProgressionLastElement
 import kotlin.reflect.KClass
 import kotlin.concurrent.AtomicReference
 import kotlinx.cinterop.*
+import kotlinx.cinterop.NativePtr
+
+@ExperimentalNativeApi
+@GCUnsafeCall("Kotlin_Interop_derefSpecialRef")
+public external fun dereferenceSpecialRef(ref: COpaquePointer?): Any?
+
+@ExperimentalNativeApi
+@GCUnsafeCall("Kotlin_Interop_createSpecialRef")
+public external fun createSpecialRef(ref: Any?): COpaquePointer?
+
+@ExperimentalNativeApi
+@GCUnsafeCall("Kotlin_Interop_disposeSpecialRef")
+public external fun disposeSpecialRef(ref: COpaquePointer?)
+
+@ExperimentalNativeApi
+@GCUnsafeCall("Kotlin_Interop_retainSpecialRef")
+public external fun retainSpecialRef(ref: COpaquePointer?)
+
+@ExperimentalNativeApi
+@GCUnsafeCall("Kotlin_Interop_tryRetainSpecialRef")
+public external fun tryRetainSpecialRef(ref: COpaquePointer?): Boolean
+
+@ExperimentalNativeApi
+@GCUnsafeCall("Kotlin_Interop_releaseSpecialRef")
+public external fun releaseSpecialRef(ref: COpaquePointer?)
 
 @ExportForCppRuntime
 @PublishedApi
@@ -264,3 +289,7 @@ internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     }
     return string.encodeToByteArray()
 }
+
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
+internal external fun immutableBlobOfImpl(data: String): ImmutableBlob

@@ -21,6 +21,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
@@ -28,8 +29,11 @@ import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
 
+private const val SWIFT_EXPORT_EMBEDDABLE = ":native:swift:swift-export-embeddable"
+
 val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-assignment",
+    ":compose-compiler-gradle-plugin",
     ":kotlin-allopen",
     ":kotlin-noarg",
     ":kotlin-power-assert",
@@ -73,6 +77,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-lombok-compiler-plugin.embeddable",
     ":kotlinx-serialization-compiler-plugin.embeddable",
     ":kotlin-annotation-processing-embeddable",
+    ":plugins:compose-compiler-plugin:temp:compiler",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
     ":kotlin-scripting-jvm",
@@ -81,23 +86,42 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-test-js-runner",
     ":native:kotlin-klib-commonizer-embeddable",
     ":native:kotlin-klib-commonizer-api",
+    SWIFT_EXPORT_EMBEDDABLE,
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-impl",
 )
 
+private fun Task.processDependent(dependent: String, action: () -> Unit) {
+    val isSwiftExportEmbeddable = dependent == SWIFT_EXPORT_EMBEDDABLE
+    val isSwiftExportPluginPublishingEnabled = project.kotlinBuildProperties.isSwiftExportPluginPublishingEnabled
+
+    if (!isSwiftExportEmbeddable || isSwiftExportPluginPublishingEnabled) {
+        action.invoke()
+    }
+}
+
 fun Task.dependsOnKotlinGradlePluginInstall() {
-    kotlinGradlePluginAndItsRequired.forEach {
-        dependsOn("${it}:install")
+    kotlinGradlePluginAndItsRequired.forEach { dependency ->
+        processDependent(dependency) {
+            dependsOn("${dependency}:install")
+        }
     }
 }
 
 fun Task.dependsOnKotlinGradlePluginPublish() {
-    kotlinGradlePluginAndItsRequired.forEach {
-        project.rootProject.tasks.findByPath("${it}:publish")?.let { task ->
-            dependsOn(task)
+    kotlinGradlePluginAndItsRequired
+        .filter {
+            // Compose compiler plugin does not assemble with LV 1.9 and should not be a part of the dist bundle for now
+            it != ":plugins:compose-compiler-plugin:temp:compiler"
         }
-    }
+        .forEach { dependency ->
+            processDependent(dependency) {
+                project.rootProject.tasks.findByPath("${dependency}:publish")?.let { task ->
+                    dependsOn(task)
+                }
+            }
+        }
 }
 
 // Mixing JUnit4 and Junit5 in one module proved to be problematic, consider using separate modules instead
@@ -116,14 +140,11 @@ fun Project.projectTest(
     jUnitMode: JUnitMode = JUnitMode.JUnit4,
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
+    maxMetaspaceSizeMb: Int = 512,
     reservedCodeCacheSizeMb: Int = 256,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
-    val concurrencyLimitService =
-        project.gradle.sharedServices.registerIfAbsent("concurrencyLimitService", ConcurrencyLimitService::class) {
-            maxParallelUsages = 1
-        }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
     if (shouldInstrument) {
@@ -189,24 +210,37 @@ fun Project.projectTest(
             dependsOn(":test-instrumenter:jar")
         }
 
+        // The glibc default number of memory pools on 64bit systems is 8 times the number of CPU cores
+        // Choosing a value MALLOC_ARENA_MAX is generally a tradeoff between performance and memory consumption.
+        // Not setting MALLOC_ARENA_MAX gives the best performance, but may mean higher memory use.
+        // Setting MALLOC_ARENA_MAX to “2” or “1” makes glibc use fewer memory pools and potentially less memory,
+        // but this may reduce performance.
+        environment("MALLOC_ARENA_MAX", "2")
+
         jvmArgs(
             "-ea",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-XX:+UseCodeCacheFlushing",
             "-XX:ReservedCodeCacheSize=${reservedCodeCacheSizeMb}m",
+            "-XX:MaxMetaspaceSize=${maxMetaspaceSizeMb}m",
+            "-XX:CICompilerCount=2",
             "-Djna.nosys=true"
         )
+
+        val nativeMemoryTracking = project.providers.gradleProperty("kotlin.build.test.process.NativeMemoryTracking")
+        if (nativeMemoryTracking.isPresent) {
+            jvmArgs("-XX:NativeMemoryTracking=${nativeMemoryTracking.get()}")
+        }
 
         val junit5ParallelTestWorkers =
             project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: Runtime.getRuntime().availableProcessors()
 
-        val memoryPerTestProcessMb = maxHeapSizeMb ?: if (jUnitMode == JUnitMode.JUnit5)
+        val memoryPerTestProcessMb = if (jUnitMode == JUnitMode.JUnit5)
             totalMaxMemoryForTestsMb.coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
         else
             defaultMaxMemoryPerTestWorkerMb
 
-        maxHeapSize = "${memoryPerTestProcessMb}m"
-        usesService(concurrencyLimitService)
+        maxHeapSize = "${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb - reservedCodeCacheSizeMb)}m"
 
         if (minHeapSizeMb != null) {
             minHeapSize = "${minHeapSizeMb}m"
@@ -411,10 +445,8 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
 }
 
 private fun Project.optInTo(annotationFqName: String) {
-    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=$annotationFqName"
-        }
+    tasks.withType<KotlinCompilationTask<*>>().configureEach {
+        compilerOptions.optIn.add(annotationFqName)
     }
 }
 

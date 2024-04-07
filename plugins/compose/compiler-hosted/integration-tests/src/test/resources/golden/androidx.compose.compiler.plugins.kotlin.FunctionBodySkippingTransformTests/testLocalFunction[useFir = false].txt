@@ -1,0 +1,56 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun A(x: Int) {
+    @Composable fun foo(y: Int) {
+        B(x, y)
+    }
+    foo(x)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun A(x: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)<foo(x)>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    @Composable
+    fun foo(y: Int, %composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(foo)<B(x,>:Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      B(x, y, %composer, 0b01110000 and %changed shl 0b0011)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+    }
+    foo(x, %composer, 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(x, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

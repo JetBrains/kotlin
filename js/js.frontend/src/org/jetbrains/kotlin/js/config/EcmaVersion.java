@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.js.config;
 import org.jetbrains.annotations.NotNull;
 
 public enum EcmaVersion {
-    v3, v5;
+    es5, es2015;
 
     @NotNull
     public static EcmaVersion defaultVersion() {
-        return v5;
+        return es5;
     }
 }

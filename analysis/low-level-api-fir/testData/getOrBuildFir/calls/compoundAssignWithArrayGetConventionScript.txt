@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayGetConventionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compoundAssignWithArrayGetConventionScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
             public abstract operator [ResolvedTo(CONTRACTS)] fun plusAssign([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|kotlin/Unit|

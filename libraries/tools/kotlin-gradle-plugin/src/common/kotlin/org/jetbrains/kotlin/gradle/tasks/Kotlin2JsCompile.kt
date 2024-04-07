@@ -46,11 +46,10 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
-    override val compilerOptions: KotlinJsCompilerOptions,
+    final override val compilerOptions: KotlinJsCompilerOptions,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
-    KotlinCompilationTask<KotlinJsCompilerOptions>,
     UsesLibraryFilterCachingService,
     UsesBuildFusService,
     KotlinJsCompile,
@@ -61,6 +60,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsCompat(
         { this },
         compilerOptions
@@ -138,7 +139,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
             args.moduleName = compilerOptions.moduleName.get()
 
-            if (compilerOptions.usesK2.get()) {
+            if (compilerOptions.usesK2.get() && multiPlatformEnabled.get()) {
                 args.fragments = multiplatformStructure.fragmentsCompilerArgs
                 args.fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
             }
@@ -176,10 +177,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
             }
 
-            if (compilerOptions.usesK2.get()) {
-                args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourceFileFilter)
-            } else {
-                args.commonSources = commonSourceSet.asFileTree.toPathsArray()
+            if (multiPlatformEnabled.get()) {
+                if (compilerOptions.usesK2.get()) {
+                    args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sources.files, sourceFileFilter)
+                } else {
+                    args.commonSources = commonSourceSet.asFileTree.toPathsArray()
+                }
             }
 
             args.freeArgs += sources.asFileTree.files.map { it.absolutePath }

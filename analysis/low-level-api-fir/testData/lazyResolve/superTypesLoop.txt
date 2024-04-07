@@ -268,6 +268,33 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
+    public open [ResolvedTo(CONSTANT_EVALUATION)] class resolveMe : R|C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            LAZY_super<C>
+        }
+
+    }
+    public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<B>
+        }
+
+    }
+    public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<C>
+        }
+
+    }
+    public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<A>
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
     public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class resolveMe : R|C| {

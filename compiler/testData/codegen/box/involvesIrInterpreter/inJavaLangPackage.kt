@@ -15,5 +15,5 @@ const val usageE = Math.<!EVALUATED("2.718281828459045")!>E<!>
 const val usagePI = Math.<!EVALUATED("3.141592653589793")!>PI<!>
 
 fun box(): String {
-    return Math.<!EVALUATED("OK")!>OK<!>
+    return Math.<!EVALUATED{IR}("OK")!>OK<!>
 }

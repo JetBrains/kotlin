@@ -9,8 +9,8 @@ abstract public class A implements java.util.Collection<String> {
 }
 
 // FILE: main.kt
-abstract class <!CONFLICTING_JVM_DECLARATIONS!>KA<!> : A() {
-    <!CONFLICTING_JVM_DECLARATIONS!>override fun contains(x: String)<!> = false
+abstract class KA : A() {
+    override fun contains(x: String) = false
 }
 
 fun foo(a: A, ka: KA) {

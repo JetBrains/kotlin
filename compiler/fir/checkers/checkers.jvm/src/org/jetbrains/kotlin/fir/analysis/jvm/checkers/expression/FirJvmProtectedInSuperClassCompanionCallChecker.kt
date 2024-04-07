@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 // TODO: consider what to do with it
@@ -51,7 +51,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
             resolvedSymbol.visibility
         }
         if (visibility != Visibilities.Protected) return
-        if (resolvedSymbol.getAnnotationByClassId(JVM_STATIC_ANNOTATION_CLASS_ID, context.session) != null) return
+        if (resolvedSymbol.getAnnotationByClassId(StandardClassIds.Annotations.jvmStatic, context.session) != null) return
         if (!dispatchClassSymbol.isCompanion) return
         val companionContainingClassSymbol =
             dispatchClassSymbol.getContainingDeclaration(context.session) as? FirRegularClassSymbol ?: return

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.name.SpecialNames
 
 class ConeTypeVariableForPostponedAtom(name: String) : ConeTypeVariable(name)
-class ConeTypeVariableForLambdaParameterType(name: String, val index: Int) : ConeTypeVariable(name)
+class ConeTypeVariableForLambdaParameterType(name: String) : ConeTypeVariable(name)
 class ConeTypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
 
 class ConeTypeParameterBasedTypeVariable(

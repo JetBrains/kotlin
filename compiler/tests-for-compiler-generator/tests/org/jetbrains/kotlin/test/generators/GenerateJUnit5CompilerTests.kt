@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
+import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
 import org.jetbrains.kotlin.test.runners.ir.*
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFirPsi2IrTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
@@ -19,6 +20,13 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
     val k2BoxTestDir = listOf("multiplatform/k2")
     val excludedScriptDirs = listOf("script")
+    // We exclude the 'inlineScopes' directory from the IR inliner tests. The reason is that
+    // the IR inliner produces slightly different bytecode than the bytecode inliner (see KT-65477).
+    val inlineScopesTestDir = listOf("inlineScopes")
+    // We exclude the 'inlineScopes/newFormatToOld' directory from tests that have inline scopes enabled
+    // by default, since we only want to test the scenario where code with inline scopes is inlined by the
+    // old inliner with $iv suffixes.
+    val inlineScopesNewFormatToOld = listOf("inlineScopes/newFormatToOld")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testsRoot = "compiler/tests-common-new/tests-gen", testDataRoot = "compiler/testData") {
@@ -80,7 +88,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             // We split JVM ABI tests into two parts, to avoid creation of a huge file, unable to analyze by IntelliJ with default settings
             testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestBoxGenerated") {
-                model("codegen/box", excludeDirs = k2BoxTestDir + excludedScriptDirs)
+                model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
             testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestRestGenerated") {
@@ -111,7 +119,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractIrLocalVariableIrInlinerTest> {
-                model("debug/localVariables")
+                model("debug/localVariables", excludeDirs = inlineScopesTestDir)
             }
 
             testClass<AbstractBlackBoxCodegenTest>("BlackBoxModernJdkCodegenTestGenerated") {
@@ -200,6 +208,48 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractJvmIrInterpreterAfterPsi2IrTest> {
                 model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
+
+            // ------------- Inline scopes tests duplication -------------
+
+            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
+                model("codegen/box", excludeDirs = k2BoxTestDir + excludedScriptDirs)
+            }
+
+            testClass<AbstractFirBytecodeTextTestWithInlineScopes> {
+                model("codegen/bytecodeText")
+            }
+
+            testClass<AbstractFirSteppingWithBytecodeInlinerTestWithInlineScopes> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractFirSteppingWithIrInlinerTestWithInlineScopes> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractFirLocalVariableBytecodeInlinerTestWithInlineScopes> {
+                model("debug/localVariables", excludeDirs = inlineScopesNewFormatToOld)
+            }
+
+            testClass<AbstractFirLocalVariableIrInlinerTestWithInlineScopes> {
+                model("debug/localVariables", excludeDirs = inlineScopesTestDir)
+            }
+
+            testClass<AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopes> {
+                model("codegen/boxInline", excludeDirs = k2BoxTestDir)
+            }
+
+            testClass<AbstractFirBlackBoxInlineCodegenWithIrInlinerTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes>("FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {
+                model("codegen/boxModernJdk")
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------
@@ -283,7 +333,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/box")
             }
 
-            testClass<AbstractFirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTest> {
+            testClass<AbstractFirLightTreeBlackBoxCodegenWithFir2IrFakeOverrideGeneratorTest> {
                 model("codegen/box", excludeDirs = excludedScriptDirs)
             }
 
@@ -366,8 +416,8 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirPsiDiagnosticTest> {
-                model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-                model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model("resolve", pattern = TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+                model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
             }
 
             testClass<AbstractFirLightTreeDiagnosticsTest> {

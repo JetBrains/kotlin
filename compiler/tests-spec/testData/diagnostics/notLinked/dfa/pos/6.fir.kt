@@ -183,7 +183,7 @@ fun case_10() {
     val a = Class()
     val b = null
 
-    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a.prop_4 === b<!> || true) {
+    if (a.prop_4 === b || true) {
         if (a.prop_4 != null) {
             a.prop_4
             a.prop_4.equals(null)
@@ -315,7 +315,7 @@ fun case_16() {
 }
 
 // TESTCASE NUMBER: 17
-val case_17 = if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>nullableIntProperty === implicitNullableNothingProperty<!>) 0 else {
+val case_17 = if (nullableIntProperty === implicitNullableNothingProperty) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>nullableIntProperty<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>nullableIntProperty<!>.equals(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>nullableIntProperty<!>.propT
@@ -413,7 +413,7 @@ fun case_20(x: Boolean, y: Nothing?) {
 
 // TESTCASE NUMBER: 21
 fun case_21() {
-    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>EnumClassWithNullableProperty.A.prop_1 !== implicitNullableNothingProperty<!>) {
+    if (EnumClassWithNullableProperty.A.prop_1 !== implicitNullableNothingProperty) {
         EnumClassWithNullableProperty.A.prop_1
         EnumClassWithNullableProperty.A.prop_1.equals(null)
         EnumClassWithNullableProperty.A.prop_1.propT
@@ -445,9 +445,9 @@ fun case_22(a: (() -> Unit)?) {
 
 // TESTCASE NUMBER: 23
 fun case_23(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
-    if (a != z && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>b !== z<!> && <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>b !== z<!>) {
+    if (a != z && b !== z && <!SENSELESS_COMPARISON!>b !== z<!>) {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>)<!>
-        if (x != z || <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== implicitNullableNothingProperty<!>) {
+        if (x != z || <!SENSELESS_COMPARISON!>x !== implicitNullableNothingProperty<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
@@ -520,7 +520,7 @@ fun case_26(a: ((Float) -> Int?)?, b: Float?) {
 
     if (a != z == true && b != implicitNullableNothingProperty == true) {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>)<!>
-        if (x != implicitNullableNothingProperty == true || <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>z !== x<!>) {
+        if (x != implicitNullableNothingProperty == true || <!SENSELESS_COMPARISON!>z !== x<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
@@ -585,7 +585,7 @@ fun case_29(x: Boolean) {
     if (false || false || false || false || y !== v) {
         val t = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
 
-        if (z !== t || false) {
+        if (<!EQUALITY_NOT_APPLICABLE!>z !== t<!> || false) {
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!><!UNSAFE_CALL!>.<!>a
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!><!UNSAFE_CALL!>.<!>equals(null)
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.propT
@@ -621,7 +621,7 @@ fun case_30(a: ((Float) -> Int?)?, b: Float?) {
 
 // TESTCASE NUMBER: 31
 fun case_31(z1: Boolean?, z: Nothing?) {
-    if (false || EnumClassWithNullableProperty.A.prop_1 != z && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>z1 !== z<!> && z1) {
+    if (false || EnumClassWithNullableProperty.A.prop_1 != z && z1 !== z && z1) {
         EnumClassWithNullableProperty.A.prop_1
         EnumClassWithNullableProperty.A.prop_1<!UNSAFE_CALL!>.<!>equals(null)
         EnumClassWithNullableProperty.A.prop_1.propT
@@ -660,7 +660,7 @@ fun case_33(a: ((Float) -> Int?)?, b: Float?, c: Boolean?) {
 
     } else {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>)<!>
-        if (x == z == true && <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === z<!> || (c != z && !c)) {
+        if (x == z == true && <!SENSELESS_COMPARISON!>x === z<!> || (c != z && !c)) {
 
         } else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
@@ -685,7 +685,7 @@ fun case_33(a: ((Float) -> Int?)?, b: Float?, c: Boolean?) {
 fun case_34(z1: Boolean?) {
     <!CAN_BE_VAL!>var<!> z = null
 
-    if (true && true && true && true && EnumClassWithNullableProperty.A.prop_1 != implicitNullableNothingProperty && <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>EnumClassWithNullableProperty.A.prop_1 !== null<!> && <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>EnumClassWithNullableProperty.A.prop_1 !== z<!> || z1 != implicitNullableNothingProperty || z1!! && <!UNREACHABLE_CODE!>true<!> && <!UNREACHABLE_CODE!>true<!>) {
+    if (true && true && true && true && EnumClassWithNullableProperty.A.prop_1 != implicitNullableNothingProperty && <!SENSELESS_COMPARISON!>EnumClassWithNullableProperty.A.prop_1 !== null<!> && <!SENSELESS_COMPARISON!>EnumClassWithNullableProperty.A.prop_1 !== z<!> || z1 != implicitNullableNothingProperty || z1!! && true && true) {
 
     } else {
         EnumClassWithNullableProperty.A.prop_1
@@ -925,7 +925,7 @@ fun case_51() {
 }
 
 // TESTCASE NUMBER: 52
-val case_52 = if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>nullableIntProperty !== nullableNothingProperty<!> && <!SENSELESS_COMPARISON!>nullableNothingProperty != nullableIntProperty<!>) 0 else {
+val case_52 = if (nullableIntProperty !== nullableNothingProperty && <!SENSELESS_COMPARISON!>nullableNothingProperty != nullableIntProperty<!>) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>nullableIntProperty<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>nullableIntProperty<!>.hashCode()
 }
@@ -1011,7 +1011,7 @@ fun case_57(a: (() -> Unit)) {
  * UNEXPECTED BEHAVIOUR
  */
 fun case_58(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
-    if (a === z && b == z || z == a && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>z === b<!>) {
+    if (a === z && b == z || z == a && z === b) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>
         if (a != z) {

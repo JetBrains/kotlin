@@ -5,5 +5,5 @@ package foo
         inner class B
     }
 
-    val b = /*p:A.B(B)*/A().B()
+    val b = A().B()
 }

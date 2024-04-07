@@ -1,0 +1,59 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int) {
+    // calls only in the result block, which means we can statically guarantee the
+    // number of groups, so no group around the when is needed, just groups around the
+    // result blocks.
+    when (x) {
+        0 -> A(a)
+        1 -> A(b)
+        else -> A(c)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0_subject = x
+  when {
+    tmp0_subject == 0 -> {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<A(a)>")
+      A(a, %composer, 0)
+      %composer.endReplaceGroup()
+    }
+    tmp0_subject == 0b0001 -> {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<A(b)>")
+      A(b, %composer, 0)
+      %composer.endReplaceGroup()
+    }
+    else -> {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<A(c)>")
+      A(c, %composer, 0)
+      %composer.endReplaceGroup()
+    }
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

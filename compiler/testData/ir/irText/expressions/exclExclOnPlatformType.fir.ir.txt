@@ -3,8 +3,8 @@ FILE fqName:<root> fileName:/exclExclOnPlatformType.kt
     BLOCK_BODY
       CALL 'public final fun use (a: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         a: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
-          <T0>: kotlin.String
-          arg0: CALL 'public open fun get (): T of java.lang.ref.WeakReference? declared in java.lang.ref.WeakReference' type=kotlin.String? origin=null
+          <T0>: @[EnhancedNullability] kotlin.String
+          arg0: CALL 'public open fun get (): @[EnhancedNullability] T of java.lang.ref.WeakReference? declared in java.lang.ref.WeakReference' type=@[EnhancedNullability] kotlin.String? origin=null
             $this: CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] T of java.lang.ref.WeakReference?) declared in java.lang.ref.WeakReference' type=java.lang.ref.WeakReference<@[FlexibleNullability] kotlin.String?> origin=null
               <class: T>: @[FlexibleNullability] kotlin.String?
               p0: CONST String type=kotlin.String value=""

@@ -157,6 +157,9 @@ object StandardClassIds {
         val DeprecatedSinceKotlin = "DeprecatedSinceKotlin".baseId()
         val RequireKotlin = "RequireKotlin".internalId()
 
+        val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
+        val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
+
         val HidesMembers = "HidesMembers".internalId()
         val DynamicExtension = "DynamicExtension".internalId()
         val IntrinsicConstEvaluation = "IntrinsicConstEvaluation".internalId()
@@ -190,6 +193,8 @@ object StandardClassIds {
 
         val OptionalExpectation = "OptionalExpectation".baseId()
         val ImplicitlyActualizedByJvmDeclaration = "ImplicitlyActualizedByJvmDeclaration".jvmId()
+
+        val jvmStatic = "JvmStatic".jvmId()
 
         val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
@@ -243,6 +248,8 @@ object StandardClassIds {
         val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
+
+    val allBuiltinTypes = primitiveTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))

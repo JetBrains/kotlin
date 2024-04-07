@@ -9,8 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
@@ -60,13 +58,13 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: TestModule, testServices: TestServices) {
-        val ktFiles = testServices.ktModuleProvider.getKtFiles(mainModule)
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        val ktFiles = mainModule.ktFiles
         doLightClassTest(ktFiles, mainModule, testServices)
     }
 
-    open fun doLightClassTest(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        if (isTestAgainstCompiledCode && TestModuleCompiler.Directives.COMPILATION_ERRORS in module.directives) {
+    open fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
+        if (isTestAgainstCompiledCode && TestModuleCompiler.Directives.COMPILATION_ERRORS in module.testModule.directives) {
             return
         }
 
@@ -80,7 +78,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    protected fun compareResults(module: TestModule, testServices: TestServices, computeActual: () -> String) {
+    protected fun compareResults(module: KtTestModule, testServices: TestServices, computeActual: () -> String) {
         val actual = computeActual().cleanup()
         compareResults(testServices, actual)
         removeIgnoreDirectives(module)
@@ -99,15 +97,15 @@ abstract class AbstractSymbolLightClassesTestBase(
         ktFile: KtFile,
         ktFiles: List<KtFile>,
         testDataFile: Path,
-        module: TestModule,
+        module: KtTestModule,
         project: Project,
     ): String
 
-    protected fun ignoreExceptionIfIgnoreDirectivePresent(module: TestModule, action: () -> Unit) {
+    protected fun ignoreExceptionIfIgnoreDirectivePresent(module: KtTestModule, action: () -> Unit) {
         try {
             action()
         } catch (e: Throwable) {
-            val directives = module.directives
+            val directives = module.testModule.directives
             if (Directives.IGNORE_FIR in directives || isTestAgainstCompiledCode && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
                 return
             }
@@ -124,8 +122,8 @@ abstract class AbstractSymbolLightClassesTestBase(
         testServices.assertions.assertEqualsToFile(path, actual)
     }
 
-    private fun removeIgnoreDirectives(module: TestModule) {
-        val directives = module.directives
+    private fun removeIgnoreDirectives(module: KtTestModule) {
+        val directives = module.testModule.directives
         if (Directives.IGNORE_FIR in directives) {
             throwTestIsPassingException(Directives.IGNORE_FIR)
         }

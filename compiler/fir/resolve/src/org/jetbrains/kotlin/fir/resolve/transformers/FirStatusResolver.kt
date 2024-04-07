@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -14,13 +15,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirStatusResolver(
@@ -245,7 +249,6 @@ class FirStatusResolver(
                 isLocal -> Visibilities.Local
                 else -> resolveVisibility(declaration, containingClass, containingProperty, overriddenStatuses)
             }
-            Visibilities.Private -> Visibilities.Private
             else -> status.visibility
         }
 
@@ -316,6 +319,21 @@ class FirStatusResolver(
         val fallbackVisibility = when {
             declaration is FirPropertyAccessor && containingProperty != null -> containingProperty.visibility
             else -> Visibilities.Public
+        }
+
+        if (containingClass?.status?.isData == true &&
+            declaration is FirSimpleFunction &&
+            declaration.origin == FirDeclarationOrigin.Synthetic.DataClassMember &&
+            DataClassResolver.isCopy(declaration.name)
+        ) {
+            return when {
+                containingClass.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, session) ->
+                    Visibilities.Public
+                session.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
+                        containingClass.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, session) ->
+                    containingClass.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
+                else -> fallbackVisibility
+            }
         }
 
         return overriddenStatuses.map { it.visibility }

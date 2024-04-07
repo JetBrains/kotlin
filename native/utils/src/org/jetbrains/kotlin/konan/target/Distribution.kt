@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.nio.file.Path
 
 class Distribution private constructor(private val serialized: Serialized) : java.io.Serializable {
     constructor(
@@ -30,9 +31,6 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 
     val konanSubdir = "$konanHome/konan"
     val mainPropertyFileName = "$konanSubdir/konan.properties"
-    val experimentalEnabled by lazy {
-        File("$konanSubdir/experimentalTargetsEnabled").exists
-    }
 
     private fun propertyFilesFromConfigDir(configDir: String, genericName: String): List<File> {
         val directory = File(configDir, "platforms/$genericName")
@@ -64,12 +62,6 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 
         loadPropertiesSafely(File(mainPropertyFileName))
 
-        HostManager.knownTargetTemplates.forEach { targetTemplate ->
-            additionalPropertyFiles(targetTemplate).forEach {
-                loadPropertiesSafely(it)
-            }
-        }
-
         if (onlyDefaultProfiles) {
             result.keepOnlyDefaultProfiles()
         }
@@ -88,6 +80,9 @@ class Distribution private constructor(private val serialized: Serialized) : jav
     val stdlib = "$klib/common/stdlib"
     val stdlibDefaultComponent = "$stdlib/default"
 
+    val kotlinRuntimeForSwiftHome = "$konanHome/konan/swift_export/kotlin_runtime"
+    val kotlinRuntimeForSwiftModuleMap = "$kotlinRuntimeForSwiftHome/module.modulemap"
+
     fun defaultNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/native"
 
     fun runtime(target: KonanTarget) = runtimeFileOverride ?: "${defaultNatives(target)}/runtime.bc"
@@ -104,11 +99,6 @@ class Distribution private constructor(private val serialized: Serialized) : jav
     val dependenciesDir = DependencyDirectories
         .getDependenciesRoot(konanDataDir)
         .absolutePath
-
-    val subTargetProvider = object: SubTargetProvider {
-        override fun availableSubTarget(genericName: String) =
-                additionalPropertyFiles(genericName).map { it.name }
-    }
 
     companion object {
         /**

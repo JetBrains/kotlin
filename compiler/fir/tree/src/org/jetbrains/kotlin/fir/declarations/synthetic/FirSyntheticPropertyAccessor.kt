@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -47,7 +46,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
         get() = delegate.dispatchReceiverType
 
     override val receiverParameter: FirReceiverParameter?
-        get() = null
+        get() = delegate.receiverParameter
 
     override val deprecationsProvider: DeprecationsProvider
         get() = delegate.deprecationsProvider
@@ -75,18 +74,18 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
     }
 
     override val contextReceivers: List<FirContextReceiver>
-        get() = emptyList()
+        get() = delegate.contextReceivers
 
     override val controlFlowGraphReference: FirControlFlowGraphReference? = null
 
-    override val contractDescription: FirContractDescription = FirEmptyContractDescription
+    override val contractDescription: FirContractDescription? = null
 
     override val containerSource: DeserializedContainerSource? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         delegate.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
-        contractDescription.accept(visitor, data)
+        contractDescription?.accept(visitor, data)
     }
 
     override fun replaceBody(newBody: FirBlock?) {
@@ -145,7 +144,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
         notSupported()
     }
 
-    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+    override fun replaceContractDescription(newContractDescription: FirContractDescription?) {
         notSupported()
     }
 

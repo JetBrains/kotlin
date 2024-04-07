@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
-object FirWasmExternalChecker : FirWebCommonExternalChecker() {
+object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = false) {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
         return symbol.isEffectivelyExternal(session)
     }

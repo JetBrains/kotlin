@@ -17,7 +17,7 @@
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
 

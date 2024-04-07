@@ -12,7 +12,7 @@ repositories {
 android {
     namespace "com.example"
 
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     kotlin {
         jvmToolchain(8)

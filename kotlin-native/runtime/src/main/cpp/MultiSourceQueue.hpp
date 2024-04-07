@@ -11,7 +11,7 @@
 #include <memory>
 #include <mutex>
 
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {

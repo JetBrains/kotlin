@@ -7,20 +7,19 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val project = mainFile.project
         assert(!project.isDisposed) { "$project is disposed" }
         val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
@@ -33,8 +32,7 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTe
                 ktReferences.first().resolveToSymbol()?.psi as KtDeclaration
             }
 
-        val module = ProjectStructureProvider.getModule(project, mainFile, contextualModule = null)
-        val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(module)
+        val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(mainModule.ktModule)
         val fir = declaration.resolveToFirSymbol(resolveSession).fir
         testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration))
     }

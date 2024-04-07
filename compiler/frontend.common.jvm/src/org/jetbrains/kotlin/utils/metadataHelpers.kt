@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,7 @@ private val LANGUAGE_TO_METADATA_VERSION = EnumMap<LanguageVersion, JvmMetadataV
     this[LanguageVersion.KOTLIN_2_0] = JvmMetadataVersion.INSTANCE
     this[LanguageVersion.KOTLIN_2_1] = JvmMetadataVersion(2, 1, 0)
 
-    check(size == LanguageVersion.values().size) {
+    check(size == LanguageVersion.entries.size) {
         "Please add mappings from the missing LanguageVersion instances to the corresponding JvmMetadataVersion " +
                 "in `LANGUAGE_TO_METADATA_VERSION`"
     }

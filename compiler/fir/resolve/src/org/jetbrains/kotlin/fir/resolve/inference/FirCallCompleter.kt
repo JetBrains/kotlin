@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
@@ -30,6 +31,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -99,7 +103,11 @@ class FirCallCompleter(
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                val finalSubstitutor = candidate.system.asReadOnlyStorage()
+
+                val readOnlyConstraintStorage = candidate.system.asReadOnlyStorage()
+                checkStorageConstraintsAfterFullCompletion(readOnlyConstraintStorage)
+
+                val finalSubstitutor = readOnlyConstraintStorage
                     .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                 call.transformSingle(
                     FirCallCompletionResultsWriterTransformer(
@@ -127,16 +135,38 @@ class FirCallCompleter(
         }
     }
 
+    private fun checkStorageConstraintsAfterFullCompletion(storage: ConstraintStorage) {
+        // Fast path for sake of optimization
+        if (storage.notFixedTypeVariables.isEmpty()) return
+
+        val notFixedTypeVariablesBasedOnTypeParameters = storage.notFixedTypeVariables.filter {
+            it.value.typeVariable is ConeTypeParameterBasedTypeVariable
+        }
+
+        // TODO: Turn it into `require(storage.notFixedTypeVariables.isEmpty())` (KT-66759)
+        require(notFixedTypeVariablesBasedOnTypeParameters.isEmpty()) {
+            "All variables should be fixed to something, " +
+                    "but {${notFixedTypeVariablesBasedOnTypeParameters.keys.joinToString(", ")}} are found"
+        }
+    }
+
     private fun addConstraintFromExpectedType(
         candidate: Candidate,
         initialType: ConeKotlinType,
         resolutionMode: ResolutionMode,
     ) {
         if (resolutionMode !is ResolutionMode.WithExpectedType) return
-        val expectedType = resolutionMode.expectedTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
+        val expectedType = resolutionMode.expectedTypeRef.type.fullyExpandedType(session)
 
         val system = candidate.system
         when {
+            // Only add equality constraint in independent contexts (resolutionMode.forceFullCompletion) for K1 compatibility.
+            // Otherwise,
+            // we miss some constraints from incorporation which leads to NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER in cases like
+            // compiler/testData/diagnostics/tests/inference/nestedIfWithExpectedType.kt.
+            resolutionMode.forceFullCompletion && candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType) ->
+                system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+
             // If type mismatch is assumed to be reported in the checker, we should not add a subtyping constraint that leads to error.
             // Because it might make resulting type correct while, it's hopefully would be more clear if we let the call be inferred without
             // the expected type, and then would report diagnostic in the checker.
@@ -165,6 +195,44 @@ class FirCallCompleter(
                 system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
             }
         }
+    }
+
+    /**
+     * For synthetic functions (when, try, !!, but **not** elvis), we need to add an equality constraint for the expected type
+     * so that some type variables aren't inferred to `Nothing` that appears in one of the branches.
+     *
+     * @See org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createKnownTypeParameterSubstitutorForSpecialCall
+     */
+    private fun Candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType: ConeKotlinType): Boolean {
+        // If we're inside an assignment's RHS, we mustn't add an equality constraint because it might prevent smartcasts.
+        // Example: val x: String? = null; x = if (foo) "" else throw Exception()
+        if (components.context.isInsideAssignmentRhs) return false
+
+        val symbol = symbol as? FirCallableSymbol ?: return false
+        if (symbol.origin != FirDeclarationOrigin.Synthetic.FakeFunction ||
+            expectedType.isUnitOrNullableUnit ||
+            expectedType.isAnyOrNullableAny ||
+            // We don't want to add an equality constraint to a nullable type to a !! call.
+            // See compiler/testData/diagnostics/tests/inference/checkNotNullWithNullableExpectedType.kt
+            (symbol.callableId == SyntheticCallableId.CHECK_NOT_NULL && expectedType.canBeNull(session))
+        ) {
+            return false
+        }
+
+        // If our expression contains any elvis, even nested, we mustn't add an equality constraint because it might influence the
+        // inferred type of the elvis RHS.
+        if (system.allTypeVariables.values.any {
+                it is ConeTypeParameterBasedTypeVariable && it.typeParameterSymbol.containingDeclarationSymbol.isSyntheticElvisFunction()
+            }
+        ) {
+            return false
+        }
+
+        return true
+    }
+
+    private fun FirBasedSymbol<*>.isSyntheticElvisFunction(): Boolean {
+        return origin == FirDeclarationOrigin.Synthetic.FakeFunction && (this as? FirCallableSymbol)?.callableId == SyntheticCallableId.ELVIS_NOT_NULL
     }
 
     fun <T> runCompletionForCall(
@@ -249,7 +317,7 @@ class FirCallCompleter(
 
             val matchedParameter = candidate.argumentMapping?.firstNotNullOfOrNull { (currentArgument, currentValueParameter) ->
                 val currentLambdaArgument =
-                    ((currentArgument as? FirLambdaArgumentExpression)?.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
+                    (currentArgument as? FirAnonymousFunctionExpression)?.anonymousFunction
                 if (currentLambdaArgument === lambdaArgument) {
                     currentValueParameter
                 } else {

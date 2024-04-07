@@ -21,6 +21,7 @@ fun abiMetadataProcessor(
     preserveDeclarationOrder: Boolean,
     classesToBeDeleted: Set<String>,
     pruneClass: Boolean,
+    treatInternalAsPrivate: Boolean,
 ): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
@@ -39,14 +40,15 @@ fun abiMetadataProcessor(
                             removeDataClassCopyIfConstructorIsPrivate,
                             preserveDeclarationOrder,
                             classesToBeDeleted,
-                            pruneClass
+                            pruneClass,
+                            treatInternalAsPrivate,
                         )
                     }
                     is KotlinClassMetadata.FileFacade -> {
-                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder, pruneClass)
+                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder, pruneClass, treatInternalAsPrivate)
                     }
                     is KotlinClassMetadata.MultiFileClassPart -> {
-                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder, pruneClass)
+                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder, pruneClass, treatInternalAsPrivate)
                     }
                     else -> Unit
                 }
@@ -162,12 +164,14 @@ private fun KmClass.removePrivateDeclarations(
     preserveDeclarationOrder: Boolean,
     classesToBeDeleted: Set<String>,
     pruneClass: Boolean,
+    treatInternalAsPrivate: Boolean,
 ) {
-    constructors.removeIf { pruneClass || it.visibility.isPrivate }
+    constructors.removeIf { pruneClass || it.visibility.shouldRemove(treatInternalAsPrivate) }
     (this as KmDeclarationContainer).removePrivateDeclarations(
         copyFunShouldBeDeleted(removeCopyAlongWithConstructor),
         preserveDeclarationOrder,
         pruneClass,
+        treatInternalAsPrivate,
     )
     nestedClasses.removeIf { "$name\$$it" in classesToBeDeleted }
     companionObject = companionObject.takeUnless { "$name\$$it" in classesToBeDeleted }
@@ -175,8 +179,12 @@ private fun KmClass.removePrivateDeclarations(
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
 }
 
-private fun KmPackage.removePrivateDeclarations(preserveDeclarationOrder: Boolean, pruneClass: Boolean) {
-    (this as KmDeclarationContainer).removePrivateDeclarations(false, preserveDeclarationOrder, pruneClass)
+private fun KmPackage.removePrivateDeclarations(
+    preserveDeclarationOrder: Boolean,
+    pruneClass: Boolean,
+    treatInternalAsPrivate: Boolean,
+) {
+    (this as KmDeclarationContainer).removePrivateDeclarations(false, preserveDeclarationOrder, pruneClass, treatInternalAsPrivate)
     localDelegatedProperties.clear()
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
 }
@@ -185,9 +193,10 @@ private fun KmDeclarationContainer.removePrivateDeclarations(
     copyFunShouldBeDeleted: Boolean,
     preserveDeclarationOrder: Boolean,
     pruneClass: Boolean,
+    treatInternalAsPrivate: Boolean,
 ) {
-    functions.removeIf { pruneClass || it.visibility.isPrivate || (copyFunShouldBeDeleted && it.name == "copy") }
-    properties.removeIf { pruneClass || it.visibility.isPrivate }
+    functions.removeIf { pruneClass || it.visibility.shouldRemove(treatInternalAsPrivate) || (copyFunShouldBeDeleted && it.name == "copy") }
+    properties.removeIf { pruneClass || it.visibility.shouldRemove(treatInternalAsPrivate) }
 
     if (!preserveDeclarationOrder) {
         functions.sortWith(compareBy(KmFunction::name, { it.signature.toString() }))
@@ -205,5 +214,9 @@ private fun KmDeclarationContainer.removePrivateDeclarations(
 private fun KmClass.copyFunShouldBeDeleted(removeDataClassCopy: Boolean): Boolean =
     removeDataClassCopy && isData && constructors.none { !it.isSecondary }
 
-private val Visibility.isPrivate: Boolean
-    get() = this == Visibility.PRIVATE || this == Visibility.PRIVATE_TO_THIS || this == Visibility.LOCAL
+private fun Visibility.shouldRemove(treatInternalAsPrivate: Boolean): Boolean {
+    return this == Visibility.PRIVATE ||
+            this == Visibility.PRIVATE_TO_THIS ||
+            this == Visibility.LOCAL ||
+            (treatInternalAsPrivate && this == Visibility.INTERNAL)
+}

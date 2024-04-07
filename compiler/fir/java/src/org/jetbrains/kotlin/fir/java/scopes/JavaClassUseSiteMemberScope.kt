@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.java.SyntheticPropertiesCacheKey
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
@@ -32,8 +35,10 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
 import org.jetbrains.kotlin.fir.scopes.impl.MembersByScope
+import org.jetbrains.kotlin.fir.scopes.impl.isIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.impl.similarFunctionsOrBothProperties
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
+import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -46,6 +51,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -162,7 +168,12 @@ class JavaClassUseSiteMemberScope(
 
         @Suppress("UNCHECKED_CAST")
         for (overriddenProperty in propertiesFromSupertypes as List<ResultOfIntersection<FirPropertySymbol>>) {
-            val overrideInClass = syntheticPropertyCache.getValue(name, this to overriddenProperty)
+            val key = SyntheticPropertiesCacheKey(
+                name,
+                overriddenProperty.chosenSymbol.receiverParameter?.typeRef?.coneType,
+                overriddenProperty.chosenSymbol.resolvedContextReceivers.ifNotEmpty { map { it.typeRef.coneType } } ?: emptyList()
+            )
+            val overrideInClass = syntheticPropertyCache.getValue(key, this to overriddenProperty)
 
             val chosenSymbol = overrideInClass ?: overriddenProperty.chosenSymbol
             directOverriddenProperties[chosenSymbol] = listOf(overriddenProperty)
@@ -174,12 +185,13 @@ class JavaClassUseSiteMemberScope(
     }
 
     internal fun syntheticPropertyFromOverride(overriddenProperty: ResultOfIntersection<FirPropertySymbol>): FirSyntheticPropertySymbol? {
-        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull { (symbol, _) ->
+        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull superMember@{ (symbol, baseScope) ->
             // We may call this function at the STATUS phase, which means that using resolved status may lead to cycle
             // So we need to use raw status here
-            if (!symbol.isVisibleInClass(klass.symbol, symbol.rawStatus)) return@firstNotNullOfOrNull null
+            if (!symbol.isVisibleInClass(klass.symbol, symbol.rawStatus)) return@superMember null
             symbol.createOverridePropertyIfExists(declaredMemberScope, takeModalityFromGetter = true)
-                ?: superTypeScopes.firstNotNullOfOrNull { scope ->
+                ?: superTypeScopes.firstNotNullOfOrNull superScope@{ scope ->
+                    if (scope == baseScope) return@superScope null
                     symbol.createOverridePropertyIfExists(scope, takeModalityFromGetter = false)
                 }
         }
@@ -206,18 +218,20 @@ class JavaClassUseSiteMemberScope(
     ): FirNamedFunctionSymbol? {
         val specialGetterName = if (canUseSpecialGetters) getBuiltinSpecialPropertyGetterName() else null
         val name = specialGetterName?.asString() ?: JvmAbi.getterName(fir.name.asString())
-        return findGetterByName(name, scope)
+        return findGetterOverride(name, scope)
     }
 
-    private fun FirPropertySymbol.findGetterByName(
+    private fun FirPropertySymbol.findGetterOverride(
         getterName: String,
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
         val propertyFromSupertype = fir
         val expectedReturnType = propertyFromSupertype.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+        val receiverCount = (if (receiverParameter != null) 1 else 0) + resolvedContextReceivers.size
         return scope.getFunctions(Name.identifier(getterName)).firstNotNullOfOrNull factory@{ candidateSymbol ->
             val candidate = candidateSymbol.fir
-            if (candidate.valueParameters.isNotEmpty()) return@factory null
+            if (candidate.valueParameters.size != receiverCount) return@factory null
+            if (!checkValueParameters(candidate)) return@factory null
 
             val candidateReturnType = candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
 
@@ -237,14 +251,18 @@ class JavaClassUseSiteMemberScope(
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
         val propertyType = fir.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return null
+        val receiverCount = (if (receiverParameter != null) 1 else 0) + resolvedContextReceivers.size
+
         return scope.getFunctions(Name.identifier(JvmAbi.setterName(fir.name.asString()))).firstNotNullOfOrNull factory@{ candidateSymbol ->
             val candidate = candidateSymbol.fir
-            if (candidate.valueParameters.size != 1) return@factory null
+
+            if (candidate.valueParameters.size != receiverCount + 1) return@factory null
+            if (!checkValueParameters(candidate)) return@factory null
 
             if (!candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack).isUnit) return@factory null
 
             val parameterType =
-                candidate.valueParameters.single().returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+                candidate.valueParameters.last().returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
 
             candidateSymbol.takeIf {
                 candidate.isAcceptableAsAccessorOverride() && AbstractTypeChecker.equalTypes(
@@ -252,6 +270,23 @@ class JavaClassUseSiteMemberScope(
                 )
             }
         }
+    }
+
+    private fun FirPropertySymbol.checkValueParameters(candidate: FirSimpleFunction): Boolean {
+        var parameterIndex = 0
+        for (contextReceiver in this.resolvedContextReceivers) {
+            if (contextReceiver.typeRef.coneType.computeJvmDescriptorRepresentation() !=
+                candidate.valueParameters[parameterIndex++].returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+                    .computeJvmDescriptorRepresentation()
+            ) {
+                return false
+            }
+        }
+
+        return receiverParameter == null ||
+                receiverParameter!!.typeRef.coneType.computeJvmDescriptorRepresentation() ==
+                candidate.valueParameters[parameterIndex].returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+                    .computeJvmDescriptorRepresentation()
     }
 
     private fun FirSimpleFunction.isAcceptableAsAccessorOverride(): Boolean {
@@ -398,6 +433,20 @@ class JavaClassUseSiteMemberScope(
 
         processSpecialFunctions(name, explicitlyDeclaredFunctions, functionsWithScopeFromSupertypes, result)
         return result.toSet()
+    }
+
+    private fun <D : FirCallableSymbol<*>> ResultOfIntersection<D>.extractSomeSymbolFromSuperType(): D {
+        return if (this.isIntersectionOverride()) {
+            /*
+             * we don't want to create intersection override if some declared function actually overrides some functions
+             *   from supertypes, so instead of intersection override symbol we check actual symbol from supertype
+             *
+             * TODO(KT-65925): is it enough to check only one function?
+             */
+            keySymbol
+        } else {
+            chosenSymbol
+        }
     }
 
     private fun processSpecialFunctions(
@@ -843,10 +892,7 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun FirTypeRef.probablyJavaTypeRefToConeType(): ConeKotlinType {
-        return when (this) {
-            is FirJavaTypeRef -> toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
-            else -> coneType
-        }
+        return toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
     }
 
     // It's either overrides Collection.contains(Object) or Collection.containsAll(Collection<?>) or similar methods

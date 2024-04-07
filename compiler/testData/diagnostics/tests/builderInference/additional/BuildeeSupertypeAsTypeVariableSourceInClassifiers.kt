@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// ISSUE: KT-65300
+
 fun test() {
     // a primary constructor call
     build {

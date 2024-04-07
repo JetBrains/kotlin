@@ -1,0 +1,4 @@
+ALL:
+  test/Foo.call(text: String): Unit
+DIRECT:
+  test/Foo.call(text: String): Unit

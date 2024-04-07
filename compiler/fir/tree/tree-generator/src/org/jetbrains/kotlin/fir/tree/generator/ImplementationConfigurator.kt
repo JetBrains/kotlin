@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
+import org.jetbrains.kotlin.generators.tree.AbstractField
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.Object
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
 
-    override fun configure() = with(FirTreeBuilder) {
+    override fun configure(model: Model) = with(FirTreeBuilder) {
         impl(constructor) {
             defaultFalse("isPrimary", withGetter = true)
         }
@@ -66,14 +67,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 delegateCall = "shortName()"
                 withGetter = true
             }
-
-            default("delegate") {
-                isChild = false
-            }
         }
 
         fun ImplementationContext.commonAnnotationConfig() {
-            defaultEmptyList("annotations")
+            defaultEmptyList("annotations", withGetter = true)
             default("coneTypeOrNull") {
                 value = "annotationTypeRef.coneTypeOrNull"
                 withGetter = true
@@ -87,16 +84,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(annotationCall) {
             commonAnnotationConfig()
-            default("argumentMapping") {
-                isChild = false
-            }
         }
 
         impl(errorAnnotationCall) {
             commonAnnotationConfig()
-            default("argumentMapping") {
-                isChild = false
-            }
             default("annotationResolvePhase") {
                 value = "FirAnnotationResolvePhase.Types"
             }
@@ -203,8 +194,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         val emptyExpressionBlock = impl(block, "FirEmptyExpressionBlock") {
             noSource()
-            defaultEmptyList("statements")
-            defaultEmptyList("annotations")
+            defaultEmptyList("statements", withGetter = true)
+            defaultEmptyList("annotations", withGetter = true)
             publicImplementation()
             defaultNull("coneTypeOrNull")
         }
@@ -231,8 +222,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorLoop) {
             default("block", "FirEmptyExpressionBlock()")
-            default("condition", "FirErrorExpressionImpl(source, MutableOrEmptyList.empty(), ConeStubDiagnostic(diagnostic), null, null)")
-            additionalImports(emptyExpressionBlock, coneStubDiagnosticType)
+            default("condition", "FirErrorExpressionImpl(source, MutableOrEmptyList.empty(), ConeUnreportedDuplicateDiagnostic(diagnostic), null, null)")
+            additionalImports(emptyExpressionBlock, coneUnreportedDuplicateDiagnosticType)
         }
 
         impl(expression, "FirExpressionStub") {
@@ -326,16 +317,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(lambdaArgumentExpression) {
-            default("isSpread") {
-                value = "false"
-                withGetter = true
-            }
-            default("coneTypeOrNull") {
-                delegate = "expression"
-            }
-        }
-
         impl(spreadArgumentExpression) {
             default("isSpread") {
                 value = "true"
@@ -391,8 +372,14 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(expression, "FirUnitExpression") {
+            kDoc(
+                """
+                A special kind of expression that can only appear inside [${returnExpression.typeName}].
+                It denotes an empty `return` expression, which is different from explicit `return Unit`.
+                """.trimIndent()
+            )
             defaultBuiltInType("Unit")
-            additionalImports(implicitUnitTypeRefType)
+            additionalImports(returnExpression)
             publicImplementation()
         }
 
@@ -512,19 +499,16 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedTypeRef) {
             publicImplementation()
-            default("delegatedTypeRef") {
-                isChild = false
-            }
         }
 
         impl(errorExpression) {
-            default("coneTypeOrNull", "expression?.coneTypeOrNull ?: ConeErrorType(ConeStubDiagnostic(diagnostic))", withGetter = true)
-            additionalImports(coneErrorTypeType, coneStubDiagnosticType)
+            default("coneTypeOrNull", "expression?.coneTypeOrNull ?: ConeErrorType(ConeUnreportedDuplicateDiagnostic(diagnostic))", withGetter = true)
+            additionalImports(coneErrorTypeType, coneUnreportedDuplicateDiagnosticType)
         }
 
         impl(qualifiedErrorAccessExpression) {
-            default("coneTypeOrNull", "ConeErrorType(ConeStubDiagnostic(diagnostic))")
-            additionalImports(coneErrorTypeType, coneStubDiagnosticType)
+            default("coneTypeOrNull", "ConeErrorType(ConeUnreportedDuplicateDiagnostic(diagnostic))")
+            additionalImports(coneErrorTypeType, coneUnreportedDuplicateDiagnosticType)
         }
 
         impl(errorFunction) {
@@ -547,8 +531,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(errorNamedReference) {
             default("name", "Name.special(\"<\${diagnostic.reason}>\")")
         }
-
-        impl(fromMissingDependenciesNamedReference)
 
         impl(breakExpression) {
             defaultBuiltInType("Nothing")
@@ -604,13 +586,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         noImpl(userTypeRef)
 
-        impl(file) {
-            default("annotations") {
-                value = "annotationsContainer?.annotations ?: emptyList()"
-                withGetter = true
-            }
-        }
-
         noImpl(argumentList)
         noImpl(annotationArgumentMapping)
 
@@ -635,14 +610,14 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "typeParameters",
             implementationPredicate = { it.typeName in implementationsWithoutStatusAndTypeParameters }
         ) {
-            defaultEmptyList(it)
+            defaultEmptyList(it, withGetter = true)
             additionalImports(resolvedDeclarationStatusImplType)
         }
     }
 
-    override fun configureAllImplementations() {
+    override fun configureAllImplementations(model: Model) {
         configureFieldInAllImplementations(
-            field = "controlFlowGraphReference",
+            fieldName = "controlFlowGraphReference",
             implementationPredicate = { it.typeName != "FirAnonymousFunctionImpl" }
         ) {
             defaultNull(it)
@@ -674,18 +649,18 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirInaccessibleReceiverExpressionImpl"
         )
         configureFieldInAllImplementations(
-            field = "typeRef",
+            fieldName = "typeRef",
             implementationPredicate = { it.typeName !in implementationWithConfigurableTypeRef },
-            fieldPredicate = { it.defaultValueInImplementation == null }
+            fieldPredicate = { it.implementationDefaultStrategy!!.defaultValue != null }
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")
             additionalImports(firImplicitTypeWithoutSourceType)
         }
 
         configureFieldInAllImplementations(
-            field = "lValueTypeRef",
+            fieldName = "lValueTypeRef",
             implementationPredicate = { it.typeName in "FirVariableAssignmentImpl" },
-            fieldPredicate = { it.defaultValueInImplementation == null }
+            fieldPredicate = { it.implementationDefaultStrategy!!.defaultValue != null }
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")
             additionalImports(firImplicitTypeWithoutSourceType)

@@ -15,6 +15,8 @@ public final data class MyDependency public constructor(b: one.B, d: one.D) {
 
     public final operator fun component2(): one.D { /* compiled code */ }
 
+    public final fun copy(b: one.B = COMPILED_CODE, d: one.D = COMPILED_CODE): one.MyDependency { /* compiled code */ }
+
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 
     public open fun hashCode(): kotlin.Int { /* compiled code */ }
@@ -30,7 +32,7 @@ public final data [ResolvedTo(BODY_RESOLVE)] class MyDependency : R|kotlin/Any| 
 
     public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|one/D|
 
-    public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] b: R|one/B| = this@R|one/MyDependency|.R|one/MyDependency.b|, [ResolvedTo(BODY_RESOLVE)] d: R|one/D| = this@R|one/MyDependency|.R|one/MyDependency.d|): R|one/MyDependency|
+    public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] b: R|one/B| = STUB, [ResolvedTo(BODY_RESOLVE)] d: R|one/D| = STUB): R|one/MyDependency|
 
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
@@ -60,16 +63,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken)
     is ConeUnresolvedTypeQualifierError -> {
         when {
-            // There could be an implicit reference here, such as FirImplicitThisReference,
-            // or other implicit elements without a source.
-            // In that case, it's not necessary to report UNRESOLVED_REFERENCE because they are implicit.
-            source == null -> null
-
             // this.qualifiers will contain all resolved qualifiers from the left up to (including) the first unresolved qualifier.
             // We want to report UNRESOLVED_REFERENCE exactly on the first unresolved qualifier with its name as argument.
             // Examples: <!UNRESOLVED_REFERENCE!>Unresolved<!>, <!UNRESOLVED_REFERENCE!>Unresolved<!>.Foo,
             // Resolved.<!UNRESOLVED_REFERENCE!>Unresolved<!>, Resolved.<!UNRESOLVED_REFERENCE!>Unresolved<!>.Foo
-            source.kind == KtRealSourceElementKind -> {
+            source?.kind == KtRealSourceElementKind -> {
                 val lastQualifier = this.qualifiers.last()
                 FirErrors.UNRESOLVED_REFERENCE.createOn(lastQualifier.source, lastQualifier.name.asString(), null)
             }
@@ -114,7 +112,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbols)
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>)
-    is ConeAmbiguityError -> when {
+    is ConeAmbiguityError -> @OptIn(ApplicabilityDetail::class) when {
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
             val (unsafeCall, candidate) = candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnsafeCall>()?.to(it) }
@@ -158,7 +156,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(callOrAssignmentSource ?: source, reason)
 
     is ConeSimpleDiagnostic -> when {
-        (source?.kind as? KtFakeSourceElementKind)?.canBeIgnored == true -> null
+        (source?.kind as? KtFakeSourceElementKind)?.shouldIgnoreSimpleDiagnostic == true -> null
         else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source)
     }
 
@@ -168,15 +166,15 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeCannotInferReceiverParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(callOrAssignmentSource ?: source)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
-    is ConeStubDiagnostic -> null
-    is ConeIntermediateDiagnostic -> null
+    is ConeUnreportedDuplicateDiagnostic -> null // Unreported because we always report something different
+    is ConeIntermediateDiagnostic -> null // At least some usages are accounted in FirMissingDependencyClassChecker
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason)
     is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason)
     is ConeTypeParameterInQualifiedAccess -> null // reported in various checkers instead
-    is ConeNotAnnotationContainer -> null
+    is ConeNotAnnotationContainer -> null // Reported in FirAnnotationExpressionChecker.checkAnnotationUsedAsAnnotationArgument
     is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name)
     is ConeUnsupported -> FirErrors.UNSUPPORTED.createOn(this.source ?: source, this.reason)
-    is ConeLocalVariableNoTypeOrInitializer -> runIf(variable.isLocalMember) {
+    is ConeLocalVariableNoTypeOrInitializer -> runIf(variable.isLocalMember) { // Top/Class-level declarations are handled in FirTopLevelPropertiesChecker
         FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source)
     }
     is ConeForbiddenIntersection -> null // reported in FirDefinitelyNotNullableChecker
@@ -198,7 +196,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
-private val KtFakeSourceElementKind.canBeIgnored: Boolean
+/**
+ * `DelegatingConstructorCall` because in this case there is either `UNRESOLVED_REFERENCE` or `SYNTAX` already.
+ * `ErrorTypeRef` because in this case there is `SYNTAX` already.
+ * */
+private val KtFakeSourceElementKind.shouldIgnoreSimpleDiagnostic: Boolean
     get() = this == KtFakeSourceElementKind.DelegatingConstructorCall
             || this == KtFakeSourceElementKind.ErrorTypeRef
 
@@ -279,7 +281,8 @@ private fun mapInapplicableCandidateError(
 ): List<KtDiagnostic> {
     val typeContext = session.typeContext
     val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol)
-    val diagnostics = diagnostic.candidate.diagnostics.filter { !it.applicability.isSuccess }.mapNotNull { rootCause ->
+
+    val diagnostics = diagnostic.candidate.diagnostics.filter { !it.isSuccess }.mapNotNull { rootCause ->
         when (rootCause) {
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.createOn(
                 rootCause.argument.source ?: qualifiedAccessSource
@@ -397,6 +400,13 @@ private fun mapInapplicableCandidateError(
             // Reported later
             is TypeParameterAsExpression -> null
 
+            is AmbiguousInterceptedSymbol -> FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL.createOn(source, rootCause.pluginNames)
+
+            is MissingInnerClassConstructorReceiver -> FirErrors.INNER_CLASS_CONSTRUCTOR_NO_RECEIVER.createOn(
+                qualifiedAccessSource ?: source,
+                rootCause.candidateSymbol
+            )
+
             else -> genericDiagnostic
         }
     }.distinct()
@@ -458,18 +468,26 @@ private fun ConstraintSystemError.toDiagnostic(
     return when (this) {
         is NewConstraintError -> {
             val position = position.from
-            val argument =
+            val (argument, reportOn) =
                 when (position) {
-                    // TODO, KT-59810: Support other ReceiverConstraintPositionImpl, LHSArgumentConstraintPositionImpl
-                    is ConeArgumentConstraintPosition -> position.argument
-                    is ConeLambdaArgumentConstraintPosition -> position.lambda
-                    else -> null
+                    is ConeArgumentConstraintPosition -> position.argument to null
+                    is ConeLambdaArgumentConstraintPosition -> position.lambda to null
+                    is ConeReceiverConstraintPosition -> position.argument to position.source
+                    // ConeExpectedTypeConstraintPosition is processed below,
+                    // all others are reported as NEW_INFERENCE_ERROR instead (see mapSystemHasContradictionError);
+                    // About calls from mapInapplicableCandidateError:
+                    // - ConeExplicitTypeParameterConstraintPosition is reported as UPPER_BOUND_VIOLATED
+                    // (see e.g. testCheckEnhancedUpperBounds)
+                    // - ConeFixVariableConstraintPosition is occurred in delegates only,
+                    // and reported as DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE (see testSuccessfulProvideDelegateLeadsToRedGetValue)
+                    // Finally, ConeDeclaredUpperBoundConstraintPosition never occurs here
+                    else -> null to null
                 }
 
             val typeMismatchDueToNullability = typeContext.isTypeMismatchDueToNullability(lowerConeType, upperConeType)
             argument?.let {
                 return FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
-                    it.source ?: source,
+                    reportOn ?: it.source ?: source,
                     lowerConeType.removeTypeVariableTypes(typeContext),
                     upperConeType.removeTypeVariableTypes(typeContext),
                     typeMismatchDueToNullability
@@ -511,7 +529,9 @@ private fun ConstraintSystemError.toDiagnostic(
             }
 
             FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.createOn(
-                candidate.sourceOfCallToSymbolWith(this.typeVariable as ConeTypeVariable) ?: source,
+                (resolvedAtom as? FirResolvable)?.calleeReference?.source
+                    ?: candidate.sourceOfCallToSymbolWith(this.typeVariable as ConeTypeVariable)
+                    ?: source,
                 typeVariableName,
             )
         }

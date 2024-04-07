@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinal
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.android.internal.internal
@@ -36,7 +37,7 @@ abstract class KotlinMultiplatformExtension
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts,
     KotlinHierarchyDsl,
-    HasConfigurableCompilerOptions<KotlinCommonCompilerOptions>,
+    HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions>,
     KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
     @Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
@@ -69,7 +70,7 @@ abstract class KotlinMultiplatformExtension
         configure(presetExtension)
     }
 
-    internal val hierarchy by lazy { KotlinHierarchyDslImpl(targets, sourceSets) }
+    internal val hierarchy by lazy { KotlinHierarchyDslImpl(targets, sourceSets, redundantDependsOnEdgesTracker) }
 
     /**
      * Sets up a 'natural'/'default' hierarchy withing [KotlinTarget]'s in the project.
@@ -356,3 +357,5 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
 }
 
 internal val KotlinMultiplatformExtension.metadataTarget get() = metadata() as KotlinMetadataTarget
+
+internal val Collection<KotlinTarget>.platformTargets: List<KotlinTarget> get() = filter { it !is KotlinMetadataTarget }

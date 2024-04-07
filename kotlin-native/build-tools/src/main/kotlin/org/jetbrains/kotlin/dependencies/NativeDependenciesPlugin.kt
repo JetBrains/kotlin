@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 import java.nio.file.Paths
@@ -137,6 +138,7 @@ abstract class NativeDependenciesExtension @Inject constructor(private val proje
  */
 class NativeDependenciesPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.apply<PlatformManagerPlugin>()
         project.apply<NativeDependenciesBasePlugin>()
         project.extensions.create<NativeDependenciesExtension>("nativeDependencies", project)
     }

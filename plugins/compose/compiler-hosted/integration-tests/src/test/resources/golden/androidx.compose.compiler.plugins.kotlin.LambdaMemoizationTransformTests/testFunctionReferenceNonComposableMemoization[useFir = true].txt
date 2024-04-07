@@ -1,0 +1,49 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+@Composable fun Example(x: Int) {
+    fun foo() { use(x) }
+    val shouldMemoize: ()->(()->Unit) = { ::foo }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)<{>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    fun foo() {
+      use(x)
+    }
+    val shouldMemoize = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
+        {
+          ::foo
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(x, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

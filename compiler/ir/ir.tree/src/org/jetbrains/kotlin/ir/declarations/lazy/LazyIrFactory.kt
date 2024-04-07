@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -69,11 +69,11 @@ class LazyIrFactory(
         visibility: DescriptorVisibility,
         isInline: Boolean,
         isExpect: Boolean,
-        returnType: IrType,
+        returnType: IrType?,
         symbol: IrConstructorSymbol,
         isPrimary: Boolean,
         isExternal: Boolean,
-        containerSource: DeserializedContainerSource?
+        containerSource: DeserializedContainerSource?,
     ): IrConstructor = if (symbol.isBound)
         symbol.owner
     else
@@ -127,7 +127,7 @@ class LazyIrFactory(
         visibility: DescriptorVisibility,
         isInline: Boolean,
         isExpect: Boolean,
-        returnType: IrType,
+        returnType: IrType?,
         modality: Modality,
         symbol: IrSimpleFunctionSymbol,
         isTailrec: Boolean,
@@ -136,7 +136,7 @@ class LazyIrFactory(
         isInfix: Boolean,
         isExternal: Boolean,
         containerSource: DeserializedContainerSource?,
-        isFakeOverride: Boolean
+        isFakeOverride: Boolean,
     ): IrSimpleFunction = if (symbol.isBound)
         symbol.owner
     else

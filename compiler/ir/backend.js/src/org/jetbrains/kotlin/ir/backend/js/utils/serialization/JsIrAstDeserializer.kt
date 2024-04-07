@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -276,10 +276,10 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         }
     }
 
-    private val sideEffectKindValues = SideEffectKind.values()
-    private val jsBinaryOperatorValues = JsBinaryOperator.values()
-    private val jsUnaryOperatorValues = JsUnaryOperator.values()
-    private val jsFunctionModifiersValues = JsFunction.Modifier.values()
+    private val sideEffectKindValues get() = SideEffectKind.entries
+    private val jsBinaryOperatorValues get() = JsBinaryOperator.entries
+    private val jsUnaryOperatorValues get() = JsUnaryOperator.entries
+    private val jsFunctionModifiersValues get() = JsFunction.Modifier.entries
 
     private fun readExpression(): JsExpression {
         return withComments {
@@ -450,7 +450,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         }
     }
 
-    private val specialFunctionValues = SpecialFunction.values()
+    private val specialFunctionValues get() = SpecialFunction.entries
 
     private fun readName(): JsName {
         val identifier = stringTable[readInt()]

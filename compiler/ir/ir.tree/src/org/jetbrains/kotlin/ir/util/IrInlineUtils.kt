@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNullable
 
 val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
     get() = when (val element = inlinedElement) {
@@ -40,3 +43,9 @@ val IrReturnableBlock.inlineFunction: IrFunction?
     get() = (this.statements.singleOrNull() as? IrInlinedFunctionBlock)?.inlineFunction
 val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
     get() = inlineFunction?.fileOrNull?.symbol
+
+fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
+    index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
+
+fun IrExpression.isAdaptedFunctionReference() =
+    this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE

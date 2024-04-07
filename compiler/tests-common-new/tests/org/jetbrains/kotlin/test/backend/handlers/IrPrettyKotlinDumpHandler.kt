@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.util.FakeOverridesStrategy
 import org.jetbrains.kotlin.ir.util.KotlinLikeDumpOptions
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.computeDumpExtension
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.groupWithTestFiles
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -44,6 +46,9 @@ class IrPrettyKotlinDumpHandler(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
 
+    override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
+        get() = listOf(::FirIrDumpIdenticalChecker)
+
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return
         dumpModuleKotlinLike(
@@ -58,11 +63,15 @@ class IrPrettyKotlinDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
         val moduleStructure = testServices.moduleStructure
         val extension = computeDumpExtension(moduleStructure.modules.first(), DUMP_EXTENSION)
         val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(extension)
-        assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_KT_IR)
+        } else {
+            assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+        }
     }
 }
 

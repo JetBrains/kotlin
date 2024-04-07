@@ -210,7 +210,7 @@ class IrModuleToJsTransformer(
         }
 
         if (modes.any { it.production }) {
-            optimizeProgramByIr(modules, backendContext, removeUnusedAssociatedObjects)
+            optimizeProgramByIr(modules, backendContext, moduleKind, removeUnusedAssociatedObjects)
         }
 
         modes.filter { it.production }.forEach {
@@ -225,7 +225,7 @@ class IrModuleToJsTransformer(
         doStaticMembersLowering(modules)
 
         if (mode.production) {
-            optimizeProgramByIr(modules, backendContext, removeUnusedAssociatedObjects)
+            optimizeProgramByIr(modules, backendContext, moduleKind, removeUnusedAssociatedObjects)
         }
 
         return makeJsCodeGeneratorFromIr(exportData, mode)

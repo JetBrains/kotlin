@@ -37,9 +37,20 @@ internal class AbiRendererImpl(
 
         if (settings.renderManifest) {
             with(libraryAbi.manifest) {
+                val nativeTargets = mutableListOf<LibraryTarget.Native>()
+                val wasmTargets = mutableListOf<LibraryTarget.WASM>()
+
+                for (platformTarget in platformTargets) {
+                    when (platformTarget) {
+                        is LibraryTarget.Native -> nativeTargets += platformTarget
+                        is LibraryTarget.WASM -> wasmTargets += platformTarget
+                    }
+                }
+
                 listOfNotNull(
                     platform?.let { "Platform" to it },
                     nativeTargets.takeIf { it.isNotEmpty() }?.let { "Native targets" to it.joinToString(separator = ", ") },
+                    wasmTargets.takeIf { it.isNotEmpty() }?.let { "WASM targets" to it.joinToString(separator = ", ") },
                     compilerVersion?.let { "Compiler version" to it },
                     abiVersion?.let { "ABI version" to it },
                     libraryVersion?.let { "Library version" to it },

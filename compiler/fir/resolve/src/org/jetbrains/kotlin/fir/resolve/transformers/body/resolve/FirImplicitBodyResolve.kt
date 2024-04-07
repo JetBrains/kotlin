@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 @OptIn(AdapterForResolveProcessor::class)
@@ -73,8 +75,7 @@ class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSes
 fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
-    localClassesNavigationInfo: LocalClassesNavigationInfo,
-    firResolveContextCollector: FirResolveContextCollector? = null
+    localClassesNavigationInfo: LocalClassesNavigationInfo
 ): F {
     val currentReturnTypeCalculator = components.context.returnTypeCalculator as? ReturnTypeCalculatorWithJump
     val prevDesignation = currentReturnTypeCalculator?.designationMapForLocalClasses ?: emptyMap()
@@ -106,7 +107,6 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
         implicitTypeOnly = false,
         returnTypeCalculator,
         outerBodyResolveContext = newContext,
-        firResolveContextCollector = firResolveContextCollector,
     )
 
     return this.transform(transformer, resolutionMode)
@@ -120,7 +120,6 @@ open class FirImplicitAwareBodyResolveTransformer(
     implicitTypeOnly: Boolean,
     returnTypeCalculator: ReturnTypeCalculatorWithJump,
     outerBodyResolveContext: BodyResolveContext? = null,
-    firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirBodyResolveTransformer(
     session,
     phase,
@@ -128,7 +127,6 @@ open class FirImplicitAwareBodyResolveTransformer(
     scopeSession,
     returnTypeCalculator,
     outerBodyResolveContext,
-    firResolveContextCollector
 ) {
     override fun transformForeignAnnotationCall(symbol: FirBasedSymbol<*>, annotationCall: FirAnnotationCall): FirAnnotationCall {
         val outerTransformer = (returnTypeCalculator as ReturnTypeCalculatorWithJump).outerTransformer
@@ -171,7 +169,8 @@ open class FirImplicitAwareBodyResolveTransformer(
         }
 
         val canHaveDeepImplicitTypeRefs = member is FirProperty && member.backingField?.returnTypeRef is FirResolvedTypeRef == false
-        if (member.returnTypeRef is FirResolvedTypeRef && !canHaveDeepImplicitTypeRefs) return member
+        val isConstProperty = member is FirProperty && member.isConst
+        if (member.returnTypeRef is FirResolvedTypeRef && !canHaveDeepImplicitTypeRefs && !isConstProperty) return member
         val symbol = member.symbol
         val status = implicitBodyResolveComputationSession.getStatus(symbol)
         if (status is ImplicitBodyResolveComputationStatus.Computed) {
@@ -245,7 +244,7 @@ open class ReturnTypeCalculatorWithJump(
             }
         }
 
-        if (declaration.isCopyCreatedInScope) {
+        if (declaration.canHaveDeferredReturnTypeCalculation) {
             val resolvedTypeRef = callableCopyTypeCalculator.computeReturnType(declaration)
             requireWithAttachment(
                 resolvedTypeRef is FirResolvedTypeRef,
@@ -309,6 +308,7 @@ open class ReturnTypeCalculatorWithJump(
 
             val provider = session.firProvider
             val file = provider.getFirCallableContainerFile(symbol)
+            val script = file?.declarations?.firstIsInstanceOrNull<FirScript>()
 
             val outerClasses = generateSequence(symbol.containingClassLookupTag()?.classId) { classId ->
                 classId.outerClassId
@@ -322,7 +322,7 @@ open class ReturnTypeCalculatorWithJump(
                     )
                 }
             }
-            (listOf(file) + outerClasses.filterNotNull().asReversed()) to null
+            (listOfNotNull(file, script) + outerClasses.filterNotNull().asReversed()) to null
         }
 
         val previousTowerDataContexts = outerBodyResolveContext?.regularTowerDataContexts
@@ -350,8 +350,8 @@ open class ReturnTypeCalculatorWithJump(
         return newReturnTypeRef
     }
 
-    private inner class CallableCopyTypeCalculatorWithJump : CallableCopyTypeCalculator.AbstractCallableCopyTypeCalculator() {
-        override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef? {
+    private inner class CallableCopyTypeCalculatorWithJump : CallableCopyTypeCalculator.DeferredCallableCopyTypeCalculator() {
+        override fun FirCallableDeclaration.getResolvedTypeRef(): FirResolvedTypeRef {
             return this@ReturnTypeCalculatorWithJump.computeReturnTypeRef(this)
         }
     }

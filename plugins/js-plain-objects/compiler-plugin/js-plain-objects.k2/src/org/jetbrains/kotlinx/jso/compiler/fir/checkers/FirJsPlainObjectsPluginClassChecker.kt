@@ -33,43 +33,53 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
             val classSymbol = declaration.symbol as? FirRegularClassSymbol ?: return
 
             if (classSymbol.hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session)) {
-                checkJsPlainObjectAnnotationTargets(classSymbol, reporter)
-                checkJsPlainObjectSuperTypes(classSymbol, reporter)
-                checkJsPlainObjectMembers(classSymbol, reporter)
+                checkJsPlainObjectAnnotationTargets(classSymbol, context, reporter)
+                checkJsPlainObjectSuperTypes(classSymbol, context, reporter)
+                checkJsPlainObjectMembers(classSymbol, context, reporter)
             } else {
-                checkJsPlainObjectAsSuperInterface(classSymbol, reporter)
+                checkJsPlainObjectAsSuperInterface(classSymbol, context, reporter)
             }
         }
     }
-    
-    context(CheckerContext)
-    private fun checkJsPlainObjectAnnotationTargets(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
+
+    private fun checkJsPlainObjectAnnotationTargets(
+        classSymbol: FirClassSymbol<out FirClass>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
         val classKind = classSymbol.classKind.codeRepresentation ?: error("Unexpected enum entry")
 
-        if (!classSymbol.isEffectivelyExternal(session)) {
-            reporter.reportOn(classSymbol.source, FirJsPlainObjectsErrors.NON_EXTERNAL_DECLARATIONS_NOT_SUPPORTED, classKind)
+        if (!classSymbol.isEffectivelyExternal(context.session)) {
+            reporter.reportOn(classSymbol.source, FirJsPlainObjectsErrors.NON_EXTERNAL_DECLARATIONS_NOT_SUPPORTED, classKind, context)
             return
         }
         if (!classSymbol.isInterface) {
-            reporter.reportOn(classSymbol.source, FirJsPlainObjectsErrors.ONLY_INTERFACES_ARE_SUPPORTED, classKind)
+            reporter.reportOn(classSymbol.source, FirJsPlainObjectsErrors.ONLY_INTERFACES_ARE_SUPPORTED, classKind, context)
             return
         }
     }
 
-    context(CheckerContext)
-    private fun checkJsPlainObjectMembers(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
-        if (!classSymbol.isEffectivelyExternal(session) || !classSymbol.isInterface) return
+    private fun checkJsPlainObjectMembers(
+        classSymbol: FirClassSymbol<out FirClass>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (!classSymbol.isEffectivelyExternal(context.session) || !classSymbol.isInterface) return
         classSymbol
-            .declaredMemberScope(session, null)
+            .declaredMemberScope(context.session, null)
             .processAllFunctions {
                 if (!it.isMethodOfAny && !it.isInline) {
-                    reporter.reportOn(it.source, FirJsPlainObjectsErrors.METHODS_ARE_NOT_ALLOWED_INSIDE_JS_PLAIN_OBJECT)
+                    reporter.reportOn(it.source, FirJsPlainObjectsErrors.METHODS_ARE_NOT_ALLOWED_INSIDE_JS_PLAIN_OBJECT, context)
                 }
             }
     }
-    
-    context(CheckerContext)
-    private fun checkJsPlainObjectSuperTypes(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
+
+    private fun checkJsPlainObjectSuperTypes(
+        classSymbol: FirClassSymbol<out FirClass>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        val session = context.session
         if (!classSymbol.isEffectivelyExternal(session) || !classSymbol.isInterface) return
         classSymbol.resolvedSuperTypeRefs.forEach { superType ->
             val superInterface = superType.coneType
@@ -81,14 +91,19 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
                 reporter.reportOn(
                     superType.source,
                     FirJsPlainObjectsErrors.JS_PLAIN_OBJECT_CAN_EXTEND_ONLY_OTHER_JS_PLAIN_OBJECTS,
-                    classSymbol.classId.asFqNameString()
+                    classSymbol.classId.asFqNameString(),
+                    context
                 )
             }
         }
     }
 
-    context(CheckerContext)
-    private fun checkJsPlainObjectAsSuperInterface(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
+    private fun checkJsPlainObjectAsSuperInterface(
+        classSymbol: FirClassSymbol<out FirClass>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        val session = context.session
         classSymbol.resolvedSuperTypeRefs.forEach {
             val superInterface = it.coneType.fullyExpandedType(session)
                 .toRegularClassSymbol(session)
@@ -98,7 +113,8 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
                 reporter.reportOn(
                     it.source,
                     FirJsPlainObjectsErrors.IMPLEMENTING_OF_JS_PLAIN_OBJECT_IS_NOT_SUPPORTED,
-                    classSymbol.classId.asFqNameString()
+                    classSymbol.classId.asFqNameString(),
+                    context
                 )
             }
         }

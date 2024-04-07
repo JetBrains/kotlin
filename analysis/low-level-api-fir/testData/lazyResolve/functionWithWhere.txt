@@ -80,6 +80,16 @@ FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
         ^foo R|<local>/t|
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] T : R|One|, R|Two|> foo([ResolvedTo(CONSTANT_EVALUATION)] t: R|T|): R|T| {
+        ^foo R|<local>/t|
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
     public final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,6 +31,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val value =
             when (releaseTargetArg) {
                 "1.6" -> 6
+                "1.7" -> 7
                 "1.8" -> 8
                 else -> releaseTargetArg.toIntOrNull()
             }
@@ -41,18 +42,29 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             if (value != getJavaVersion() || arguments.jdkHome != null) {
                 put(JVMConfigurationKeys.JDK_RELEASE, value)
             }
-            if (jvmTargetArg != null && jvmTargetArg != releaseTargetArg) {
+            if (jvmTargetArg != null && !isCompatibleJvmTargetAndRelease(jvmTargetArg, releaseTargetArg)) {
+                val suggestion =
+                    if (value < 8) "Please change the value of the 'jvm-target' option to 1.8"
+                    else "Please remove the '-jvm-target' option"
                 messageCollector.report(
                     ERROR,
-                    "'-Xjdk-release=$releaseTargetArg' option conflicts with '-jvm-target $jvmTargetArg'. " +
-                            "Please remove the '-jvm-target' option"
+                    "'-Xjdk-release=$releaseTargetArg' option conflicts with '-jvm-target $jvmTargetArg'. $suggestion"
                 )
             }
         }
     }
 
     val jvmTargetValue = when (releaseTargetArg) {
-        "6" -> "1.6"
+        "6", "1.6", "7", "1.7" -> {
+            if (jvmTargetArg == null) {
+                messageCollector.report(
+                    ERROR,
+                    "'-Xjdk-release=$releaseTargetArg' option requires JVM target explicitly set to 1.8. " +
+                            "Please specify the '-jvm-target' option"
+                )
+            }
+            jvmTargetArg
+        }
         "8" -> "1.8"
         null -> jvmTargetArg
         else -> releaseTargetArg
@@ -70,7 +82,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         } else {
             messageCollector.report(
                 ERROR, "Unknown JVM target version: $jvmTargetValue\n" +
-                        "Supported versions: ${JvmTarget.values().joinToString { it.description }}"
+                        "Supported versions: ${JvmTarget.supportedValues().joinToString { it.description }}"
             )
         }
     }
@@ -91,7 +103,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         } else {
             messageCollector.report(
                 ERROR, "Unknown `-Xstring-concat` mode: $stringConcat\n" +
-                        "Supported modes: ${JvmStringConcat.values().joinToString { it.description }}"
+                        "Supported modes: ${JvmStringConcat.entries.joinToString { it.description }}"
             )
         }
     }
@@ -100,6 +112,15 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
+}
+
+private fun isCompatibleJvmTargetAndRelease(jvmTarget: String, release: String): Boolean {
+    if (jvmTarget == "1.8") {
+        // This is needed to be able to compile stdlib with -jvm-target 1.8 and -Xjdk-release=1.6/1.7.
+        return release in listOf("6", "1.6", "7", "1.7", "8", "1.8")
+    }
+
+    return jvmTarget == release
 }
 
 private fun CompilerConfiguration.handleClosureGenerationSchemeArgument(
@@ -116,7 +137,7 @@ private fun CompilerConfiguration.handleClosureGenerationSchemeArgument(
         messageCollector.report(
             ERROR,
             "Unknown `$flag` argument: ${value}\n." +
-                    "Supported arguments: ${JvmClosureGenerationScheme.values().joinToString { it.description }}"
+                    "Supported arguments: ${JvmClosureGenerationScheme.entries.joinToString { it.description }}"
         )
     }
 }
@@ -250,7 +271,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
         if (abiStability == null) {
             messageCollector.report(
                 ERROR,
-                "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.values().map { it.description }}"
+                "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.entries.map { it.description }}"
             )
         } else if (!useIR && abiStability == JvmAbiStability.UNSTABLE) {
             messageCollector.report(ERROR, "-Xabi-stability=unstable is not supported in the old JVM backend")
@@ -282,13 +303,14 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
     put(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC, arguments.oldInnerClassesLogic)
     put(JVMConfigurationKeys.ENABLE_IR_INLINER, arguments.enableIrInliner)
+    put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, arguments.useInlineScopesNumbers)
 
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
     if (assertionsMode == null) {
         messageCollector.report(
             ERROR,
-            "Unknown assertions mode: ${arguments.assertionsMode}, supported modes: ${JVMAssertionsMode.values().map { it.description }}"
+            "Unknown assertions mode: ${arguments.assertionsMode}, supported modes: ${JVMAssertionsMode.entries.map { it.description }}"
         )
     }
     put(JVMConfigurationKeys.ASSERTIONS_MODE, assertionsMode ?: JVMAssertionsMode.DEFAULT)

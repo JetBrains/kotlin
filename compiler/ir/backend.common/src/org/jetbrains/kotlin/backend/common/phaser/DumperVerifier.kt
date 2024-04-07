@@ -144,3 +144,9 @@ fun validationCallback(context: CommonBackendContext, fragment: IrElement, check
 }
 
 val validationAction = makeVerifyAction(::validationCallback)
+
+class IrValidationPhase(private val context: CommonBackendContext) : ModuleLoweringPass {
+    override fun lower(irModule: IrModuleFragment) {
+        validationCallback(context, irModule)
+    }
+}

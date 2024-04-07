@@ -170,7 +170,7 @@ class NamedNativeInteropConfig implements Named {
         this.project = project
         this.flavor = flavor
 
-        def platformManager = project.project(":kotlin-native").ext.platformManager
+        def platformManager = project.extensions.platformManager
         def targetManager = platformManager.targetManager(target)
         this.target = targetManager.targetName
 
@@ -188,7 +188,7 @@ class NamedNativeInteropConfig implements Named {
             interopStubs = project.sourceSets.create(interopStubsName)
             configuration = project.configurations.create(interopStubs.name)
             project.tasks.getByName(interopStubs.getTaskName("compile", "Kotlin")) {
-                kotlinOptions.freeCompilerArgs = ["-Xskip-prerelease-check"]
+                compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
             }
 
             interopStubs.kotlin.srcDir(project.tasks.named(genTask.name).map { generatedSrcDir })
@@ -203,6 +203,7 @@ class NamedNativeInteropConfig implements Named {
         }
 
         genTask.configure {
+            notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
             dependsOn project.extensions.nativeDependencies.hostPlatformDependency
             dependsOn project.extensions.nativeDependencies.llvmDependency
             dependsOn ":kotlin-native:Interop:Indexer:nativelibs"
@@ -303,6 +304,7 @@ class NativeInteropPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project prj) {
+        prj.plugins.apply("platform-manager")
         prj.plugins.apply("native-dependencies")
 
         prj.extensions.add("kotlinNativeInterop", new NativeInteropExtension(prj))

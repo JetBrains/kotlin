@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
  * returns `sequenceOf(A, B, C)`
  */
 context(KtAnalysisSession)
-internal fun KtFileSymbol.getAllClassOrObjectSymbols(): List<KtClassifierSymbol> {
+internal fun KtFileSymbol.getAllClassOrObjectSymbols(): List<KtClassOrObjectSymbol> {
     return getFileScope().getClassifierSymbols()
         .filterIsInstance<KtClassOrObjectSymbol>()
         .flatMap { classSymbol -> listOf(classSymbol) + classSymbol.getAllClassOrObjectSymbols() }

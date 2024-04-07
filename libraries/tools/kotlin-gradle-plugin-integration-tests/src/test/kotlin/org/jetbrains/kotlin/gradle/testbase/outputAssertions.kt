@@ -33,7 +33,7 @@ fun BuildResult.assertOutputContainsAny(
 ) {
     assert(expectedSubStrings.any { output.contains(it) }) {
         printBuildOutput()
-        "Build output does not contain any of \"$expectedSubStrings\""
+        "Build output does not contain any of \"${expectedSubStrings.toList()}\""
     }
 }
 

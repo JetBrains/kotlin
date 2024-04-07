@@ -1,0 +1,12 @@
+KtDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = call()
+    type = ERROR CLASS: Symbol not found for Foo?
+  hasEscapingJumps = false
+  hasJumps = false
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = false
+  loopJumpExpressions = []
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

@@ -1,5 +1,5 @@
 fun test() {
-  use(a = CHECK_NOT_NULL<String>(arg0 = WeakReference<@FlexibleNullability String?>(p0 = "").get()))
+  use(a = CHECK_NOT_NULL<@EnhancedNullability String>(arg0 = WeakReference<@FlexibleNullability String?>(p0 = "").get()))
   use(a = CHECK_NOT_NULL<@FlexibleNullability String>(arg0 = getProperty(p0 = "abc")))
 }
 

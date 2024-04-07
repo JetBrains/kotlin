@@ -40,6 +40,12 @@ FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
         ^foo String(boo)
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] param: R|kotlin/Int|): R|kotlin/String| {
+        ^foo String(boo)
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|kotlin/Int|): R|kotlin/String| {

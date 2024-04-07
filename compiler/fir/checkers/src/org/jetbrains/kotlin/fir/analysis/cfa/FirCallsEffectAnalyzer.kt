@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.resolve.isInvoke
+import org.jetbrains.kotlin.fir.resolve.isFunctionOrSuspendFunctionInvoke
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -40,7 +41,6 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
-
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
         // TODO, KT-59816: this is quadratic due to `graph.traverse`, surely there is a better way?
         for (subGraph in graph.subGraphs) {
@@ -50,19 +50,20 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         val session = context.session
         val function = (graph.declaration as? FirFunction) ?: return
         if (function !is FirContractDescriptionOwner) return
-        if (function.contractDescription.effects?.any { it.effect is ConeCallsEffectDeclaration } != true) return
+        val contractDescription = function.contractDescription ?: return
+        if (contractDescription.effects?.any { it.effect is ConeCallsEffectDeclaration } != true) return
 
         val functionalTypeEffects = mutableMapOf<FirBasedSymbol<*>, ConeCallsEffectDeclaration>()
 
         function.valueParameters.forEachIndexed { index, parameter ->
             if (parameter.returnTypeRef.isFunctionTypeRef(session)) {
-                val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(index)
+                val effectDeclaration = contractDescription.getParameterCallsEffectDeclaration(index)
                 if (effectDeclaration != null) functionalTypeEffects[parameter.symbol] = effectDeclaration
             }
         }
 
         if (function.receiverParameter?.typeRef.isFunctionTypeRef(session)) {
-            val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(-1)
+            val effectDeclaration = contractDescription.getParameterCallsEffectDeclaration(-1)
             if (effectDeclaration != null) functionalTypeEffects[function.symbol] = effectDeclaration
         }
 
@@ -75,7 +76,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         )
 
         for ((symbol, leakedPlaces) in leakedSymbols) {
-            reporter.reportOn(function.contractDescription.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
+            reporter.reportOn(contractDescription.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
             leakedPlaces.forEach {
                 reporter.reportOn(it, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
             }
@@ -104,10 +105,10 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
-        val foundRange = info[symbol] ?: EventOccurrencesRange.ZERO
+        val foundRange = info[symbol]?.withoutMarker ?: EventOccurrencesRange.ZERO
         if (foundRange !in requiredRange) {
             reporter.reportOn(
-                function.contractDescription.source,
+                function.contractDescription?.source,
                 FirErrors.WRONG_INVOCATION_KIND,
                 symbol,
                 requiredRange,
@@ -193,7 +194,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
             val callSource = node.fir.explicitReceiver?.source ?: node.fir.source
             data.checkExpressionForLeakedSymbols(node.fir.explicitReceiver, callSource) {
-                functionSymbol?.callableId?.isInvoke() != true && contractDescription?.getParameterCallsEffect(-1) == null
+                functionSymbol?.callableId?.isFunctionOrSuspendFunctionInvoke() != true && contractDescription?.getParameterCallsEffect(-1) == null
             }
 
             for (arg in node.fir.argumentList.arguments) {
@@ -207,13 +208,13 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
     @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
     class LambdaInvocationInfo(
-        map: PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange> = persistentMapOf(),
+        map: PersistentMap<FirBasedSymbol<*>, EventOccurrencesRangeAtNode> = persistentMapOf(),
     ) : EventOccurrencesRangeInfo<LambdaInvocationInfo, FirBasedSymbol<*>>(map) {
         companion object {
             val EMPTY = LambdaInvocationInfo()
         }
 
-        override val constructor: (PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange>) -> LambdaInvocationInfo =
+        override val constructor: (PersistentMap<FirBasedSymbol<*>, EventOccurrencesRangeAtNode>) -> LambdaInvocationInfo =
             ::LambdaInvocationInfo
     }
 
@@ -238,14 +239,15 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
             dataForNode = dataForNode.checkReference(node.fir.explicitReceiver.toQualifiedReference()) {
                 when {
-                    functionSymbol?.callableId?.isInvoke() == true -> EventOccurrencesRange.EXACTLY_ONCE
-                    else -> contractDescription.getParameterCallsEffect(-1) ?: EventOccurrencesRange.UNKNOWN
+                    functionSymbol?.callableId?.isFunctionOrSuspendFunctionInvoke() == true -> MarkedEventOccurrencesRange.ExactlyOnce(node)
+                    else -> contractDescription.getParameterCallsEffect(-1)?.at(node)
+                        ?: MarkedEventOccurrencesRange.Zero
                 }
             }
 
             for (arg in node.fir.argumentList.arguments) {
                 dataForNode = dataForNode.checkReference(arg.toQualifiedReference()) {
-                    node.fir.getArgumentCallsEffect(arg) ?: EventOccurrencesRange.ZERO
+                    node.fir.getArgumentCallsEffect(arg)?.at(node) ?: MarkedEventOccurrencesRange.Zero
                 }
             }
 
@@ -262,17 +264,17 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
         private inline fun PathAwareLambdaInvocationInfo.checkReference(
             reference: FirReference?,
-            rangeGetter: () -> EventOccurrencesRange
+            rangeGetter: () -> EventOccurrencesRangeAtNode
         ): PathAwareLambdaInvocationInfo {
             return if (collectDataForReference(reference)) addInvocationInfo(reference, rangeGetter()) else this
         }
 
         private fun PathAwareLambdaInvocationInfo.addInvocationInfo(
             reference: FirReference,
-            range: EventOccurrencesRange
+            range: EventOccurrencesRangeAtNode
         ): PathAwareLambdaInvocationInfo {
             val symbol = referenceToSymbol(reference)
-            return if (symbol != null) addRange(this, symbol, range) else this
+            return if (symbol != null) addRange(symbol, range) else this
         }
     }
 

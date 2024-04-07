@@ -1,8 +1,0 @@
-class A : Java1 {
-  constructor() /* primary */ {
-    super/*Java1*/()
-    /* <init>() */
-
-  }
-
-}

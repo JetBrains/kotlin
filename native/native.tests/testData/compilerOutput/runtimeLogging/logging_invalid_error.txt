@@ -1,0 +1,3 @@
+warning: failed to parse log tag at "invalid". No logging will be performed.
+warning: failed to parse log level at "unknown". No logging will be performed.
+OK

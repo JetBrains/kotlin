@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -29,53 +33,70 @@ interface DestructuringContext<T> {
     }
 }
 
-context(AbstractRawFirBuilder<*>, DestructuringContext<T>)
-fun <T> MutableList<in FirVariable>.addDestructuringVariables(
+fun <T> AbstractRawFirBuilder<*>.addDestructuringVariables(
+    destination: MutableList<in FirVariable>,
+    c: DestructuringContext<T>,
     moduleData: FirModuleData,
     container: FirVariable,
     entries: List<T>,
     isVar: Boolean,
     tmpVariable: Boolean,
-    localEntries: Boolean,
+    forceLocal: Boolean,
     configure: (FirVariable) -> Unit = {}
 ) {
     if (tmpVariable) {
-        this += container
+        destination += container
     }
     for ((index, entry) in entries.withIndex()) {
-        this += buildDestructuringVariable(
+        destination += buildDestructuringVariable(
             moduleData,
+            c,
             container,
             entry,
             isVar,
-            localEntries,
+            forceLocal,
             index,
             configure,
         )
     }
 }
 
-context(AbstractRawFirBuilder<*>, DestructuringContext<T>)
-fun <T> buildDestructuringVariable(
+fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
     moduleData: FirModuleData,
+    c: DestructuringContext<T>,
     container: FirVariable,
     entry: T,
     isVar: Boolean,
-    localEntries: Boolean,
+    forceLocal: Boolean,
     index: Int,
     configure: (FirVariable) -> Unit = {}
-): FirVariable = buildProperty {
-    symbol = FirPropertySymbol(entry.name)
-    withContainerSymbol(symbol, localEntries) {
-        this.moduleData = moduleData
-        origin = FirDeclarationOrigin.Source
-        returnTypeRef = entry.returnTypeRef
-        name = entry.name
-        initializer = createComponentCall(container, entry.source, index)
-        this.isVar = isVar
-        source = entry.source
-        isLocal = localEntries
-        status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
-        entry.extractAnnotationsTo(this, context.containerSymbol)
-    }
-}.also(configure)
+): FirVariable = with(c) {
+    buildProperty {
+        symbol = if (forceLocal) FirPropertySymbol(entry.name) else FirPropertySymbol(callableIdForName(entry.name))
+        val localEntries = forceLocal || context.inLocalContext
+        withContainerSymbol(symbol, localEntries) {
+            this.moduleData = moduleData
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = entry.returnTypeRef
+            name = entry.name
+            initializer = createComponentCall(container, entry.source, index)
+            this.isVar = isVar
+            source = entry.source
+            isLocal = localEntries
+            status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
+            entry.extractAnnotationsTo(this, context.containerSymbol)
+            if (!localEntries) {
+                getter = FirDefaultPropertyGetter(
+                    source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor), moduleData,
+                    FirDeclarationOrigin.Source, returnTypeRef, Visibilities.Public, symbol,
+                )
+                if (isVar) {
+                    setter = FirDefaultPropertySetter(
+                        source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor), moduleData,
+                        FirDeclarationOrigin.Source, returnTypeRef, Visibilities.Public, symbol,
+                    )
+                }
+            }
+        }
+    }.also(configure)
+}

@@ -160,6 +160,18 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.getNonSubsumedOverriddenSymbols():
         .map { it.member }
 }
 
+fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.getNonSubsumedNonPhantomOverriddenSymbols(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
+    // It's crucial that we only unwrap phantom intersection overrides.
+    // See comments in the following tests for explanation:
+    // - intersectionWithMultipleDefaultsInJavaOverriddenByIntersectionInKotlin.kt
+    // - intersectionOverridesIntersection.kt
+    return flatMap { it.flattenPhantomIntersectionsRecursively() }
+        .nonSubsumed()
+        // To learn why `distinctBy` is needed, see:
+        // - intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt
+        .distinctBy { it.member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() }
+}
+
 fun FirCallableSymbol<*>.dispatchReceiverScope(session: FirSession, scopeSession: ScopeSession): FirTypeScope {
     val dispatchReceiverType = requireNotNull(dispatchReceiverType)
     return dispatchReceiverType.scope(
@@ -174,6 +186,16 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenIntersectionsRecursively():
     if (member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>().origin != FirDeclarationOrigin.IntersectionOverride) return listOf(this)
 
     return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenIntersectionsRecursively() }
+}
+
+fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursively(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
+    val symbol = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
+
+    if (symbol !is FirIntersectionCallableSymbol || symbol.containsMultipleNonSubsumed) {
+        return listOf(this)
+    }
+
+    return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenPhantomIntersectionsRecursively() }
 }
 
 /**

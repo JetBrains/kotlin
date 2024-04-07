@@ -1,0 +1,136 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+private fun Decorated(boolean: Boolean) {
+    var something = boolean
+    Decoratable(decorator = { content ->
+        used(something)
+        content()
+    })
+}
+
+@Composable
+private fun Decoratable(decorator: Decoration) {
+    decorator.Decoration {
+
+    }
+}
+
+fun interface Decoration {
+    @Composable fun Decoration(content: @Composable () -> Unit)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+private fun Decorated(boolean: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Decorated)<Decora...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(boolean)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    var something = boolean
+    Decoratable(<block>{
+      class <no name provided> : Decoration {
+        @Composable
+        @ComposableInferredTarget(scheme = "[0[0]]")
+        override fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+          %composer = %composer.startRestartGroup(<>)
+          sourceInformation(%composer, "C(Decoration)<conten...>:Test.kt")
+          val %dirty = %changed
+          if (%changed and 0b0110 == 0) {
+            %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+          }
+          if (%changed and 0b00110000 == 0) {
+            %dirty = %dirty or if (%composer.changed(<this>)) 0b00100000 else 0b00010000
+          }
+          if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
+            used(something)
+            content(%composer, 0b1110 and %dirty)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+          val tmp0_rcvr = <this>
+          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+            tmp0_rcvr.Decoration(content, %composer, updateChangedFlags(%changed or 0b0001))
+          }
+        }
+      }
+      <no name provided>()
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Decorated(boolean, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+private fun Decoratable(decorator: Decoration, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Decoratable)<Decora...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(decorator)
+    } else {
+      %composer.changedInstance(decorator)
+    }
+    ) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    decorator.Decoration(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110 or 0b01110000 and %dirty shl 0b0011)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Decoratable(decorator, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+interface Decoration {
+  @Composable
+  abstract fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
+}
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

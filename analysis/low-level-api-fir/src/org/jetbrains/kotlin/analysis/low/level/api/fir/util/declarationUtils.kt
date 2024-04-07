@@ -204,6 +204,10 @@ val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
 
 internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+    for (property in parameters) {
+        action(property)
+    }
+
     for (statement in declarations) {
         action(statement)
     }
@@ -233,16 +237,11 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
  */
 internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
     get() = when {
-        // We should treat result$$ property as non-local explicitly as its CallableId is local
-        // TODO: can be dropped after KT-65523
-        fir.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> false
-
         // Destructuring declaration container should be treated as a non-local as it is a top-level script declaration
         fir.origin == FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer -> false
 
-        // We should treat destructuring declaration entries as non-local explicitly as its CallableId is local
-        // TODO: can be dropped after KT-65727
-        (fir as? FirProperty)?.destructuringDeclarationContainerVariable != null -> false
+        // Script parameters should be treated as non-locals as they are visible from FirScript
+        fir.origin == FirDeclarationOrigin.ScriptCustomization.Parameter || fir.origin == FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
 
         else -> callableId.isLocal || fir.status.visibility == Visibilities.Local
     }

@@ -1,23 +1,3 @@
-/*
- * Copyright 2010-2022 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-buildscript {
-    apply(from = "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle")
-}
-
 plugins {
     kotlin("jvm")
     application
@@ -32,7 +12,7 @@ dependencies {
     implementation(project(":kotlin-native:Interop:Indexer"))
     implementation(project(path = ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration = "jvmRuntimeElements"))
 
-    api(project(":kotlin-stdlib"))
+    api(kotlinStdlib())
     implementation(project(":kotlinx-metadata-klib"))
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":compiler:util"))
@@ -41,16 +21,12 @@ dependencies {
     testImplementation(kotlinTest("junit"))
 }
 
-tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs += listOf(
-                "-opt-in=kotlin.ExperimentalUnsignedTypes",
-                "-Xskip-metadata-version-check"
-            )
-        }
-    }
+sourceSets {
+    "main" { projectDefault() }
+    "test" { projectDefault() }
+}
 
+tasks {
     // Copy-pasted from Indexer build.gradle.kts.
     withType<Test>().configureEach {
         val projectsWithNativeLibs = listOf(

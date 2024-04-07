@@ -25,10 +25,6 @@ abstract class AbstractJavaModulesIntegrationTest(
     override val testDataPath: String
         get() = "compiler/testData/javaModules/"
 
-    protected open fun muteForK2(test: () -> Unit) {
-        test()
-    }
-
     private fun module(
         name: String,
         modulePath: List<File> = emptyList(),
@@ -70,15 +66,12 @@ abstract class AbstractJavaModulesIntegrationTest(
         )
     }
 
-
     private fun checkKotlinOutput(moduleName: String): (String) -> Unit {
         val expectedFirFile = File(testDataDirectory, "$moduleName.fir.txt")
         return { actual ->
             KotlinTestUtils.assertEqualsToFile(
                 if (languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile else File(testDataDirectory, "$moduleName.txt"),
                 getNormalizedCompilerOutput(actual, null, testDataPath, tmpdir.absolutePath)
-                    .replace((System.getenv("JDK_11_0") ?: System.getenv("JDK_11")).replace("\\", "/"), "\$JDK11")
-                    .replace((System.getenv("JDK_17_0") ?: System.getenv("JDK_17")).replace("\\", "/"), "\$JDK17")
             )
         }
     }
@@ -123,8 +116,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleB", listOf(a))
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
-    fun testSimpleUseNonExportedPackage() = muteForK2 {
+    fun testSimpleUseNonExportedPackage() {
         val a = module("moduleA")
         module("moduleB", listOf(a))
     }
@@ -136,8 +128,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleD", listOf(a, b, c))
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
-    fun testUnnamedDependsOnNamed() = muteForK2 {
+    fun testUnnamedDependsOnNamed() {
         val a = module("moduleA")
         module("moduleB", listOf(a), listOf("moduleA"))
 
@@ -177,8 +168,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         }
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
-    fun testAutomaticModuleInternalJdkPackageUsage() = muteForK2 {
+    fun testAutomaticModuleInternalJdkPackageUsage() {
         module("jvmStatUsage")
     }
 
@@ -220,8 +210,33 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleD", listOf(c, b, a))
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
-    fun testSpecifyPathToModuleInfoInArguments() = muteForK2 {
+    fun testInheritedDeclarationFromTwiceTransitiveDependency() {
+        // module A <-t- module B <-t- module C <--- module D
+
+        // Java: class A { String ok() { /* ... */ } }
+        val a = module("moduleA")
+
+        // Java: class B extends A
+        val b = module("moduleB", listOf(a))
+
+        val c = module("moduleC", listOf(a, b))
+
+        // Java: new B().ok()
+        // Kotlin: B().ok()
+        val d = module("moduleD", listOf(a, b, c))
+
+        // validate the run-time behavior of Java-compiled code for the sake of comparison
+        val (javaStdout, javaStderr) = runModule("moduleD/d.JavaMain", listOf(d, c, b, a))
+        assertEquals("", javaStderr)
+        assertEquals("OK", javaStdout)
+
+        // test the run-time behavior of Kotlin-compiled code
+        val (kotlinStdout, kotlinStderr) = runModule("moduleD/d.KotlinMainKt", listOf(d, c, b, a))
+        assertEquals("", kotlinStderr)
+        assertEquals("OK", kotlinStdout)
+    }
+
+    fun testSpecifyPathToModuleInfoInArguments() {
         val a = module("moduleA")
 
         val kotlinOptions = mutableListOf(
@@ -352,15 +367,13 @@ abstract class AbstractJavaModulesIntegrationTest(
         })
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.
-    fun testNoDependencyOnNamed() = muteForK2 {
+    fun testNoDependencyOnNamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE diagnostic.
         val lib = module("lib")
         module("main", listOf(lib), listOf("lib"))
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE.
-    fun testNoDependencyOnUnnamed() = muteForK2 {
+    fun testNoDependencyOnUnnamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE diagnostic.
         // Most of the other tests in this class are compiling modules to jars, however here we need to compile the module to a directory.
         // The reason is twofold:
@@ -373,5 +386,28 @@ abstract class AbstractJavaModulesIntegrationTest(
         // In this test we're checking the diagnostic about using symbols from unnamed modules, so we need to compile 'lib' to a directory.
         val lib = module("lib", destination = File(tmpdir, name))
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path))
+    }
+
+    fun testNamedDoesNotReadAutomaticWithUnrelatedNamed() {
+        // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
+        // But currently it's OK for compatibility, see KT-66622.
+        val lib = module("lib")
+        val unrelated = module("unrelated")
+        module("main", listOf(lib, unrelated))
+    }
+
+    fun testNamedDoesNotReadAutomaticWithTransitiveStdlib() {
+        // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
+        // But currently it's OK for compatibility, see KT-66622.
+        val lib = module("lib")
+        module("main", listOf(lib))
+    }
+
+    fun testNamedReadsAutomaticWithUnrelatedAutomatic() {
+        // Similarly to how it works in javac, if we depend on one automatic module, we depend on all of them. So even though 'main' does
+        // not have explicit "requires lib", in fact it depends on 'lib' because it has "requires unrelated". So "OK" is expected.
+        val lib = module("lib")
+        val unrelated = module("unrelated")
+        module("main", listOf(lib, unrelated))
     }
 }

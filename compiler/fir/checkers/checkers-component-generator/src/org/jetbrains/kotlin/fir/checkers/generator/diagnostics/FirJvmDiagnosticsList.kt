@@ -7,20 +7,16 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.*
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.util.PrivateForInline
 
 @Suppress("ClassName", "unused")
@@ -69,6 +65,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
             parameter<String>("messageSuffix")
+        }
+
+        val TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES by warning<PsiElement> {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
         }
     }
 
@@ -135,6 +136,17 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error<PsiElement>()
     }
 
+    val MODULES by object : DiagnosticGroup("JVM Modules") {
+        val JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE by error<PsiElement> {
+            parameter<String>("moduleName")
+        }
+        val JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE by error<PsiElement>()
+        val JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE by error<PsiElement>() {
+            parameter<String>("moduleName")
+            parameter<String>("packageName")
+        }
+    }
+
     val JVM_DEFAULT by object : DiagnosticGroup("JVM Default") {
         val JVM_DEFAULT_IN_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("annotation")
@@ -183,6 +195,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     val SUSPENSION_POINT by object : DiagnosticGroup("Suspension Point") {
         val SUSPENSION_POINT_INSIDE_CRITICAL_SECTION by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirCallableSymbol<*>>("function")
+        }
+    }
+
+    val INLINE by object : DiagnosticGroup("Inline") {
+        val INLINE_FROM_HIGHER_PLATFORM by error<PsiElement> {
+            parameter<String>("inlinedBytecodeVersion")
+            parameter<String>("currentModuleBytecodeVersion")
         }
     }
 

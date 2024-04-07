@@ -9,10 +9,6 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-
-import java.util.regex.Pattern
 
 buildscript {
     repositories {
@@ -24,26 +20,59 @@ buildscript {
     }
 }
 
+void loadLocalProperties() {
+    if (new File("$project.rootDir/local.properties").exists()) {
+        Properties props = new Properties()
+        props.load(new FileInputStream("$project.rootDir/local.properties"))
+        props.each { prop -> project.ext.set(prop.key, prop.value) }
+    }
+}
+
+void loadCommandLineProperties() {
+    if (project.hasProperty("konanc_flags")) {
+        throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
+    }
+
+    ext.globalBuildArgs = new ArrayList<String>()
+    if (project.hasProperty("build_flags")) {
+        for (String flag : ext.build_flags.toString().split("\\s")) {
+            flag = flag.trim()
+            if (!flag.isEmpty()) ext.globalBuildArgs.add(flag)
+        }
+    }
+
+    ext.globalTestArgs = new ArrayList<String>()
+    ext.globalTestArgs.add("-Xpartial-linkage=enable")
+    ext.globalTestArgs.add("-Xpartial-linkage-loglevel=error")
+    if (project.hasProperty("test_flags")) {
+        for (String flag : ext.test_flags.toString().split("\\s")) {
+            flag = flag.trim()
+            if (!flag.isEmpty()) ext.globalTestArgs.add(flag)
+        }
+    }
+
+    ext.testTarget = project.hasProperty("test_target") ? ext.test_target : PlatformInfo.hostName
+}
+
+loadCommandLineProperties()
+loadLocalProperties()
+
+apply plugin: 'platform-manager'
 apply plugin: 'konan'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin.native.build-tools-conventions'
 apply plugin: 'native-dependencies'
 
 configurations {
-    cli_bc
     update_tests
 
     nopPluginApi
     api.extendsFrom nopPluginApi
 }
 
-dependencies {
-    // TODO: upgrade coroutines to common version
-    api RepoDependencies.commonDependency(project, "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
-}
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 
-ext.platformManager = project.project(":kotlin-native").platformManager
+ext.platformManager = project.extensions.platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
 ext.buildNumber = rootProject.property("kotlinVersion")
@@ -61,9 +90,7 @@ if (!useCustomDist) {
 }
 
 compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs += "-Xskip-prerelease-check"
-    }
+    compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 }
 
 // Do not generate run tasks for konan built artifacts
@@ -168,19 +195,13 @@ void konanc(String[] args) {
 }
 
 tasks.named("clean", Delete.class) {
-    doLast {
-        delete(project(":kotlin-native").file(testOutputRoot))
-    }
+    delete(testOutputRoot)
 }
 
 tasks.named("run") {
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
     // Add regular gradle test tasks
     dependsOn(tasks.withType(Test).matching { it.enabled })
-    // TODO(KTI-1571): This task should be run by Compiler Unit Tests (Native) configuration
-    dependsOn(":nativeCompilerUnitTest")
-    // TODO(KTI-1571): This should be run by Compiler Tests (Native) configuration
-    dependsOn(":native:objcexport-header-generator:check")
 }
 
 // Was a subset of tests.
@@ -256,239 +277,6 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
     }
 }
 
-// This test checks object layout can't be done in
-// KonanLocalTest paradigm
-//tasks.register("constructor", UnitKonanTest) {
-//    source = "codegen/object/constructor.kt"
-//}
-
-standaloneTest("runtime_basic_init") {
-    source = "runtime/basic/init.kt"
-    expectedExitStatus = 0
-}
-
-standaloneTest("cleaner_basic") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_basic.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("cleaner_workers") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_workers.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("cleaner_in_main_with_checker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_in_main_with_checker.kt"
-    useGoldenData = true
-}
-
-standaloneTest("cleaner_in_main_without_checker") {
-    source = "runtime/basic/cleaner_in_main_without_checker.kt"
-    useGoldenData = true
-}
-
-standaloneTest("cleaner_leak_without_checker") {
-    source = "runtime/basic/cleaner_leak_without_checker.kt"
-    useGoldenData = true
-}
-
-standaloneTest("cleaner_leak_with_checker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_leak_with_checker.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
-}
-
-standaloneTest("cleaner_in_tls_main_without_checker") {
-    source = "runtime/basic/cleaner_in_tls_main_without_checker.kt"
-}
-
-standaloneTest("cleaner_in_tls_main_with_checker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_in_tls_main_with_checker.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
-}
-
-standaloneTest("cleaner_in_tls_worker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_in_tls_worker.kt"
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest('logging') {
-    outputChecker = { out ->
-        out.toLowerCase().contains("[logging]") && // loging reports configured log levels on info level
-        out.toLowerCase().contains("logging = debug") &&
-        out.toLowerCase().contains("gc = info") &&
-        out.toLowerCase().contains("mm = warning") &&
-        out.toLowerCase().contains("tls = error") &&
-        out.toLowerCase().contains("[gc]") // gc reports initialization on info level
-    }
-    source = "runtime/basic/logging.kt"
-    flags = ['-Xruntime-logs=gc=info,mm=warning,tls=error,logging=debug']
-}
-
-standaloneTest('logging_invalid') {
-    outputChecker = { it.isEmpty() }
-    source = "runtime/basic/logging.kt"
-    flags = ['-Xruntime-logs=invalid=unknown,logging=debug']
-}
-
-standaloneTest('logging_override') {
-    outputChecker = { it.isEmpty() }
-    source = "runtime/basic/logging.kt"
-    flags = ['-Xruntime-logs=logging=info,logging=debug,logging=none']
-}
-
-standaloneTest("worker_bound_reference0") {
-    source = "runtime/concurrent/worker_bound_reference0.kt"
-    flags = ['-tr']
-
-    if (isNoopGC) {
-        def exclude = [
-                "*.testCollect",
-                "*.testCollectFrozen",
-                "*.testCollectInWorkerFrozen",
-                "*.collectCyclicGarbage",
-                "*.collectCyclicGarbageWithAtomicsFrozen",
-                "*.collectCrossThreadCyclicGarbageWithAtomicsFrozen"
-        ]
-        arguments += ["--ktest_filter=*-${exclude.join(":")}"]
-    }
-}
-
-// This tests changes main thread worker queue state, so better be executed alone.
-standaloneTest("worker5") {
-    useGoldenData = true
-    source = "runtime/workers/worker5.kt"
-}
-
-tasks.register("worker10", KonanLocalTest) {
-    enabled = !isNoopGC
-    useGoldenData = true
-    source = "runtime/workers/worker10.kt"
-}
-
-standaloneTest("worker_exceptions") {
-    flags = ["-tr"]
-    outputChecker = {
-        !it.contains("testExecuteAfterStartQuiet error") && it.contains("testExecuteStart error") && !it.contains("testExecuteStartQuiet error")
-    }
-    source = "runtime/workers/worker_exceptions.kt"
-}
-
-standaloneTest("worker_exceptions_terminate") {
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = {
-        it.contains("some error") && !it.contains("Will not happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate.kt"
-}
-
-standaloneTest("worker_exceptions_terminate_hook") {
-    outputChecker = {
-        it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_hook.kt"
-}
-
-standaloneTest("worker_exceptions_terminate_current") {
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = {
-        it.contains("some error") && !it.contains("Will not happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_current.kt"
-}
-
-standaloneTest("worker_exceptions_terminate_hook_current") {
-    outputChecker = {
-        it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
-    }
-    source = "runtime/workers/worker_exceptions_terminate_hook_current.kt"
-}
-
-standaloneTest("worker_threadlocal_no_leak") {
-    source = "runtime/workers/worker_threadlocal_no_leak.kt"
-}
-
-standaloneTest("freeze_disabled") {
-    enabled = !isNoopGC
-    flags = ["-tr"]
-    source = "runtime/workers/freeze_disabled.kt"
-    testLogger = KonanTest.Logger.SILENT
-}
-
-standaloneTest("lazy2") {
-    useGoldenData = true
-    source = "runtime/workers/lazy2.kt"
-}
-
-standaloneTest("lazy3") {
-    enabled = !isNoopGC
-    source = "runtime/workers/lazy3.kt"
-}
-
-tasks.register("mutableData1", KonanLocalTest) {
-    source = "runtime/workers/mutableData1.kt"
-}
-
-tasks.register("enumIdentity", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/enum_identity.kt"
-}
-
-standaloneTest("leakWorker") {
-    source = "runtime/workers/leak_worker.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Unfinished workers detected, 1 workers leaked!") }
-}
-
-standaloneTest("leakMemoryWithWorkerTermination") {
-    source = "runtime/workers/leak_memory_with_worker_termination.kt"
-}
-
-standaloneTest("initializers_testInfrastructure") {
-    source = "codegen/initializers/testInfrastructure.kt"
-    flags = ["-tr"]
-}
-
-tasks.register("sanity_assertions_enabled_for_local_tests", KonanLocalTest) {
-    source = "sanity/assertions_enabled_for_local_tests.kt"
-}
-
-tasks.register("immutable_binary_blob_in_lambda", KonanLocalTest) {
-    source = "lower/immutable_blob_in_lambda.kt"
-    useGoldenData = true
-}
-
-tasks.register("abstract_super", KonanLocalTest) {
-    source = "datagen/rtti/abstract_super.kt"
-}
-
-tasks.register("vtable1", KonanLocalTest) {
-    source = "datagen/rtti/vtable1.kt"
-}
-
-tasks.register("vtable_any", KonanLocalTest) {
-    source = "datagen/rtti/vtable_any.kt"
-    useGoldenData = true
-}
-
-tasks.register("empty_string", KonanLocalTest) {
-    useGoldenData = true
-    source = "datagen/literals/empty_string.kt"
-}
-
-standaloneTest("link_default_libs") {
-    useGoldenData = true
-    source = "link/default/default.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
 standaloneTest("check_stacktrace_format_coresymbolication") {
     disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
@@ -504,7 +292,7 @@ standaloneTest("stack_trace_inline") {
 }
 
 standaloneTest("kt-49240-stack-trace-completeness") {
-    disabled = !PlatformInfo.supportsExceptions(project) || project.globalTestArgs.contains('-opt')
+    disabled = project.globalTestArgs.contains('-opt')
     source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
 }
 
@@ -548,157 +336,6 @@ standaloneTest("throw_from_except_constr") {
     source = "runtime/exceptions/throw_from_except_constr.kt"
 }
 
-tasks.register("initializers6", KonanLocalTest) {
-    source = "runtime/basic/initializers6.kt"
-}
-
-tasks.register("memory_var1", KonanLocalTest) {
-    source = "runtime/memory/var1.kt"
-}
-
-tasks.register("memory_var2", KonanLocalTest) {
-    source = "runtime/memory/var2.kt"
-}
-
-tasks.register("memory_var3", KonanLocalTest) {
-    source = "runtime/memory/var3.kt"
-}
-
-tasks.register("memory_var4", KonanLocalTest) {
-    source = "runtime/memory/var4.kt"
-}
-
-tasks.register("memory_throw_cleanup", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/throw_cleanup.kt"
-}
-
-tasks.register("memory_escape0", KonanLocalTest) {
-    source = "runtime/memory/escape0.kt"
-}
-
-tasks.register("memory_escape1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/escape1.kt"
-}
-
-tasks.register("memory_cycles0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/cycles0.kt"
-}
-
-tasks.register("memory_cycles1", KonanLocalTest) {
-    enabled = !isNoopGC
-    source = "runtime/memory/cycles1.kt"
-}
-
-tasks.register("memory_basic0", KonanLocalTest) {
-    source = "runtime/memory/basic0.kt"
-}
-
-tasks.register("memory_escape2", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/escape2.kt"
-}
-
-tasks.register("memory_weak0", KonanLocalTest) {
-    enabled = !isNoopGC
-    useGoldenData = true
-    source = "runtime/memory/weak0.kt"
-}
-
-tasks.register("memory_weak1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/memory/weak1.kt"
-}
-
-standaloneTest("memory_only_gc") {
-    source = "runtime/memory/only_gc.kt"
-}
-
-standaloneTest("leakMemory") {
-    source = "runtime/memory/leak_memory.kt"
-}
-
-standaloneTest("leakMemoryWithTestRunner") {
-    source = "runtime/memory/leak_memory_test_runner.kt"
-    flags = ['-tr']
-}
-
-standaloneTest("gcStats") {
-    source = "runtime/memory/gcStats.kt"
-    flags = ['-tr', "-Xbinary=gcSchedulerType=disabled"]
-    enabled = !isNoopGC && !isAggressiveGC
-}
-
-standaloneTest("stress_gc_allocations") {
-    // TODO: Support obtaining peak RSS on more platforms.
-    enabled =
-        (project.testTarget != "watchos_arm32") &&
-        (project.testTarget != "watchos_arm64") &&
-        (project.testTarget != "watchos_x86") &&
-        (project.testTarget != "watchos_x64") &&
-        (project.testTarget != "watchos_simulator_arm64") &&
-        !isNoopGC && // Requires some GC.
-        !isAggressiveGC && // No need to check with aggressive GC at all
-        !runtimeAssertionsPanic // New allocator with assertions makes this test very slow.
-    source = "runtime/memory/stress_gc_allocations.kt"
-    flags = [
-        '-opt-in=kotlin.native.internal.InternalForKotlinNative', // MemoryUsageInfo is internal
-        '-Xdisable-phases=EscapeAnalysis', // The test checks GC, we need to allocate everything on the heap.
-    ]
-}
-
-standaloneTest("array_out_of_memory") {
-    // This test allocs a large array that may make Linux
-    // kill any process inlcuding Gradle with OOM-killer
-    enabled = project.target.family != Family.LINUX
-    source = "runtime/memory/array_out_of_memory.kt"
-    flags = ['-tr']
-    switch(project.target.architecture) {
-        case Architecture.X64:
-        case Architecture.ARM64:
-            break;
-        case Architecture.X86:
-        case Architecture.ARM32:
-        case Architecture.MIPS32:
-        case Architecture.MIPSEL32:
-        case Architecture.WASM32:
-            expectedExitStatusChecker = { it != 0 }
-            outputChecker = { s -> s.contains("Out of memory trying to allocate") }
-            break;
-    }
-}
-
-tasks.register("vararg0", KonanLocalTest) {
-    source = "lower/vararg.kt"
-}
-
-tasks.register("vararg_of_literals", KonanLocalTest) {
-    enabled = false
-    useGoldenData = true
-    source = "lower/vararg_of_literals.kt"
-}
-
-standaloneTest('tailrec') {
-    disabled = isAggressiveGC // TODO: Investigate why too slow
-    useGoldenData = true
-    source = "lower/tailrec.kt"
-    flags = ['-XXLanguage:-ProhibitTailrecOnVirtualMember', '-e', 'lower.tailrec.main']
-}
-
-tasks.register("deserialized_inline0", KonanLocalTest) {
-    source = "serialization/deserialized_inline0.kt"
-}
-
-tasks.register("deserialized_listof0", KonanLocalTest) {
-    source = "serialization/deserialized_listof0.kt"
-}
-
-tasks.register("deserialized_fields", KonanLocalTest) {
-    source = "serialization/deserialized_fields.kt"
-}
-
 KotlinNativeTestKt.createTest(project, "kt39548", KonanStandaloneTest) { task ->
     // Test infrastructure doesn't support generated source;
     // workaround by specifying dummy source:
@@ -719,11 +356,6 @@ KotlinNativeTestKt.createTest(project, "kt39548", KonanStandaloneTest) { task ->
             GenTestKT39548Kt.genTestKT39548(ktFile)
         }
     }
-}
-
-standaloneTest("serialized_no_typemap") {
-    source = "serialization/regression/no_type_map.kt"
-    useGoldenData = true
 }
 
 standaloneTest("testing_annotations") {
@@ -950,160 +582,6 @@ createInterop("kt43502") {
     }
 }
 
-createInterop("leakMemoryWithRunningThread") {
-    it.defFile 'interop/leakMemoryWithRunningThread/leakMemory.def'
-    it.headers "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.h"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.cpp"
-}
-
-createInterop("workerSignals") {
-    it.defFile "interop/workerSignals/workerSignals.def"
-    it.headers "$projectDir/interop/workerSignals/workerSignals.h"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/workerSignals/workerSignals.cpp"
-}
-
-if (PlatformInfo.isAppleTarget(project)) {
-    createInterop("objcSmoke") {
-        it.defFile 'interop/objc/objcSmoke.def'
-        it.headers "$projectDir/interop/objc/smoke.h"
-    }
-
-    createInterop("objcTests") {
-        it.defFile 'interop/objc/objcTests.def'
-        it.headers fileTree("$projectDir/interop/objc/tests") { include '**/*.h' }
-    }
-
-    createInterop("objcMisc") {
-        it.defFile 'interop/objc_with_initializer/objc_misc.def'
-        it.headers "$projectDir/interop/objc_with_initializer/objc_misc.h"
-    }
-
-    createInterop("objcMessaging") {
-        it.defFile 'interop/objc/msg_send/messaging.def'
-        it.headers "$projectDir/interop/objc/msg_send/messaging.h"
-    }
-
-    createInterop("foreignException") {
-        it.defFile 'interop/objc/foreignException/objc_wrap.def'
-        it.headers "$projectDir/interop/objc/foreignException/objc_wrap.h"
-    }
-
-    createInterop("foreignExceptionMode_default") {
-        it.defFile 'interop/objc/foreignException/objcExceptionMode.def'
-        it.headers "$projectDir/interop/objc/foreignException/objc_wrap.h"
-    }
-
-    createInterop("foreignExceptionMode_wrap") {
-        it.defFile 'interop/objc/foreignException/objcExceptionMode.def'
-        it.headers "$projectDir/interop/objc/foreignException/objc_wrap.h"
-        it.extraOpts '-Xforeign-exception-mode', "objc-wrap"
-    }
-
-    createInterop("objcKt43517") {
-        it.defFile 'framework/kt43517/kt43517.def'
-    }
-    createInterop("objc_kt42172") {
-        it.defFile 'interop/objc/kt42172/objclib.def'
-        it.headers "$projectDir/interop/objc/kt42172/objclib.h"
-    }
-    createInterop("objc_kt55938") {
-        it.defFile 'interop/objc/kt55938/objclib.def'
-        it.headers "$projectDir/interop/objc/kt55938/objclib.h"
-    }
-
-    createInterop("objc_include_categories") {
-        it.defFile 'interop/objc/include_categories/objc_include_categories.def'
-        it.headers "$projectDir/interop/objc/include_categories/objc_include_categories.h"
-    }
-    createInterop("frameworkForwardDeclarations") {
-        it.defFile 'framework/forwardDeclarations/clib.def'
-    }
-    createInterop("objc_kt56402") {
-        it.defFile 'interop/objc/kt56402/objclib.def'
-        it.headers "$projectDir/interop/objc/kt56402/objclib.h"
-    }
-    createInterop("objc_friendly_dealloc") {
-        it.defFile 'interop/objc/objc_friendly_dealloc/objclib.def'
-        it.headers "$projectDir/interop/objc/objc_friendly_dealloc/objclib.h"
-    }
-    createInterop("objCAction") {
-        it.defFile 'interop/objc/objCAction/objclib.def'
-        it.headers "$projectDir/interop/objc/objCAction/objclib.h"
-    }
-    createInterop("kt63423_dispose_on_main_stress") {
-        it.defFile 'interop/objc/kt63423_dispose_on_main_stress/objclib.def'
-        it.headers "$projectDir/interop/objc/kt63423_dispose_on_main_stress/objclib.h"
-        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/kt63423_dispose_on_main_stress/objclib.m"
-        it.extraOpts "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)="
-        it.extraOpts "-Xsource-compiler-option", "-fobjc-arc"
-        it.extraOpts "-Xsource-compiler-option", "-ObjC++"
-    }
-}
-
-createInterop("exceptions_throwThroughBridge") {
-    it.defFile "interop/exceptions/throwThroughBridge.def"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/exceptions/throwThroughBridgeInterop.cpp"
-}
-
-/**
- * Creates a task for the interop test. Configures runner and adds library and test build tasks.
- */
-Task interopTestBase(String name, boolean multiFile, boolean interop2ForMainOnly, Closure<KonanInteropTest> configureClosure) {
-    return KotlinNativeTestKt.createTest(project, name, KonanInteropTest) { KonanInteropTest task ->
-        task.configure(configureClosure)
-        if (task.enabled) {
-            konanArtifacts {
-                def targetName = target.name
-                def interopLib = task.interop
-                def interopLib2 = task.interop2
-                UtilsKt.dependsOnKonanBuildingTask(task, interopLib, target)
-                if (interopLib2 != null) UtilsKt.dependsOnKonanBuildingTask(task, interopLib2, target)
-
-                def lib = "lib$name"
-                def hasIntermediateLib = task.lib != null
-                if (hasIntermediateLib) {
-                    // build a library from KonanInteropTest::lib property
-                    library(lib, targets: [targetName]) {
-                        libraries {
-                            artifact interopLib
-                            if (interopLib2 != null && !interop2ForMainOnly) artifact interopLib2
-                        }
-                        srcFiles task.lib
-                        baseDir  "$testOutputLocal/$name"
-                        extraOpts task.flags
-                        extraOpts project.globalTestArgs.findAll { !it.contains("-Xpartial-linkage") }
-                    }
-                    UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
-                }
-
-                program(name, targets: [targetName]) {
-                    libraries {
-                        artifact interopLib
-                        if (interopLib2 != null) artifact interopLib2
-                        if (hasIntermediateLib)
-                            klibFile file("$testOutputLocal/$name/$targetName/${lib}.klib")
-                    }
-                    srcFiles multiFile ? fileTree(task.source) { include '**/*.kt' } : task.getSources()
-                    baseDir "$testOutputLocal/$name"
-                    linkerOpts "-L${project.layout.buildDirectory.get().asFile}"
-                    extraOpts task.flags
-                    extraOpts project.globalTestArgs
-                }
-            }
-            task.dependsOn(nativeDependencies.llvmDependency)
-            task.dependsOn(nativeDependencies.targetDependency(target))
-        }
-    }
-}
-
-Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
-    return interopTestBase(name, false, false, configureClosure)
-}
-
-Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosure) {
-    return interopTestBase(name, true, false, configureClosure)
-}
-
 standaloneTest("interop_objc_allocException") {
     disabled = !PlatformInfo.isAppleTarget(project)
     expectedExitStatus = 0
@@ -1118,197 +596,10 @@ dynamicTest("interop_kt43502") {
     useGoldenData = true
 }
 
-interopTest("interop_leakMemoryWithRunningThreadChecked") {
-    interop = 'leakMemoryWithRunningThread'
-    source = "interop/leakMemoryWithRunningThread/checked.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Cannot run checkers when there are 1 alive runtimes at the shutdown") }
-}
-
-interopTest("interop_workerSignals") {
-    disabled = project.testTarget == 'mingw_x64' // cross-thread signalling does not work on Windows
-    source = "interop/workerSignals/workerSignals.kt"
-    interop = "workerSignals"
-}
-
-/*
-TODO: This test isn't run automatically
-tasks.register("interop_echo_server", RunInteropKonanTest) {
-    disabled = PlatformInfo.isWasmTarget(project) || PlatformInfo.isWindowsTarget(project)
-    run = false
-    source = "interop/basics/echo_server.kt"
-    interop = 'sockets'
-}
-*/
-
-/*
-TODO: This test isn't run automatically
-standaloneTest("interop_opengl_teapot") {
-    enabled = PlatformInfo.isAppleTarget(project) && project.testTarget != 'ios_x64'  // No GLUT in iOS
-    dependsOnPlatformLibs(it as Task)
-    run = false
-    source = "interop/basics/opengl_teapot.kt"
-}
-*/
-
 if (PlatformInfo.isAppleTarget(project)) {
     standaloneTest("interop_objc_kt61441") {
         source = "interop/objc/kt61441.kt"
         UtilsKt.dependsOnPlatformLibs(it)
-    }
-
-
-    interopTest("interop_objc_global_initializer") {
-        useGoldenData = true
-        source = "interop/objc_with_initializer/objc_test.kt"
-        interop = 'objcMisc'
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjcmisc.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc_with_initializer/objc_misc.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-    }
-
-    interopTest("interop_objc_msg_send") {
-        source = "interop/objc/msg_send/main.kt"
-        interop = 'objcMessaging'
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjcmessaging.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/msg_send/messaging.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-    }
-
-    interopTest("interop_objc_foreignException") {
-        source = "interop/objc/foreignException/objc_wrap.kt"
-        interop = 'foreignException'
-        UtilsKt.dependsOnPlatformLibs(it)
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjcexception.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/foreignException/objc_wrap.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-    }
-
-    interopTest("interop_objc_foreignExceptionMode_wrap") {
-        source = "interop/objc/foreignException/objcExceptionMode_wrap.kt"
-        interop = 'foreignExceptionMode_wrap'
-        useGoldenData = true
-        UtilsKt.dependsOnPlatformLibs(it)
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjcexception.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/foreignException/objc_wrap.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-    }
-
-    interopTest("interop_objc_foreignExceptionMode_default") {
-        source = "interop/objc/foreignException/objcExceptionMode_default.kt"
-        interop = 'foreignExceptionMode_default'
-        useGoldenData = true
-        UtilsKt.dependsOnPlatformLibs(it)
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjcexception.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/foreignException/objc_wrap.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-    }
-
-    interopTest("interop_objc_kt42172") {
-        enabled = !isNoopGC
-        source = "interop/objc/kt42172/main.kt"
-        interop = "objc_kt42172"
-        flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-        useGoldenData = true
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjc_kt42172.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/kt42172/objclib.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-    }
-
-    interopTest("interop_objc_kt55938") {
-        source = "interop/objc/kt55938/main.kt"
-        lib = "interop/objc/kt55938/lib.kt"
-        interop = "objc_kt55938"
-        useGoldenData = true
-        enabled = cacheTesting != null
-        flags = [
-                "-Xauto-cache-from=$testOutputRoot/local/objc_kt55938",
-                "-Xauto-cache-from=$testOutputRoot/local/interop_objc_kt55938",
-                "-Xauto-cache-dir=$testOutputRoot/local/interop_objc_kt55938/cache",
-                "-Xsuppress-version-warnings",  // suppresses warning about experimental language version, otherwise test fails with K2 due to -Werror
-                "-Werror" // to forbid retry with auto-cache disabled
-        ]
-
-        UtilsKt.findKonanBuildTask(project, "objc_kt55938", target).configure {
-            it.doFirst {
-                def cacheDir = new File("$testOutputRoot/local/interop_objc_kt55938/cache")
-                cacheDir.deleteDir()
-                mkdir(cacheDir)
-            }
-        }
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjc_kt55938.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/kt55938/objclib.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
     }
 
     standaloneTest("objc_arc_contract") {
@@ -1323,118 +614,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc_arc_contract/main.kt"
         useGoldenData = true
         flags = ["-native-library", bcFile.toString()]
-    }
-
-    interopTest("interop_objc_include_categories") {
-        useGoldenData = true
-        source = "interop/objc/include_categories/main.kt"
-        interop = "objc_include_categories"
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjcincludecategories.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/include_categories/objc_include_categories.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-    }
-
-    standaloneTest("interop_kt55653") {
-        // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
-        source = "interop/objc/kt55653/main.kt"
-        useGoldenData = true
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
-
-    standaloneTest("interop_kt40426") {
-        // Test depends on iOS-specific UIKit
-        enabled = (project.testTarget == 'ios_x64' || project.testTarget == 'ios_simulator_arm64' || project.testTarget == 'ios_arm64')
-        source = "interop/objc/kt40426/main.kt"
-        useGoldenData = true
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
-
-    interopTest("interop_objc_kt56402") {
-        // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
-            && !isNoopGC // requires some GC
-        source = 'interop/objc/kt56402/main.kt'
-        interop = "objc_kt56402"
-        flags = ["-tr", "-e", "runAllTests"] // Generate test suites, but use custom entrypoint.
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjc_kt56402.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/kt56402/objclib.m"
-                args "-g"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-                args '-framework', 'AppKit'
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-    }
-
-    interopTest("interop_objc_friendly_dealloc") {
-        enabled = !isNoopGC // requires some GC
-        source = 'interop/objc/objc_friendly_dealloc/main.kt'
-        interop = "objc_friendly_dealloc"
-        flags = ["-tr"]
-
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjc_friendly_dealloc.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/objc_friendly_dealloc/objclib.m"
-                args "-lobjc", '-fno-objc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
-
-    interopTest("interop_objCAction") {
-        source = 'interop/objc/objCAction/main.kt'
-        interop = "objCAction"
-        flags = ["-tr"]
-        doBeforeBuild {
-            def dylibFile = project.layout.buildDirectory.file("libobjCAction.dylib").get().asFile
-            mkdir(dylibFile.parentFile)
-            project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/objCAction/objclib.m"
-                args "-lobjc", '-fobjc-arc'
-                args '-fPIC', '-shared', '-o', dylibFile.toString()
-            }
-            if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, dylibFile.toString())
-            }
-        }
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
-
-    interopTest("interop_objc_kt63423_dispose_on_main_stress") {
-        // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
-            && !isNoopGC // requires some GC
-            && !isAggressiveGC // requires careful timing of GC
-            && !isWithStateChecker // TODO(KT-65261)
-        source = 'interop/objc/kt63423_dispose_on_main_stress/main.kt'
-        interop = "kt63423_dispose_on_main_stress"
-        flags = [
-            '-opt-in=kotlin.native.internal.InternalForKotlinNative', // MemoryUsageInfo is internal
-            '-Xbinary=gcSchedulerType=manual', // This test requires very careful timing when GC can happen
-        ]
     }
 }
 
@@ -1454,180 +633,10 @@ tasks.register("KT-50983", KonanDriverTest) {
     flags = ['-linker-option', resFile.toString()]
 }
 
-standaloneTest("interop_libiconv") {
-    enabled = (project.testTarget == null)
-    source = "interop/libiconv.kt"
-    useGoldenData = true
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
-standaloneTest("interop_objc_illegal_sharing") {
-    disabled = !PlatformInfo.isAppleTarget(project)
-    source = "interop/objc/illegal_sharing.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-    outputChecker = {
-        it.startsWith("Before") && it.contains("After")
-    }
-}
-
-standaloneTest("interop_kt62262") {
-    enabled = project.testTarget == 'ios_x64' || project.testTarget == 'ios_arm64' || project.testTarget == 'ios_simulator_arm64'
-    source = "interop/objc/kt62262.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
-dynamicTest("produce_dynamic") {
-    source = "produce_dynamic/simple/hello.kt"
-    cSource = "$projectDir/produce_dynamic/simple/main.c"
-    useGoldenData = true
-}
-
-dynamicTest("kt36878") {
-    source = "produce_dynamic/kt-36878/hello.kt"
-    cSource = "$projectDir/produce_dynamic/kt-36878/main.c"
-    useGoldenData = true
-}
-
-dynamicTest("kt39015") {
-    source = "produce_dynamic/kt-39015/hello.kt"
-    cSource = "$projectDir/produce_dynamic/kt-39015/main.c"
-    useGoldenData = true
-}
-
-dynamicTest("kt39496") {
-    source = "produce_dynamic/kt-39496/hello.kt"
-    cSource = "$projectDir/produce_dynamic/kt-39496/main.c"
-    useGoldenData = true
-}
-
-dynamicTest("kt41904") {
-    source = "produce_dynamic/kt-41904/hello.kt"
-    cSource = "$projectDir/produce_dynamic/kt-41904/main.c"
-    useGoldenData = true
-}
-
-for (i in 0..2) {
-    dynamicTest("kt42796_$i") {
-        clangTool = "clang++"
-        source = "produce_dynamic/kt-42796/main-${i}.kt"
-        cSource = "$projectDir/produce_dynamic/kt-42796/main.cpp"
-        useGoldenData = true
-        clangFlags = ["-DTEST=$i", "-Werror"]
-    }
-}
-
-dynamicTest("kt42830") {
-    source = "produce_dynamic/kt-42830/box_unbox.kt"
-    cSource = "$projectDir/produce_dynamic/kt-42830/main.c"
-    useGoldenData = true
-}
-
-dynamicTest("kt64508") {
-    source = "produce_dynamic/kt-64508/hello.kt"
-    cSource = "$projectDir/produce_dynamic/kt-64508/main.c"
-    useGoldenData = true
-}
-
-dynamicTest("produce_dynamic_unhandledException") {
-    disabled = (cacheTesting != null) // Disabled due to KT-47828.
-    source = "produce_dynamic/unhandledException/unhandled.kt"
-    cSource = "$projectDir/produce_dynamic/unhandledException/main.cpp"
-    clangTool = "clang++"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { str -> str.startsWith("Kotlin hook: Exception. Runnable state: true") }
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-dynamicTest("interop_concurrentRuntime") {
-    source = "interop/concurrentTerminate/reverseInterop.kt"
-    cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
-    clangTool = "clang++"
-    if (project.testTarget == 'mingw_x64') {
-        // Our sysroot for mingw_x64 still requires -femulated-tls. For C++ code as well. See KT-46612.
-        clangFlags += "-femulated-tls"
-    }
-    outputChecker = { str -> str.startsWith("Uncaught Kotlin exception: kotlin.RuntimeException: Example") }
-    expectedExitStatus = 99
-}
-
-for (i in ["kt42397", "kt56182_root", "kt56182_package1lvl", "kt56182_subpackage2lvl", "kt56182_root_package1lvl", "kt56182_root_subpackage2lvl"]) {
-    // note: kt56182_package1lvl is same as kt42397
-    // note: kt56182_root_package1lvl is similar as kt41904
-    // note: kt56182_subpackage2lvl is similar as kt42796_1
-    dynamicTest("interop_$i") {
-        source = "interop/$i/knlibrary.kt"
-        cSource = "$projectDir/interop/$i/test.cpp"
-        clangTool = "clang++"
-    }
-}
-
-dynamicTest("interop_cleaners_main_thread") {
-    disabled = isNoopGC
-    source = "interop/cleaners/cleaners.kt"
-    cSource = "$projectDir/interop/cleaners/main_thread.cpp"
-    clangTool = "clang++"
-    useGoldenData = true
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-dynamicTest("interop_cleaners_second_thread") {
-    disabled = isNoopGC
-    source = "interop/cleaners/cleaners.kt"
-    cSource = "$projectDir/interop/cleaners/second_thread.cpp"
-    clangTool = "clang++"
-    useGoldenData = true
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-dynamicTest("interop_cleaners_leak") {
-    source = "interop/cleaners/cleaners.kt"
-    cSource = "$projectDir/interop/cleaners/leak.cpp"
-    clangTool = "clang++"
-    useGoldenData = true
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-dynamicTest("interop_migrating_main_thread") {
-    source = "interop/migrating_main_thread/lib.kt"
-    clangFlags = ['-DEXPERIMENTAL_MM']
-    cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
-    clangTool = "clang++"
-}
-
-dynamicTest("interop_exceptions_throwThroughBridge") {
-    source = "interop/exceptions/throwThroughBridge.kt"
-    cSource = "$projectDir/interop/exceptions/throwThroughBridge.cpp"
-    clangTool = "clang++"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> !s.contains("Should not happen") }
-    interop = "exceptions_throwThroughBridge"
-}
-
-dynamicTest("interop_kotlin_exception_hook") {
-    source = "interop/exceptions/exceptionHook.kt"
-    cSource = "$projectDir/interop/exceptions/exceptionHook.cpp"
-    clangTool = "clang++"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("OK. Kotlin unhandled exception hook") }
-}
-
 standaloneTest("kt51302") {
-    enabled = project.target.name == project.hostName
+    enabled = project.target.name == PlatformInfo.hostName
     source = "serialization/KT-51302/main.kt"
     flags = ["-l", "$projectDir/serialization/KT-51302/kt51302_dependency"]
-}
-
-standaloneTest("fake_override_0") {
-    def sources = "$projectDir/link/fake_overrides"
-    doBeforeBuild {
-        konanc("$sources/base.kt -p library -target ${target.name} -o $outputDirectory/base.klib")
-        konanc("$sources/move.kt -p library -target ${target.name} -o $outputDirectory/move.klib -l $outputDirectory/base.klib")
-        konanc("$sources/use.kt -p library -target ${target.name} -o $outputDirectory/use.klib -l $outputDirectory/move.klib -l $outputDirectory/base.klib")
-        konanc("$sources/move2.kt -p library -target ${target.name} -o $outputDirectory/move.klib -l $outputDirectory/base.klib")
-    }
-    source = "$sources/main.kt"
-    flags = ["-l", "$outputDirectory/use.klib", "-l", "$outputDirectory/move.klib", "-l", "$outputDirectory/base.klib"]
-    useGoldenData = true
 }
 
 standaloneTest("split_compilation_pipeline") {
@@ -1649,48 +658,6 @@ standaloneTest("split_compilation_pipeline") {
     useGoldenData = true
 }
 
-/**
- * Builds tests into a single binary with TestRunner
- */
-task buildKonanTests { t ->
-    def compileList = [ "codegen", "datagen", "lower", "runtime", "serialization", "sanity" ]
-
-    // These tests should not be built into the TestRunner's test executable
-    def excludeList = [ "codegen/inline/returnLocalClassFromBlock.kt" ]
-    project.tasks
-            .withType(KonanStandaloneTest.class)
-            .each {
-                // add library and source files
-                if (it.source != null) {
-                    excludeList += it.source
-                }
-            }
-    def sources = UtilsKt.getFilesToCompile(project, compileList, excludeList)
-
-    konanArtifacts {
-        program('localTest', targets: [target.name]) {
-            srcFiles sources
-            baseDir testOutputLocal
-            extraOpts '-ea' // Without this option assertions would remain inactive.
-            extraOpts '-tr'
-            extraOpts '-Xverify-ir=error'
-            extraOpts project.globalTestArgs
-        }
-    }
-
-    // Set build dependencies.
-    dependsOn compileKonanLocalTest
-    def buildTask = UtilsKt.findKonanBuildTask(project, "localTest", target)
-    UtilsKt.dependsOnDist(buildTask)
-
-    // Local tests build into a single binary should depend on this task
-    project.tasks
-            .withType(KonanLocalTest.class)
-            .matching { !(it instanceof KonanStandaloneTest) }
-            .configureEach { it.dependsOn(t) }
-}
-
-
 sourceSets {
     nopPlugin {
         kotlin {
@@ -1700,7 +667,7 @@ sourceSets {
 }
 
 compileNopPluginKotlin {
-    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
+    compilerOptions.freeCompilerArgs.add('-Xskip-prerelease-check')
 }
 
 Task pluginTest(String name, String pluginName, Closure configureClosure) {
@@ -1735,7 +702,6 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 }
 
 dependencies {
-    nopPluginApi kotlinCompilerModule
     nopPluginApi project(":native:kotlin-native-utils")
     nopPluginApi project(":core:descriptors")
     nopPluginApi project(":compiler:ir.tree")
@@ -1749,8 +715,7 @@ dependencies {
     nopPluginApi project(":kotlin-util-klib-metadata")
     nopPluginApi project(":compiler:ir.serialization.common")
 
-    implementation kotlinCompilerModule
-    api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
+    api project(':native:cli-native')
     api libs.junit4
 }
 

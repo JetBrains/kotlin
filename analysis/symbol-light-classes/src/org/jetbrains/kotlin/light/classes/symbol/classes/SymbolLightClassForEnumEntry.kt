@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationHolder
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
@@ -116,6 +117,7 @@ internal class SymbolLightClassForEnumEntry(
                 addPropertyBackingFields(
                     result,
                     initializer,
+                    SymbolLightField.FieldNameGenerator(),
 
                     // `addPropertyBackingFields` detects that property fields should be static when the given symbol with members is an
                     // object. Unfortunately, the enum entry's initializer is an anonymous object, yet we want the enum entry's light class

@@ -299,6 +299,35 @@ And that's how `addSubtypeConstraintIfCompatible` might be used.
 One of the ideas particularly for assignment is that they should be resolved via setter call, thus the necessary constraint would be
 introduced naturally when string literal would be an argument for `Fv` value parameter.
 
+### getAndSemiFixCurrentResultIfTypeVariable
+
+Before deep-diving into this section, it's worth reading [On demand variable fixation](#on-demand-variable-fixation) section.
+
+Sometimes, besides computing member scope, there might be other cases when we need to fix a type variable on-demand.
+
+```kotlin
+interface A<F> 
+interface B<G> : A<G>
+
+fun <X> predicate(x: X, c: MutableList<in X>, p: (X) -> Boolean) {}
+
+fun main(a: A<*>) {
+    buildList { 
+        predicate(a, this) {
+            it is B
+        }
+    }
+}
+```
+
+In this example, for `is` check, `B` type on the right-hand side is a bare type and to compute its arguments properly, we need to know
+the proper type representation of `it` which is not proper yet (`Xv` variable).
+
+Potentially, we might've ignored that requiring full type arguments for `B`, but that would be a breaking change from a user project
+([KT-64840](https://youtrack.jetbrains.com/issue/KT-64840)), so we decided to fix the type variable to the current result type.
+
+That's how this callback is currently used from the place before bare-type computation is started.
+
 ## PCLA_POSTPONED_CALL completion mode
 
 This mode is assumed to be used for postponed nested calls inside PCLA lambdas instead of FULL mode (i.e., mostly for top-level calls).
@@ -436,7 +465,7 @@ buildList {
 }
 ```
 
-See the implementations details at `FirPCLAInferenceSession.fixVariablesForMemberScope`.
+See the implementation details at `FirPCLAInferenceSession.fixCurrentResultIfTypeVariableAndReturnBinding`.
 
 ## CST computation
 

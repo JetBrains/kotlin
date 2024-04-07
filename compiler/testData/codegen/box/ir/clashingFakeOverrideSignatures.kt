@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION
-// Reason: KT-42020
 
 open class Base<T> {
     fun foo(x: T) = "x:$x"

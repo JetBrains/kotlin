@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectD
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
@@ -223,28 +222,28 @@ public class DebugSymbolRenderer(
     context(KtAnalysisSession)
     private fun PrettyPrinter.renderType(type: KtType) {
         val typeToRender = if (renderExpandedTypes) type.fullyExpandedType else type
-        if (renderTypeByProperties) {
-            renderByPropertyNames(typeToRender)
-            return
-        }
 
         renderFrontendIndependentKClassNameOf(typeToRender)
         withIndent {
             appendLine()
-            append("annotationsList: ")
-            renderAnnotationsList(typeToRender.annotationsList)
+            if (renderTypeByProperties) {
+                renderByPropertyNames(typeToRender)
+            } else {
+                append("annotationsList: ")
+                renderAnnotationsList(typeToRender.annotationsList)
 
-            if (typeToRender is KtNonErrorClassType) {
+                if (typeToRender is KtNonErrorClassType) {
+                    appendLine()
+                    append("ownTypeArguments: ")
+                    renderList(typeToRender.ownTypeArguments, renderSymbolsFully = false)
+                }
+
                 appendLine()
-                append("ownTypeArguments: ")
-                renderList(typeToRender.ownTypeArguments, renderSymbolsFully = false)
-            }
-
-            appendLine()
-            append("type: ")
-            when (typeToRender) {
-                is KtErrorType -> append("ERROR_TYPE")
-                else -> append(typeToRender.asStringForDebugging())
+                append("type: ")
+                when (typeToRender) {
+                    is KtErrorType -> append("ERROR_TYPE")
+                    else -> append(typeToRender.asStringForDebugging())
+                }
             }
         }
     }

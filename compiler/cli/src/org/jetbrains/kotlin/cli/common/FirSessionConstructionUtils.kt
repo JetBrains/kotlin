@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.cli.common
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.OptInLanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -68,6 +65,7 @@ fun <F> prepareJvmSessions(
     librariesScope: AbstractProjectFileSearchScope,
     libraryList: DependencyListForCliModule,
     isCommonSource: (F) -> Boolean,
+    isScript: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
     createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
@@ -79,7 +77,7 @@ fun <F> prepareJvmSessions(
 
     return prepareSessions(
         files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices, metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
+        JvmPlatformAnalyzerServices, metadataCompilationMode = false, libraryList, isCommonSource, isScript, fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJvmSessionFactory.createLibrarySession(
                 rootModuleName,
@@ -117,6 +115,7 @@ fun <F> prepareJvmSessions(
             },
             extensionRegistrars,
             configuration.languageVersionSettings,
+            configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
             configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
@@ -149,7 +148,8 @@ fun <F> prepareJsSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices,
-        metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
+        metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
+        fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJsSessionFactory.createLibrarySession(
                 rootModuleName,
@@ -196,7 +196,8 @@ fun <F> prepareNativeSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices,
-        metadataCompilationMode, libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
+        metadataCompilationMode, libraryList, isCommonSource, isScript = { false },
+        fileBelongsToModule, createLibrarySession = { sessionProvider ->
             FirNativeSessionFactory.createLibrarySession(
                 rootModuleName,
                 resolvedLibraries,
@@ -244,7 +245,8 @@ fun <F> prepareWasmSessions(
     }
     return prepareSessions(
         files, configuration, rootModuleName, WasmPlatforms.Default, analyzerServices,
-        metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
+        metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
+        fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirWasmSessionFactory.createLibrarySession(
                 rootModuleName,
@@ -291,7 +293,8 @@ fun <F> prepareCommonSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform, CommonPlatformAnalyzerServices,
-        metadataCompilationMode = true, libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
+        metadataCompilationMode = true, libraryList, isCommonSource, isScript = { false }, fileBelongsToModule,
+        createLibrarySession = { sessionProvider ->
             FirCommonSessionFactory.createLibrarySession(
                 rootModuleName,
                 sessionProvider,
@@ -335,11 +338,13 @@ private inline fun <F> prepareSessions(
     metadataCompilationMode: Boolean,
     libraryList: DependencyListForCliModule,
     isCommonSource: (F) -> Boolean,
+    isScript: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
     createLibrarySession: (FirProjectSessionProvider) -> FirSession,
     createSourceSession: FirSessionProducer<F>,
 ): List<SessionWithSources<F>> {
     val languageVersionSettings = configuration.languageVersionSettings
+    val (scripts, nonScriptFiles) = files.partition(isScript)
 
     val isMppEnabled = languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
     val hmppModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
@@ -353,25 +358,57 @@ private inline fun <F> prepareSessions(
         }
     }
 
-    return when {
-        metadataCompilationMode || !isMppEnabled -> listOf(
-            createSingleSession(
-                files, rootModuleName, libraryList, targetPlatform, analyzerServices,
-                sessionProvider, sessionConfigurator, createSourceSession
+    val nonScriptSessions = when {
+        metadataCompilationMode || !isMppEnabled -> {
+            listOf(
+                createSingleSession(
+                    nonScriptFiles, rootModuleName, libraryList, targetPlatform, analyzerServices,
+                    sessionProvider, sessionConfigurator, createSourceSession
+                )
             )
-        )
+        }
 
         hmppModuleStructure == null -> createSessionsForLegacyMppProject(
-            files, rootModuleName, libraryList, targetPlatform, analyzerServices,
+            nonScriptFiles, rootModuleName, libraryList, targetPlatform, analyzerServices,
             sessionProvider, sessionConfigurator, isCommonSource, createSourceSession
         )
 
         else -> createSessionsForHmppProject(
-            files, rootModuleName, hmppModuleStructure, libraryList, targetPlatform, analyzerServices,
+            nonScriptFiles, rootModuleName, hmppModuleStructure, libraryList, targetPlatform, analyzerServices,
             sessionProvider, sessionConfigurator, fileBelongsToModule, createSourceSession
         )
     }
+
+    return if (scripts.isEmpty()) nonScriptSessions
+    else nonScriptSessions +
+            createScriptsSession(
+                scripts, rootModuleName, libraryList, nonScriptSessions.last().session.moduleData,
+                targetPlatform, analyzerServices, sessionProvider, sessionConfigurator, createSourceSession
+            )
 }
+
+private inline fun <F> createScriptsSession(
+    scripts: List<F>,
+    rootModuleName: Name,
+    libraryList: DependencyListForCliModule,
+    lastModuleData: FirModuleData,
+    targetPlatform: TargetPlatform,
+    analyzerServices: PlatformDependentAnalyzerServices,
+    sessionProvider: FirProjectSessionProvider,
+    noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
+    createSourceSession: FirSessionProducer<F>,
+): SessionWithSources<F> =
+    createSingleSession(
+        scripts, Name.identifier("${rootModuleName.asString()}-scripts"),
+        DependencyListForCliModule(
+            libraryList.regularDependencies,
+            listOf(lastModuleData),
+            libraryList.friendsDependencies,
+            libraryList.moduleDataProvider
+        ),
+        targetPlatform, analyzerServices,
+        sessionProvider, sessionConfigurator, createSourceSession
+    )
 
 private inline fun <F> createSingleSession(
     files: List<F>,

@@ -11,9 +11,6 @@ import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmDeclarationContainer
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.annotations
-import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
@@ -58,7 +55,9 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
         ).assertSuccess().resultingArtifact
         spoilDeprecatedAnnotationsInLibrary(library)
 
-        compileToExecutable(
+        // For this test it's ok to compile executable in the simplest way, not respecting possible `mode=TWO_STAGE_MULTI_MODULE`
+        // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
+        compileToExecutableInOneStage(
             generateTestCaseWithSingleFile(
                 sourceFile = File(MAIN_FILE_PATH),
                 testKind = TestKind.STANDALONE_NO_TR,

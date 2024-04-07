@@ -49,6 +49,7 @@ public:
 
 private:
     friend struct DefaultIntrusiveForwardListTraits<Node>;
+    Node() : Node(37) {}
 
     Node* next() const noexcept { return next_; }
     void setNext(Node* next) noexcept {

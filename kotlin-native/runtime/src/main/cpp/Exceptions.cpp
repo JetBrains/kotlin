@@ -25,7 +25,8 @@
 #include "Exceptions.h"
 #include "ExecFormat.h"
 #include "Memory.h"
-#include "Mutex.hpp"
+#include <std_support/Atomic.hpp>
+#include "concurrent/Mutex.hpp"
 #include "Porting.h"
 #include "Types.h"
 #include "Utils.hpp"
@@ -57,10 +58,10 @@ class {
      * If the terminate handler hangs for 5 sec it is probably fatally broken, so let's do abnormal _Exit in that case.
      */
     unsigned int timeoutSec = 5;
-    int terminatingFlag = 0;
+    std::atomic<int> terminatingFlag = 0;
   public:
     template <class Fun> RUNTIME_NORETURN void operator()(Fun block) {
-      if (compareAndSet(&terminatingFlag, 0, 1)) {
+      if (kotlin::std_support::atomic_compare_exchange_strong(terminatingFlag, 0, 1)) {
         block();
         // block() is supposed to be NORETURN, otherwise go to normal abort()
         std::abort();

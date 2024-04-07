@@ -11,15 +11,22 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.text.ParseException
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestReportParseState as State
 
-internal class TestReport(
+class TestReport(
     val passedTests: Collection<TestName>,
     val failedTests: Collection<TestName>,
     val ignoredTests: Collection<TestName>
 ) {
     fun isEmpty(): Boolean = passedTests.isEmpty() && failedTests.isEmpty() && ignoredTests.isEmpty()
+
+    override fun toString(): String = """
+        TestReport:
+         * Passed:  $passedTests
+         * Failed:  $failedTests
+         * Ignored: $ignoredTests
+    """.trimIndent()
 }
 
-internal interface TestOutputFilter {
+interface TestOutputFilter {
     fun filter(testOutput: String): FilteredOutput
 
     data class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)

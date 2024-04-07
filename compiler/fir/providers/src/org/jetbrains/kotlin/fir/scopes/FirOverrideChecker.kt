@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 interface FirOverrideChecker : FirSessionComponent {
     fun isOverriddenFunction(
@@ -24,6 +26,11 @@ interface FirOverrideChecker : FirSessionComponent {
         overrideCandidate: FirCallableDeclaration, // NB: in Java it can be a function which overrides accessor
         baseDeclaration: FirProperty
     ): Boolean
+
+    fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
+        dispatchClassSymbol: FirRegularClassSymbol?,
+    ): Visibility
 }
 
 fun FirOverrideChecker.isOverriddenFunction(

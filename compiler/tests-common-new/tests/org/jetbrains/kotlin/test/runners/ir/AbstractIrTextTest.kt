@@ -113,10 +113,6 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
             )
         }
 
-        useAfterAnalysisCheckers(
-            ::FirIrDumpIdenticalChecker,
-        )
-
         forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {
             defaultDirectives {
                 LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"

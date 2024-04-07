@@ -1,0 +1,113 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#test1(){}
+  //   Public signature: /A.test1|4297044443957252634[0]
+  //   Public signature debug description: test1(){}
+  open fun test1(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#test2(){}kotlin.Int
+  //   Public signature: /A.test2|5542371834528279174[0]
+  //   Public signature debug description: test2(){}kotlin.Int
+  open fun test2(): Int
+
+  // CHECK:
+  //   Mangled name: A#test3(){}
+  //   Public signature: /A.test3|-3759735065270951803[0]
+  //   Public signature debug description: test3(){}
+  open fun test3(): Unit
+
+  // CHECK:
+  //   Mangled name: A#test4(){}
+  //   Public signature: /A.test4|5588455914500386239[0]
+  //   Public signature debug description: test4(){}
+  open fun test4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#test1(){}
+  //   Public signature: /B.test1|4297044443957252634[0]
+  //   Public signature debug description: test1(){}
+  fun test1(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#test2(){}kotlin.Int
+  //   Public signature: /B.test2|5542371834528279174[0]
+  //   Public signature debug description: test2(){}kotlin.Int
+  fun test2(): Int
+
+  // CHECK:
+  //   Mangled name: B#test3(){}
+  //   Public signature: /B.test3|-3759735065270951803[0]
+  //   Public signature debug description: test3(){}
+  fun test3(): Unit
+
+  // CHECK:
+  //   Mangled name: B#test4(){}
+  //   Public signature: /B.test4|5588455914500386239[0]
+  //   Public signature debug description: test4(){}
+  fun test4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java3 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#test1(){}
+  //   Public signature: /C.test1|4297044443957252634[0]
+  //   Public signature debug description: test1(){}
+  /* fake */ override fun test1(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#test2(){}kotlin.Int
+  //   Public signature: /C.test2|5542371834528279174[0]
+  //   Public signature debug description: test2(){}kotlin.Int
+  /* fake */ override fun test2(): Int
+
+  // CHECK:
+  //   Mangled name: C#test3(){}
+  //   Public signature: /C.test3|-3759735065270951803[0]
+  //   Public signature debug description: test3(){}
+  /* fake */ override fun test3(): Unit
+
+  // CHECK:
+  //   Mangled name: C#test4(){}
+  //   Public signature: /C.test4|5588455914500386239[0]
+  //   Public signature debug description: test4(){}
+  /* fake */ override fun test4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C){}
+//   Public signature: /test|-4981009800298118531[0]
+//   Public signature debug description: test(A;B;C){}
+fun test(a: A, b: B, c: C): Unit

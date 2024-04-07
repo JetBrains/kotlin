@@ -15,11 +15,6 @@ sealed class Builder<BuilderField, Element> : FieldContainer<BuilderField>, Type
 
     abstract val uselessFields: List<BuilderField>
 
-    override fun get(fieldName: String): BuilderField {
-        return allFields.firstOrNull { it.name == fieldName }
-            ?: throw IllegalArgumentException("Builder $typeName doesn't contains field $fieldName")
-    }
-
     private val fieldsFromParentIndex: Map<String, Boolean> by lazy {
         mutableMapOf<String, Boolean>().apply {
             for (field in allFields + uselessFields) {
@@ -53,7 +48,7 @@ class LeafBuilder<BuilderField, Element, Implementation>(
     override val typeName: String
         get() = (implementation.name ?: implementation.element.typeName) + "Builder"
 
-    override val allFields: List<BuilderField> by lazy { implementation.fieldsWithoutDefault }
+    override val allFields: List<BuilderField> by lazy { implementation.fieldsInConstructor }
 
     override val uselessFields: List<BuilderField> by lazy {
         val fieldsFromParents = parents.flatMap { it.allFields }.distinct()

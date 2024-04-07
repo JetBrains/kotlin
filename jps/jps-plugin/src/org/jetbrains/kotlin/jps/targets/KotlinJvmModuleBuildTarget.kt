@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJvmCache
 import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
+import org.jetbrains.kotlin.jps.targets.impl.LookupUsageRegistrar
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
@@ -385,12 +386,19 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             if (!cache.isMultifileFacade(className)) return emptySet()
 
             // In case of graph implementation of JPS
-            if (previousMappings == null) return emptySet()
+            if (KotlinBuilder.useDependencyGraph || previousMappings == null) return emptySet()
 
             val name = previousMappings.getName(className.internalName)
             return previousMappings.getClassSources(name).toSet()
         }
 
+        if (KotlinBuilder.useDependencyGraph) {
+            LookupUsageRegistrar().processLookupTracker(
+                environment.services[LookupTracker::class.java],
+                callback,
+                environment.messageCollector
+            )
+        }
         for ((target, outputs) in outputItems) {
             for (output in outputs) {
                 if (output !is GeneratedJvmClass) continue
@@ -413,6 +421,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 )
             }
         }
+        // important: in jps-dependency-graph you can't register additional dependencies after [callback.associate].
 
         val allCompiled = dirtyFilesHolder.allDirtyFiles
         JavaBuilderUtil.registerFilesToCompile(localContext, allCompiled)

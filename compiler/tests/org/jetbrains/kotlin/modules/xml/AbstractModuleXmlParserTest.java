@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +70,7 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
                 FileUtil.writeToFile(txtFile, actual);
             }
             catch (IOException e) {
-                throw new RuntimeException(e);
+                throw ExceptionUtilsKt.rethrow(e);
             }
             fail("Expected data file does not exist. A new file created: " + txtFile);
         }

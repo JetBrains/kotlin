@@ -16,6 +16,7 @@ import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.lang.JavaVersion;
 import junit.framework.TestCase;
+import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
@@ -63,8 +64,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES;
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
@@ -260,7 +260,7 @@ public class KotlinTestUtils {
         assertEqualsToFile("Actual data differs from file content", expectedFile, actual, sanitizer);
     }
 
-    public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+    public static Pair<Boolean, String> doesEqualToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         try {
             String actualText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
 
@@ -276,13 +276,19 @@ public class KotlinTestUtils {
 
             String expectedText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
 
-            if (!Objects.equals(sanitizer.invoke(expectedText), sanitizer.invoke(actualText))) {
-                throw new FileComparisonFailure(message + ": " + expectedFile.getName(),
-                                                expected, actual, expectedFile.getAbsolutePath());
-            }
+            return new Pair<>(Objects.equals(sanitizer.invoke(expectedText), sanitizer.invoke(actualText)), expected);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
+    public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+        Pair<Boolean, String> pair = doesEqualToFile(expectedFile, actual, sanitizer);
+        String expected = pair.getSecond();
+        if (!pair.getFirst()) {
+            throw new FileComparisonFailure(message + ": " + expectedFile.getName(),
+                                            expected, actual, expectedFile.getAbsolutePath());
         }
     }
 
@@ -475,7 +481,10 @@ public class KotlinTestUtils {
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
     public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIXES), null, testDataFilePath);
+        String[] prefixes = test.getClass().getSimpleName().startsWith("Fir")
+                            ? new String[] { IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K2_DIRECTIVE_PREFIX }
+                            : IGNORE_BACKEND_DIRECTIVE_PREFIXES;
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, prefixes), null, testDataFilePath);
     }
 
     private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) {
@@ -554,7 +563,7 @@ public class KotlinTestUtils {
                         try {
                             FileUtil.writeToFile(testDataFile, newText);
                         } catch (IOException ioException) {
-                            throw new RuntimeException(ioException);
+                            throw ExceptionUtilsKt.rethrow(e);
                         }
                     }
                 }
@@ -585,7 +594,7 @@ public class KotlinTestUtils {
                             try {
                                 FileUtil.writeToFile(testDataFile, newText);
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                throw ExceptionUtilsKt.rethrow(e);
                             }
                         }
                     }

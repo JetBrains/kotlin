@@ -71,7 +71,7 @@ fun main1() {
 
     1.<!ILLEGAL_SELECTOR!>"sdf"<!>
     1.<!ILLEGAL_SELECTOR!>{}<!>
-    1.<!ILLEGAL_SELECTOR!><!INVALID_IF_AS_EXPRESSION!>if<!> (true) {}<!>
+    1.<!ILLEGAL_SELECTOR!>if (true) {}<!>
 }
 
 fun test() {

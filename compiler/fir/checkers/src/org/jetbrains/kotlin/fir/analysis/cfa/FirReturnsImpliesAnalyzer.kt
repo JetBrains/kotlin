@@ -52,8 +52,9 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         }
 
         val function = graph.declaration as? FirFunction ?: return
-        if (function !is FirContractDescriptionOwner || function.contractDescription.source == null) return
-        val effects = function.contractDescription.effects ?: return
+        if (function !is FirContractDescriptionOwner) return
+        val contractDescription = function.contractDescription ?: return
+        val effects = contractDescription.effects ?: return
         val dataFlowInfo = function.controlFlowGraphReference?.dataFlowInfo ?: return
 
         val argumentIdentifiers = Array(function.valueParameters.size + 1) { i ->
@@ -77,7 +78,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
             }
             if (wrongCondition) {
                 // TODO, KT-59813: reportOn(firEffect.source, ...)
-                reporter.reportOn(function.contractDescription.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
+                reporter.reportOn(contractDescription.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
             }
         }
     }
@@ -117,7 +118,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
                 if (expressionType != null && !operation.canBeTrueFor(context.session, expressionType)) return false
                 // TODO: avoid modifying the storage
                 val variableStorage = dataFlowInfo.variableStorage as VariableStorageImpl
-                val resultVar = variableStorage.getOrCreateIfReal(flow, resultExpression)
+                val resultVar = variableStorage.getOrCreateIfReal(flow, resultExpression, unwrapAlias = true)
                 if (resultVar != null) {
                     val impliedByReturnValue = logicSystem.approveOperationStatement(flow, OperationStatement(resultVar, operation))
                     if (impliedByReturnValue.isNotEmpty()) {

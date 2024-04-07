@@ -104,10 +104,9 @@ val forLoopsPhase = makeIrFilePhase(
  *   }
  * ```
  */
-class ForLoopsLowering(
-    val context: CommonBackendContext,
-    private val loopBodyTransformer: ForLoopBodyTransformer? = null
-) : BodyLoweringPass {
+open class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+    open val loopBodyTransformer: ForLoopBodyTransformer?
+        get() = null
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()

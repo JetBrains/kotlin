@@ -154,7 +154,7 @@ FILE fqName:<root> fileName:/kt30020.kt
           element: CONST Int type=kotlin.Int value=200
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int
+        public abstract size: kotlin.Int declared in kotlin.collections.MutableList
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:

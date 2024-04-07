@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.junit.Assert.assertNotEquals
 import java.io.File
 
 abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
@@ -35,28 +36,37 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
             override fun getClassBuilderMode() = ClassBuilderMode.getLightAnalysisForTests()
         }
 
-        private val ignoreDirectives = listOf(
-            "// IGNORE_LIGHT_ANALYSIS",
+        private val ignoreDirective = "// IGNORE_LIGHT_ANALYSIS"
+        private val disableDirectives = listOf(
             "// MODULE:",
             "// TARGET_FRONTEND: FIR",
             "// IGNORE_BACKEND_K1:",
         )
     }
 
-    override val backend: TargetBackend
+    final override val backend: TargetBackend
         get() = TargetBackend.JVM_IR
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         for (file in files) {
-            if (ignoreDirectives.any { file.content.contains(it) }) return
+            if (disableDirectives.any { file.content.contains(it) }) return
         }
 
-        val fullTxt = compileWithFullAnalysis(files)
-
-        val liteTxt = compileWithLightAnalysis(wholeFile, files)
-            .replace("@synthetic.kotlin.jvm.GeneratedByJvmOverloads ", "")
-
-        assertEquals(fullTxt, liteTxt)
+        val isIgnored = files.any { it.content.contains(ignoreDirective) }
+        val (fullTxt, liteTxt) = try {
+            Pair(
+                compileWithFullAnalysis(files),
+                compileWithLightAnalysis(wholeFile, files)
+                    .replace("@synthetic.kotlin.jvm.GeneratedByJvmOverloads ", "")
+            )
+        } catch (t: Throwable) {
+            if (isIgnored) return // Expected failure: compile error
+            throw t
+        }
+        if (isIgnored)
+            assertNotEquals(fullTxt, liteTxt)
+        else
+            assertEquals(fullTxt, liteTxt)
     }
 
     override fun verifyWithDex(): Boolean {
@@ -71,7 +81,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
 
         configurationKind = extractConfigurationKind(files)
         val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files), backend, listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
+            configurationKind, getTestJdkKind(files), listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
         )
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())

@@ -1,5 +1,6 @@
 // WITH_REFLECT
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// ISSUE: KT-65300
 
 import kotlin.reflect.KProperty
 

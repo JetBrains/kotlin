@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.bitMaskSlotCount
@@ -99,7 +99,7 @@ class IrPreGenerator(
             )
         }
 
-        compilerContext.referenceClass(JVM_STATIC_ANNOTATION_CLASS_ID)
+        compilerContext.referenceClass(StandardClassIds.Annotations.jvmStatic)
             ?.let { method.annotations += method.createAnnotationCallWithoutArgs(it) }
 
         compilerContext.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(method)

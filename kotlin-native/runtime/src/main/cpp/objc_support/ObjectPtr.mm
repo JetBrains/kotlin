@@ -7,7 +7,7 @@
 
 #include "ObjectPtr.hpp"
 
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
 
 using namespace kotlin;
 

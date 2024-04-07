@@ -1,0 +1,65 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+private fun Test(param: String?): String? {
+    return Test(
+        if (param == null) {
+           Test(
+                if (param == null) {
+                    remember { "" }
+                } else {
+                    null
+                }
+           )
+        } else {
+            null
+        },
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<Test(>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = Test(<block>{
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<Test(>")
+    val tmp3_group = if (param == null) {
+      Test(<block>{
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<rememb...>")
+        val tmp2_group = if (param == null) {
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+          val tmp1_group = %composer.cache(false) {
+            ""
+          }
+          sourceInformationMarkerEnd(%composer)
+          tmp1_group
+        } else {
+          null
+        }
+        %composer.endReplaceGroup()
+        tmp2_group
+      }, %composer, 0)
+    } else {
+      null
+    }
+    %composer.endReplaceGroup()
+    tmp3_group
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

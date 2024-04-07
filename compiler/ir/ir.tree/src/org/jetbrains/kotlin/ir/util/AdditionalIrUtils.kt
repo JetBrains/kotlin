@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -139,7 +140,7 @@ val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
 fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
-    symbol.hasEqualFqName(fqName) || name == fqName.shortName() && when (val parent = parent) {
+    name == fqName.shortName() && when (val parent = parent) {
         is IrPackageFragment -> parent.packageFqName == fqName.parent()
         is IrDeclarationWithName -> parent.hasEqualFqName(fqName.parent())
         else -> false
@@ -324,3 +325,12 @@ fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = own
 fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
     return annotations.filterNot { it.annotationClass.hasEqualFqName(fqName) }
 }
+
+fun IrFunction.isBuiltInSuspendCoroutine(): Boolean =
+    isTopLevelInPackage("suspendCoroutine", StandardNames.COROUTINES_PACKAGE_FQ_NAME)
+
+fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
+    isTopLevelInPackage(
+        "suspendCoroutineUninterceptedOrReturn",
+        StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
+    )

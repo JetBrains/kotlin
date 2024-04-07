@@ -15,7 +15,7 @@ fun test_1(e: JavaEnum) {
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
-        is String -> 3
+        <!USELESS_IS_CHECK!>is String<!> -> 3
     }.plus(0)
 
     val c = when (e) {

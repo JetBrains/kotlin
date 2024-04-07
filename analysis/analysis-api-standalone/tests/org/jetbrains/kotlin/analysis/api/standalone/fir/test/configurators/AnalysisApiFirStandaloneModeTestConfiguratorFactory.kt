@@ -12,19 +12,10 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
         requireSupported(data)
 
         return when (data.moduleKind) {
-            TestModuleKind.Source -> when (data.analysisSessionMode) {
-                AnalysisSessionMode.Normal -> StandaloneModeConfigurator
-                AnalysisSessionMode.Dependent -> unsupportedModeError(data)
-            }
-
-            TestModuleKind.LibraryBinary -> when (data.analysisSessionMode) {
-                AnalysisSessionMode.Normal -> StandaloneModeLibraryBinaryTestConfigurator
-                AnalysisSessionMode.Dependent -> unsupportedModeError(data)
-            }
-
-            else -> {
-                unsupportedModeError(data)
-            }
+            TestModuleKind.Source -> StandaloneModeConfigurator
+            TestModuleKind.LibraryBinary -> StandaloneModeLibraryBinaryTestConfigurator
+            TestModuleKind.LibraryBinaryDecompiled -> StandaloneModeLibraryBinaryDecompiledTestConfigurator
+            else -> unsupportedModeError(data)
         }
     }
 
@@ -36,12 +27,14 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
             else -> when (data.moduleKind) {
                 TestModuleKind.Source,
                 TestModuleKind.LibraryBinary,
+                TestModuleKind.LibraryBinaryDecompiled,
                 TestModuleKind.CodeFragment -> {
                     true
                 }
 
                 TestModuleKind.ScriptSource,
-                TestModuleKind.LibrarySource -> {
+                TestModuleKind.LibrarySource,
+                TestModuleKind.NotUnderContentRoot -> {
                     false
                 }
             }

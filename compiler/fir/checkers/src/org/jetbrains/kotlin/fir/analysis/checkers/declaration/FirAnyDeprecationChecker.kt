@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -15,21 +12,18 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationClassForOptInMarker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAnnotations
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 
 object FirAnyDeprecationChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    private val firstKotlin = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_0, ApiVersion.KOTLIN_1_0)
-
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isOverride || !declaration.symbol.isMethodOfAny) return
+        val deprecationAnnotations =
+            context.session.annotationPlatformSupport.deprecationAnnotationsWithOverridesPropagation
         declaration.annotations.forEach { annotation ->
-            val isDeprecationMarker =
-                listOf(annotation)
-                    .getDeprecationsProviderFromAnnotations(context.session, false)
-                    .getDeprecationsInfo(firstKotlin)
-                    ?.isNotEmpty() == true
+            val isDeprecationMarker = annotation.toAnnotationClassId(context.session) in deprecationAnnotations
             val isOptInMarker =
                 annotation.getAnnotationClassForOptInMarker(context.session) != null
             if (isDeprecationMarker || isOptInMarker)

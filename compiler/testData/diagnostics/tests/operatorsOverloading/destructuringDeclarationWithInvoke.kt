@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-59715
 
 class FunctionComponent {

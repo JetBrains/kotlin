@@ -1,0 +1,34 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+fun Problem() {
+    fun foo() { }
+    val lambda: @Composable ()->Unit = {
+        ::foo
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun Problem() {
+  fun foo() { }
+  val lambda = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      ::foo
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

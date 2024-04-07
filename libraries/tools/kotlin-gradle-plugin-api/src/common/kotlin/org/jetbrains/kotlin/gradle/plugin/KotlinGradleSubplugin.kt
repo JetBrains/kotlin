@@ -23,12 +23,18 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import java.io.File
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 open class SubpluginOption(val key: String, private val lazyValue: Lazy<String>) {
     constructor(key: String, value: String) : this(key, lazyOf(value))
 
     val value: String get() = lazyValue.value
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 class FilesSubpluginOption(
     key: String,
     val files: Iterable<File>,
@@ -44,6 +50,9 @@ class FilesSubpluginOption(
     ) : this(key, files, kind, lazy { value ?: files.joinToString(File.pathSeparator) { it.normalize().absolutePath } })
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 class CompositeSubpluginOption(
     key: String,
     lazyValue: Lazy<String>,
@@ -52,7 +61,10 @@ class CompositeSubpluginOption(
     constructor(key: String, value: String, originalOptions: List<SubpluginOption>) : this(key, lazyOf(value), originalOptions)
 }
 
-/** Defines how the files option should be handled with regard to Gradle model */
+/**
+ * @suppress TODO: KT-58858 add documentation
+ * Defines how the files option should be handled with regard to Gradle model
+ */
 enum class FilesOptionKind {
     /** The files option is an implementation detail and should not be treated as an input or an output.  */
     INTERNAL
@@ -61,10 +73,16 @@ enum class FilesOptionKind {
     // such as output directories, inputs or classpath options.
 }
 
-/** Defines a subplugin option that should be excluded from Gradle input/output checks */
+/**
+ * @suppress TODO: KT-58858 add documentation
+ * Defines a subplugin option that should be excluded from Gradle input/output checks
+ */
 open class InternalSubpluginOption(key: String, value: String) : SubpluginOption(key, value)
 
-/** Keeps one or more compiler options for one of more compiler plugins. */
+/**
+ * @suppress TODO: KT-58858 add documentation
+ * Keeps one or more compiler options for one of more compiler plugins.
+ */
 open class CompilerPluginConfig {
     @get:Internal
     protected val optionsByPluginId = mutableMapOf<String, MutableList<SubpluginOption>>()
@@ -115,6 +133,7 @@ open class CompilerPluginConfig {
 }
 
 /**
+ * @suppress TODO: KT-58858 add documentation
  * Gradle plugin implementing support for a Kotlin compiler plugin.
  *
  * In order to be discovered, it should be applied to the project as an ordinary Gradle [Plugin] before the
@@ -154,11 +173,18 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
     fun getPluginArtifactForNative(): SubpluginArtifact? = null
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 open class SubpluginArtifact(val groupId: String, val artifactId: String, val version: String? = null)
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 class JetBrainsSubpluginArtifact(artifactId: String) : SubpluginArtifact(groupId = "org.jetbrains.kotlin", artifactId = artifactId)
 
 /**
+ * @suppress TODO: KT-58858 add documentation
  * Marker interface left here for backward compatibility with older plugin versions.
  * Remove once minimal supported Gradle version will use Kotlin 1.7+.
  */

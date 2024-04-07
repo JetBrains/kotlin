@@ -1,0 +1,3 @@
+language = Objective-C
+headerFilter = **/friendly_dealloc.h
+linkerOpts = -lfriendly_dealloc

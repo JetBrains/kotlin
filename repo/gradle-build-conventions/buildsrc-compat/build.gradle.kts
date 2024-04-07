@@ -120,6 +120,17 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}")
     implementation(libs.gson)
     implementation(libs.kotlinx.metadataJvm)
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-tasks.register("checkBuild")
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
+tasks.register("checkBuild") {
+    dependsOn("test")
+}
+

@@ -18,12 +18,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         kDoc = "The root interface of the Swift IR tree."
     }
 
-    val module by element {
-        customParentInVisitor = rootElement
-        parent(declarationContainer)
-        parent(named)
-    }
-
     val declarationParent by sealedElement()
 
     val declarationContainer by sealedElement {
@@ -33,13 +27,36 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("declarations", declaration)
     }
 
+    val mutableDeclarationContainer by sealedElement {
+        parent(declarationParent)
+        parent(declarationContainer)
+        customParentInVisitor = rootElement
+
+        +listField("declarations", declaration, isMutableList = true)
+    }
+
+    val module by element {
+        customParentInVisitor = rootElement
+        parent(mutableDeclarationContainer)
+        parent(named)
+    }
+
     val declaration by sealedElement {
         customParentInVisitor = rootElement
         +field("origin", originType)
         +field("visibility", swiftVisibilityType)
+        +field(name = "documentation", string, nullable = true, mutable = true)
         +field("parent", declarationParent, mutable = true, isChild = false) {
             useInBaseTransformerDetection = false
         }
+    }
+
+    val extension: Element by element {
+        customParentInVisitor = declaration
+        parent(declaration)
+        parent(mutableDeclarationContainer)
+
+        +field("extendedType", typeType)
     }
 
     val named by sealedElement {
@@ -57,7 +74,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val enum: Element by element {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
-        parent(declarationContainer)
+        parent(mutableDeclarationContainer)
 
         +listField("cases", enumCaseType)
     }
@@ -68,19 +85,36 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declarationContainer)
     }
 
+    val `class`: Element by element {
+        customParentInVisitor = namedDeclaration
+        parent(namedDeclaration)
+        parent(mutableDeclarationContainer)
+    }
+
     val callable by sealedElement {
         parent(declaration)
+
+        +field("kind", callableKind)
+        +field("body", functionBodyType, nullable = true, mutable = true)
+    }
+
+    val init by element {
+        customParentInVisitor = callable
+        parent(callable)
+
+        +field("isFailable", boolean)
+        +listField("parameters", parameterType)
+
+        +field("initKind", initKind)
     }
 
     val function by element {
         customParentInVisitor = callable
         parent(callable)
 
-        +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
         +field("name", string)
         +listField("parameters", parameterType)
         +field("returnType", typeType)
-        +field("body", functionBodyType, nullable = true, mutable = true)
 
         +field(name = "documentation", string, nullable = true, mutable = true)
     }
@@ -88,8 +122,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val accessor by sealedElement {
         customParentInVisitor = callable
         parent(callable)
-
-        +field("body", functionBodyType, nullable = true, mutable = true)
     }
 
     val getter by element {
@@ -113,7 +145,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("getter", getter)
         +field("setter", setter, nullable = true)
 
-        +field("isStatic", boolean) // todo: KT-65046 Method|function distinction in SIR
+        +field(name = "documentation", string, nullable = true, mutable = true)
     }
 
     val import by element {

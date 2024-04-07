@@ -272,6 +272,35 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public open [ResolvedTo(CONSTANT_EVALUATION)] val <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/Number|> explicitType: R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/Int|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/Int| {
+                ^ IntegerLiteral(1)
+            }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -352,7 +381,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotations.kt
                 super<R|kotlin/Any|>()
             }
 
-            private final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+            private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }

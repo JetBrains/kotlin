@@ -18,13 +18,13 @@
 #define RUNTIME_MEMORY_H
 
 #include <utility>
+#include <std_support/Atomic.hpp>
 
 #include "Alignment.hpp"
 #include "KAssert.h"
 #include "Common.h"
 #include "TypeInfo.h"
 #include "TypeLayout.hpp"
-#include "Atomic.h"
 #include "PointerBits.h"
 #include "Utils.hpp"
 
@@ -61,8 +61,8 @@ struct ObjHeader {
       }
   }
 
-  TypeInfo* typeInfoOrMetaRelaxed() const { return atomicGetRelaxed(&typeInfoOrMeta_);}
-  TypeInfo* typeInfoOrMetaAcquire() const { return atomicGetAcquire(&typeInfoOrMeta_);}
+  TypeInfo* typeInfoOrMetaRelaxed() const { return kotlin::std_support::atomic_ref{typeInfoOrMeta_}.load(std::memory_order_relaxed);}
+  TypeInfo* typeInfoOrMetaAcquire() const { return kotlin::std_support::atomic_ref{typeInfoOrMeta_}.load(std::memory_order_acquire);}
 
   /**
    * Formally, this code data races with installing ExtraObject. Even though, we are okey, with reading
@@ -77,7 +77,8 @@ struct ObjHeader {
    * Hardware guaranties on many supported platforms doesn't allow this to happen.
    */
   const TypeInfo* type_info() const {
-      const TypeInfo* typeInfo = atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK)->typeInfo_);
+      auto atomicTypeInfoPtr = kotlin::std_support::atomic_ref{clearPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK)->typeInfo_};
+      const TypeInfo* typeInfo = atomicTypeInfoPtr.load(std::memory_order_relaxed);
       RuntimeAssert(typeInfo != nullptr, "TypeInfo ptr in object %p in null", this);
       return typeInfo;
   }
@@ -604,5 +605,12 @@ void compactObjectPoolInCurrentThread() noexcept;
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_Interop_derefSpecialRef, kotlin::mm::RawSpecialRef *ref);
+RUNTIME_NOTHROW extern "C" kotlin::mm::RawSpecialRef *Kotlin_Interop_createSpecialRef(ObjHeader *object);
+RUNTIME_NOTHROW extern "C" void Kotlin_Interop_disposeSpecialRef(kotlin::mm::RawSpecialRef *ref);
+RUNTIME_NOTHROW extern "C" void Kotlin_Interop_retainSpecialRef(kotlin::mm::RawSpecialRef *ref);
+RUNTIME_NOTHROW extern "C" bool Kotlin_Interop_tryRetainSpecialRef(kotlin::mm::RawSpecialRef *ref);
+RUNTIME_NOTHROW extern "C" void Kotlin_Interop_releaseSpecialRef(kotlin::mm::RawSpecialRef *ref);
 
 #endif // RUNTIME_MEMORY_H

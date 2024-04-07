@@ -50,8 +50,8 @@
         neither it is visible in the consumer project.
         -->
         <kotlin.version>${project.version}</kotlin.version>
-        <deploy-snapshot-url>sonatype-nexus-staging</deploy-snapshot-url>
-        <deploy-snapshot-repo>https://oss.sonatype.org/content/repositories/snapshots/</deploy-snapshot-repo>
+        <deploy-snapshot-repo>sonatype-nexus-staging</deploy-snapshot-repo>
+        <deploy-snapshot-url>https://oss.sonatype.org/content/repositories/snapshots/</deploy-snapshot-url>
     </properties>
 
     <dependencyManagement>

@@ -11,6 +11,8 @@ sealed class SourceLocation {
     // Both line and column are zero-based
     data class Location(val file: String, val line: Int, val column: Int) : SourceLocation()
 
+    data class IgnoredLocation(val file: String, val line: Int, val column: Int) : SourceLocation()
+
     companion object {
         @Suppress("FunctionName", "UNUSED_PARAMETER")
         fun NoLocation(description: String): SourceLocation = NoLocation

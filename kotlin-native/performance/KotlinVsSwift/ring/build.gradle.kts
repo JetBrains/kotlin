@@ -25,5 +25,10 @@ swiftBenchmark {
 
 tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>("compileKotlinNative") {
     dependsOn(gradle.includedBuild("benchmarksAnalyzer").task(":cinteropLibcurlMacos"))
-    kotlinOptions.freeCompilerArgs = listOf("-l", project.file("$toolsPath/benchmarksAnalyzer/build/classes/kotlin/macos/main/benchmarksAnalyzer-cinterop-libcurl").absolutePath)
+    compilerOptions.freeCompilerArgs.addAll(
+            listOf(
+                    "-l",
+                    project.file("$toolsPath/benchmarksAnalyzer/build/classes/kotlin/macos/main/benchmarksAnalyzer-cinterop-libcurl").absolutePath
+            )
+    )
 }

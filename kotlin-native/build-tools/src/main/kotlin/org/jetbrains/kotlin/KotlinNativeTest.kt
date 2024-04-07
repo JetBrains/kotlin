@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.regex.Pattern
@@ -93,6 +94,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
 
+        notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
         // Set Gradle properties for the better navigation
         group = LifecycleBasePlugin.VERIFICATION_GROUP
         description = "Kotlin/Native test infrastructure task"
@@ -145,18 +147,21 @@ fun <T : KonanTestExecutable> Project.createTest(name: String, type: Class<T>, c
         }
 
 /**
- * Task to run tests built into a single predefined binary named `localTest`.
- * Note: this task should depend on task that builds a test binary.
+ * Executes a standalone tests provided with either @param executable or by the tasks @param name.
+ * The executable itself should be built by the konan plugin.
  */
-open class KonanLocalTest : KonanTest() {
-    override val outputDirectory = project.testOutputLocal
+open class KonanStandaloneTest : KonanTest() {
+    init {
+        useFilter = false
+    }
 
-    // local tests built into a single binary with the known name
-    @get:Internal
+    override val outputDirectory: String
+        get() = "${project.testOutputLocal}/$name"
+
+    override var testLogger = Logger.EMPTY
+
     override val executable: String
-        get() = "$outputDirectory/${project.testTarget.name}/localTest.${project.testTarget.family.exeSuffix}"
-
-    override var testLogger = Logger.SILENT
+        get() = "$outputDirectory/${project.testTarget.name}/$name.${project.testTarget.family.exeSuffix}"
 
     @Input
     @Optional
@@ -244,6 +249,33 @@ open class KonanLocalTest : KonanTest() {
     @Optional
     var multiArguments: List<List<String>>? = null
 
+    @Input
+    var enableKonanAssertions = true
+
+    @Input
+    var verifyIr = true
+
+    /**
+     * Compiler flags used to build a test.
+     */
+    @Internal
+    var flags: List<String> = listOf()
+        get() {
+            val result = field.toMutableList()
+            if (enableKonanAssertions)
+                result += "-ea"
+            if (verifyIr)
+                result += "-Xverify-ir=error"
+            return result
+        }
+
+    @Internal
+    fun getSources(): Provider<List<String>> = project.provider {
+        val sources = buildCompileList(project.file(source).toPath(), outputDirectory)
+        sources.forEach { it.writeTextToFile() }
+        sources.map { it.path }
+    }
+
     @TaskAction
     override fun run() {
         doBeforeRun?.execute(this)
@@ -319,59 +351,14 @@ open class KonanLocalTest : KonanTest() {
 }
 
 /**
- * Executes a standalone tests provided with either @param executable or by the tasks @param name.
- * The executable itself should be built by the konan plugin.
- */
-open class KonanStandaloneTest : KonanLocalTest() {
-    init {
-        useFilter = false
-    }
-
-    override val outputDirectory: String
-        get() = "${project.testOutputLocal}/$name"
-
-    override var testLogger = Logger.EMPTY
-
-    override val executable: String
-        get() = "$outputDirectory/${project.testTarget.name}/$name.${project.testTarget.family.exeSuffix}"
-
-    @Input
-    var enableKonanAssertions = true
-
-    @Input
-    var verifyIr = true
-
-    /**
-     * Compiler flags used to build a test.
-     */
-    @Internal
-    var flags: List<String> = listOf()
-        get() {
-            val result = field.toMutableList()
-            if (enableKonanAssertions)
-                result += "-ea"
-            if (verifyIr)
-                result += "-Xverify-ir=error"
-            return result
-        }
-
-    @Internal
-    fun getSources(): Provider<List<String>> = project.provider {
-        val sources = buildCompileList(project.file(source).toPath(), outputDirectory)
-        sources.forEach { it.writeTextToFile() }
-        sources.map { it.path }
-    }
-}
-
-/**
  * This is another way to run the konanc compiler. It runs a konanc shell script.
  *
  * @note This task is not intended for regular testing as project.exec + a shell script isolate the jvm from IDEA.
- * @see KonanLocalTest to be used as a regular task.
  */
 open class KonanDriverTest : KonanStandaloneTest() {
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
+        notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
         doFirst { konan() }
         doBeforeBuild?.let { doFirst(it) }
         return this
@@ -411,22 +398,6 @@ open class KonanDriverTest : KonanStandaloneTest() {
             }
         }
     }
-}
-
-open class KonanInteropTest : KonanStandaloneTest() {
-    /**
-     * Name of the interop library
-     */
-    @Input
-    lateinit var interop: String
-
-    @Input
-    @Optional
-    var interop2: String? = null
-
-    @Input
-    @Optional
-    var lib: String? = null
 }
 
 /**
@@ -481,7 +452,8 @@ open class KonanDynamicTest : KonanStandaloneTest() {
 
     private fun clang() {
         val log = ByteArrayOutputStream()
-        val plugin = project.extensions.getByType<ExecClang>()
+        val platformManager = project.extensions.getByType<PlatformManager>()
+        val plugin = ExecClang.create(project.objects, platformManager)
         val artifactsDir = "$outputDirectory/${project.testTarget}"
 
         fun flagsContain(opt: String) = project.globalTestArgs.contains(opt) || flags.contains(opt)

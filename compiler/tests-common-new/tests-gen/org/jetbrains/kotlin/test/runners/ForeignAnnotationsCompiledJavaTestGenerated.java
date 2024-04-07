@@ -235,6 +235,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("kt65193.kt")
+        public void testKt65193() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/kt65193.kt");
+        }
+
+        @Test
         @TestMetadata("localInference.kt")
         public void testLocalInference() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/localInference.kt");
@@ -751,6 +757,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("NullMarkedWithStarType.kt")
+        public void testNullMarkedWithStarType() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedWithStarType.kt");
+        }
+
+        @Test
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullnessUnspecifiedTypeParameter.kt");
@@ -851,6 +863,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("NullMarkedWithStarType.kt")
+        public void testNullMarkedWithStarType() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullMarkedWithStarType.kt");
+        }
+
+        @Test
         @TestMetadata("NullnessUnspecifiedTypeParameter.kt")
         public void testNullnessUnspecifiedTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullnessUnspecifiedTypeParameter.kt");
@@ -896,6 +914,18 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         @TestMetadata("WildcardsWithDefault.kt")
         public void testWildcardsWithDefault() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/WildcardsWithDefault.kt");
+        }
+
+        @Test
+        @TestMetadata("wrongNullabilityForOverridesCommon.kt")
+        public void testWrongNullabilityForOverridesCommon() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverridesCommon.kt");
+        }
+
+        @Test
+        @TestMetadata("wrongNullabilityForOverridesPlatform.kt")
+        public void testWrongNullabilityForOverridesPlatform() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/wrongNullabilityForOverridesPlatform.kt");
         }
       }
     }

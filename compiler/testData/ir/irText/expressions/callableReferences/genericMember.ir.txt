@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/genericMember.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final bar: kotlin.Int' field=null getter='public final fun <get-bar> (): kotlin.Int declared in <root>.A' setter=null type=kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'public final bar: kotlin.Int declared in <root>.A' field=null getter='public final fun <get-bar> (): kotlin.Int declared in <root>.A' setter=null type=kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY

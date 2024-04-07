@@ -633,8 +633,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
      *     val <array> = a
      *     val <index0> = b
      *     val <index1> = c
-     *     val <unary> = <array>.get(b, c)
-     *     <array>.set(b, c, <unary>.inc())
+     *     val <unary> = <array>.get(<index0>, <index1>)
+     *     <array>.set(<index0>, <index1>, <unary>.inc())
      *     ^<unary>
      * }
      *
@@ -646,8 +646,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
      *     val <array> = a
      *     val <index0> = b
      *     val <index1> = c
-     *     <array>.set(b, c, <array>.get(b, c).inc())
-     *     ^<array>.get(b, c)
+     *     <array>.set(b, c, <array>.get(<index0>, <index1>).inc())
+     *     ^<array>.get(<index0>, <index1>)
      * }
      *
      */
@@ -835,7 +835,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 if (operation == FirOperation.ASSIGN) {
                     val result = unwrappedLhs.convert()
                     result.replaceAnnotations(result.annotations.smartPlus(annotations))
-                    source = result.source
+                    source = result.source?.fakeElement(KtFakeSourceElementKind.IndexedAssignmentCoercionBlock)
                     statements += result.pullUpSafeCallIfNecessary()
                 } else {
                     val receiver = unwrappedLhs.convert()
@@ -846,13 +846,13 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                                 receiver.selector as FirExpression, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
                             )
                         )
-                        source = receiver.source
+                        source = receiver.source?.fakeElement(KtFakeSourceElementKind.IndexedAssignmentCoercionBlock)
                         statements += receiver
                     } else {
                         val augmentedArraySetCall = generateAugmentedArraySetCall(
                             receiver, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
                         )
-                        source = augmentedArraySetCall.source
+                        source = augmentedArraySetCall.source?.fakeElement(KtFakeSourceElementKind.IndexedAssignmentCoercionBlock)
                         statements += augmentedArraySetCall
                     }
                 }
@@ -1203,10 +1203,12 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
         dispatchReceiverType = dispatchReceiver
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
+        // We need to resolve annotations on the data class. It's not possible to do it on RAW_FIR phase.
+        // We will resolve the visibility later in the STATUS phase
         status = if (isFromLibrary) {
-            FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+            FirResolvedDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL, EffectiveVisibility.Unknown)
         } else {
-            FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+            FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
         }
         for ((ktParameter, firProperty) in zippedParameters) {
             val propertyName = firProperty.name

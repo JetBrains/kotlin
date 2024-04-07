@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -141,18 +142,50 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         // Other kinds of fake overrides may also be incorrect, but not to that extent, so we can
         // check them more granularly. See the relevant comments.
 
-        firTypeScope.processAllProperties {
-            if (it.containingClassLookupTag() == declaration.symbol.toLookupTag() && !it.isSubstitutionOverride) {
+        fun checkMember(it: FirCallableSymbol<*>) {
+            val isFromThis = it.containingClassLookupTag() == declaration.symbol.toLookupTag()
+
+            if (isFromThis && !it.isSubstitutionOverride) {
                 checkMember(it, declaration, reporter, typeCheckerState, firTypeScope, context)
+            } else {
+                val source = it.source?.takeIf { isFromThis } ?: declaration.source
+                it.ensureKnownVisibility(context, reporter, source)
             }
         }
 
-        firTypeScope.processAllFunctions {
-            if (it.containingClassLookupTag() == declaration.symbol.toLookupTag() && !it.isSubstitutionOverride) {
-                checkMember(it, declaration, reporter, typeCheckerState, firTypeScope, context)
-            }
-        }
+        firTypeScope.processAllProperties(::checkMember)
+        firTypeScope.processAllFunctions(::checkMember)
     }
+
+    /**
+     * Returns `false` if [Visibilities.Unknown].
+     */
+    private fun FirCallableSymbol<*>.ensureKnownVisibility(
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        source: KtSourceElement? = this.source,
+    ) = when {
+        visibility != Visibilities.Unknown -> true
+        else -> false.also { reporter.reportOn(source, chooseCannotInferVisibilityFor(this), this, context) }
+    }
+
+    private fun chooseCannotInferVisibilityFor(symbol: FirCallableSymbol<*>) = when {
+        !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_INFER_VISIBILITY
+        else -> FirErrors.CANNOT_INFER_VISIBILITY_WARNING
+    }
+
+    private fun chooseCannotChangeAccessPrivilegeFor(symbol: FirCallableSymbol<*>) = when {
+        !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
+        else -> FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING
+    }
+
+    private fun chooseCannotWeakenAccessPrivilegeFor(symbol: FirCallableSymbol<*>) = when {
+        !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE
+        else -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING
+    }
+
+    private val FirCallableSymbol<*>.wouldMissDiagnosticInK1: Boolean
+        get() = this is FirPropertyAccessorSymbol && propertySymbol.isIntersectionOverride && visibility != propertySymbol.visibility
 
     private fun checkModality(
         overriddenSymbols: List<FirCallableSymbol<*>>,
@@ -178,13 +211,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
-        if (visibility == Visibilities.Unknown) {
-            // MANY_*_NOT_IMPLEMENTED implies CANNOT_INFER_VISIBILITY as per KT-63741
-            val isManyNotImplementedDiagnosticReported = overriddenSymbols.count { !it.isAbstract } != 1
-            val isSimpleToReasonAboutSituation = overriddenSymbols.none { it.isIntersectionOverride }
-            if (!(isManyNotImplementedDiagnosticReported && isSimpleToReasonAboutSituation)) {
-                reporter.reportOn(source, FirErrors.CANNOT_INFER_VISIBILITY, this, context)
-            }
+        if (!ensureKnownVisibility(context, reporter)) {
             return
         }
 
@@ -196,7 +223,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             Visibilities.compare(visibility, pair.second) ?: Int.MIN_VALUE
         }
 
-        if (this is FirPropertySymbol) {
+        if (this is FirPropertySymbol && canDelegateVisibilityConsistencyChecksToAccessors) {
             getterSymbol?.checkVisibility(
                 containingClass,
                 reporter,
@@ -247,16 +274,26 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         }
     }
 
+    /**
+     * Properties that are intersection overrides are created lightweight:
+     * they only contain accessors if they have visibilities that are different
+     * from the property visibility
+     *
+     * @see org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator.buildCopyIfNeeded
+     */
+    private val FirPropertySymbol.canDelegateVisibilityConsistencyChecksToAccessors: Boolean
+        get() = getterSymbol != null || setterSymbol != null
+
     private fun FirCallableSymbol<*>.checkDeprecation(
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext,
         firTypeScope: FirTypeScope,
     ) {
-        val ownDeprecation = this.getDeprecation(context.session.languageVersionSettings)
+        val ownDeprecation = this.getDeprecation(context.session)
         if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
         for (overriddenSymbol in overriddenSymbols) {
-            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.session.languageVersionSettings)
+            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.session)
                 ?: continue
             val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden.all
                 ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()
@@ -485,7 +522,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         val containingClass = overridden.containingClassLookupTag() ?: return
         reportOn(
             overriding.source,
-            FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE,
+            chooseCannotWeakenAccessPrivilegeFor(overriding),
             overriding.visibility,
             overridden,
             containingClass.name,
@@ -501,7 +538,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         val containingClass = overridden.containingClassLookupTag() ?: return
         reportOn(
             overriding.source,
-            FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE,
+            chooseCannotChangeAccessPrivilegeFor(overriding),
             overriding.visibility,
             overridden,
             containingClass.name,

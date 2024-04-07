@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -136,9 +135,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             val containingClassSymbol = localFunctionSymbol.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
 
             if (containingClassSymbol != null) {
-                val unsubstitutedScope = containingClassSymbol.unsubstitutedScope(context)
-                unsubstitutedScope.processFunctionsByName(localFunctionSymbol.name) {}
-                val overriddenFunctions = unsubstitutedScope.getDirectOverriddenFunctions(localFunctionSymbol)
+                val overriddenFunctions = localFunctionSymbol.directOverriddenFunctions(context.session, context.scopeSession)
                 if (localFunctionSymbol == function.symbol || localThrowsAnnotation == null && overriddenFunctions.isNotEmpty()) {
                     for (overriddenFunction in overriddenFunctions) {
                         val annotation = if (overriddenFunction.isSubstitutionOrIntersectionOverride) {

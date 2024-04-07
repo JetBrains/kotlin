@@ -1,11 +1,11 @@
 fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<String>, jad: java.util.ArrayDeque<String>) {
     ll.addFirst("")
     ll.addLast("")
-    ll.<!DEPRECATION!>getFirst<!>()
-    ll.<!DEPRECATION!>first<!> // synthetic property for getFirst()
+    ll.getFirst()
+    ll.first // synthetic property for getFirst()
     ll.first() // stdlib extension on List
-    ll.<!DEPRECATION!>getLast<!>()
-    ll.<!DEPRECATION!>last<!>
+    ll.getLast()
+    ll.last
     ll.last()
     ll.<!DEBUG_INFO_CALL("fqName: java.util.LinkedList.removeFirst; typeCall: function")!>removeFirst()<!>
     ll.<!DEBUG_INFO_CALL("fqName: java.util.LinkedList.removeLast; typeCall: function")!>removeLast()<!>
@@ -13,11 +13,11 @@ fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<
 
     al.addFirst("")
     al.addLast("")
-    al.<!DEPRECATION!>getFirst<!>()
-    al.<!DEPRECATION!>first<!>
+    al.getFirst()
+    al.first
     al.first()
-    al.<!DEPRECATION!>getLast<!>()
-    al.<!DEPRECATION!>last<!>
+    al.getLast()
+    al.last
     al.last()
     al.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeFirst; typeCall: function")!>removeFirst()<!>
     al.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeLast; typeCall: function")!>removeLast()<!>
@@ -25,11 +25,11 @@ fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<
 
     ad.addFirst("")
     ad.addLast("")
-    ad.<!DEPRECATION!>getFirst<!>()
-    ad.<!DEPRECATION!>first<!>
+    ad.<!UNRESOLVED_REFERENCE!>getFirst<!>()
+    ad.<!FUNCTION_CALL_EXPECTED!>first<!>
     ad.first()
-    ad.<!DEPRECATION!>getLast<!>()
-    ad.<!DEPRECATION!>last<!>
+    ad.<!UNRESOLVED_REFERENCE!>getLast<!>()
+    ad.<!FUNCTION_CALL_EXPECTED!>last<!>
     ad.last()
     ad.<!DEBUG_INFO_CALL("fqName: kotlin.collections.ArrayDeque.removeFirst; typeCall: function")!>removeFirst()<!>
     ad.<!DEBUG_INFO_CALL("fqName: kotlin.collections.ArrayDeque.removeLast; typeCall: function")!>removeLast()<!>

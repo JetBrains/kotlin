@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.wasm.resolve.diagnostics.*
 object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-        JsExternalChecker, WasmExternalInheritanceChecker,
+        WasmExternalInheritanceChecker,
         JsRuntimeAnnotationChecker,
         JsExportAnnotationChecker,
         WasmExternalDeclarationChecker,
@@ -31,6 +31,7 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
         WasmJsFunAnnotationChecker,
         WasmJsInteropTypesChecker,
         WasmJsExportChecker,
+        FirWasmJsAssociatedObjectChecker,
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,
@@ -50,7 +51,8 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(WasmDiagnosticSuppressor)
-        container.useInstance(JsExportDeclarationChecker(includeUnsignedNumbers = true))
+        container.useInstance(JsExternalChecker(allowCompanionInInterface = false))
+        container.useInstance(JsExportDeclarationChecker(allowCompanionInInterface = false, includeUnsignedNumbers = true))
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

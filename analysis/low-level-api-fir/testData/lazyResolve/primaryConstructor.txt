@@ -108,6 +108,17 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructor.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] primaryConstructor.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class Problem : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructor.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Problem : R|kotlin/Any| {

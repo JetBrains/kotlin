@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
@@ -110,6 +111,7 @@ public class ClassBuildingContext(
  *
  * Created class won't have a constructor; constructor can be added separately with [createConstructor] function
  */
+@ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelClass(
     classId: ClassId,
     key: GeneratedDeclarationKey,

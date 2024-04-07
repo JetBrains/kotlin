@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 val nonConst = 1
 
 const val constConst = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>nonConst * nonConst + 2<!>

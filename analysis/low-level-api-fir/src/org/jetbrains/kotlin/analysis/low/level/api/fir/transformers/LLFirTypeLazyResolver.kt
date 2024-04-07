@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationTypeIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContextReceiverTypeRefIsResolved
@@ -17,11 +15,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolv
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -31,15 +26,7 @@ import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES) {
-    override fun resolve(
-        target: LLFirResolveTarget,
-        lockProvider: LLFirLockProvider,
-        scopeSession: ScopeSession,
-        towerDataContextCollector: FirResolveContextCollector?,
-    ) {
-        val resolver = LLFirTypeTargetResolver(target, lockProvider, scopeSession)
-        resolver.resolveDesignation()
-    }
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirTypeTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target is FirAnnotationContainer) {
@@ -64,16 +51,27 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
                     checkTypeRefIsResolved(bound, "type parameter bound", target)
                 }
             }
+
+            is FirRegularClass -> checkContextReceiverTypeRefIsResolved(target)
+            is FirScript -> checkContextReceiverTypeRefIsResolved(target)
         }
     }
 }
 
-private class LLFirTypeTargetResolver(
-    target: LLFirResolveTarget,
-    lockProvider: LLFirLockProvider,
-    scopeSession: ScopeSession,
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.TYPES) {
-    private val transformer = object : FirTypeResolveTransformer(target.session, scopeSession) {
+/**
+ * This resolver is responsible for [TYPES][FirResolvePhase.TYPES] phase.
+ *
+ * This resolver:
+ * - Transform explicitly written types in declaration headers.
+ *
+ * Special rules:
+ * - First resolves outer classes to this phase.
+ *
+ * @see FirTypeResolveTransformer
+ * @see FirResolvePhase.TYPES
+ */
+private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(target, FirResolvePhase.TYPES) {
+    private val transformer = object : FirTypeResolveTransformer(resolveTargetSession, resolveTargetScopeSession) {
         override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
             FirLazyBodiesCalculator.calculateAnnotations(typeRef, session)
             return super.transformTypeRef(typeRef, data)
@@ -106,14 +104,14 @@ private class LLFirTypeTargetResolver(
             is FirProperty -> resolve(target, TypeStateKeepers.PROPERTY)
             is FirCallableDeclaration,
             is FirDanglingModifierList,
-            is FirFileAnnotationsContainer,
+            is FirFile,
             is FirTypeAlias,
             is FirScript,
             is FirRegularClass,
             is FirAnonymousInitializer,
             -> rawResolve(target)
 
-            is FirFile, is FirCodeFragment -> {}
+            is FirCodeFragment -> {}
             else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {
                 withFirEntry("declaration", target)
             }
@@ -133,9 +131,7 @@ private class LLFirTypeTargetResolver(
                 resolveOutsideClassBody(target, transformer::transformDelegatedConstructorCall)
             }
             is FirScript -> resolveScriptTypes(target)
-            is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias,
-            is FirAnonymousInitializer,
-            -> {
+            is FirDanglingModifierList, is FirCallableDeclaration, is FirTypeAlias, is FirAnonymousInitializer -> {
                 if (target is FirField && target.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
                     // delegated field should be resolved in the same context as super types
                     resolveOutsideClassBody(target, transformer::transformDelegateField)
@@ -144,6 +140,7 @@ private class LLFirTypeTargetResolver(
                 }
             }
 
+            is FirFile -> transformer.withFileScope(target) { target.transformAnnotations(transformer, null) }
             is FirRegularClass -> resolveClassTypes(target)
             else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {
                 withFirEntry("declaration", target)
@@ -178,8 +175,8 @@ private class LLFirTypeTargetResolver(
     }
 
     private fun resolveScriptTypes(firScript: FirScript) {
-        firScript.annotations.forEach { it.accept(transformer, null) }
-        firScript.contextReceivers.forEach { it.accept(transformer, null) }
+        firScript.transformAnnotations(transformer, null)
+        firScript.transformContextReceivers(transformer, null)
     }
 
     private fun resolveClassTypes(firClass: FirRegularClass) {

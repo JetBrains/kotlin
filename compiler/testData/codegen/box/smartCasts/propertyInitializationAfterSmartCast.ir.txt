@@ -116,7 +116,7 @@ FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: kotlin.Any?
+        public final x: kotlin.Any? declared in <root>.Base_1
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base_1) returnType:kotlin.Any? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base_1
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final y: kotlin.Any?
+        public final y: kotlin.Any? declared in <root>.Base_1
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base_1) returnType:kotlin.Any? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: kotlin.Any?
+        public final x: kotlin.Any? declared in <root>.Base_2
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base_2) returnType:kotlin.Any? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -159,7 +159,7 @@ FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base_2
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final y: kotlin.Any?
+        public final y: kotlin.Any? declared in <root>.Base_2
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base_2) returnType:kotlin.Any? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -186,7 +186,7 @@ FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final x: kotlin.Any?
+        public final x: kotlin.Any? declared in <root>.Derived_2
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base_2) returnType:kotlin.Any? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
@@ -194,7 +194,7 @@ FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base_2
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final y: kotlin.Any?
+        public final y: kotlin.Any? declared in <root>.Derived_2
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base_2) returnType:kotlin.Any? [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:

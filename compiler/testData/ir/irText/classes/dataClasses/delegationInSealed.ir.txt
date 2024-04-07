@@ -123,8 +123,8 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
               CONST String type=kotlin.String value=")"
       PROPERTY DELEGATED_MEMBER name:length visibility:public modality:OPEN [val]
         overridden:
-          public abstract length: kotlin.Int
-          public abstract length: kotlin.Int
+          public abstract length: kotlin.Int declared in <root>.A
+          public abstract length: kotlin.Int declared in kotlin.CharSequence
         FUN DELEGATED_MEMBER name:<get-length> visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.Int
           correspondingProperty: PROPERTY DELEGATED_MEMBER name:length visibility:public modality:OPEN [val]
           overridden:
@@ -166,7 +166,7 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
-        public abstract length: kotlin.Int
+        public abstract length: kotlin.Int declared in kotlin.CharSequence
       FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
         overridden:

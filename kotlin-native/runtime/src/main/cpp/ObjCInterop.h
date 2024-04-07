@@ -8,9 +8,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#include <Foundation/NSString.h>
-#include <Foundation/NSException.h>
-#include <objc/objc-exception.h>
+#include <Foundation/Foundation.h>
 
 #include <objc/objc.h>
 #include <objc/runtime.h>

@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.hiddenEverywhereBesideSuperCallsStatus
-import org.jetbrains.kotlin.fir.declarations.isHiddenToOvercomeSignatureClash
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -25,7 +22,9 @@ import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.SCOPE_DUMP
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -46,7 +45,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
-            val fqNamesWithNames = currentModule.directives[FirDiagnosticsDirectives.SCOPE_DUMP]
+            val fqNamesWithNames = currentModule.directives[SCOPE_DUMP]
             if (fqNamesWithNames.isEmpty()) return
             val printer = SmartPrinter(dumper.builderForModule(currentModule), indent = "  ")
             for (fqNameWithNames in fqNamesWithNames) {
@@ -153,14 +152,23 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         }
         val renderedDeclaration = FirRenderer.noAnnotationBodiesAccessorAndArguments().renderElementAsString(declaration).trim()
         print(renderedDeclaration)
+        val initialSignatureAttr = declaration.initialSignatureAttr
+        if (initialSignatureAttr != null) {
+            print(" [initial: ")
+            print(FirRenderer.noAnnotationBodiesAccessorAndArguments().renderElementAsString(initialSignatureAttr).trim())
+            print("]")
+        }
         print(" from $scope")
         println(" [id: ${counter.getIndex(declaration.symbol)}]")
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
         val expectedFile = testServices.moduleStructure.originalTestDataFiles.first().withExtension(".overrides.txt")
         val actualDump = dumper.generateResultingDump()
-        assertions.assertEqualsToFile(expectedFile, actualDump)
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, SCOPE_DUMP)
+        } else {
+            assertions.assertEqualsToFile(expectedFile, actualDump)
+        }
     }
 }

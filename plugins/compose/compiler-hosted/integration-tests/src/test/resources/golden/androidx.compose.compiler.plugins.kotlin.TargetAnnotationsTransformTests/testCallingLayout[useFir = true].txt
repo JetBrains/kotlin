@@ -1,0 +1,246 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+import androidx.compose.ui.layout.*
+import androidx.compose.foundation.text.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.style.*
+
+@Composable
+fun Test1() {
+    Layout(content = { }) { _, _ -> error("") }
+}
+
+@Composable
+fun Test2(content: @Composable ()->Unit) {
+    Layout(content = content) { _, _ -> error("") }
+}
+
+@Composable
+fun Test3() {
+  Test1()
+}
+
+@Composable
+fun Test4() {
+  BasicText(text = AnnotatedString("Some text"))
+}
+
+val Local = compositionLocalOf { 0 }
+
+@Composable
+fun Test5(content: @Composable () -> Unit) {
+  CompositionLocalProvider(Local provides 5) {
+      Test1()
+      content()
+  }
+}
+
+@Composable
+fun Test6(test: String) {
+  CompositionLocalProvider(Local provides 6) {
+     T(test)
+     Test1()
+  }
+}
+
+@Composable
+fun T(value: String) { }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
+fun Test1(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test1)<Layout...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Layout({ %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+      Unit
+      sourceInformationMarkerEnd(%composer)
+    }, null, MeasurePolicy { <unused var>: List<Measurable>, <unused var>: Constraints ->
+      error("")
+    }, %composer, 0b000110000000, 0b0010)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test1(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
+fun Test2(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test2)<Layout...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Layout(content, null, MeasurePolicy { <unused var>: List<Measurable>, <unused var>: Constraints ->
+      error("")
+    }, %composer, 0b000110000000 or 0b1110 and %dirty, 0b0010)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test2(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
+fun Test3(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test3)<Test1(...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Test1(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test3(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
+fun Test4(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test4)<BasicT...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    BasicText(AnnotatedString(
+      text = "Some text"
+    ), null, null, null, <unsafe-coerce>(0), false, 0, 0, null, null, %composer, 0b0110, 0b001111111110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test4(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+val Local: ProvidableCompositionLocal<Int> = compositionLocalOf {
+  0
+}
+@Composable
+@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
+fun Test5(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test5)<{>,<Compos...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    CompositionLocalProvider(Local provides 5, rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<Test1(...>,<conten...>:Test.kt")
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        Test1(%composer, 0)
+        content(%composer, 0)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b00110000 or ProvidedValue.%stable)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test5(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
+fun Test6(test: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test6)<{>,<Compos...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    CompositionLocalProvider(Local provides 6, rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<T(test...>,<Test1(...>:Test.kt")
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        T(test, %composer, 0)
+        Test1(%composer, 0)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b00110000 or ProvidedValue.%stable)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test6(test, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun T(value: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(T):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    T(value, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

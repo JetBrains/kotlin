@@ -248,6 +248,31 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Enum<Foo>|>
+        }
+
+        @R|Anno|[Types]() public final static [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Foo| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Foo>|
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

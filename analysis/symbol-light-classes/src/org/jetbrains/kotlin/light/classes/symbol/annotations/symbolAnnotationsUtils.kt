@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,20 +7,27 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
+import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
+import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.getContainingSymbolsWithSelf
+import org.jetbrains.kotlin.light.classes.symbol.getTypeNullability
+import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
@@ -91,6 +98,28 @@ internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(
 
 internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.InlineOnly)
 
+context(KtAnalysisSession)
+internal fun KtDeclarationSymbol.suppressWildcardMode(
+    declarationFilter: (KtDeclarationSymbol) -> Boolean = { true },
+): Boolean? {
+    return getContainingSymbolsWithSelf().firstNotNullOfOrNull { symbol ->
+        symbol.takeIf(declarationFilter)?.suppressWildcard()
+    }
+}
+
+internal fun KtAnnotatedSymbol.suppressWildcard(): Boolean? {
+    if (hasJvmWildcardAnnotation()) return true
+    return getJvmSuppressWildcardsFromAnnotation()
+}
+
+internal fun KtAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean? {
+    return annotationsByClassId(JvmStandardClassIds.Annotations.JvmSuppressWildcards).firstOrNull()?.let { annoApp ->
+        (annoApp.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? Boolean
+    }
+}
+
+internal fun KtAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmWildcard)
+
 internal fun KtAnnotatedSymbol.findAnnotation(
     classId: ClassId,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
@@ -137,30 +166,49 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
 }
 
 context(KtAnalysisSession)
-internal fun annotateByKtType(
+@KtAnalysisNonPublicApi
+fun annotateByKtType(
     psiType: PsiType,
     ktType: KtType,
-    psiContext: PsiTypeElement,
-    modifierListAsParent: PsiModifierList?,
+    annotationParent: PsiElement,
 ): PsiType {
-    fun KtType.getAnnotationsSequence(modifierList: PsiModifierList?): Sequence<List<PsiAnnotation>> = sequence {
-        yield(
-            annotations.map { annoApp ->
-                SymbolLightSimpleAnnotation(
-                    annoApp.classId?.asFqNameString(),
-                    modifierList ?: psiContext,
-                    annoApp.arguments,
-                    annoApp.psi,
-                )
-            }
-        )
+    fun getAnnotationsSequence(type: KtType): Sequence<List<PsiAnnotation>> = sequence {
+        val unwrappedType = when (type) {
+            // We assume that flexible types have to have the same set of annotations on upper and lower bound.
+            // Also, the upper bound is more similar to the resulting PsiType as it has fewer restrictions.
+            is KtFlexibleType -> type.upperBound
+            else -> type
+        }
 
-        (this@getAnnotationsSequence as? KtNonErrorClassType)?.ownTypeArguments?.forEach { typeProjection ->
-            typeProjection.type?.let {
-                yieldAll(it.getAnnotationsSequence(modifierList = null))
+        val explicitTypeAnnotations = unwrappedType.annotations.map { annoApp ->
+            SymbolLightSimpleAnnotation(
+                annoApp.classId?.asFqNameString(),
+                annotationParent,
+                annoApp.arguments,
+                annoApp.psi,
+            )
+        }
+
+        // Original type should be used to infer nullability
+        val typeNullability = when {
+            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KtTypeNullability.NON_NULLABLE
+            else -> getTypeNullability(type)
+        }
+
+        val nullabilityAnnotation = typeNullability.asAnnotationQualifier?.let {
+            SymbolLightSimpleAnnotation(it, annotationParent)
+        }
+
+        yield(explicitTypeAnnotations + listOfNotNull(nullabilityAnnotation))
+
+        if (unwrappedType is KtNonErrorClassType) {
+            unwrappedType.ownTypeArguments.forEach { typeProjection ->
+                typeProjection.type?.let {
+                    yieldAll(getAnnotationsSequence(it))
+                }
             }
         }
     }
 
-    return psiType.annotateByTypeAnnotationProvider(ktType.getAnnotationsSequence(modifierListAsParent))
+    return psiType.annotateByTypeAnnotationProvider(getAnnotationsSequence(ktType))
 }

@@ -214,6 +214,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     expectedReturn == null && expression is IrReturnableBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expression.symbol)
                     expression is IrReturn && expression.returnTargetSymbol == expectedReturn -> getConstPropertyReference(expression.value, null)
                     expression is IrBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expectedReturn)
+                    expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST -> getConstPropertyReference(expression.argument, expectedReturn)
                     else -> null
                 }
             }

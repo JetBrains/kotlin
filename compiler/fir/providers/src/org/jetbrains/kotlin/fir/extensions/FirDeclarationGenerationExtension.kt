@@ -43,6 +43,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
      *
      * If classId has `outerClassId.Companion` format then generated class should be a companion object
      */
+    @ExperimentalTopLevelDeclarationsGenerationApi
     open fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
 
     open fun generateNestedClassLikeDeclaration(
@@ -70,17 +71,23 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
      */
     open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> = emptySet()
     open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> = emptySet()
+
+    @ExperimentalTopLevelDeclarationsGenerationApi
     open fun getTopLevelCallableIds(): Set<CallableId> = emptySet()
+
+    @ExperimentalTopLevelDeclarationsGenerationApi
     open fun getTopLevelClassIds(): Set<ClassId> = emptySet()
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 
     // ----------------------------------- internal utils -----------------------------------
 
+    @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     @FirExtensionApiInternals
     val topLevelClassIdsCache: FirLazyValue<Set<ClassId>> =
         session.firCachesFactory.createLazyValue { getTopLevelClassIds() }
 
+    @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     @FirExtensionApiInternals
     val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>> =
         session.firCachesFactory.createLazyValue { getTopLevelCallableIds() }

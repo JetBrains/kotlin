@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec.utils
@@ -42,7 +42,7 @@ object TestsStatisticCollector {
     fun collect(testLinkedType: SpecTestLinkedType): Map<TestArea, SpecTestsStatElement> {
         val statistic = mutableMapOf<TestArea, SpecTestsStatElement>()
 
-        for (specTestArea in TestArea.values()) {
+        for (specTestArea in TestArea.entries) {
             val specTestsPath = "$SPEC_TESTDATA_PATH/${specTestArea.name.lowercase().replace("_", "/")}/${testLinkedType.testDataPath}"
 
             statistic[specTestArea] =

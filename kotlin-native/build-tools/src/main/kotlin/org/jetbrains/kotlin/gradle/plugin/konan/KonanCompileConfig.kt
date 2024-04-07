@@ -12,7 +12,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.KonanTarget.WASM32
 import java.io.File
 
 abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
@@ -94,8 +93,6 @@ open class KonanDynamic(name: String,
 
     override val defaultBaseDir: File
         get() = project.konanBinBaseDir
-
-    override fun targetIsSupported(target: KonanTarget): Boolean = target != WASM32
 }
 
 open class KonanFramework(name: String,

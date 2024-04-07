@@ -31,15 +31,22 @@ class ConstValueProviderImpl(
         if (firExpression is FirVarargArgumentsExpression) return null
 
         val fileName = firFile.packageFqName.child(Name.identifier(firFile.name)).asString()
-        return if (firExpression is FirQualifiedAccessExpression && firExpression.shouldUseCalleeReferenceAsItsSourceInIr()) {
-            val calleeReference = firExpression.calleeReference
-            val start = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
-            val end = firExpression.source?.endOffset ?: return null
-            evaluatedConstTracker.load(start, end, fileName)
-        } else {
-            val start = firExpression.source?.startOffset ?: return null
-            val end = firExpression.source?.endOffset ?: return null
-            evaluatedConstTracker.load(start, end, fileName)
+        val (start, end) = firExpression.getCorrespondingIrOffset() ?: return null
+        return evaluatedConstTracker.load(start, end, fileName)
+    }
+
+    companion object {
+        fun FirExpression.getCorrespondingIrOffset(): Pair<Int, Int>? {
+            return if (this is FirQualifiedAccessExpression && this.shouldUseCalleeReferenceAsItsSourceInIr()) {
+                val calleeReference = this.calleeReference
+                val start = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
+                val end = this.source?.endOffset ?: return null
+                start to end
+            } else {
+                val start = this.source?.startOffset ?: return null
+                val end = this.source?.endOffset ?: return null
+                start to end
+            }
         }
     }
 }

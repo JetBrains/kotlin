@@ -21,15 +21,18 @@ import org.jetbrains.kotlin.sir.impl.SirImportImpl
 class SirImportBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
+    var documentation: String? = null
     lateinit var moduleName: String
 
     fun build(): SirImport {
         return SirImportImpl(
             origin,
             visibility,
+            documentation,
             moduleName,
         )
     }
+
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -48,6 +51,7 @@ inline fun buildImportCopy(original: SirImport, init: SirImportBuilder.() -> Uni
     val copyBuilder = SirImportBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
+    copyBuilder.documentation = original.documentation
     copyBuilder.moduleName = original.moduleName
     return copyBuilder.apply(init).build()
 }

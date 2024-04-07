@@ -1,5 +1,7 @@
+// FIR_IDENTICAL
 // FIR_DUMP
 // DUMP_IR
+// WITH_STDLIB
 
 annotation class Ann(@Ann(1) val e: Int)
 
@@ -14,4 +16,10 @@ public annotation class MyRequiresOptIn(
     }
 }
 
-fun box() = "OK"
+fun box(): String {
+    val result = MyRequiresOptIn.MyLevel.values().joinToString()
+    return when (result) {
+        "WARNING, ERROR" -> "OK"
+        else -> "Fail: $result"
+    }
+}

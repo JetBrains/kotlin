@@ -49,9 +49,19 @@ public interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMi
     public fun KtCallableSymbol.getDirectlyOverriddenSymbols(): List<KtCallableSymbol> =
         withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.getDirectlyOverriddenSymbols(this) }
 
+    /**
+     * Checks if [this] class has [superClass] as its superclass somewhere in the inheritance hierarchy.
+     *
+     * N.B. The class is not considered to be a subclass of itself, so `myClass.isSubClassOf(myClass)` is always `false`.
+     */
     public fun KtClassOrObjectSymbol.isSubClassOf(superClass: KtClassOrObjectSymbol): Boolean =
         withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.isSubClassOf(this, superClass) }
 
+    /**
+     * Checks if [this] class has [superClass] listed as its direct superclass.
+     *
+     * N.B. The class is not considered to be a direct subclass of itself, so `myClass.isDirectSubClassOf(myClass)` is always `false`.
+     */
     public fun KtClassOrObjectSymbol.isDirectSubClassOf(superClass: KtClassOrObjectSymbol): Boolean =
         withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.isDirectSubClassOf(this, superClass) }
 

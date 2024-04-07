@@ -54,7 +54,8 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
             val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet()).apply {
                 files += TestFile.createCommitted(ktFile, this)
             }
-            val compilationResult = compileToExecutable(
+            // KT-39120 is irrelevant to compiler backend, so executable can be compiled in the simplest way, without splitting to stages.
+            val compilationResult = compileToExecutableInOneStage(
                 createTestCaseNoTestRun(module, TestCompilerArgs.EMPTY),
                 klib1.asLibraryDependency(),
                 klib2.asLibraryDependency()

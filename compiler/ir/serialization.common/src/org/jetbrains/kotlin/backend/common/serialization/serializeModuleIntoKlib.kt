@@ -63,7 +63,7 @@ class KotlinFileSerializedData private constructor(
 class SerializerOutput<Dependency : KotlinLibrary>(
     val serializedMetadata: SerializedMetadata?,
     val serializedIr: SerializedIrModule?,
-    val dataFlowGraph: ByteArray?,
+    val dataFlowGraph: ByteArray?, // TODO (KT-66218): remove this property
     val neededLibraries: List<Dependency>,
 )
 

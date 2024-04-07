@@ -1,0 +1,12 @@
+KtDataFlowExitPointSnapshot:
+  defaultExpressionInfo = null
+  hasEscapingJumps = true
+  hasJumps = true
+  hasMultipleJumpKinds = true
+  hasMultipleJumpTargets = true
+  loopJumpExpressions = [
+    continue
+  ]
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

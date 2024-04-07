@@ -1,3 +1,5 @@
+// FIR status: KT-65249 K2: False positive modality is different for native compilation
+
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt

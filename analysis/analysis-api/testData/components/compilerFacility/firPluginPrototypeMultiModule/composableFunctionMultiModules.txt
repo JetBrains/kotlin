@@ -1,0 +1,16 @@
+final class MainKt$Bar$1 {
+    // source: 'main.kt'
+    enclosing method MainKt.Bar()V
+    public final static field INSTANCE: MainKt$Bar$1
+    inner (anonymous) class MainKt$Bar$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+public final class MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class MainKt$Bar$1
+    public final static method Bar(): void
+}

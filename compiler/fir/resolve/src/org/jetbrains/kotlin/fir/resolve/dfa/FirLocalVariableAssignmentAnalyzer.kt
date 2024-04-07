@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.explicitReceiver
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.expressions.explicitReceiver
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -59,7 +59,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
     @OptIn(DfaInternals::class)
-    fun isAccessToUnstableLocalVariable(fir: FirExpression, targetType: ConeKotlinType?, session: FirSession): Boolean {
+    fun isAccessToUnstableLocalVariable(fir: FirElement, targetType: ConeKotlinType?, session: FirSession): Boolean {
         if (assignedLocalVariablesByDeclaration == null) return false
 
         val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
@@ -327,6 +327,8 @@ internal class FirLocalVariableAssignmentAnalyzer {
             fun retain(properties: Set<FirProperty>) {
                 assignments.keys.retainAll(properties)
             }
+
+            fun isEmpty(): Boolean = assignments.isEmpty()
         }
 
         private class MiniFlow(val parents: Set<MiniFlow>) {
@@ -480,6 +482,8 @@ internal class FirLocalVariableAssignmentAnalyzer {
             }
 
             private fun MiniFlow.recordAssignments(properties: VariableAssignments) {
+                if (properties.isEmpty()) return
+
                 assignedLater.merge(properties)
                 parents.forEach { it.recordAssignments(properties) }
             }

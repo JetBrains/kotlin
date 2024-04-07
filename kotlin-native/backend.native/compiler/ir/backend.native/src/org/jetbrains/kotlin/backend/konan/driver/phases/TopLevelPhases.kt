@@ -74,6 +74,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 newEngine(generationState) { generationStateEngine ->
                     if (context.config.produce.isCache) {
                         generationStateEngine.runPhase(BuildAdditionalCacheInfoPhase, module)
+                        if (context.config.produce.isHeaderCache) return@newEngine
                     }
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
                         generationStateEngine.runPhase(EntryPointPhase, module)
@@ -90,6 +91,14 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         fun runAfterLowerings(fragment: BackendJobFragment, generationState: NativeGenerationState) {
             val tempFiles = createTempFiles(config, fragment.cacheDeserializationStrategy)
             val outputFiles = generationState.outputFiles
+            if (context.config.produce.isHeaderCache) {
+                newEngine(generationState) { generationStateEngine ->
+                    generationStateEngine.runPhase(SaveAdditionalCacheInfoPhase)
+                    File(outputFiles.nativeBinaryFile).createNew()
+                    generationStateEngine.runPhase(FinalizeCachePhase, outputFiles)
+                }
+                return
+            }
             try {
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
@@ -198,7 +207,8 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     containsStdlib = containsStdlib
             )
             val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
-            val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins, listOf(file))
+            val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins)
+            fragment.files += file
             if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl)
                 fragment.files += files.filter { it.isFunctionInterfaceFile }
 
@@ -257,7 +267,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFr
     if (checkExternalCalls) {
         runPhase(RewriteExternalCallsCheckerGlobals)
     }
-    if (context.config.produce.isCache) {
+    if (context.config.produce.isFullCache) {
         runPhase(SaveAdditionalCacheInfoPhase)
     }
     runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
@@ -274,10 +284,10 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
     runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val (linkerInput, cacheBinaries) = run {
-        val resolvedCacheBinaries = resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult)
+        val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
         when {
             context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
-                compilationResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+                compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
                 val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()

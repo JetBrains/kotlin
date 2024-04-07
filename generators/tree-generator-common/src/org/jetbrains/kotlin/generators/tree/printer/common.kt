@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -72,8 +72,6 @@ fun printGeneratedType(
  * @param builderConfigurator The class for configuring the set of builders, see [Builder] and [AbstractBuilderConfigurator].
  * @param createImplementationPrinter Provide the class that prints implementations of elements, see [AbstractImplementationPrinter].
  * @param createBuilderPrinter Provide the class that prints the corresponding builder for each element class, see [AbstractBuilderPrinter].
- * @param afterConfiguration The routine to run after all implementations and builders were fully configured,
- * but before anything was printed to a file.
  * @param enableBaseTransformerTypeDetection Whether to use a special algorithm for inferring return types of transformer methods for each
  * element, see [detectBaseTransformerTypes].
  * @param addFiles Arbitrary files to add to the set of generated files.
@@ -85,28 +83,26 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
     pureAbstractElement: ClassRef<*>,
     createElementPrinter: (SmartPrinter) -> AbstractElementPrinter<Element, ElementField>,
     createVisitorPrinters: List<Pair<ClassRef<*>, (SmartPrinter, ClassRef<*>) -> AbstractVisitorPrinter<Element, ElementField>>>,
-    implementationConfigurator: AbstractImplementationConfigurator<Implementation, Element, ImplementationField>? = null,
+    implementationConfigurator: AbstractImplementationConfigurator<Implementation, Element, ElementField, ImplementationField>,
     builderConfigurator: AbstractBuilderConfigurator<Element, Implementation, ImplementationField, ElementField>? = null,
-    createImplementationPrinter: ((SmartPrinter) -> AbstractImplementationPrinter<Implementation, Element, ImplementationField>)? = null,
+    createImplementationPrinter: (SmartPrinter) -> AbstractImplementationPrinter<Implementation, Element, ImplementationField>,
     createBuilderPrinter: ((SmartPrinter) -> AbstractBuilderPrinter<Element, Implementation, ImplementationField, ElementField>)? = null,
-    afterConfiguration: () -> Unit = {},
     enableBaseTransformerTypeDetection: Boolean = true,
     addFiles: MutableList<GeneratedFile>.() -> Unit = {},
 ) where Element : AbstractElement<Element, ElementField, Implementation>,
         Implementation : AbstractImplementation<Implementation, Element, ImplementationField>,
         ElementField : AbstractField<ElementField>,
-        ImplementationField : AbstractField<*>,
-        ImplementationField : AbstractFieldWithDefaultValue<ElementField> {
+        ImplementationField : AbstractField<ElementField> {
     if (enableBaseTransformerTypeDetection) {
         detectBaseTransformerTypes(model)
     }
-    implementationConfigurator?.configureImplementations(model)
-    val implementations = model.elements.flatMap { it.allImplementations }
+    initializeSubElements(model.elements)
+    implementationConfigurator.configureImplementations(model)
+    val implementations = model.elements.flatMap { it.implementations }
     InterfaceAndAbstractClassConfigurator((model.elements + implementations))
         .configureInterfacesAndAbstractClasses()
     addPureAbstractElement(model.elements, pureAbstractElement)
     builderConfigurator?.configureBuilders()
-    afterConfiguration()
     val generatedFiles = mutableListOf<GeneratedFile>()
 
     model.elements.mapTo(generatedFiles) { element ->
@@ -120,17 +116,15 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
         }
     }
 
-    if (createImplementationPrinter != null) {
-        implementations.mapTo(generatedFiles) { implementation ->
-            printGeneratedType(
-                generationPath,
-                treeGeneratorReadme,
-                implementation.packageName,
-                implementation.typeName,
-                fileSuppressions = listOf("DuplicatedCode", "unused"),
-            ) {
-                createImplementationPrinter(this).printImplementation(implementation)
-            }
+    implementations.filter { it.doPrint }.mapTo(generatedFiles) { implementation ->
+        printGeneratedType(
+            generationPath,
+            treeGeneratorReadme,
+            implementation.packageName,
+            implementation.typeName,
+            fileSuppressions = listOf("DuplicatedCode"),
+        ) {
+            createImplementationPrinter(this).printImplementation(implementation)
         }
     }
 

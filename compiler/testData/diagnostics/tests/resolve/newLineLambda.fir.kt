@@ -112,6 +112,6 @@ fun testTwoLambdas() {
 fun f1(): (() -> Unit) -> (() -> Unit) -> Unit {
     return <!RETURN_TYPE_MISMATCH!>{ l1 ->
         l1()
-        <!TOO_MANY_ARGUMENTS!>{ l2 -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!>
+        <!TOO_MANY_ARGUMENTS!>{ <!CANNOT_INFER_PARAMETER_TYPE!>l2<!> -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!>
     }<!>
 }

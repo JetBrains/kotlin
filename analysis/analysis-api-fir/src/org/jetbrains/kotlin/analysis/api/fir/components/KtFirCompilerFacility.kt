@@ -39,8 +39,14 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.jvm.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -66,7 +72,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -186,7 +195,7 @@ internal class KtFirCompilerFacility(
         ProgressManager.checkCanceled()
         targetFir2IrResult.pluginContext.applyIrGenerationExtensions(targetFir2IrResult.irModuleFragment, irGeneratorExtensions)
 
-        val bindingContext = NoScopeRecordCliBindingTrace().bindingContext
+        val bindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
         val codegenFactory = createJvmIrCodegenFactory(targetConfiguration, file is KtCodeFragment, targetFir2IrResult.irModuleFragment)
         val generateClassFilter = SingleFileGenerateClassFilter(file, compilationPeerData.inlinedClasses)
 
@@ -277,8 +286,8 @@ internal class KtFirCompilerFacility(
 
     private fun patchCodeFragmentIr(fir2IrResult: Fir2IrActualizedResult) {
         fun isCodeFragmentFile(irFile: IrFile): Boolean {
-            val firFiles = (irFile.metadata as? FirMetadataSource.File)?.files ?: return false
-            return firFiles.any { it.psi is KtCodeFragment }
+            val file = (irFile.metadata as? FirMetadataSource.File)?.fir
+            return file?.psi is KtCodeFragment
         }
 
         val (irCodeFragmentFiles, irOrdinaryFiles) = fir2IrResult.irModuleFragment.files.partition(::isCodeFragmentFile)
@@ -521,8 +530,6 @@ internal class KtFirCompilerFacility(
             shouldReferenceUndiscoveredExpectSymbols = false, // TODO it was true
         )
 
-        val phaseConfig = PhaseConfig(if (isCodeFragment) jvmFragmentLoweringPhases else jvmLoweringPhases)
-
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         val evaluatorFragmentInfoForPsi2Ir = runIf<EvaluatorFragmentInfo?>(isCodeFragment) {
             val irFile = irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
@@ -533,7 +540,7 @@ internal class KtFirCompilerFacility(
 
         return JvmIrCodegenFactory(
             configuration,
-            phaseConfig,
+            PhaseConfig(jvmPhases),
             jvmGeneratorExtensions = jvmGeneratorExtensions,
             evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir,
             ideCodegenSettings = ideCodegenSettings,

@@ -38,6 +38,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven { setUrl("file://${projectDir.absolutePath.replace('\\', '/')}/repo") }
+        maven { setUrl("${projectDir.absolutePath.replace('\\', '/')}/repo") }
     }
 }

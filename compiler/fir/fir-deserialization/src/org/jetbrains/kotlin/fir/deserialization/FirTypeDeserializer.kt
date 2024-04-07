@@ -133,11 +133,11 @@ class FirTypeDeserializer(
             val lowerBound = simpleType(proto, attributes)
             val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!, attributes)
 
-            val isDynamic = lowerBound == moduleData.session.builtinTypes.nothingType.coneType &&
-                    upperBound == moduleData.session.builtinTypes.nullableAnyType.coneType
+            val isDynamic = lowerBound?.classId == moduleData.session.builtinTypes.nothingType.id &&
+                    upperBound?.classId == moduleData.session.builtinTypes.nullableAnyType.id
 
             return if (isDynamic) {
-                ConeDynamicType.create(moduleData.session)
+                ConeDynamicType.create(moduleData.session, lowerBound?.attributes ?: ConeAttributes.Empty)
             } else {
                 ConeFlexibleType(lowerBound!!, upperBound!!)
             }

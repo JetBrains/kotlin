@@ -128,6 +128,19 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArguments.kt
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias BadArgsInTypeAlias = R|@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/Int>>|
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] withMissedArguments.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arg: String = R|<local>/arg|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] get(): String
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] typealias BadArgsInTypeAlias = R|@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/Int>>|
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] withMissedArguments.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {

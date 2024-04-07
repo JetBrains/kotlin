@@ -30,24 +30,25 @@ internal class TestCompilationFactory {
     private val cachedObjCFrameworkCompilations = ThreadSafeCache<ObjCFrameworkCacheKey, ObjCFrameworkCompilation>()
     private val cachedBinaryLibraryCompilations = ThreadSafeCache<BinaryLibraryCacheKey, BinaryLibraryCompilation>()
 
-    private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs)
+    private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs, val useHeaders: Boolean)
     private data class ExecutableCacheKey(val sourceModules: Set<TestModule>)
     private data class ObjCFrameworkCacheKey(val sourceModules: Set<TestModule>)
-    private data class BinaryLibraryCacheKey(val sourceModules: Set<TestModule>, val kind: BinaryLibrary.Kind)
+    private data class BinaryLibraryCacheKey(val sourceModules: Set<TestModule>, val kind: BinaryLibraryKind)
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
-    private data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?)
+    private data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?, val headerCache: TestCompilation<KLIBStaticCache>?)
 
     private data class CompilationDependencies(
         private val klibDependencies: List<CompiledDependency<KLIB>>,
-        private val staticCacheDependencies: List<CompiledDependency<KLIBStaticCache>>
+        private val staticCacheDependencies: List<CompiledDependency<KLIBStaticCache>>,
+        private val staticCacheHeaderDependencies: List<CompiledDependency<KLIBStaticCache>>
     ) {
         /** Dependencies needed to compile KLIB. */
         fun forKlib(): Iterable<CompiledDependency<KLIB>> = klibDependencies
 
         /** Dependencies needed to compile KLIB static cache. */
-        fun forStaticCache(klib: CompiledDependency<KLIB>): Iterable<CompiledDependency<*>> =
-            (klibDependencies.asSequence().filter { it.type == FriendLibrary } + klib + staticCacheDependencies).asIterable()
+        fun forStaticCache(klib: CompiledDependency<KLIB>, useHeaders: Boolean): Iterable<CompiledDependency<*>> =
+            (klibDependencies.asSequence().filter { it.type == FriendLibrary } + klib + if (useHeaders) staticCacheHeaderDependencies else staticCacheDependencies).asIterable()
 
         /** Dependencies needed to compile one-stage executable. */
         fun forOneStageExecutable(): Iterable<CompiledDependency<*>> =
@@ -86,7 +87,7 @@ internal class TestCompilationFactory {
         }
     }
 
-    fun testCaseToBinaryLibrary(testCase: TestCase, settings: Settings, kind: BinaryLibrary.Kind): BinaryLibraryCompilation {
+    fun testCaseToBinaryLibrary(testCase: TestCase, settings: Settings, kind: BinaryLibraryKind): BinaryLibraryCompilation {
         val rootModules = testCase.rootModules
         val cacheKey = BinaryLibraryCacheKey(testCase.rootModules, kind)
         cachedBinaryLibraryCompilations[cacheKey]?.let { return it }
@@ -97,14 +98,15 @@ internal class TestCompilationFactory {
         ) = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
             ProduceStaticCache.No
         }
-        val expectedArtifact = BinaryLibrary(settings.artifactFileForBinaryLibrary(rootModules, kind), kind = kind)
+        val expectedArtifact = BinaryLibrary(settings.artifactFileForBinaryLibrary(rootModules, kind))
         return cachedBinaryLibraryCompilations.computeIfAbsent(cacheKey) {
             BinaryLibraryCompilation(
                 settings = settings,
                 freeCompilerArgs = testCase.freeCompilerArgs,
                 sourceModules = sourceModules,
                 dependencies = dependencies,
-                expectedArtifact = expectedArtifact
+                expectedArtifact = expectedArtifact,
+                kind = kind,
             )
         }
     }
@@ -209,7 +211,8 @@ internal class TestCompilationFactory {
         produceStaticCache: ProduceStaticCache,
         settings: Settings
     ): KlibCompilations {
-        val cacheKey = KlibCacheKey(sourceModules, freeCompilerArgs)
+        val useHeaders: Boolean = settings.get<CacheMode>().useHeaders
+        val cacheKey = KlibCacheKey(sourceModules, freeCompilerArgs, useHeaders)
 
         // Fast pass.
         cachedKlibCompilations[cacheKey]?.let { return it }
@@ -222,10 +225,18 @@ internal class TestCompilationFactory {
 
         val staticCacheArtifactAndOptions: Pair<KLIBStaticCache, StaticCacheCompilation.Options>? = when (produceStaticCache) {
             is ProduceStaticCache.No -> null // No artifact means no static cache should be compiled.
-            is ProduceStaticCache.Yes -> KLIBStaticCache(
+            is ProduceStaticCache.Yes -> KLIBStaticCacheImpl(
                 cacheDir = settings.cacheDirForStaticCache(klibArtifact, isGivenKlibArtifact),
                 klib = klibArtifact
             ) to produceStaticCache.options
+        }
+
+        val headerCacheArtifactAndOptions = staticCacheArtifactAndOptions?.let {
+            if (!useHeaders) return@let null
+            KLIBStaticCacheHeader(
+                cacheDir = settings.cacheDirForStaticCache(klibArtifact, isGivenKlibArtifact, header = true),
+                klib = klibArtifact
+            ) to it.second
         }
 
         return cachedKlibCompilations.computeIfAbsent(cacheKey) {
@@ -273,13 +284,32 @@ internal class TestCompilationFactory {
                         freeCompilerArgs = freeCompilerArgs,
                         options = staticCacheOptions,
                         pipelineType = settings.get(),
-                        dependencies = dependencies.forStaticCache(klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library)),
+                        dependencies = dependencies.forStaticCache(
+                            klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library),
+                            settings.get<CacheMode>().useHeaders
+                        ),
                         expectedArtifact = staticCacheArtifact,
                         makePerFileCacheOverride = makePerFileCacheOverride,
                     )
                 }
 
-            KlibCompilations(klibCompilation, staticCacheCompilation)
+            val headerCacheCompilation: StaticCacheCompilation? =
+                headerCacheArtifactAndOptions?.let { (staticCacheArtifact, staticCacheOptions) ->
+                    StaticCacheCompilation(
+                        settings = settings,
+                        freeCompilerArgs = freeCompilerArgs,
+                        options = staticCacheOptions,
+                        createHeaderCache = true,
+                        pipelineType = settings.get(),
+                        dependencies = dependencies.forStaticCache(
+                            klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library),
+                            settings.get<CacheMode>().useHeaders
+                        ),
+                        expectedArtifact = staticCacheArtifact
+                    )
+                }
+
+            KlibCompilations(klibCompilation, staticCacheCompilation, headerCacheCompilation)
         }
     }
 
@@ -290,6 +320,7 @@ internal class TestCompilationFactory {
     ): CompilationDependencies {
         val klibDependencies = mutableListOf<CompiledDependency<KLIB>>()
         val staticCacheDependencies = mutableListOf<CompiledDependency<KLIBStaticCache>>()
+        val staticCacheHeaderDependencies = mutableListOf<CompiledDependency<KLIBStaticCache>>()
 
         val produceStaticCache = ProduceStaticCache.decideForRegularKlib(settings)
 
@@ -298,14 +329,16 @@ internal class TestCompilationFactory {
                 val klibCompilations = modulesToKlib(setOf(dependencyModule), freeCompilerArgs, produceStaticCache, settings)
                 klibDependencies += klibCompilations.klib.asKlibDependency(type)
 
-                if (type == Library || type == IncludedLibrary)
+                if (type == Library || type == IncludedLibrary) {
                     staticCacheDependencies.addIfNotNull(klibCompilations.staticCache?.asStaticCacheDependency())
+                    staticCacheHeaderDependencies.addIfNotNull((klibCompilations.headerCache ?: klibCompilations.staticCache)?.asStaticCacheDependency())
+                }
             }
 
         sourceModules.allDependencies().collectDependencies(Library)
         sourceModules.allFriends().collectDependencies(FriendLibrary)
 
-        return CompilationDependencies(klibDependencies, staticCacheDependencies)
+        return CompilationDependencies(klibDependencies, staticCacheDependencies, staticCacheHeaderDependencies)
     }
 
     private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
@@ -330,17 +363,17 @@ internal class TestCompilationFactory {
         private fun Settings.artifactFileForExecutable(module: TestModule.Exclusive) =
             singleModuleArtifactFile(module, get<KotlinNativeTargets>().testTarget.family.exeSuffix)
 
-        private fun Settings.pickBinaryLibrarySuffix(kind: BinaryLibrary.Kind) = when (kind) {
-            BinaryLibrary.Kind.STATIC -> get<KotlinNativeTargets>().testTarget.family.staticSuffix
-            BinaryLibrary.Kind.DYNAMIC -> get<KotlinNativeTargets>().testTarget.family.dynamicSuffix
+        private fun Settings.pickBinaryLibrarySuffix(kind: BinaryLibraryKind) = when (kind) {
+            BinaryLibraryKind.STATIC -> get<KotlinNativeTargets>().testTarget.family.staticSuffix
+            BinaryLibraryKind.DYNAMIC -> get<KotlinNativeTargets>().testTarget.family.dynamicSuffix
         }
 
-        private fun Settings.artifactFileForBinaryLibrary(modules: Set<TestModule.Exclusive>, kind: BinaryLibrary.Kind) = when (modules.size) {
+        private fun Settings.artifactFileForBinaryLibrary(modules: Set<TestModule.Exclusive>, kind: BinaryLibraryKind) = when (modules.size) {
             1 -> artifactFileForBinaryLibrary(modules.first(), kind)
             else -> multiModuleArtifactFile(modules, pickBinaryLibrarySuffix(kind))
         }
 
-        private fun Settings.artifactFileForBinaryLibrary(module: TestModule.Exclusive, kind: BinaryLibrary.Kind) =
+        private fun Settings.artifactFileForBinaryLibrary(module: TestModule.Exclusive, kind: BinaryLibraryKind) =
             singleModuleArtifactFile(module, pickBinaryLibrarySuffix(kind))
 
         private fun Settings.artifactFileForKlib(modules: Set<TestModule>, freeCompilerArgs: TestCompilerArgs): File =
@@ -361,7 +394,7 @@ internal class TestCompilationFactory {
                 }
             }
 
-        private fun Settings.cacheDirForStaticCache(klibArtifact: KLIB, isGivenKlibArtifact: Boolean): File {
+        private fun Settings.cacheDirForStaticCache(klibArtifact: KLIB, isGivenKlibArtifact: Boolean, header: Boolean = false): File {
             val artifactBaseDir = if (isGivenKlibArtifact) {
                 // Special case for the given (external) KLIB artifacts.
                 get<Binaries>().givenBinariesDir
@@ -370,7 +403,7 @@ internal class TestCompilationFactory {
                 klibArtifact.klibFile.parentFile
             }
 
-            return artifactBaseDir.resolve(STATIC_CACHE_DIR_NAME).apply { mkdirs() }
+            return artifactBaseDir.resolve(if (header) HEADER_CACHE_DIR_NAME else STATIC_CACHE_DIR_NAME).apply { mkdirs() }
         }
 
         private fun Settings.singleModuleArtifactFile(module: TestModule.Exclusive, extension: String): File {

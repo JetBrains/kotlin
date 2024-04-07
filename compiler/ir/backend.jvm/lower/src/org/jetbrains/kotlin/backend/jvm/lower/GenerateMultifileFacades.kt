@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
@@ -42,28 +42,32 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 
-internal val generateMultifileFacadesPhase = makeCustomPhase(
+internal val generateMultifileFacadesPhase = makeIrModulePhase(
+    ::GenerateMultifileFacades,
     name = "GenerateMultifileFacades",
     description = "Generate JvmMultifileClass facades, based on the information provided by FileClassLowering",
     prerequisite = setOf(fileClassPhase),
-    op = { context, input ->
+)
+
+private class GenerateMultifileFacades(private val context: JvmBackendContext) : ModuleLoweringPass {
+    override fun lower(irModule: IrModuleFragment) {
         val functionDelegates = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
         // In -Xmultifile-parts-inherit mode, instead of generating "bridge" methods in the facade which call into parts,
         // we construct an inheritance chain such that all part members are present as fake overrides in the facade.
         val shouldGeneratePartHierarchy = context.config.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)
-        input.files.addAll(
-            generateMultifileFacades(input, context, shouldGeneratePartHierarchy, functionDelegates)
+        irModule.files.addAll(
+            generateMultifileFacades(irModule, context, shouldGeneratePartHierarchy, functionDelegates)
         )
 
-        UpdateFunctionCallSites(functionDelegates).lower(input)
-        UpdateConstantFacadePropertyReferences(context, shouldGeneratePartHierarchy).lower(input)
+        UpdateFunctionCallSites(functionDelegates).lower(irModule)
+        UpdateConstantFacadePropertyReferences(context, shouldGeneratePartHierarchy).lower(irModule)
 
         context.multifileFacadesToAdd.clear()
 
         functionDelegates.entries.associateTo(context.multifileFacadeMemberToPartMember) { (member, newMember) -> newMember to member }
     }
-)
+}
 
 private fun generateMultifileFacades(
     module: IrModuleFragment,
@@ -215,7 +219,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
 
     if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
-        origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+        origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
         origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA ||
         origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
         origin == IrDeclarationOrigin.PROPERTY_DELEGATE ||

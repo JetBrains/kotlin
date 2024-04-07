@@ -106,6 +106,35 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
     }
 
+CONSTANT_EVALUATION:
+TARGET: public open override [<synthetic> CONSTANT_EVALUATION] val something: R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>|
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
+        ^getSomething IntegerLiteral(42)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONSTANT_EVALUATION)] fun getSomething(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
+            ^getSomething IntegerLiteral(42)
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>|
     @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>| {
@@ -175,7 +204,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(BODY_RESOLVE)] class Derived : R|Base| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor(): R|Derived| {

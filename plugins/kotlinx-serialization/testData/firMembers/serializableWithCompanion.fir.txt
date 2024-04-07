@@ -43,7 +43,7 @@ FILE: serializableWithCompanion.kt
 
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithCompanion|.R|com/example/WithCompanion.i|): R|com/example/WithCompanion|
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<com/example/WithCompanion>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<com/example/WithCompanion>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/WithCompanion|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/WithCompanion|
@@ -85,7 +85,7 @@ FILE: serializableWithCompanion.kt
 
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithNamedCompanion|.R|com/example/WithNamedCompanion.i|): R|com/example/WithNamedCompanion|
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<com/example/WithNamedCompanion>| {
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<com/example/WithNamedCompanion>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/WithNamedCompanion|): R|kotlin/Unit|
 
             public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/WithNamedCompanion|

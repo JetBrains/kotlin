@@ -6,96 +6,199 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.native.analysis.api.readKlibDeclarationAddresses
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
+import org.jetbrains.kotlin.objcexport.extras.originClassId
+import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
+import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.tooling.core.closure
+
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
-    val stubs = mutableListOf<ObjCExportStub>()
-    val protocolForwardDeclarations = mutableSetOf<String>()
-    val classForwardDeclarations = mutableSetOf<ObjCClassForwardDeclaration>()
+    val generator = KtObjCExportHeaderGenerator()
 
-    val symbolTranslationQueue = mutableListOf<KtSymbol>()
-    val translatedClassifiers = mutableMapOf<ClassId, ObjCClass>()
+    val klibDeclarationAddresses = useSiteModule.closure { module -> module.allDirectDependencies().asIterable() }
+        .filterIsInstance<KtLibraryModule>()
+        .filter { it.getObjCKotlinModuleName() in configuration.exportedModuleNames }
+        .flatMap { it.readKlibDeclarationAddresses().orEmpty() }
 
-    fun process(
-        symbol: KtSymbol,
-        forwardProtocolsAndClasses: Boolean = false,
-    ): List<ObjCExportStub> {
-        val result = mutableListOf<ObjCExportStub>()
-        when (symbol) {
-            /* In this case: Go and translate all classes/objects/interfaces inside the file as well */
-            is KtFileSymbol -> {
-                val translatedTopLevelFileFacade = symbol.translateToObjCTopLevelInterfaceFileFacade()
-                result.addIfNotNull(translatedTopLevelFileFacade)
+    val unresolvedFiles = files.map { ktFile -> KtObjCExportFile(ktFile) } +
+        createKtObjCExportFiles(klibDeclarationAddresses)
 
-                symbolTranslationQueue.addAll(
-                    symbol.getAllClassOrObjectSymbols().sortedWith(StableClassifierOrder)
-                )
-            }
+    generator.translateAll(unresolvedFiles.sortedWith(StableFileOrder))
+    return generator.buildObjCHeader()
+}
 
-            /* Translate the Class/Interface, but ensure that all supertypes will be translated also */
-            is KtClassOrObjectSymbol -> {
-                val classId = symbol.classIdIfNonLocal ?: return result
+/**
+ * Encapsulates the 'dynamic' nature of the ObjCExport where only during the export phase decisions about
+ * 1) Which symbols are to be exported
+ * 2) In which order symbols are to be exported
+ *
+ * can be made.
+ *
+ * Functions inside this class will have side effects such as mutating the [classDeque] or adding results to the [objCStubs]
+ */
+private class KtObjCExportHeaderGenerator {
+    /**
+     * Represents a queue containing pointers to all classes that are 'to be translated later'.
+     * This happens, e.g., when a class is referenced inside a callable signature. Such 'dependency types' are to be
+     * translated
+     */
+    private val classDeque = ArrayDeque<ClassId>()
 
-                /* Add the classId to already processed classIds and do not redo if already processed */
-                val stub = translatedClassifiers.getOrPut(classId) {
-                    val translatedObjCClassOrProtocol = when (symbol.classKind) {
-                        KtClassKind.INTERFACE -> symbol.translateToObjCProtocol()
-                        KtClassKind.CLASS -> symbol.translateToObjCClass()
-                        KtClassKind.OBJECT -> symbol.translateToObjCObject()
-                        KtClassKind.ENUM_CLASS -> symbol.translateToObjCClass()
-                        KtClassKind.COMPANION_OBJECT -> symbol.translateToObjCObject()
-                        else -> return result
-                    } ?: return result
+    /**
+     * The mutable aggregate of the already translated elements
+     */
+    private val objCStubs = mutableListOf<ObjCTopLevel>()
 
-                    symbol.getDeclaredSuperInterfaceSymbols().forEach { superInterfaceSymbol ->
-                        result.addAll(process(superInterfaceSymbol, true))
-                    }
+    /**
+     * An index of all already translated classes. All classes here are also present in [objCStubs]
+     */
+    private val objCStubsByClassId = hashMapOf<ClassId, ObjCClass?>()
 
-                    symbol.getSuperClassSymbolNotAny()?.let { superClassSymbol ->
-                        process(superClassSymbol, true)
-                    }
+    /**
+     * An index of already translated classes (by ObjC name)
+     */
+    private val objCStubsByClassName = hashMapOf<String, ObjCClass>()
 
-                    result.add(translatedObjCClassOrProtocol)
-                    translatedObjCClassOrProtocol
-                }
+    /**
+     * The mutable aggregate of all protocol names that shall later be rendered as forward declarations
+     */
+    private val objCProtocolForwardDeclarations = mutableSetOf<String>()
 
-                if (forwardProtocolsAndClasses) {
-                    when (stub) {
-                        is ObjCInterface -> classForwardDeclarations.add(ObjCClassForwardDeclaration(stub.name, stub.generics))
-                        is ObjCProtocol -> protocolForwardDeclarations.add(stub.name)
-                    }
-                }
-            }
+    /**
+     * The mutable aggregate of all class names that shall later be rendered as forward declarations
+     */
+    private val objCClassForwardDeclarations = mutableSetOf<String>()
+
+    context(KtAnalysisSession, KtObjCExportSession)
+    fun translateAll(files: List<KtObjCExportFile>) {
+        /**
+         * Step 1: Translate classifiers (class, interface, object, ...)
+         */
+        files.forEach { file ->
+            translateFileClassifiers(file)
         }
-        return result
-    }
 
-    fun processDeclaredSymbols(symbols: List<KtSymbol>): List<ObjCExportStub> {
-        val result = mutableListOf<ObjCExportStub>()
-        symbolTranslationQueue.addAll(symbols)
+        /**
+         * Step 2: Translate file facades (see [translateToTopLevelFileFacade], [translateToExtensionFacade])
+         * This step has to be done after all classifiers were translated to match the translation order of K1
+         */
+        files.forEach { file ->
+            translateFileFacades(file)
+        }
+
+        /**
+         * Step 3: Translate dependency classes referenced by Step 1 and Step 2
+         * Note: Transitive dependencies will still add to this queue and will be processed until we're finished
+         */
         while (true) {
-            val next = symbolTranslationQueue.removeFirstOrNull() ?: break
-            result.addAll(process(next))
+            translateClass(classDeque.removeFirstOrNull() ?: break)
         }
-        return result
     }
 
-    fun processDependencySymbols(stubs: List<ObjCExportStub>): List<ObjCExportStub> {
-        val dependencyClassSymbols = stubs.closureSequence()
-            .mapNotNull { stub ->
-                when (stub) {
-                    is ObjCMethod -> stub.returnType
-                    is ObjCParameter -> stub.type
-                    is ObjCProperty -> stub.type
+    context(KtAnalysisSession, KtObjCExportSession)
+    private fun translateClass(classId: ClassId) {
+        val classOrObjectSymbol = getClassOrObjectSymbolByClassId(classId) ?: return
+        translateClassOrObjectSymbol(classOrObjectSymbol)
+    }
+
+    context(KtAnalysisSession, KtObjCExportSession)
+    private fun translateFileClassifiers(file: KtObjCExportFile) {
+        val resolvedFile = file.resolve()
+        resolvedFile.classifierSymbols.sortedWith(StableClassifierOrder).forEach { classOrObjectSymbol ->
+            translateClassOrObjectSymbol(classOrObjectSymbol)
+        }
+    }
+
+    context(KtAnalysisSession, KtObjCExportSession)
+    private fun translateFileFacades(file: KtObjCExportFile) {
+        val resolvedFile = file.resolve()
+
+        resolvedFile.translateToObjCExtensionFacades().forEach { facade ->
+            objCStubs += facade
+            enqueueDependencyClasses(facade)
+            objCClassForwardDeclarations += facade.name
+        }
+
+        resolvedFile.translateToObjCTopLevelFacade()?.let { topLevelFacade ->
+            objCStubs += topLevelFacade
+            enqueueDependencyClasses(topLevelFacade)
+        }
+    }
+
+    context(KtAnalysisSession, KtObjCExportSession)
+    private fun translateClassOrObjectSymbol(symbol: KtClassOrObjectSymbol): ObjCClass? {
+        /* No classId, no stubs ¯\_(ツ)_/¯ */
+        val classId = symbol.classIdIfNonLocal ?: return null
+
+        /* Already processed this class, therefore nothing to do! */
+        if (classId in objCStubsByClassId) return objCStubsByClassId[classId]
+
+        /**
+         * Translate: Note: Even if the result was 'null', the classId will still be marked as 'handled' by adding it
+         * to the [objCStubsByClassId] index.
+         */
+        val objCClass = symbol.translateToObjCExportStub()
+        objCStubsByClassId[classId] = objCClass
+        objCClass ?: return null
+
+        /*
+        To replicate the translation (and result stub order) of the K1 implementation:
+        1) Super interface / superclass symbols have to be translated right away
+        2) Super interface / superclass symbol export stubs (result of translation) have to be present in the stubs list before the
+        original stub
+         */
+        symbol.getDeclaredSuperInterfaceSymbols().filter { it.isVisibleInObjC() }.forEach { superInterfaceSymbol ->
+            translateClassOrObjectSymbol(superInterfaceSymbol)?.let {
+                objCProtocolForwardDeclarations += it.name
+            }
+        }
+
+        symbol.getSuperClassSymbolNotAny()?.takeIf { it.isVisibleInObjC() }?.let { superClassSymbol ->
+            translateClassOrObjectSymbol(superClassSymbol)?.let {
+                objCClassForwardDeclarations += it.name
+            }
+        }
+
+
+        /* Note: It is important to add *this* stub to the result list only after translating/processing the superclass symbols */
+        objCStubs += objCClass
+        objCStubsByClassName[objCClass.name] = objCClass
+        enqueueDependencyClasses(objCClass)
+        return objCClass
+    }
+
+    /**
+     * Will introspect the given [stub] to collect all used 'dependency' types/classes.
+     * Example: Usage of Kotlin Stdlib Type (Array):
+     *
+     * ```
+     * class Foo {
+     *      fun createArray(): Array<String> = error("stub")
+     * }
+     * ```
+     *
+     * The given symbol "Foo" will reference `Array`. Therefore, the `Array` class has to be translated as well (later)
+     * and `Array` has to be registered as forward declaration.
+     */
+    private fun enqueueDependencyClasses(stub: ObjCExportStub) {
+        classDeque += stub.closureSequence()
+            .flatMap { child -> child.throwsAnnotationClassIds.orEmpty() }
+
+        classDeque += stub.closureSequence()
+            .mapNotNull { child ->
+                when (child) {
+                    is ObjCMethod -> child.returnType
+                    is ObjCParameter -> child.type
+                    is ObjCProperty -> child.type
                     is ObjCTopLevel -> null
                 }
             }
@@ -103,39 +206,50 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
                 if (type is ObjCClassType) type.typeArguments + type
                 else listOf(type)
             }
-            .mapNotNull { if (it is ObjCReferenceType) it.classId else null }
-            .mapNotNull { classId -> getClassOrObjectSymbolByClassId(classId) }
-            .toList()
-
-        symbolTranslationQueue.addAll(dependencyClassSymbols)
-
-        val result = dependencyClassSymbols.flatMap { symbol ->
-            process(symbol, forwardProtocolsAndClasses = true)
-        }
-
-        return if (result.isNotEmpty()) result + processDependencySymbols(result)
-        else result
+            .filterIsInstance<ObjCReferenceType>()
+            .onEach { type ->
+                if (!type.requiresForwardDeclaration) return@onEach
+                val nonNullType = if (type is ObjCNullableReferenceType) type.nonNullType else type
+                if (nonNullType is ObjCClassType) objCClassForwardDeclarations += nonNullType.className
+                if (nonNullType is ObjCProtocolType) objCProtocolForwardDeclarations += nonNullType.protocolName
+            }
+            .mapNotNull { it.originClassId }
     }
 
-    val fileSymbols = files.sortedWith(StableFileOrder).map { it.getFileSymbol() }
-    val declaredStubs = processDeclaredSymbols(fileSymbols)
-    val dependencyStubs = processDependencySymbols(declaredStubs)
+    /**
+     * [objCClassForwardDeclarations] are recorded by their respective class name:
+     * This method will resolve the objc interface that was translated, which is associated with the [className] and
+     * build the respective [ObjCClassForwardDeclaration] from it.
+     *
+     * If no such class was explicitly translated a simple [ObjCClassForwardDeclaration] will be emitted that does not
+     * carry any generics.
+     */
+    private fun resolveObjCClassForwardDeclaration(className: String): ObjCClassForwardDeclaration {
+        objCStubsByClassName[className]
+            .let { it as? ObjCInterface }
+            ?.let { objCClass -> return ObjCClassForwardDeclaration(objCClass.name, objCClass.generics) }
 
-    stubs.addAll(declaredStubs + dependencyStubs)
-
-    if (stubs.hasErrorTypes()) {
-        stubs.add(errorInterface)
-        classForwardDeclarations.add(errorForwardClass)
+        return ObjCClassForwardDeclaration(className)
     }
 
-    if (configuration.generateBaseDeclarationStubs) {
-        stubs.addAll(0, objCBaseDeclarations())
-    }
+    context(KtAnalysisSession, KtObjCExportSession)
+    fun buildObjCHeader(): ObjCHeader {
+        val hasErrorTypes = objCStubs.hasErrorTypes()
 
-    return ObjCHeader(
-        stubs = stubs,
-        classForwardDeclarations = classForwardDeclarations,
-        protocolForwardDeclarations = protocolForwardDeclarations,
-        additionalImports = emptyList()
-    )
+        val protocolForwardDeclarations = objCProtocolForwardDeclarations.toSet()
+
+        val classForwardDeclarations = objCClassForwardDeclarations
+            .map { className -> resolveObjCClassForwardDeclaration(className) }
+            .toSet()
+
+        val stubs = (if (configuration.generateBaseDeclarationStubs) objCBaseDeclarations() else emptyList()).plus(objCStubs)
+            .plus(listOfNotNull(errorInterface.takeIf { hasErrorTypes }))
+
+        return ObjCHeader(
+            stubs = stubs,
+            classForwardDeclarations = classForwardDeclarations,
+            protocolForwardDeclarations = protocolForwardDeclarations,
+            additionalImports = emptyList()
+        )
+    }
 }

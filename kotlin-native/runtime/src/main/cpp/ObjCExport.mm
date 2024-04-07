@@ -17,14 +17,7 @@
 #include <unordered_set>
 #include <vector>
 
-#import <Foundation/NSObject.h>
-#import <Foundation/NSValue.h>
-#import <Foundation/NSString.h>
-#import <Foundation/NSMethodSignature.h>
-#import <Foundation/NSError.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSDecimalNumber.h>
-#import <Foundation/NSDictionary.h>
+#import <Foundation/Foundation.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import <objc/objc-exception.h>
@@ -35,7 +28,7 @@
 #import "ObjCExportPrivate.h"
 #import "ObjCMMAPI.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 #import "Exceptions.h"
 #import "Natives.h"
 

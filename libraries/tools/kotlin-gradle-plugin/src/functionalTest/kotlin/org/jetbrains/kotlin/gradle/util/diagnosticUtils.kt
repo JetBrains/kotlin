@@ -15,12 +15,13 @@ import java.nio.file.Path
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-internal fun checkDiagnosticsWithMppProject(projectName: String, projectConfiguration: Project.() -> Unit) {
+internal fun checkDiagnosticsWithMppProject(expectedDiagnosticsFile: String, projectConfiguration: Project.() -> Unit) {
+    val projectName = File(expectedDiagnosticsFile).name
     val project = buildProjectWithMPP(projectBuilder = { withName(projectName) })
     project.setMultiplatformAndroidSourceSetLayoutVersion(2)
     project.projectConfiguration()
     project.evaluate()
-    project.checkDiagnostics(projectName)
+    project.checkDiagnostics(expectedDiagnosticsFile)
 }
 
 internal fun ToolingDiagnostic.equals(that: ToolingDiagnostic, ignoreThrowable: Boolean) = if (ignoreThrowable) {

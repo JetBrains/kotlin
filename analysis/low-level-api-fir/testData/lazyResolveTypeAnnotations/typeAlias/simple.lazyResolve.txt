@@ -148,6 +148,21 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] simple.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val arg: String = R|<local>/arg|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONSTANT_EVALUATION)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(<strcat>(String(type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested type: ), constant#))  kotlin/collections/List<@R|TypeAnnWithArg|(<strcat>(String(nested nested type: ), constant#))  kotlin/Int>>|
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -189,6 +204,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] simple.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAnnWithArg] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|))  kotlin/Int>>|

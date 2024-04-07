@@ -14,6 +14,6 @@ FILE: dataClassWithAnnotations.kt
 
         public? final operator fun component2(): @Anno(<strcat>(String(Derived c parameter type ), x#)) C<@Anno(<strcat>(String(nested Derived c parameter type ), x#)) CNested<@Anno(<strcat>(String(nested nested Derived c parameter type ), x#)) CNestedNested>>
 
-        public final fun copy(@Anno(<strcat>(String(b ), x#)) @Anno(<strcat>(String(param: b ), x#)) b: @Anno(<strcat>(String(Derived b parameter type ), x#)) B<@Anno(<strcat>(String(nested Derived b parameter type ), x#)) BNested<@Anno(<strcat>(String(nested nested Derived b parameter type ), x#)) BNestedNested>> = this@R|/Derived|.R|/Derived.b|, c: @Anno(<strcat>(String(Derived c parameter type ), x#)) C<@Anno(<strcat>(String(nested Derived c parameter type ), x#)) CNested<@Anno(<strcat>(String(nested nested Derived c parameter type ), x#)) CNestedNested>> = this@R|/Derived|.R|/Derived.c|): R|Derived|
+        public? final fun copy(@Anno(<strcat>(String(b ), x#)) @Anno(<strcat>(String(param: b ), x#)) b: @Anno(<strcat>(String(Derived b parameter type ), x#)) B<@Anno(<strcat>(String(nested Derived b parameter type ), x#)) BNested<@Anno(<strcat>(String(nested nested Derived b parameter type ), x#)) BNestedNested>> = this@R|/Derived|.R|/Derived.b|, c: @Anno(<strcat>(String(Derived c parameter type ), x#)) C<@Anno(<strcat>(String(nested Derived c parameter type ), x#)) CNested<@Anno(<strcat>(String(nested nested Derived c parameter type ), x#)) CNestedNested>> = this@R|/Derived|.R|/Derived.c|): R|Derived|
 
     }

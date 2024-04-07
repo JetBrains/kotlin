@@ -1,0 +1,71 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+    interface A
+
+    interface B {
+        val property: A @Composable get() = TODO()
+    }
+
+    @Composable fun Test(b: B) {
+        val a = object : A by b.property {}
+        println(a)
+    }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface A
+interface B {
+  val property: A
+    @Composable @JvmName(name = "getProperty")
+    get() {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C:Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      TODO()
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      %composer.endReplaceGroup()
+    }
+}
+@Composable
+fun Test(b: B, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(b)
+    } else {
+      %composer.changedInstance(b)
+    }
+    ) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val a = <block>{
+      object : A {
+        private val %%delegate_0: A = b.<get-property>(%composer, 0b1110 and %dirty)
+      }
+    }
+    println(a)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(b, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

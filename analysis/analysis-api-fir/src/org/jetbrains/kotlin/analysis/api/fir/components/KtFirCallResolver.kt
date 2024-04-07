@@ -554,7 +554,9 @@ internal class KtFirCallResolver(
                     KtSimpleVariableAccess.Write(rhs)
                 )
             }
-            is FirPropertyAccessExpression -> {
+            is FirPropertyAccessExpression, is FirCallableReferenceAccess -> {
+                @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
+                require(fir is FirQualifiedAccessExpression)
                 when (unsubstitutedKtSignature.symbol) {
                     is KtVariableLikeSymbol -> {
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
@@ -812,7 +814,7 @@ internal class KtFirCallResolver(
     private fun FirVariableAssignment.toPartiallyAppliedSymbol(): KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>? {
         val variableRef = calleeReference as? FirResolvedNamedReference ?: return null
         val variableSymbol = variableRef.resolvedSymbol as? FirVariableSymbol<*> ?: return null
-        val substitutor = unwrapLValue()?.createConeSubstitutorFromTypeArguments() ?: return null
+        val substitutor = unwrapLValue()?.createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
         val ktSignature = variableSymbol.toKtSignature()
         return KtPartiallyAppliedSymbol(
             with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
@@ -826,7 +828,7 @@ internal class KtFirCallResolver(
     ): KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>? {
         val operationSymbol =
             (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
-        val substitutor = createConeSubstitutorFromTypeArguments() ?: return null
+        val substitutor = createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
         val explicitReceiver = this.explicitReceiver
         val dispatchReceiver = this.dispatchReceiver
         val extensionReceiver = this.extensionReceiver
@@ -999,11 +1001,12 @@ internal class KtFirCallResolver(
             is FirArrayLiteral, is FirEqualityOperatorCall -> {
                 toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
             }
-            is FirComparisonExpression -> compareToCall.toKtCallInfo(
-                psi,
-                resolveCalleeExpressionOfFunctionCall,
-                resolveFragmentOfCall
-            ).toKtCallCandidateInfos()
+            is FirComparisonExpression -> {
+                compareToCall.toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
+            }
+            is FirCallableReferenceAccess -> {
+                calleeReference.toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
+            }
             is FirResolvedQualifier -> toKtCallCandidateInfos()
             is FirDelegatedConstructorCall -> collectCallCandidatesForDelegatedConstructorCall(psi, resolveFragmentOfCall)
             else -> toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
@@ -1137,7 +1140,7 @@ internal class KtFirCallResolver(
             return KtApplicableCallCandidateInfo(call, isInBestCandidates)
         }
 
-        val diagnostic = createConeDiagnosticForCandidateWithError(candidate.currentApplicability, candidate)
+        val diagnostic = createConeDiagnosticForCandidateWithError(candidate.lowestApplicability, candidate)
         if (diagnostic is ConeHiddenCandidateError) return null
         val ktDiagnostic =
             resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
@@ -1350,8 +1353,10 @@ internal class KtFirCallResolver(
                 expression.realPsi as? KtExpression
             is FirSmartCastExpression ->
                 originalExpression.realPsi as? KtExpression
-            is FirNamedArgumentExpression, is FirSpreadArgumentExpression, is FirLambdaArgumentExpression ->
+            is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
                 realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
+            is FirAnonymousFunctionExpression ->
+                realPsi?.parent as? KtLabeledExpression ?: realPsi as? KtExpression
             else -> realPsi as? KtExpression
         }
     }

@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -736,6 +737,14 @@ fun splitStringConstant(value: String): List<String> {
 
         result
     }
+}
+
+fun AnnotationVisitor.visitWithSplitting(name: String?, value: String) {
+    val av = visitArray(name)
+    for (part in splitStringConstant(value)) {
+        av.visit(null, part)
+    }
+    av.visitEnd()
 }
 
 fun String.encodedUTF8Size(): Int {

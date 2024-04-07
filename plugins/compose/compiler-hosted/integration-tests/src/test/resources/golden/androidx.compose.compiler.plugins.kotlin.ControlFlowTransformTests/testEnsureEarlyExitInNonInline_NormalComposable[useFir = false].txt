@@ -1,0 +1,75 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+object obj {
+    val condition = true
+}
+
+@Composable
+fun Test(condition: Boolean) {
+    if (condition) return
+    with (obj) {
+        if (condition) return
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+object obj {
+  val condition: Boolean = true
+  static val %stable: Int = 0
+}
+@Composable
+fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<A()>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    if (condition) {
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+      }
+      return
+    }
+    with(obj) {
+      if (condition) {
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+          Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+        }
+        return
+      }
+    }
+    A(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

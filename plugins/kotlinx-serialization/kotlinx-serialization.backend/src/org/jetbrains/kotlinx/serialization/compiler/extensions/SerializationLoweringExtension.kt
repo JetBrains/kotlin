@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
@@ -119,7 +120,7 @@ private inline fun IrClass.runPluginSafe(block: () -> Unit) {
         block()
     } catch (e: Throwable) {
         throw when (e) {
-            is VirtualMachineError, is ThreadDeath -> e
+            is VirtualMachineError, is ThreadDeath, is ProcessCanceledException -> e
             else -> CompilationException(
                 "kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause",
                 this.fileParent,

@@ -22,14 +22,6 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
     open fun visitElement(element: SirElement) {
     }
 
-    final override fun visitModule(module: SirModule, data: Nothing?) {
-        visitModule(module)
-    }
-
-    open fun visitModule(module: SirModule) {
-        visitElement(module)
-    }
-
     final override fun visitDeclarationContainer(declarationContainer: SirDeclarationContainer, data: Nothing?) {
         visitDeclarationContainer(declarationContainer)
     }
@@ -38,12 +30,36 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitElement(declarationContainer)
     }
 
+    final override fun visitMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer, data: Nothing?) {
+        visitMutableDeclarationContainer(mutableDeclarationContainer)
+    }
+
+    open fun visitMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer) {
+        visitElement(mutableDeclarationContainer)
+    }
+
+    final override fun visitModule(module: SirModule, data: Nothing?) {
+        visitModule(module)
+    }
+
+    open fun visitModule(module: SirModule) {
+        visitElement(module)
+    }
+
     final override fun visitDeclaration(declaration: SirDeclaration, data: Nothing?) {
         visitDeclaration(declaration)
     }
 
     open fun visitDeclaration(declaration: SirDeclaration) {
         visitElement(declaration)
+    }
+
+    final override fun visitExtension(extension: SirExtension, data: Nothing?) {
+        visitExtension(extension)
+    }
+
+    open fun visitExtension(extension: SirExtension) {
+        visitDeclaration(extension)
     }
 
     final override fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: Nothing?) {
@@ -70,12 +86,28 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitNamedDeclaration(struct)
     }
 
+    final override fun visitClass(klass: SirClass, data: Nothing?) {
+        visitClass(klass)
+    }
+
+    open fun visitClass(klass: SirClass) {
+        visitNamedDeclaration(klass)
+    }
+
     final override fun visitCallable(callable: SirCallable, data: Nothing?) {
         visitCallable(callable)
     }
 
     open fun visitCallable(callable: SirCallable) {
         visitDeclaration(callable)
+    }
+
+    final override fun visitInit(init: SirInit, data: Nothing?) {
+        visitInit(init)
+    }
+
+    open fun visitInit(init: SirInit) {
+        visitCallable(init)
     }
 
     final override fun visitFunction(function: SirFunction, data: Nothing?) {

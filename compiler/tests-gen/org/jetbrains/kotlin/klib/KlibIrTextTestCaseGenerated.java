@@ -2098,6 +2098,310 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     public void testAllFilesPresentInFakeOverrides() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
+
+    @TestMetadata("setterVisibliity.kt")
+    public void testSetterVisibliity() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Annotations extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/charsequence")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Charsequence extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInCharsequence() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/charsequence"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Collections extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInCollections() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/list")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class List extends AbstractKlibIrTextTestCase {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+        }
+
+        public void testAllFilesPresentInList() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/list"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
+
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/map")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class Map extends AbstractKlibIrTextTestCase {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+        }
+
+        public void testAllFilesPresentInMap() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/map"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
+
+      @TestMetadata("compiler/testData/ir/irText/fakeOverrides/collections/set")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class Set extends AbstractKlibIrTextTestCase {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+        }
+
+        public void testAllFilesPresentInSet() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/set"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/dataclass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Dataclass extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInDataclass() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/dataclass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/enum")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Enum extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInEnum() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Fieldmodifiers extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInFieldmodifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/generics")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Generics extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInGenerics() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/gettersetter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Gettersetter extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInGettersetter() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/gettersetter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/java21")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Java21 extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInJava21() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/java21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/javastatic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Javastatic extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInJavastatic() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/javastatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/kotlinextensions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Kotlinextensions extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInKotlinextensions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/kotlinextensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodmodifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Methodmodifiers extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInMethodmodifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/methodparameters")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Methodparameters extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInMethodparameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodparameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/number")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Number extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInNumber() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/number"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/operators")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Operators extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInOperators() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/operators"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/platformtypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Platformtypes extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInPlatformtypes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/platformtypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/typenothing")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Typenothing extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInTypenothing() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/typenothing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/vararg")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Vararg extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInVararg() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/visibility")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Visibility extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInVisibility() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/fakeOverrides/void")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Void extends AbstractKlibIrTextTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+      }
+
+      public void testAllFilesPresentInVoid() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/void"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
   }
 
   @TestMetadata("compiler/testData/ir/irText/firProblems")
@@ -2220,6 +2524,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @TestMetadata("kt59102.kt")
     public void testKt59102() {
       runTest("compiler/testData/ir/irText/firProblems/kt59102.kt");
+    }
+
+    @TestMetadata("kt65642.kt")
+    public void testKt65642() {
+      runTest("compiler/testData/ir/irText/firProblems/kt65642.kt");
     }
 
     @TestMetadata("lambdaInEnumEntryConstructorCall.kt")
@@ -2522,11 +2831,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
       runTest("compiler/testData/ir/irText/lambdas/justLambda.kt");
     }
 
-    @TestMetadata("lambdaReturningUnit.kt")
-    public void testLambdaReturningUnit() {
-      runTest("compiler/testData/ir/irText/lambdas/lambdaReturningUnit.kt");
-    }
-
     @TestMetadata("localFunction.kt")
     public void testLocalFunction() {
       runTest("compiler/testData/ir/irText/lambdas/localFunction.kt");
@@ -2553,6 +2857,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
 
     public void testAllFilesPresentInProperties() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @TestMetadata("targetOnPrimaryCtorParameter.kt")
+    public void testTargetOnPrimaryCtorParameter() {
+      runTest("compiler/testData/ir/irText/properties/targetOnPrimaryCtorParameter.kt");
     }
 
     @TestMetadata("compiler/testData/ir/irText/properties/backingField")

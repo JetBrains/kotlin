@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.swiftexport.standalone;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,6 +21,12 @@ public class SwiftExportRunnerTest extends AbstractSwiftRunnerTest {
   @Test
   public void testAllFilesPresentInTestData() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
+
+  @Test
+  @TestMetadata("classes")
+  public void testClasses() {
+    runTest("native/swift/swift-export-standalone/testData/classes/");
   }
 
   @Test

@@ -43,6 +43,8 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     override val lockFileName: String = LockCopyTask.PACKAGE_LOCK
 
     override val setProperty: (String) -> String = { ".set($it)" }
+
+    override val mismatchReportMessage: String = PACKAGE_LOCK_MISMATCH_MESSAGE
 }
 
 class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
@@ -69,6 +71,8 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
     override val lockFileName: String = LockCopyTask.YARN_LOCK
 
     override val setProperty: (String) -> String = { " = $it" }
+
+    override val mismatchReportMessage: String = YarnPlugin.YARN_LOCK_MISMATCH_MESSAGE
 }
 
 @JsGradlePluginTests
@@ -97,6 +101,8 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
     abstract val lockFileName: String
 
     abstract val setProperty: (String) -> String
+
+    abstract val mismatchReportMessage: String
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
@@ -247,7 +253,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             assertTasksExecuted(":$restoreTaskName")
             assertTasksExecuted(":$storeTaskName")
 
-            assertOutputContains(PACKAGE_LOCK_MISMATCH_MESSAGE)
+            assertOutputContains(mismatchReportMessage)
         }
 
         build(upgradeTaskName) {
@@ -276,7 +282,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             assertTasksExecuted(":$restoreTaskName")
             assertTasksExecuted(":$storeTaskName")
 
-            assertOutputDoesNotContain(PACKAGE_LOCK_MISMATCH_MESSAGE)
+            assertOutputDoesNotContain(mismatchReportMessage)
         }
 
         build(upgradeTaskName) {
@@ -312,7 +318,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             assertTasksSkipped(":$restoreTaskName")
             assertTasksExecuted(":$storeTaskName")
 
-            assertOutputDoesNotContain(PACKAGE_LOCK_MISMATCH_MESSAGE)
+            assertOutputDoesNotContain(mismatchReportMessage)
         }
 
         buildGradleKts.modify {

@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,12 +25,10 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import kotlin.properties.ReadWriteProperty
 
 abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
-    components: Fir2IrComponents,
+    protected val c: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
@@ -40,7 +36,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override var parent: IrDeclarationParent,
     override var isFakeOverride: Boolean
 ) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
-    Fir2IrComponents by components {
+    Fir2IrComponents by c {
 
     override lateinit var typeParameters: List<IrTypeParameter>
 
@@ -81,7 +77,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     }
 
     override var visibility: DescriptorVisibility by lazyVar(lock) {
-        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+        c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
     }
 
     override var modality: Modality
@@ -99,17 +95,12 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     protected fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
         return !fir.isStatic && !containingClass.isFacadeClass &&
-                (!containingClass.isObject || containingClass.isCompanion || !hasJvmStaticAnnotation())
-    }
-
-    private fun hasJvmStaticAnnotation(): Boolean {
-        return fir.hasAnnotation(JVM_STATIC_CLASS_ID, session) ||
-                (fir as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(JVM_STATIC_CLASS_ID, session) == true
+                (!containingClass.isObject || containingClass.isCompanion || !extensions.isTrueStatic(fir, session))
     }
 
     protected fun createThisReceiverParameter(thisType: IrType, explicitReceiver: FirReceiverParameter? = null): IrValueParameter {
         declarationStorage.enterScope(this.symbol)
-        return declareThisReceiverParameter(thisType, origin, explicitReceiver = explicitReceiver).apply {
+        return declareThisReceiverParameter(c, thisType, origin, explicitReceiver = explicitReceiver).apply {
             declarationStorage.leaveScope(this@AbstractFir2IrLazyFunction.symbol)
         }
     }
@@ -126,9 +117,5 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override fun lazyParent(): IrDeclarationParent {
         return super<AbstractFir2IrLazyDeclaration>.lazyParent()
-    }
-
-    companion object {
-        private val JVM_STATIC_CLASS_ID = ClassId.topLevel(JVM_STATIC_ANNOTATION_FQ_NAME)
     }
 }

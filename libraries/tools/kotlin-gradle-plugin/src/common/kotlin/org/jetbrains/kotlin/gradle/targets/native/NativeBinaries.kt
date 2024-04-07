@@ -36,17 +36,12 @@ import java.io.File
  */
 sealed class NativeBinary(
     private val name: String,
-    baseNameProvided: String,
+    open var baseName: String,
     val buildType: NativeBuildType,
     @Transient
     var compilation: KotlinNativeCompilation
 ) : Named {
-    open var baseName: String
-        get() = baseNameProvider.get()
-        set(value) {
-            baseNameProvider = project.provider { value }
-        }
-    internal var baseNameProvider: Provider<String> = project.provider { baseNameProvided }
+    internal val baseNameProvider: Provider<String> = project.provider { baseName }
 
     internal val konanTarget: KonanTarget
         get() = compilation.konanTarget
@@ -84,6 +79,7 @@ sealed class NativeBinary(
     }
 
     /** Additional arguments passed to the Kotlin/Native compiler. */
+    @Suppress("DEPRECATION")
     var freeCompilerArgs: List<String>
         get() = linkTask.kotlinOptions.freeCompilerArgs
         set(value) {
@@ -111,9 +107,8 @@ sealed class NativeBinary(
         objects.directoryProperty().convention(layout.buildDirectory.dir("bin/$targetSubDirectory${this@NativeBinary.name}"))
     }
 
-    val outputFile: File by lazy {
-        linkTask.outputFile.get()
-    }
+    val outputFile: File
+        get() = linkTask.outputFile.get()
 
     // Named implementation.
     override fun getName(): String = name

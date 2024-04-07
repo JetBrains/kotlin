@@ -305,6 +305,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
   }
 
   @Test
+  @TestMetadata("incompleteCodeTypeArgument.kt")
+  public void testIncompleteCodeTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/incompleteCodeTypeArgument.kt");
+  }
+
+  @Test
   @TestMetadata("kdoc.kt")
   public void testKdoc() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdoc.kt");

@@ -13,11 +13,13 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMingw
 import java.io.File
+import javax.inject.Inject
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.addAll
@@ -41,7 +43,7 @@ open class NativePlugin : Plugin<Project> {
     }
 }
 
-abstract class ToolExecutionTask : DefaultTask() {
+abstract class ToolExecutionTask @Inject constructor(private val execOperations: ExecOperations): DefaultTask() {
     @get:OutputFile
     abstract var output: File
 
@@ -57,7 +59,7 @@ abstract class ToolExecutionTask : DefaultTask() {
     @TaskAction
     fun action() {
         if (output.exists()) output.delete()
-        project.exec {
+        execOperations.exec {
             executable(cmd)
             args(*this@ToolExecutionTask.args.toTypedArray())
         }
@@ -208,9 +210,7 @@ open class NativeToolsExtension(val project: Project) {
 
     fun target(name: String, vararg objSet: SourceSet, configuration: ToolPatternConfiguration) {
         project.tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME, Delete::class.java).configure {
-            doLast {
-                delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
-            }
+            delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
         }
 
         sourceSets.project.tasks.create(name, ToolExecutionTask::class.java) {

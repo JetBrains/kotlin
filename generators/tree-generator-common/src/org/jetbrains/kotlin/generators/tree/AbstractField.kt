@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tree
 
 abstract class AbstractField<Field : AbstractField<Field>> {
+    abstract val origin: Field
 
     abstract val name: String
 
@@ -20,17 +21,14 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     abstract val isFinal: Boolean
 
-    open var isLateinit: Boolean = false
-
     abstract val isParameter: Boolean
 
     open val arbitraryImportables: MutableList<Importable> = mutableListOf()
 
     open var optInAnnotation: ClassRef<*>? = null
+    open var replaceOptInAnnotation: ClassRef<*>? = null
 
     abstract var isMutable: Boolean
-    open val withGetter: Boolean get() = false
-    open val customSetter: String? get() = null
 
     open var customInitializationCall: String? = null
 
@@ -49,7 +47,20 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val containsElement: Boolean
         get() = typeRef is ElementOrRef<*> || this is ListField && baseType is ElementOrRef<*>
 
-    open val defaultValueInImplementation: String? get() = null
+    /**
+     * Indicates how the field will be initialized.
+     *
+     * Null value means that the initialization strategy has not been explicitly configured,
+     * and it will be inherited from an ancestor element, or assigned a default strategy
+     * of [ImplementationDefaultStrategy.Required].
+     *
+     * @see org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator.inheritImplementationFieldSpecifications .
+     */
+    open var implementationDefaultStrategy: ImplementationDefaultStrategy? = null
+
+    abstract var defaultValueInBuilder: String?
+
+    abstract var customSetter: String?
 
     /**
      * @see org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes
@@ -64,7 +75,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      *
      * Only has effect if [containsElement] is `true`.
      */
-    var isChild: Boolean = true
+    abstract val isChild: Boolean
 
     open val overriddenTypes: MutableSet<TypeRefWithNullability> = mutableSetOf()
 
@@ -98,15 +109,42 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     protected open fun updateFieldsInCopy(copy: Field) {
         copy.kDoc = kDoc
-        copy.isLateinit = isLateinit
         copy.arbitraryImportables += arbitraryImportables
         copy.optInAnnotation = optInAnnotation
+        copy.replaceOptInAnnotation = replaceOptInAnnotation
         copy.isMutable = isMutable
         copy.deprecation = deprecation
         copy.visibility = visibility
         copy.fromParent = fromParent
         copy.useInBaseTransformerDetection = useInBaseTransformerDetection
-        copy.isChild = isChild
         copy.overriddenTypes += overriddenTypes
+        copy.implementationDefaultStrategy = implementationDefaultStrategy
+    }
+
+    sealed interface ImplementationDefaultStrategy {
+        open val defaultValue: String?
+            get() = null
+        open val withGetter: Boolean
+            get() = false
+
+
+        /**
+         * The field will have to be initialized explicitly in the implementation class constructor.
+         */
+        data object Required : ImplementationDefaultStrategy
+
+        /**
+         * The field will be `lateinit var`.
+         */
+        data object Lateinit : ImplementationDefaultStrategy
+
+        /**
+         * - If [withGetter] == false - the field will be a stored property, initialized to [defaultValue].
+         * - If [withGetter] == true - the field will be a computed property, with getter returning [defaultValue].
+         */
+        data class DefaultValue(
+            override val defaultValue: String,
+            override val withGetter: Boolean,
+        ) : ImplementationDefaultStrategy
     }
 }

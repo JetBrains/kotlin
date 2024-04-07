@@ -356,10 +356,15 @@ class NewConstraintSystemImpl(
         // in `otherSystem` from `this.notFixedTypeVariables`, too
         if (clearNotFixedTypeVariables) {
             notFixedTypeVariables.clear()
+            typeVariableDependencies.clear()
         }
 
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+        }
+
+        for ((variable, variablesThatReferenceGivenOne) in otherSystem.typeVariableDependencies) {
+            typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
         }
 
         val currentInitialConstraints = storage.initialConstraints.toSet()
@@ -456,6 +461,15 @@ class NewConstraintSystemImpl(
         get() {
             checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
             return storage.notFixedTypeVariables
+        }
+
+    /**
+     * @see org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.typeVariableDependencies
+     */
+    override val typeVariableDependencies: MutableMap<TypeConstructorMarker, MutableSet<TypeConstructorMarker>>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.typeVariableDependencies
         }
 
     override val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker>
@@ -582,7 +596,14 @@ class NewConstraintSystemImpl(
         checkMissedConstraints()
 
         val freshTypeConstructor = variable.freshTypeConstructor()
-        val variableWithConstraints = notFixedTypeVariables.remove(freshTypeConstructor)
+        val variableWithConstraints =
+            notFixedTypeVariables.remove(freshTypeConstructor) ?: error("Seems that $variable is being fixed second time")
+
+        outerTypeVariables?.let { outerVariables ->
+            require(freshTypeConstructor !in outerVariables) {
+                "Outer type variables are not assumed to be fixed during nested calls analysis, but $variable is being fixed"
+            }
+        }
 
         for (otherVariableWithConstraints in notFixedTypeVariables.values) {
             otherVariableWithConstraints.removeConstrains { containsTypeVariable(it.type, freshTypeConstructor) }
@@ -792,5 +813,13 @@ class NewConstraintSystemImpl(
                 constraint.type.contains { it is StubTypeMarker && it.getOriginalTypeVariable() in postponedTypeVariables }
             }
         }
+    }
+
+    override fun recordTypeVariableReferenceInConstraint(
+        constraintOwner: TypeConstructorMarker,
+        referencedVariable: TypeConstructorMarker,
+    ) {
+        typeVariableDependencies.getOrPut(referencedVariable) { mutableSetOf() }
+            .add(constraintOwner)
     }
 }

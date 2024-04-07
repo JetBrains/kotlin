@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FIR_NON_SUPPRESSIBLE_ERROR_NAMES
@@ -50,7 +48,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         val annotationClassId = expression.toAnnotationClassId(context.session)
         val fqName = annotationClassId?.asSingleFqName()
         for (arg in argumentMapping.values) {
-            val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: (arg as? FirErrorExpression)?.expression ?: arg
+            val argExpression = (arg as? FirErrorExpression)?.expression ?: arg
             checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
                 ?.let { reporter.reportOn(argExpression.source, it, context) }
         }
@@ -101,13 +99,13 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 }
             }
             else -> {
-                return when (checkConstantArguments(expression, session)) {
+                return when (computeConstantExpressionKind(expression, session, calledOnCheckerStage = true)) {
                     ConstantArgumentKind.NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
                     ConstantArgumentKind.ENUM_NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
                     ConstantArgumentKind.NOT_KCLASS_LITERAL -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
                     ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR -> FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
                     ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
-                    ConstantArgumentKind.VALID_CONST ->
+                    ConstantArgumentKind.VALID_CONST, ConstantArgumentKind.RESOLUTION_ERROR ->
                         //try to go deeper if we are not sure about this function call
                         //to report non-constant val in not fully resolved calls
                         if (expression is FirFunctionCall) checkArgumentList(expression.argumentList)
@@ -123,8 +121,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): ApiVersion? {
-        val constantExpression = (expression as? FirLiteralExpression<*>)
-            ?: ((expression as? FirNamedArgumentExpression)?.expression as? FirLiteralExpression<*>) ?: return null
+        val constantExpression = (expression as? FirLiteralExpression<*>) ?: return null
         val stringValue = constantExpression.value as? String ?: return null
         if (!stringValue.matches(RequireKotlinConstants.VERSION_REGEX)) {
             reporter.reportOn(expression.source, FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE, context)

@@ -61,6 +61,8 @@ abstract class KotlinCompile @Inject constructor(
     K2MultiplatformCompilationTask,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl {
 
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
     final override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsCompat(
         { this },
         compilerOptions
@@ -263,15 +265,17 @@ abstract class KotlinCompile @Inject constructor(
         }
 
         sources { args ->
-            if (compilerOptions.usesK2.get()) {
-                args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourceFileFilter)
-            } else {
-                args.commonSources = commonSourceSet.asFileTree.toPathsArray()
-            }
-
             val sourcesFiles = sources.asFileTree.files.toList()
             val javaSourcesFiles = javaSources.files.toList()
             val scriptSourcesFiles = scriptSources.asFileTree.files.toList()
+
+            if (multiPlatformEnabled.get()) {
+                if (compilerOptions.usesK2.get()) {
+                    args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourcesFiles, sourceFileFilter)
+                } else {
+                    args.commonSources = commonSourceSet.asFileTree.toPathsArray()
+                }
+            }
 
             if (logger.isInfoEnabled) {
                 logger.info("Kotlin source files: ${sourcesFiles.joinToString()}")

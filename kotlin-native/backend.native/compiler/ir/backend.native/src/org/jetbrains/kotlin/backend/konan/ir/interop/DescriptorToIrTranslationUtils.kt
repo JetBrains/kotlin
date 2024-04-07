@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -95,7 +94,7 @@ internal interface DescriptorToIrTranslationMixin {
                         visibility,
                         isInline,
                         isExpect,
-                        IrUninitializedType,
+                        constructorDescriptor.returnType.toIrType(),
                         it,
                         isPrimary,
                         isEffectivelyExternal(),
@@ -110,7 +109,6 @@ internal interface DescriptorToIrTranslationMixin {
                 it.parent = irConstructor
             }
         }
-        irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         irConstructor.generateAnnotations()
         return irConstructor
     }

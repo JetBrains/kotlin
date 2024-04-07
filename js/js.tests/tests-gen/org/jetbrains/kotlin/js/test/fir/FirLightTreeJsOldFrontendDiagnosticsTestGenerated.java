@@ -44,6 +44,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("externalTypeInheritsExternalTypeViaTypeAlias.kt")
+  public void testExternalTypeInheritsExternalTypeViaTypeAlias() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalTypeInheritsExternalTypeViaTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("funConstructorCallJS.kt")
   public void testFunConstructorCallJS() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");
@@ -71,6 +77,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   @TestMetadata("jsExternalSuperclassWithoutArguments.kt")
   public void testJsExternalSuperclassWithoutArguments() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalSuperclassWithoutArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("jsStatic.kt")
+  public void testJsStatic() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsStatic.kt");
   }
 
   @Test
@@ -987,6 +999,18 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("inlineClassAsParameterOrReturnTypeWhenPropertyParametersAllowed.kt.kt")
+    public void testInlineClassAsParameterOrReturnTypeWhenPropertyParametersAllowed_kt() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnTypeWhenPropertyParametersAllowed.kt.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassAsParameterOrReturnTypeWithPropertyParameters_allowed.kt.kt")
+    public void testInlineClassAsParameterOrReturnTypeWithPropertyParameters_allowed_kt() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnTypeWithPropertyParameters_allowed.kt.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClassAsParameterOrReturnType_allowed.kt.kt")
     public void testInlineClassAsParameterOrReturnType_allowed_kt() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnType_allowed.kt.kt");
@@ -996,6 +1020,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("inlineClassAsParameterOrReturnType.kt.kt")
     public void testInlineClassAsParameterOrReturnType_kt() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnType.kt.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassWithAllowedPropertyParameter.kt")
+    public void testInlineClassWithAllowedPropertyParameter() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassWithAllowedPropertyParameter.kt");
     }
 
     @Test
@@ -1038,6 +1068,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("propertyParameter.kt")
     public void testPropertyParameter() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/propertyParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyParameterWhenItsAllowed.kt")
+    public void testPropertyParameterWhenItsAllowed() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/propertyParameterWhenItsAllowed.kt");
     }
 
     @Test

@@ -12,7 +12,16 @@ package foo;
 @kotlin.Metadata()
 public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
 
-    public default void foo() {
+    public abstract void foo();
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull() foo.InterfaceWithDefaults<T> $this) {
+        }
     }
 }
 

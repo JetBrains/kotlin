@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.wasm.lower
+package org.jetbrains.kotlin.backend.wasm.lower
 
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -21,29 +22,28 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
  * Find single most appropriate main function and call with empty arguments from
  * [WasmBackendContext.mainCallsWrapperFunction].
  */
-fun generateMainFunctionCalls(
-    context: WasmBackendContext,
-    module: IrModuleFragment
-) {
-    val mainFunction = JsMainFunctionDetector(context).getMainFunctionOrNull(module) ?: return
-    val generateArgv = mainFunction.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
-    val generateContinuation = mainFunction.isLoweredSuspendFunction(context)
-    with(context.createIrBuilder(context.mainCallsWrapperFunction.symbol)) {
-        val argv = if (generateArgv) {
-            context.createArrayOfExpression(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, emptyList())
-        } else {
-            null
-        }
-
-        val continuation =
-            if (generateContinuation) {
-                irCall(context.wasmSymbols.coroutineEmptyContinuation.owner.getter!!)
+class GenerateMainFunctionCalls(private val backendContext: WasmBackendContext) : ModuleLoweringPass {
+    override fun lower(irModule: IrModuleFragment) {
+        val mainFunction = JsMainFunctionDetector(backendContext).getMainFunctionOrNull(irModule) ?: return
+        val generateArgv = mainFunction.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
+        val generateContinuation = mainFunction.isLoweredSuspendFunction(backendContext)
+        with(backendContext.createIrBuilder(backendContext.mainCallsWrapperFunction.symbol)) {
+            val argv = if (generateArgv) {
+                backendContext.createArrayOfExpression(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, emptyList())
             } else {
                 null
             }
 
-        (context.mainCallsWrapperFunction.body as IrBlockBody).statements += irCall(mainFunction).also { call ->
-            listOfNotNull(argv, continuation).forEachIndexed { index: Int, arg: IrExpression -> call.putValueArgument(index, arg) }
+            val continuation =
+                if (generateContinuation) {
+                    irCall(backendContext.wasmSymbols.coroutineEmptyContinuation.owner.getter!!)
+                } else {
+                    null
+                }
+
+            (backendContext.mainCallsWrapperFunction.body as IrBlockBody).statements += irCall(mainFunction).also { call ->
+                listOfNotNull(argv, continuation).forEachIndexed { index: Int, arg: IrExpression -> call.putValueArgument(index, arg) }
+            }
         }
     }
 }

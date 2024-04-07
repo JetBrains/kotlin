@@ -2,7 +2,6 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-// K2: false positve INCOMPATIBLE_MATCHING: KT-60155
 public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
     override val values: MutableCollection<V>
 }

@@ -278,4 +278,12 @@ private class SignatureParts(
 
     override val TypeParameterMarker.isFromJava: Boolean
         get() = this is LazyJavaTypeParameterDescriptor
+
+    override fun getDefaultNullability(
+        referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
+        defaultTypeQualifiers: JavaDefaultQualifiers?
+    ): NullabilityQualifierWithMigrationStatus? {
+        return referencedParameterBoundsNullability?.copy(qualifier = NullabilityQualifier.NOT_NULL)
+            ?: defaultTypeQualifiers?.nullabilityQualifier
+    }
 }

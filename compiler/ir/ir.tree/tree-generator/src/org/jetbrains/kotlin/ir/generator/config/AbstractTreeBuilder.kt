@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.ir.generator.model.ElementOrRef
 import org.jetbrains.kotlin.ir.generator.model.ElementRef
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.model.Model
+import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
@@ -25,8 +25,8 @@ abstract class AbstractTreeBuilder {
         customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.No
     }
 
-    protected fun Field.useFieldInIrFactory(defaultValue: String? = null) {
-        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(defaultValue)
+    protected fun Field.useFieldInIrFactory(customType: TypeRef? = null, defaultValue: String? = null) {
+        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(customType, defaultValue)
     }
 
     fun element(category: Element.Category, name: String? = null, initializer: Element.() -> Unit = {}): ElementDelegate {
@@ -78,8 +78,7 @@ abstract class AbstractTreeBuilder {
         isChild: Boolean = true,
         initializer: SingleField.() -> Unit = {}
     ): SingleField {
-        return SingleField(name, type.copy(nullable), mutable).apply {
-            this.isChild = isChild
+        return SingleField(name, type.copy(nullable), mutable, isChild).apply {
             initializer()
         }
     }
@@ -103,8 +102,8 @@ abstract class AbstractTreeBuilder {
             listType = listType,
             isNullable = nullable,
             mutable = mutability == ListField.Mutability.Var,
+            isChild = isChild,
         ).apply(initializer).apply {
-            this.isChild = isChild
             initializer()
         }
     }

@@ -1,0 +1,78 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+import androidx.compose.ui.layout.*
+import androidx.compose.foundation.text.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.*
+
+@Immutable
+interface LocalBoxScope {
+    @Stable
+    fun Modifier.align(alignment: Alignment): Modifier
+}
+
+object LocalBoxScopeInstance : LocalBoxScope {
+    override fun Modifier.align(alignment: Alignment): Modifier = Modifier
+}
+
+val localBoxMeasurePolicy = MeasurePolicy { _, constraints ->
+    layout(
+        constraints.minWidth,
+        constraints.minHeight
+    ) {}
+}
+
+@Composable
+inline fun LocalBox(
+    modifier: Modifier = Modifier,
+    content: @Composable LocalBoxScope.() -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        measurePolicy = localBoxMeasurePolicy,
+        content = { LocalBoxScopeInstance.content() }
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Immutable
+interface LocalBoxScope {
+  @Stable
+  abstract fun Modifier.align(alignment: Alignment): Modifier
+}
+@StabilityInferred(parameters = 1)
+object LocalBoxScopeInstance : LocalBoxScope {
+  override fun Modifier.align(alignment: Alignment): Modifier {
+    return Companion
+  }
+  static val %stable: Int = 0
+}
+val localBoxMeasurePolicy: MeasurePolicy = MeasurePolicy { <unused var>: List<Measurable>, constraints: Constraints ->
+  %this%MeasurePolicy.layout(
+    width = constraints.minWidth,
+    height = constraints.minHeight
+  ) {
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
+fun LocalBox(modifier: Modifier?, content: @[ExtensionFunctionType] Function3<LocalBoxScope, Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(LocalBox)P(1)<Layout...>:Test.kt")
+  if (%default and 0b0001 != 0) {
+    modifier = Companion
+  }
+  val tmp0_measurePolicy = localBoxMeasurePolicy
+  Layout({ %composer: Composer?, %changed: Int ->
+    sourceInformationMarkerStart(%composer, <>, "C<conten...>:Test.kt")
+    content(LocalBoxScopeInstance, %composer, 0b0110 or 0b01110000 and %changed@LocalBox)
+    sourceInformationMarkerEnd(%composer)
+  }, modifier, tmp0_measurePolicy, %composer, 0b000110000000 or 0b01110000 and %changed shl 0b0011, 0)
+  sourceInformationMarkerEnd(%composer)
+}

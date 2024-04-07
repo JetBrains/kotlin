@@ -21,10 +21,10 @@ class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   protected_and_package /* fake */ override fun clone(): Any?
 
   // CHECK JVM_IR:
-  //   Mangled name: MyMap#compute(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1?,out|1:1?>{EnhancedNullability}){}1:1?
-  //   Public signature: /MyMap.compute|8707373617613354757[0]
-  //   Public signature debug description: compute(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1?,out|1:1?>{EnhancedNullability}){}1:1?
-  /* fake */ override fun compute(p0: @EnhancedNullability K, p1: @EnhancedNullability BiFunction<in @EnhancedNullability K, in V?, out V?>): V?
+  //   Mangled name: MyMap#compute(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1?{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.compute|4714573429337571093[0]
+  //   Public signature debug description: compute(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1?{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun compute(p0: @EnhancedNullability K, p1: @EnhancedNullability BiFunction<in @EnhancedNullability K, in @EnhancedNullability V?, out @EnhancedNullability V?>): @EnhancedNullability V?
 
   // CHECK JVM_IR:
   //   Mangled name: MyMap#computeIfAbsent(1:0{EnhancedNullability};java.util.function.Function<in|1:0{EnhancedNullability},out|1:1{EnhancedNullability}>{EnhancedNullability}){}1:1{EnhancedNullability}
@@ -33,12 +33,10 @@ class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   /* fake */ override fun computeIfAbsent(p0: @EnhancedNullability K, p1: @EnhancedNullability Function<in @EnhancedNullability K, out @EnhancedNullability V>): @EnhancedNullability V
 
   // CHECK JVM_IR:
-  //   Mangled name: MyMap#computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
-  //   Mangled name for the signature by IR:       computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
-  //   Mangled name for the signature by Frontend: computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?>{EnhancedNullability}){}1:1?
-  //   Public signature: /MyMap.computeIfPresent|-2673672788318360066[0]
-  //   Public signature debug description: computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
-  /* fake */ override fun computeIfPresent(p0: @EnhancedNullability K, p1: @EnhancedNullability BiFunction<in @EnhancedNullability K, in V, out V?>): V?
+  //   Mangled name: MyMap#computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.computeIfPresent|-5841525018102765873[0]
+  //   Public signature debug description: computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun computeIfPresent(p0: @EnhancedNullability K, p1: @EnhancedNullability BiFunction<in @EnhancedNullability K, in @EnhancedNullability (V & Any), out @EnhancedNullability V?>): @EnhancedNullability V?
 
   // CHECK JVM_IR:
   //   Mangled name: MyMap#containsKey(1:0){}kotlin.Boolean
@@ -83,12 +81,10 @@ class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   /* fake */ override fun isEmpty(): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: MyMap#merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1,in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
-  //   Mangled name for the signature by IR:       merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1,in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
-  //   Mangled name for the signature by Frontend: merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?>{EnhancedNullability}){}1:1?
-  //   Public signature: /MyMap.merge|5136195963180492586[0]
-  //   Public signature debug description: merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1,in|1:1,out|1:1?>{EnhancedNullability}){}1:1?
-  /* fake */ override fun merge(p0: @EnhancedNullability K, p1: @EnhancedNullability (V & Any), p2: @EnhancedNullability BiFunction<in V, in V, out V?>): V?
+  //   Mangled name: MyMap#merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.merge|5784030730910430027[0]
+  //   Public signature debug description: merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun merge(p0: @EnhancedNullability K, p1: @EnhancedNullability (V & Any), p2: @EnhancedNullability BiFunction<in @EnhancedNullability (V & Any), in @EnhancedNullability (V & Any), out @EnhancedNullability V?>): @EnhancedNullability V?
 
   // CHECK:
   //   Mangled name: MyMap#putAll(kotlin.collections.Map<out|1:0,1:1>){}
@@ -97,10 +93,10 @@ class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   /* fake */ override fun putAll(from: Map<out K, V>): Unit
 
   // CHECK JVM_IR:
-  //   Mangled name: MyMap#putIfAbsent(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?
-  //   Public signature: /MyMap.putIfAbsent|-8436525025860060266[0]
-  //   Public signature debug description: putIfAbsent(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?
-  /* fake */ override fun putIfAbsent(p0: @EnhancedNullability K, p1: @EnhancedNullability V): V?
+  //   Mangled name: MyMap#putIfAbsent(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.putIfAbsent|-6480034727897367684[0]
+  //   Public signature debug description: putIfAbsent(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun putIfAbsent(p0: @EnhancedNullability K, p1: @EnhancedNullability V): @EnhancedNullability V?
 
   // CHECK JVM_IR:
   //   Mangled name: MyMap#remove(1:0){}1:1?
@@ -109,10 +105,10 @@ class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   /* fake */ override fun remove(key: K): V?
 
   // CHECK JVM_IR:
-  //   Mangled name: MyMap#replace(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?
-  //   Public signature: /MyMap.replace|5602916868878322979[0]
-  //   Public signature debug description: replace(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?
-  /* fake */ override fun replace(p0: @EnhancedNullability K, p1: @EnhancedNullability V): V?
+  //   Mangled name: MyMap#replace(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.replace|2326634020395552533[0]
+  //   Public signature debug description: replace(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun replace(p0: @EnhancedNullability K, p1: @EnhancedNullability V): @EnhancedNullability V?
 
   // CHECK JVM_IR:
   //   Mangled name: MyMap#replace(1:0{EnhancedNullability};1:1{EnhancedNullability};1:1{EnhancedNullability}){}kotlin.Boolean

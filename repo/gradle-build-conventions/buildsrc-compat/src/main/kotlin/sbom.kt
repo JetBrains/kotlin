@@ -60,17 +60,14 @@ fun Project.configureSbom(
         })
     }
 
-    val sbomOutputDirectory = layout.buildDirectory.dir("spdx/$targetName")
     val spdxSbomTask = tasks.named<SpdxSbomTask>("spdxSbomFor$targetName") {
-        outputDirectory.set(sbomOutputDirectory)
     }
-    val sbomFile = sbomOutputDirectory.map { it.file("$targetName.spdx.json") }
     val sbomCfg = configurations.maybeCreate("sbomFor$targetName").apply {
         isCanBeResolved = false
         isCanBeConsumed = true
     }
 
-    val sbomArtifact = artifacts.add(sbomCfg.name, sbomFile) {
+    val sbomArtifact = artifacts.add(sbomCfg.name, spdxSbomTask) {
         type = "sbom"
         extension = "spdx.json"
         builtBy(spdxSbomTask)

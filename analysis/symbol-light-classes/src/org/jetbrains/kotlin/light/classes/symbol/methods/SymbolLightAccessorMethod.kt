@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.toFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
@@ -215,13 +216,13 @@ internal class SymbolLightAccessorMethod private constructor(
                         if (nullabilityApplicable) {
                             withPropertySymbol { propertySymbol ->
                                 when {
-                                    propertySymbol.isLateInit -> NullabilityType.NotNull
-                                    forceBoxedReturnType(propertySymbol) -> NullabilityType.NotNull
+                                    propertySymbol.isLateInit -> KtTypeNullability.NON_NULLABLE
+                                    forceBoxedReturnType(propertySymbol) -> KtTypeNullability.NON_NULLABLE
                                     else -> getTypeNullability(propertySymbol.returnType)
                                 }
                             }
                         } else {
-                            NullabilityType.Unknown
+                            KtTypeNullability.UNKNOWN
                         }
                     },
                     MethodAdditionalAnnotationsProvider
@@ -269,11 +270,19 @@ internal class SymbolLightAccessorMethod private constructor(
                 allowErrorTypes = true,
                 typeMappingMode,
                 containingClass.isAnnotationType,
+                suppressWildcards(),
             )
         } ?: nonExistentType()
     }
 
     override fun getReturnType(): PsiType = _returnedType
+
+    override fun suppressWildcards(): Boolean? =
+        withAccessorSymbol { accessorSymbol ->
+            accessorSymbol.suppressWildcardMode { parent ->
+                parent !is KtPropertySymbol
+            }
+        }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         return super.isEquivalentTo(another) || basicIsEquivalentTo(this, another as? PsiField)

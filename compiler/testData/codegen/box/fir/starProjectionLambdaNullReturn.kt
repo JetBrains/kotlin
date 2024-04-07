@@ -1,6 +1,6 @@
 // ISSUE: KT-64261
 // DUMP_IR
-// JVM_ABI_K1_K2_DIFF: KT-62855, KT-62550
+// JVM_ABI_K1_K2_DIFF: KT-62855, KT-66280
 interface I<T : Any> {
     fun foo(func: () -> T?)
 }

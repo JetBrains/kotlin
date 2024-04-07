@@ -24,19 +24,19 @@ fun throws() {
 
 // FILE: entry.mjs
 
-import wasmExports from "./index.mjs";
+import { add, sumNumbers, throws } from "./index.mjs";
 
-if (wasmExports.add(10, 20) !== 30) {
+if (add(10, 20) !== 30) {
     throw "Fail add";
 }
 
-if (wasmExports.sumNumbers(10) !== 55) {
+if (sumNumbers(10) !== 55) {
     throw "Fail sumNumbers";
 }
 
 var thrown = false;
 try {
-    wasmExports.throws();
+    throws();
 } catch(e) {
     thrown = true;
 }

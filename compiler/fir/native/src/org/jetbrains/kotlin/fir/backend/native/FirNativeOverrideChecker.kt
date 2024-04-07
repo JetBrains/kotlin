@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.fir.backend.native
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.native.interop.decodeObjCMethodAnnotation
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.backend.native.interop.isObjCClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.*
 
 /**
  * The same code, as in this class also exists in [org.jetbrains.kotlin.ir.objcinterop.ObjCOverridabilityCondition]
@@ -29,6 +33,18 @@ class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChe
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean =
         // KT-57640: There's no necessity to implement platform-dependent overridability check for properties
         standardOverrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
+
+    override fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
+        dispatchClassSymbol: FirRegularClassSymbol?,
+    ): Visibility {
+        return chooseIntersectionVisibilityOrNull(overrides) { it.isAbstractAccordingToRawStatus || it.isObjCClassPropertyOrAccessor(session) }
+            ?: Visibilities.Unknown
+    }
+
+    private fun FirCallableSymbol<*>.isObjCClassPropertyOrAccessor(session: FirSession) =
+        (this is FirPropertySymbol || this is FirPropertyAccessorSymbol)
+                && (containingClassLookupTag()?.toSymbol(session) as? FirClassSymbol<*>)?.isObjCClass(session) ?: false
 
     /**
      * mimics ObjCOverridabilityCondition.isOverridable

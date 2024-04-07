@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,9 @@ private class ImplementationFieldPrinter(printer: SmartPrinter) : AbstractFieldP
     override fun forceMutable(field: FieldWithDefault): Boolean = field.isMutable && field.isMutableOrEmptyIfList()
 
     override fun actualTypeOfField(field: FieldWithDefault) = field.getMutableType()
+
+    override val wrapOptInAnnotations
+        get() = true
 }
 
 internal class ImplementationPrinter(
@@ -48,15 +51,13 @@ internal class ImplementationPrinter(
             when (this) {
                 is FieldWithDefault -> origin.transform()
 
-                is FirField ->
+                is SimpleField ->
                     println("$name = ${name}${call()}transform(transformer, data)")
 
                 is FieldList -> {
                     addImport(transformInPlaceImport)
                     println("${name}.transformInplace(transformer, data)")
                 }
-
-                else -> throw IllegalStateException()
             }
         }
         with(implementation) {
@@ -69,10 +70,9 @@ internal class ImplementationPrinter(
                         !element.typeName.contains("Reference")
                         && !element.typeName.contains("ResolvedQualifier")
                         && !element.typeName.endsWith("Ref")
-                        && !element.typeName.endsWith("AnnotationsContainer")
             }.orEmpty()
 
-            val customCalls = fieldsWithoutDefault.filter { it.customInitializationCall != null }
+            val customCalls = fieldsInConstructor.filter { it.customInitializationCall != null }
             if (bindingCalls.isNotEmpty() || customCalls.isNotEmpty()) {
                 println()
                 println("init {")
@@ -102,9 +102,9 @@ internal class ImplementationPrinter(
                         for (field in walkableFields) {
                             when (field.name) {
                                 "explicitReceiver" -> {
-                                    val explicitReceiver = implementation["explicitReceiver"]!!
-                                    val dispatchReceiver = implementation["dispatchReceiver"]!!
-                                    val extensionReceiver = implementation["extensionReceiver"]!!
+                                    val explicitReceiver = implementation["explicitReceiver"]
+                                    val dispatchReceiver = implementation["dispatchReceiver"]
+                                    val extensionReceiver = implementation["extensionReceiver"]
                                     println(
                                         """
                                     |${explicitReceiver.acceptString()}
@@ -135,7 +135,7 @@ internal class ImplementationPrinter(
                                         )
                                     } else {
                                         when (field.origin) {
-                                            is FirField -> {
+                                            is SimpleField -> {
                                                 println(field.acceptString())
                                             }
 
@@ -168,9 +168,9 @@ internal class ImplementationPrinter(
                         for (field in transformableChildren) {
                             when {
                                 field.name == "explicitReceiver" -> {
-                                    val explicitReceiver = implementation["explicitReceiver"]!!
-                                    val dispatchReceiver = implementation["dispatchReceiver"]!!
-                                    val extensionReceiver = implementation["extensionReceiver"]!!
+                                    val explicitReceiver = implementation["explicitReceiver"]
+                                    val dispatchReceiver = implementation["dispatchReceiver"]
+                                    val extensionReceiver = implementation["extensionReceiver"]
                                     if (explicitReceiver.isMutable) {
                                         println("explicitReceiver = explicitReceiver${explicitReceiver.call()}transform(transformer, data)")
                                     }
@@ -300,7 +300,7 @@ internal class ImplementationPrinter(
                 val newValue = "new$capitalizedFieldName"
                 generateReplace(field, forceNullable = field.useNullableForReplace) {
                     when {
-                        field.withGetter -> {}
+                        field.implementationDefaultStrategy!!.withGetter -> {}
 
                         field.origin is FieldList && !field.isMutableOrEmptyList -> {
                             println("${field.name}.clear()")

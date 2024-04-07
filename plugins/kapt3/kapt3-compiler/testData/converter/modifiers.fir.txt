@@ -274,6 +274,10 @@ package modifiers;
  *
  *   // nested class: Four
  *
+ *   // sealed subclass: modifiers/SealedClass.One
+ *
+ *   // sealed subclass: modifiers/SealedClass.Two
+ *
  *   // module name: main
  * }
  */

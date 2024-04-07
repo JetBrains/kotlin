@@ -19,13 +19,9 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class Fir2IrBuiltIns(
-    private val components: Fir2IrComponents,
-    private val provider: Fir2IrSpecialSymbolProvider
-) : Fir2IrComponents by components {
-    init {
-        provider.initComponents(components)
-    }
-
+    private val c: Fir2IrComponents,
+    private val provider: Fir2IrSpecialSymbolProvider?,
+) : Fir2IrComponents by c {
     // ---------------------- special annotations ----------------------
 
     private val enhancedNullabilityAnnotationIrSymbol by lazy {
@@ -70,7 +66,7 @@ class Fir2IrBuiltIns(
     }
 
     private val extensionFunctionTypeAnnotationSymbol by lazy {
-        extensionFunctionTypeAnnotationFirSymbol?.toSymbol(ConversionTypeOrigin.DEFAULT) as? IrClassSymbol
+        extensionFunctionTypeAnnotationFirSymbol?.toSymbol(c, ConversionTypeOrigin.DEFAULT) as? IrClassSymbol
     }
 
     internal fun extensionFunctionTypeAnnotationConstructorCall(): IrConstructorCall? =
@@ -79,7 +75,7 @@ class Fir2IrBuiltIns(
     // ---------------------- utils ----------------------
 
     private fun specialAnnotationIrSymbolById(classId: ClassId): IrClassSymbol? {
-        return provider.getClassSymbolById(classId)
+        return provider?.getClassSymbolById(classId)
     }
 
     private fun regularAnnotationFirSymbolById(id: ClassId): FirRegularClassSymbol? {
@@ -91,7 +87,7 @@ class Fir2IrBuiltIns(
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             owner.declarations.firstIsInstance<IrConstructor>().symbol
         } else {
-            val firConstructorSymbol = firSymbol.unsubstitutedScope().getDeclaredConstructors().singleOrNull() ?: return null
+            val firConstructorSymbol = firSymbol.unsubstitutedScope(c).getDeclaredConstructors().singleOrNull() ?: return null
 
             declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
         }

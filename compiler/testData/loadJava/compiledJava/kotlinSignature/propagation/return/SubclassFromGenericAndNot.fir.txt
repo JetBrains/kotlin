@@ -1,6 +1,6 @@
 public abstract interface SubclassFromGenericAndNot : R|kotlin/Any| {
     public abstract interface Generic<T : R|kotlin/Any!|> : R|kotlin/Any| {
-        public abstract fun foo(): R|ft<T & Any, T?>|
+        public abstract fun foo(): R|T!|
 
         public abstract fun dummy(): R|kotlin/Unit|
 

@@ -30,8 +30,9 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         if (declaration !is FirContractDescriptionOwner) return
         val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return
 
+        val reportedNotAllowed = checkContractNotAllowed(declaration, contractDescription, context, reporter)
+        if (reportedNotAllowed) return
         checkUnresolvedEffects(contractDescription, context, reporter)
-        checkContractNotAllowed(declaration, contractDescription, context, reporter)
         if (contractDescription.effects.isEmpty() && contractDescription.unresolvedEffects.isEmpty()) {
             reporter.reportOn(contractDescription.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, EMPTY_CONTRACT_MESSAGE, context)
         }
@@ -57,9 +58,9 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         contractDescription: FirResolvedContractDescription,
         context: CheckerContext,
         reporter: DiagnosticReporter
-    ) {
+    ): Boolean {
         val source = contractDescription.source
-        if (source?.kind !is KtRealSourceElementKind) return
+        if (source?.kind !is KtRealSourceElementKind) return false
 
         fun contractNotAllowed(message: String) = reporter.reportOn(source, FirErrors.CONTRACT_NOT_ALLOWED, message, context)
 
@@ -67,6 +68,8 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         else if (declaration.isAbstract || declaration.isOpen || declaration.isOverride) contractNotAllowed("Contracts are not allowed for open or override functions.")
         else if (declaration.isOperator) contractNotAllowed("Contracts are not allowed for operator functions.")
         else if (declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local) contractNotAllowed("Contracts are not allowed for local functions.")
+        else return false
+        return true
     }
 
     private object DiagnosticExtractor : KtContractDescriptionVisitor<ConeDiagnostic?, Nothing?, ConeKotlinType, ConeDiagnostic>() {

@@ -1745,6 +1745,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("deserializedDynamicWithAnnotatedBounds.kt")
+    public void testDeserializedDynamicWithAnnotatedBounds() {
+      runTest("js/js.translator/testData/box/dynamic/deserializedDynamicWithAnnotatedBounds.kt");
+    }
+
+    @Test
+    @TestMetadata("dynamicArrayInc.kt")
+    public void testDynamicArrayInc() {
+      runTest("js/js.translator/testData/box/dynamic/dynamicArrayInc.kt");
+    }
+
+    @Test
     @TestMetadata("dynamicArraySetWithLambda.kt")
     public void testDynamicArraySetWithLambda() {
       runTest("js/js.translator/testData/box/dynamic/dynamicArraySetWithLambda.kt");
@@ -2500,6 +2512,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
       }
 
       @Test
+      @TestMetadata("interfaceWithCompanion.kt")
+      public void testInterfaceWithCompanion() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/interfaceWithCompanion.kt");
+      }
+
+      @Test
       @TestMetadata("jsExportInClass.kt")
       public void testJsExportInClass() {
         runTest("js/js.translator/testData/box/esModules/jsExport/jsExportInClass.kt");
@@ -2509,6 +2527,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
       @TestMetadata("perFileExportedApi.kt")
       public void testPerFileExportedApi() {
         runTest("js/js.translator/testData/box/esModules/jsExport/perFileExportedApi.kt");
+      }
+
+      @Test
+      @TestMetadata("privateInnerClass.kt")
+      public void testPrivateInnerClass() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/privateInnerClass.kt");
       }
 
       @Test
@@ -2591,6 +2615,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
       @TestMetadata("interfaces.kt")
       public void testInterfaces() {
         runTest("js/js.translator/testData/box/esModules/jsModule/interfaces.kt");
+      }
+
+      @Test
+      @TestMetadata("interfacesWithCompanion.kt")
+      public void testInterfacesWithCompanion() {
+        runTest("js/js.translator/testData/box/esModules/jsModule/interfacesWithCompanion.kt");
       }
 
       @Test
@@ -3070,6 +3100,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("exportProtectedMembers.kt")
     public void testExportProtectedMembers() {
       runTest("js/js.translator/testData/box/export/exportProtectedMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("exportWithJsStatic.kt")
+    public void testExportWithJsStatic() {
+      runTest("js/js.translator/testData/box/export/exportWithJsStatic.kt");
     }
 
     @Test
@@ -7165,6 +7201,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("logicalOperators.kt")
+    public void testLogicalOperators() {
+      runTest("js/js.translator/testData/box/jsAstOptimizations/logicalOperators.kt");
+    }
+
+    @Test
     @TestMetadata("tempVarDeclOnAssignment.kt")
     public void testTempVarDeclOnAssignment() {
       runTest("js/js.translator/testData/box/jsAstOptimizations/tempVarDeclOnAssignment.kt");
@@ -7413,6 +7455,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("interfaceWithCompanion.kt")
+    public void testInterfaceWithCompanion() {
+      runTest("js/js.translator/testData/box/jsExport/interfaceWithCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("jsExportInClass.kt")
     public void testJsExportInClass() {
       runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");
@@ -7546,6 +7594,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("js/js.translator/testData/box/jsModule/interfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("interfacesWithCompanion.kt")
+    public void testInterfacesWithCompanion() {
+      runTest("js/js.translator/testData/box/jsModule/interfacesWithCompanion.kt");
     }
 
     @Test
@@ -7722,6 +7776,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("interfacesWithCompanion.kt")
+    public void testInterfacesWithCompanion() {
+      runTest("js/js.translator/testData/box/jsQualifier/interfacesWithCompanion.kt");
     }
 
     @Test

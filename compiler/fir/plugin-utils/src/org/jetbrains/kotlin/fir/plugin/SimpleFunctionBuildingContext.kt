@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -130,6 +131,7 @@ public fun FirExtension.createMemberFunction(
  *
  * Type and value parameters can be configured with [config] builder.
  */
+@ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelFunction(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
@@ -145,6 +147,7 @@ public fun FirExtension.createTopLevelFunction(
  *
  * Type and value parameters can be configured with [config] builder.
  */
+@ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelFunction(
     key: GeneratedDeclarationKey,
     callableId: CallableId,

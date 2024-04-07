@@ -57,8 +57,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x in x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x !in x<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>x is String<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>x !is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x !is String<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x < x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x > x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x <= x<!> -> {}
@@ -72,8 +72,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         (x in x) -> {}
         (x !in x) -> {}
-        (x is String) -> {}
-        (x !is String) -> {}
+        (<!USELESS_IS_CHECK!>x is String<!>) -> {}
+        (<!USELESS_IS_CHECK!>x !is String<!>) -> {}
         (x < x) -> {}
         (x > x) -> {}
         (x <= x) -> {}
@@ -161,8 +161,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x in x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x !in x<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_WARNING!>x is String<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_WARNING!>x !is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x !is String<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x < x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x > x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x <= x<!> -> {}
@@ -176,8 +176,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in (x in x) -> {}
         in (x !in x) -> {}
-        in (x is String) -> {}
-        in (x !is String) -> {}
+        in (<!USELESS_IS_CHECK!>x is String<!>) -> {}
+        in (<!USELESS_IS_CHECK!>x !is String<!>) -> {}
         in (x < x) -> {}
         in (x > x) -> {}
         in (x <= x) -> {}

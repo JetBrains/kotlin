@@ -6,28 +6,28 @@ import bar.*
     val a = 1
     var b = ""
 
-    val c: /*p:bar p:foo*/String
-        get() = /*p:A p:foo.A p:kotlin(String)*/b
+    val c: /*p:bar p:foo p:foo.A*/String
+        get() = /*p:foo.A*/b
 
-    var d: /*p:bar p:foo*/String = "ddd"
+    var d: /*p:bar p:foo p:foo.A*/String = "ddd"
         get() = field
         set(v) { field = v }
 
     fun foo() {
-        /*p:A p:foo.A p:kotlin(Int)*/a
-        /*p:A p:foo.A p:kotlin(Unit)*/foo()
-        /*p:A(a) p:foo.A(a) p:kotlin(Int)*/this.a
-        /*p:A(foo) p:foo.A(foo) p:kotlin(Unit)*/this.foo()
-        /*p:A.Companion p:bar p:foo p:foo.A p:foo.A.Companion p:kotlin(Unit)*/baz()
-        /*p:A.Companion(a) p:bar p:foo p:foo.A p:foo.A(a) p:foo.A.Companion p:foo.A.Companion(a) p:kotlin(Int)*/Companion.a
-        /*p:A.O(v) p:bar p:foo p:foo.A p:foo.A.Companion p:foo.A.O(v) p:kotlin(String)*/O.v = "OK"
+        /*p:foo.A*/a
+        /*p:foo.A*/foo()
+        /*p:foo.A(a)*/this.a
+        /*p:foo.A(foo)*/this.foo()
+        /*p:bar p:foo p:foo.A p:foo.A.Companion*/baz()
+        /*p:bar p:foo p:foo.A p:foo.A(a) p:foo.A.Companion p:foo.A.Companion(a)*/Companion.a
+        /*p:bar p:foo p:foo.A p:foo.A.Companion p:foo.A.O(v)*/O.v = "OK"
     }
 
     class B {
         val a = 1
 
         companion object CO {
-            fun bar(a: /*p:bar p:foo*/Int) {}
+            fun bar(a: /*p:bar p:foo p:foo.A p:foo.A.B*/Int) {}
         }
     }
 
@@ -44,7 +44,7 @@ import bar.*
 }
 
 /*p:foo*/interface I {
-    var a: /*p:bar p:foo*/Int
+    var a: /*p:bar p:foo p:foo.I*/Int
     fun foo()
 
     class NI
@@ -63,9 +63,9 @@ import bar.*
 
     val a = 1
     fun foo() {
-        /*p:E p:foo.E p:kotlin(Int)*/a
-        /*p:E(a) p:bar p:foo p:foo.E p:foo.E(a) p:kotlin(Int) p:kotlin.Enum p:kotlin.Enum.Companion*/Y.a
-        /*p:E p:foo.E p:kotlin(Unit)*/foo()
-        /*p:E(foo) p:bar p:foo p:foo.E p:foo.E(foo) p:kotlin(Unit) p:kotlin.Enum p:kotlin.Enum.Companion*/X.foo()
+        /*p:foo.E*/a
+        /*p:bar p:foo p:foo(E) p:foo.E p:foo.E(a) p:kotlin(Enum) p:kotlin.Enum p:kotlin.Enum(Companion) p:kotlin.Enum.Companion*/Y.a
+        /*p:foo.E*/foo()
+        /*p:bar p:foo p:foo(E) p:foo.E p:foo.E(foo) p:kotlin(Enum) p:kotlin.Enum p:kotlin.Enum(Companion) p:kotlin.Enum.Companion*/X.foo()
     }
 }

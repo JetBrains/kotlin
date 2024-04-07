@@ -33,7 +33,15 @@ class TestFixturesIT : KGPBaseTest() {
     @MppGradlePluginTests
     @GradleTest
     fun testInternalAccessInMppProject(gradleVersion: GradleVersion) {
-        project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
+        project(
+            MPP_TEST_FIXTURES_PROJECT_NAME,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_8_7,
+                gradleVersion,
+                "KT-66542: withJava() produces deprecation warning"
+            )
+        ) {
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -74,7 +82,15 @@ class TestFixturesIT : KGPBaseTest() {
     @MppGradlePluginTests
     @GradleTest
     fun testInternalAccessFromTestsInMppProject(gradleVersion: GradleVersion) {
-        project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
+        project(
+            MPP_TEST_FIXTURES_PROJECT_NAME,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_8_7,
+                gradleVersion,
+                "KT-66542: withJava() produces deprecation warning"
+            )
+        ) {
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -112,7 +128,15 @@ class TestFixturesIT : KGPBaseTest() {
     @MppGradlePluginTests
     @GradleTest
     fun testTestFixturesAndFunctionalTestsInMppProject(gradleVersion: GradleVersion) {
-        project("mpp-test-fixtures-functionalTest", gradleVersion) {
+        project(
+            "mpp-test-fixtures-functionalTest",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_8_7,
+                gradleVersion,
+                "KT-66542: withJava() produces deprecation warning"
+            )
+        ) {
             build("functionalTest") {
                 assertOutputContains("src/main OK!")
                 assertOutputContains("src/test OK!")

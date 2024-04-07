@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/reflectGetOnNullableTypeAlias.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:backRefProp type:kotlin.reflect.KProperty1<<root>.Foo, kotlin.Any?>? [val]
-        PROPERTY_REFERENCE 'public final bar: kotlin.String' field=null getter='public final fun <get-bar> (): kotlin.String declared in <root>.Foo' setter=null type=kotlin.reflect.KProperty1<<root>.Foo, kotlin.String> origin=null
+        PROPERTY_REFERENCE 'public final bar: kotlin.String declared in <root>.Foo' field=null getter='public final fun <get-bar> (): kotlin.String declared in <root>.Foo' setter=null type=kotlin.reflect.KProperty1<<root>.Foo, kotlin.String> origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ

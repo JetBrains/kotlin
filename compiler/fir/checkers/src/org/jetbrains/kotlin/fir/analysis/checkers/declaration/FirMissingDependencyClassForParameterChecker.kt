@@ -25,6 +25,9 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
 
         val missingTypes = mutableSetOf<ConeKotlinType>()
         considerType(declaration.returnTypeRef.coneType, missingTypes, context)
-        reportMissingTypes(declaration.source, missingTypes, context, reporter, isTypeOfLambdaParameter = true)
+        reportMissingTypes(
+            declaration.source, missingTypes, context, reporter,
+            missingTypeOrigin = FirMissingDependencyClassProxy.MissingTypeOrigin.LAMBDA_PARAMETER
+        )
     }
 }

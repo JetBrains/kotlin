@@ -1,3 +1,4 @@
+// ISSUE: KT-60305
 // NI_EXPECTED_FILE
 
 class C<T>

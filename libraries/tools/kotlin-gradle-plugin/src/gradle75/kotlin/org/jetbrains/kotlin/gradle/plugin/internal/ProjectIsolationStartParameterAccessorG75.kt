@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
+import org.gradle.api.Project
 import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.invocation.Gradle
 
@@ -14,10 +15,12 @@ internal class ProjectIsolationStartParameterAccessorG75(
     override val isProjectIsolationEnabled: Boolean by lazy {
         (gradle.startParameter as StartParameterInternal).isolatedProjects.get()
     }
+    override val isProjectIsolationRequested: Boolean
+        get() = isProjectIsolationEnabled
 
     internal class Factory : ProjectIsolationStartParameterAccessor.Factory {
-        override fun getInstance(gradle: Gradle): ProjectIsolationStartParameterAccessor {
-            return ProjectIsolationStartParameterAccessorG75(gradle)
+        override fun getInstance(project: Project): ProjectIsolationStartParameterAccessor {
+            return ProjectIsolationStartParameterAccessorG75(project.gradle)
         }
     }
 }

@@ -1,0 +1,11 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:Greeting visibility:public modality:FINAL <> () returnType:kotlin.String
+      annotations:
+        MyComposable
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun Greeting (): kotlin.String declared in <root>'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="Hi "
+            CALL 'public final fun <get-foo> (): kotlin.Int declared in p3.FooKt' type=kotlin.Int origin=GET_PROPERTY
+            CONST String type=kotlin.String value="!"

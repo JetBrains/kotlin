@@ -86,7 +86,7 @@ void launchMain() {
   }
 
   // TODO: Can we shutdown runtime here?
-  Kotlin_deinitRuntimeIfNeeded();
+  deinitRuntimeIfNeeded();
 }
 
 void* entry(void* param) {

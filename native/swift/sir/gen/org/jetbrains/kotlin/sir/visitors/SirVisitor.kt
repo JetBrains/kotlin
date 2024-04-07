@@ -17,14 +17,20 @@ abstract class SirVisitor<out R, in D> {
 
     abstract fun visitElement(element: SirElement, data: D): R
 
-    open fun visitModule(module: SirModule, data: D): R =
-        visitElement(module, data)
-
     open fun visitDeclarationContainer(declarationContainer: SirDeclarationContainer, data: D): R =
         visitElement(declarationContainer, data)
 
+    open fun visitMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer, data: D): R =
+        visitElement(mutableDeclarationContainer, data)
+
+    open fun visitModule(module: SirModule, data: D): R =
+        visitElement(module, data)
+
     open fun visitDeclaration(declaration: SirDeclaration, data: D): R =
         visitElement(declaration, data)
+
+    open fun visitExtension(extension: SirExtension, data: D): R =
+        visitDeclaration(extension, data)
 
     open fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: D): R =
         visitDeclaration(declaration, data)
@@ -35,8 +41,14 @@ abstract class SirVisitor<out R, in D> {
     open fun visitStruct(struct: SirStruct, data: D): R =
         visitNamedDeclaration(struct, data)
 
+    open fun visitClass(klass: SirClass, data: D): R =
+        visitNamedDeclaration(klass, data)
+
     open fun visitCallable(callable: SirCallable, data: D): R =
         visitDeclaration(callable, data)
+
+    open fun visitInit(init: SirInit, data: D): R =
+        visitCallable(init, data)
 
     open fun visitFunction(function: SirFunction, data: D): R =
         visitCallable(function, data)

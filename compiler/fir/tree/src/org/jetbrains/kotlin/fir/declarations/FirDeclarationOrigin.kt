@@ -54,6 +54,7 @@ sealed class FirDeclarationOrigin(
         object Default : ScriptCustomization(FirScriptCustomizationKind.DEFAULT)
         object ResultProperty : ScriptCustomization(FirScriptCustomizationKind.RESULT_PROPERTY)
         object Parameter : ScriptCustomization(FirScriptCustomizationKind.PARAMETER)
+        object ParameterFromBaseClass : ScriptCustomization(FirScriptCustomizationKind.PARAMETER_FROM_BASE_CLASS)
     }
     class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
 

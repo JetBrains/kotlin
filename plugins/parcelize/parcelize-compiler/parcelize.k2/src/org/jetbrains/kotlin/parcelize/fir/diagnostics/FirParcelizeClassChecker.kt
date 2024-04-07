@@ -21,16 +21,16 @@ import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Common) {
+class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) : FirClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         checkParcelableClass(declaration, context, reporter)
         checkParcelerClass(declaration, context, reporter)
@@ -38,7 +38,7 @@ object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Common) {
 
     private fun checkParcelableClass(klass: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = klass.symbol
-        if (!symbol.isParcelize(context.session)) return
+        if (!symbol.isParcelize(context.session, parcelizeAnnotations)) return
         val source = klass.source ?: return
         val classKind = klass.classKind
 
@@ -110,14 +110,14 @@ object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Common) {
 }
 
 @OptIn(ExperimentalContracts::class)
-fun FirClassSymbol<*>?.isParcelize(session: FirSession): Boolean {
+fun FirClassSymbol<*>?.isParcelize(session: FirSession, parcelizeAnnotations: List<ClassId>): Boolean {
     contract {
         returns(true) implies (this@isParcelize != null)
     }
 
     if (this == null) return false
     return checkParcelizeClassSymbols(this, session) { symbol ->
-        symbol.annotations.any { it.toAnnotationClassId(session) in PARCELIZE_CLASS_CLASS_IDS }
+        symbol.annotations.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
     }
 }
 

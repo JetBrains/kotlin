@@ -39,7 +39,7 @@ class ManifestReadingTest {
         val testData = mapOf(
             "sample-library-1" to LibraryManifest(
                 platform = BuiltInsPlatform.JS.name,
-                nativeTargets = emptyList(),
+                platformTargets = emptyList(),
                 compilerVersion = "1.23.45",
                 abiVersion = "2.34.56",
                 libraryVersion = "3.45.67",
@@ -47,7 +47,14 @@ class ManifestReadingTest {
             ),
             "sample-library-2" to LibraryManifest(
                 platform = BuiltInsPlatform.NATIVE.name,
-                nativeTargets = listOf("ios_arm64", "ios_simulator_arm64", "macos_arm64", "macos_x64"),
+                platformTargets = listOf(
+                    LibraryTarget.Native("ios_arm64"),
+                    LibraryTarget.Native("ios_simulator_arm64"),
+                    LibraryTarget.Native("macos_arm64"),
+                    LibraryTarget.Native("macos_x64"),
+                    LibraryTarget.WASM("wasm-js"),
+                    LibraryTarget.WASM("wasm-wasi"),
+                ),
                 compilerVersion = null,
                 abiVersion = null,
                 libraryVersion = null,
@@ -82,18 +89,25 @@ class ManifestReadingTest {
             moduleName = libraryName,
             versions = libraryVersioning,
             builtInsPlatform = builtInsPlatform,
-            nativeTargets = libraryManifest.nativeTargets,
+            nativeTargets = libraryManifest.platformTargets.filterIsInstance<LibraryTarget.Native>().map { it.name },
             nopack = true,
             shortName = libraryName,
             layout = libraryLayout
         )
-        libraryManifest.irProviderName?.let { irProviderName ->
-            library.addManifestAddend(
-                Properties().apply {
+
+        library.addManifestAddend(
+            Properties().apply {
+                val wasmTargets = libraryManifest.platformTargets.filterIsInstance<LibraryTarget.WASM>()
+                if (wasmTargets.isNotEmpty()) {
+                    this[KLIB_PROPERTY_WASM_TARGETS] = wasmTargets.joinToString(" ") { it.name }
+                }
+
+                libraryManifest.irProviderName?.let { irProviderName ->
                     this[KLIB_PROPERTY_IR_PROVIDER] = irProviderName
                 }
-            )
-        }
+            }
+        )
+
         library.addIr(SerializedIrModule(files = emptyList())) // Empty library.
         library.commit()
 

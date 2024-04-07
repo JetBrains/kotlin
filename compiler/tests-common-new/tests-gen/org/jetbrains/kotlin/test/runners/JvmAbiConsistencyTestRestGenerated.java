@@ -5318,6 +5318,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("inlinePassthroughWithSuspendConversion.kt")
+      public void testInlinePassthroughWithSuspendConversion() {
+        runTest("compiler/testData/codegen/boxInline/suspend/inlinePassthroughWithSuspendConversion.kt");
+      }
+
+      @Test
       @TestMetadata("inlineSuspendContinuation.kt")
       public void testInlineSuspendContinuation() {
         runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendContinuation.kt");
@@ -9277,6 +9283,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("forInPrimitiveArray.kt")
       public void testForInPrimitiveArray() {
         runTest("compiler/testData/codegen/bytecodeText/forLoop/forInPrimitiveArray.kt");
+      }
+
+      @Test
+      @TestMetadata("forInRangeInlinedFromStdlib.kt")
+      public void testForInRangeInlinedFromStdlib() {
+        runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeInlinedFromStdlib.kt");
       }
 
       @Test
@@ -13483,6 +13495,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("kt43459.kt")
       public void testKt43459() {
         runTest("compiler/testData/codegen/bytecodeListing/annotations/kt43459.kt");
+      }
+
+      @Test
+      @TestMetadata("kt62788.kt")
+      public void testKt62788() {
+        runTest("compiler/testData/codegen/bytecodeListing/annotations/kt62788.kt");
       }
 
       @Test

@@ -15,7 +15,14 @@ import java.io.IOException
 import org.junit.jupiter.api.Assertions as JUnit5PlatformAssertions
 
 object JUnit5Assertions : AssertionsService() {
-    val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
+    override fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String): Boolean {
+        return doesEqualToFile(
+            expectedFile,
+            actual,
+            sanitizer,
+            fileNotFoundMessageTeamCity = { "Expected data file did not exist `$expectedFile`" },
+            fileNotFoundMessageLocal = { "Expected data file did not exist. Generating: $expectedFile" }).first
+    }
 
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
         assertEqualsToFile(
@@ -27,14 +34,13 @@ object JUnit5Assertions : AssertionsService() {
             fileNotFoundMessageLocal = { "Expected data file did not exist. Generating: $expectedFile" })
     }
 
-    fun assertEqualsToFile(
+    private fun doesEqualToFile(
         expectedFile: File,
         actual: String,
         sanitizer: (String) -> String,
-        differenceObtainedMessage: () -> String,
         fileNotFoundMessageTeamCity: (File) -> String,
         fileNotFoundMessageLocal: (File) -> String,
-    ) {
+    ): Pair<Boolean, String> {
         try {
             val actualText = actual.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
             if (!expectedFile.exists()) {
@@ -48,14 +54,27 @@ object JUnit5Assertions : AssertionsService() {
             }
             val expected = expectedFile.readText().convertLineSeparators()
             val expectedText = expected.trim { it <= ' ' }.trimTrailingWhitespacesAndAddNewlineAtEOF()
-            if (sanitizer.invoke(expectedText) != sanitizer.invoke(actualText)) {
-                throw FileComparisonFailure(
-                    "${differenceObtainedMessage()}: ${expectedFile.name}",
-                    expected, actual, expectedFile.absolutePath
-                )
-            }
+            return Pair(sanitizer.invoke(expectedText) == sanitizer.invoke(actualText), expected)
         } catch (e: IOException) {
             throw rethrow(e)
+        }
+    }
+
+    fun assertEqualsToFile(
+        expectedFile: File,
+        actual: String,
+        sanitizer: (String) -> String,
+        differenceObtainedMessage: () -> String,
+        fileNotFoundMessageTeamCity: (File) -> String,
+        fileNotFoundMessageLocal: (File) -> String,
+    ) {
+        val (equalsToFile, expected) =
+            doesEqualToFile(expectedFile, actual, sanitizer, fileNotFoundMessageTeamCity, fileNotFoundMessageLocal)
+        if (!equalsToFile) {
+            throw FileComparisonFailure(
+                "${differenceObtainedMessage()}: ${expectedFile.name}",
+                expected, actual, expectedFile.absolutePath
+            )
         }
     }
 

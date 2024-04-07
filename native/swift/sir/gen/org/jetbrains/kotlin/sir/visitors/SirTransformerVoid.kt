@@ -20,23 +20,35 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun <E : SirElement> transformElement(element: E, data: Nothing?): E =
         transformElement(element)
 
-    open fun transformModule(module: SirModule): SirModule =
-        transformElement(module)
-
-    final override fun transformModule(module: SirModule, data: Nothing?): SirModule =
-        transformModule(module)
-
     open fun transformDeclarationContainer(declarationContainer: SirDeclarationContainer): SirDeclarationContainer =
         transformElement(declarationContainer)
 
     final override fun transformDeclarationContainer(declarationContainer: SirDeclarationContainer, data: Nothing?): SirDeclarationContainer =
         transformDeclarationContainer(declarationContainer)
 
+    open fun transformMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer): SirMutableDeclarationContainer =
+        transformElement(mutableDeclarationContainer)
+
+    final override fun transformMutableDeclarationContainer(mutableDeclarationContainer: SirMutableDeclarationContainer, data: Nothing?): SirMutableDeclarationContainer =
+        transformMutableDeclarationContainer(mutableDeclarationContainer)
+
+    open fun transformModule(module: SirModule): SirModule =
+        transformElement(module)
+
+    final override fun transformModule(module: SirModule, data: Nothing?): SirModule =
+        transformModule(module)
+
     open fun transformDeclaration(declaration: SirDeclaration): SirDeclaration =
         transformElement(declaration)
 
     final override fun transformDeclaration(declaration: SirDeclaration, data: Nothing?): SirDeclaration =
         transformDeclaration(declaration)
+
+    open fun transformExtension(extension: SirExtension): SirDeclaration =
+        transformDeclaration(extension)
+
+    final override fun transformExtension(extension: SirExtension, data: Nothing?): SirDeclaration =
+        transformExtension(extension)
 
     open fun transformNamedDeclaration(declaration: SirNamedDeclaration): SirDeclaration =
         transformDeclaration(declaration)
@@ -56,11 +68,23 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformStruct(struct: SirStruct, data: Nothing?): SirDeclaration =
         transformStruct(struct)
 
+    open fun transformClass(klass: SirClass): SirDeclaration =
+        transformNamedDeclaration(klass)
+
+    final override fun transformClass(klass: SirClass, data: Nothing?): SirDeclaration =
+        transformClass(klass)
+
     open fun transformCallable(callable: SirCallable): SirDeclaration =
         transformDeclaration(callable)
 
     final override fun transformCallable(callable: SirCallable, data: Nothing?): SirDeclaration =
         transformCallable(callable)
+
+    open fun transformInit(init: SirInit): SirDeclaration =
+        transformCallable(init)
+
+    final override fun transformInit(init: SirInit, data: Nothing?): SirDeclaration =
+        transformInit(init)
 
     open fun transformFunction(function: SirFunction): SirDeclaration =
         transformCallable(function)

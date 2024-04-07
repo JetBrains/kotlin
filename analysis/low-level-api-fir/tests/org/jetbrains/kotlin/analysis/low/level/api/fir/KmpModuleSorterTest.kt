@@ -108,6 +108,7 @@ class KmpModuleSorterTest : TestWithMockProject() {
     private fun buildDependenciesToTest(module: KtModule): List<KtModule> {
         val dependenciesToSort = buildSet {
             addAll(module.directRegularDependencies)
+            addAll(module.directFriendDependencies)
             addAll(module.transitiveDependsOnDependencies)
         }
         return KmpModuleSorter.order(dependenciesToSort.toList())

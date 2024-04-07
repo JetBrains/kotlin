@@ -62,6 +62,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     public void testSimple() {
       runTest("plugins/fir-plugin-prototype/testData/diagnostics/checkers/simple.kt");
     }
+
+    @Test
+    @TestMetadata("ValueOfCustomFunctionTypeAsArgumentOfInlineFunction.kt")
+    public void testValueOfCustomFunctionTypeAsArgumentOfInlineFunction() {
+      runTest("plugins/fir-plugin-prototype/testData/diagnostics/checkers/ValueOfCustomFunctionTypeAsArgumentOfInlineFunction.kt");
+    }
   }
 
   @Nested
@@ -145,6 +151,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     @Test
     public void testAllFilesPresentInReceivers() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/diagnostics/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector.kt")
+    public void testCallShapeBasedInjector() {
+      runTest("plugins/fir-plugin-prototype/testData/diagnostics/receivers/callShapeBasedInjector.kt");
     }
 
     @Test

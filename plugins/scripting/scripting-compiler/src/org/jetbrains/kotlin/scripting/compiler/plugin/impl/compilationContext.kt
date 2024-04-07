@@ -282,6 +282,10 @@ private fun createInitialCompilerConfiguration(
             ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS,
             ScriptingCompilerConfigurationComponentRegistrar()
         )
+        add(
+            CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS,
+            ScriptingK2CompilerPluginRegistrar()
+        )
 
         configureJavaModulesContentRoots(baseArguments)
         configureContentRootsFromClassPath(baseArguments)
@@ -315,7 +319,7 @@ private fun createInitialCompilerConfiguration(
         if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {
             PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, this)
         } else {
-            loadPlugins()
+            loadPluginsFromClassloader(CompilerConfiguration::class.java.classLoader)
         }
     }
 }

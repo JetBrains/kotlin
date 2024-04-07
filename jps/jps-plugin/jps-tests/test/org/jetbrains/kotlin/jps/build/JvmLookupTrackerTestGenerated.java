@@ -34,6 +34,11 @@ public class JvmLookupTrackerTestGenerated extends AbstractJvmLookupTrackerTest 
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/classifierMembers/");
   }
 
+  @TestMetadata("companion")
+  public void testCompanion() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/companion/");
+  }
+
   @TestMetadata("conventions")
   public void testConventions() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/conventions/");
@@ -49,9 +54,29 @@ public class JvmLookupTrackerTestGenerated extends AbstractJvmLookupTrackerTest 
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/java/");
   }
 
+  @TestMetadata("javaStatics")
+  public void testJavaStatics() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/javaStatics/");
+  }
+
+  @TestMetadata("jvmNameChanged")
+  public void testJvmNameChanged() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/jvmNameChanged/");
+  }
+
   @TestMetadata("localDeclarations")
   public void testLocalDeclarations() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/localDeclarations/");
+  }
+
+  @TestMetadata("namedCompanion")
+  public void testNamedCompanion() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/namedCompanion/");
+  }
+
+  @TestMetadata("nested")
+  public void testNested() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/nested/");
   }
 
   @TestMetadata("packageDeclarations")
@@ -72,5 +97,10 @@ public class JvmLookupTrackerTestGenerated extends AbstractJvmLookupTrackerTest 
   @TestMetadata("syntheticProperties")
   public void testSyntheticProperties() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/syntheticProperties/");
+  }
+
+  @TestMetadata("typeAliasAndUsage")
+  public void testTypeAliasAndUsage() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/typeAliasAndUsage/");
   }
 }

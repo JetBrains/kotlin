@@ -11,6 +11,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_create")
 @ObsoleteWorkersApi
+@Escapes(0b01) // value escapes into stable ref.
 external private fun createWorkerBoundReference(value: Any): NativePtr
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_deref")

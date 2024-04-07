@@ -20,7 +20,7 @@ import java.io.File
 /**
  * Represents a single file that will be supplied to the compiler.
  */
-internal class TestFile<M : TestModule> private constructor(
+class TestFile<M : TestModule> private constructor(
     val location: File,
     val module: M,
     private var state: State
@@ -79,7 +79,7 @@ internal class TestFile<M : TestModule> private constructor(
  * [TestModule.Shared] represents a "shared" module, i.e. the auxiliary module that can be used in multiple [TestCase]s.
  *                     Such module is compiled to KLIB
  */
-internal sealed class TestModule {
+sealed class TestModule {
     abstract val name: String
     abstract val files: Set<TestFile<*>>
 
@@ -157,7 +157,7 @@ internal sealed class TestModule {
  *
  * [testCaseGroupId] - a unique ID of [TestCaseGroup] this [TestCase] belongs to.
  */
-internal interface TestCaseId {
+interface TestCaseId {
     val testCaseGroupId: TestCaseGroupId
 
     data class TestDataFile(val file: File) : TestCaseId {
@@ -181,7 +181,7 @@ internal interface TestCaseId {
  * [nominalPackageName] - the unique package name that was computed for this [TestCase] based on [id].
  *                        Note: It depends on the concrete [TestKind] whether the package name will be enforced for the [TestFile]s or not.
  */
-internal class TestCase(
+class TestCase(
     val id: TestCaseId,
     val kind: TestKind,
     val modules: Set<TestModule.Exclusive>,
@@ -281,7 +281,7 @@ internal class TestCase(
 /**
  * A unique identified of [TestCaseGroup].
  */
-internal interface TestCaseGroupId {
+interface TestCaseGroupId {
     data class TestDataDir(val dir: File) : TestCaseGroupId
     data class Named(val uniqueName: String) : TestCaseGroupId
 }
@@ -292,7 +292,7 @@ internal interface TestCaseGroupId {
  * [TestCase]s inside of the group with similar [TestCompilerArgs] can be compiled to the single
  * executable file to reduce the time spent for compiling and speed-up overall test execution.
  */
-internal interface TestCaseGroup {
+internal sealed interface TestCaseGroup {
     fun isEnabled(testCaseId: TestCaseId): Boolean
     fun getByName(testCaseId: TestCaseId): TestCase?
 
@@ -323,18 +323,28 @@ internal interface TestCaseGroup {
         }
     }
 
-    companion object {
-        val ALL_DISABLED = object : TestCaseGroup {
-            override fun isEnabled(testCaseId: TestCaseId) = false
-            override fun getByName(testCaseId: TestCaseId) = unsupported()
+    data class MetaGroup(val testCaseGroupId: TestCaseGroupId, val testGroups: Set<TestCaseGroup>) : TestCaseGroup {
+        override fun isEnabled(testCaseId: TestCaseId): Boolean = testGroups.all { it.isEnabled(testCaseId) }
 
-            override fun getRegularOnly(
-                freeCompilerArgs: TestCompilerArgs,
-                sharedModules: Set<TestModule.Shared>,
-                runnerType: TestRunnerType
-            ) = unsupported()
+        override fun getByName(testCaseId: TestCaseId): TestCase? = testGroups.firstNotNullOfOrNull { it.getByName(testCaseId) }
 
-            private fun unsupported(): Nothing = fail { "This function should not be called" }
-        }
+        override fun getRegularOnly(
+            freeCompilerArgs: TestCompilerArgs,
+            sharedModules: Set<TestModule.Shared>,
+            runnerType: TestRunnerType,
+        ): Collection<TestCase> = testGroups.flatMap { it.getRegularOnly(freeCompilerArgs, sharedModules, runnerType) }
+    }
+
+    data object AllDisabled : TestCaseGroup {
+        override fun isEnabled(testCaseId: TestCaseId) = false
+        override fun getByName(testCaseId: TestCaseId) = unsupported()
+
+        override fun getRegularOnly(
+            freeCompilerArgs: TestCompilerArgs,
+            sharedModules: Set<TestModule.Shared>,
+            runnerType: TestRunnerType
+        ) = unsupported()
+
+        private fun unsupported(): Nothing = fail { "This function should not be called" }
     }
 }

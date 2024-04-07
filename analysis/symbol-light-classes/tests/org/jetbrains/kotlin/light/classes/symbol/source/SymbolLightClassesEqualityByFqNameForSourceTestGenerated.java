@@ -103,6 +103,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("CompanionObjectWithAConflictingProperty.kt")
+  public void testCompanionObjectWithAConflictingProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/CompanionObjectWithAConflictingProperty.kt");
+  }
+
+  @Test
   @TestMetadata("Constructors.kt")
   public void testConstructors() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Constructors.kt");
@@ -211,6 +217,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("InterfaceWithDefaultMethodAndCompanion.kt")
+  public void testInterfaceWithDefaultMethodAndCompanion() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InterfaceWithDefaultMethodAndCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
   public void testInvalidJavaIdentifierAsAnnotationArgument() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
@@ -262,6 +274,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   @TestMetadata("NestedObjects.kt")
   public void testNestedObjects() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NestedObjects.kt");
+  }
+
+  @Test
+  @TestMetadata("NestedTypeAnnotations.kt")
+  public void testNestedTypeAnnotations() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/NestedTypeAnnotations.kt");
   }
 
   @Test
@@ -334,6 +352,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   @TestMetadata("TypePararametersInClass.kt")
   public void testTypePararametersInClass() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/TypePararametersInClass.kt");
+  }
+
+  @Test
+  @TestMetadata("UnitAsTypeAlias.kt")
+  public void testUnitAsTypeAlias() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/UnitAsTypeAlias.kt");
   }
 
   @Test
@@ -523,6 +547,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
     @TestMetadata("typeAliasActualization2.kt")
     public void testTypeAliasActualization2() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/typeAliasActualization2.kt");
+    }
+
+    @Test
+    @TestMetadata("UnitAsTypeAliasActualization.kt")
+    public void testUnitAsTypeAliasActualization() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/UnitAsTypeAliasActualization.kt");
     }
 
     @Test

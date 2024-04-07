@@ -1,5 +1,6 @@
 // FULL_JDK
 // WITH_STDLIB
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
 import java.util.EnumMap
 
 interface I
@@ -21,8 +22,6 @@ open class FooEnumMap<P>(val data: EnumMap<P, Any?>) where P : Enum<P>, P : I
 private fun test(node: FooEnumMap<*>) {
     node.data.get(MyEnum.EnumEntry)
     val map = node.data
-    // TODO inferred type argument is giant multi-level type KT-65704
-    // R|<local>/map|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<out ft<it(kotlin/Enum<out ft<it(kotlin/Enum<*> & I), it(kotlin/Enum<*>? & I?)>> & I), it(kotlin/Enum<*>? & I?)>> & I), it(kotlin/Enum<*>? & I?)>|, R|kotlin/Any!|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
     map.get(MyEnum.EnumEntry)
 }
 

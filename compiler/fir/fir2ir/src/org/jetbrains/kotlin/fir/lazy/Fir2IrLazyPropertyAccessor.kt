@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 class Fir2IrLazyPropertyAccessor(
-    components: Fir2IrComponents,
+    c: Fir2IrComponents,
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -37,7 +37,7 @@ class Fir2IrLazyPropertyAccessor(
     parent: IrDeclarationParent,
     isFakeOverride: Boolean,
     override var correspondingPropertySymbol: IrPropertySymbol?
-) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(components, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
+) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
     init {
         symbol.bind(this)
     }
@@ -50,7 +50,10 @@ class Fir2IrLazyPropertyAccessor(
         get() = firAccessor?.isInline == true
         set(_) = mutationNotSupported()
 
-    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> by when {
+        firAccessor != null -> createLazyAnnotations()
+        else -> lazyVar<List<IrConstructorCall>>(lock) { emptyList() }
+    }
 
     override var name: Name
         get() = Name.special("<${if (isSetter) "set" else "get"}-${firParentProperty.name}>")

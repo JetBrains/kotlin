@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -61,7 +61,7 @@ class TestExceptionsComparator(wholeFile: File) {
     }
 
     private fun validateExistingExceptionFiles(e: TestsError?) {
-        val postfixesOfFilesToCheck = TestsExceptionType.values().toMutableSet().filter { it != e?.type }
+        val postfixesOfFilesToCheck = TestsExceptionType.entries.toMutableSet().filter { it != e?.type }
 
         postfixesOfFilesToCheck.forEach {
             if (File("$filePathPrefix.${it.postfix}.txt").exists())

@@ -7,9 +7,8 @@
 
 #include "ObjectPtr.hpp"
 
-#import <CoreFoundation/CFArray.h>
-#import <Foundation/NSArray.h>
-#import <Foundation/NSObject.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import <Foundation/Foundation.h>
 #include <functional>
 #include <memory>
 

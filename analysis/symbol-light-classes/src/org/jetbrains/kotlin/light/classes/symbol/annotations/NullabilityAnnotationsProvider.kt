@@ -7,19 +7,20 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
-internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: Lazy<NullabilityType>) : AdditionalAnnotationsProvider {
-    constructor(initializer: () -> NullabilityType) : this(lazyPub(initializer))
+internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: Lazy<KtTypeNullability>) : AdditionalAnnotationsProvider {
+    constructor(initializer: () -> KtTypeNullability) : this(lazyPub(initializer))
 
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,
         owner: PsiElement
     ) {
-        val qualifier = lazyNullabilityType.qualifier ?: return
+        val qualifier = lazyNullabilityType.value.asAnnotationQualifier ?: return
         addSimpleAnnotationIfMissing(qualifier, currentRawAnnotations, foundQualifiers, owner)
     }
 
@@ -32,7 +33,7 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
             return null
         }
 
-        val expectedQualifier = lazyNullabilityType.qualifier ?: return null
+        val expectedQualifier = lazyNullabilityType.value.asAnnotationQualifier ?: return null
         return createSimpleAnnotationIfMatches(qualifiedName, expectedQualifier, owner)
     }
 
@@ -42,10 +43,3 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
 private val String.isNullOrNotNullQualifiedName: Boolean
     get() = this == JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString() ||
             this == JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString()
-
-private val Lazy<NullabilityType>.qualifier: String?
-    get() = when (value) {
-        NullabilityType.NotNull -> JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
-        NullabilityType.Nullable -> JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
-        else -> null
-    }?.asString()

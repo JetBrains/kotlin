@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider
-import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.deserialization.PackagePartsCacheData
+import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -31,6 +28,8 @@ class OptionalAnnotationClassesProvider(
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {
+
+    private val annotationDeserializer = MetadataBasedAnnotationDeserializer(session)
 
     private val optionalAnnotationClassesAndPackages by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val optionalAnnotationClasses = mutableMapOf<ClassId, ClassData>()
@@ -71,7 +70,7 @@ class OptionalAnnotationClassesProvider(
         return ClassMetadataFindResult.Metadata(
             optionalAnnotationClass.nameResolver,
             optionalAnnotationClass.classProto,
-            null,
+            annotationDeserializer,
             moduleDataProvider.allModuleData.last(),
             null,
             classPostProcessor = null

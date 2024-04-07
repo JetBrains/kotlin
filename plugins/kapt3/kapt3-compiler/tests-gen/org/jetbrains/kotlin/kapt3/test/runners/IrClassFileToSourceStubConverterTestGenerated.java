@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt3.test.runners;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -391,6 +390,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
   }
 
   @Test
+  @TestMetadata("jvmRecord.kt")
+  public void testJvmRecord() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmRecord.kt");
+  }
+
+  @Test
   @TestMetadata("jvmRepeatableAnnotation.kt")
   public void testJvmRepeatableAnnotation() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmRepeatableAnnotation.kt");
@@ -520,6 +525,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
   @TestMetadata("kt65453.kt")
   public void testKt65453() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt65453.kt");
+  }
+
+  @Test
+  @TestMetadata("kt66687.kt")
+  public void testKt66687() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt66687.kt");
   }
 
   @Test

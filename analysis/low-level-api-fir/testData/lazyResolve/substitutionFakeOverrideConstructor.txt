@@ -148,6 +148,21 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructor.kt
 
     }
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructor.kt
+    public abstract [ResolvedTo(CONSTANT_EVALUATION)] class SubClass : R|second/AbstractClass<kotlin/Int>| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+            LAZY_super<R|second/AbstractClass<kotlin/Int>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] t: R|T|): R|second/AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructor.kt
     public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<kotlin/Int>| {

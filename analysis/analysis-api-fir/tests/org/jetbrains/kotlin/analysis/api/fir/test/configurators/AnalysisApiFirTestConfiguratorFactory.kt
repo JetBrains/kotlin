@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.configurators
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCodeFragmentTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibrarySourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
@@ -32,6 +33,11 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
                 AnalysisApiFirLibraryBinaryTestConfigurator
             }
 
+            TestModuleKind.LibraryBinaryDecompiled -> {
+                require(data.analysisSessionMode == AnalysisSessionMode.Normal)
+                AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
+            }
+
             TestModuleKind.LibrarySource -> {
                 require(data.analysisSessionMode == AnalysisSessionMode.Normal)
                 AnalysisApiFirLibrarySourceTestConfigurator
@@ -41,6 +47,8 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
                 AnalysisSessionMode.Normal -> AnalysisApiFirCodeFragmentTestConfigurator(analyseInDependentSession = false)
                 AnalysisSessionMode.Dependent -> AnalysisApiFirCodeFragmentTestConfigurator(analyseInDependentSession = true)
             }
+
+            else -> unsupportedModeError(data)
         }
     }
 
@@ -55,10 +63,13 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
                 }
 
                 TestModuleKind.LibraryBinary,
+                TestModuleKind.LibraryBinaryDecompiled,
                 TestModuleKind.LibrarySource,
                 TestModuleKind.CodeFragment -> {
                     data.analysisSessionMode == AnalysisSessionMode.Normal
                 }
+
+                TestModuleKind.NotUnderContentRoot -> false
             }
         }
     }

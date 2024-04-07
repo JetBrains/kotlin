@@ -549,16 +549,13 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
 
             extensionReceiverParameter = superFunction.extensionReceiverParameter?.copyTo(function)
 
-            valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
-                parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                        type = functionParameterTypes[index])
-            }
-
             overriddenSymbols += superFunction.symbol
+
+            val valueParameters = mutableListOf<IrValueParameter>()
 
             body = context.createIrBuilder(function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset) {
                 +irReturn(
-                        irCall(functionReference.symbol).apply {
+                        irCall(referencedFunction).apply {
                             var unboundIndex = 0
                             val unboundArgsSet = unboundFunctionParameters.toSet()
                             for (parameter in functionParameters) {
@@ -573,8 +570,29 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                                             if (parameter == referencedFunction.extensionReceiverParameter
                                                     && extensionReceiverParameter != null)
                                                 irGet(extensionReceiverParameter!!)
-                                            else
-                                                irGet(valueParameters[unboundIndex++])
+                                            else {
+                                                // Sometimes FE resolves type as an intersection type which gets approximated to Nothing,
+                                                // so try to get the type from the referenced function in such a case.
+                                                // NOTE: the JVM counterpart of this lowering takes all the types from the referenced function
+                                                // for lambdas and SAM conversions, but it can't be done here because of the different
+                                                // lowerings order (in K/N the LocalDeclarationsLowering has already been applied by this point,
+                                                // and lambdas might have their own type parameters, copied from the outer scopes, and it
+                                                // gets really messy to try to substitute them to the correct ones).
+                                                val valueParameter = if ((samSuperType != null || isLambda)
+                                                        && functionParameterTypes[unboundIndex].isNothing()
+                                                ) {
+                                                    parameter.copyTo(
+                                                            function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, unboundIndex,
+                                                            type = parameter.type)
+                                                } else {
+                                                    superFunction.valueParameters[unboundIndex].copyTo(
+                                                            function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, unboundIndex,
+                                                            type = functionParameterTypes[unboundIndex])
+                                                }
+                                                ++unboundIndex
+                                                valueParameters.add(valueParameter)
+                                                irGet(valueParameter)
+                                            }
                                         }
                                 when (parameter) {
                                     referencedFunction.dispatchReceiverParameter -> dispatchReceiver = argument
@@ -590,6 +608,8 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                         }
                 )
             }
+
+            this.valueParameters = valueParameters
         }
     }
 }

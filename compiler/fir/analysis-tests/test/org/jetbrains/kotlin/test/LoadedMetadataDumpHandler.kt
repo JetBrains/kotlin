@@ -82,6 +82,7 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
             environment.getSearchScopeForProjectLibraries(),
             libraryList,
             isCommonSource = { false },
+            isScript = { false },
             fileBelongsToModule = { _, _ -> false },
             createProviderAndScopeForIncrementalCompilation = { null }
         )

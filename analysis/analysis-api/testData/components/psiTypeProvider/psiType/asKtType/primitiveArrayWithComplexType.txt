@@ -1,0 +1,2 @@
+PsiType: List<List<java.lang.String>>[]
+KtType: kotlin.Array<(List..List)>!

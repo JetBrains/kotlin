@@ -56,6 +56,14 @@ abstract class AbstractWasmArtifactsCollector(testServices: TestServices) : Wasm
                 mjsFiles += AdditionalFile(it.name, it.readText())
             }
 
+
+        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main${JavaScript.DOT_EXTENSION}")
+            .takeIf { it.exists() }
+            ?.let {
+                entryMjs = it.name
+                mjsFiles += AdditionalFile(it.name, it.readText())
+            }
+
         return JsArtifacts(entryMjs, jsFiles, mjsFiles)
     }
 

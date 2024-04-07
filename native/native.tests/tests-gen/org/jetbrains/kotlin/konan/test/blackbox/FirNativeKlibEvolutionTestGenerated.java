@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -122,6 +121,12 @@ public class FirNativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolu
   @TestMetadata("changeConstInitialization.kt")
   public void testChangeConstInitialization() {
     runTest("compiler/testData/klib/evolution/changeConstInitialization.kt");
+  }
+
+  @Test
+  @TestMetadata("changeFakeOverrides.kt")
+  public void testChangeFakeOverrides() {
+    runTest("compiler/testData/klib/evolution/changeFakeOverrides.kt");
   }
 
   @Test

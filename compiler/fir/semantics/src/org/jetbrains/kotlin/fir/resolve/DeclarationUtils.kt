@@ -48,6 +48,9 @@ fun FirClassLikeSymbol<out FirClassLikeDeclaration>.getContainingDeclaration(ses
     return null
 }
 
+// TODO(KT-66349) Investigate and fix the contract.
+//  - Why aren't we supporting nested `inner` classes?
+//  - Why are we traversing super types?
 fun isValidTypeParameterFromOuterDeclaration(
     typeParameterSymbol: FirTypeParameterSymbol,
     declaration: FirDeclaration?,

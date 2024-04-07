@@ -14,7 +14,7 @@ FILE: lambda.kt
 
         public? final operator fun component2(): Int
 
-        public final fun copy(x: Int = this@R|/Tuple|.R|/Tuple.x|, y: Int = this@R|/Tuple|.R|/Tuple.y|): R|Tuple|
+        public? final fun copy(x: Int = this@R|/Tuple|.R|/Tuple.x|, y: Int = this@R|/Tuple|.R|/Tuple.y|): R|Tuple|
 
     }
     public? final? inline fun use(f: ( (Tuple) -> Int )): <implicit> {

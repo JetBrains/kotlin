@@ -250,16 +250,16 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val ENABLE_IR_FAKE_OVERRIDE_GENERATION by directive(
+    val ENABLE_FIR_FAKE_OVERRIDE_GENERATION by directive(
         description = """
-            Enables fake-override generation in FIR2IR using IR f/o generator on JVM. KT-61514
+            Enables fake-override generation in FIR2IR using FIR2IR f/o generator on JVM, i.e. revert to behavior before KT-61514 was resolved
         """.trimIndent()
     )
 
     // String to allow and enforce issue id. Value is not actually used.
-    val IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION by stringDirective(
+    val IGNORE_CODEGEN_WITH_FIR2IR_FAKE_OVERRIDE_GENERATION by stringDirective(
         description = """
-            Suppresses test if $ENABLE_IR_FAKE_OVERRIDE_GENERATION directive enabled
+            Suppresses test if $ENABLE_FIR_FAKE_OVERRIDE_GENERATION directive enabled
         """.trimIndent()
     )
 

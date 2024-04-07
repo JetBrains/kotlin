@@ -146,40 +146,4 @@ public final class KotlinClassHeader implements Metadata {
     }
 
     // TODO: equals, hashCode, etc as in Java Annotation contract?
-
-    /**
-     * Use {@link KotlinClassMetadata#CLASS_KIND} instead
-     */
-    @Deprecated
-    public static final int CLASS_KIND = 1;
-
-    /**
-     * Use {@link KotlinClassMetadata#FILE_FACADE_KIND} instead
-     */
-    @Deprecated
-    public static final int FILE_FACADE_KIND = 2;
-
-    /**
-     * Use {@link KotlinClassMetadata#SYNTHETIC_CLASS_KIND} instead
-     */
-    @Deprecated
-    public static final int SYNTHETIC_CLASS_KIND = 3;
-
-    /**
-     * Use {@link KotlinClassMetadata#MULTI_FILE_CLASS_FACADE_KIND} instead
-     */
-    @Deprecated
-    public static final int MULTI_FILE_CLASS_FACADE_KIND = 4;
-
-    /**
-     * Use {@link KotlinClassMetadata#MULTI_FILE_CLASS_PART_KIND} instead
-     */
-    @Deprecated
-    public static final int MULTI_FILE_CLASS_PART_KIND = 5;
-
-    /**
-     * Use {@link kotlinx.metadata.jvm.JvmMetadataVersion#LATEST_STABLE_SUPPORTED} instead
-     */
-    @Deprecated
-    public static final int[] COMPATIBLE_METADATA_VERSION = Arrays.copyOf(JvmMetadataVersion.INSTANCE.toArray(), 3);
 }

@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           GET_VAR 't: T of <root>.C.g1 declared in <root>.C.g1' type=T of <root>.C.g1 origin=null
     PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [fake_override,val]
       overridden:
-        public final fromClass: T of <root>.BaseClass.<get-fromClass>
+        public final fromClass: T of <root>.BaseClass.<get-fromClass> declared in <root>.BaseClass
       FUN FAKE_OVERRIDE name:<get-fromClass> visibility:public modality:FINAL <T> ($this:<root>.BaseClass, $receiver:T of <root>.C.<get-fromClass>) returnType:T of <root>.C.<get-fromClass> [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [fake_override,val]
         overridden:

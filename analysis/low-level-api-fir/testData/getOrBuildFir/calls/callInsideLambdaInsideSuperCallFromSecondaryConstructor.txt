@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallFromSecondaryConstruc
         }
 
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor([ResolvedTo(BODY_RESOLVE)] l: R|kotlin/Long|): R|B| {
-            super<R|A|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            super<R|A|>([ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 R|/foo|(R|<local>/l|)
             }
             )

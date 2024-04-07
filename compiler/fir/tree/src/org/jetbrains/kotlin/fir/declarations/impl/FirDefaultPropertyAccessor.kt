@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -61,7 +60,7 @@ abstract class FirDefaultPropertyAccessor(
     contextReceivers = MutableOrEmptyList.empty(),
     valueParameters,
     body = null,
-    contractDescription = FirEmptyContractDescription,
+    contractDescription = null,
     symbol,
     propertySymbol,
     isGetter,

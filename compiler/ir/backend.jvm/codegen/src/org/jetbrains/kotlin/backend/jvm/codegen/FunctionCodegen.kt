@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -274,18 +272,18 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     ) {
         val iterator = irFunction.valueParameters.iterator()
         val kotlinParameterTypes = jvmSignature.valueParameters
-        val syntheticParameterCount = kotlinParameterTypes.count { it.kind.isSkippedInGenericSignature }
+        val syntheticParameterCount = irFunction.valueParameters.count { it.isSkippedInGenericSignature }
 
         visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
 
         kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
-            val kind = parameterSignature.kind
-            val annotated = when (kind) {
-                JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter
-                else -> iterator.next()
-            }
+            val extensionReceiverParameter = irFunction.extensionReceiverParameter
+            val annotated = if (extensionReceiverParameter != null && i == irFunction.contextReceiverParametersCount)
+                extensionReceiverParameter
+            else
+                iterator.next()
 
-            if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
+            if (i >= syntheticParameterCount && !annotated.isSyntheticMarkerParameter()) {
                 object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
                     override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                         return mv.visitParameterAnnotation(
@@ -312,7 +310,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 // Not generating parameter annotations for default stubs fixes KT-7892, though
                 // this certainly looks like a workaround for a javac bug.
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
-                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
                 IrDeclarationOrigin.BRIDGE,
                 IrDeclarationOrigin.BRIDGE_SPECIAL,
@@ -333,8 +331,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
 
 private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
-    origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||
-            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
+    origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, config: JvmBackendConfig) {
     irFunction.extensionReceiverParameter?.let {

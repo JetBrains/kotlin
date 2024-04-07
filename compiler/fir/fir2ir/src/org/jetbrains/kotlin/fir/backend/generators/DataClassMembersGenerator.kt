@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  * fir own logic that traverses class hierarchies in fir elements. Also, this one creates and passes IR elements, instead of providing how
  * to declare them, to [DataClassMembersGenerator].
  */
-class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
+class DataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
 
     fun generateSingleFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
         return MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
@@ -88,8 +88,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         val origin: IrDeclarationOrigin
     ) {
         private val irDataClassMembersGenerator = object : IrBasedDataClassMembersGenerator(
-            IrGeneratorContextBase(components.irBuiltIns),
-            components.symbolTable,
+            IrGeneratorContextBase(c.irBuiltIns),
+            c.symbolTable,
             irClass,
             irClass.kotlinFqName,
             origin,
@@ -123,7 +123,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in scope of kotlin.Any
                     return getHashCodeFunction(session.builtinTypes.anyType.type.toRegularClassSymbol(session)!!.fir)
                 }
-                val scope = klass.symbol.unsubstitutedScope()
+                val scope = klass.symbol.unsubstitutedScope(c)
                 return scope.getFunctions(HASHCODE_NAME).first { symbol ->
                     val function = symbol.fir
                     function.valueParameters.isEmpty() && function.receiverParameter == null && function.contextReceivers.isEmpty()
@@ -156,7 +156,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             }
 
             override fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo {
-                val firProperty = klass.symbol.declaredScope()
+                val firProperty = klass.symbol.declaredScope(c)
                     .getProperties(property.name)
                     .first { (it as FirPropertySymbol).fromPrimaryConstructor } as FirPropertySymbol
 
@@ -191,6 +191,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
 
         fun generateDispatchReceiverParameter(irFunction: IrFunction) =
             irFunction.declareThisReceiverParameter(
+                c,
                 irClass.defaultType,
                 IrDeclarationOrigin.DEFINED,
                 UNDEFINED_OFFSET,
@@ -207,7 +208,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 val toStringFunction = createSyntheticIrFunction(
                     TO_STRING,
                     toStringContributedFunction,
-                    components.irBuiltIns.stringType,
+                    c.irBuiltIns.stringType,
                 )
                 declarationStorage.cacheGeneratedFunction(toStringContributedFunction, toStringFunction)
             }
@@ -218,7 +219,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 val hashCodeFunction = createSyntheticIrFunction(
                     HASHCODE_NAME,
                     hashcodeNameContributedFunction,
-                    components.irBuiltIns.intType,
+                    c.irBuiltIns.intType,
                 )
                 declarationStorage.cacheGeneratedFunction(hashcodeNameContributedFunction, hashCodeFunction)
             }
@@ -229,7 +230,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 val equalsFunction = createSyntheticIrFunction(
                     EQUALS,
                     equalsContributedFunction,
-                    components.irBuiltIns.booleanType,
+                    c.irBuiltIns.booleanType,
                     otherParameterNeeded = true,
                     isOperator = true
                 )
@@ -267,7 +268,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         }
 
         private fun calculateSyntheticFirFunctions(): Map<Name, FirSimpleFunction> {
-            val scope = klass.unsubstitutedScope()
+            val scope = klass.unsubstitutedScope(c)
             val contributedSyntheticFunctions =
                 buildMap<Name, FirSimpleFunction> {
                     for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
@@ -310,9 +311,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             otherParameterNeeded: Boolean = false,
             isOperator: Boolean = false,
         ): IrSimpleFunction {
-            val signature = if (klass.symbol.classId.isLocal) null else components.signatureComposer.composeSignature(syntheticCounterpart)
-            val symbol = components.declarationStorage.createFunctionSymbol(signature)
-            return components.irFactory.createSimpleFunction(
+            val symbol = c.declarationStorage.createFunctionSymbol(signature = null)
+            return c.irFactory.createSimpleFunction(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 origin = origin,
@@ -332,7 +332,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             ).apply {
                 if (otherParameterNeeded) {
                     val irValueParameter = createSyntheticIrParameter(
-                        this, syntheticCounterpart.valueParameters.first().name, components.irBuiltIns.anyNType
+                        this, syntheticCounterpart.valueParameters.first().name, c.irBuiltIns.anyNType
                     )
                     this.valueParameters = listOf(irValueParameter)
                 }
@@ -340,8 +340,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 setParent(irClass)
                 addDeclarationToParent(this, irClass)
                 dispatchReceiverParameter = generateDispatchReceiverParameter(this)
-                components.irBuiltIns.findBuiltInClassMemberFunctions(
-                    components.irBuiltIns.anyClass,
+                c.irBuiltIns.findBuiltInClassMemberFunctions(
+                    c.irBuiltIns.anyClass,
                     this.name
                 ).singleOrNull()?.let {
                     overriddenSymbols = listOf(it)
@@ -350,7 +350,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         }
 
         private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType, index: Int = 0): IrValueParameter =
-            components.irFactory.createValueParameter(
+            c.irFactory.createValueParameter(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.DEFINED,

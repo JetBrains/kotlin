@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.HasExtras
+import org.jetbrains.kotlin.tooling.core.emptyExtras
 import org.jetbrains.kotlin.types.Variance
 
-sealed class ObjCType {
+sealed class ObjCType : HasExtras {
     final override fun toString(): String = this.render()
 
     abstract fun render(attrsAndName: String): String
@@ -22,24 +24,19 @@ sealed class ObjCType {
 
 data class ObjCRawType(
     val rawText: String,
+    override val extras: Extras = emptyExtras()
 ) : ObjCType() {
     override fun render(attrsAndName: String): String = rawText.withAttrsAndName(attrsAndName)
 }
 
-sealed class ObjCReferenceType : ObjCType() {
-    @InternalKotlinNativeApi
-    open val classId: ClassId? = null
-}
-
+sealed class ObjCReferenceType : ObjCType()
 sealed class ObjCNonNullReferenceType : ObjCReferenceType()
 
 data class ObjCNullableReferenceType(
     val nonNullType: ObjCNonNullReferenceType,
     val isNullableResult: Boolean = false,
+    override val extras: Extras = emptyExtras(),
 ) : ObjCReferenceType() {
-
-    override val classId: ClassId? get() = nonNullType.classId
-
     override fun render(attrsAndName: String): String {
         val attribute = if (isNullableResult) objcNullableResultAttribute else objcNullableAttribute
         return nonNullType.render(" $attribute".withAttrsAndName(attrsAndName))
@@ -49,7 +46,7 @@ data class ObjCNullableReferenceType(
 data class ObjCClassType(
     val className: String,
     val typeArguments: List<ObjCNonNullReferenceType> = emptyList(),
-    override val classId: ClassId? = null,
+    override val extras: Extras = emptyExtras()
 ) : ObjCNonNullReferenceType() {
 
 
@@ -72,30 +69,37 @@ sealed class ObjCGenericTypeUsage : ObjCNonNullReferenceType() {
     }
 }
 
-data class ObjCGenericTypeRawUsage(override val typeName: String) : ObjCGenericTypeUsage()
+data class ObjCGenericTypeRawUsage(
+    override val typeName: String,
+    override val extras: Extras = emptyExtras()
+) : ObjCGenericTypeUsage()
 
 data class ObjCGenericTypeParameterUsage(
     override val typeName: String,
+    override val extras: Extras = emptyExtras()
 ) : ObjCGenericTypeUsage()
 
 data class ObjCProtocolType(
     val protocolName: String,
-    override val classId: ClassId? = null,
+    override val extras: Extras = emptyExtras()
 ) : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = "id<$protocolName>".withAttrsAndName(attrsAndName)
 }
 
 object ObjCIdType : ObjCNonNullReferenceType() {
+    override val extras: Extras = emptyExtras()
     override fun render(attrsAndName: String) = "id".withAttrsAndName(attrsAndName)
 }
 
 object ObjCInstanceType : ObjCNonNullReferenceType() {
+    override val extras: Extras = emptyExtras()
     override fun render(attrsAndName: String): String = "instancetype".withAttrsAndName(attrsAndName)
 }
 
 data class ObjCBlockPointerType(
     val returnType: ObjCType,
     val parameterTypes: List<ObjCReferenceType>,
+    override val extras: Extras = emptyExtras()
 ) : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = returnType.render(buildString {
         append("(^")
@@ -108,12 +112,15 @@ data class ObjCBlockPointerType(
 }
 
 object ObjCMetaClassType : ObjCNonNullReferenceType() {
+    override val extras: Extras = emptyExtras()
     override fun render(attrsAndName: String): String = "Class".withAttrsAndName(attrsAndName)
 }
 
 sealed class ObjCPrimitiveType(
     val cName: String,
 ) : ObjCType() {
+    override val extras: Extras = emptyExtras()
+
     object NSUInteger : ObjCPrimitiveType("NSUInteger")
     object BOOL : ObjCPrimitiveType("BOOL")
     object unichar : ObjCPrimitiveType("unichar")
@@ -145,6 +152,7 @@ sealed class ObjCPrimitiveType(
 data class ObjCPointerType(
     val pointee: ObjCType,
     val nullable: Boolean = false,
+    override val extras: Extras = emptyExtras()
 ) : ObjCType() {
     override fun render(attrsAndName: String) =
         pointee.render(
@@ -159,6 +167,7 @@ data class ObjCPointerType(
 }
 
 object ObjCVoidType : ObjCType() {
+    override val extras: Extras = emptyExtras()
     override fun render(attrsAndName: String) = "void".withAttrsAndName(attrsAndName)
 }
 

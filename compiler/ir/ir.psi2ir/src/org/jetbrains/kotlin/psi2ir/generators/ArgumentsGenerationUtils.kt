@@ -463,7 +463,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             isHidden = false,
         )
 
-    irAdapterFun.extensionReceiverParameter = createValueParameter("callee", -1, funType.toIrType())
+    irAdapterFun.extensionReceiverParameter = createValueParameter("\$callee", -1, funType.toIrType())
     irAdapterFun.valueParameters = suspendFunType.arguments
         .take(suspendFunType.arguments.size - 1)
         .mapIndexed { index, typeProjection -> createValueParameter("p$index", index, typeProjection.type.toIrType()) }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -25,7 +24,7 @@ import kotlin.contracts.contract
 abstract class AbstractDeclarationModificationServicePsiResilienceTest : AbstractLowLevelApiModifiablePsiTest() {
     protected abstract fun modifySelectedElement(element: PsiElement)
 
-    override fun doTestWithPsiModification(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+    override fun doTestWithPsiModification(ktFile: KtFile, testServices: TestServices) {
         val selectedElement = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
         modifySelectedElement(selectedElement)
 

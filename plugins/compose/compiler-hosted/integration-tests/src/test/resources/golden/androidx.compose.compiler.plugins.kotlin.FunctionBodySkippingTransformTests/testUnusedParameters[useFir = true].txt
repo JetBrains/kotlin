@@ -1,0 +1,120 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Unskippable(a: Unstable, b: Stable, c: MaybeStable) {
+    used(a)
+}
+@Composable
+fun Skippable1(a: Unstable, b: Stable, c: MaybeStable) {
+    used(b)
+}
+@Composable
+fun Skippable2(a: Unstable, b: Stable, c: MaybeStable) {
+    used(c)
+}
+@Composable
+fun Skippable3(a: Unstable, b: Stable, c: MaybeStable) { }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Unskippable(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Unskippable):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(a)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(a)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Unskippable(a, b, c, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Skippable1(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Skippable1):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b00010001 != 0b00010000 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(b)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Skippable1(a, b, c, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Skippable2(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Skippable2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b001000000000 == 0) {
+      %composer.changed(c)
+    } else {
+      %composer.changedInstance(c)
+    }
+    ) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b10000001 != 0b10000000 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(c)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Skippable2(a, b, c, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Skippable3(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Skippable3):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Skippable3(a, b, c, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

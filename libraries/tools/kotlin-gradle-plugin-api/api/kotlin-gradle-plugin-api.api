@@ -8,15 +8,15 @@ public final class org/jetbrains/kotlin/gradle/dsl/ExplicitApiMode : java/lang/E
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions {
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions {
 	public abstract fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun compilerOptions (Lorg/gradle/api/Action;)V
 	public abstract fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
 }
 
-public final class org/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions$DefaultImpls {
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions;Lkotlin/jvm/functions/Function1;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions;Lorg/gradle/api/Action;)V
+public final class org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions$DefaultImpls {
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions;Lkotlin/jvm/functions/Function1;)V
+	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions;Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode : java/lang/Enum {
@@ -109,6 +109,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field JVM_1_8 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_20 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_21 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public static final field JVM_22 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun fromTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -257,15 +258,16 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCommonToolOptions$Defau
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCompile : org/gradle/api/Task {
 	public abstract fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
-	public abstract fun kotlinOptions (Lgroovy/lang/Closure;)V
 	public abstract fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun kotlinOptions (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompile$DefaultImpls {
-	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lgroovy/lang/Closure;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompileKt {
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinGradlePluginDsl : java/lang/annotation/Annotation {
@@ -335,7 +337,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun getSourceMapPrefix ()Ljava/lang/String;
 	public abstract fun getTarget ()Ljava/lang/String;
 	public abstract fun getTypedArrays ()Z
-	public abstract fun getUseEsClasses ()Z
+	public abstract fun getUseEsClasses ()Ljava/lang/Boolean;
 	public abstract fun setFriendModulesDisabled (Z)V
 	public abstract fun setMain (Ljava/lang/String;)V
 	public abstract fun setMetaInfo (Z)V
@@ -348,7 +350,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun setSourceMapPrefix (Ljava/lang/String;)V
 	public abstract fun setTarget (Ljava/lang/String;)V
 	public abstract fun setTypedArrays (Z)V
-	public abstract fun setUseEsClasses (Z)V
+	public abstract fun setUseEsClasses (Ljava/lang/Boolean;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls {
@@ -369,7 +371,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getTypedArrays (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
-	public static fun getUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
+	public static fun getUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/Boolean;
 	public static fun getUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
@@ -389,7 +391,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setTypedArrays (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
-	public static fun setUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
+	public static fun setUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/Boolean;)V
 	public static fun setUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 }
@@ -730,8 +732,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun associateWith (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)V
 	public abstract fun attributes (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun attributes (Lorg/gradle/api/Action;)V
-	public abstract fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun compilerOptions (Lorg/gradle/api/Action;)V
 	public abstract fun defaultSourceSet (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun defaultSourceSet (Lorg/gradle/api/Action;)V
 	public abstract fun getAllAssociatedCompilations ()Ljava/util/Set;
@@ -772,8 +772,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilation$Companio
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilation$DefaultImpls {
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lkotlin/jvm/functions/Function1;)V
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/gradle/api/Action;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lkotlin/jvm/functions/Function1;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/gradle/api/Action;)V
 	public static fun defaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Lorg/gradle/api/Action;)V
 	public static fun getAssociateWith (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/util/List;
 	public static fun getDefaultSourceSetName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Ljava/lang/String;
@@ -805,8 +803,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles$DefaultImpls {
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lkotlin/jvm/functions/Function1;)V
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lorg/gradle/api/Action;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lkotlin/jvm/functions/Function1;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lorg/gradle/api/Action;)V
 	public static fun defaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;Lorg/gradle/api/Action;)V
 	public static fun getAssociateWith (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/util/List;
 	public static fun getDefaultSourceSetName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)Ljava/lang/String;
@@ -824,8 +820,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources$DefaultImpls {
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lkotlin/jvm/functions/Function1;)V
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lorg/gradle/api/Action;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lkotlin/jvm/functions/Function1;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lorg/gradle/api/Action;)V
 	public static fun defaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;Lorg/gradle/api/Action;)V
 	public static fun getAssociateWith (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/util/List;
 	public static fun getDefaultSourceSetName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources;)Ljava/lang/String;
@@ -850,28 +844,27 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSuppor
 	public static fun getPluginArtifactForNative (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin;)Lorg/jetbrains/kotlin/gradle/plugin/SubpluginArtifact;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler : org/jetbrains/kotlin/gradle/plugin/HasProject {
 	public abstract fun api (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun api (Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun api (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public abstract fun api (Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun api (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun api (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun api (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun compileOnly (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun compileOnly (Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun compileOnly (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public abstract fun compileOnly (Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun compileOnly (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun compileOnly (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun compileOnly (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun devNpm (Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun devNpm (Ljava/lang/String;Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun devNpm (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun enforcedPlatform (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun enforcedPlatform (Ljava/lang/Object;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun getProject ()Lorg/gradle/api/Project;
 	public abstract fun implementation (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun implementation (Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun implementation (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public abstract fun implementation (Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun implementation (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun implementation (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun implementation (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun kotlin (Ljava/lang/String;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun kotlin (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun npm (Ljava/io/File;)Lorg/gradle/api/artifacts/Dependency;
@@ -892,21 +885,21 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDepende
 	public abstract fun project (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public abstract fun project (Ljava/util/Map;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public abstract fun runtimeOnly (Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun runtimeOnly (Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun runtimeOnly (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public abstract fun runtimeOnly (Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun runtimeOnly (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public abstract fun runtimeOnly (Lorg/gradle/api/artifacts/Dependency;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun runtimeOnly (Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler$DefaultImpls {
-	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
-	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun api (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun compileOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun enforcedPlatform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/Object;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun enforcedPlatform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/Object;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
-	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun implementation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun kotlin (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
 	public static fun npm (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/io/File;Z)Lorg/gradle/api/artifacts/Dependency;
 	public static fun npm (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/io/File;Z)Lorg/gradle/api/artifacts/Dependency;
@@ -918,8 +911,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler$De
 	public static fun platform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/Object;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 	public static fun project (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/ProjectDependency;
 	public static synthetic fun project$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/gradle/api/artifacts/ProjectDependency;
-	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
-	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lgroovy/lang/Closure;)Lorg/gradle/api/artifacts/Dependency;
+	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/ExternalModuleDependency;
+	public static fun runtimeOnly (Lorg/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler;Lorg/gradle/api/artifacts/Dependency;Lorg/gradle/api/Action;)Lorg/gradle/api/artifacts/Dependency;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinExecution : org/gradle/api/Named {
@@ -1389,7 +1382,6 @@ public final class org/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs$DefaultIm
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs;Lkotlin/jvm/functions/Function1;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs;Lorg/gradle/api/Action;)V
 	public static fun getKotlinJavaToolchain (Lorg/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs;)Lorg/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain;
-	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs;Lgroovy/lang/Closure;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs;Lorg/gradle/api/Action;)V
 }
@@ -1458,7 +1450,6 @@ public final class org/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile$DefaultImp
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;Lkotlin/jvm/functions/Function1;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;Lorg/gradle/api/Action;)V
 	public static fun getKotlinJavaToolchain (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;)Lorg/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain;
-	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;Lgroovy/lang/Closure;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile;Lorg/gradle/api/Action;)V
 }

@@ -10,7 +10,6 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
@@ -137,4 +136,8 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[CompatibilityConventionRegistrar.Factory::class] =
         CompatibilityConventionRegistrarG80.Factory()
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
+        ConfigurationCacheStartParameterAccessorG80.Factory()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG80.Factory()
 }

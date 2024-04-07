@@ -5,23 +5,17 @@
 
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
-import org.jetbrains.kotlin.cli.jvm.compiler.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.MARK_DYNAMIC_CALLS
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -44,9 +38,8 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
 
     private val reporter = ClassicDiagnosticReporter(testServices)
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
-        var allDiagnostics = info.analysisResult.bindingContext.diagnostics + computeJvmSignatureDiagnostics(info)
+        var allDiagnostics = info.analysisResult.bindingContext.diagnostics.toList()
         if (AdditionalFilesDirectives.CHECK_TYPE in module.directives) {
             allDiagnostics = allDiagnostics.filter { it.factory.name != Errors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
         }
@@ -71,26 +64,6 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
             processDebugInfoDiagnostics(configuration, module, file, ktFile, info, withNewInferenceModeEnabled)
         }
     }
-
-    private fun computeJvmSignatureDiagnostics(info: ClassicFrontendOutputArtifact): Set<Diagnostic> {
-        if (testServices.moduleStructure.modules.any { !it.targetPlatform.isJvm() }) return emptySet()
-        if (REPORT_JVM_DIAGNOSTICS_ON_FRONTEND !in testServices.moduleStructure.allDirectives) return emptySet()
-        val bindingContext = info.analysisResult.bindingContext
-        val jvmSignatureDiagnostics = HashSet<Diagnostic>()
-        for (ktFile in info.ktFiles.values) {
-            val declarations = PsiTreeUtil.findChildrenOfType(ktFile, KtDeclaration::class.java)
-            for (declaration in declarations) {
-                val diagnostics = getJvmSignatureDiagnostics(
-                    declaration,
-                    bindingContext.diagnostics,
-                ) ?: continue
-
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration))
-            }
-        }
-        return jvmSignatureDiagnostics
-    }
-
 
     private fun processDebugInfoDiagnostics(
         configuration: DiagnosticsRenderingConfiguration,

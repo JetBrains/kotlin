@@ -55,6 +55,11 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
     runTest("plugins/jvm-abi-gen/testData/content/class/");
   }
 
+  @TestMetadata("dataClassNonPublicConstructor")
+  public void testDataClassNonPublicConstructor() {
+    runTest("plugins/jvm-abi-gen/testData/content/dataClassNonPublicConstructor/");
+  }
+
   @TestMetadata("effectivelyPrivateAnnotation")
   public void testEffectivelyPrivateAnnotation() {
     runTest("plugins/jvm-abi-gen/testData/content/effectivelyPrivateAnnotation/");
@@ -63,6 +68,16 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
   @TestMetadata("innerClasses")
   public void testInnerClasses() {
     runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
+  }
+
+  @TestMetadata("internalClassAndCopyMethod")
+  public void testInternalClassAndCopyMethod() {
+    runTest("plugins/jvm-abi-gen/testData/content/internalClassAndCopyMethod/");
+  }
+
+  @TestMetadata("internalClassAndCopyMethodStrict")
+  public void testInternalClassAndCopyMethodStrict() {
+    runTest("plugins/jvm-abi-gen/testData/content/internalClassAndCopyMethodStrict/");
   }
 
   @TestMetadata("kt50005")

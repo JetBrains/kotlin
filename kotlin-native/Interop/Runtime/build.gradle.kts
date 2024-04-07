@@ -67,14 +67,16 @@ sourceSets.main.configure {
 }
 
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs += listOf(
-            "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-opt-in=kotlinx.cinterop.BetaInteropApi",
-            "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-            "-Xskip-prerelease-check"
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+    compilerOptions {
+        optIn.addAll(
+                listOf(
+                        "kotlin.ExperimentalUnsignedTypes",
+                        "kotlinx.cinterop.BetaInteropApi",
+                        "kotlinx.cinterop.ExperimentalForeignApi",
+                )
         )
+        freeCompilerArgs.add("-Xskip-prerelease-check")
     }
 }
 

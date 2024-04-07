@@ -65,12 +65,16 @@ const val JS_MAP = "js.map"
 const val META_JS = "meta.js"
 const val HTML = "html"
 
-internal fun writeWasmUnitTestRunner(compiledFile: File): File {
-    val testRunnerFile = compiledFile.parentFile.resolve("runUnitTests.mjs")
+internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File {
+    val static = workingDir.resolve("static").also {
+        it.mkdirs()
+    }
+
+    val testRunnerFile = static.resolve("runUnitTests.mjs")
     testRunnerFile.writeText(
         """
-        import exports from './${compiledFile.name}';
-        exports.startUnitTests?.();
+        import { startUnitTests } from './${compiledFile.relativeTo(static).invariantSeparatorsPath}';
+        startUnitTests();
         """.trimIndent()
     )
     return testRunnerFile

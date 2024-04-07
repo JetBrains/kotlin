@@ -1,15 +1,5 @@
-buildscript {
-    apply(from = "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle")
-}
-
 plugins {
     kotlin("jvm")
-}
-
-repositories {
-    extra["bootstrapKotlinRepo"]?.let {
-        maven(url = it)
-    }
 }
 
 dependencies {
@@ -23,8 +13,7 @@ dependencies {
     implementation(project(":kotlin-metadata")) { isTransitive = false }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xskip-prerelease-check"
-    }
+sourceSets {
+    "main" { projectDefault() }
+    "test" { none() }
 }

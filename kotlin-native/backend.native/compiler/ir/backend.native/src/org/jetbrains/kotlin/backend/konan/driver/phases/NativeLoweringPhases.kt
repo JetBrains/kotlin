@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
-import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowe
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
-import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
+import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -72,7 +71,7 @@ private val stripTypeAliasDeclarationsPhase = createFileLoweringPhase(
 )
 
 private val annotationImplementationPhase = createFileLoweringPhase(
-        { context -> AnnotationImplementationLowering { NativeAnnotationImplementationTransformer(context, it) } },
+        ::NativeAnnotationImplementationLowering,
         name = "AnnotationImplementation",
         description = "Create synthetic annotations implementations and use them in annotations constructor calls"
 )
@@ -251,9 +250,7 @@ private val rangeContainsLoweringPhase = createFileLoweringPhase(
 )
 
 private val forLoopsPhase = createFileLoweringPhase(
-        { context, irFile ->
-            ForLoopsLowering(context, KonanBCEForLoopBodyTransformer()).lower(irFile)
-        },
+        ::NativeForLoopsLowering,
         name = "ForLoops",
         description = "For loops lowering",
         prerequisite = setOf(functionsWithoutBoundCheck)
@@ -347,7 +344,7 @@ private val inlinePhase = createFileLoweringPhase(
                     FunctionInlining(
                             context.context,
                             NativeInlineFunctionResolver(context.context, context),
-                            alwaysCreateTemporaryVariablesForArguments = context.shouldContainDebugInfo()
+                            insertAdditionalImplicitCasts = true,
                     ).lower(irFile)
                 }
             }

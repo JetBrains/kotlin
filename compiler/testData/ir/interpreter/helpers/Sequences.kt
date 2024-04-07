@@ -19,6 +19,11 @@ private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
     override fun take(n: Int) = EmptySequence
 }
 
+internal interface DropTakeSequence<T> : Sequence<T> {
+    fun drop(n: Int): Sequence<T>
+    fun take(n: Int): Sequence<T>
+}
+
 public inline fun <T> Sequence<T>?.orEmpty(): Sequence<T> = this ?: emptySequence()
 
 private class GeneratorSequence<T : Any>(private val getInitialValue: () -> T?, private val getNextValue: (T) -> T?) : Sequence<T> {

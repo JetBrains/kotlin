@@ -154,7 +154,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTypeArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
@@ -174,7 +174,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTypeArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
@@ -190,11 +190,31 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
         }
 
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTypeArgumentScript.kts>
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+        }
+
+        @R|one/Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
+        }
+
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTypeArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
@@ -214,7 +234,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTypeArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
@@ -248,4 +268,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithTypeArgumentScript.kts
 
         @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|)) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         }
-

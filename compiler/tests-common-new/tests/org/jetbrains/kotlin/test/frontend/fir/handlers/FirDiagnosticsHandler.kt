@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFa
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
@@ -44,7 +47,9 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -53,6 +58,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
@@ -66,11 +72,15 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
 
     fun assertCollectedDiagnostics(testServices: TestServices, expectedExtension: String) {
-        if (directive !in testServices.moduleStructure.allDirectives) {
-            return
-        }
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutExtension.removeSuffix(".fir")}$expectedExtension")
+
+        if (directive !in testServices.moduleStructure.allDirectives) {
+            if (DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in testServices.moduleStructure.allDirectives) {
+                testServices.assertions.assertFileDoesntExist(expectedFile, directive)
+            }
+            return
+        }
         if (dumper.isEmpty() && !expectedFile.exists()) {
             return
         }
@@ -106,6 +116,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     override val additionalServices: List<ServiceRegistrationData> =
         listOf(service(::DiagnosticsService), service(::FirDiagnosticCollectorService))
 
+    override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
+        get() = listOf(::FirIdenticalChecker)
+
     private val fullDiagnosticsRenderer = FullDiagnosticsRenderer(DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
@@ -125,22 +138,26 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 val firFile = info.mainFirFiles[file] ?: continue
                 var diagnostics = frontendDiagnosticsPerFile[firFile]
                 if (AdditionalFilesDirectives.CHECK_TYPE in currentModule.directives) {
-                    diagnostics = diagnostics.filter { it.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
+                    diagnostics = diagnostics.filter { it.diagnostic.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
                 }
                 if (LanguageSettingsDirectives.API_VERSION in currentModule.directives) {
-                    diagnostics = diagnostics.filter { it.factory.name != FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
+                    diagnostics = diagnostics.filter { it.diagnostic.factory.name != FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
                 }
-                val diagnosticsMetadataInfos =
-                    diagnostics.diagnosticCodeMetaInfos(
-                        currentModule, file,
-                        diagnosticsService, globalMetadataInfoHandler,
-                        lightTreeEnabled, lightTreeComparingModeEnabled,
-                        forceRenderArguments,
-                    )
+                val diagnosticsMetadataInfos = diagnostics
+                    .groupBy({ it.kmpCompilationMode }, { it.diagnostic })
+                    .flatMap { (kmpCompilation, diagnostics) ->
+                        diagnostics.diagnosticCodeMetaInfos(
+                            currentModule, file,
+                            diagnosticsService, globalMetadataInfoHandler,
+                            lightTreeEnabled, lightTreeComparingModeEnabled,
+                            forceRenderArguments,
+                            kmpCompilation
+                        )
+                    }
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
                 collectSyntaxDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments)
                 collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
-                fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics, file)
+                fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics.map { it.diagnostic }, file)
             }
         }
     }
@@ -160,7 +177,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     .toMetaInfos(
                         module,
                         testFile,
-                        globalMetadataInfoHandler1 = globalMetadataInfoHandler,
+                        globalMetadataInfoHandler = globalMetadataInfoHandler,
                         lightTreeEnabled,
                         lightTreeComparingModeEnabled,
                         forceRenderArguments,
@@ -175,7 +192,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     it.toMetaInfos(
                         module,
                         testFile,
-                        globalMetadataInfoHandler1 = globalMetadataInfoHandler,
+                        globalMetadataInfoHandler = globalMetadataInfoHandler,
                         lightTreeEnabled,
                         lightTreeComparingModeEnabled,
                         forceRenderArguments,
@@ -379,6 +396,7 @@ fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
     lightTreeEnabled: Boolean,
     lightTreeComparingModeEnabled: Boolean,
     forceRenderArguments: Boolean = false,
+    kmpCompilationMode: KmpCompilationMode? = null
 ): List<FirDiagnosticCodeMetaInfo> = flatMap { diagnostic ->
     if (!diagnosticsService.shouldRenderDiagnostic(
             module,
@@ -394,6 +412,7 @@ fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
         lightTreeEnabled,
         lightTreeComparingModeEnabled,
         forceRenderArguments,
+        kmpCompilationMode
     )
 }
 
@@ -577,13 +596,14 @@ class PsiLightTreeMetaInfoProcessor(testServices: TestServices) : AbstractTwoAtt
 fun KtDiagnostic.toMetaInfos(
     module: TestModule,
     file: TestFile,
-    globalMetadataInfoHandler1: GlobalMetadataInfoHandler,
+    globalMetadataInfoHandler: GlobalMetadataInfoHandler,
     lightTreeEnabled: Boolean,
     lightTreeComparingModeEnabled: Boolean,
-    forceRenderArguments: Boolean = false
+    forceRenderArguments: Boolean = false,
+    kmpCompilationMode: KmpCompilationMode? = null
 ): List<FirDiagnosticCodeMetaInfo> = textRanges.map { range ->
     val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)
-    val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler1.getExistingMetaInfosForActualMetadata(file, metaInfo)
+    val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, metaInfo)
         .any { it.description != null }
     if (shouldRenderArguments) {
         metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
@@ -601,10 +621,36 @@ fun KtDiagnostic.toMetaInfos(
             else -> error("Should not be here")
         }
     }
+    if (kmpCompilationMode == KmpCompilationMode.METADATA) {
+        metaInfo.attributes += "METADATA"
+    }
     metaInfo
 }
 
-typealias DiagnosticsMap = Multimap<FirFile, KtDiagnostic, List<KtDiagnostic>>
+typealias DiagnosticsMap = Multimap<FirFile, DiagnosticWithKmpCompilationMode, List<DiagnosticWithKmpCompilationMode>>
+
+data class DiagnosticWithKmpCompilationMode(val diagnostic: KtDiagnostic, val kmpCompilationMode: KmpCompilationMode)
+
+/**
+ * There are two types of checkers (represented by [MppCheckerKind]):
+ * 1. Common checker. When a common checker analyzes a code, the checker doesn't see what are the actualizations for the `expect` declarations.
+ * 2. Platform checker. When a platform checker analyzes a code, the checker sees what are the actualizations for the `expect` declarations
+ *    instead of the `expect` declarations themselves.
+ *
+ * KMP is compiled in two different modes (represented by [KmpCompilationMode]):
+ * 1. Metadata compilation. Metadata compilation compiles only non-platform fragments,
+ *    and it runs both common and platform checkers on those non-platform fragments.
+ *    But in testData, we only check diagnostics from platform checkers in non-platform fragments.
+ *    Common checkers in non-platform targets are tested by "platform compilation" anyway
+ * 2. Platform compilation. Platform compilation compiles all the fragments (non-platform and platform),
+ *    and it runs common checkers on non-platform fragments,
+ *    and it runs platform checkers on platform fragments
+ *
+ * Please don't confuse "platform checker" and "platform compilation"
+ */
+enum class KmpCompilationMode {
+    METADATA, PLATFORM, LOW_LEVEL_API
+}
 
 open class FirDiagnosticCollectorService(val testServices: TestServices) : TestService {
     private val cache: MutableMap<FirOutputArtifact, DiagnosticsMap> = mutableMapOf()
@@ -614,14 +660,14 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
     }
 
     fun containsErrors(info: FirOutputArtifact): Boolean {
-        return getFrontendDiagnosticsForModule(info).values.any { it.severity == Severity.ERROR }
+        return getFrontendDiagnosticsForModule(info).values.any { it.diagnostic.severity == Severity.ERROR }
     }
 
-    private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile, KtDiagnostic> {
+    private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile, DiagnosticWithKmpCompilationMode> {
         val allFiles = info.partsForDependsOnModules.flatMap { it.firFiles.values }
         val platformPart = info.partsForDependsOnModules.last()
         val lazyDeclarationResolver = platformPart.session.lazyDeclarationResolver
-        val result = listMultimapOf<FirFile, KtDiagnostic>()
+        val result = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
 
         lazyDeclarationResolver.disableLazyResolveContractChecksInside {
             result += platformPart.session.runCheckers(
@@ -629,19 +675,46 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                 allFiles,
                 DiagnosticReporterFactory.createPendingReporter(),
                 mppCheckerKind = MppCheckerKind.Platform
-            )
+            ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }
 
             for (part in info.partsForDependsOnModules) {
                 result += part.session.runCheckers(
-                    platformPart.firAnalyzerFacade.scopeSession,
+                    part.firAnalyzerFacade.scopeSession,
                     part.firFiles.values,
                     DiagnosticReporterFactory.createPendingReporter(),
                     mppCheckerKind = MppCheckerKind.Common
-                )
+                ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }
+            }
+
+            for (part in info.partsForDependsOnModules.dropLast(1)) {
+                part.session.turnOnMetadataCompilationAnalysisFlag {
+                    result += part.session.runCheckers(
+                        part.firAnalyzerFacade.scopeSession,
+                        part.firFiles.values,
+                        DiagnosticReporterFactory.createPendingReporter(),
+                        mppCheckerKind = MppCheckerKind.Platform
+                    ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.METADATA) } }
+                }
             }
         }
 
         return result
+    }
+}
+
+@OptIn(SessionConfiguration::class)
+private fun FirSession.turnOnMetadataCompilationAnalysisFlag(body: () -> Unit) {
+    val originalLv = languageVersionSettings
+    val lv = object : LanguageVersionSettings by originalLv {
+        override fun <T> getFlag(flag: AnalysisFlag<T>): T =
+            @Suppress("UNCHECKED_CAST") // UNCHECKED_CAST is fine because metadataCompilation is boolean flag
+            if (flag == AnalysisFlags.metadataCompilation) true as T else originalLv.getFlag(flag)
+    }
+    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(lv))
+    try {
+        body()
+    } finally {
+        register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(originalLv))
     }
 }
 

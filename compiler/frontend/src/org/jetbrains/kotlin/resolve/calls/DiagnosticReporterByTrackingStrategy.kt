@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -601,7 +601,7 @@ class DiagnosticReporterByTrackingStrategy(
             is CallableReferenceConstraintPosition<*>,
             is IncorporationConstraintPosition,
             is InjectedAnotherStubTypeConstraintPosition<*>,
-            is LHSArgumentConstraintPosition<*, *>, SimpleConstraintSystemConstraintPosition, ProvideDelegateFixationPosition
+            is SimpleConstraintSystemConstraintPosition, ProvideDelegateFixationPosition
             -> {
                 if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                     throw AssertionError("Constraint error in unexpected position: $position")
@@ -861,7 +861,7 @@ class DiagnosticReporterByTrackingStrategy(
 
             if (argumentsExpression != null) {
                 val specialFunctionName = requireNotNull(
-                    ControlStructureTypingUtils.ResolveConstruct.values().find { specialFunction ->
+                    ControlStructureTypingUtils.ResolveConstruct.entries.find { specialFunction ->
                         specialFunction.specialFunctionName == resolvedAtom.candidateDescriptor.name
                     }
                 ) { "Unsupported special construct: ${resolvedAtom.candidateDescriptor.name} not found in special construct names" }
@@ -918,7 +918,7 @@ class DiagnosticReporterByTrackingStrategy(
         }
         if (atom !is ResolvedCallAtom) return false
 
-        return ControlStructureTypingUtils.ResolveConstruct.values().any { specialFunction ->
+        return ControlStructureTypingUtils.ResolveConstruct.entries.any { specialFunction ->
             specialFunction.specialFunctionName == atom.candidateDescriptor.name
         }
     }

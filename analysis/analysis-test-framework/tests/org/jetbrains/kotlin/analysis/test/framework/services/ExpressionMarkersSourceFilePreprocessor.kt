@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -108,9 +107,18 @@ class ExpressionMarkerProvider : TestService {
 
     inline fun <reified P : KtElement> getElementOfTypeAtCaret(file: KtFile, caretTag: String? = null): P {
         val offset = getCaretPosition(file, caretTag)
+        return file.findElementAt(offset)?.parentOfType() ?: error("No expression found at caret")
+    }
+
+    /**
+     * Returns an element of type [P] at the specified caret, or returns `null` if no such caret exists. If the caret can be found but the
+     * element has the wrong type, an error will be raised.
+     */
+    inline fun <reified P : KtElement> getElementOfTypeAtCaretOrNull(file: KtFile, caretTag: String? = null): P? {
+        val offset = getCaretPositionOrNull(file, caretTag) ?: return null
         return file.findElementAt(offset)
             ?.parentOfType()
-            ?: error("No expression found at caret")
+            ?: error("Element at caret doesn't exist or doesn't have a parent of type `${P::class.simpleName}`")
     }
 
     inline fun <reified P : KtElement> getElementOfTypeAtCaretByDirective(
@@ -140,15 +148,12 @@ class ExpressionMarkerProvider : TestService {
     }
 
     inline fun <reified P : KtElement> getElementsOfTypeAtCarets(
-        moduleStructure: TestModuleStructure,
         testServices: TestServices,
         caretTag: String? = null,
     ): Collection<Pair<P, KtFile>> {
-        return moduleStructure.modules.flatMap { module ->
-            val ktFiles = testServices.ktModuleProvider.getKtFiles(module)
-            getElementsOfTypeAtCarets<P>(ktFiles, caretTag)
+        return testServices.ktTestModuleStructure.mainModules.flatMap { ktTestModule ->
+            getElementsOfTypeAtCarets<P>(ktTestModule.ktFiles, caretTag)
         }
-
     }
 
     fun getSelectedElementOrElementAtCaretOfTypeByDirective(
@@ -208,9 +213,9 @@ class ExpressionMarkerProvider : TestService {
         return Class.forName(expectedTypeFqName) as Class<PsiElement>
     }
 
-    fun getSelectedElementOfTypeByDirective(ktFile: KtFile, module: TestModule): PsiElement {
+    fun getSelectedElementOfTypeByDirective(ktFile: KtFile, module: KtTestModule): PsiElement {
         val selectedElement = getSelectedElement(ktFile)
-        val expectedType = expectedTypeClass(module.directives) ?: return selectedElement
+        val expectedType = expectedTypeClass(module.testModule.directives) ?: return selectedElement
         if (expectedType.isInstance(selectedElement)) return selectedElement
 
         return findDescendantOfTheSameRangeOfType(selectedElement, expectedType)

@@ -13,7 +13,61 @@ FILE: common.kt
             public get(): R|MyList|
 
     }
+FILE: jvm.kt
+    public open actual class MyList : R|kotlin/Any| {
+        public constructor(): R|MyList| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual fun get(i: R|kotlin/Int|): R|kotlin/Int| {
+            ^get R|<local>/i|
+        }
+
+        public final fun set(i: R|kotlin/Int|, v: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class DerivedList : R|MyList| {
+        public constructor(): R|DerivedList| {
+            super<R|MyList|>()
+        }
+
+        public final fun useMember(): R|kotlin/Unit| {
+            this@R|/DerivedList|.R|/MyList.get|(Int(1))
+            this@R|/DerivedList|.R|/MyList.set|(Int(2), Int(3))
+        }
+
+    }
+    public final fun useList(list: R|MyList|): R|kotlin/Unit| {
+        R|<local>/list|.R|/MyList.get|(Int(1))
+        R|<local>/list|.R|/MyList.set|(Int(2), Int(3))
+    }
+    public final class DerivedWrapper : R|Wrapper| {
+        public constructor(): R|DerivedWrapper| {
+            super<R|Wrapper|>(R|/MyList.MyList|())
+        }
+
+        public final fun use(): R|kotlin/Unit| {
+            this@R|/DerivedWrapper|.R|/Wrapper.list|.R|/MyList.get|(Int(1))
+            this@R|/DerivedWrapper|.R|/Wrapper.list|.R|/MyList.set|(Int(2), Int(3))
+        }
+
+    }
 Module: m1-jvm
+FILE: common.kt
+    public final expect class MyList : R|kotlin/Any| {
+        public final expect fun get(i: R|kotlin/Int|): R|kotlin/Int|
+
+    }
+    public open class Wrapper : R|kotlin/Any| {
+        public constructor(list: R|MyList|): R|Wrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val list: R|MyList| = R|<local>/list|
+            public get(): R|MyList|
+
+    }
 FILE: jvm.kt
     public open actual class MyList : R|kotlin/Any| {
         public constructor(): R|MyList| {

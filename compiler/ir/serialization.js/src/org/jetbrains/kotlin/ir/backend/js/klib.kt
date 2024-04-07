@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
@@ -65,6 +66,7 @@ import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
@@ -103,6 +105,7 @@ fun generateKLib(
     moduleFragment: IrModuleFragment,
     diagnosticReporter: DiagnosticReporter,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
+    wasmTarget: WasmTarget? = null,
 ) {
     val configuration = depsDescriptors.compilerConfiguration
     val allDependencies = depsDescriptors.allDependencies
@@ -122,6 +125,7 @@ fun generateKLib(
         abiVersion,
         jsOutputName,
         builtInsPlatform,
+        wasmTarget,
     )
 }
 
@@ -615,6 +619,7 @@ fun serializeModuleIntoKlib(
     abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
+    wasmTarget: WasmTarget? = null,
 ) {
     val moduleExportedNames = moduleFragment.collectExportedNames()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
@@ -689,6 +694,10 @@ fun serializeModuleIntoKlib(
     val properties = Properties().also { p ->
         if (jsOutputName != null) {
             p.setProperty(KLIB_PROPERTY_JS_OUTPUT_NAME, jsOutputName)
+        }
+        val wasmTargets = listOfNotNull(/* in the future there might be multiple WASM targets */ wasmTarget)
+        if (wasmTargets.isNotEmpty()) {
+            p.setProperty(KLIB_PROPERTY_WASM_TARGETS, wasmTargets.joinToString(" ") { it.alias })
         }
         if (containsErrorCode) {
             p.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")

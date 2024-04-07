@@ -7,25 +7,23 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substi
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 import kotlin.collections.single
 
 abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+    override fun doTest(testServices: TestServices) {
         val baseClass = testServices.expressionMarkerProvider
-            .getElementsOfTypeAtCarets<KtClassOrObject>(moduleStructure, testServices, "base")
+            .getElementsOfTypeAtCarets<KtClassOrObject>(testServices, "base")
             .single().first
         val superClass = testServices.expressionMarkerProvider
-            .getElementsOfTypeAtCarets<KtClassOrObject>(moduleStructure, testServices, "super")
+            .getElementsOfTypeAtCarets<KtClassOrObject>(testServices, "super")
             .single().first
 
         val substitutorRendered = analyseForTest(baseClass) {

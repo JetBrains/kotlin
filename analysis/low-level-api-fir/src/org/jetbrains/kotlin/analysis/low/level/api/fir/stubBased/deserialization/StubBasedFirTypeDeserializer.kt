@@ -231,7 +231,11 @@ internal class StubBasedFirTypeDeserializer(
             constructor,
             arguments,
             isNullable = isNullable,
-            if (typeElement is KtFunctionType && typeElement.receiver != null) ConeAttributes.WithExtensionFunctionType else attributes
+            if (typeElement is KtFunctionType && typeElement.receiver != null) {
+                ConeAttributes.WithExtensionFunctionType.add(attributes)
+            } else {
+                attributes
+            }
         )
     }
 

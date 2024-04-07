@@ -31,6 +31,25 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * Aggregates [KT][KtElement] -> [FIR][org.jetbrains.kotlin.fir.FirElement] mappings and diagnostics for associated [KtFile].
+ *
+ * For every [KtFile] we need mapping for, we have [FileStructure] which contains a tree like-structure of [FileStructureElement].
+ *
+ * When we want to get `KT -> FIR` mapping,
+ * we [getOrPut][getStructureElementFor] [FileStructureElement] for the closest non-local declaration
+ * which contains the requested [KtElement].
+ *
+ * Some of [FileStructureElement] can be invalidated in the case on in-block PSI modification.
+ * See [invalidateElement] and [LLFirDeclarationModificationService] for details.
+ *
+ * The mapping is an optimization to avoid searching for the associated [FirElement][org.jetbrains.kotlin.fir.FirElement]
+ * by [KtElement] as it requires deep traverse through the main element of [FileStructureElement].
+ *
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
+ * @see FileStructureElement
+ * @see LLFirDeclarationModificationService
+ */
 internal class FileStructure private constructor(
     private val ktFile: KtFile,
     private val firFile: FirFile,
@@ -56,12 +75,16 @@ internal class FileStructure private constructor(
      * This method is responsible for "invalidation" of re-analyzable declarations.
      *
      * @see LLFirDeclarationModificationService
+     * @see getNonLocalReanalyzableContainingDeclaration
      */
     fun invalidateElement(element: KtElement) {
         val container = getContainerKtElement(element)
         structureElements.remove(container)
     }
 
+    /**
+     * @return [FileStructureElement] for the closest non-local declaration which contains this [element].
+     */
     fun getStructureElementFor(element: KtElement): FileStructureElement {
         val container = getContainerKtElement(element)
         return structureElements.getOrPut(container) { createStructureElement(container) }

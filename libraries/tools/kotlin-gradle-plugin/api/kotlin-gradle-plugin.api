@@ -1,4 +1,4 @@
-public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension, org/jetbrains/kotlin/gradle/dsl/HasConfigurableCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinHierarchyDsl, org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithNativeShortcuts, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions {
+public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinHierarchyDsl, org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithNativeShortcuts, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions {
 	public fun android ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public fun android (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public fun android (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
@@ -765,6 +765,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedE
 	public fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public fun getProject ()Lorg/gradle/api/Project;
 	public fun getPublishable ()Z
+	public fun getResourcesElementsConfigurationName ()Ljava/lang/String;
 	public final fun getRuntimeElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
 	public final fun getRuntimeElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
@@ -905,6 +906,16 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public static final fun publishSources (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/gradle/api/tasks/TaskProvider;)V
 	public static final fun publishSources (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)V
 	public static final fun sourcesJarTask (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTargetResourcesPublication {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTargetResourcesPublication$Companion;
+	public static final field EXTENSION_NAME Ljava/lang/String;
+	public abstract fun canPublishResources (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Z
+	public abstract fun canResolveResources (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Z
+	public abstract fun publishInAndroidAssets (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;Lkotlin/jvm/functions/Function1;Lorg/gradle/api/provider/Provider;)V
+	public abstract fun publishResourcesAsKotlinComponent (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;Lorg/gradle/api/provider/Provider;)V
+	public abstract fun resolveResources (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Lorg/gradle/api/provider/Provider;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {

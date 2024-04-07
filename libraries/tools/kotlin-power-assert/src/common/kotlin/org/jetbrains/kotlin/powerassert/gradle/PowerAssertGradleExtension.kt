@@ -19,7 +19,24 @@
 
 package org.jetbrains.kotlin.powerassert.gradle
 
-open class PowerAssertGradleExtension {
-    var functions: List<String> = listOf("kotlin.assert")
-    var excludedSourceSets: List<String> = listOf()
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.SetProperty
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import javax.inject.Inject
+
+@ExperimentalKotlinGradlePluginApi
+abstract class PowerAssertGradleExtension @Inject constructor(
+    objectFactory: ObjectFactory,
+) {
+    /**
+     * Defines the fully-qualified path of functions which should be transformed by the Power-Assert compiler plugin.
+     * If nothing is defined, defaults to [`kotlin.assert`][assert].
+     */
+    val functions: SetProperty<String> = objectFactory.setProperty(String::class.java).convention(setOf("kotlin.assert"))
+
+    /**
+     * Defines the Kotlin SourceSets by name which will be transformed by the Power-Assert compiler plugin.
+     * When the provider returns `null` - which is the default - all test SourceSets will be transformed.
+     */
+    val includedSourceSets: SetProperty<String> = objectFactory.setProperty(String::class.java).convention(emptySet())
 }

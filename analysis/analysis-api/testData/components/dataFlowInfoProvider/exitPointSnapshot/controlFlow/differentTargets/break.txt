@@ -1,0 +1,19 @@
+KtDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = if (cond()) {
+                    break
+                } else if (cond()) {
+                    break@outer
+                }
+    type = kotlin.Unit
+  hasEscapingJumps = true
+  hasJumps = true
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = true
+  loopJumpExpressions = [
+    break,
+    break@outer
+  ]
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

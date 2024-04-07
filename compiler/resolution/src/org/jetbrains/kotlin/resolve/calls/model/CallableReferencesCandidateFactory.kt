@@ -176,6 +176,8 @@ class CallableReferencesCandidateFactory(
         val fakeArguments = createFakeArgumentsForReference(descriptor, expectedArgumentCount, inputOutputTypes, unboundReceiverCount)
         val argumentMapping =
             callComponents.argumentsToParametersMapper.mapArguments(fakeArguments, externalArgument = null, descriptor = descriptor)
+
+        @OptIn(ApplicabilityDetail::class)
         if (argumentMapping.diagnostics.any { !it.candidateApplicability.isSuccess }) return null
 
         /**

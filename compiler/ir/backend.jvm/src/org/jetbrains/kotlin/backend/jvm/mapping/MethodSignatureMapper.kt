@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
-import org.jetbrains.kotlin.ir.util.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
-import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
@@ -255,26 +254,21 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         for (i in 0 until function.contextReceiverParametersCount) {
             val contextReceiver = function.valueParameters[i]
-            writeParameter(sw, JvmMethodParameterKind.CONTEXT_RECEIVER, contextReceiver.type, function)
+            writeParameter(sw, false, contextReceiver.type, function)
         }
 
         val receiverParameter = function.extensionReceiverParameter
         if (receiverParameter != null) {
-            writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
+            writeParameter(sw, false, receiverParameter.type, function)
         }
 
         for (i in function.contextReceiverParametersCount until function.valueParameters.size) {
             val parameter = function.valueParameters[i]
-            val kind = when (parameter.origin) {
-                JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> JvmMethodParameterKind.OUTER
-                JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER -> JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL
-                else -> JvmMethodParameterKind.VALUE
-            }
             val type =
                 if (shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
                     parameter.type.makeNullable()
                 else parameter.type
-            writeParameter(sw, kind, type, function, materialized)
+            writeParameter(sw, parameter.isSkippedInGenericSignature, type, function, materialized)
         }
 
         sw.writeReturnType()
@@ -324,26 +318,28 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             }
     }
 
-    // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation.
-    // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt').
-    fun shouldBoxSingleValueParameterForSpecialCaseOfRemove(irFunction: IrFunction): Boolean {
-        if (irFunction !is IrSimpleFunction) return false
-        if (irFunction.name.asString() != "remove" && !irFunction.name.asString().startsWith("remove-")) return false
-        if (irFunction.isFromJava()) return false
-        if (irFunction.valueParameters.size != 1) return false
-        val valueParameterType = irFunction.valueParameters[0].type
-        if (!valueParameterType.unboxInlineClass().isInt()) return false
-        return irFunction.allOverridden(false).any { it.parent.kotlinFqName == StandardNames.FqNames.mutableCollection }
+    companion object {
+        // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation.
+        // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt').
+        fun shouldBoxSingleValueParameterForSpecialCaseOfRemove(irFunction: IrFunction): Boolean {
+            if (irFunction !is IrSimpleFunction) return false
+            if (irFunction.name.asString() != "remove" && !irFunction.name.asString().startsWith("remove-")) return false
+            if (irFunction.isFromJava()) return false
+            if (irFunction.valueParameters.size != 1) return false
+            val valueParameterType = irFunction.valueParameters[0].type
+            if (!valueParameterType.unboxInlineClass().isInt()) return false
+            return irFunction.allOverridden(false).any { it.parent.kotlinFqName == StandardNames.FqNames.mutableCollection }
+        }
     }
 
     private fun writeParameter(
         sw: JvmSignatureWriter,
-        kind: JvmMethodParameterKind,
+        isSkippedInGenericSignature: Boolean,
         type: IrType,
         function: IrFunction,
         materialized: Boolean = true
     ) {
-        sw.writeParameterType(kind)
+        sw.writeParameterType(JvmMethodParameterKind.VALUE, isSkippedInGenericSignature)
         writeParameterType(sw, type, function, materialized)
         sw.writeParameterTypeEnd()
     }

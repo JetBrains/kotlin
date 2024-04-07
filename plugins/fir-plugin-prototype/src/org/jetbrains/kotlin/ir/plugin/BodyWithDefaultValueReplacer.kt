@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -37,7 +37,7 @@ class BodyWithDefaultValueReplacer : IrElementVisitorVoid {
             }
 
             override fun visitReturn(expression: IrReturn) {
-                expression.value = defaultValue.expression.deepCopyWithVariables()
+                expression.value = defaultValue.expression.deepCopyWithoutPatchingParents()
             }
         }
         declaration.body?.acceptChildrenVoid(bodyReplacer)

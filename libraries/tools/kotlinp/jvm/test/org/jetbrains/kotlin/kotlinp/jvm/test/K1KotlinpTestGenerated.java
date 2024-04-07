@@ -29,6 +29,11 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/jvm/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
+  @TestMetadata("AnnotationWithQualifiedExpressionInArgument.kt")
+  public void testAnnotationWithQualifiedExpressionInArgument() {
+    runTest("libraries/tools/kotlinp/jvm/testData/AnnotationWithQualifiedExpressionInArgument.kt");
+  }
+
   @TestMetadata("Annotations.kt")
   public void testAnnotations() {
     runTest("libraries/tools/kotlinp/jvm/testData/Annotations.kt");

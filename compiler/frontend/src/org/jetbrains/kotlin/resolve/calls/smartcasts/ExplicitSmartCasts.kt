@@ -37,6 +37,8 @@ data class SingleSmartCast(val call: Call?, val type: KotlinType) : ExplicitSmar
         else MultipleSmartCasts(mapOf(call to type, smartCast.call to smartCast.type))
 }
 
+// todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
 data class MultipleSmartCasts internal constructor(val map: Map<Call?, KotlinType>) : ExplicitSmartCasts {
     override fun type(call: Call?) = map[call]
 

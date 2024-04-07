@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
@@ -85,10 +86,8 @@ class JvmBackendContext(
 
     val config: JvmBackendConfig = state.config
 
-    // If not-null, this is populated by LocalDeclarationsLowering with the intermediate data
-    // allowing mapping from local function captures to parameters and accurate transformation
-    // of calls to local functions from code fragments (i.e. the expression evaluator).
-    var localDeclarationsLoweringData: MutableMap<IrFunction, LocalFunctionData>? = null
+    // If this is not null, the JVM IR backend is invoked in the context of Evaluate Expression in the IDE.
+    var evaluatorData: JvmEvaluatorData? = null
 
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.
@@ -104,7 +103,7 @@ class JvmBackendContext(
     val defaultTypeMapper = IrTypeMapper(this)
     val defaultMethodSignatureMapper = MethodSignatureMapper(this, defaultTypeMapper)
 
-    val innerClassesSupport = JvmInnerClassesSupport(irFactory)
+    override val innerClassesSupport: InnerClassesSupport = JvmInnerClassesSupport(irFactory)
     val cachedDeclarations = JvmCachedDeclarations(
         this, generatorExtensions.cachedFields
     )
@@ -192,6 +191,8 @@ class JvmBackendContext(
     val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
 
     val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = ConcurrentHashMap.newKeySet()
+
+    val optionalAnnotations = mutableListOf<MetadataSource.Class>()
 
     init {
         state.mapInlineClass = { descriptor ->

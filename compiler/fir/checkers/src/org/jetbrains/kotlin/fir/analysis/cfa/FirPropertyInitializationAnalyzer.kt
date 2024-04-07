@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -99,17 +102,47 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     doNotReportConstantUninitialized: Boolean,
     scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
 ) {
+    val capturedInitializationError = if (receiver != null)
+        FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
+    else
+        FirErrors.CAPTURED_VAL_INITIALIZATION
+
+    // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
     fun FirQualifiedAccessExpression.hasMatchingReceiver(): Boolean {
         val expression = dispatchReceiver?.unwrapSmartcastExpression()
         return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver ||
                 (expression as? FirResolvedQualifier)?.symbol == receiver
     }
 
-    for (node in graph.nodes) {
-        when {
-            // TODO, KT-59669: `node.isUnion` - f({ x = 1 }, { x = 2 }) - which to report?
-            //  Also this is currently indistinguishable from x = 1; f({}, {}).
+    fun CFGNode<*>.reportErrorsOnInitializationsInInputs(symbol: FirPropertySymbol, path: EdgeLabel) {
+        for (previousNode in previousCfgNodes) {
+            if (edgeFrom(previousNode).kind.isBack) continue
+            when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
+                is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
+                is VariableAssignmentNode ->
+                    reporter.reportOn(assignmentNode.fir.lValue.source, capturedInitializationError, symbol, context)
+                else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
+                    assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path)
+            }
+        }
+    }
 
+    for (node in graph.nodes) {
+        if (node.isUnion) {
+            for ((path, data) in getValue(node)) {
+                for ((symbol, range) in data) {
+                    if (!symbol.isVal || !range.canBeRevisited() || symbol !in properties) continue
+                    // This can be something like `f({ x = 1 }, { x = 2 })` where `f` calls both lambdas in-place.
+                    // At each assignment it was only considered in isolation, but now that we're merging their control flows,
+                    // we can see that the assignments clash, so we need to go back and emit errors on these nodes.
+                    if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.canBeRevisited() != true }) {
+                        node.reportErrorsOnInitializationsInInputs(symbol, path)
+                    }
+                }
+            }
+        }
+
+        when {
             node is VariableDeclarationNode -> {
                 val symbol = node.fir.symbol
                 if (scope != null && receiver == null && node.fir.isVal && symbol in properties) {
@@ -123,14 +156,17 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
                 val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
                 if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver() != true || symbol !in properties) continue
 
-                if (getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
+                val info = getValue(node)
+                if (info.values.any { it[symbol]?.canBeRevisited() == true }) {
                     reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
                 } else if (scope != scopes[symbol]) {
-                    val error = if (receiver != null)
-                        FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
-                    else
-                        FirErrors.CAPTURED_VAL_INITIALIZATION
-                    reporter.reportOn(node.fir.lValue.source, error, symbol, context)
+                    reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
+                } else if (!symbol.isLocal && !node.owner.isInline(until = symbol.getContainingSymbol(context.session))) {
+                    // If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
+                    // backend generates either separate function or separate class for the lambda.
+                    // If we try to initialize non-static final field there, we will get exception at
+                    // runtime, since we can initialize such fields only inside constructors.
+                    reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
                 }
             }
 
@@ -182,3 +218,30 @@ private val Kind.doNotReportUninitializedVariableForInitialization: Boolean
         Kind.Function, Kind.AnonymousFunction, Kind.LocalFunction -> true
         else -> false
     }
+
+/**
+ * Determine if this declaration is evaluated inline. This is distinct from [evaluatedInPlace], as the declaration must also be inlined by
+ * the compiler.
+ */
+private val FirDeclaration.evaluatedInline: Boolean
+    get() = when (this) {
+        is FirAnonymousFunction -> inlineStatus == InlineStatus.Inline
+        is FirConstructor -> true // child of class initialization graph
+        is FirFunction, is FirClass -> false
+        else -> true // property initializer, etc.
+    }
+
+/**
+ * Checks that [ControlFlowGraph.declaration] is [evaluatedInline], and also recursively check all
+ * parent [ControlFlowGraph]s.
+ *
+ * @param until will stop recursion if [ControlFlowGraph.declaration] matches the specified symbol.
+ * This is used to stop recursion when there are nested declarations (like a local class), and we
+ * only need to check until that nested declaration.
+ */
+private fun ControlFlowGraph.isInline(until: FirBasedSymbol<*>?): Boolean {
+    val declaration = declaration
+    if (declaration?.symbol == until) return true
+    if (declaration?.evaluatedInline != true) return false
+    return enterNode.previousNodes.all { it.owner.isInline(until) }
+}

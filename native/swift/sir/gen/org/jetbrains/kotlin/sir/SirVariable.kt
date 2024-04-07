@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.variable]
  */
-abstract class SirVariable : SirDeclarationParent(), SirDeclaration {
+abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationParent {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override var parent: SirDeclarationParent
@@ -22,7 +22,7 @@ abstract class SirVariable : SirDeclarationParent(), SirDeclaration {
     abstract val type: SirType
     abstract val getter: SirGetter
     abstract val setter: SirSetter?
-    abstract val isStatic: Boolean
+    abstract override var documentation: String?
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)

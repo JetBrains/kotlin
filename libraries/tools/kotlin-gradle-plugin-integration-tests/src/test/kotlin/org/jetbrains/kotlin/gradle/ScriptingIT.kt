@@ -129,16 +129,6 @@ class ScriptingK1IT : ScriptingIT() {
 class ScriptingK2IT : ScriptingIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
-    @Disabled("KT-61137")
-    override fun testScripting(gradleVersion: GradleVersion) {
-        super.testScripting(gradleVersion)
-    }
-
-    @Disabled("KT-61137")
-    override fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
-        super.testScriptingCustomExtensionIncremental(gradleVersion)
-    }
-
     override fun GradleProject.disableLightTreeIfNeeded() {
         buildGradle.append(
             """

@@ -192,13 +192,16 @@ internal class KtFirTypeProvider(
             }
             is FirCallableReferenceAccess -> {
                 when (val explicitReceiver = fir.explicitReceiver) {
+                    is FirThisReceiverExpression -> {
+                        explicitReceiver.resolvedType.asKtType()
+                    }
                     is FirPropertyAccessExpression -> {
                         explicitReceiver.resolvedType.asKtType()
                     }
                     is FirResolvedQualifier -> {
                         explicitReceiver.symbol?.toLookupTag()?.constructType(
                             explicitReceiver.typeArguments.map { it.toConeTypeProjection() }.toTypedArray(),
-                            isNullable = false
+                            isNullable = explicitReceiver.isNullableLHSForCallableReference
                         )?.asKtType()
                             ?: fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
                     }

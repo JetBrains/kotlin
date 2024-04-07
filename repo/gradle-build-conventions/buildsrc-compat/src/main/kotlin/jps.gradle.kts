@@ -16,8 +16,9 @@ val distKotlinHomeDir by extra("$distDir/kotlinc")
 fun updateCompilerXml() {
     val modulesExcludedFromJps = listOf(
         "buildSrc",
-        "native/commonizer",
-        "plugins/atomicfu/atomicfu-runtime",
+        "compiler/build-tools/kotlin-build-tools-api-tests",
+        "libraries/examples",
+        "libraries/scripting/dependencies-maven-all",
         "libraries/tools/atomicfu",
         "libraries/tools/binary-compatibility-validator",
         "libraries/tools/dukat",
@@ -33,10 +34,11 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-gradle-plugin-dsl-codegen",
         "libraries/tools/kotlin-gradle-plugin-idea",
         "libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests",
+        "libraries/tools/kotlin-gradle-plugin-idea-proto",
         "libraries/tools/kotlin-gradle-plugin-integration-tests",
-        "libraries/tools/kotlin-gradle-plugin-tcs-android",
         "libraries/tools/kotlin-gradle-plugin-model",
         "libraries/tools/kotlin-gradle-plugin-npm-versions-codegen",
+        "libraries/tools/kotlin-gradle-plugin-tcs-android",
         "libraries/tools/kotlin-gradle-plugin-test-utils-embeddable",
         "libraries/tools/kotlin-gradle-statistics",
         "libraries/tools/kotlin-lombok",
@@ -51,6 +53,7 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-maven-serialization",
         "libraries/tools/kotlin-noarg",
         "libraries/tools/kotlin-osgi-bundle",
+        "libraries/tools/kotlin-power-assert",
         "libraries/tools/kotlin-prepush-hook",
         "libraries/tools/kotlin-sam-with-receiver",
         "libraries/tools/kotlin-serialization",
@@ -58,18 +61,17 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-stdlib-docs",
         "libraries/tools/kotlin-stdlib-gen",
         "libraries/tools/kotlin-test-js-runner",
-        "libraries/tools/kotlin-tooling-core",
         "libraries/tools/kotlin-tooling-metadata",
         "libraries/tools/maven-archetypes",
         "libraries/tools/mutability-annotations-compat",
         "libraries/tools/script-runtime",
-        "libraries/scripting/dependencies-maven-all",
+        "native/commonizer",
         "native/commonizer-api",
-        "libraries/examples",
-        "libraries/tools/kotlin-gradle-plugin-idea-proto",
-        "repo/gradle-settings-conventions",
-        "plugins/fir-plugin-prototype/plugin-annotations",
+        "native/objcexport-header-generator",
         "plugins/atomicfu/atomicfu-compiler/test/org/jetbrains/kotlin/konan/test/blackbox",
+        "plugins/atomicfu/atomicfu-runtime",
+        "plugins/fir-plugin-prototype/plugin-annotations",
+        "repo/gradle-settings-conventions",
     )
 
     val d = '$'
@@ -98,6 +100,7 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
         "-Xmx$xmx",
         "-XX:+UseCodeCacheFlushing",
         "-XX:ReservedCodeCacheSize=128m",
+        "-XX:+UseParallelGC",
         "-Djna.nosys=true",
         "-Didea.platform.prefix=Idea",
         "-Didea.is.unit.test=true",
@@ -137,7 +140,7 @@ fun setupGenerateAllTestsRunConfiguration() {
 // Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
 fun setupFirRunConfiguration() {
 
-    val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
+    val junit = JUnit("_stub").apply { configureForKotlin("4096m") }
     junit.moduleName = "kotlin.compiler.fir.fir2ir.test"
     junit.pattern = """^.*\.FirPsi\w+Test\w*Generated$"""
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")

@@ -68,8 +68,8 @@ class A {
 // test.kt:6 box
 
 // EXPECTATIONS WASM
-// test.kt:1 $box
 // test.kt:5 $box (4, 4, 8)
+// test.kt:8 $A.<init>
 // test.kt:29 $A.<init>
 // test.kt:11 $A.test
 // test.kt:18 $Companion.foo (20, 12)

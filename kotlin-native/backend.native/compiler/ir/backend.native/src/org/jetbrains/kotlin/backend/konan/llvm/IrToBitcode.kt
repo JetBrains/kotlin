@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -1761,7 +1761,7 @@ internal class CodeGeneratorVisitor(
                 return evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>).llvm
             }
             else -> {
-                if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive(context)) {
+                if (value.symbol.owner.isGlobalNonPrimitive(context)) {
                     functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
                 }
                 fieldAddress = staticFieldPtr(value.symbol.owner, functionGenerationContext)
@@ -1840,7 +1840,7 @@ internal class CodeGeneratorVisitor(
             alignment = generationState.llvmDeclarations.forField(value.symbol.owner).alignment
         } else {
             require(value.symbol.owner.isStatic) { "A receiver expected for a non-static field: ${value.render()}" }
-            if (context.config.threadsAreAllowed && value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
+            if (value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.shouldBeFrozen(context) && value.origin != ObjectClassLowering.IrStatementOriginFieldPreInit)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
@@ -2412,16 +2412,7 @@ internal class CodeGeneratorVisitor(
             val result = evaluateExpression(expression.result, resultSlot)
 
             functionGenerationContext.appendingTo(bbDispatch) {
-                if (context.config.indirectBranchesAreAllowed)
-                    functionGenerationContext.indirectBr(suspensionPointId, resumePoints)
-                else {
-                    val bbElse = functionGenerationContext.basicBlock("else", null) {
-                        functionGenerationContext.unreachable()
-                    }
-
-                    val cases = resumePoints.withIndex().map { llvm.int32(it.index + 1) to it.value }
-                    functionGenerationContext.switch(functionGenerationContext.ptrToInt(suspensionPointId, llvm.int32Type), cases, bbElse)
-                }
+                functionGenerationContext.indirectBr(suspensionPointId, resumePoints)
             }
             return result
         }
@@ -2432,10 +2423,7 @@ internal class CodeGeneratorVisitor(
                                              val bbResumeId: Int): InnerScopeImpl() {
         override fun genGetValue(value: IrValueDeclaration, resultSlot: LLVMValueRef?): LLVMValueRef {
             if (value == suspensionPointId) {
-                return if (context.config.indirectBranchesAreAllowed)
-                           functionGenerationContext.blockAddress(bbResume)
-                       else
-                           functionGenerationContext.intToPtr(llvm.int32(bbResumeId + 1), llvm.int8PtrType)
+                return functionGenerationContext.blockAddress(bbResume)
             }
             return super.genGetValue(value, resultSlot)
         }
@@ -2795,6 +2783,7 @@ internal class CodeGeneratorVisitor(
         overrideRuntimeGlobal("Kotlin_destroyRuntimeMode", llvm.constInt32(context.config.destroyRuntimeMode.value))
         overrideRuntimeGlobal("Kotlin_gcMutatorsCooperate", llvm.constInt32(if (context.config.gcMutatorsCooperate) 1 else 0))
         overrideRuntimeGlobal("Kotlin_auxGCThreads", llvm.constInt32(context.config.auxGCThreads.toInt()))
+        overrideRuntimeGlobal("Kotlin_concurrentMarkMaxIterations", llvm.constInt32(context.config.concurrentMarkMaxIterations.toInt()))
         overrideRuntimeGlobal("Kotlin_workerExceptionHandling", llvm.constInt32(context.config.workerExceptionHandling.value))
         overrideRuntimeGlobal("Kotlin_suspendFunctionsFromAnyThreadFromObjC", llvm.constInt32(if (context.config.suspendFunctionsFromAnyThreadFromObjC) 1 else 0))
         val getSourceInfoFunctionName = when (context.config.sourceInfoType) {

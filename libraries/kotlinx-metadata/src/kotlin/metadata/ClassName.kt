@@ -24,10 +24,3 @@ public typealias ClassName = String // Not a value class because of Java usages
  * A class name represents a local class or an anonymous object if it starts with '.' (dot).
  */
 public fun ClassName.isLocalClassName(): Boolean = this.startsWith(".")
-
-@Deprecated(
-    "Renamed to isLocalClassName() to avoid confusion with String properties",
-    ReplaceWith("isLocalClassName()"),
-    level = DeprecationLevel.ERROR
-)
-public val ClassName.isLocal: Boolean get() = isLocalClassName()

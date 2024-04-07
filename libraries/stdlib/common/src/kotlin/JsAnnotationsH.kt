@@ -58,6 +58,21 @@ public expect annotation class JsFileName(val name: String)
 public annotation class ExperimentalJsExport
 
 /**
+ * Marks the experimental JsStatic annotation.
+ *
+ * Note that behavior of these annotations will likely be changed in the future.
+ *
+ * Usages of such annotations will be reported as warnings unless an explicit opt-in with
+ * the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsStatic::class)`,
+ * or with the `-opt-in=kotlin.js.ExperimentalJsStatic` compiler option is given.
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("2.0")
+public annotation class ExperimentalJsStatic
+
+/**
  * Exports top-level declaration on JS platform.
  *
  * Compiled module exposes declarations that are marked with this annotation without name mangling.
@@ -144,5 +159,17 @@ public annotation class ExperimentalJsReflectionCreateInstance
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @MustBeDocumented
-@SinceKotlin("1.9")
+@SinceKotlin("2.0")
 public annotation class ExperimentalJsCollectionsApi
+
+/**
+ * Specifies that an additional static method is generated from the annotated companion object member if it's a function.
+ * If the member is a property, additional static getter/setter methods are generated.
+ */
+@ExperimentalJsStatic
+@Retention(AnnotationRetention.BINARY)
+@Target(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
+@MustBeDocumented
+@OptionalExpectation
+@SinceKotlin("2.0")
+public expect annotation class JsStatic

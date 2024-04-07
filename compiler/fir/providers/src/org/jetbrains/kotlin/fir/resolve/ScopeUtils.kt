@@ -106,25 +106,6 @@ private fun ConeKotlinType.scope(
             intersectionType.scope(useSiteSession, scopeSession, requiredMembersPhase) ?: FirTypeScope.Empty
         }
     }
-    is ConeStubTypeForChainInference -> {
-        // Actually, it should be the intersection of bounds, but K1 doesn't think so.
-        // interface ABC {
-        //     fun foo()
-        // }
-        //
-        // class Buildee<out U : ABC> {
-        //     fun get(): U = null!!
-        // }
-        //
-        // fun <F: ABC> buildsome(l: Buildee<F>.() -> Unit) {}
-        //
-        // fun test() {
-        //    buildsome {
-        //        this.get().foo()
-        //    }
-        // }
-        useSiteSession.builtinTypes.anyType.type.scope(useSiteSession, scopeSession, requiredMembersPhase)
-    }
     is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession, requiredMembersPhase)
     is ConeDynamicType -> useSiteSession.dynamicMembersStorage.getDynamicScopeFor(scopeSession)
     is ConeFlexibleType -> lowerBound.scope(useSiteSession, scopeSession, requiredMembersPhase)

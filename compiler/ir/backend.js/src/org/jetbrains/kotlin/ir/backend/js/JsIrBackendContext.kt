@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -52,7 +53,7 @@ import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
-import java.util.WeakHashMap
+import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrBackendContext(
@@ -138,7 +139,7 @@ class JsIrBackendContext(
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 
-    val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
+    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
     companion object {
         val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
@@ -150,6 +151,7 @@ class JsIrBackendContext(
         private val ENUMS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("enums"))
         private val JS_POLYFILLS_PACKAGE = JS_PACKAGE_FQNAME.child(Name.identifier("polyfill"))
         private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
+        private val COLLECTION_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("collections"))
 
         // TODO: due to name clash those weird suffix is required, remove it once `MemberNameGenerator` is implemented
         private val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
@@ -157,6 +159,7 @@ class JsIrBackendContext(
     }
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
+    private val internalCollectionPackage = module.getPackage(COLLECTION_PACKAGE_FQNAME)
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
@@ -266,8 +269,8 @@ class JsIrBackendContext(
             override val returnIfSuspended =
                 symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("returnIfSuspended"))
 
-            override val functionAdapter: IrClassSymbol
-                get() = TODO("Not implemented")
+            override val functionAdapter =
+                symbolTable.descriptorExtension.referenceClass(getJsInternalClass("FunctionAdapter"))
 
             override fun functionN(n: Int): IrClassSymbol {
                 return irFactory.stageController.withInitialIr { super.functionN(n) }
@@ -387,6 +390,9 @@ class JsIrBackendContext(
 
     internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
         findFunctions(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
+
+    internal fun getJsInternalCollectionFunction(name: String): SimpleFunctionDescriptor =
+        findFunctions(internalCollectionPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
 
     internal fun getJsInternalProperty(name: String): PropertyDescriptor =
         findProperty(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")

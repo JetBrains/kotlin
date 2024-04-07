@@ -74,6 +74,7 @@ val FirCallableDeclaration.isSubstitutionOverride: Boolean get() = origin is Fir
 val FirCallableDeclaration.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
 val FirCallableDeclaration.isDelegated: Boolean get() = origin == FirDeclarationOrigin.Delegated
 val FirCallableDeclaration.isCopyCreatedInScope: Boolean get() = isSubstitutionOrIntersectionOverride || isDelegated
+val FirCallableDeclaration.canHaveDeferredReturnTypeCalculation: Boolean get() = isCopyCreatedInScope || origin == FirDeclarationOrigin.Enhancement || origin == FirDeclarationOrigin.Synthetic.JavaProperty
 
 val FirCallableSymbol<*>.isIntersectionOverride: Boolean get() = origin == FirDeclarationOrigin.IntersectionOverride
 val FirCallableSymbol<*>.isSubstitutionOverride: Boolean get() = origin is FirDeclarationOrigin.SubstitutionOverride
@@ -172,6 +173,11 @@ var <D : FirCallableDeclaration>
 
 private object InitialSignatureKey : FirDeclarationDataKey()
 
+/**
+ * Some Java declarations are renamed (CharSequence.charAt) or have signatures with erased (Object) value parameters (Collection.remove).
+ *
+ * When the receiver is a mapped declaration with a Kotlin signature, this property returns the declaration with the initial Java signature.
+ */
 var FirCallableDeclaration.initialSignatureAttr: FirCallableDeclaration? by FirDeclarationDataRegistry.data(InitialSignatureKey)
 
 private object MatchingParameterFunctionTypeKey : FirDeclarationDataKey()

@@ -7,10 +7,11 @@ package kotlin.metadata.test
 
 import kotlin.metadata.*
 import org.junit.Test
+import kotlin.metadata.internal.FlagImpl
+import kotlin.metadata.internal._flagAccess
 import kotlin.reflect.KMutableProperty0
 import kotlin.test.*
 
-@Suppress("DEPRECATION", "DEPRECATION_ERROR") // flags will become internal eventually
 class FlagDelegatesTest {
     private class Private
 
@@ -26,29 +27,29 @@ class FlagDelegatesTest {
         assertEquals(Visibility.PRIVATE, p1.visibility)
         assertEquals(Visibility.PUBLIC, p2.visibility)
 
-        assertTrue(Flag.IS_PRIVATE(p1.flags))
-        assertTrue(Flag.IS_PUBLIC(p2.flags))
+        assertTrue(Flag.IS_PRIVATE(_flagAccess(p1)))
+        assertTrue(Flag.IS_PUBLIC(_flagAccess(p2)))
 
         p1.visibility = Visibility.PUBLIC
         p2.visibility = Visibility.INTERNAL
 
-        assertFalse(Flag.IS_PRIVATE(p1.flags))
-        assertFalse(Flag.IS_PUBLIC(p2.flags))
+        assertFalse(Flag.IS_PRIVATE(_flagAccess(p1)))
+        assertFalse(Flag.IS_PUBLIC(_flagAccess(p2)))
 
-        assertTrue(Flag.IS_PUBLIC(p1.flags))
-        assertTrue(Flag.IS_INTERNAL(p2.flags))
+        assertTrue(Flag.IS_PUBLIC(_flagAccess(p1)))
+        assertTrue(Flag.IS_INTERNAL(_flagAccess(p2)))
 
         val f = assertNotNull(p2.functions.find { it.name == "f" })
         assertEquals(Visibility.PUBLIC, f.visibility)
         f.visibility = Visibility.PRIVATE
-        assertFalse(Flag.IS_PUBLIC(f.flags))
-        assertTrue(Flag.IS_PRIVATE(f.flags))
+        assertFalse(Flag.IS_PUBLIC(_flagAccess(f)))
+        assertTrue(Flag.IS_PRIVATE(_flagAccess(f)))
     }
 
     @Test
     fun testBooleanFlags() {
         val klass = Public::class.java.readMetadataAsKmClass()
-        fun doTest(prop: KMutableProperty0<Boolean>, flags: () -> Int, rawFlag: Flag) {
+        fun doTest(prop: KMutableProperty0<Boolean>, flags: () -> Int, rawFlag: FlagImpl) {
             assertFalse(prop.get())
             assertFalse(rawFlag(flags()))
 
@@ -59,14 +60,14 @@ class FlagDelegatesTest {
         }
 
 
-        doTest(klass::isData, klass::flags, Flag.Class.IS_DATA)
+        doTest(klass::isData, { _flagAccess(klass) }, Flag.Class.IS_DATA)
         val f = klass.functions.single { it.name == "f" }
-        doTest(f::isOperator, f::flags, Flag.Function.IS_OPERATOR)
+        doTest(f::isOperator, { _flagAccess(f) }, Flag.Function.IS_OPERATOR)
         val rt = f.returnType
-        doTest(rt::isNullable, rt::flags, Flag.Type.IS_NULLABLE)
+        doTest(rt::isNullable, { _flagAccess(rt) }, Flag.Type.IS_NULLABLE)
     }
 
-    @Suppress("UNUSED_PARAMETER")
+    @Suppress("UNUSED_PARAMETER", "unused")
     class PropertiesContainer {
         val defaultVal: String = ""
 
@@ -121,7 +122,7 @@ class FlagDelegatesTest {
             setterParamCheck: (KmValueParameter?) -> Unit = { assertNull(it, "Should not be a setter parameter for $name") },
         ) {
             with(propMap.getValue(name)) {
-                assertEquals(listOf(isVarProp, true, isVarProp), listOf(isVar, hasGetter, hasSetter), "for $name")
+                assertEquals(listOf(isVarProp, isVarProp), listOf(isVar, setter != null), "for $name")
                 assertEquals(visibility, getter.visibility, "for $name")
                 assertEquals(getterNotDefault, getter.isNotDefault, "for $name")
 

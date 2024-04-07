@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/recursiveCapturedTypeInPropertyReference.kt
             $receiver: CALL 'public final fun filterIsInstance <R> (): kotlin.collections.List<@[NoInfer] R of kotlin.collections.filterIsInstance> declared in kotlin.collections' type=kotlin.collections.List<@[NoInfer] <root>.Recursive<*>> origin=null
               <R>: <root>.Recursive<*>
               $receiver: GET_VAR 'list: kotlin.collections.List<kotlin.Any> declared in <root>.AbstractSymbol.foo' type=kotlin.collections.List<kotlin.Any> origin=null
-            transform: PROPERTY_REFERENCE 'public abstract symbol: <root>.AbstractSymbol<R of <root>.Recursive>' field=null getter='public abstract fun <get-symbol> (): <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' setter=null type=kotlin.reflect.KProperty1<<root>.Recursive<*>, <root>.AbstractSymbol<out <root>.Recursive<*>>> origin=null
+            transform: PROPERTY_REFERENCE 'public abstract symbol: <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' field=null getter='public abstract fun <get-symbol> (): <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' setter=null type=kotlin.reflect.KProperty1<<root>.Recursive<*>, <root>.AbstractSymbol<out <root>.Recursive<*>>> origin=null
   CLASS INTERFACE name:Recursive modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Recursive<R of <root>.Recursive>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[<root>.Recursive<R of <root>.Recursive>; <root>.Something] reified:false

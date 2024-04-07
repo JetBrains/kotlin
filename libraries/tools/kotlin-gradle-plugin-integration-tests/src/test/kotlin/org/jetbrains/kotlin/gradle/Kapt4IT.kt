@@ -22,15 +22,19 @@ class Kapt4IT : Kapt3IT() {
     }
 
     @Disabled("Doesn't make sense in Kapt 4")
+    @GradleTest
     override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
+    @GradleTest
     override fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
+    @GradleTest
     override fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
+    @GradleTest
     override fun useK2KaptProperty(gradleVersion: GradleVersion) {}
 
     @DisplayName("KT-61879: K2 KAPT works with proguarded compiler jars and enum class")
@@ -55,15 +59,19 @@ class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
     }
 
     @Disabled("Enable when KT-61845 is fixed")
+    @GradleTest
     override fun testKt18799(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
+    @GradleTest
     override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
+    @GradleTest
     override fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
+    @GradleTest
     override fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {}
 }
 

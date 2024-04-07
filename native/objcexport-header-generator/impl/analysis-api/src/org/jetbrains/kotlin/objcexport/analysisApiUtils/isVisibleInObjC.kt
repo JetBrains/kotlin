@@ -21,7 +21,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 context(KtAnalysisSession)
-internal fun KtSymbol.isVisibleInObjC(): Boolean = when(this) {
+internal fun KtSymbol.isVisibleInObjC(): Boolean = when (this) {
     is KtCallableSymbol -> this.isVisibleInObjC()
     is KtClassOrObjectSymbol -> this.isVisibleInObjC()
     else -> false
@@ -36,6 +36,7 @@ internal fun KtCallableSymbol.isVisibleInObjC(): Boolean {
     if (this.isHiddenFromObjCByAnnotation()) return false
     if (this.isSealedClassConstructor()) return false
     if (this.isComponentNMethod() && this.getDirectlyOverriddenSymbols().isEmpty()) return false
+    getContainingSymbol()?.let { if (!it.isVisibleInObjC()) return false }
     return true
 }
 
@@ -50,6 +51,7 @@ internal fun KtClassOrObjectSymbol.isVisibleInObjC(): Boolean {
     if (!this.classKind.isVisibleInObjC()) return false
     if (this.isExpect) return false
     if (this.isInlined()) return false
+    getContainingSymbol()?.let { if (!it.isVisibleInObjC()) return false }
     return true
 }
 

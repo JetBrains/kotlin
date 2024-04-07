@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -49,6 +48,12 @@ public class SourceClassIdTestGenerated extends AbstractSourceClassIdTest {
   }
 
   @Test
+  @TestMetadata("localClassInsideAnnotationArgument.kt")
+  public void testLocalClassInsideAnnotationArgument() {
+    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideAnnotationArgument.kt");
+  }
+
+  @Test
   @TestMetadata("localClassInsideFunctionLiteral.kt")
   public void testLocalClassInsideFunctionLiteral() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideFunctionLiteral.kt");
@@ -64,6 +69,12 @@ public class SourceClassIdTestGenerated extends AbstractSourceClassIdTest {
   @TestMetadata("localClassInsideSuperEntryCall.kt")
   public void testLocalClassInsideSuperEntryCall() {
     runTest("analysis/low-level-api-fir/testData/classId/localClassInsideSuperEntryCall.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassInsideUnclosedAnnotation.kt")
+  public void testLocalClassInsideUnclosedAnnotation() {
+    runTest("analysis/low-level-api-fir/testData/classId/localClassInsideUnclosedAnnotation.kt");
   }
 
   @Test

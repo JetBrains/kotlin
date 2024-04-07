@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -22,20 +20,21 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private fun List<CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
 
-private val validateIrBeforeLowering = makeCustomPhase<JsIrBackendContext>(
-    { context, module -> validationCallback(context, module) },
+private val validateIrBeforeLowering = makeIrModulePhase(
+    ::IrValidationPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
-private val validateIrAfterLowering = makeCustomPhase<JsIrBackendContext>(
-    { context, module -> validationCallback(context, module) },
+private val validateIrAfterLowering = makeIrModulePhase(
+    ::IrValidationPhase,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
@@ -58,10 +57,10 @@ private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
     description = "Exclude synthetic declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`",
 )
 
-val scriptRemoveReceiverLowering = makeIrModulePhase(
-    ::ScriptRemoveReceiverLowering,
-    name = "ScriptRemoveReceiver",
-    description = "Remove receivers for declarations in script"
+private val jsStaticLowering = makeIrModulePhase(
+    ::JsStaticLowering,
+    name = "JsStaticLowering",
+    description = "Make for each @JsStatic declaration inside the companion object a proxy declaration inside its parent class static scope",
 )
 
 val createScriptFunctionsPhase = makeIrModulePhase(
@@ -213,9 +212,6 @@ private val functionInliningPhase = makeIrModulePhase(
             it,
             JsInlineFunctionResolver(it),
             it.innerClassesSupport,
-            alwaysCreateTemporaryVariablesForArguments = true,
-            inlineArgumentsWithOriginalOffset = true,
-            allowExternalInlining = true
         )
     },
     name = "FunctionInliningPhase",
@@ -363,7 +359,7 @@ private val forLoopsLoweringPhase = makeIrModulePhase(
 private val enumWhenPhase = makeIrModulePhase(
     ::EnumWhenLowering,
     name = "EnumWhenLowering",
-    description = "Replace `when` subjects of enum types with their ordinals"
+    description = "[Optimization] Replace `when` subjects of enum types with their ordinals"
 )
 
 private val propertyLazyInitLoweringPhase = makeIrModulePhase(
@@ -418,20 +414,20 @@ private val localClassExtractionPhase = makeIrModulePhase(
 )
 
 private val innerClassesLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
-    { context -> InnerClassesLowering(context, context.innerClassesSupport) },
+    ::InnerClassesLowering,
     name = "InnerClassesLowering",
     description = "Capture outer this reference to inner class"
 )
 
 private val innerClassesMemberBodyLoweringPhase = makeIrModulePhase(
-    { context -> InnerClassesMemberBodyLowering(context, context.innerClassesSupport) },
+    ::InnerClassesMemberBodyLowering,
     name = "InnerClassesMemberBody",
     description = "Replace `this` with 'outer this' field references",
     prerequisite = setOf(innerClassesLoweringPhase)
 )
 
 private val innerClassConstructorCallsLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
-    { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
+    ::InnerClassConstructorCallsLowering,
     name = "InnerClassConstructorCallsLowering",
     description = "Replace inner class constructor invocation"
 )
@@ -677,8 +673,8 @@ private val jsClassUsageInReflectionPhase = makeIrModulePhase(
 )
 
 private val classReferenceLoweringPhase = makeIrModulePhase(
-    ::ClassReferenceLowering,
-    name = "ClassReferenceLowering",
+    ::JsClassReferenceLowering,
+    name = "JsClassReferenceLowering",
     description = "Handle class references",
     prerequisite = setOf(jsClassUsageInReflectionPhase)
 )
@@ -785,10 +781,10 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 )
 
 val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
-    scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
     prepareCollectionsToExportLowering,
     preventExportOfSyntheticDeclarationsLowering,
+    jsStaticLowering,
     inventNamesForLocalClassesPhase,
     collectClassIdentifiersLowering,
     annotationInstantiationLowering,

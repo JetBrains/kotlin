@@ -13,8 +13,8 @@ FILE fqName:<root> fileName:/kt27933.kt
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: SET_VAR 'var r: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
-            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-              $this: GET_VAR 'var r: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+              $this: GET_VAR 'var r: kotlin.String declared in <root>.box' type=kotlin.String origin=PLUSEQ
               other: CONST String type=kotlin.String value="O"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -22,8 +22,8 @@ FILE fqName:<root> fileName:/kt27933.kt
             arg0: GET_VAR 'var r: kotlin.String declared in <root>.box' type=kotlin.String origin=null
             arg1: CONST String type=kotlin.String value="O"
           then: SET_VAR 'var r: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
-            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
-              $this: GET_VAR 'var r: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+              $this: GET_VAR 'var r: kotlin.String declared in <root>.box' type=kotlin.String origin=PLUSEQ
               other: CONST String type=kotlin.String value="K"
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         GET_VAR 'var r: kotlin.String declared in <root>.box' type=kotlin.String origin=null

@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeIn
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
@@ -32,8 +31,8 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
     val denotableName = Name.identifier("Denotable")
     val undenotableName = Name.identifier("Nondenotable")
 
-    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: TestModule, testServices: TestServices) {
-        val ktFile = mainFile ?: testServices.ktModuleProvider.getKtFiles(mainModule).first()
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        val ktFile = mainFile ?: mainModule.ktFiles.first()
         val actualText = buildString {
             ktFile.accept(object : KtTreeVisitorVoid() {
                 override fun visitElement(element: PsiElement) {

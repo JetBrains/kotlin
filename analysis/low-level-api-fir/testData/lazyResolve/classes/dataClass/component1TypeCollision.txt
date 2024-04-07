@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(COMPANION_GENERATION)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(SUPER_TYPES)] fun component1(): MyClass
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
 
         public? final operator [ResolvedTo(TYPES)] fun component1(): R|one/two/MyDataClass.MyClass|
 
-        public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] prop: MyClass = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }
 
@@ -283,6 +283,35 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
         }
 
         public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component1(): R|one/two/MyDataClass.MyClass|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] prop: R|one/two/MyDataClass.MyClass| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] component1TypeCollision.kt
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|one/two/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final data [ResolvedTo(CONSTANT_EVALUATION)] class MyDataClass : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop: R|one/two/MyDataClass.MyClass| = R|<local>/prop|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyDataClass] get(): R|one/two/MyDataClass.MyClass|
+
+        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|one/two/MyDataClass.MyClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final operator [ResolvedTo(CONSTANT_EVALUATION)] fun component1(): R|one/two/MyDataClass.MyClass|
 
         public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] prop: R|one/two/MyDataClass.MyClass| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 

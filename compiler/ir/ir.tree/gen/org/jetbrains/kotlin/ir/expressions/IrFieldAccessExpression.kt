@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 
 /**
- * A non-leaf IR tree element.
- *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.fieldAccessExpression]
  */
 abstract class IrFieldAccessExpression : IrDeclarationReference() {
@@ -21,7 +19,7 @@ abstract class IrFieldAccessExpression : IrDeclarationReference() {
 
     abstract var superQualifierSymbol: IrClassSymbol?
 
-    var receiver: IrExpression? = null
+    abstract var receiver: IrExpression?
 
     abstract var origin: IrStatementOrigin?
 }

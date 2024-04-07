@@ -43,7 +43,7 @@ internal class FirAssignAnnotationMatchingService(
         if (this.annotations.any { it.toAnnotationClassId(session)?.asSingleFqName() in annotationClassIds }) return true
         return resolvedSuperTypeRefs.any { superTypeRef ->
             val symbol = superTypeRef.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
-            symbol.annotations.any { it.toAnnotationClassId(session)?.asSingleFqName() in annotationClassIds }
+            symbol.annotated()
         }
     }
 }

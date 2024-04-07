@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
 
@@ -129,6 +131,8 @@ internal fun SymbolLightClassBase.createConstructors(
     }
 
     for (constructor in constructors) {
+        ProgressManager.checkCanceled()
+
         if (constructor.isHiddenOrSynthetic()) continue
 
         result.add(
@@ -212,6 +216,8 @@ internal fun SymbolLightClassBase.createMethods(
     fun KtAnalysisSession.handleDeclaration(declaration: KtCallableSymbol) {
         when (declaration) {
             is KtFunctionSymbol -> {
+                ProgressManager.checkCanceled()
+
                 if (declaration.hasReifiedParameters || declaration.isHiddenOrSynthetic()) return
                 if (declaration.name.isSpecial) return
 
@@ -290,6 +296,8 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     onlyJvmStatic: Boolean = false,
     suppressStatic: Boolean = false,
 ) {
+    ProgressManager.checkCanceled()
+
     if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
     if (declaration.name.isSpecial) return
 
@@ -405,6 +413,8 @@ internal fun SymbolLightClassBase.createField(
     isStatic: Boolean,
     result: MutableList<KtLightField>
 ) {
+    ProgressManager.checkCanceled()
+
     if (declaration.name.isSpecial) return
     if (!hasBackingField(declaration)) return
 
@@ -537,16 +547,12 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     containingClass: SymbolLightClassBase,
     classOrObject: KtClassOrObject?
 ): List<SymbolLightClassBase> {
-    val result = ArrayList<SymbolLightClassBase>()
+    val result = SmartList<SymbolLightClassBase>()
 
-    // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927
-    // inner classes with null names can't be searched for and can't be used from java anyway
-    // we can't prohibit creating light classes with null names either since they can contain members
-
-    getStaticDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
+    getStaticDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapNotNullTo(result) {
         val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
-            createLightClassNoCache(classOrObjectDeclaration, containingClass.ktModule)
+            classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
         } else {
             createLightClassNoCache(it, ktModule = containingClass.ktModule, manager)
         }
@@ -622,6 +628,7 @@ context(KtAnalysisSession)
 internal fun SymbolLightClassBase.addPropertyBackingFields(
     result: MutableList<KtLightField>,
     symbolWithMembers: KtSymbolWithMembers,
+    nameGenerator: SymbolLightField.FieldNameGenerator,
     forceIsStaticTo: Boolean? = null,
 ) {
     val propertySymbols = symbolWithMembers.getCombinedDeclaredMemberScope().getCallableSymbols()
@@ -634,9 +641,6 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
         }
 
     val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }
-
-    val nameGenerator = SymbolLightField.FieldNameGenerator()
-
     val isStatic = forceIsStaticTo ?: (symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject)
     fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
         createField(

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractDoubleColonReceiverTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -92,5 +91,23 @@ public class FirStandaloneNormalAnalysisSourceModuleDoubleColonReceiverTypeTestG
   @TestMetadata("methodReference_variable.kt")
   public void testMethodReference_variable() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_variable.kt");
+  }
+
+  @Test
+  @TestMetadata("nullableType.kt")
+  public void testNullableType() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/nullableType.kt");
+  }
+
+  @Test
+  @TestMetadata("outerThisReceiver.kt")
+  public void testOuterThisReceiver() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/outerThisReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("thisReceiver.kt")
+  public void testThisReceiver() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/thisReceiver.kt");
   }
 }

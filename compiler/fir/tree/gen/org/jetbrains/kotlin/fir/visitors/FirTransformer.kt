@@ -139,14 +139,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElementWithResolveState(elementWithResolveState, data)
     }
 
-    open fun transformFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): FirFileAnnotationsContainer {
-        return transformElement(fileAnnotationsContainer, data)
-    }
-
-    final override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): FirFileAnnotationsContainer {
-        return transformFileAnnotationsContainer(fileAnnotationsContainer, data)
-    }
-
     open fun transformDeclaration(declaration: FirDeclaration, data: D): FirDeclaration {
         return transformElement(declaration, data)
     }
@@ -931,14 +923,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformWrappedArgumentExpression(wrappedArgumentExpression, data)
     }
 
-    open fun transformLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement {
-        return transformElement(lambdaArgumentExpression, data)
-    }
-
-    final override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement {
-        return transformLambdaArgumentExpression(lambdaArgumentExpression, data)
-    }
-
     open fun transformSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): FirStatement {
         return transformElement(spreadArgumentExpression, data)
     }
@@ -1081,14 +1065,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): FirReference {
         return transformErrorNamedReference(errorNamedReference, data)
-    }
-
-    open fun transformFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): FirReference {
-        return transformElement(fromMissingDependenciesNamedReference, data)
-    }
-
-    final override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): FirReference {
-        return transformFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference, data)
     }
 
     open fun transformSuperReference(superReference: FirSuperReference, data: D): FirReference {

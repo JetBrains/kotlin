@@ -1,0 +1,69 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+private fun Test(param: String?) {
+    val state = remember { mutableStateOf(false) }
+    when (state.value) {
+        true -> return Text(text = "true")
+        else -> Text(text = "false")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+private fun Test(param: String?, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val state = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        mutableStateOf(
+          value = false
+        )
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    val tmp0_subject = state.value
+    when {
+      tmp0_subject == true -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<Text(t...>")
+        val tmp1_return = Text("true", %composer, 0b0110)
+        %composer.endReplaceGroup()
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+          Test(param, %composer, updateChangedFlags(%changed or 0b0001))
+        }
+        return tmp1_return
+      }
+      else -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<Text(t...>")
+        Text("false", %composer, 0b0110)
+        %composer.endReplaceGroup()
+      }
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(param, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

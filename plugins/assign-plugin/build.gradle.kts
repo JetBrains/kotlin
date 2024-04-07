@@ -14,7 +14,6 @@ dependencies {
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
     testApi(project(":kotlin-assignment-compiler-plugin.cli"))
-    testCompileOnly(project(":kotlin-compiler"))
     testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
 
     testApi(projectTests(":compiler:tests-common-new"))

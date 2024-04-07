@@ -2,9 +2,8 @@
 // !OPT_IN: kotlin.ExperimentalMultiplatform
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// JVM_ABI_K1_K2_DIFF: KT-63984
 
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: K2 incorrectly generates Anno.class, need to investigate after KT-57243 is fixed.
 
 @file:Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE") // TODO: support common sources in the test infrastructure
 

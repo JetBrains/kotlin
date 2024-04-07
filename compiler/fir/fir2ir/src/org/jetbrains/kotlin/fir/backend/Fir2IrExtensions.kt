@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -30,12 +31,19 @@ interface Fir2IrExtensions {
     fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue?
 
     /**
-     * Platform-dependent logic to determine, whether a backing field is required.
-     * Should be called instead of `FirProperty.hasBackingField()` to decide whether to create a backing field.
-     * The implementation should return `true` in case platform-dependent condition for backing field existence is met,
-     * otherwise return a result of Fir2IrExtensions.Default.hasBackingField()
+     * Platform-dependent logic to determine whether a backing field is required for [property].
+     * Should be called instead of [FirProperty.hasBackingField] to decide whether to create a backing field.
+     * The implementation should return `true` in case a platform-dependent condition for backing field existence is met,
+     * otherwise it should return the result of [Fir2IrExtensions.Default.hasBackingField].
      */
     fun hasBackingField(property: FirProperty, session: FirSession): Boolean
+
+    /**
+     * Whether this declaration is forcibly made static in the sense that it has no dispatch receiver.
+     *
+     * For example, on JVM this corresponds to the [JvmStatic] annotation.
+     */
+    fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean
 
     object Default : Fir2IrExtensions {
         override val irNeedsDeserialization: Boolean
@@ -50,5 +58,6 @@ interface Fir2IrExtensions {
         override fun registerDeclarations(symbolTable: SymbolTable) {}
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope) = null
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
+        override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
     }
 }

@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.extractEnumValueArgumentInfo
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.load.java.AbstractAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.JavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
@@ -50,16 +48,7 @@ class FirAnnotationTypeQualifierResolver(
         when (this) {
             is FirArrayLiteral -> arguments.flatMap { it.toEnumNames() }
             is FirVarargArgumentsExpression -> arguments.flatMap { it.toEnumNames() }
-            else -> {
-                val name = when (val reference = toReference(session)) {
-                    is FirResolvedNamedReference ->
-                        (reference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId?.callableName?.asString()
-                    is FirFromMissingDependenciesNamedReference -> reference.name.asString()
-                    else -> null
-                }
-
-                listOfNotNull(name)
-            }
+            else -> listOfNotNull(extractEnumValueArgumentInfo()?.enumEntryName?.asString())
         }
 
     fun extractDefaultQualifiers(firClass: FirRegularClass): JavaTypeQualifiersByElementType? {

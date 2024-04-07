@@ -1,6 +1,6 @@
 public abstract interface LoadIterator<T : R|kotlin/Any!|> : R|kotlin/Any| {
-    public abstract fun getIterator(): R|ft<kotlin/collections/MutableIterator<ft<T & Any, T?>>, kotlin/collections/Iterator<ft<T & Any, T?>>?>|
+    public abstract fun getIterator(): R|ft<kotlin/collections/MutableIterator<T!>, kotlin/collections/Iterator<T!>?>|
 
-    public abstract fun setIterator(iterator: R|ft<kotlin/collections/MutableIterator<ft<T & Any, T?>>, kotlin/collections/Iterator<ft<T & Any, T?>>?>|): R|kotlin/Unit|
+    public abstract fun setIterator(iterator: R|ft<kotlin/collections/MutableIterator<T!>, kotlin/collections/Iterator<T!>?>|): R|kotlin/Unit|
 
 }

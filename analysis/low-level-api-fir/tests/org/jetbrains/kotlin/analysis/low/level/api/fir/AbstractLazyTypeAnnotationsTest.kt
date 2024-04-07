@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.allKtFiles
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -45,21 +45,20 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  * It collects all type annotations from the selected declaration and resolves them
  */
 abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResolveTestCase() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val builderBeforeAnnotationResolve = StringBuilder()
         val builderAfterAnnotationResolve = StringBuilder()
 
-        val allKtFiles = testServices.allKtFiles()
+        val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
         resolveWithClearCaches(mainFile) { session ->
-            val moduleStructure = testServices.moduleStructure
-            val (declaration, resolver) = findFirDeclarationToResolve(mainFile, moduleStructure, testServices, session)
+            val (declaration, resolver) = findFirDeclarationToResolve(mainFile, testServices, session)
             resolver.invoke(FirResolvePhase.TYPES)
 
             if (declaration is FirCallableDeclaration) {
                 declaration.symbol.calculateReturnType()
             }
 
-            if (Directives.BODY_RESOLVE in moduleStructure.allDirectives) {
+            if (Directives.BODY_RESOLVE in testServices.moduleStructure.allDirectives) {
                 resolver.invoke(FirResolvePhase.BODY_RESOLVE)
             }
 

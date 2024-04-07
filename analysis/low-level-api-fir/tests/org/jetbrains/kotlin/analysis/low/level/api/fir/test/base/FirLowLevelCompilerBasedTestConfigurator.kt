@@ -9,17 +9,19 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiScriptTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependenciesOfType
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -31,6 +33,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
+            useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
         }
     }
 
@@ -38,27 +41,34 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         AnalysisApiBaseTestServiceRegistrar,
         AnalysisApiDecompiledCodeTestServiceRegistrar,
         AnalysisApiFirTestServiceRegistrar,
-        AnalysisApiScriptTestServiceRegistrar,
     )
 
     override fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
+    ): KtTestModuleStructure {
         val mainModules = moduleStructure.modules.map { testModule ->
             val files = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
             val scriptFile = files.singleOrNull() as? KtFile
-            val ktModule = if (scriptFile?.isScript() == true) {
-                KtScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices)
+
+            val (ktModule, testModuleKind) = if (scriptFile?.isScript() == true) {
+                Pair(
+                    KtScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices),
+                    TestModuleKind.ScriptSource,
+                )
             } else {
-                KtSourceModuleByCompilerConfiguration(project, testModule, files, testServices)
+                Pair(
+                    KtSourceModuleByCompilerConfiguration(project, testModule, files, testServices),
+                    TestModuleKind.Source,
+                )
             }
 
-            KtModuleWithFiles(ktModule, files)
+            KtTestModule(testModuleKind, testModule, ktModule, files)
         }
 
-        return KtModuleProjectStructure(
+        return KtTestModuleStructure(
+            testModuleStructure = moduleStructure,
             mainModules = mainModules,
             binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtBinaryModule>() }.asIterable(),
         )

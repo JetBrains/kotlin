@@ -166,9 +166,7 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
         expectActualTypeParametersMap: Map<IrTypeParameter, IrTypeParameter>
     ): IrExpressionBody {
         return this
-            .deepCopyWithSymbols(actualFunction) { symbolRemapper, _ ->
-                DeepCopyIrTreeWithSymbols(symbolRemapper, IrTypeParameterRemapper(expectActualTypeParametersMap))
-            }
+            .deepCopyWithSymbols(actualFunction) { IrTypeParameterRemapper(expectActualTypeParametersMap) }
             .transform(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid()

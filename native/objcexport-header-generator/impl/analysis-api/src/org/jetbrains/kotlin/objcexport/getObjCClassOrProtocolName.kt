@@ -6,13 +6,29 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
+/**
+ * Constructs the name of the given [KtClassLikeSymbol] by composing
+ * ```
+ * {Current Framework Name}{Additional Module Prefix}{ObjC Class or Protocol Name}
+ *         (1)                      (2)                         (3)
+ * ```
+ *
+ * 1) Current Framework Name: See [KtObjCExportConfiguration.frameworkName]
+ * 2) Additional Module Prefix: Dependency modules that are not directly exported will add the prefix to distinguish from which
+ * dependency module a symbol came from. Note: This module name can be abbreviated e.g. `LongModuleName` will be `LMN`
+ * 3) ObjC Class or Protocol Name: This is either the name of the symbol, or the defined name in the `ObjCName` annotation
+ * (see [resolveObjCNameAnnotation]): e.g.
+ * ```
+ * @ObjCName("ObjCFoo")
+ * class Foo
+ * ```
+ * will use `ObjCFoo` instead of the class name `Foo`
+ *
+ */
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassLikeSymbol.getObjCClassOrProtocolName(): ObjCExportClassOrProtocolName {
     val resolvedObjCNameAnnotation = resolveObjCNameAnnotation()
@@ -37,8 +53,11 @@ private fun KtClassLikeSymbol.getObjCName(
         return containingClass.getObjCName() + objCName.capitalizeAsciiOnly()
     }
 
-    // KT-65670: Append module specific prefixes?
-    return configuration.frameworkName.orEmpty() + objCName
+    return buildString {
+        configuration.frameworkName?.let(::append)
+        getObjCModuleNamePrefix()?.let(::append)
+        append(objCName)
+    }
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -71,9 +90,10 @@ private fun KtClassLikeSymbol.getSwiftName(
         }
     }
 
-    // KT-65670: Append module specific prefixes?
-    return swiftName
-
+    return buildString {
+        getObjCModuleNamePrefix()?.let(::append)
+        append(swiftName)
+    }
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -111,4 +131,28 @@ private fun KtClassLikeSymbol.canBeOuterSwift(): Boolean {
 private fun mangleSwiftNestedClassName(name: String): String = when (name) {
     "Type" -> "${name}_" // See https://github.com/JetBrains/kotlin-native/issues/3167
     else -> name
+}
+
+context(KtAnalysisSession, KtObjCExportSession)
+private fun KtSymbol.getObjCModuleNamePrefix(): String? {
+    val module = getContainingModule()
+    val moduleName = module.getObjCKotlinModuleName() ?: return null
+    if (moduleName == "stdlib" || moduleName == "kotlin-stdlib-common") return "Kotlin"
+    if (moduleName in configuration.exportedModuleNames) return null
+    return abbreviateModuleName(moduleName)
+}
+
+/**
+ * 'MyModuleName' -> 'MMN'
+ * 'someLibraryFoo' -> 'SLF'
+ */
+internal fun abbreviateModuleName(name: String): String {
+    val normalizedName = name
+        .capitalizeAsciiOnly()
+        .replace("[-.]".toRegex(), "_")
+
+    val uppers = normalizedName.filter { character -> character.isUpperCase() }
+    if (uppers.length >= 3) return uppers
+
+    return normalizedName
 }

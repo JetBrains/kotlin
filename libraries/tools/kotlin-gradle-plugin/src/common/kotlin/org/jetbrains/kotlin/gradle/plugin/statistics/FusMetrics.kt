@@ -13,6 +13,7 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -73,7 +74,8 @@ internal object CompilerArgumentMetrics : FusMetrics {
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER, "kotlin-sam-with-receiver-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_LOMBOK, "kotlin-lombok-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_PARSELIZE, "kotlin-parcelize-compiler-.*jar"),
-                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ATOMICFU, "atomicfu-.*jar")
+                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ATOMICFU, "atomicfu-.*jar"),
+                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_POWER_ASSERT, "kotlin-power-assert-.*jar"),
                 )
                 val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
                 if (pluginJars != null) {
@@ -268,6 +270,14 @@ internal object MultiplatformTargetMetrics : FusMetrics {
         else target.platformType.name
         project.addConfigurationMetrics {
             it.put(StringMetrics.MPP_PLATFORMS, targetName)
+        }
+    }
+}
+
+internal object NativeLinkTaskMetrics : FusMetrics {
+    internal fun collectMetrics(project: Project) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.KOTLIN_INCREMENTAL_NATIVE_ENABLED, project.isKonanIncrementalCompilationEnabled())
         }
     }
 }

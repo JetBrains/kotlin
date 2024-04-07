@@ -68,8 +68,8 @@ fun testIs(x: Any) : Int {
     }
 }
 
-fun testIs2(x: lib.FwdStruct) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is cnames.structs.FwdStruct<!>
-fun testIs3(x: lib.FwdObjcClass) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is objcnames.classes.FwdObjcClass<!>
+fun testIs2(x: lib.FwdStruct) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, USELESS_IS_CHECK!>x is cnames.structs.FwdStruct<!>
+fun testIs3(x: lib.FwdObjcClass) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, USELESS_IS_CHECK!>x is objcnames.classes.FwdObjcClass<!>
 fun testIs4(x: lib.FwdProtocol) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is objcnames.protocols.FwdProtocol<!>
 
 

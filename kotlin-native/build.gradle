@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
+import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
@@ -44,37 +45,14 @@ buildscript {
 
 defaultTasks 'clean', 'dist'
 
+apply plugin: XcodeOverridePlugin
+
 if (PlatformInfo.isMac()) {
     PlatformInfo.checkXcodeVersion(project)
 }
 
 apply plugin: "kotlin.native.build-tools-conventions"
-
-ext {
-    distDir = UtilsKt.getKotlinNativeDist(project)
-    def konanDataDir = project.hasProperty('konan.data.dir') ? project.property('konan.data.dir').toString() : null
-    dependenciesDir = DependencyDirectories.INSTANCE.getDependenciesRoot(konanDataDir)
-    experimentalEnabled = project.hasProperty("org.jetbrains.kotlin.native.experimentalTargets")
-    platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath, konanDataDir),
-            ext.experimentalEnabled)
-
-    cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
-    cacheableTargets = cacheableTargetNames.collect { platformManager.targetByName(it) }
-
-    // Some targets miss zlib in their sysroots.
-    // We skip these targets when generate a corresponding platform library.
-    // See also: the :distDef task, targetDefFiles in the :platformLibs project.
-    targetsWithoutZlib = [
-            KonanTarget.LINUX_MIPS32.INSTANCE,
-            KonanTarget.LINUX_MIPSEL32.INSTANCE
-    ]
-
-    kotlinCompilerModule = project(":kotlin-compiler")
-    kotlinStdLibModule= project(":kotlin-stdlib")
-
-    // A separate map for each build for automatic cleaning the daemon after the build have finished.
-    toolClassLoadersMap = new ConcurrentHashMap<Object, URLClassLoader>()
-}
+apply plugin: "platform-manager"
 
 allprojects {
     repositories {
@@ -83,57 +61,13 @@ allprojects {
             url project.bootstrapKotlinRepo
         }
     }
-
-    setupHostAndTarget()
-    loadCommandLineProperties()
-    loadLocalProperties()
-    setupClang(project)
 }
 
-void setupHostAndTarget() {
-    ext.hostName = platformManager.hostName
-    ext.targetList = EnabledTargetsKt.enabledTargets(platformManager).collect { it.visibleName } as List
-    ext.konanTargetList = EnabledTargetsKt.enabledTargets(platformManager) as List
-}
-
-void setupClang(Project project) {
-    project.extensions.platformManager = project.project(":kotlin-native").ext.platformManager
-    project.extensions.execClang = org.jetbrains.kotlin.ExecClang.create(project)
-}
-
-void loadLocalProperties() {
-    if (new File("$project.rootDir/local.properties").exists()) {
-        Properties props = new Properties()
-        props.load(new FileInputStream("$project.rootDir/local.properties"))
-        props.each { prop -> project.ext.set(prop.key, prop.value) }
-    }
-}
-
-void loadCommandLineProperties() {
-    if (project.hasProperty("konanc_flags")) {
-        throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
-    }
-
-    ext.globalBuildArgs = new ArrayList<String>()
-    if (project.hasProperty("build_flags")) {
-        for (String flag : ext.build_flags.toString().split("\\s")) {
-            flag = flag.trim()
-            if (!flag.isEmpty()) ext.globalBuildArgs.add(flag)
-        }
-    }
-
-    ext.globalTestArgs = new ArrayList<String>()
-    ext.globalTestArgs.add("-Xpartial-linkage=enable")
-    ext.globalTestArgs.add("-Xpartial-linkage-loglevel=error")
-    if (project.hasProperty("test_flags")) {
-        for (String flag : ext.test_flags.toString().split("\\s")) {
-            flag = flag.trim()
-            if (!flag.isEmpty()) ext.globalTestArgs.add(flag)
-        }
-    }
-
-    ext.testTarget = project.hasProperty("test_target") ? ext.test_target : ext.hostName
-}
+def platformManager = project.extensions.platformManager
+def distDir = UtilsKt.getKotlinNativeDist(project)
+def hostName = PlatformInfo.hostName
+def targetList = EnabledTargetsKt.enabledTargets(platformManager).collect { it.visibleName } as List
+def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
 configurations {
     ftpAntTask
@@ -148,7 +82,25 @@ configurations {
         }
     }
 
+    objcExportApi {
+        canBeConsumed = false
+        canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.API))
+        }
+    }
+
     embeddableJar {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+
+    nativeLibs {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+
+    trove4j_jar {
         canBeConsumed = false
         canBeResolved = true
     }
@@ -158,24 +110,20 @@ apply plugin: CompilationDatabasePlugin
 
 dependencies {
     ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
-    distPack project(':kotlin-native:Interop:Runtime')
-    distPack project(':kotlin-native:Interop:Indexer')
-    distPack project(':kotlin-native:Interop:StubGenerator')
     distPack project(':kotlin-native:Interop:Skia')
-    distPack project(':kotlin-native:backend.native')
-    distPack project(':native:objcexport-header-generator')
-    distPack project(':native:objcexport-header-generator-k1')
-    distPack project(':native:base')
-    distPack project(':kotlin-native:utilities:cli-runner')
-    distPack project(':kotlin-native:klib')
-    distPack project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
-    distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
+    distPack project(path: ':kotlin-native:utilities:cli-runner', configuration: 'runtimeElements')
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
     compilationDatabase project(":kotlin-native:common")
     compilationDatabase project(":kotlin-native:runtime")
     runtimeBitcode project(":kotlin-native:runtime")
+    objcExportApi project(":kotlin-native:runtime")
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
+    nativeLibs project(path: ':kotlin-native:common', configuration: 'nativeLibs')
+    nativeLibs project(path: ':kotlin-native:llvmInterop', configuration: 'nativeLibs')
+    use(RepoDependencies) {
+        trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
+    }
 }
 
 apply plugin: GitClangFormatPlugin
@@ -261,12 +209,15 @@ tasks.register("distCompiler", Copy) {
 
     destinationDir distDir
 
-    from(project(':kotlin-native:backend.native').file("build/nativelibs/$hostName")) {
+    from(configurations.nativeLibs) {
         into('konan/nativelib')
     }
 
-    from(project(':kotlin-native:backend.native').file('build/external_jars/trove4j.jar')) {
-        into('konan/lib')
+    from(configurations.trove4j_jar) {
+        include "trove4j*.jar"
+        rename "trove4j(.*).jar", "trove4j.jar"
+
+        into("konan/lib")
     }
 
     from(configurations.embeddableJar) {
@@ -313,6 +264,10 @@ tasks.register("distCompiler", Copy) {
         exclude('**/*.properties')
     }
 
+    from(configurations.objcExportApi) {
+        into('konan/swift_export/kotlin_runtime')
+    }
+
     from(project.file('konan')) {
         into('konan')
         include('**/*.properties')
@@ -329,11 +284,7 @@ tasks.register("distCompiler", Copy) {
                 tokens: [("llvm.${hostName}.dev".toString()): "\$llvm.${hostName}.${llvmVariant}".toString()]
         )
     }
-    if (experimentalEnabled) {
-        file('konan/experimentalTargetsEnabled').text = ""
-    } else {
-        delete('konan/experimentalTargetsEnabled')
-    }
+    delete('konan/experimentalTargetsEnabled')
 }
 
 tasks.register("distDef", Copy) {
@@ -343,9 +294,6 @@ tasks.register("distDef", Copy) {
         from(project(":kotlin-native:platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
             into target.visibleName
             include '**/*.def'
-            if (target in targetsWithoutZlib) {
-                exclude '**/zlib.def'
-            }
         }
     }
 }
@@ -439,8 +387,7 @@ targetList.each { target ->
 }
 
 tasks.register("distPlatformLibs") {
-    dependsOn ':kotlin-native:platformLibs:hostInstall'
-    dependsOn ':kotlin-native:platformLibs:hostCache'
+    dependsOn("${hostName}PlatformLibs")
 }
 
 tasks.register("dist") {
@@ -468,7 +415,7 @@ def sbomBundleRegular = SbomKt.configureSbom(project, "BundleRegular", "Kotlin/N
 def sbomBundleRegularForPublish = tasks.register("sbomBundleRegularForPublish", Copy) {
     dependsOn(sbomBundleRegular)
     destinationDir = file("$buildDir/spdx/regular")
-    from(sbomBundleRegular.map { it.outputDirectory.file("BundleRegular.spdx.json") }) {
+    from(sbomBundleRegular) {
         rename(".*", "kotlin-native-${HostManager.platformName()}-${kotlinVersion}.spdx.json")
     }
 }
@@ -496,7 +443,7 @@ def sbomBundlePrebuilt = SbomKt.configureSbom(project,
 def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish", Copy) {
     dependsOn(sbomBundlePrebuilt)
     destinationDir = file("$buildDir/spdx/prebuilt")
-    from(sbomBundlePrebuilt.map { it.outputDirectory.file("BundlePrebuilt.spdx.json") }) {
+    from(sbomBundlePrebuilt) {
         rename(".*", "kotlin-native-prebuilt-${HostManager.platformName()}-${kotlinVersion}.spdx.json")
     }
 }
@@ -742,12 +689,10 @@ KotlinBuildPublishingPluginKt.configureDefaultPublishing(
 
 tasks.named("clean", Delete) {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
-    doFirst {
-        delete distDir
-        delete layout.buildDirectory
-        delete bundle.outputs.files
-        delete "${projectDir}/compile_commands.json"
-    }
+    it.delete(distDir)
+    it.delete(layout.buildDirectory)
+    it.delete(bundle.outputs.files)
+    it.delete("${projectDir}/compile_commands.json")
 }
 
 publishing {
@@ -782,7 +727,7 @@ publishing {
                     classifier = HostManager.platformName()
                     extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
                 }
-                mvn.artifact(sbomBundleRegular.map { it.outputDirectory.file("BundleRegular.spdx.json") }) {
+                mvn.artifact(sbomBundleRegular) {
                     classifier = HostManager.platformName()
                     extension = "spdx.json"
                 }
@@ -823,7 +768,7 @@ publishing {
                     classifier = HostManager.platformName()
                     extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
                 }
-                mvn.artifact(sbomBundlePrebuilt.map { it.outputDirectory.file("BundlePrebuilt.spdx.json") }) {
+                mvn.artifact(sbomBundlePrebuilt) {
                     classifier = HostManager.platformName()
                     extension = "spdx.json"
                 }

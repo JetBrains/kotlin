@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
+class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     // ------------------------------------ type parameters ------------------------------------
 
     fun createIrTypeParameterWithoutBounds(
@@ -58,7 +58,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     }
 
     fun initializeTypeParameterBounds(typeParameter: FirTypeParameter, irTypeParameter: IrTypeParameter) {
-        irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType() }
+        irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType(c) }
     }
 
     // ------------------------------------ classes ------------------------------------
@@ -81,7 +81,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 endOffset = endOffset,
                 origin = regularClass.computeIrOrigin(predefinedOrigin),
                 name = regularClass.name,
-                visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                visibility = c.visibilityConverter.convertToDescriptorVisibility(visibility),
                 symbol = symbol,
                 kind = regularClass.classKind,
                 modality = modality,
@@ -108,7 +108,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         return irClass
     }
 
-    fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getCachedIrClass(klass)!!): IrClass {
+    fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getIrClass(klass)): IrClass {
         irClass.declareTypeParameters(klass)
         irClass.setThisReceiver(klass.typeParameters)
         irClass.declareSupertypes(klass)
@@ -121,7 +121,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     // `irClass` is a source class and definitely is not a lazy class
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.declareTypeParameters(klass: FirClass) {
-        classifierStorage.preCacheTypeParameters(klass, symbol)
+        classifierStorage.preCacheTypeParameters(klass)
         setTypeParameters(this, klass)
         if (klass is FirRegularClass) {
             val fieldsForContextReceiversOfCurrentClass = classifierStorage.getFieldsWithContextReceiversForClass(this, klass)
@@ -135,6 +135,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
             IrSimpleTypeImpl(classifierStorage.getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT), false, emptyList(), emptyList())
         }
         thisReceiver = declareThisReceiverParameter(
+            c,
             thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )
@@ -142,7 +143,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     }
 
     private fun IrClass.declareSupertypes(klass: FirClass) {
-        superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
+        superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType(c) }
     }
 
     private fun IrClass.declareValueClassRepresentation(klass: FirRegularClass) {
@@ -171,7 +172,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     }
 
     private fun FirRegularClass.hasAbstractMembersInScope(): Boolean {
-        val scope = unsubstitutedScope()
+        val scope = unsubstitutedScope(c)
         val names = scope.getCallableNames()
         var hasAbstract = false
         for (name in names) {
@@ -221,8 +222,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         val irClass = if (classOrLocalParent === klass) {
             result
         } else {
-            classifierStorage.getCachedIrClass(klass)
-                ?: error("Assuming that all nested classes of ${classOrLocalParent.classId.asString()} should already be cached")
+            classifierStorage.getIrClass(klass)
         }
         return LocalIrClassInfo(irClass, classOrLocalParent, result)
     }
@@ -265,7 +265,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 endOffset = endOffset,
                 origin = origin,
                 name = name,
-                visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                visibility = c.visibilityConverter.convertToDescriptorVisibility(visibility),
                 symbol = IrClassSymbolImpl(),
                 kind = anonymousObject.classKind,
                 modality = modality,
@@ -286,16 +286,16 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
         parent: IrDeclarationParent,
         symbol: IrTypeAliasSymbol,
     ): IrTypeAlias = typeAlias.convertWithOffsets { startOffset, endOffset ->
-        classifierStorage.preCacheTypeParameters(typeAlias, symbol)
+        classifierStorage.preCacheTypeParameters(typeAlias)
         irFactory.createTypeAlias(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.DEFINED,
             name = typeAlias.name,
-            visibility = components.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
+            visibility = c.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
             symbol = symbol,
             isActual = typeAlias.isActual,
-            expandedType = typeAlias.expandedTypeRef.toIrType(),
+            expandedType = typeAlias.expandedTypeRef.toIrType(c),
         ).apply {
             this.parent = parent
             setTypeParameters(this, typeAlias)
@@ -333,6 +333,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 addDeclarationToParent(this, containingFile)
                 typeParameters = emptyList()
                 thisReceiver = declareThisReceiverParameter(
+                    c,
                     thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
                     thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
                 )
@@ -390,10 +391,10 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     ) {
         irOwner.typeParameters = owner.typeParameters.mapIndexedNotNull { index, typeParameter ->
             if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
-            classifierStorage.getIrTypeParameter(typeParameter, index, irOwner.symbol, typeOrigin).apply {
+            classifierStorage.getIrTypeParameter(typeParameter, index, typeOrigin).apply {
                 parent = irOwner
                 if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType(typeOrigin) }
+                    superTypes = typeParameter.bounds.map { it.toIrType(c, typeOrigin) }
                 }
             }
         }
@@ -430,6 +431,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 addDeclarationToParent(this, irParent)
                 typeParameters = emptyList()
                 thisReceiver = declareThisReceiverParameter(
+                    c,
                     thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
                     thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER,
                 )

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -76,6 +75,12 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   @TestMetadata("extensionReceiverSmartCasted.kt")
   public void testExtensionReceiverSmartCasted() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverSmartCasted.kt");
+  }
+
+  @Test
+  @TestMetadata("foreignValue.kt")
+  public void testForeignValue() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/foreignValue.kt");
   }
 
   @Test

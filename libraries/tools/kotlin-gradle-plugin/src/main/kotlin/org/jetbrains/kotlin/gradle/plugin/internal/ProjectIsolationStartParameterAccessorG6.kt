@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
-import org.gradle.api.invocation.Gradle
+import org.gradle.api.Project
 
 internal class ProjectIsolationStartParameterAccessorG6() : ProjectIsolationStartParameterAccessor {
     override val isProjectIsolationEnabled: Boolean
         get() = false
+    override val isProjectIsolationRequested: Boolean
+        get() = isProjectIsolationEnabled
 
     internal class Factory : ProjectIsolationStartParameterAccessor.Factory {
-        override fun getInstance(gradle: Gradle): ProjectIsolationStartParameterAccessor {
+        override fun getInstance(project: Project): ProjectIsolationStartParameterAccessor {
             return ProjectIsolationStartParameterAccessorG6()
         }
     }

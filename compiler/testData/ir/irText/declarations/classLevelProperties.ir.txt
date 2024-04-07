@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
               $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' type=kotlin.Lazy<kotlin.Int> origin=null
                 receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test7>' type=<root>.C origin=null
               thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test7>' type=<root>.C origin=null
-              property: PROPERTY_REFERENCE 'public final test7: kotlin.Int' field=null getter='public final fun <get-test7> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'public final test7: kotlin.Int declared in <root>.C' field=null getter='public final fun <get-test7> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
       FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]
         EXPRESSION_BODY
@@ -118,7 +118,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
               $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test8>' type=<root>.C origin=null
               thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test8>' type=<root>.C origin=null
-              property: PROPERTY_REFERENCE 'public final test8: kotlin.Int' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'public final test8: kotlin.Int declared in <root>.C' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
@@ -130,7 +130,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
               $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
               thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
-              property: PROPERTY_REFERENCE 'public final test8: kotlin.Int' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'public final test8: kotlin.Int declared in <root>.C' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test8>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
       BLOCK_BODY

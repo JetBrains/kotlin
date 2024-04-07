@@ -41,7 +41,7 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
             ModuleContext(module, project, "container for tests"),
             JvmPlatforms.defaultJvmPlatform,
             JvmPlatformAnalyzerServices,
-            BindingTraceContext(),
+            BindingTraceContext(project),
             LanguageVersionSettingsImpl.DEFAULT,
             optimizingOptions = null,
             absentDescriptorHandlerClass = BasicAbsentDescriptorHandler::class.java

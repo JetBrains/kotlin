@@ -8,4 +8,3 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotation.kt
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String()))
-    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container

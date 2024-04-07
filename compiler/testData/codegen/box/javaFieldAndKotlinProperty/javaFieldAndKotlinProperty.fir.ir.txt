@@ -57,12 +57,12 @@ FILE fqName:<root> fileName:/Derived.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.String origin=null
-                $this: PROPERTY_REFERENCE 'public final a: kotlin.String' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
+                $this: PROPERTY_REFERENCE 'public final a: kotlin.String declared in <root>.Derived' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
                   $this: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
               arg1: CONST String type=kotlin.String value="OK"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.String origin=null
-              $this: PROPERTY_REFERENCE 'public final a: kotlin.String' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
+              $this: PROPERTY_REFERENCE 'public final a: kotlin.String declared in <root>.Derived' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
                 $this: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
       CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null

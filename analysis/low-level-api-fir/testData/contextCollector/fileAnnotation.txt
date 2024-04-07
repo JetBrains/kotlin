@@ -14,7 +14,6 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] fileAnnotation.kt
     @FILE:Anno[Unresolved]()
-    [ResolvedTo(RAW_FIR)] annotations container
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>

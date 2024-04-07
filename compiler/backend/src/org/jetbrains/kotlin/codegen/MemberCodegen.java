@@ -92,7 +92,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     private NameGenerator inlineNameGenerator;
     private boolean jvmAssertFieldGenerated;
 
-    private boolean alwaysWriteSourceMap;
     private SourceMapper sourceMapper;
 
     public MemberCodegen(
@@ -187,10 +186,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         writeInnerClasses();
 
-        if (alwaysWriteSourceMap || (sourceMapper != null && !sourceMapper.isTrivial())) {
-            v.visitSMAP(getOrCreateSourceMapper(), !state.getLanguageVersionSettings().supportsFeature(LanguageFeature.CorrectSourceMappingSyntax));
-        }
-
+        v.visitSMAP(getOrCreateSourceMapper(), !state.getLanguageVersionSettings().supportsFeature(LanguageFeature.CorrectSourceMappingSyntax));
         v.done(state.getConfig().getGenerateSmapCopyToAnnotation());
     }
 
@@ -749,23 +745,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     @NotNull
     public SourceMapper getOrCreateSourceMapper() {
         if (sourceMapper == null) {
-            // note: this is used in InlineCodegen and the element is always physical (KtElement) there
-            sourceMapper = new SourceMapper(SourceInfo.Companion.createFromPsi((KtElement)element, getClassName()));
+            sourceMapper = new SourceMapper(element instanceof KtElement ? SourceInfo.Companion.createFromPsi((KtElement)element, getClassName()) : null);
         }
         return sourceMapper;
-    }
-
-    protected void initDefaultSourceMappingIfNeeded() {
-        if (state.getConfig().isInlineDisabled()) return;
-
-        CodegenContext parentContext = context.getParentContext();
-        while (parentContext != null) {
-            if (parentContext.isInlineMethodContext()) {
-                alwaysWriteSourceMap = true;
-                return;
-            }
-            parentContext = parentContext.getParentContext();
-        }
     }
 
     protected void generateConstInstance(@NotNull Type thisAsmType, @NotNull Type fieldAsmType) {

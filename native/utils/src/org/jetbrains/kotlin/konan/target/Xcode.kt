@@ -41,6 +41,8 @@ data class XcodeVersion(val major: Int, val minor: Int) : Comparable<XcodeVersio
                 minor = split.getOrNull(1)?.toIntOrNull() ?: return null,
             )
         }
+
+        val maxTested = XcodeVersion(15, 1)
     }
 }
 
@@ -83,7 +85,11 @@ interface Xcode {
         val current: Xcode
             get() = findCurrent()
 
-        fun findCurrent(): Xcode = CurrentXcode()
+        var xcodeOverride: Xcode? = null
+
+        fun findCurrent(): Xcode = xcodeOverride ?: defaultCurrent()
+
+        fun defaultCurrent(): Xcode = CurrentXcode()
     }
 }
 

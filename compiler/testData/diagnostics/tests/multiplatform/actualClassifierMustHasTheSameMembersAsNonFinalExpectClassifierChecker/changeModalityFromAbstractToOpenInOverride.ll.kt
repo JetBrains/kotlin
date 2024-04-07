@@ -3,7 +3,7 @@
 interface Base {
     fun foo()
 }
-expect open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Foo<!>() : Base
+expect open class Foo() : Base
 
 
 // MODULE: m2-jvm()()(m1-common)

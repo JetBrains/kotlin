@@ -1,0 +1,125 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] constCyclePropertyWithExplicitType.kt
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle1: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle1: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public? final? const [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val withCycle1: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public? final? const [ResolvedTo(COMPANION_GENERATION)] val withCycle1: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public? final? const [ResolvedTo(SUPER_TYPES)] val withCycle1: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(SUPER_TYPES)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public? final? const [ResolvedTo(TYPES)] val withCycle1: R|kotlin/Int| = LAZY_EXPRESSION
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public final const [ResolvedTo(STATUS)] val withCycle1: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public final const [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val withCycle1: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int|
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public final const [ResolvedTo(CONTRACTS)] val withCycle1: R|kotlin/Int| = IntegerLiteral(1).plus#(withCycle2#)
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(CONTRACTS)] val withCycle2: R|kotlin/Int| = IntegerLiteral(2).plus#(withCycle3#)
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+    public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public final const [ResolvedTo(CONSTANT_EVALUATION)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle3: R|kotlin/Int| = Int(3).R|kotlin/Int.plus|(R|/withCycle1|)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle3: R|kotlin/Int| = Int(3).R|kotlin/Int.plus|(R|/withCycle1|)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
+    public final const [ResolvedTo(BODY_RESOLVE)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle3: R|kotlin/Int| = Int(3).R|kotlin/Int.plus|(R|/withCycle1|)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] constCyclePropertyWithExplicitType.kt
+    public final const [ResolvedTo(BODY_RESOLVE)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(BODY_RESOLVE)] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(BODY_RESOLVE)] val withCycle3: R|kotlin/Int| = Int(3).R|kotlin/Int.plus|(R|/withCycle1|)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

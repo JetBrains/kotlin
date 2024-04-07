@@ -1,0 +1,135 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable
+@Composable
+fun Simple() {
+  // this has a composable call in it, and since we don't know the number of times the
+  // lambda will get called, we place a group around the whole call
+  run {
+    A()
+  }
+  A()
+}
+
+@NonRestartableComposable
+@Composable
+fun WithReturn() {
+  // this has an early return in it, so it needs to end all of the groups present.
+  run {
+    A()
+    return@WithReturn
+  }
+  A()
+}
+
+@NonRestartableComposable
+@Composable
+fun NoCalls() {
+  // this has no composable calls in it, so shouldn't cause any groups to get created
+  run {
+    println("hello world")
+  }
+  A()
+}
+
+@NonRestartableComposable
+@Composable
+fun NoCallsAfter() {
+  // this has a composable call in the lambda, but not after it, which means the
+  // group should be able to be coalesced into the group of the function
+  run {
+    A()
+  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Simple(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Simple)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<A()>")
+  run {
+    A(%composer, 0)
+  }
+  %composer.endReplaceGroup()
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@NonRestartableComposable
+@Composable
+fun WithReturn(%composer: Composer?, %changed: Int) {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(WithReturn)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<A()>")
+  run {
+    A(%composer, 0)
+    %composer.endReplaceGroup()
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return
+  }
+  %composer.endReplaceGroup()
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceGroup()
+}
+@NonRestartableComposable
+@Composable
+fun NoCalls(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(NoCalls)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  run {
+    println("hello world")
+  }
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@NonRestartableComposable
+@Composable
+fun NoCallsAfter(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(NoCallsAfter):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<A()>")
+  run {
+    A(%composer, 0)
+  }
+  %composer.endReplaceGroup()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

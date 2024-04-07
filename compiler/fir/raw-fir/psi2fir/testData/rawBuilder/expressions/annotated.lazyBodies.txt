@@ -21,7 +21,7 @@ FILE: annotated.kt
 
         public? final operator fun component2(): Int
 
-        public final fun copy(x: Int = this@R|/Two|.R|/Two.x|, y: Int = this@R|/Two|.R|/Two.y|): R|Two|
+        public? final fun copy(x: Int = this@R|/Two|.R|/Two.x|, y: Int = this@R|/Two|.R|/Two.y|): R|Two|
 
     }
     public? final? fun bar(two: Two): R|kotlin/Unit| { LAZY_BLOCK }

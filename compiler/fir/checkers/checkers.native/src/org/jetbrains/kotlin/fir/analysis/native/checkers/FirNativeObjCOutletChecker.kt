@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOutletClassId
 
-object FirNativeObjCOutletChecker : FirClassChecker(MppCheckerKind.Common) {
+object FirNativeObjCOutletChecker : FirClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
 

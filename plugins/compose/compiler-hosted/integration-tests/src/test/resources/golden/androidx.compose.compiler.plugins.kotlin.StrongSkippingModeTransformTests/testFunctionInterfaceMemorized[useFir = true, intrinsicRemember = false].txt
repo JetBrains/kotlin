@@ -1,0 +1,69 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable fun TestMemoizedFun(compute: TestFunInterface) {}
+@Composable fun Test() {
+    val capture = 0
+    TestMemoizedFun {
+        // no captures
+        use(it)
+    }
+    TestMemoizedFun {
+        // stable captures
+        use(capture)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun TestMemoizedFun(compute: TestFunInterface, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    TestMemoizedFun(compute, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val capture = 0
+    TestMemoizedFun(TestFunInterface { it: Int ->
+      use(it)
+    }, %composer, 0b0110)
+    TestMemoizedFun(%composer.cache(%composer.changed(capture)) {
+      TestFunInterface { it: Int ->
+        use(capture)
+      }
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -15,10 +15,10 @@ dependencies {
     api(project(":analysis:decompiled:light-classes-for-decompiled"))
     api(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
+    testImplementation(projectTests(":analysis:analysis-api-fir"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
 
     testImplementation(kotlinTest("junit"))
     testImplementation(toolsJar())

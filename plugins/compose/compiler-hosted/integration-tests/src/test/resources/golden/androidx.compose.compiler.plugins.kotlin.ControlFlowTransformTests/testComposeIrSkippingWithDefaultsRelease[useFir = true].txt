@@ -1,0 +1,76 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+
+object Ui {}
+
+@Composable
+fun Ui.UiTextField(
+    isError: Boolean = false,
+    keyboardActions2: Boolean = false,
+) {
+    println("t41 insideFunction $isError")
+    println("t41 insideFunction $keyboardActions2")
+    Column {
+        Text("$isError")
+        Text("$keyboardActions2")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+object Ui {
+  static val %stable: Int = 0
+}
+@Composable
+@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
+fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(UiTextField)<Column>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(isError)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(keyboardActions2)) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b10010001 != 0b10010000 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      isError = false
+    }
+    if (%default and 0b0010 != 0) {
+      keyboardActions2 = false
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    println("t41 insideFunction %isError")
+    println("t41 insideFunction %keyboardActions2")
+    Column(null, null, null, { %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C<Text("...>,<Text("...>:Test.kt")
+      Text("%isError", false, 0, 0, %composer, 0, 0b1110)
+      Text("%keyboardActions2", false, 0, 0, %composer, 0, 0b1110)
+      sourceInformationMarkerEnd(%composer)
+    }, %composer, 0, 0b0111)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    UiTextField(isError, keyboardActions2, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

@@ -80,7 +80,10 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
         val versions = library.versions
         return LibraryManifest(
             platform = library.builtInsPlatform?.name,
-            nativeTargets = library.nativeTargets.sorted(),
+            platformTargets = buildList {
+                library.nativeTargets.sorted().mapTo(this, LibraryTarget::Native)
+                library.wasmTargets.sorted().mapTo(this, LibraryTarget::WASM)
+            },
             compilerVersion = versions.compilerVersion,
             abiVersion = versions.abiVersion?.toString(),
             libraryVersion = versions.libraryVersion,

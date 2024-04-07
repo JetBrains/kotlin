@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
+import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -176,7 +178,10 @@ fun compileWasm(
             "./$baseFileName.wasm",
             backendContext.jsModuleAndQualifierReferences
         )
-        jsWrapper = generateEsmExportsWrapper("./$baseFileName.uninstantiated.mjs")
+        jsWrapper = compiledWasmModule.generateEsmExportsWrapper(
+            "./$baseFileName.uninstantiated.mjs",
+            backendContext.jsModuleAndQualifierReferences
+        )
     } else {
         jsUninstantiatedWrapper = null
         jsWrapper = compiledWasmModule.generateAsyncWasiWrapper("./$baseFileName.wasm")
@@ -215,7 +220,8 @@ const wasmInstance = new WebAssembly.Instance(wasmModule, wasi.getImportObject()
 
 wasi.initialize(wasmInstance);
 
-export default wasmInstance.exports;
+const exports = wasmInstance.exports
+${generateExports()}
 """
 
 fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
@@ -234,7 +240,7 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
         .sorted()
         .joinToString("") {
             val moduleSpecifier = it.toJsStringLiteral()
-            "        $moduleSpecifier: imports[$moduleSpecifier] ?? await import($moduleSpecifier),\n"
+            "        $moduleSpecifier: imports[$moduleSpecifier],\n"
         }
 
     val referencesToQualifiedAndImportedDeclarations = jsModuleAndQualifierReferences
@@ -246,7 +252,7 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
                 append(it.jsVariableName)
                 append(" = ")
                 if (module != null) {
-                    append("(imports[${module.toJsStringLiteral()}] ?? await import(${module.toJsStringLiteral()}))")
+                    append("imports[${module.toJsStringLiteral()}]")
                     if (qualifier != null)
                         append(".")
                 }
@@ -283,15 +289,16 @@ $jsCodeBodyIndented
     let wasmExports;
 
     const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
+    const isDeno = !isNodeJs && (typeof Deno !== 'undefined')
     const isStandaloneJsVM =
-        !isNodeJs && (
+        !isDeno && !isNodeJs && (
             typeof d8 !== 'undefined' // V8
             || typeof inIon !== 'undefined' // SpiderMonkey
             || typeof jscOptions !== 'undefined' // JavaScriptCore
         );
-    const isBrowser = !isNodeJs && !isStandaloneJsVM && (typeof window !== 'undefined');
+    const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined');
     
-    if (!isNodeJs && !isStandaloneJsVM && !isBrowser) {
+    if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
       throw "Supported JS engine not detected";
     }
     
@@ -313,6 +320,14 @@ $imports
         const wasmBuffer = fs.readFileSync(path.resolve(dirpath, wasmFilePath));
         const wasmModule = new WebAssembly.Module(wasmBuffer);
         wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
+      }
+      
+      if (isDeno) {
+        const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
+        const dirpath = path.dirname(path.fromFileUrl(import.meta.url));
+        const binary = Deno.readFileSync(path.resolve(dirpath, wasmFilePath));
+        const module = await WebAssembly.compile(binary);
+        wasmInstance = await WebAssembly.instantiate(module, importObject);
       }
       
       if (isStandaloneJsVM) {
@@ -352,10 +367,59 @@ For more information, see https://kotl.in/wasm-help
 """
 }
 
-fun generateEsmExportsWrapper(asyncWrapperFileName: String): String = /*language=js */ """
+fun WasmCompiledModuleFragment.generateEsmExportsWrapper(
+    asyncWrapperFileName: String,
+    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>
+): String {
+    val importedModules = jsModuleImports
+        .map {
+            val moduleSpecifier = it.toJsStringLiteral().toString()
+            val importVariableString = JsModuleAndQualifierReference.encode(it)
+            moduleSpecifier to importVariableString
+        }
+
+    val referencesToImportedDeclarations = jsModuleAndQualifierReferences
+        .filter { it.module != null }
+        .map {
+            val module = it.module!!
+            val stringLiteral = module.toJsStringLiteral().toString()
+            stringLiteral to if (it.qualifier != null) {
+                it.importVariableName
+            } else {
+                it.jsVariableName
+            }
+        }
+
+    val allModules = (importedModules + referencesToImportedDeclarations)
+        .distinctBy {
+            it.first
+        }.sortedBy { it.first }
+
+    val importsImportedSection = allModules.joinToString("\n") {
+        buildString {
+            append("import * as ")
+            append(it.second)
+            append(" from ")
+            append(it.first)
+            append(";")
+        }
+    }
+
+    val imports = allModules.joinToString(",\n") {
+        "    ${it.first}: ${it.second}"
+    }
+
+    /*language=js */
+    return """
+$importsImportedSection
 import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
-export default (await instantiate()).exports;
+
+const exports = (await instantiate({
+$imports
+})).exports;
+${generateExports()}
 """
+}
 
 fun writeCompilationResult(
     result: WasmCompilerResult,
@@ -383,4 +447,38 @@ fun writeCompilationResult(
     if (result.dts != null) {
         File(dir, "$fileNameBase.d.ts").writeText(result.dts)
     }
+}
+
+fun WasmCompiledModuleFragment.generateExports(): String {
+    // TODO: necessary to move export check onto common place
+    val exportNames = exports
+        .filterNot { it.name.startsWith(JsInteropFunctionsLowering.CALL_FUNCTION) }
+        .ifNotEmpty {
+            joinToString(",\n") {
+                "    ${it.name}"
+            }
+        }?.let {
+            """
+            |const {
+                |$it
+            |}
+        """.trimMargin()
+        }
+
+    /*language=js */
+    return """
+export default new Proxy(exports, {
+    _shownError: false,
+    get(target, prop) {
+        if (!this._shownError) {
+            this._shownError = true;
+            if (typeof console !== "undefined") {
+                console.error("Do not use default import. Use corresponding named import instead.")
+            }
+        }
+        return target[prop];
+    }
+});
+${exportNames?.let { "export $it = exports;" }}
+"""
 }

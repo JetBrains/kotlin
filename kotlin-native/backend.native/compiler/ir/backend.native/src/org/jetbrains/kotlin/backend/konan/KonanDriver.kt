@@ -25,14 +25,22 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.util.*
 
-// Extracted from KonanTarget class to avoid problems with kotlin-native-shared.
-private val deprecatedTargets = setOf(
-        KonanTarget.WATCHOS_X86,
-        KonanTarget.IOS_ARM32,
-        KonanTarget.MINGW_X86,
-        KonanTarget.LINUX_MIPS32,
-        KonanTarget.LINUX_MIPSEL32,
-        KonanTarget.WASM32
+/**
+ * [this] is a value passed to `-target` CLI-argument (see [KonanConfigKeys.TARGET])
+ * Returns 'true' if this argument is most likely a removed [KonanTarget], allowing for a
+ * more readable and graceful error message.
+ */
+private fun String.looksLikeRemovedTarget(): Boolean =
+        // NB: zephyr had loadable targets, so the full value was of form 'zephyr_<subtarget>'
+        this in removedTargetsNames || this.startsWith("zephyr_")
+
+private val removedTargetsNames = setOf(
+        "ios_arm32",
+        "watchos_x86",
+        "linux_mips32",
+        "linux_mipsel32",
+        "mingw_x86",
+        "wasm32"
 )
 
 private val softDeprecatedTargets = setOf(
@@ -87,17 +95,18 @@ class KonanDriver(
             configuration.put(KonanConfigKeys.MAKE_PER_FILE_CACHE, true)
             configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
         }
+
+        val target = configuration.get(KonanConfigKeys.TARGET)
+        if (target != null && target.looksLikeRemovedTarget()) {
+            configuration.report(CompilerMessageSeverity.ERROR,
+                    "target $target is no longer available. See: $DEPRECATION_LINK")
+        }
         var konanConfig = KonanConfig(project, configuration)
 
         if (configuration.get(KonanConfigKeys.LIST_TARGETS) == true) {
             konanConfig.targetManager.list()
         }
         if (konanConfig.infoArgsOnly) return
-
-        if (konanConfig.target in deprecatedTargets || konanConfig.target is KonanTarget.ZEPHYR) {
-            configuration.report(CompilerMessageSeverity.ERROR,
-                    "target ${konanConfig.target} is no longer available. See: $DEPRECATION_LINK")
-        }
 
         // Avoid showing warning twice in 2-phase compilation.
         if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in softDeprecatedTargets) {
@@ -113,7 +122,9 @@ class KonanDriver(
             konanConfig = KonanConfig(project, configuration) // TODO: Just set freshly built caches.
         }
 
-        konanConfig.cacheSupport.checkConsistency()
+        if (!konanConfig.produce.isHeaderCache) {
+            konanConfig.cacheSupport.checkConsistency()
+        }
 
         DynamicCompilerDriver().run(konanConfig, environment)
     }
@@ -172,7 +183,7 @@ class KonanDriver(
             copy(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
             copy(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
             copy(KonanConfigKeys.OBJC_GENERICS)
-            copy(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER)
+            copy(CommonConfigurationKeys.USE_FIR_BASED_FAKE_OVERRIDE_GENERATOR)
         }
 
         // For the second stage, remove already compiled source files from the configuration.

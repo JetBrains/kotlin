@@ -29,7 +29,7 @@ internal fun SirModule.dumpResultToFiles(requests: List<BridgeRequest>, output: 
 }
 
 private fun SirModule.generateSwiftSrc(): String {
-    return SirAsSwiftSourcesPrinter().print(this)
+    return SirAsSwiftSourcesPrinter.print(this)
 }
 
 private fun generateBridgeSources(requests: List<BridgeRequest>): BridgeSources {
@@ -38,11 +38,12 @@ private fun generateBridgeSources(requests: List<BridgeRequest>): BridgeSources 
     val kotlinBridgePrinter = createKotlinBridgePrinter()
     val cBridgePrinter = createCBridgePrinter()
 
-    requests.forEach { request ->
-        val bridge = generator.generate(request)
-        kotlinBridgePrinter.add(bridge)
-        cBridgePrinter.add(bridge)
-    }
+    requests
+        .map(generator::generate)
+        .forEach {
+            kotlinBridgePrinter.add(it)
+            cBridgePrinter.add(it)
+        }
 
     val actualKotlinSrc = kotlinBridgePrinter.print()
     val actualCHeader = cBridgePrinter.print()

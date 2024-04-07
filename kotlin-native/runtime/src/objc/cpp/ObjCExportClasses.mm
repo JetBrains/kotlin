@@ -9,11 +9,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSObject.h>
-#import <Foundation/NSValue.h>
-#import <Foundation/NSString.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSDecimalNumber.h>
+#import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <objc/objc-exception.h>
 #import <dispatch/dispatch.h>
@@ -22,7 +18,7 @@
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 #import "Exceptions.h"
 
 @interface NSObject (NSObjectPrivateMethods)

@@ -18,7 +18,7 @@ fun testMixedIfAndWhen() =
 fun testWrappedExpressions() =
         if (true) {
             println()
-            if (true) {
+            <!INVALID_IF_AS_EXPRESSION!>if<!> (true) {
                 println()
                 if (true) {
                     println()

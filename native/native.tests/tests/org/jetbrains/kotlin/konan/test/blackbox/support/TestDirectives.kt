@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support
 
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
@@ -22,10 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.Outp
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.StringDirective
-import org.jetbrains.kotlin.test.directives.model.singleValue
+import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
@@ -197,11 +195,13 @@ internal object TestDirectives : SimpleDirectivesContainer() {
         description = """
             Force assertions mode to given value, overriding calculated mode which is derived from cacheMode and optimizationMode.
         """.trimIndent()
-    )
+    ) {
+        AssertionsMode.fromStringOrNull(it)
+    }
 }
 
 // mimics class `JVMAssertionsMode`
-internal enum class AssertionsMode(val description: String) {
+enum class AssertionsMode(val description: String) {
     ALWAYS_ENABLE("always-enable"),
     ALWAYS_DISABLE("always-disable"),
     JVM("jvm"),
@@ -214,20 +214,20 @@ internal enum class AssertionsMode(val description: String) {
     }
 }
 
-internal enum class TestKind {
+enum class TestKind {
     REGULAR,
     STANDALONE,
     STANDALONE_NO_TR,
     STANDALONE_LLDB;
 }
 
-internal enum class TestRunnerType {
+enum class TestRunnerType {
     DEFAULT,
     WORKER,
     NO_EXIT
 }
 
-internal enum class MutedOption {
+enum class MutedOption {
     DEFAULT,
     K1,
     K2
@@ -241,7 +241,7 @@ internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(e
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
 }
 
-internal open class TestCompilerArgs(
+open class TestCompilerArgs(
     val compilerArgs: List<String>,
     val cinteropArgs: List<String> = emptyList(),
     val assertionsMode: AssertionsMode = AssertionsMode.DEFAULT,
@@ -250,9 +250,9 @@ internal open class TestCompilerArgs(
 
     private val uniqueCompilerArgs = compilerArgs.toSet()
     private val uniqueCinteropArgs = cinteropArgs.toSet()
-    override fun hashCode() = (uniqueCompilerArgs + uniqueCinteropArgs).hashCode()
+    override fun hashCode() = ((uniqueCompilerArgs + uniqueCinteropArgs) to assertionsMode).hashCode()
     override fun equals(other: Any?) = (other as? TestCompilerArgs)?.uniqueCompilerArgs == uniqueCompilerArgs &&
-            other.uniqueCinteropArgs == uniqueCinteropArgs
+            other.uniqueCinteropArgs == uniqueCinteropArgs && other.assertionsMode == assertionsMode
 
     operator fun plus(otherCompilerArgs: TestCompilerArgs): TestCompilerArgs = TestCompilerArgs(
         this.compilerArgs + otherCompilerArgs.compilerArgs,
@@ -406,6 +406,7 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, l
 }
 
 internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location): TestCompilerArgs {
+    val assertionsMode = registeredDirectives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT
     val freeCInteropArgs = registeredDirectives[FREE_CINTEROP_ARGS]
     val freeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
     if (freeCompilerArgs.isNotEmpty()) {
@@ -417,7 +418,7 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
         """.trimIndent()
         }
     }
-    return TestCompilerArgs(freeCompilerArgs, freeCInteropArgs)
+    return TestCompilerArgs(freeCompilerArgs, freeCInteropArgs, assertionsMode)
 }
 
 internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
@@ -448,11 +449,12 @@ internal fun parseProgramArguments(registeredDirectives: RegisteredDirectives): 
 internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestRunCheck.OutputMatcher? {
     if (OUTPUT_REGEX !in registeredDirectives)
         return null
-    val regexStr = registeredDirectives.singleValue(OUTPUT_REGEX)
-    val regex = regexStr.toRegex(RegexOption.DOT_MATCHES_ALL)
+    val regexes = registeredDirectives[OUTPUT_REGEX].map { it.toRegex(RegexOption.DOT_MATCHES_ALL) }
     return TestRunCheck.OutputMatcher {
-        assertTrue(regex.matches(it)) {
-            "Regex `$regex` failed to match `$it`"
+        regexes.forEach { regex ->
+            assertTrue(regex.matches(it)) {
+                "Regex `$regex` failed to match `$it`"
+            }
         }
         true
     }

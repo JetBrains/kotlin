@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -244,7 +243,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         ktClassOrObject: KtPureClassOrObject
     ): IrConstructor =
         declareConstructor(
-            ktClassOrObject,
             ktClassOrObject.primaryConstructor ?: ktClassOrObject,
             ktClassOrObject.contextReceivers.mapNotNull { it.typeReference() },
             primaryConstructorDescriptor
@@ -262,7 +260,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
     fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtPureClassOrObject): IrConstructor {
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
         return declareConstructor(
-            ktConstructor,
             ktConstructor,
             ktClassOrObject.contextReceivers.mapNotNull { it.typeReference() },
             constructorDescriptor
@@ -282,7 +279,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
 
     private inline fun declareConstructor(
         ktConstructorElement: KtPureElement,
-        ktParametersElement: KtPureElement,
         ktContextReceiversElements: List<KtPureElement>,
         constructorDescriptor: ClassConstructorDescriptor,
         generateBody: BodyGenerator.(IrConstructor) -> IrBody?
@@ -300,7 +296,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                     visibility = visibility,
                     isInline = isInline,
                     isExpect = isExpect,
-                    returnType = IrUninitializedType,
+                    returnType = constructorDescriptor.returnType.toIrType(),
                     symbol = it,
                     isPrimary = isPrimary,
                     isExternal = isEffectivelyExternal(),
@@ -310,11 +306,10 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                 contextReceiverParametersCount = ktContextReceiversElements.size
             }
         }.buildWithScope { irConstructor ->
-            generateValueParameterDeclarations(irConstructor, ktParametersElement, null, ktContextReceiversElements)
+            generateValueParameterDeclarations(irConstructor, ktConstructorElement, null, ktContextReceiversElements)
             if (context.configuration.generateBodies) {
                 irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody(irConstructor)
             }
-            irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         }
     }
 

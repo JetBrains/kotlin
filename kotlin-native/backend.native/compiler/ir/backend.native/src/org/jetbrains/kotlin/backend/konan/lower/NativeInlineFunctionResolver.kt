@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
+import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 
@@ -20,8 +20,7 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
     private val partiallyLoweredInlineFunctions = mapping.partiallyLoweredInlineFunctions
 
     fun savePartiallyLoweredInlineFunction(function: IrFunction) =
-            function.deepCopyWithVariables().also {
-                it.patchDeclarationParents(function.parent)
+            function.deepCopyWithSymbols(function.parent).also {
                 partiallyLoweredInlineFunctions[function.symbol] = it
             }
 
@@ -31,15 +30,16 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
 internal class NativeInlineFunctionResolver(override val context: Context, val generationState: NativeGenerationState) : InlineFunctionResolverReplacingCoroutineIntrinsics(context) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-        val function = super.getFunctionDeclaration(symbol)
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.getFunctionDeclaration(symbol) ?: return null
 
         generationState.inlineFunctionOrigins[function]?.let { return it.irFunction }
 
         val packageFragment = function.getPackageFragment()
         val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
         val irFile: IrFile
-        val (possiblyLoweredFunction, shouldLower) = if (moduleDeserializer != null) {
+        val functionIsCached = moduleDeserializer != null && function.body == null
+        val (possiblyLoweredFunction, shouldLower) = if (functionIsCached) {
             // The function is cached, get its body from the IR linker.
             val (firstAccess, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
             generationState.inlineFunctionOrigins[function] = deserializedInlineFunction
@@ -58,7 +58,6 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
         }
 
         if (shouldLower) {
-            val functionIsCached = moduleDeserializer != null
             lower(possiblyLoweredFunction, irFile, functionIsCached)
             if (!functionIsCached) {
                 generationState.inlineFunctionOrigins[function] =

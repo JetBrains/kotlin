@@ -1,24 +1,24 @@
 package foo.bar
 
 /*p:foo.bar*/fun testOperators(a: /*p:foo.bar*/A, b: /*p:foo.bar*/Int) {
-    var d = a
+    var d = /*p:foo.bar(A)*/a
 
-    d/*p:A(inc) p:foo.bar(A) p:foo.bar.A(inc)*/++
-    /*p:A(inc) p:foo.bar(A) p:foo.bar.A(inc)*/++d
-    d/*p:foo.bar(A) p:foo.bar(dec) p:foo.bar.A(dec)*/--
-    /*p:foo.bar(A) p:foo.bar(dec) p:foo.bar.A(dec)*/--d
+    /*p:foo.bar(A)*/d/*p:foo.bar(A) p:foo.bar.A(inc)*/++
+    /*p:foo.bar(A) p:foo.bar.A(inc)*/++/*p:foo.bar(A)*/d
+    /*p:foo.bar(A)*/d/*p:foo.bar(A) p:foo.bar(dec) p:foo.bar.A(dec)*/--
+    /*p:foo.bar(A) p:foo.bar(dec) p:foo.bar.A(dec)*/--/*p:foo.bar(A)*/d
 
-    /*p:A(plus) p:foo.bar(A) p:foo.bar.A(plus)*/a + b
+    /*p:foo.bar(A) p:foo.bar.A(plus)*/a + b
     /*p:foo.bar(A) p:foo.bar(minus) p:foo.bar.A(minus)*/a - b
-    /*p:foo.bar(not) p:foo.bar.A(not) p:kotlin(Unit)*/!a
+    /*p:foo.bar(not) p:foo.bar.A(not)*/!/*p:foo.bar(A)*/a
 
     // for val
-    /*p:A(timesAssign) p:foo.bar(times) p:foo.bar.A(times) p:foo.bar.A(timesAssign) p:kotlin(Unit)*/a *= b
-    /*p:foo.bar(div) p:foo.bar(divAssign) p:foo.bar.A(div) p:foo.bar.A(divAssign) p:kotlin(Unit)*/a /= b
+    /*p:foo.bar(A) p:foo.bar(times) p:foo.bar.A(times) p:foo.bar.A(timesAssign) p:java.math(BigDecimal) p:java.math(BigInteger) p:kotlin(times)*/a *= b
+    /*p:foo.bar(A) p:foo.bar(div) p:foo.bar(divAssign) p:foo.bar.A(div) p:foo.bar.A(divAssign) p:java.math(BigDecimal) p:java.math(BigInteger) p:kotlin(div)*/a /= b
 
     // for var
-    /*p:A(plus) p:foo.bar(A) p:foo.bar(plusAssign) p:foo.bar.A(plus) p:foo.bar.A(plusAssign)*/d += b
-    /*p:foo.bar(A) p:foo.bar(minus) p:foo.bar(minusAssign) p:foo.bar.A(minus) p:foo.bar.A(minusAssign)*/d -= b
-    /*p:A(timesAssign) p:foo.bar(times) p:foo.bar.A(times) p:foo.bar.A(timesAssign) p:kotlin(Unit)*/d *= b
-    /*p:foo.bar(div) p:foo.bar(divAssign) p:foo.bar.A(div) p:foo.bar.A(divAssign) p:kotlin(Unit)*/d /= b
+    /*p:foo.bar(A) p:foo.bar(plusAssign) p:foo.bar.A(plus) p:foo.bar.A(plusAssign) p:kotlin.collections(plusAssign)*/d += b
+    /*p:foo.bar(A) p:foo.bar(minus) p:foo.bar(minusAssign) p:foo.bar.A(minus) p:foo.bar.A(minusAssign) p:kotlin.collections(minusAssign)*/d -= b
+    /*p:foo.bar(A) p:foo.bar(times) p:foo.bar.A(times) p:foo.bar.A(timesAssign) p:java.math(BigDecimal) p:java.math(BigInteger) p:kotlin(times)*/d *= b
+    /*p:foo.bar(A) p:foo.bar(div) p:foo.bar(divAssign) p:foo.bar.A(div) p:foo.bar.A(divAssign) p:java.math(BigDecimal) p:java.math(BigInteger) p:kotlin(div)*/d /= b
 }

@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
@@ -20,7 +18,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTestRunFactory
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.io.File
 import javax.inject.Inject
 
 abstract class KotlinJsIrTarget
@@ -87,6 +86,12 @@ constructor(
                 producingCompilation = mainCompilation,
                 componentName = componentName,
                 artifactNameAppendix = wasmDecamelizedDefaultNameOrNull() ?: dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+            )
+        )
+
+        usageContexts.addIfNotNull(
+            setUpResourcesVariant(
+                mainCompilation
             )
         )
 
@@ -151,7 +156,6 @@ constructor(
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
                     val syncTask = binary.linkSyncTask
-                    binaryenReplaceInput[binary]?.invoke()
                     val tsValidationTask = registerTypeScriptCheckTask(binary)
 
                     binary.linkTask.configure {
@@ -182,97 +186,8 @@ constructor(
         }
     }
 
-    //Binaryen
-    private var binaryenReplaceInput: MutableMap<JsIrBinary, () -> Unit> = mutableMapOf()
-
+    @Deprecated("Binaryen is enabled by default. This call is redundant.")
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
-        compilations.all {
-            it.binaries.all { binary ->
-                if (binary is ExecutableWasm) {
-                    val binaryenExec = createBinaryen(binary, body)
-
-                    if (
-                        wasmTargetType == KotlinWasmTargetType.WASI && nodejsLazyDelegate.isInitialized() ||
-                        project.locateTask<IncrementalSyncTask>(binary.linkSyncTaskName) != null
-                    ) {
-                        configureBinaryen(binary, binaryenExec)
-                    } else {
-                        binaryenReplaceInput[binary] = {
-                            configureBinaryen(binary, binaryenExec)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun createBinaryen(binary: ExecutableWasm, binaryenDsl: BinaryenExec.() -> Unit): TaskProvider<BinaryenExec> {
-        val linkTask = binary.linkTask
-
-        val compileWasmDestDir = linkTask.map {
-            it.destinationDirectory
-        }
-
-        val compiledWasmFile = linkTask.map { link ->
-            link.destinationDirectory.asFile.get().resolve(link.compilerOptions.moduleName.get() + ".wasm")
-        }
-
-        return BinaryenExec.create(binary.compilation, binary.optimizeTaskName) {
-            val compilation = binary.compilation
-            dependsOn(linkTask)
-            inputFileProperty.fileProvider(compiledWasmFile)
-
-            val outputDirectory: Provider<File> = binary.target.project.layout.buildDirectory
-                .dir(COMPILE_SYNC)
-                .map { it.dir(compilation.target.targetName) }
-                .map { it.dir(compilation.name) }
-                .map { it.dir(binary.name) }
-                .map { it.dir("optimized") }
-                .map { it.asFile }
-
-            val outputFile = outputDirectory.map { it.resolve(compiledWasmFile.get().name) }
-
-            outputFileProperty.fileProvider(
-                outputFile
-            )
-
-            doLast {
-                fs.copy {
-                    it.from(compileWasmDestDir)
-                    it.into(outputDirectory)
-                    it.eachFile {
-                        if (it.relativePath.getFile(outputDirectory.get()).exists()) {
-                            it.exclude()
-                        }
-                    }
-                }
-            }
-
-            binaryenDsl()
-        }
-    }
-
-    private fun configureBinaryen(binary: JsIrBinary, binaryenExec: TaskProvider<BinaryenExec>) {
-        if (wasmTargetType == KotlinWasmTargetType.WASI) {
-            if (binary.compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(binaryenExec)
-            }
-
-            whenNodejsConfigured {
-                testTask {
-                    val name = binary.mainFileName
-                    it.inputFileProperty.fileProvider(
-                        binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile.resolve(name.get()) } }
-                    )
-                    it.dependsOn(binaryenExec)
-                }
-            }
-        } else {
-            binary.linkSyncTask.configure {
-                it.from.setFrom(binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                it.dependsOn(binaryenExec)
-            }
-        }
     }
 
     //Browser
@@ -304,12 +219,8 @@ constructor(
             commonLazy
         } else {
             NodeJsRootPlugin.apply(project.rootProject)
-            compilations.all { compilation ->
-                compilation.binaries.all { binary ->
-                    binaryenReplaceInput[binary]?.invoke()
-                }
-            }
         }
+
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
             it.configureSubTarget()
             nodejsConfiguredHandlers.forEach { handler ->
@@ -385,28 +296,33 @@ constructor(
     }
 
     override fun useCommonJs() {
-        compilations.all {
-            it.kotlinOptions.configureCommonJsOptions()
+        compilations.configureEach { jsCompilation ->
+            jsCompilation.compileTaskProvider.configure {
+                compilerOptions.configureCommonJsOptions()
+            }
 
-            it.binaries
+            jsCompilation.binaries
                 .withType(JsIrBinary::class.java)
-                .all {
+                .configureEach {
                     it.linkTask.configure { linkTask ->
-                        linkTask.kotlinOptions.configureCommonJsOptions()
+                        linkTask.compilerOptions.configureCommonJsOptions()
                     }
                 }
         }
     }
 
     override fun useEsModules() {
-        compilations.all {
-            it.kotlinOptions.configureEsModulesOptions()
+        compilations.configureEach { jsCompilation ->
+            // Here it is essential to configure compilation compiler options as npm queries
+            // compilation fileExtension before any task configuration action is done
+            @Suppress("DEPRECATION")
+            jsCompilation.compilerOptions.options.configureEsModulesOptions()
 
-            it.binaries
+            jsCompilation.binaries
                 .withType(JsIrBinary::class.java)
-                .all {
+                .configureEach {
                     it.linkTask.configure { linkTask ->
-                        linkTask.kotlinOptions.configureEsModulesOptions()
+                        linkTask.compilerOptions.configureEsModulesOptions()
                     }
                 }
         }
@@ -427,16 +343,16 @@ constructor(
             }
     }
 
-    private fun KotlinJsOptions.configureCommonJsOptions() {
-        moduleKind = "commonjs"
-        sourceMap = true
-        sourceMapEmbedSources = "never"
+    private fun KotlinJsCompilerOptions.configureCommonJsOptions() {
+        moduleKind.convention(JsModuleKind.MODULE_COMMONJS)
+        sourceMap.convention(true)
+        sourceMapEmbedSources.convention(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
     }
 
-    private fun KotlinJsOptions.configureEsModulesOptions() {
-        moduleKind = "es"
-        sourceMap = true
-        sourceMapEmbedSources = "never"
+    private fun KotlinJsCompilerOptions.configureEsModulesOptions() {
+        moduleKind.convention(JsModuleKind.MODULE_ES)
+        sourceMap.convention(true)
+        sourceMapEmbedSources.convention(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
     }
 
     override fun generateTypeScriptDefinitions() {

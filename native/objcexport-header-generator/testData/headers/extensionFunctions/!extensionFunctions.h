@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class Foo;
+@class ClazzA, ClazzB;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -21,14 +21,33 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 __attribute__((objc_subclassing_restricted))
-@interface Foo : Base
+@interface ClazzA : Base
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)funA __attribute__((swift_name("funA()")));
+- (void)memberFun __attribute__((swift_name("memberFun()")));
 @end
 
-@interface Foo (Extensions)
-- (void)funB __attribute__((swift_name("funB()")));
+__attribute__((objc_subclassing_restricted))
+@interface ClazzB : Base
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (void)memberFun __attribute__((swift_name("memberFun()")));
+@end
+
+@interface ClazzA (Extensions)
+- (void)extensionFunA1 __attribute__((swift_name("extensionFunA1()")));
+- (void)extensionFunA2 __attribute__((swift_name("extensionFunA2()")));
+@end
+
+@interface ClazzB (Extensions)
+- (void)extensionFunB1 __attribute__((swift_name("extensionFunB1()")));
+- (void)extensionFunB2 __attribute__((swift_name("extensionFunB2()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+@interface FooKt : Base
++ (void)topLevelFunA __attribute__((swift_name("topLevelFunA()")));
++ (void)topLevelFunB __attribute__((swift_name("topLevelFunB()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

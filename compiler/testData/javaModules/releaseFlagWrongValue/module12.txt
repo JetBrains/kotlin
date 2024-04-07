@@ -1,3 +1,3 @@
-error: can't find modules signatures in `ct.sym` file for `-Xjdk-release=12` in $JDK11/lib/ct.sym
+error: can't find modules signatures in `ct.sym` file for `-Xjdk-release=12` in $JDK_11/lib/ct.sym
 error: module java.base cannot be found in the module graph
 COMPILATION_ERROR

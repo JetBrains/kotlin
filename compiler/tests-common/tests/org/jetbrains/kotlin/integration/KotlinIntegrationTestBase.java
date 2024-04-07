@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -63,7 +64,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         try {
             exitCode = runProcess(commandLine, executionLog);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
 
         if (logName == null) {

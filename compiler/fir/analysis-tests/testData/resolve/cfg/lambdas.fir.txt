@@ -35,7 +35,7 @@ FILE: lambdas.kt
         )
     }
     public final fun test_4(): R|kotlin/Int| {
-        ^test_4 R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+        ^test_4 R|/getInt|(getInt@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             ^test_4 Int(1)
         }
         )

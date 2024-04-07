@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/canvas.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyCanvas
     PROPERTY name:suffix visibility:public modality:OPEN [val]
       overridden:
-        public abstract suffix: kotlin.String
+        public abstract suffix: kotlin.String declared in <root>.Canvas
       FIELD PROPERTY_BACKING_FIELD name:suffix type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""

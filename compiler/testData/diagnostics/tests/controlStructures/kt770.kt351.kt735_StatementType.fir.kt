@@ -149,7 +149,7 @@ fun bar(a: Unit) {}
 fun testStatementInExpressionContext() {
     var z = 34
     val a1: Unit = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = 334<!>
-    val f = for (i in 1..10) {}
+    val f = <!EXPRESSION_EXPECTED!>for (i in 1..10) {}<!>
     if (true) return <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = 34<!>
     return <!EXPRESSION_EXPECTED!>while (true) {}<!>
 }

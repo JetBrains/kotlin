@@ -1,3 +1,4 @@
+// ISSUE: KT-60305
 // NI_EXPECTED_FILE
 
 class C<T>
@@ -7,8 +8,8 @@ typealias CIn = C<in Int>
 typealias COut = C<out Int>
 typealias CT<T> = C<T>
 
-val test1 = CStar()
-val test2 = CIn()
-val test3 = COut()
+val test1 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_WARNING!>CStar()<!>
+val test2 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_WARNING!>CIn()<!>
+val test3 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_WARNING!>COut()<!>
 val test4 = CT<<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
 val test5 = CT<CT<*>>()

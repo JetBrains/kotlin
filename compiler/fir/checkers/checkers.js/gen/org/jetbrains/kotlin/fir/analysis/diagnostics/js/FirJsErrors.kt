@@ -78,12 +78,19 @@ object FirJsErrors {
     val WRONG_EXPORTED_DECLARATION: KtDiagnosticFactory1<String> by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val NON_EXPORTABLE_TYPE: KtDiagnosticFactory2<String, ConeKotlinType> by warning2<KtElement, String, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val NON_CONSUMABLE_EXPORTED_IDENTIFIER: KtDiagnosticFactory1<String> by warning1<KtElement, String>()
+    val NAMED_COMPANION_IN_EXPORTED_INTERFACE: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Dynamics
     val DELEGATION_BY_DYNAMIC: KtDiagnosticFactory0 by error0<KtElement>()
     val PROPERTY_DELEGATION_BY_DYNAMIC: KtDiagnosticFactory0 by error0<KtElement>()
     val SPREAD_OPERATOR_IN_DYNAMIC_CALL: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.SPREAD_OPERATOR)
     val WRONG_OPERATION_WITH_DYNAMIC: KtDiagnosticFactory1<String> by error1<KtElement, String>()
+
+    // Static
+    val JS_STATIC_NOT_IN_CLASS_COMPANION: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val JS_STATIC_ON_NON_PUBLIC_MEMBER: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val JS_STATIC_ON_CONST: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val JS_STATIC_ON_OVERRIDE: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)

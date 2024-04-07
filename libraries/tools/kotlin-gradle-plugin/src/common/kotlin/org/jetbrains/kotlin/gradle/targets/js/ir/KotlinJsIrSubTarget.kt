@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -27,11 +25,11 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
@@ -55,13 +53,12 @@ abstract class KotlinJsIrSubTarget(
     }
 
     internal fun configure() {
+        configureTests()
         target.compilations.all {
             val npmProject = it.npmProject
             @Suppress("DEPRECATION")
             it.compilerOptions.options.freeCompilerArgs.add("$PER_MODULE_OUTPUT_NAME=${npmProject.name}")
         }
-
-        configureTests()
     }
 
     private val produceExecutable: Unit by lazy {
@@ -126,15 +123,8 @@ abstract class KotlinJsIrSubTarget(
                 testJs.dependsOn(binary.linkSyncTask)
                 binary.mainFileSyncPath
             } else {
-                if (project.locateTask<BinaryenExec>((binary as ExecutableWasm).optimizeTaskName) != null) {
-                    testJs.dependsOn(binary.optimizeTask)
-                    binary.optimizeTask.flatMap { optimizeTask ->
-                        optimizeTask.outputFileProperty
-                    }
-                } else {
-                    testJs.dependsOn(binary.linkTask)
-                    binary.mainFile
-                }
+                testJs.dependsOn(binary.linkTask)
+                binary.mainFile
             }
 
             testJs.inputFileProperty.set(
@@ -221,8 +211,13 @@ abstract class KotlinJsIrSubTarget(
                         DISTRIBUTION_TASK_NAME
                     )
                 ) {
-                    it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
-                    it.from(binary.linkSyncTask)
+                    if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                        it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
+                        it.from(binary.linkSyncTask)
+                    } else {
+                        it.from(binary.linkTask)
+                        it.from(project.tasks.named(compilation.processResourcesTaskName))
+                    }
 
                     it.into(binary.distribution.outputDirectory)
                 }

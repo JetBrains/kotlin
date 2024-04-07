@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 abstract class SirImport : SirElementBase(), SirDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
+    abstract override var documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract val moduleName: String
 

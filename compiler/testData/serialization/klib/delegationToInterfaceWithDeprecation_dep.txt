@@ -1,0 +1,5 @@
+package test
+
+public interface Some {
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "somemessage", replaceWith = kotlin.ReplaceWith(expression = "somereplacement", imports = {})) public abstract fun foo(): kotlin.Unit
+}

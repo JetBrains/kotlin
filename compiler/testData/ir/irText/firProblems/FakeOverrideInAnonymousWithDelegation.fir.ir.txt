@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/FakeOverrideInAnonymousWithDelegation.kt
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
               PROPERTY FAKE_OVERRIDE name:foo visibility:public modality:OPEN [fake_override,val]
                 overridden:
-                  public open foo: kotlin.String
+                  public open foo: kotlin.String declared in <root>.Bar
                 FUN FAKE_OVERRIDE name:<get-foo> visibility:public modality:OPEN <> ($this:<root>.Bar) returnType:kotlin.String [fake_override]
                   correspondingProperty: PROPERTY FAKE_OVERRIDE name:foo visibility:public modality:OPEN [fake_override,val]
                   overridden:
@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/FakeOverrideInAnonymousWithDelegation.kt
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
               PROPERTY DELEGATED_MEMBER name:foo visibility:public modality:OPEN [val]
                 overridden:
-                  public open foo: kotlin.String
+                  public open foo: kotlin.String declared in <root>.Bar
                 FUN DELEGATED_MEMBER name:<get-foo> visibility:public modality:OPEN <> ($this:<root>.Wrapper.bar.<no name provided>) returnType:kotlin.String
                   correspondingProperty: PROPERTY DELEGATED_MEMBER name:foo visibility:public modality:OPEN [val]
                   overridden:

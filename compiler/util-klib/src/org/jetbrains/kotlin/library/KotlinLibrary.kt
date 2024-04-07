@@ -31,6 +31,7 @@ const val KLIB_PROPERTY_CONTAINS_ERROR_CODE = "contains_error_code"
 
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
+const val KLIB_PROPERTY_HEADER = "header"
 const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
 const val KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS = "includedForwardDeclarations"
 const val KLIB_PROPERTY_IR_PROVIDER = "ir_provider"
@@ -39,6 +40,7 @@ const val KLIB_PROPERTY_IR_PROVIDER = "ir_provider"
  * Copy-pasted to `kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/Utils.kt`
  */
 const val KLIB_PROPERTY_NATIVE_TARGETS = "native_targets"
+const val KLIB_PROPERTY_WASM_TARGETS = "wasm_targets"
 
 // Commonizer-specific:
 /**
@@ -125,6 +127,9 @@ interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
 val KotlinLibrary.isInterop: Boolean
     get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
 
+val KotlinLibrary.isHeader: Boolean
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_HEADER) == "true"
+
 val KotlinLibrary.packageFqName: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)
 
@@ -139,6 +144,9 @@ val BaseKotlinLibrary.irProviderName: String?
 
 val BaseKotlinLibrary.nativeTargets: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)
+
+val BaseKotlinLibrary.wasmTargets: List<String>
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_WASM_TARGETS)
 
 val KotlinLibrary.containsErrorCode: Boolean
     get() = manifestProperties.getProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE) == "true"

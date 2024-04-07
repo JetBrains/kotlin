@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
@@ -27,8 +29,10 @@ object FirCustomEnumEntriesMigrationAccessChecker : FirPropertyAccessExpressionC
         // This 'if' is needed just to choose one of two diagnostics
         if (expression.dispatchReceiver is FirResolvedQualifier || expression.extensionReceiver is FirResolvedQualifier) {
             reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY, context)
-        } else {
+        } else if (context.containingDeclarations.any { it is FirClass && it.isEnumClass }) {
             reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM, context)
+        } else {
+            reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY, context)
         }
     }
 }

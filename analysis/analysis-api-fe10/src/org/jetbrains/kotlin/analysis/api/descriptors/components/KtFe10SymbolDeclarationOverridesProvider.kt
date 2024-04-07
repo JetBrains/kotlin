@@ -73,6 +73,8 @@ internal class KtFe10SymbolDeclarationOverridesProvider(
     }
 
     override fun isSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol): Boolean {
+        if (subClass == superClass) return false
+
         val subClassDescriptor = getSymbolDescriptor(subClass) as? ClassDescriptor ?: return false
         val superClassDescriptor = getSymbolDescriptor(superClass) as? ClassDescriptor ?: return false
         return subClassDescriptor.isSubclassOf(superClassDescriptor)

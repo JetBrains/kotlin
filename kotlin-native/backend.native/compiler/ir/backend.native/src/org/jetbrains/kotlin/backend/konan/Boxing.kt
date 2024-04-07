@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.Name
 
 // TODO: Find a better home for this function than Context.
@@ -132,7 +131,7 @@ internal fun initializeCachedBoxes(generationState: NativeGenerationState) {
  * Adds global that refers to the cache.
  */
 private fun initCache(cache: BoxCache, generationState: NativeGenerationState, cacheName: String,
-                      rangeStartName: String, rangeEndName: String, declareOnly: Boolean) : StaticData.Global {
+                      rangeStartName: String, rangeEndName: String, declareOnly: Boolean): StaticData.Global {
 
     val context = generationState.context
     val kotlinType = context.irBuiltIns.getKotlinClass(cache)
@@ -140,7 +139,7 @@ private fun initCache(cache: BoxCache, generationState: NativeGenerationState, c
     val llvm = generationState.llvm
     val llvmType = kotlinType.defaultType.toLLVMType(llvm)
     val llvmBoxType = llvm.structType(llvm.runtime.objHeaderType, llvmType)
-    val (start, end) = context.config.target.getBoxCacheRange(cache)
+    val (start, end) = cache.defaultRange
 
     return if (declareOnly) {
         staticData.createGlobal(LLVMArrayType(llvmBoxType, end - start + 1)!!, cacheName, true)
@@ -178,7 +177,7 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
         IrConstKind.Long -> value.value as Long
         else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
     }
-    val (start, end) = generationState.config.target.getBoxCacheRange(cacheType)
+    val (start, end) = cacheType.defaultRange
     return if (value in start..end) {
         generationState.llvm.let { llvm ->
             val llvmType = llvm.structType(llvm.runtime.objHeaderType, when (cacheType) {
@@ -212,11 +211,6 @@ private val BoxCache.defaultRange get() = when (this) {
     BoxCache.CHAR -> (0 to 255)
     BoxCache.INT -> (-128 to 127)
     BoxCache.LONG -> (-128 to 127)
-}
-
-private fun KonanTarget.getBoxCacheRange(cache: BoxCache): Pair<Int, Int> = when (this) {
-    is KonanTarget.ZEPHYR   -> emptyRange
-    else                    -> cache.defaultRange
 }
 
 internal fun IrBuiltIns.getKotlinClass(cache: BoxCache): IrClass = when (cache) {

@@ -20,6 +20,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -33,8 +34,6 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.Companion.COMPILE_AL
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.buildDistribution
-import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
@@ -110,11 +109,7 @@ internal val Project.konanArtifactsContainer: KonanArtifactContainer
 // by using HostManager instead of PlatformManager. But we need to download the compiler at the configuration
 // stage (e.g. by getting it from maven as a plugin dependency) and bring back the PlatformManager here.
 internal val Project.hostManager: HostManager
-    get() = findProperty("hostManager") as HostManager? ?:
-            if (hasProperty("org.jetbrains.kotlin.native.experimentalTargets"))
-                HostManager(buildDistribution(rootProject.rootDir.absolutePath), true)
-            else
-                HostManager(customerDistribution(konanHome))
+    get() = findProperty("hostManager") as HostManager? ?: HostManager()
 
 internal val Project.konanTargets: List<KonanTarget>
     get() = hostManager.toKonanTargets(konanExtension.targets)
@@ -224,7 +219,6 @@ internal fun dumpProperties(task: Task) {
             println("languageVersion    : $languageVersion")
             println("apiVersion         : $apiVersion")
             println("konanVersion       : ${KotlinVersion.CURRENT}")
-            println("konanHome          : $konanHome")
             println()
         }
         is KonanInteropTask -> with(task) {
@@ -244,7 +238,6 @@ internal fun dumpProperties(task: Task) {
             println("headers            : ${headers.dump()}")
             println("linkFiles          : ${linkFiles.dump()}")
             println("konanVersion       : ${KotlinVersion.CURRENT}")
-            println("konanHome          : $konanHome")
             println()
         }
         else -> {
@@ -298,10 +291,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal const val KONAN_EXTENSION_NAME = "konan"
 
         internal val REQUIRED_GRADLE_VERSION = GradleVersion.version("6.7")
-    }
-
-    private fun Project.cleanKonan() = project.tasks.withType(KonanBuildingTask::class.java).forEach {
-        project.delete(it.artifact)
     }
 
     private fun checkGradleVersion() =  GradleVersion.current().let { current ->
@@ -362,8 +351,10 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.tasks.named("build").configure {
             dependsOn(compileKonanTask)
         }
-        project.tasks.named("clean").configure {
-            doLast { project.cleanKonan() }
+        project.tasks.named("clean", Delete::class.java).configure {
+            delete(project.tasks.withType(KonanBuildingTask::class.java).map {
+                it.artifact
+            })
         }
 
         project.afterEvaluate {

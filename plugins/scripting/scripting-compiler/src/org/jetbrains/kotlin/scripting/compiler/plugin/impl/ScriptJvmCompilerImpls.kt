@@ -267,7 +267,7 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             project,
             sourceFiles,
-            NoScopeRecordCliBindingTrace(),
+            NoScopeRecordCliBindingTrace(project),
             environment.configuration,
             environment::createPackagePartProvider
         )
@@ -365,7 +365,8 @@ private fun doCompileWithK2(
     )
     val session = prepareJvmSessions(
         sourceFiles, kotlinCompilerConfiguration, projectEnvironment, Name.special("<$rootModuleName>"), extensionRegistrars,
-        librariesScope, libraryList, isCommonSourceForPsi, fileBelongsToModuleForPsi,
+        librariesScope, libraryList, isCommonSourceForPsi, { false },
+        fileBelongsToModuleForPsi,
         createProviderAndScopeForIncrementalCompilation = { files ->
             createContextForIncrementalCompilation(
                 compilerInput.configuration,
@@ -433,7 +434,7 @@ private fun doCompileWithK2(
 
     val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
 
-    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, null)
+    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
     diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
 

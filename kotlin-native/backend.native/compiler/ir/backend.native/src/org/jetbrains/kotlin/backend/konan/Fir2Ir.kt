@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.backend.native.interop.isExternalObjCClassProperty
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
@@ -58,6 +59,8 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
                 property.isLateInit
             else
                 Fir2IrExtensions.Default.hasBackingField(property, session)
+
+    override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
 }
 
 internal fun PhaseContext.fir2Ir(

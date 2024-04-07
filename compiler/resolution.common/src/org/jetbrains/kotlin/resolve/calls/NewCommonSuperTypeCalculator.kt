@@ -14,6 +14,15 @@ import org.jetbrains.kotlin.types.model.*
 
 object NewCommonSuperTypeCalculator {
     fun TypeSystemCommonSuperTypesContext.commonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker {
+        // Skip computation if the list has only one element.
+        // It's not only an optimization, but it's required to not mess up attributes.
+        // See compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/kt65193.kt
+        // When the type is flexible, calling replaceCustomAttributes(unionTypeAttributes(types)) will take the attributes of the
+        // lower bound which will mess up `EnhancedTypeForWarningAttribute`s.
+        // It's not a problem if the list has multiple entries, because `EnhancedTypeForWarningAttribute.union` returns null,
+        // meaning that whenever we union multiple types, we remove any `EnhancedTypeForWarningAttribute`.
+        types.singleOrNull()?.let { return it }
+
         val maxDepth = types.maxOfOrNull { it.typeDepth() } ?: 0
         return commonSuperType(types, -maxDepth, true).replaceCustomAttributes(unionTypeAttributes(types))
     }
@@ -400,8 +409,8 @@ object NewCommonSuperTypeCalculator {
         if (parameter.getVariance() == TypeVariance.IN)
             return false // arguments for contravariant parameters are intersected, recursion should not be possible
 
-        val originalTypesSet = originalTypesForCst.toSet()
-        val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.map { it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }.toSet()
+        val originalTypesSet = originalTypesForCst.mapTo(mutableSetOf()) { it.lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }
+        val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.mapTo(mutableSetOf()) { it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }
 
         if (originalTypesSet.size != typeArgumentsTypeSet.size)
             return false

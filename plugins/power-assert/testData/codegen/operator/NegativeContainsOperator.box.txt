@@ -3,3 +3,36 @@ assert("Hello" !in listOf("Hello", "World"))
                |   |
                |   [Hello, World]
                false
+
+Assertion failed
+assert(" !in " !in listOf(" !in "))
+               |   |
+               |   [ !in ]
+               false
+
+Assertion failed
+assert(
+    " !in "
+
+            !in
+            |
+            false
+
+            listOf(" !in ")
+            |
+            [ !in ]
+)
+
+Assertion failed
+assert("Hello"/*!in*/!in/*!in*/listOf("Hello", "World"))
+                     |         |
+                     |         [Hello, World]
+                     false
+
+Assertion failed
+assert(("Hello" !in listOf("Hello", "World")) !in listOf(false))
+                |   |                         |   |
+                |   |                         |   [false]
+                |   |                         false
+                |   [Hello, World]
+                false

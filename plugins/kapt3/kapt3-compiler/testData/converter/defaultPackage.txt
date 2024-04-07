@@ -18,6 +18,23 @@ public final class AnotherRootClass {
 ////////////////////
 
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class RootAnnotation : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface RootAnnotation {
+}
+
+////////////////////
+
+
 /**
  * public final class RootClass : kotlin/Any {
  *
@@ -88,6 +105,7 @@ public abstract interface PackedClass {
 package test;
 
 @ClassRefAnnotation(value = {RootClass.class})
+@RootAnnotation()
 /**
  * public final class test/PackedWithAnnotation : kotlin/Any {
  *

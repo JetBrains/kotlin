@@ -1,0 +1,57 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import java.time.Instant
+
+@Composable
+fun SkippableComposable(list: List<String>) {
+    use(list)
+}
+
+@Composable
+fun UnskippableComposable(instant: Instant) {
+    use(instant)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun SkippableComposable(list: List<String>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(list)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    use(list)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    SkippableComposable(list, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun UnskippableComposable(instant: Instant, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  use(instant)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    UnskippableComposable(instant, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

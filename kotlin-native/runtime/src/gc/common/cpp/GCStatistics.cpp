@@ -11,7 +11,7 @@
 
 #include "Allocator.hpp"
 #include "Logging.hpp"
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 #include "Porting.h"
 #include "ThreadData.hpp"
 #include "Types.h"
@@ -78,7 +78,7 @@ struct RootSetStatistics {
     KLong stackReferences;
     KLong globalReferences;
     KLong stableReferences;
-    KLong total() const { return threadLocalReferences + stableReferences + globalReferences + stableReferences; }
+    KLong total() const { return threadLocalReferences + stackReferences + globalReferences + stableReferences; }
 };
 
 struct GCInfo {

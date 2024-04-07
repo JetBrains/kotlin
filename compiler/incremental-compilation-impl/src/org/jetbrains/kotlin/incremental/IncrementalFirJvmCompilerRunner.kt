@@ -87,7 +87,7 @@ open class IncrementalFirJvmCompilerRunner(
         isIncremental: Boolean
     ): Pair<ExitCode, Collection<File>> {
 //        val isIncremental = true // TODO
-        val collector = GroupingMessageCollector(messageCollector, args.allWarningsAsErrors)
+        val collector = GroupingMessageCollector(messageCollector, args.allWarningsAsErrors, args.reportAllWarnings)
         // from K2JVMCompiler (~)
         val moduleName = args.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         val targetId = TargetId(moduleName, "java-production") // TODO: get rid of magic constant
@@ -213,8 +213,6 @@ open class IncrementalFirJvmCompilerRunner(
                         configuration
                     )
 
-                    performanceManager?.notifyAnalysisStarted()
-
                     val analysisResults =
                         compileModuleToAnalyzedFir(
                             compilerInput,
@@ -222,10 +220,7 @@ open class IncrementalFirJvmCompilerRunner(
                             emptyList(),
                             incrementalExcludesScope,
                             diagnosticsReporter,
-                            performanceManager
                         )
-
-                    performanceManager?.notifyAnalysisFinished()
 
                     // TODO: consider what to do if many compilations find a main class
                     if (mainClassFqName == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
@@ -267,16 +262,11 @@ open class IncrementalFirJvmCompilerRunner(
 
             val cycleResult = firIncrementalCycle() ?: return ExitCode.COMPILATION_ERROR to allCompiledSources
 
-            performanceManager?.notifyGenerationStarted()
-            performanceManager?.notifyIRTranslationStarted()
-
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
             val irGenerationExtensions = projectEnvironment.project.let { IrGenerationExtension.getInstances(it) }
             val (irModuleFragment, components, pluginContext, irActualizedResult) = cycleResult.convertToIrAndActualizeForJvm(
                 extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
             )
-
-            performanceManager?.notifyIRTranslationFinished()
 
             val irInput = ModuleCompilerIrBackendInput(
                 targetId,
@@ -288,10 +278,7 @@ open class IncrementalFirJvmCompilerRunner(
                 irActualizedResult
             )
 
-            val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
-
-            performanceManager?.notifyIRGenerationFinished()
-            performanceManager?.notifyGenerationFinished()
+            val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
             diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
 

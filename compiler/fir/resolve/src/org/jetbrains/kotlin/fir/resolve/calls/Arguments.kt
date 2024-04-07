@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
@@ -19,12 +20,15 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.unwrapLowerBound
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -124,6 +128,14 @@ fun Candidate.resolveArgumentExpression(
             isReceiver,
             isDispatch
         )
+        is FirErrorExpression -> {
+            val wrappedExpression = argument.expression
+            if (wrappedExpression != null) {
+                resolveArgumentExpression(csBuilder, wrappedExpression, expectedType, sink, context, isReceiver, isDispatch)
+            } else {
+                resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, context, isReceiver, isDispatch)
+            }
+        }
         else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, context, isReceiver, isDispatch)
     }
 }
@@ -264,9 +276,10 @@ fun Candidate.resolvePlainArgumentType(
     context: ResolutionContext,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    useNullableArgumentType: Boolean = false
+    useNullableArgumentType: Boolean = false,
+    sourceForReceiver: KtSourceElement? = null,
 ) {
-    val position = if (isReceiver) ConeReceiverConstraintPosition(argument) else ConeArgumentConstraintPosition(argument)
+    val position = if (isReceiver) ConeReceiverConstraintPosition(argument, sourceForReceiver) else ConeArgumentConstraintPosition(argument)
 
     val session = context.session
     val capturedType = prepareCapturedType(argumentType, context)
@@ -279,8 +292,10 @@ fun Candidate.resolvePlainArgumentType(
 
     // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
     if (expectedType != null) {
-        argumentTypeWithCustomConversion(
-            session, context.bodyResolveComponents.scopeSession, expectedType, argumentTypeForApplicabilityCheck
+        context.typeContext.argumentTypeWithCustomConversion(
+            session = session,
+            expectedType = expectedType,
+            argumentType = argumentTypeForApplicabilityCheck,
         )?.let {
             argumentTypeForApplicabilityCheck = it
             substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
@@ -293,11 +308,10 @@ fun Candidate.resolvePlainArgumentType(
     )
 }
 
-private fun argumentTypeWithCustomConversion(
+private fun ConeInferenceContext.argumentTypeWithCustomConversion(
     session: FirSession,
-    scopeSession: ScopeSession,
     expectedType: ConeKotlinType,
-    argumentType: ConeKotlinType
+    argumentType: ConeKotlinType,
 ): ConeKotlinType? {
     // Expect the expected type to be a not regular functional type (e.g. suspend or custom)
     val expectedTypeKind = expectedType.functionTypeKind(session) ?: return null
@@ -306,21 +320,18 @@ private fun argumentTypeWithCustomConversion(
     // We want to check the argument type against non-suspend functional type.
     val expectedFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
 
-    val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType)
+    val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType) ?: return null
+    val functionType = argumentTypeWithInvoke.unwrapLowerBound()
+        .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
+        ?.firstOrNull() as? ConeKotlinType ?: return null
 
-    return argumentTypeWithInvoke?.findContributedInvokeSymbol(
-        session,
-        scopeSession,
-        expectedFunctionType,
-        shouldCalculateReturnTypesOfFakeOverrides = false
-    )?.let { invokeSymbol ->
-        createFunctionType(
-            expectedTypeKind,
-            invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
-            null,
-            invokeSymbol.fir.returnTypeRef.coneType,
-        )
-    }
+    val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.type }.ifEmpty { return null }
+    return createFunctionType(
+        kind = expectedTypeKind,
+        parameters = typeArguments.subList(0, typeArguments.lastIndex),
+        receiverType = null,
+        rawReturnType = typeArguments.last(),
+    )
 }
 
 internal fun prepareCapturedType(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType {
@@ -462,24 +473,19 @@ private fun Candidate.prepareExpectedType(
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
-    val basicExpectedType = argument.getExpectedType(parameter/*, LanguageVersionSettings*/)
+    val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
 
     val expectedType =
         getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context)?.also {
             session.lookupTracker?.let { lookupTracker ->
                 parameter.returnTypeRef.coneType.lowerBoundIfFlexible().classId?.takeIf { !it.isLocal }?.let { classId ->
-                    lookupTracker.recordLookup(
-                        SAM_LOOKUP_NAME,
-                        classId.asString(),
+                    lookupTracker.recordClassMemberLookup(
+                        SAM_LOOKUP_NAME.asString(),
+                        classId,
                         callInfo.callSite.source,
                         callInfo.containingFile.source
                     )
-                    lookupTracker.recordLookup(
-                        classId.shortClassName,
-                        classId.packageFqName.asString(),
-                        callInfo.callSite.source,
-                        callInfo.containingFile.source
-                    )
+                    lookupTracker.recordClassLikeLookup(classId, callInfo.callSite.source, callInfo.containingFile.source)
                 }
             }
         }
@@ -497,8 +503,9 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 ): ConeKotlinType? {
     if (candidateExpectedType.isSomeFunctionType(session)) return null
 
-    val expectedFunctionType = context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
+    val samConversionInfo = context.bodyResolveComponents.samResolver.getSamInfoForPossibleSamType(candidateExpectedType)
         ?: return null
+    val expectedFunctionType = samConversionInfo.functionalType
 
     if (!argument.shouldUseSamConversion(
             session,
@@ -512,9 +519,9 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     }
 
     val samConversions = functionTypesOfSamConversions
-        ?: hashMapOf<FirExpression, ConeKotlinType>().also { functionTypesOfSamConversions = it }
+        ?: hashMapOf<FirExpression, FirSamResolver.SamConversionInfo>().also { functionTypesOfSamConversions = it }
 
-    samConversions[argument.unwrapArgument()] = expectedFunctionType
+    samConversions[argument.unwrapArgument()] = samConversionInfo
     return expectedFunctionType
 }
 
@@ -652,6 +659,7 @@ private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCa
     }
 
 fun FirExpression.getExpectedType(
+    session: FirSession,
     parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
 ): ConeKotlinType {
     val shouldUnwrapVarargType = when (this) {
@@ -659,10 +667,36 @@ fun FirExpression.getExpectedType(
         else -> parameter.isVararg
     }
 
-    return if (shouldUnwrapVarargType) {
+    val expectedType = if (shouldUnwrapVarargType) {
         parameter.returnTypeRef.coneType.varargElementType()
     } else {
         parameter.returnTypeRef.coneType
+    }
+    if (!session.functionTypeService.hasExtensionKinds()) return expectedType
+    return FunctionTypeKindSubstitutor(session).substituteOrSelf(expectedType)
+}
+
+/**
+ * This class creates a type by recursively substituting function types of a given type if the function types have special function
+ * type kinds.
+ */
+private class FunctionTypeKindSubstitutor(private val session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
+    /**
+     * Returns a new type that applies the special function type kind to [type] if [type] has a special function type kind.
+     */
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        if (type !is ConeClassLikeType) return null
+        val classId = type.classId ?: return null
+        return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, type.customAnnotations)
+            ?.let { functionTypeKind ->
+                type.createFunctionTypeWithNewKind(session, functionTypeKind) {
+                    // When `substituteType()` returns a non-null value, it does not recursively substitute type arguments,
+                    // which is problematic for a nested function type kind like `@Composable () -> (@Composable -> Unit)`.
+                    // To fix this issue, we manually substitute type arguments here.
+                    this.mapIndexed { index, coneTypeProjection -> substituteArgument(coneTypeProjection, index) ?: coneTypeProjection }
+                        .toTypedArray()
+                }
+            }
     }
 }
 

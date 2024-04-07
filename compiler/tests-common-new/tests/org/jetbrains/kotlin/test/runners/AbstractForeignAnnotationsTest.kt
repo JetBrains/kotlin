@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.SKIP_TXT
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ANNOTATIONS_PATH
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
 import org.jetbrains.kotlin.test.preprocessors.JspecifyMarksCleanupPreprocessor
-import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.*
 import org.jetbrains.kotlin.test.services.jvm.ForeignAnnotationAgainstCompiledJavaTestSuppressor
@@ -48,7 +46,6 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
         }
 
         defaultDirectives {
-            +REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
             +WITH_FOREIGN_ANNOTATIONS
             if (kind.compiledJava) {
                 +ALL_JAVA_AS_BINARY

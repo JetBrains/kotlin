@@ -29,17 +29,7 @@ private fun getAsmFieldSignature(field: PsiField): String {
 }
 
 internal val PsiType.qualifiedName: String
-    get() = qualifiedNameOrNull ?: canonicalText.replace("""<.*>""".toRegex(), "")
-
-internal val PsiType.qualifiedNameOrNull: String?
-    get() {
-        if (this is PsiPrimitiveType) return name
-        if (this is PsiWildcardType) return bound?.qualifiedNameOrNull
-        return when (val resolvedClass = resolvedClass) {
-            is PsiTypeParameter -> resolvedClass.name
-            else -> resolvedClass?.qualifiedName
-        }
-    }
+    get() = canonicalText.replace("""<.*>""".toRegex(), "")
 
 internal val PsiType.simpleNameOrNull: String?
     get() {

@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLSealedInheritorsProviderFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLSealedInheritorsProviderFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.NoOpKtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.providers.ForeignValueProviderService
 import org.jetbrains.kotlin.analysis.providers.PackagePartProviderFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.impl.testConfiguration
@@ -25,10 +25,9 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     }
 
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
-        project.apply {
-            FirStandaloneServiceRegistrar.registerProjectServices(project)
+        FirStandaloneServiceRegistrar.registerProjectServices(project)
 
-            registerService(LLSealedInheritorsProviderFactory::class.java, LLSealedInheritorsProviderFactoryForTests())
+        project.apply {
             registerService(PackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
             registerService(KtCompilerPluginsProvider::class.java, NoOpKtCompilerPluginsProvider)
         }
@@ -41,5 +40,9 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         FirStandaloneServiceRegistrar.registerApplicationServices(application)
+
+        application.apply {
+            registerService(ForeignValueProviderService::class.java, TestForeignValueProviderService())
+        }
     }
 }

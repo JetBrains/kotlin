@@ -16,13 +16,13 @@ public enum Color /* Color*/ {
   private final int rgb;
 
   @org.jetbrains.annotations.NotNull()
-  public static Color valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() Color @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static Color[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() Color valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static kotlin.enums.EnumEntries<Color> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<Color> getEntries();//  getEntries()
 
   private  Color(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
@@ -38,13 +38,13 @@ public enum Direction /* Direction*/ {
   EAST;
 
   @org.jetbrains.annotations.NotNull()
-  public static Direction valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() Direction @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static Direction[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() Direction valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static kotlin.enums.EnumEntries<Direction> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<Direction> getEntries();//  getEntries()
 
   private  Direction();//  .ctor()
 }
@@ -64,13 +64,13 @@ public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.fun
   };
 
   @org.jetbrains.annotations.NotNull()
-  public static IntArithmetics valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() IntArithmetics @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static IntArithmetics[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() IntArithmetics valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static kotlin.enums.EnumEntries<IntArithmetics> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<IntArithmetics> getEntries();//  getEntries()
 
   private  IntArithmetics();//  .ctor()
 
@@ -106,13 +106,13 @@ public abstract enum ProtocolState /* ProtocolState*/ {
   public abstract ProtocolState signal();//  signal()
 
   @org.jetbrains.annotations.NotNull()
-  public static ProtocolState valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() ProtocolState @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static ProtocolState[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() ProtocolState valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static kotlin.enums.EnumEntries<ProtocolState> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<ProtocolState> getEntries();//  getEntries()
 
   private  ProtocolState();//  .ctor()
 

@@ -238,6 +238,30 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ParameterAnnotation.i] i: Int): R|ParameterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] get(): Int
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class Sub : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Sub] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Sub] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
@@ -307,5 +331,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedPropertyFromParameterWithImplicitAnnot
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val konstant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFrom
 import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.functionInliningPhase
+import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -26,14 +28,19 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.NameUtils
 
 internal val removeDuplicatedInlinedLocalClasses = makeIrFilePhase(
-    { context ->
-        if (!context.irInlinerIsEnabled()) return@makeIrFilePhase FileLoweringPass.Empty
-        RemoveDuplicatedInlinedLocalClassesLowering(context)
-    },
+    ::RemoveDuplicatedInlinedLocalClassesLowering,
     name = "RemoveDuplicatedInlinedLocalClasses",
     description = "Drop excess local classes that were copied by ir inliner",
     prerequisite = setOf(functionInliningPhase, localDeclarationsPhase)
 )
+
+private class RemoveDuplicatedInlinedLocalClassesLowering(private val context: JvmBackendContext) : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        if (context.config.enableIrInliner) {
+            irFile.transformChildren(RemoveDuplicatedInlinedLocalClassesTransformer(context), Data())
+        }
+    }
+}
 
 private data class Data(
     var classDeclaredOnCallSiteOrIsDefaultLambda: Boolean = false,
@@ -48,17 +55,13 @@ private data class Data(
 // This lambda will not exist after inline, so we copy declaration into new temporary inline call `singleArgumentInlineFunction`.
 // 3. MUST NOT BE created at all because will be created at callee site.
 // This lowering drops declarations that correspond to second and third type.
-private class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext) : IrElementTransformer<Data>, FileLoweringPass {
+private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBackendContext) : IrElementTransformer<Data> {
     private val visited = mutableSetOf<IrElement>()
     private val capturedConstructors = context.mapping.capturedConstructors
 
     private fun removeUselessDeclarationsFromCapturedConstructors(irClass: IrClass, data: Data) {
         irClass.parents.first { it !is IrFunction || it.origin != JvmLoweredDeclarationOrigin.INLINE_LAMBDA }
             .accept(this, data.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false, modifyTree = false))
-    }
-
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildren(this, Data())
     }
 
     override fun visitCall(expression: IrCall, data: Data): IrElement {
@@ -98,14 +101,15 @@ private class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBacken
             ?.filterIsInstance<IrFunction>()?.firstOrNull()?.takeIf { it.body != null }
         container?.let {
             LocalDeclarationsLowering(
-                context, NameUtils::sanitizeAsJavaIdentifier, JvmVisibilityPolicy(),
+                context, NameUtils::sanitizeAsJavaIdentifier, JvmVisibilityPolicy,
                 compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true, forceFieldsForInlineCaptures = true
             ).lowerWithoutActualChange(it.body!!, it)
         }
 
         // We must remove all constructors from `capturedConstructors` that belong to the classes that will be removed
         capturedConstructors.keys.forEach {
-            RemoveDuplicatedInlinedLocalClassesLowering(context).removeUselessDeclarationsFromCapturedConstructors(it.parentAsClass, data)
+            RemoveDuplicatedInlinedLocalClassesTransformer(context)
+                .removeUselessDeclarationsFromCapturedConstructors(it.parentAsClass, data)
         }
 
         val originalConstructor = capturedConstructors.keys.single {

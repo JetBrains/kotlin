@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 
@@ -51,7 +54,17 @@ open class CandidateCollector(
             bestGroup = group
         }
 
-        if (applicability == currentApplicability && group == bestGroup) {
+        /*
+         * Here we would like to consider error candidates with `INAPPLICABLE_WRONG_RECEIVER` and `INAPPLICABLE_ARGUMENTS_MAPPING_ERROR` kinda
+         *   "same error level". Generally it's questionable which candidates we should keep and which of those applicabilities is more
+         *   specific and we should consider it during work on improvement of error reporting. But this particular check is needed
+         *   to fix the KT-65218, which provoked by different stdlib declarations order in CLI compilation mode and AA mode (see
+         *   the issue for more details)
+         */
+        if (
+            (applicability == currentApplicability && group == bestGroup) ||
+            (currentApplicability == INAPPLICABLE_ARGUMENTS_MAPPING_ERROR && applicability == INAPPLICABLE_WRONG_RECEIVER)
+        ) {
             candidates.add(candidate)
         }
 
@@ -66,6 +79,7 @@ open class CandidateCollector(
     val shouldStopResolve: Boolean
         get() = currentApplicability.shouldStopResolve
 
+    @OptIn(ApplicabilityDetail::class)
     val isSuccess: Boolean
         get() = currentApplicability.isSuccess
 }

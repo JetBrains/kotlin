@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @ThreadSafeMutableState
@@ -102,8 +102,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
 
             if (resolveDeprecations) {
-                val deprecation = symbol.getOwnDeprecation(session, useSiteFile)
-                if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
+                if (symbol.isDeprecationLevelHidden(session)) {
                     symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
                     diagnostic = null
                 }
@@ -118,13 +117,28 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
+        session.lookupTracker?.recordUserTypeRefLookup(
+            typeRef, scopes.asSequence().flatMap { it.scopeOwnerLookupNames }.asIterable(), useSiteFile?.source
+        )
+
         for (scope in scopes) {
             if (applicability == CandidateApplicability.RESOLVED) break
-            scope.processClassifiersByNameWithSubstitution(qualifier.first().name) { symbol, substitutorFromScope ->
+            val name = qualifier.first().name
+            val processor = { symbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor ->
                 val resolvedSymbol = resolveSymbol(symbol, qualifier, qualifierResolver)
-                    ?: return@processClassifiersByNameWithSubstitution
 
-                processCandidate(resolvedSymbol, substitutorFromScope)
+                if (resolvedSymbol != null) {
+                    processCandidate(resolvedSymbol, substitutorFromScope)
+                }
+            }
+
+            if (scope is FirDefaultStarImportingScope) {
+                scope.processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(name) { symbol, substitutor ->
+                    processor(symbol, substitutor)
+                    applicability == CandidateApplicability.RESOLVED
+                }
+            } else {
+                scope.processClassifiersByNameWithSubstitution(name, processor)
             }
         }
 
@@ -205,7 +219,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     @OptIn(SymbolInternals::class)
     private fun FirQualifierResolver.resolveEnumEntrySymbol(
         qualifier: List<FirQualifierPart>,
-        classId: ClassId
+        classId: ClassId,
     ): FirVariableSymbol<FirEnumEntry>? {
         // Assuming the current qualifier refers to an enum entry, we drop the last part so we get a reference to the enum class.
         val enumClassSymbol = resolveSymbolWithPrefix(qualifier.dropLast(1), classId) ?: return null
@@ -453,6 +467,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 }
             }
             else -> error(typeRef.render())
+        }.also {
+            session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, useSiteFile?.source)
         }
     }
 

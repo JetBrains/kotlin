@@ -135,6 +135,16 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
   }
 
+  @TestMetadata("internalDeclarationsStrict")
+  public void testInternalDeclarationsStrict() {
+    runTest("plugins/jvm-abi-gen/testData/compare/internalDeclarationsStrict/");
+  }
+
+  @TestMetadata("internalFields")
+  public void testInternalFields() {
+    runTest("plugins/jvm-abi-gen/testData/compare/internalFields/");
+  }
+
   @TestMetadata("lambdas")
   public void testLambdas() {
     runTest("plugins/jvm-abi-gen/testData/compare/lambdas/");

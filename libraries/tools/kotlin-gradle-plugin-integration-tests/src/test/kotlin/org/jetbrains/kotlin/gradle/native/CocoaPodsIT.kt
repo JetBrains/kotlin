@@ -21,6 +21,13 @@ import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsSource
+import java.nio.file.Path
+import java.util.stream.Stream
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertContains
@@ -899,44 +906,28 @@ class CocoaPodsIT : KGPBaseTest() {
             ),
             configurationCache = true
         )
+
         nativeProjectWithCocoapodsAndIosAppPodFile(
             gradleVersion = gradleVersion,
             buildOptions = buildOptions
         ) {
             buildGradleKts.addCocoapodsBlock("""pod("Base64", version = "1.1.2")""")
 
-            val tasks = arrayOf(
-                ":podspec",
-                ":podImport",
-                ":podPublishDebugXCFramework",
-                ":podPublishReleaseXCFramework",
-                ":syncFramework",
+            assertSimpleConfigurationCacheScenarioWorks(
+                buildArguments = arrayOf(
+                    ":podspec",
+                    ":podImport",
+                    ":podPublishDebugXCFramework",
+                    ":podPublishReleaseXCFramework",
+                    ":syncFramework",
+                ),
+                buildOptions = buildOptions,
+                executedTaskNames = listOf(
+                    ":podPublishDebugXCFramework",
+                    ":podPublishReleaseXCFramework",
+                    ":linkPodDebugFrameworkIOS",
+                )
             )
-
-            val executableTasks = listOf(
-                ":podspec",
-                ":podPublishDebugXCFramework",
-                ":podPublishReleaseXCFramework",
-                ":linkPodDebugFrameworkIOS",
-            )
-
-            build(*tasks) {
-                assertTasksExecuted(executableTasks)
-
-                assertOutputContains("Calculating task graph as no configuration cache is available for tasks")
-
-                assertOutputContains("Configuration cache entry stored.")
-            }
-
-            build("clean")
-
-            build(*tasks) {
-                assertOutputContains("Reusing configuration cache.")
-            }
-
-            build(*tasks) {
-                assertTasksUpToDate(executableTasks)
-            }
         }
     }
 
@@ -1048,6 +1039,76 @@ class CocoaPodsIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Build fails when embedAndSign task is used with pod-dependencies")
+    @GradleTest
+    fun testEmbedAndSignNotUsedWithPodDepsDiagnostic(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tempDir.absolutePathString(),
+            )
+        ) {
+
+            buildGradleKts.addKotlinBlock("iosArm64()")
+            buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
+
+            buildAndFail(":embedAndSignPodAppleFrameworkForXcode") {
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
+            }
+        }
+    }
+
+    internal class GradleAndIsStaticArgumentsProvider : GradleArgumentsProvider() {
+        override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+            return super.provideArguments(context).flatMap { arguments ->
+                val gradleVersion = arguments.get().first()
+                Stream.of(true, false).map { isStatic ->
+                    Arguments.of(gradleVersion, isStatic)
+                }
+            }
+        }
+    }
+
+    @DisplayName("Build fails when embedAndSign with non-pod framework is used with pod-dependencies")
+    @ParameterizedTest(name = "{displayName} with {0} and isStatic={1}")
+    @ArgumentsSource(GradleAndIsStaticArgumentsProvider::class)
+    fun testEmbedAndSignOtherFrameworkNotUsedWithPodDepsDiagnostic(gradleVersion: GradleVersion, isStatic: Boolean, @TempDir tmp: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tmp.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tmp.absolutePathString(),
+            )
+        ) {
+
+            buildGradleKts.addKotlinBlock("""
+                iosArm64()
+                
+                targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
+                   binaries.framework {
+                       isStatic = $isStatic
+                   }
+               }
+            """.trimIndent())
+
+            buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
+
+            buildAndFail(":embedAndSignAppleFrameworkForXcode") {
+                assertHasDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
+            }
+        }
+    }
+
 
     private fun TestProject.buildAndFailWithCocoapodsWrapper(
         vararg buildArguments: String,

@@ -7,19 +7,16 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.FileElement
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubTreeLoader
 import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.builder.createDataClassCopyFunction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
@@ -34,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -181,10 +177,8 @@ internal fun deserializeClassToSymbol(
             superTypeRefs.add(session.builtinTypes.anyType)
         }
 
-        val firPrimaryConstructor = classOrObject.primaryConstructor?.let {
-            val constructor = memberDeserializer.loadConstructor(it, classOrObject, this)
-            addDeclaration(constructor)
-            constructor
+        classOrObject.primaryConstructor?.let { constructor ->
+            addDeclaration(memberDeserializer.loadConstructor(constructor, classOrObject, this))
         }
 
         classOrObject.body?.declarations?.forEach { declaration ->
@@ -216,47 +210,6 @@ internal fun deserializeClassToSymbol(
             )
             generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = initialOrigin)
             generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = initialOrigin)
-        }
-
-        if (classOrObject.isData() && firPrimaryConstructor != null) {
-            // This is a workaround for KT-64884 as we cannot guaranty the correct order
-            // in the metadata from old compilers
-            val properties = declarations.associateBy { declaration ->
-                (declaration as? FirProperty)?.name?.asString()
-            }
-
-            val zippedParameters = classOrObject.primaryConstructorParameters.map { parameter ->
-                val property = properties[parameter.name] ?: errorWithAttachment("Property is not found") {
-                    withPsiEntry("parameter", parameter)
-                    withEntry("parameterName", parameter.name)
-                    withEntryGroup("properties") {
-                        for ((index, value) in properties.entries.withIndex()) {
-                            if (value.key == null) continue
-                            withFirEntry("property$index", value.value)
-                        }
-                    }
-                }
-
-                parameter to (property as FirProperty)
-            }
-
-            addDeclaration(
-                // Explicit type arguments are needed to workaround KT-62544
-                createDataClassCopyFunction<Any, KtClassOrObject, KtParameter>(
-                    classId,
-                    classOrObject,
-                    context.dispatchReceiver,
-                    zippedParameters,
-                    isFromLibrary = true,
-                    createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
-                    createParameterTypeRefWithSourceKind = { property, newKind ->
-                        property.returnTypeRef.copyWithNewSourceKind(newKind)
-                    },
-                    toFirSource = { src: Any?, kind -> KtFakeSourceElement(src as PsiElement, kind) },
-                    addValueParameterAnnotations = { annotations += context.annotationDeserializer.loadAnnotations(it) },
-                    isVararg = { it.isVarArg },
-                )
-            )
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)

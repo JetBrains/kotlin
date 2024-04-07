@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeContext {
@@ -276,8 +279,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
-        require(typeVariable is ConeTypeVariable) { "$typeVariable should subtype of ${ConeTypeVariable::class.qualifiedName}" }
-        return ConeStubTypeForChainInference(typeVariable, ConeNullability.create(typeVariable.defaultType().isMarkedNullable()))
+        shouldNotBeCalled("PCLA does not use stub types for builder inference")
     }
 
     override fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker {
@@ -424,7 +426,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val typeParameterErasureMap = this.extractTypeParameters()
             .map { (it as ConeTypeParameterLookupTag).typeParameterSymbol }
             .eraseToUpperBoundsAssociated(session)
-        val substitutor by lazy { ConeSubstitutorByMap(typeParameterErasureMap, session) }
+        val substitutor by lazy { ConeSubstitutorByMap.create(typeParameterErasureMap, session) }
         val typeWithErasedTypeParameters = if (argumentsCount() != 0) {
             replaceArgumentsDeeply {
                 val type = it.getType()
@@ -587,7 +589,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return intersectionType.withAlternative(secondCandidate)
     }
 
-    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = true
+    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = session.languageVersionSettings.supportsFeature(
+        LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
+    )
 
     override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
         require(this is ConeKotlinType)

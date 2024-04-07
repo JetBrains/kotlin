@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
@@ -27,6 +29,16 @@ class KotlinJsIrCompilationFactory internal constructor(
         compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
             friendArtifactResolver = { _ ->
                 target.project.files()
+            }
+        ),
+        compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithRuntime(
+            withResourcesConfigurationExtending = { runtimeDependencyConfiguration, _ ->
+                if (runtimeDependencyConfiguration == null) {
+                    project.reportDiagnostic(
+                        KotlinToolingDiagnostics.MissingRuntimeDependencyConfigurationForWasmTarget(target.name,)
+                    )
+                }
+                runtimeDependencyConfiguration
             }
         ),
         preConfigureAction = DefaultKotlinCompilationPreConfigure + { compilation ->

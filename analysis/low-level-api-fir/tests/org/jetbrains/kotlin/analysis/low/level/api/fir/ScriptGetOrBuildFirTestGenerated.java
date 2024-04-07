@@ -70,6 +70,12 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("fileAnnotation2Script.kts")
+    public void testFileAnnotation2Script() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotation2Script.kts");
+    }
+
+    @Test
     @TestMetadata("fileAnnotationScript.kts")
     public void testFileAnnotationScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/fileAnnotationScript.kts");
@@ -835,6 +841,12 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
     @TestMetadata("fileAnnotationListScript.kts")
     public void testFileAnnotationListScript() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotationListScript.kts");
+    }
+
+    @Test
+    @TestMetadata("fileAnnotationScript.kts")
+    public void testFileAnnotationScript() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/fileAnnotationScript.kts");
     }
 
     @Test

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.util
 
-interface Multimap<K, out V, out C : Collection<V>> {
+interface Multimap<K, out V, out C : Collection<V>> : Iterable<Map.Entry<K, C>> {
     operator fun get(key: K): C
     operator fun contains(key: K): Boolean
     val keys: Set<K>
     val values: Collection<V>
 
-    operator fun iterator(): Iterator<Map.Entry<K, C>>
+    override operator fun iterator(): Iterator<Map.Entry<K, C>>
 }
 
 interface MutableMultimap<K, V, C : Collection<V>> : Multimap<K, V, C> {

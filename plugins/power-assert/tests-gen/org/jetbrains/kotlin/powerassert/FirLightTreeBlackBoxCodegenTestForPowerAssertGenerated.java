@@ -273,6 +273,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("DispatchInfixComplexReceiver.kt")
+    public void testDispatchInfixComplexReceiver() {
+      runTest("plugins/power-assert/testData/codegen/infix/DispatchInfixComplexReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("DispatchInfixConstantParameter.kt")
     public void testDispatchInfixConstantParameter() {
       runTest("plugins/power-assert/testData/codegen/infix/DispatchInfixConstantParameter.kt");
@@ -294,6 +300,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("DispatchNonInfix.kt")
     public void testDispatchNonInfix() {
       runTest("plugins/power-assert/testData/codegen/infix/DispatchNonInfix.kt");
+    }
+
+    @Test
+    @TestMetadata("DispatchNonInfixComplexReceiver.kt")
+    public void testDispatchNonInfixComplexReceiver() {
+      runTest("plugins/power-assert/testData/codegen/infix/DispatchNonInfixComplexReceiver.kt");
     }
 
     @Test
@@ -321,6 +333,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("ExtensionInfixComplexReceiver.kt")
+    public void testExtensionInfixComplexReceiver() {
+      runTest("plugins/power-assert/testData/codegen/infix/ExtensionInfixComplexReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("ExtensionInfixConstantParameter.kt")
     public void testExtensionInfixConstantParameter() {
       runTest("plugins/power-assert/testData/codegen/infix/ExtensionInfixConstantParameter.kt");
@@ -342,6 +360,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("ExtensionNonInfix.kt")
     public void testExtensionNonInfix() {
       runTest("plugins/power-assert/testData/codegen/infix/ExtensionNonInfix.kt");
+    }
+
+    @Test
+    @TestMetadata("ExtensionNonInfixComplexReceiver.kt")
+    public void testExtensionNonInfixComplexReceiver() {
+      runTest("plugins/power-assert/testData/codegen/infix/ExtensionNonInfixComplexReceiver.kt");
     }
 
     @Test
@@ -560,6 +584,18 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("ContainsOperator.kt")
     public void testContainsOperator() {
       runTest("plugins/power-assert/testData/codegen/operator/ContainsOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("ExcleqOperator.kt")
+    public void testExcleqOperator() {
+      runTest("plugins/power-assert/testData/codegen/operator/ExcleqOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("ExcleqeqOperator.kt")
+    public void testExcleqeqOperator() {
+      runTest("plugins/power-assert/testData/codegen/operator/ExcleqeqOperator.kt");
     }
 
     @Test

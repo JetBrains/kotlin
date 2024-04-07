@@ -1,4 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.util.Properties
 import java.io.FileReader
 
@@ -43,9 +44,13 @@ sourceSets["main"].kotlin {
     srcDir("../../tools/benchmarks/shared/src/main/kotlin/report")
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs +=
-        listOf("-opt-in=kotlin.RequiresOptIn", "-opt-in=kotlin.ExperimentalStdlibApi")
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.addAll(
+        listOf(
+                "kotlin.RequiresOptIn",
+                "kotlin.ExperimentalStdlibApi",
+        )
+    )
 }
 
 
@@ -108,9 +113,7 @@ afterEvaluate {
     tasks.withType<JavaCompile>().configureEach {
         targetCompatibility = "1.8"
     }
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions.jvmTarget = JvmTarget.JVM_1_8
     }
 }

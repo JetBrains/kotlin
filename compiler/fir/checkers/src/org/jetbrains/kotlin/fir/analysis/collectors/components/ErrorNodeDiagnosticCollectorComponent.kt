@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -77,10 +79,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             ) return
         }
 
-        if (source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
-            val property = context.containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty ?: return
-            source = property.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: return
-        }
+        source = source?.delegatedPropertySourceOrThis(context)
 
         reportFirDiagnostic(diagnostic, source, context, callOrAssignment?.source)
     }
@@ -128,7 +127,9 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     override fun visitThisReference(thisReference: FirThisReference, data: CheckerContext) {
         val diagnostic = thisReference.diagnostic ?: return
-        reportFirDiagnostic(diagnostic, thisReference.source, data)
+        // FirImplicitThisReference has no source, in this case use source of containing ThisReceiverExpression
+        val source = thisReference.source ?: data.containingElements.elementAtOrNull(1)?.source
+        reportFirDiagnostic(diagnostic, source, data)
     }
 
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: CheckerContext) {

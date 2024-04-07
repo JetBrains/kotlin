@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
@@ -32,7 +31,6 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
 
         defaultDirectives {
             +USE_PSI_CLASS_FILES_READING
-            +REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
             DIAGNOSTICS with "-UNUSED_PARAMETER"
         }
 

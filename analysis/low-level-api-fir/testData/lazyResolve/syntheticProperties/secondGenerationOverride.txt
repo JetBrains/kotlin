@@ -186,6 +186,58 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public? final? [ResolvedTo(RAW_FIR)] val propertyFromSetter: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
+CONSTANT_EVALUATION:
+TARGET: public open override [<synthetic> CONSTANT_EVALUATION] var something: R|kotlin/String|
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
+        <strcat>(String(body: ), propertyFromBody#)
+    }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| {
+        ^setSomething R|kotlin/io/println|(<strcat>(String(str ), R|<local>/s|))
+    }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|KotlinBase|>
+        }
+
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONSTANT_EVALUATION)] fun getSomething(): R|kotlin/String| {
+            <strcat>(String(body: ), propertyFromBody#)
+        }
+
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONSTANT_EVALUATION)] fun setSomething([ResolvedTo(CONSTANT_EVALUATION)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| {
+            ^setSomething R|kotlin/io/println|(<strcat>(String(str ), R|<local>/s|))
+        }
+
+    }
+    public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
+            LAZY_super<R|Base|>
+        }
+
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] val propertyFromBody: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] val propertyFromSetter: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
 ANNOTATION_ARGUMENTS:
 TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] var something: R|kotlin/String|
     @R|Anno|[Types](s = <strcat>(String(second generation getSomething: ), R|/getterProperty|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
