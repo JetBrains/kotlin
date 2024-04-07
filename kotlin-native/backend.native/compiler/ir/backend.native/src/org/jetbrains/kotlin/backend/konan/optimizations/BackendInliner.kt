@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.backend.konan.lower.erasure
@@ -409,14 +410,19 @@ internal class FunctionInlining(
 
             val instance: IrValueDeclaration? = when (callSite) {
                 is IrDelegatingConstructorCall -> (currentScope.irElement as IrConstructor).constructedClass.thisReceiver!!
-                is IrConstructorCall -> currentScope.scope.createTemporaryVariable(
-                        irCall(
-                                callSite.startOffset, callSite.endOffset,
-                                createUninitializedInstance.owner,
-                                typeArguments = listOf((callee as IrConstructor).constructedClassType)
-                        ),
-                        nameHint = "\$inst"
-                )
+                is IrConstructorCall -> {
+                    val constructedClassType = (callee as IrConstructor).constructedClassType
+                    currentScope.scope.createTemporaryVariable(
+                            IrCallImpl(
+                                    callSite.startOffset, callSite.endOffset,
+                                    constructedClassType,
+                                    createUninitializedInstance,
+                                    typeArgumentsCount = 1,
+                                    valueArgumentsCount = 0,
+                            ).apply { putTypeArgument(0, constructedClassType) },
+                            nameHint = "\$inst"
+                    )
+                }
                 else -> null
             }
 
