@@ -13,13 +13,16 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
+import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.backend.konan.lower.erasure
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -46,7 +49,10 @@ internal class BackendInliner(
 ) {
     private val context = generationState.context
     private val symbols = context.ir.symbols
+    private val string = symbols.string
+    private val throwable = symbols.throwable
     private val invokeSuspendFunction = symbols.invokeSuspendFunction
+
     private val rootSet = callGraph.rootSet
 
     private inline fun DataFlowIR.FunctionBody.forEachVirtualCall(block: (DataFlowIR.Node.VirtualCall) -> Unit) =
@@ -61,6 +67,9 @@ internal class BackendInliner(
         val stack = rootSet.toMutableList()
         for (root in stack)
             computationStates[root] = ComputationState.NEW
+
+//        var count = 0
+
         while (stack.isNotEmpty()) {
             val functionSymbol = stack.peek()!!
             val function = moduleDFG.functions[functionSymbol]!!
@@ -128,9 +137,11 @@ internal class BackendInliner(
 //                        //if (irFunction.name.asString() == "foo")
 //                        println("        $isALoop $calleeSize")
                         if (!isALoop && calleeSize <= 25 // TODO: To a function. Also use relative criterion along with the absolute one.
-                                && calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
-                                && !calleeIrFunction.overrides(invokeSuspendFunction.owner) // TODO: Is it worth trying to support?
-                                /*&& irFunction.fileOrNull?.path?.endsWith("z.kt") == true*/) {
+                                //&& calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
+                                && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
+                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
+                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.superClasses.contains(throwable) } != true
+                                /*&& irFunction.fileOrNull?.path?.endsWith("tt.kt") == true*/) {
                             if (functionsToInline.add(calleeIrFunction)) {
                                 callee.body.forEachVirtualCall { node ->
                                     val devirtualizedCallSite = devirtualizedCallSites[node]
@@ -142,13 +153,37 @@ internal class BackendInliner(
                     }
 
                     if (functionsToInline.isEmpty()) {
-//                        println("Nothing to inline to ${irFunction.render()}")
+                        //println("Nothing to inline to ${irFunction.render()}")
                         function.body.forEachVirtualCall { node ->
                             val devirtualizedCallSite = devirtualizedCallSites[node]
                             if (devirtualizedCallSite != null)
                                 rebuiltDevirtualizedCallSites[node] = devirtualizedCallSite
                         }
                     } else {
+
+                        /*
+                        100 -
+                        50 +
+                        75 -
+                        63 -
+                        57 -
+                        53 +
+                        55 -
+                        54 +
+                         */
+//                        ++count
+//                        if (count == 55)
+//                            println("ZZZ: ${irFunction.render()}")
+//                        if (count > 55)
+//                            continue
+
+//                        if (irFunction is IrConstructor && irFunction.constructedClass.name.asString() == "ArrayList" && irFunction.valueParameters.size == 6)
+//                            continue
+
+//                        if (irFunction is IrConstructor && irFunction.constructedClass.name.asString() == "ArrayList" && irFunction.valueParameters.size == 1)
+//                            println("ZZZ: ${irFunction.render()}")
+////                            continue
+
 //                        println("Preparing to inline to ${irFunction.render()}")
 ////                        functionsToInline.forEach { println("    ${it.dump()}") }
 //                        functionsToInline.forEach { println("    ${it.render()}") }
@@ -158,6 +193,8 @@ internal class BackendInliner(
                                 inlineFunctionResolver = object : InlineFunctionResolver() {
                                     override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol) =
                                             symbol.owner !in functionsToInline
+                                                    || (symbol.owner as? IrConstructor)?.constructedClass?.name?.asString() == "IllegalArgumentException"
+
                                 },
                                 devirtualizedCallSitesFromFunctionsToInline,
                         )
@@ -256,6 +293,10 @@ internal class FunctionInlining(
         private val inlineFunctionResolver: InlineFunctionResolver,
         private val devirtualizedCallSites: Map<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
 ) : IrElementTransformerVoidWithContext() {
+    private val unitType = context.irBuiltIns.unitType
+    private val createUninitializedInstance = context.ir.symbols.createUninitializedInstance
+    private val initInstance = context.ir.symbols.initInstance
+
     private var containerScope: ScopeWithIr? = null
     private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
     private val copiedDevirtualizedCallSites = mutableMapOf<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
@@ -276,6 +317,7 @@ internal class FunctionInlining(
         val calleeSymbol = when (expression) {
             is IrCall -> expression.symbol
             is IrConstructorCall -> expression.symbol
+            is IrDelegatingConstructorCall -> expression.symbol
             else -> return expression
         }
 
@@ -325,13 +367,60 @@ internal class FunctionInlining(
                 callSite: IrFunctionAccessExpression,
                 callee: IrFunction,
                 originalInlinedElement: IrElement,
-        ): IrReturnableBlock {
+        ): IrExpression {
             val copiedCallee = callee.copy().apply {
                 parent = callee.parent
             }
 //            println("AFTER copying: ${copiedCallee.dump()}")
 
-            val evaluationStatements = evaluateArguments(callSite, copiedCallee)
+            if (callee is IrConstructor) {
+                val thisReceiver = callee.constructedClass.thisReceiver!!
+                copiedCallee.transformChildrenVoid(object : IrElementTransformerVoid() {
+                    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                        val constructorCall = IrConstructorCallImpl(
+                                expression.startOffset, expression.endOffset,
+                                expression.type,
+                                expression.symbol,
+                                typeArgumentsCount = expression.typeArgumentsCount,
+                                constructorTypeArgumentsCount = 0,
+                                valueArgumentsCount = expression.valueArgumentsCount,
+                                origin = expression.origin,
+                        ).apply {
+                            (0..<expression.valueArgumentsCount).forEach {
+                                putValueArgument(it, expression.getValueArgument(it))
+                            }
+                            (0..<expression.typeArgumentsCount).forEach {
+                                putTypeArgument(it, expression.getTypeArgument(it))
+                            }
+                        }
+                        return IrCallImpl(
+                                expression.startOffset, expression.endOffset,
+                                unitType,
+                                initInstance,
+                                typeArgumentsCount = 0,
+                                valueArgumentsCount = 2,
+                        ).apply {
+                            putValueArgument(0, IrGetValueImpl(expression.startOffset, expression.endOffset, thisReceiver.symbol))
+                            putValueArgument(1, constructorCall)
+                        }
+                    }
+                })
+            }
+
+            val instance: IrValueDeclaration? = when (callSite) {
+                is IrDelegatingConstructorCall -> (currentScope.irElement as IrConstructor).constructedClass.thisReceiver!!
+                is IrConstructorCall -> currentScope.scope.createTemporaryVariable(
+                        irCall(
+                                callSite.startOffset, callSite.endOffset,
+                                createUninitializedInstance.owner,
+                                typeArguments = listOf((callee as IrConstructor).constructedClassType)
+                        ),
+                        nameHint = "\$inst"
+                )
+                else -> null
+            }
+
+            val evaluationStatements = evaluateArguments(callSite, copiedCallee, instance)
             val statements = (copiedCallee.body as? IrBlockBody)?.statements
                     ?: error("Body not found for function ${callee.render()}")
 
@@ -345,7 +434,7 @@ internal class FunctionInlining(
             val transformer = ParameterSubstitutor()
             val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
 
-            val returnType = callee.returnType.erasure()
+            val returnType = if (callee is IrConstructor) unitType else callee.returnType.erasure()
 
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                     startOffset = callSite.startOffset,
@@ -359,7 +448,7 @@ internal class FunctionInlining(
 
             // Note: here we wrap `IrInlinedFunctionBlock` inside `IrReturnableBlock` because such way it is easier to
             // control special composite blocks that are inside `IrInlinedFunctionBlock`
-            return IrReturnableBlockImpl(
+            val returnableBlock = IrReturnableBlockImpl(
                     startOffset = callSite.startOffset,
                     endOffset = callSite.endOffset,
                     type = returnType,
@@ -378,6 +467,21 @@ internal class FunctionInlining(
                     }
                 })
                 patchDeclarationParents(parent) // TODO: Why it is not enough to just run SetDeclarationsParentVisitor?
+            }
+
+            return if (instance !is IrVariable)
+                returnableBlock
+            else {
+                IrBlockImpl(
+                        callSite.startOffset, callSite.endOffset,
+                        (callee as IrConstructor).constructedClassType,
+                        origin = null,
+                        statements = listOf(
+                                instance,
+                                returnableBlock,
+                                IrGetValueImpl(callSite.startOffset, callSite.endOffset, instance.symbol)
+                        )
+                )
             }
         }
 
@@ -409,8 +513,17 @@ internal class FunctionInlining(
         }
 
         // callee might be a copied version of callsite.symbol.owner
-        private fun buildParameterToArgument(callSite: IrFunctionAccessExpression, callee: IrFunction): List<ParameterToArgument> {
+        private fun buildParameterToArgument(callSite: IrFunctionAccessExpression, callee: IrFunction, instance: IrValueDeclaration?): List<ParameterToArgument> {
             val parameterToArgument = mutableListOf<ParameterToArgument>()
+
+            if (instance != null)
+                parameterToArgument += ParameterToArgument(
+                        parameter = (callee as IrConstructor).constructedClass.thisReceiver!!,
+                        argumentExpression = IrGetValueImpl(
+                                callSite.startOffset, callSite.endOffset,
+                                instance.symbol,
+                        )
+                )
 
             if (callSite.dispatchReceiver != null && callee.dispatchReceiverParameter != null)
                 parameterToArgument += ParameterToArgument(
@@ -482,8 +595,8 @@ internal class FunctionInlining(
             return parameterToArgument + parametersWithDefaultToArgument
         }
 
-        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
-            val arguments = buildParameterToArgument(callSite, callee)
+        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction, instance: IrValueDeclaration?): List<IrStatement> {
+            val arguments = buildParameterToArgument(callSite, callee, instance)
             val evaluationStatements = mutableListOf<IrVariable>()
             val evaluationStatementsFromDefault = mutableListOf<IrVariable>()
             val substitutor = ParameterSubstitutor()
