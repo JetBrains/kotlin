@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.SyntaxTreeBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -1143,6 +1144,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     private void parseFunctionLiteral() {
+
         parseFunctionLiteral(/* preferBlock = */false, /* collapse = */true);
     }
 
@@ -1618,16 +1620,17 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * if
      *   : "if" "(" element ")" element SEMI? ("else" element)?
+     *   : "if" "(" modifiers "val" SimpleName "=" element SEMI element")"
      *   ;
      */
     private void parseIf() {
         assert _at(IF_KEYWORD);
-
+        System.out.println("parse if");
         PsiBuilder.Marker marker = mark();
 
         advance(); //IF_KEYWORD
 
-        parseCondition();
+        modifiedParseCondition();
 
         PsiBuilder.Marker thenBranch = mark();
         if (!at(ELSE_KEYWORD) && !at(SEMICOLON)) {
@@ -1652,6 +1655,31 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         marker.done(IF);
     }
 
+    private void modifiedParseCondition(){
+        myBuilder.disableNewlines();
+        System.out.println("modified_parse_condition");
+        if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {
+            PsiBuilder.Marker atIfStart = mark();
+            if(at(VAL_KEYWORD)){
+                IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.DeclarationParsingMode.LOCAL);
+                atIfStart.done(declType);
+                atIfStart.setCustomEdgeTokenBinders(PrecedingDocCommentsBinder.INSTANCE, TrailingCommentsBinder.INSTANCE);
+            }else{
+                atIfStart.drop();
+            }
+            if (at(SEMICOLON)) {
+                advance(); // SEMICOLON
+            }
+
+            PsiBuilder.Marker condition = mark();
+            parseExpression();
+            condition.done(CONDITION);
+            expect(RPAR, "Expecting ')");
+        }
+
+        myBuilder.restoreNewlinesState();
+
+    }
     /*
      * "(" element ")"
      */
@@ -1659,6 +1687,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         myBuilder.disableNewlines();
 
         if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {
+
             PsiBuilder.Marker condition = mark();
             parseExpression();
             condition.done(CONDITION);

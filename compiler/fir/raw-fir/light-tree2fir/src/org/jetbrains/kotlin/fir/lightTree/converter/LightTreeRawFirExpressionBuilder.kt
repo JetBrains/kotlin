@@ -152,6 +152,7 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitLambdaExpression
      */
     private fun convertLambdaExpression(lambdaExpression: LighterASTNode): FirExpression {
+        println("run_expr")
         val valueParameterList = mutableListOf<ValueParameter>()
         var block: LighterASTNode? = null
         var hasArrow = false
@@ -218,9 +219,9 @@ class LightTreeRawFirExpressionBuilder(
             body = withForcedLocalContext {
                 if (block != null) {
                     val kind = runIf(destructuringStatements.isNotEmpty()) {
-                    KtFakeSourceElementKind.LambdaDestructuringBlock
-                }
-                val bodyBlock = declarationBuilder.convertBlockExpressionWithoutBuilding(block!!, kind).apply {
+                        KtFakeSourceElementKind.LambdaDestructuringBlock
+                    }
+                    val bodyBlock = declarationBuilder.convertBlockExpressionWithoutBuilding(block!!, kind).apply {
                         statements.firstOrNull()?.let {
                             if (it.isContractBlockFirCheck()) {
                                 this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
@@ -241,16 +242,16 @@ class LightTreeRawFirExpressionBuilder(
                         }
                     }.build()
 
-                if (destructuringStatements.isNotEmpty()) {
-                    // Destructured variables must be in a separate block so that they can be shadowed.
-                    buildBlock {
-                        source = bodyBlock.source?.realElement()
-                        statements.addAll(destructuringStatements)
-                        statements.add(bodyBlock)
+                    if (destructuringStatements.isNotEmpty()) {
+                        // Destructured variables must be in a separate block so that they can be shadowed.
+                        buildBlock {
+                            source = bodyBlock.source?.realElement()
+                            statements.addAll(destructuringStatements)
+                            statements.add(bodyBlock)
+                        }
+                    } else {
+                        bodyBlock
                     }
-                } else {
-                    bodyBlock
-                }
                 } else {
                     buildSingleExpressionBlock(buildErrorExpression(null, ConeSyntaxDiagnostic("Lambda has no body")))
                 }
@@ -1335,32 +1336,79 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitIfExpression
      */
     private fun convertIfExpression(ifExpression: LighterASTNode): FirExpression {
+        println("if_expr")
+        println(ifExpression)
         return buildWhenExpression {
             source = ifExpression.toFirSourceElement()
-            with(parseIfExpression(ifExpression)) {
-                val trueBranch = convertLoopBody(thenBlock)
-                branches += buildWhenBranch {
-                    source = firCondition?.source
-                    condition = firCondition ?: buildErrorExpression(
-                        null,
-                        ConeSyntaxDiagnostic("If statement should have condition")
-                    )
-                    result = trueBranch
-                }
+            println(source)
 
-                if (elseBlock != null) {
-                    val elseBranch = convertLoopOrIfBody(elseBlock)
-                    if (elseBranch != null) {
-                        branches += buildWhenBranch {
-                            source = elseBlock.toFirSourceElement()
-                            condition = buildElseIfTrueCondition()
-                            result = elseBranch
-                        }
+            val myModifiedIfNodeComponent = modifiedParseIfExpression(ifExpression)
+            val subjectVariable = myModifiedIfNodeComponent.firVariable
+            var subjectExpression = myModifiedIfNodeComponent.firCondition
+            subjectExpression = subjectVariable?.initializer ?: subjectExpression
+            this.subject = subjectExpression
+            this.subjectVariable = subjectVariable
+            // val hasSubject = subjectExpression !=null
+            val firCondition = myModifiedIfNodeComponent.firCondition
+            val thenBlock = myModifiedIfNodeComponent.thenBlock
+            val elseBlock = myModifiedIfNodeComponent.elseBlock
+
+            println(firCondition)
+            println(thenBlock)
+            val trueBranch = convertLoopBody(thenBlock)
+            branches += buildWhenBranch {
+                source = firCondition?.source
+                condition = firCondition ?: buildErrorExpression(
+                    null,
+                    ConeSyntaxDiagnostic("If statement should have condition")
+                )
+                result = trueBranch
+            }
+
+            if (elseBlock != null) {
+                val elseBranch = convertLoopOrIfBody(elseBlock)
+                if (elseBranch != null) {
+                    branches += buildWhenBranch {
+                        source = elseBlock.toFirSourceElement()
+                        condition = buildElseIfTrueCondition()
+                        result = elseBranch
                     }
                 }
             }
+            println("what???")
             usedAsExpression = ifExpression.usedAsExpression
         }
+    }
+    private class modifiedIfNodeCompoinents(val firVariable: FirVariable?, val firCondition: FirExpression?, val thenBlock: LighterASTNode?, val elseBlock: LighterASTNode?)
+
+    private fun modifiedParseIfExpression(ifExpression: LighterASTNode) : modifiedIfNodeCompoinents {
+        var firVariable: FirVariable? = null
+        var firCondition: FirExpression? = null
+        var thenBlock: LighterASTNode? = null
+        var elseBlock: LighterASTNode? = null
+        ifExpression.forEachChildren{
+            when (it.tokenType){
+                PROPERTY -> firVariable = (declarationBuilder.convertPropertyDeclaration(it) as FirVariable).let { variable ->
+                    buildProperty {
+                        source = it.toFirSourceElement()
+                        origin = FirDeclarationOrigin.Source
+                        moduleData = baseModuleData
+                        returnTypeRef = variable.returnTypeRef
+                        name = variable.name
+                        initializer = variable.initializer
+                        isVar = false
+                        symbol = FirPropertySymbol(variable.name)
+                        isLocal = true
+                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        annotations += variable.annotations
+                    }
+                }
+                CONDITION -> firCondition = getAsFirExpression(it, "If statement should have condition")
+                THEN -> thenBlock = it
+                ELSE -> elseBlock = it
+            }
+        }
+        return modifiedIfNodeCompoinents(firVariable, firCondition, thenBlock, elseBlock)
     }
 
     private class IfNodeComponents(val firCondition: FirExpression?, val thenBlock: LighterASTNode?, val elseBlock: LighterASTNode?)
@@ -1371,6 +1419,7 @@ class LightTreeRawFirExpressionBuilder(
         var elseBlock: LighterASTNode? = null
         ifExpression.forEachChildren {
             when (it.tokenType) {
+                PROPERTY -> println(it)
                 CONDITION -> firCondition = getAsFirExpression(it, "If statement should have condition")
                 THEN -> thenBlock = it
                 ELSE -> elseBlock = it
