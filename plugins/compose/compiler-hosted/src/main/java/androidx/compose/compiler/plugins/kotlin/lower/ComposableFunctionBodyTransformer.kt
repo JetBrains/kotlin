@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
@@ -1991,17 +1992,24 @@ class ComposableFunctionBodyTransformer(
             .kotlinFqName
             .asString()
             .hashCode()
-        // Use the start offset of the first statement if it is a block (and has a first statement)
-        // This eliminates the ambiguity of a while loop and its block which has the same start
-        // and end offsets.
-        val startOffset = if (this is IrBlock)
-            statements.firstOrNull()?.startOffset ?: startOffset
-        else startOffset
         hash = 31 * hash + startOffset
-        if (this is IrConst<*>) {
+        hash = 31 * hash + endOffset
+
+        when (this) {
             // Disambiguate ?. clauses which become a "null" constant expression
-            hash = 31 * hash + (this.value?.hashCode() ?: 1)
+            is IrConst<*> -> {
+                hash = 31 * hash + (this.value?.hashCode() ?: 1)
+            }
+            // Disambiguate the key for blocks and composite containers in case block offsets are
+            // the same as its contents
+            is IrBlock -> {
+                hash = 31 * hash + 2
+            }
+            is IrComposite -> {
+                hash = 31 * hash + 3
+            }
         }
+
         return hash
     }
 
@@ -2485,6 +2493,13 @@ class ComposableFunctionBodyTransformer(
                 after = listOf(makeEnd()),
             )
         }
+
+        // Ensure that all group children of composable inline lambda are realized, since the inline
+        // lambda doesn't require a group on its own.
+        if (scope.isInlinedLambda && scope.isComposable) {
+            scope.realizeAllDirectChildren()
+        }
+
         scope.realizeGroup(makeEnd)
         return when {
             // if the scope ends with a return call, then it will get properly ended if we
@@ -2586,7 +2601,7 @@ class ComposableFunctionBodyTransformer(
                 }
                 is Scope.FunctionScope -> {
                     scope.markCoalescableGroup(coalescableScope, realizeGroup, makeEnd)
-                    if (!scope.isInlinedLambda) {
+                    if (!scope.isInlinedLambda || scope.isComposable) {
                         break@loop
                     }
                 }
@@ -2908,8 +2923,8 @@ class ComposableFunctionBodyTransformer(
                 // if it is not a composable call but it is an inline function, then we allow
                 // composable calls to happen inside of the inlined lambdas. This means that we have
                 // some control flow analysis to handle there as well. We wrap the call in a
-                // CallScope and coalescable group if the call has any composable invocations inside
-                // of it.
+                // CaptureScope and coalescable group if the call has any composable invocations
+                // inside of it.
                 val captureScope = withScope(Scope.CaptureScope()) {
                     expression.transformChildrenVoid()
                 }
@@ -2925,7 +2940,7 @@ class ComposableFunctionBodyTransformer(
             expression.isComposableSingletonGetter() -> {
                 // This looks like `ComposableSingletonClass.lambda-123`, which is a static/saved
                 // call of composableLambdaInstance. We want to transform the property here now
-                // so the assuptions about the invocation order assumed by source locations is
+                // so the assumptions about the invocation order assumed by source locations is
                 // preserved.
                 val getter = expression.symbol.owner
                 val property = getter.correspondingPropertySymbol?.owner
@@ -4192,16 +4207,16 @@ class ComposableFunctionBodyTransformer(
                 if (withGroups) {
                     hasComposableCallsWithGroups = true
                 }
-                if (coalescableChilds.isNotEmpty()) {
+                if (coalescableChildren.isNotEmpty()) {
                     // if a call happens after the coalescable child group, then we should
                     // realize the group of the coalescable child
-                    coalescableChilds.last().shouldRealize = true
+                    coalescableChildren.last().shouldRealize = true
                 }
             }
 
             fun realizeAllDirectChildren() {
-                if (coalescableChilds.isNotEmpty()) {
-                    coalescableChilds.fastForEach {
+                if (coalescableChildren.isNotEmpty()) {
+                    coalescableChildren.fastForEach {
                         it.shouldRealize = true
                     }
                 }
@@ -4232,7 +4247,7 @@ class ComposableFunctionBodyTransformer(
                     realizeGroup,
                     makeEnd
                 )
-                coalescableChilds.add(groupInfo)
+                coalescableChildren.add(groupInfo)
             }
 
             open fun calculateHasSourceInformation(sourceInformationEnabled: Boolean): Boolean =
@@ -4275,7 +4290,7 @@ class ComposableFunctionBodyTransformer(
             }
 
             fun realizeCoalescableGroup() {
-                coalescableChilds.fastForEach {
+                coalescableChildren.fastForEach {
                     it.realize()
                 }
             }
@@ -4295,7 +4310,7 @@ class ComposableFunctionBodyTransformer(
                 private set
             var hasJump = false
                 protected set
-            private var coalescableChilds = mutableListOf<CoalescableGroupInfo>()
+            private val coalescableChildren = mutableListOf<CoalescableGroupInfo>()
 
             class CoalescableGroupInfo(
                 private val scope: BlockScope,

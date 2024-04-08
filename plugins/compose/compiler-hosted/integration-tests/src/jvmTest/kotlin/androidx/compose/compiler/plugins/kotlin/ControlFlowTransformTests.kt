@@ -2477,4 +2477,64 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             }
         """
     )
+
+    @Test
+    fun testConditionalReturnFromInline() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable inline fun Column(content: @Composable () -> Unit) {}
+            inline fun NonComposable(content: () -> Unit) {}
+            @Composable fun Text(text: String) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Test(test: Boolean) {
+                Column {
+                   if (!test) {
+                       Text("Say")
+                       return@Column
+                   }
+                   Text("Hello")
+                }
+
+                NonComposable {
+                    if (!test) {
+                       Text("Say")
+                       return@NonComposable
+                   }
+                   Text("Hello")
+                }
+            }
+        """
+    )
+
+    @Test
+    fun ifInsideInlineComposableFunction() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+
+            fun interface MeasurePolicy {
+                fun invoke(size: Int)
+            }
+            @Composable inline fun Layout(content: @Composable () -> Unit) {}
+            @Composable fun Box() {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Label(test: Boolean) {
+                Layout(
+                    content = {
+                        Box()
+                        if (test) {
+                            Box()
+                        }
+                    }
+                )
+            }
+        """
+    )
 }
