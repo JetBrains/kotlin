@@ -1,9 +1,3 @@
-/newListMethods.kt:25:22: error: using 'getFirst(): E!' is an error. 'getFirst()' member of List is redundant in Kotlin and might be removed soon. Please use 'first()' stdlib extension instead
-        return super.getFirst()
-                     ^
-/newListMethods.kt:29:22: error: using 'getLast(): E!' is an error. 'getLast()' member of List is redundant in Kotlin and might be removed soon. Please use 'last()' stdlib extension instead
-        return super.getLast()
-                     ^
 /newListMethods.kt:36:7: error: unresolved reference: getFirst
     x.getFirst()
       ^
