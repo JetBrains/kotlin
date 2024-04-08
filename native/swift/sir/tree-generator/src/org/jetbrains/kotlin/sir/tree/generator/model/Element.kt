@@ -22,18 +22,6 @@ class Element(name: String, override val propertyName: String) : AbstractElement
 
     override var visitorParameterName: String = safeDecapitalizedName
 
-    override val hasAcceptMethod: Boolean
-        get() = true
-
-    override val hasTransformMethod: Boolean
-        get() = true
-
-    override val hasAcceptChildrenMethod: Boolean
-        get() = isRootElement
-
-    override val hasTransformChildrenMethod: Boolean
-        get() = isRootElement
-
     override var kind: ImplementationKind? = null
 
     override val namePrefix: String

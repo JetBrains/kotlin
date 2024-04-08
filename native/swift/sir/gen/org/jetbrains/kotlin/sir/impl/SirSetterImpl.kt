@@ -11,8 +11,6 @@
 package org.jetbrains.kotlin.sir.impl
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.visitors.SirTransformer
-import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 internal class SirSetterImpl(
     override val origin: SirOrigin,
@@ -23,10 +21,4 @@ internal class SirSetterImpl(
     override val parameterName: String,
 ) : SirSetter() {
     override lateinit var parent: SirDeclarationParent
-
-    override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) {
-    }
-
-    override fun <D> transformChildren(transformer: SirTransformer<D>, data: D) {
-    }
 }
