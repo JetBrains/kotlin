@@ -188,6 +188,59 @@ public class CliTestGenerated extends AbstractCliTest {
     }
   }
 
+  @TestMetadata("compiler/testData/cli/jvm/sourceFilesAndDirectories")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class SourceFilesAndDirectories extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInSourceFilesAndDirectories() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/sourceFilesAndDirectories"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("dirWithKotlinAndJavaFiles.args")
+    public void testDirWithKotlinAndJavaFiles() {
+      runTest("compiler/testData/cli/jvm/sourceFilesAndDirectories/dirWithKotlinAndJavaFiles.args");
+    }
+
+    @TestMetadata("dirWithKotlinAndNonKotlinFiles.args")
+    public void testDirWithKotlinAndNonKotlinFiles() {
+      runTest("compiler/testData/cli/jvm/sourceFilesAndDirectories/dirWithKotlinAndNonKotlinFiles.args");
+    }
+
+    @TestMetadata("dirWithKotlinFile.args")
+    public void testDirWithKotlinFile() {
+      runTest("compiler/testData/cli/jvm/sourceFilesAndDirectories/dirWithKotlinFile.args");
+    }
+
+    @TestMetadata("dirWithKotlinFileRecursive.args")
+    public void testDirWithKotlinFileRecursive() {
+      runTest("compiler/testData/cli/jvm/sourceFilesAndDirectories/dirWithKotlinFileRecursive.args");
+    }
+
+    @TestMetadata("dirWithKotlinScript.args")
+    public void testDirWithKotlinScript() {
+      runTest("compiler/testData/cli/jvm/sourceFilesAndDirectories/dirWithKotlinScript.args");
+    }
+
+    @TestMetadata("dirWithKotlinScriptPsi.args")
+    public void testDirWithKotlinScriptPsi() {
+      runTest("compiler/testData/cli/jvm/sourceFilesAndDirectories/dirWithKotlinScriptPsi.args");
+    }
+
+    @TestMetadata("dirWithOnlyNonKotlinFile.args")
+    public void testDirWithOnlyNonKotlinFile() {
+      runTest("compiler/testData/cli/jvm/sourceFilesAndDirectories/dirWithOnlyNonKotlinFile.args");
+    }
+
+    @TestMetadata("withNonKotlinFile.args")
+    public void testWithNonKotlinFile() {
+      runTest("compiler/testData/cli/jvm/sourceFilesAndDirectories/withNonKotlinFile.args");
+    }
+  }
+
   @TestMetadata("compiler/testData/cli/jvm")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
