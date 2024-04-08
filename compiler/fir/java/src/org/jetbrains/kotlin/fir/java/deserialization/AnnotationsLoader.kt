@@ -35,7 +35,12 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             visitExpression(name, createConstant(value))
         }
 
-        private fun ClassLiteralValue.toFirClassReferenceExpression(): FirClassReferenceExpression {
+        private fun ClassLiteralValue.toFirClassReferenceExpression(): FirClassReferenceExpression? {
+            // toLookupTag will throw an exception if classId is local.
+            // This should only happen in annotations of local declarations, in which we aren't interested anyway, so it should be fine
+            // to just skip some of their arguments.
+            if (classId.isLocal) return null
+
             val resolvedClassTypeRef = classId.toLookupTag().toDefaultResolvedTypeRef()
             return buildClassReferenceExpression {
                 classTypeRef = resolvedClassTypeRef
@@ -44,8 +49,9 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
         }
 
         override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
+            val argument = value.toFirClassReferenceExpression() ?: return
+
             visitExpression(name, buildGetClassCall {
-                val argument = value.toFirClassReferenceExpression()
                 argumentList = buildUnaryArgumentList(argument)
                 coneTypeOrNull = argument.resolvedType
             })
@@ -70,8 +76,8 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
 
                 override fun visitClassLiteral(value: ClassLiteralValue) {
+                    val argument = value.toFirClassReferenceExpression() ?: return
                     elements.add(buildGetClassCall {
-                        val argument = value.toFirClassReferenceExpression()
                         argumentList = buildUnaryArgumentList(argument)
                         coneTypeOrNull = argument.resolvedType
                     })
