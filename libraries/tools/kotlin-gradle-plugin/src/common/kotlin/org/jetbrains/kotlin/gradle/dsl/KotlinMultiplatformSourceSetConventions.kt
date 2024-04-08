@@ -1669,6 +1669,75 @@ interface KotlinMultiplatformSourceSetConventions {
 
     // endregion
 
+    /**
+     * Static accessor for the main Kotlin Source Set of android target.
+     * Declare android target to access this source set.
+     * If android target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    androidTarget() // Target is declared, androidMain source set is created
+     *
+     *    sourceSets {
+     *      androidMain.dependencies {
+     *          // Add androidMain dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 1.9.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.androidMain: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the unit test Kotlin Source Set of android target.
+     * Declare android target to access this source set.
+     * If android target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    androidTarget() // Target is declared, androidUnitTest source set is created
+     *
+     *    sourceSets {
+     *      androidUnitTest.dependencies {
+     *          // Add androidUnitTest dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.androidUnitTest: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the instrumented test Kotlin Source Set of android target.
+     * Declare android target to access this source set.
+     * If android target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    androidTarget() // Target is declared, androidInstrumentedTest source set is created
+     *
+     *    sourceSets {
+     *      androidInstrumentedTest.dependencies {
+     *          // Add androidUnitTest dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest: NamedDomainObjectProvider<KotlinSourceSet>
+
     operator fun NamedDomainObjectProvider<KotlinSourceSet>.invoke(
         configure: KotlinSourceSet.() -> Unit,
     ): Unit = get().run(configure)
