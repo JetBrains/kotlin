@@ -26598,6 +26598,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("expectSealedClassWithInheritorsInSeveralModules.kt")
+        public void testExpectSealedClassWithInheritorsInSeveralModules() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClassWithInheritorsInSeveralModules.kt");
+        }
+
+        @Test
+        @TestMetadata("expectSealedClassWithInheritorsInSeveralModules_typealiasActualization.kt")
+        public void testExpectSealedClassWithInheritorsInSeveralModules_typealiasActualization() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClassWithInheritorsInSeveralModules_typealiasActualization.kt");
+        }
+
+        @Test
         @TestMetadata("expectSealedInterface.kt")
         public void testExpectSealedInterface() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedInterface.kt");
