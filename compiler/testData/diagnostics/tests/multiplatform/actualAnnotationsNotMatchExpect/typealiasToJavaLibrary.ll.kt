@@ -9,6 +9,6 @@ expect annotation class MyDeprecatedMatch
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual typealias MyDeprecatedNotMatch = java.lang.Deprecated
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MyDeprecatedNotMatch<!> = java.lang.Deprecated
 
 actual typealias MyDeprecatedMatch = java.lang.Deprecated

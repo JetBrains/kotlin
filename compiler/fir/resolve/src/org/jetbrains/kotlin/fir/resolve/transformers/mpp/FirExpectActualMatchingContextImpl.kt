@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -36,6 +39,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 class FirExpectActualMatchingContextImpl private constructor(
@@ -441,44 +445,12 @@ class FirExpectActualMatchingContextImpl private constructor(
         fun AnnotationCallInfo.getFirAnnotation(): FirAnnotation {
             return (this as AnnotationCallInfoImpl).annotation
         }
-        return areFirAnnotationsEqual(expectAnnotation.getFirAnnotation(), actualAnnotation.getFirAnnotation())
-    }
-
-    private fun areFirAnnotationsEqual(annotation1: FirAnnotation, annotation2: FirAnnotation): Boolean {
-        fun FirAnnotation.hasResolvedArguments(): Boolean {
-            return resolved || (this is FirAnnotationCall && arguments.isEmpty())
-        }
-
-        check(annotation1.hasResolvedArguments() && annotation2.hasResolvedArguments()) {
-            "By this time compared annotations are expected to have resolved arguments"
-        }
-        if (!areCompatibleExpectActualTypes(
-                annotation1.resolvedType, annotation2.resolvedType, parameterOfAnnotationComparisonMode = false
-            )
-        ) {
-            return false
-        }
-        val args1 = annotation1.argumentMapping.mapping
-        val args2 = annotation2.argumentMapping.mapping
-        if (args1.size != args2.size) {
-            return false
-        }
-        return args1.all { (key, value1) ->
-            val value2 = args2[key]
-            value2 != null && areAnnotationArgumentsEqual(value1, value2)
-        }
-    }
-
-    private fun areAnnotationArgumentsEqual(expression1: FirExpression, expression2: FirExpression): Boolean {
-        // In K2 const expression calculated in backend.
-        // Because of that, we have "honest" checker at backend IR stage
-        // and "only simplest case" checker in frontend, so that we have at least some reporting in the IDE.
-        return when {
-            expression1 is FirLiteralExpression<*> && expression2 is FirLiteralExpression<*> -> {
-                expression1.value == expression2.value
-            }
-            else -> true
-        }
+        return areFirAnnotationsEqual(
+            expectAnnotation.getFirAnnotation(),
+            actualAnnotation.getFirAnnotation(),
+            collectionArgumentsCompatibilityCheckStrategy,
+            actualSession
+        )
     }
 
     private inner class AnnotationCallInfoImpl(val annotation: FirAnnotation) : AnnotationCallInfo {

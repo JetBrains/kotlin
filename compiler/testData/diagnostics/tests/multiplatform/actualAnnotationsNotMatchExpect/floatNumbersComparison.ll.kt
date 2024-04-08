@@ -8,4 +8,4 @@ expect fun floatNumbersComparison()
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 @Ann(0.1 + 0.1 + 0.1)
-actual fun floatNumbersComparison() {}
+actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>floatNumbersComparison<!>() {}

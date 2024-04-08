@@ -93,7 +93,7 @@ actual fun complexSame() {}
     ComplexNested<A>(),
     ComplexNested<A>(),
 )
-actual fun complexDiffer() {}
+actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>complexDiffer<!>() {}
 
 @NestedWithSameTypeArgument<A>(
     NestedWithSameTypeArgument<A>()

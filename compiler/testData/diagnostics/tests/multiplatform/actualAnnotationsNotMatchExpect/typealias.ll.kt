@@ -76,7 +76,7 @@ class MethodWithComplexAnnInsideTypealiasImpl {
     fun withComplexAnn() {}
 }
 
-actual typealias MethodWithComplexAnnInsideTypealias = MethodWithComplexAnnInsideTypealiasImpl
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MethodWithComplexAnnInsideTypealias<!> = MethodWithComplexAnnInsideTypealiasImpl
 
 class InnerClassInsideTypealiasImpl {
     class Foo {

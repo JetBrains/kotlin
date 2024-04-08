@@ -25,7 +25,7 @@ expect fun differentArgumentsOrder()
 actual class AnnotationOrder
 
 @Ann3(2, 1)
-actual class ValuesOrderInsideAnnotationArgument
+actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ValuesOrderInsideAnnotationArgument<!>
 
 @Ann4(arg2 = "2", arg1 = "1")
 actual fun differentArgumentsOrder() {}
