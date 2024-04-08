@@ -126,6 +126,27 @@ annotation class JdkVersions(
     }
 }
 
+/**
+ * Parameterized test against different Gradle and JDK versions.
+ * Test should accept [GradleVersion] and [JdkVersions.ProvidedJdk] as a parameters.
+ *
+ * By default, [TestVersions.Gradle.MIN_SUPPORTED] and [TestVersions.Gradle.MAX_SUPPORTED] Gradle versions are provided.
+ * To modify it use additional [GradleTestVersions] annotation on the test method.
+ *
+ * By default, [JavaVersion.VERSION_1_8] and either maximum compatible with given Gradle release
+ * or [JavaVersion.VERSION_21] JDK versions are provided. To modify it use additional [JdkVersions] annotation on the test method.
+ *
+ * @see [GradleTestVersions]
+ * @see [JdkVersions]
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@GradleTestVersions
+@JdkVersions
+@ParameterizedTest(name = "{1} with {0}: {displayName}")
+@ArgumentsSource(GradleAndJdkArgumentsProvider::class)
+annotation class GradleWithJdkTest
+
 class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
     override fun provideArguments(
         context: ExtensionContext,
