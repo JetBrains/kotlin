@@ -34,6 +34,15 @@ val generateAbstractKotlinArtifactsExtensionImplementation by generator(
     setOutputSourceRoot()
 }
 
+val generateMppSourceSetConventions by generator(
+    "org.jetbrains.kotlin.generators.gradle.dsl.MppSourceSetConventionsCodegenKt",
+    sourceSets["main"]
+) {
+    group = generateGroupName
+    setOutputSourceRoot()
+}
+
+
 fun JavaExec.setOutputSourceRoot() {
     systemProperty(
         "org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot",
