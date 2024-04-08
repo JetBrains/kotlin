@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsR
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.withClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -102,12 +103,13 @@ class JavaClassUseSiteMemberScope(
         property: FirProperty,
         takeModalityFromGetter: Boolean,
     ): FirSyntheticPropertySymbol {
+        val callableId = getterSymbol.callableId.withClassId(klass.classId)
         return buildSyntheticProperty {
             moduleData = session.moduleData
             name = property.name
             symbol = FirJavaOverriddenSyntheticPropertySymbol(
-                getterId = getterSymbol.callableId,
-                propertyId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name)
+                getterId = callableId,
+                propertyId = CallableId(klass.classId, property.name)
             )
             delegateGetter = getterSymbol.fir
             delegateSetter = setterSymbol?.fir
@@ -119,6 +121,7 @@ class JavaClassUseSiteMemberScope(
                 }
             )
             deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
+            dispatchReceiverType = klass.defaultType()
         }.symbol
     }
 

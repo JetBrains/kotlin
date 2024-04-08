@@ -177,7 +177,7 @@ class FirSignatureEnhancement(
                 return symbol
             }
             is FirSyntheticProperty -> {
-                val accessorSymbol = firElement.symbol
+                val propertySymbol = firElement.symbol as FirJavaOverriddenSyntheticPropertySymbol
                 val getterDelegate = firElement.getter.delegate
                 val overridden = firElement.overridden()
                 val enhancedGetterSymbol = getterDelegate.enhanceAccessorOrNull(overridden)
@@ -189,11 +189,12 @@ class FirSignatureEnhancement(
                 return buildSyntheticProperty {
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
-                    symbol = FirJavaOverriddenSyntheticPropertySymbol(accessorSymbol.callableId, accessorSymbol.getterId)
+                    symbol = FirJavaOverriddenSyntheticPropertySymbol(propertySymbol.callableId, propertySymbol.getterId)
                     delegateGetter = enhancedGetterSymbol?.fir as FirSimpleFunction? ?: getterDelegate
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction? ?: setterDelegate
                     status = firElement.status
                     deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
+                    dispatchReceiverType = firElement.dispatchReceiverType
                 }.symbol
             }
             else -> {
