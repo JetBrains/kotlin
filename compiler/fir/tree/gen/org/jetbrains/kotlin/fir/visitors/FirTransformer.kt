@@ -1059,6 +1059,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformControlFlowGraphReference(controlFlowGraphReference, data)
     }
 
+    open fun transformControlFlowGraphNodeReference(controlFlowGraphNodeReference: FirControlFlowGraphNodeReference, data: D): FirReference {
+        return transformElement(controlFlowGraphNodeReference, data)
+    }
+
+    final override fun visitControlFlowGraphNodeReference(controlFlowGraphNodeReference: FirControlFlowGraphNodeReference, data: D): FirReference {
+        return transformControlFlowGraphNodeReference(controlFlowGraphNodeReference, data)
+    }
+
     open fun transformTypeRef(typeRef: FirTypeRef, data: D): FirTypeRef {
         return transformElement(typeRef, data)
     }

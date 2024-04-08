@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphNodeReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -33,6 +34,7 @@ internal class FirWhenExpressionImpl(
     override val branches: MutableList<FirWhenBranch>,
     override var exhaustivenessStatus: ExhaustivenessStatus?,
     override val usedAsExpression: Boolean,
+    override var elseControlFlowGraphNodeReference: FirControlFlowGraphNodeReference?,
 ) : FirWhenExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -45,6 +47,7 @@ internal class FirWhenExpressionImpl(
             subject?.accept(visitor, data)
         }
         branches.forEach { it.accept(visitor, data) }
+        elseControlFlowGraphNodeReference?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
@@ -82,6 +85,7 @@ internal class FirWhenExpressionImpl(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
         transformAnnotations(transformer, data)
+        elseControlFlowGraphNodeReference = elseControlFlowGraphNodeReference?.transform(transformer, data)
         return this
     }
 
@@ -99,5 +103,9 @@ internal class FirWhenExpressionImpl(
 
     override fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?) {
         exhaustivenessStatus = newExhaustivenessStatus
+    }
+
+    override fun replaceElseControlFlowGraphNodeReference(newElseControlFlowGraphNodeReference: FirControlFlowGraphNodeReference?) {
+        elseControlFlowGraphNodeReference = newElseControlFlowGraphNodeReference
     }
 }

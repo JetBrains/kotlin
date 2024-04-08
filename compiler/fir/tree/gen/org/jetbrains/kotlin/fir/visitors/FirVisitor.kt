@@ -410,6 +410,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: D): R =
         visitElement(controlFlowGraphReference, data)
 
+    open fun visitControlFlowGraphNodeReference(controlFlowGraphNodeReference: FirControlFlowGraphNodeReference, data: D): R =
+        visitElement(controlFlowGraphNodeReference, data)
+
     open fun visitTypeRef(typeRef: FirTypeRef, data: D): R =
         visitElement(typeRef, data)
 

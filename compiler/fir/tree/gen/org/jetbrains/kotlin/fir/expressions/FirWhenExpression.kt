@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphNodeReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -30,6 +31,7 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract val branches: List<FirWhenBranch>
     abstract val exhaustivenessStatus: ExhaustivenessStatus?
     abstract val usedAsExpression: Boolean
+    abstract val elseControlFlowGraphNodeReference: FirControlFlowGraphNodeReference?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitWhenExpression(this, data)
@@ -45,6 +47,8 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?)
+
+    abstract fun replaceElseControlFlowGraphNodeReference(newElseControlFlowGraphNodeReference: FirControlFlowGraphNodeReference?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpression
 

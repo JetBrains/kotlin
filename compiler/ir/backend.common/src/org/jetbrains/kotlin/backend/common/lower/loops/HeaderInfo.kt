@@ -135,6 +135,7 @@ class ProgressionHeaderInfo(
         if (progressionType is UnsignedProgressionType) {
             // "step" is still signed for unsigned progressions.
             val lastValueAsULong = last.constLongValue?.toULong() ?: return@lazy true  // If "last" is not a const Number or Char.
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             when (direction) {
                 ProgressionDirection.DECREASING -> {
                     val constLimitAsULong = progressionType.minValueAsLong.toULong()
@@ -148,6 +149,7 @@ class ProgressionHeaderInfo(
             }
         } else {
             val lastValueAsLong = last.constLongValue ?: return@lazy true  // If "last" is not a const Number or Char.
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             when (direction) {
                 ProgressionDirection.DECREASING -> {
                     val constLimitAsLong = progressionType.minValueAsLong

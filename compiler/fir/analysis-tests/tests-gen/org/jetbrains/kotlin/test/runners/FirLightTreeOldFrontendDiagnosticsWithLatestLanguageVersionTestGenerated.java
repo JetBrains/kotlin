@@ -42687,6 +42687,24 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("ExhaustiveCast.kt")
+      public void testExhaustiveCast() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveCast.kt");
+      }
+
+      @Test
+      @TestMetadata("ExhaustiveComplex.kt")
+      public void testExhaustiveComplex() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveComplex.kt");
+      }
+
+      @Test
+      @TestMetadata("ExhaustiveComplex2.kt")
+      public void testExhaustiveComplex2() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveComplex2.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveDynamicType.kt")
       public void testExhaustiveDynamicType() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveDynamicType.kt");
@@ -42819,9 +42837,21 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("ExhaustiveSeparate.kt")
+      public void testExhaustiveSeparate() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSeparate.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveSmartcastBoolean.kt")
       public void testExhaustiveSmartcastBoolean() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveSmartcastBoolean.kt");
+      }
+
+      @Test
+      @TestMetadata("ExhaustiveUnsafe.kt")
+      public void testExhaustiveUnsafe() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveUnsafe.kt");
       }
 
       @Test

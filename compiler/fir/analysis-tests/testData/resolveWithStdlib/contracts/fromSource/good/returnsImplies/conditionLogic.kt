@@ -23,7 +23,7 @@ fun test2(x: String?): Any? {
 @OptIn(ExperimentalContracts::class)
 fun test3(x: String?): Any? {
     contract {
-        returnsNotNull() implies (x !is String)
+        <!WRONG_IMPLIES_CONDITION!>returnsNotNull() implies (x !is String)<!>
     }
 
     return x

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.unsafeExhaustiveness
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -33,6 +34,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
         reportNotExhaustive(expression, context, reporter)
         reportElseMisplaced(expression, reporter, context)
         reportRedundantElse(expression, context, reporter)
+        reportUnsafe(expression, context, reporter)
     }
 
     private fun reportEmptyThenInExpression(whenExpression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -124,11 +126,17 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
     }
 
     private fun reportRedundantElse(whenExpression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (whenExpression.exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive) {
+        if (whenExpression.exhaustivenessStatus is ExhaustivenessStatus.RedundantlyExhaustive) {
             for (branch in whenExpression.branches) {
                 if (branch.source == null || branch.condition !is FirElseIfTrueCondition) continue
                 reporter.reportOn(branch.source, FirErrors.REDUNDANT_ELSE_IN_WHEN, context)
             }
+        }
+    }
+
+    fun reportUnsafe(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression.unsafeExhaustiveness) {
+            reporter.reportOn(expression.source, FirErrors.UNSAFE_EXHAUSTIVENESS, context)
         }
     }
 

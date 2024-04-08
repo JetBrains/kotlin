@@ -291,6 +291,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitReference(controlFlowGraphReference)
     }
 
+    override fun visitControlFlowGraphNodeReference(controlFlowGraphNodeReference: FirControlFlowGraphNodeReference) {
+        visitReference(controlFlowGraphNodeReference)
+    }
+
     override fun visitTypeRef(typeRef: FirTypeRef) {
         visitAnnotationContainer(typeRef)
     }

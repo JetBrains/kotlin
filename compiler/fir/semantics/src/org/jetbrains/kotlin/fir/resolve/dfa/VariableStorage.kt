@@ -45,7 +45,10 @@ class VariableStorage(private val session: FirSession) {
         unwrapAlias: (RealVariable) -> RealVariable?,
         unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
     ): DataFlowVariable? {
-        val unwrapped = fir.unwrapElement() ?: return null
+        val unwrapped = fir.unwrapElement() ?: return fir.unwrapWhenSubject()
+
+        val fallbackVariable by lazy { fir.unwrapWhenSubject() ?: SyntheticVariable(unwrapped) }
+
         val isImplicit = unwrapped is FirThisReceiverExpression ||
                 unwrapped.toResolvedCallableSymbol(session)?.isContextParameter() == true
         val symbol = when (unwrapped) {
@@ -55,16 +58,16 @@ class VariableStorage(private val session: FirSession) {
             else -> null
         }?.takeIf {
             isImplicit || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)
-        }?.unwrapFakeOverridesIfNecessary() ?: return SyntheticVariable(unwrapped)
+        }?.unwrapFakeOverridesIfNecessary() ?: return fallbackVariable
 
         val qualifiedAccess = unwrapped as? FirQualifiedAccessExpression
         val dispatchReceiverVar = qualifiedAccess?.dispatchReceiver?.let {
-            (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
+            (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return fallbackVariable
         }
         val extensionReceiverVar = qualifiedAccess?.extensionReceiver?.let {
-            (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
+            (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return fallbackVariable
         }
-        val prototype = RealVariable(symbol, isImplicit, dispatchReceiverVar, extensionReceiverVar, unwrapped.resolvedType)
+        val prototype = RealVariableFromSymbol(symbol, isImplicit, dispatchReceiverVar, extensionReceiverVar, unwrapped.resolvedType)
         val real = if (createReal) rememberWithKnownReceivers(prototype) else realVariables[prototype] ?: return null
         return unwrapAlias(real)
     }
@@ -78,13 +81,20 @@ class VariableStorage(private val session: FirSession) {
 
     private fun rememberWithKnownReceivers(variable: RealVariable): RealVariable =
         realVariables.getOrPut(variable) {
-            variable.dispatchReceiver?.let { memberVariables.put(it, variable) }
-            variable.extensionReceiver?.let { memberVariables.put(it, variable) }
+            if (variable is RealVariableFromSymbol) {
+                variable.dispatchReceiver?.let { memberVariables.put(it, variable) }
+                variable.extensionReceiver?.let { memberVariables.put(it, variable) }
+            }
             variable
         }
 
-    private inline fun RealVariable.mapReceivers(block: (RealVariable) -> RealVariable): RealVariable =
-        RealVariable(symbol, isImplicit, dispatchReceiver?.let(block), extensionReceiver?.let(block), originalType)
+    private inline fun RealVariable.mapReceivers(block: (RealVariable) -> RealVariable): RealVariable = when (this) {
+        is RealVariableFromSymbol ->
+            RealVariableFromSymbol(symbol, isImplicit, dispatchReceiver?.let(block), extensionReceiver?.let(block), originalType)
+        is RealVariableFromWhenSubject ->
+            RealVariableFromWhenSubject(whenRef, originalType)
+    }
+
 
     /**
      * Call a lambda with every known [RealVariable] that represents a member property of another [RealVariable].
@@ -127,4 +137,11 @@ class VariableStorage(private val session: FirSession) {
 
         return this.unwrapFakeOverrides()
     }
+
+    private tailrec fun FirExpression.unwrapWhenSubject(): RealVariable? =
+        when (this) {
+            is FirWhenSubjectExpression -> RealVariable.whenSubject(this)
+            is FirSmartCastExpression -> originalExpression.unwrapWhenSubject()
+            else -> null
+        }
 }

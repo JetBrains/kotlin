@@ -1,0 +1,154 @@
+FILE: negativeTypes.kt
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun foo1(x: R|kotlin/Any|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x !is kotlin/Int
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|kotlin/Int|))
+            }
+            )
+        }
+
+        ^foo1 (R|<local>/x| is R|kotlin/String|)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun foo2(x: R|kotlin/Any|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x !is kotlin/String
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|kotlin/String|))
+            }
+            )
+        }
+
+        ^foo2 (R|<local>/x| is R|kotlin/String|)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun foo3(x: R|kotlin/Any?|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x !is kotlin/Any
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|kotlin/Any|))
+            }
+            )
+        }
+
+        ^foo3 (R|<local>/x| is R|kotlin/String|)
+    }
+    public sealed class Sealed : R|kotlin/Any| {
+        protected constructor(): R|Sealed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final data class A : R|Sealed| {
+            public constructor(a: R|kotlin/Int|): R|Sealed.A| {
+                super<R|Sealed|>()
+            }
+
+            public final val a: R|kotlin/Int| = R|<local>/a|
+                public get(): R|kotlin/Int|
+
+            public final operator fun component1(): R|kotlin/Int|
+
+            public final fun copy(a: R|kotlin/Int| = this@R|/Sealed.A|.R|/Sealed.A.a|): R|Sealed.A|
+
+        }
+
+        public final data class B : R|Sealed| {
+            public constructor(b: R|kotlin/Int|): R|Sealed.B| {
+                super<R|Sealed|>()
+            }
+
+            public final val b: R|kotlin/Int| = R|<local>/b|
+                public get(): R|kotlin/Int|
+
+            public final operator fun component1(): R|kotlin/Int|
+
+            public final fun copy(b: R|kotlin/Int| = this@R|/Sealed.B|.R|/Sealed.B.b|): R|Sealed.B|
+
+        }
+
+        public final data class C : R|Sealed| {
+            public constructor(c: R|kotlin/Int|): R|Sealed.C| {
+                super<R|Sealed|>()
+            }
+
+            public final val c: R|kotlin/Int| = R|<local>/c|
+                public get(): R|kotlin/Int|
+
+            public final operator fun component1(): R|kotlin/Int|
+
+            public final fun copy(c: R|kotlin/Int| = this@R|/Sealed.C|.R|/Sealed.C.c|): R|Sealed.C|
+
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun bar1(x: R|Sealed|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x !is Sealed.B
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|Sealed.B|))
+            }
+            )
+        }
+
+        ^bar1 (R|<local>/x| !is R|Sealed.B|)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun bar2(x: R|Sealed|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x !is Sealed.B
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|Sealed.B|))
+            }
+            )
+        }
+
+        ^bar2 (R|<local>/x| is R|Sealed.A|)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun bar3(x: R|Sealed|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x !is Sealed.B
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|Sealed.B|))
+            }
+            )
+        }
+
+        ^bar3 (R|<local>/x| is R|Sealed.A|) || (R|<local>/x| is R|Sealed.C|)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun bar4(x: R|Sealed|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x !is Sealed.B
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|Sealed.B|))
+            }
+            )
+        }
+
+        ^bar4 (R|<local>/x| !is R|Sealed.A|)
+    }

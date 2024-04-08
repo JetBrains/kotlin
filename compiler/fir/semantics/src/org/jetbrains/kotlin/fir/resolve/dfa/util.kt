@@ -5,9 +5,16 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
+import org.jetbrains.kotlin.fir.types.isMarkedOrFlexiblyNullable
 
 fun TypeStatement.smartCastedType(context: ConeTypeContext): ConeKotlinType =
     if (exactType.isNotEmpty()) {
@@ -24,3 +31,16 @@ fun FirOperation.isEq(): Boolean {
         else -> throw IllegalArgumentException("$this should not be there")
     }
 }
+
+fun Collection<ConeKotlinType>.isVacuousIntersection(session: FirSession): Boolean {
+    // in this case we have 'null' in the intersection
+    if (all { it.isMarkedOrFlexiblyNullable }) return false
+    // otherwise, check if we have more than one final class
+    return filterIsInstance<ConeClassLikeType>()
+        .mapNotNull { it.toRegularClassSymbol(session) }
+        .filter { it.isConsideredFinal }
+        .toSet().size > 1
+}
+
+private val FirRegularClassSymbol.isConsideredFinal: Boolean
+    get() = classKind == ClassKind.ENUM_ENTRY || (isFinal && classKind != ClassKind.ENUM_CLASS)

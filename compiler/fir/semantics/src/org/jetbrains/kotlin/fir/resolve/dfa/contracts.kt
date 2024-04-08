@@ -35,7 +35,7 @@ fun LogicSystem.approveContractStatement(
 
     fun ConeBooleanExpression.visit(inverted: Boolean): TypeStatements? = when (this) {
         is ConeBooleanConstantReference ->
-            if (inverted == (this == ConeContractConstantValues.TRUE)) null else mapOf()
+            if (inverted == (this == ConeContractConstantValues.TRUE)) null else emptyTypeStatements()
         is ConeLogicalNot -> arg.visit(inverted = !inverted)
         is ConeIsInstancePredicate ->
             arguments.getOrNull(arg.parameterIndex + 1)?.let {
@@ -49,19 +49,21 @@ fun LogicSystem.approveContractStatement(
                         val fromNullability = if ((isType && !type.canBeNull(session)) || (!isType && type.isMarkedNullable))
                             it.processEqNull(false)
                         else
-                            mapOf()
-                        if (isType && it is RealVariable) {
-                            andForTypeStatements(fromNullability, mapOf(it to (it typeEq substitutedType)))
-                        } else {
-                            fromNullability
+                            emptyTypeStatements()
+                        val fromType = when {
+                            it !is RealVariable -> emptyTypeStatements()
+                            isType -> mapOf(it to (it typeEq substitutedType))
+                            !isType -> mapOf(it to (it typeNotEq substitutedType))
+                            else -> emptyTypeStatements()
                         }
+                        andForTypeStatements(fromNullability, fromType)
                     }
                 }
-            } ?: mapOf()
+            } ?: emptyTypeStatements()
         is ConeIsNullPredicate ->
-            arguments.getOrNull(arg.parameterIndex + 1)?.processEqNull(inverted == isNegated) ?: mapOf()
+            arguments.getOrNull(arg.parameterIndex + 1)?.processEqNull(inverted == isNegated) ?: emptyTypeStatements()
         is ConeBooleanValueParameterReference ->
-            arguments.getOrNull(parameterIndex + 1)?.let { approveOperationStatement(it eq !inverted) } ?: mapOf()
+            arguments.getOrNull(parameterIndex + 1)?.let { approveOperationStatement(it eq !inverted) } ?: emptyTypeStatements()
         is ConeBinaryLogicExpression -> {
             val a = left.visit(inverted)
             val b = right.visit(inverted)
@@ -73,7 +75,7 @@ fun LogicSystem.approveContractStatement(
                 else -> orForTypeStatements(a, b)
             }
         }
-        else -> mapOf()
+        else -> emptyTypeStatements()
     }
 
     return statement.visit(inverted = false)

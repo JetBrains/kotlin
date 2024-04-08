@@ -27,6 +27,8 @@ fun CFGNode<*>.render(): String =
                 is BlockExitNode -> "Exit block"
 
                 is WhenEnterNode -> "Enter when"
+                is WhenSubjectEnterNode -> "Enter when subject"
+                is WhenSubjectExitNode -> "Exit when subject"
                 is WhenBranchConditionEnterNode -> "Enter when branch condition ${if (fir.condition is FirElseIfTrueCondition) "\"else\"" else ""}"
                 is WhenBranchConditionExitNode -> "Exit when branch condition"
                 is WhenBranchResultEnterNode -> "Enter when branch result"

@@ -97,7 +97,7 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
         override fun relation(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): Permissiveness =
             when (other) {
                 this -> Permissiveness.SAME
-                PrivateInClass, Local -> Permissiveness.MORE
+                is PrivateInClass, is Local -> Permissiveness.MORE
                 else -> Permissiveness.LESS
             }
 
@@ -111,7 +111,7 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
         override fun relation(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): Permissiveness =
             when (other) {
                 this -> Permissiveness.SAME
-                Unknown -> Permissiveness.UNKNOWN
+                is Unknown -> Permissiveness.UNKNOWN
                 else -> Permissiveness.MORE
             }
 
@@ -123,19 +123,19 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
     ) {
         override fun relation(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): Permissiveness =
             when (other) {
-                Public -> Permissiveness.LESS
-                PrivateInClass, PrivateInFile, Local, InternalProtectedBound, is InternalProtected -> Permissiveness.MORE
+                is Public -> Permissiveness.LESS
+                is PrivateInClass, is PrivateInFile, is Local, is InternalProtectedBound, is InternalProtected -> Permissiveness.MORE
                 is InternalOrPackage -> Permissiveness.SAME
-                ProtectedBound, is Protected, Unknown -> Permissiveness.UNKNOWN
+                is ProtectedBound, is Protected, is Unknown -> Permissiveness.UNKNOWN
             }
 
         override fun lowerBound(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): EffectiveVisibility =
             when (other) {
-                Public -> this
-                PrivateInClass, PrivateInFile, Local, InternalProtectedBound, is InternalOrPackage, is InternalProtected -> other
+                is Public -> this
+                is PrivateInClass, is PrivateInFile, is Local, is InternalProtectedBound, is InternalOrPackage, is InternalProtected -> other
                 is Protected -> InternalProtected(other.containerTypeConstructor)
                 is Unknown -> Local
-                ProtectedBound -> InternalProtectedBound
+                is ProtectedBound -> InternalProtectedBound
             }
     }
 
@@ -169,8 +169,8 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
 
         override fun relation(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): Permissiveness =
             when (other) {
-                Public -> Permissiveness.LESS
-                PrivateInClass, PrivateInFile, Local, ProtectedBound, InternalProtectedBound -> Permissiveness.MORE
+                is Public -> Permissiveness.LESS
+                is PrivateInClass, is PrivateInFile, is Local, is ProtectedBound, is InternalProtectedBound -> Permissiveness.MORE
                 is Protected -> containerRelation(containerTypeConstructor, other.containerTypeConstructor, typeCheckerContextProvider)
                 is InternalProtected -> when (containerRelation(
                     containerTypeConstructor,
@@ -186,8 +186,8 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
 
         override fun lowerBound(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): EffectiveVisibility =
             when (other) {
-                Public -> this
-                PrivateInClass, PrivateInFile, Local, ProtectedBound, InternalProtectedBound -> other
+                is Public -> this
+                is PrivateInClass, is PrivateInFile, is Local, is ProtectedBound, is InternalProtectedBound -> other
                 is Protected -> when (relation(other, typeCheckerContextProvider)) {
                     Permissiveness.SAME, Permissiveness.LESS -> this
                     Permissiveness.MORE -> other
@@ -210,16 +210,16 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
     object ProtectedBound : EffectiveVisibility("protected (in different classes)", publicApi = true) {
         override fun relation(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): Permissiveness =
             when (other) {
-                Public, is Protected -> Permissiveness.LESS
-                PrivateInClass, PrivateInFile, Local, InternalProtectedBound -> Permissiveness.MORE
-                ProtectedBound -> Permissiveness.SAME
+                is Public, is Protected -> Permissiveness.LESS
+                is PrivateInClass, is PrivateInFile, is Local, is InternalProtectedBound -> Permissiveness.MORE
+                is ProtectedBound -> Permissiveness.SAME
                 is InternalOrPackage, is InternalProtected, is Unknown -> Permissiveness.UNKNOWN
             }
 
         override fun lowerBound(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): EffectiveVisibility =
             when (other) {
-                Public, is Protected -> this
-                PrivateInClass, PrivateInFile, Local, ProtectedBound, InternalProtectedBound -> other
+                is Public, is Protected -> this
+                is PrivateInClass, is PrivateInFile, is Local, is ProtectedBound, is InternalProtectedBound -> other
                 is InternalOrPackage, is InternalProtected -> InternalProtectedBound
                 is Unknown -> Local
             }
@@ -244,8 +244,8 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
 
         override fun relation(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): Permissiveness =
             when (other) {
-                Public, is InternalOrPackage -> Permissiveness.LESS
-                PrivateInClass, PrivateInFile, Local, InternalProtectedBound -> Permissiveness.MORE
+                is Public, is InternalOrPackage -> Permissiveness.LESS
+                is PrivateInClass, is PrivateInFile, is Local, is InternalProtectedBound -> Permissiveness.MORE
                 is InternalProtected -> containerRelation(
                     containerTypeConstructor,
                     other.containerTypeConstructor,
@@ -260,20 +260,20 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
                     Permissiveness.SAME, Permissiveness.LESS -> Permissiveness.LESS
                     Permissiveness.UNKNOWN, Permissiveness.MORE -> Permissiveness.UNKNOWN
                 }
-                ProtectedBound, Unknown -> Permissiveness.UNKNOWN
+                is ProtectedBound, is Unknown -> Permissiveness.UNKNOWN
             }
 
         override fun lowerBound(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): EffectiveVisibility =
             when (other) {
-                Public, is InternalOrPackage -> this
-                PrivateInClass, PrivateInFile, Local, InternalProtectedBound -> other
+                is Public, is InternalOrPackage -> this
+                is PrivateInClass, is PrivateInFile, is Local, is InternalProtectedBound -> other
                 is Protected, is InternalProtected -> when (relation(other, typeCheckerContextProvider)) {
                     Permissiveness.SAME, Permissiveness.LESS -> this
                     Permissiveness.MORE -> other
                     Permissiveness.UNKNOWN -> InternalProtectedBound
                 }
-                ProtectedBound -> InternalProtectedBound
-                Unknown -> Local
+                is ProtectedBound -> InternalProtectedBound
+                is Unknown -> Local
             }
 
         override fun toVisibility(): Visibility = Visibilities.Private
@@ -285,10 +285,10 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
     object InternalProtectedBound : EffectiveVisibility("internal & protected (in different classes)") {
         override fun relation(other: EffectiveVisibility, typeCheckerContextProvider: TypeCheckerProviderContext): Permissiveness =
             when (other) {
-                Public, is Protected, is InternalProtected, ProtectedBound, is InternalOrPackage -> Permissiveness.LESS
-                PrivateInClass, PrivateInFile, Local -> Permissiveness.MORE
-                InternalProtectedBound -> Permissiveness.SAME
-                Unknown -> Permissiveness.UNKNOWN
+                is Public, is Protected, is InternalProtected, is ProtectedBound, is InternalOrPackage -> Permissiveness.LESS
+                is PrivateInClass, is PrivateInFile, is Local -> Permissiveness.MORE
+                is InternalProtectedBound -> Permissiveness.SAME
+                is Unknown -> Permissiveness.UNKNOWN
             }
 
         override fun toVisibility(): Visibility = Visibilities.Private

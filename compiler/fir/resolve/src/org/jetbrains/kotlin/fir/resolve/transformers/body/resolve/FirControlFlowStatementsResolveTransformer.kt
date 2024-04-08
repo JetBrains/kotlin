@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphNodeReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.expectedType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
@@ -65,8 +66,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         whenExpression.annotations.forEach { it.accept(this, data) }
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
         return context.withWhenExpression(whenExpression, session) with@{
+            dataFlowAnalyzer.enterWhenSubject(whenExpression)
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
+            dataFlowAnalyzer.exitWhenSubject(whenExpression)
             val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(session)
             var completionNeeded = false
             context.withWhenSubjectType(subjectType, components) {
@@ -99,7 +102,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                         completionNeeded = true
                     }
                 }
-                whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
+
+                val typeInformation = dataFlowAnalyzer.getTypeStatementOfCurrentWhen(whenExpression)
+                whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, typeInformation)
 
                 // This is necessary to perform outside the place where the synthetic call is created because
                 // exhaustiveness is not yet computed there, but at the same time to compute it properly
@@ -116,7 +121,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     )
                     whenExpression = completionResult
                 }
-                dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
+                dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)?.let {
+                    whenExpression.replaceElseControlFlowGraphNodeReference(FirControlFlowGraphNodeReferenceImpl(it))
+                }
                 whenExpression.replaceReturnTypeIfNotExhaustive(session)
                 whenExpression
             }

@@ -300,7 +300,7 @@ object ConeTypeCompatibilityChecker {
                 val typeParameter = typeParameterOwner.getTypeParameter(index) ?: return@forEachIndexed
                 var boundTypeArgument: BoundTypeArgument = when (coneTypeProjection) {
                     // Ignore star since it doesn't provide any constraints.
-                    ConeStarProjection -> return@forEachIndexed
+                    is ConeStarProjection -> return@forEachIndexed
                     // Ignore contravariant projection because they induces union types. Hence, whatever type argument should always be
                     // considered compatible.
                     is ConeKotlinTypeProjectionIn -> BoundTypeArgument(coneTypeProjection.type, Variance.IN_VARIANCE)

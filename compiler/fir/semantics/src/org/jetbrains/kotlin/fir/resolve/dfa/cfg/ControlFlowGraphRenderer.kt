@@ -188,7 +188,11 @@ private class ControlFlowGraphRenderer(
 
     private fun Statement.renderHtmlLike(): String = when (this) {
         is OperationStatement -> "${variable.renderHtmlLike()} ${operation.renderHtmlLike()}"
-        is TypeStatement -> "${variable.renderHtmlLike()}: ${exactType.renderHtmlLike()}"
+        is TypeStatement -> {
+            val positives = exactType.map { it.renderHtmlLike() }
+            val negatives = negativeInformation.map { "!${it.renderHtmlLike()}" }
+            "${variable.renderHtmlLike()}: ${(positives + negatives).joinToString(" & ")}"
+        }
     }
 
     private fun Set<ConeKotlinType>.renderHtmlLike(): String =

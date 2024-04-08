@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.FlowPath
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isNothing
@@ -482,6 +483,18 @@ class WhenExitNode(owner: ControlFlowGraph, override val fir: FirWhenExpression,
         return visitor.visitWhenExitNode(this, data)
     }
 }
+class WhenSubjectEnterNode(owner: ControlFlowGraph, override val fir: FirWhenExpression, level: Int) : CFGNode<FirWhenExpression>(owner, level),
+    EnterNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitWhenSubjectEnterNode(this, data)
+    }
+}
+class WhenSubjectExitNode(owner: ControlFlowGraph, override val fir: FirWhenExpression, level: Int) : CFGNode<FirWhenExpression>(owner, level),
+    ExitNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitWhenSubjectExitNode(this, data)
+    }
+}
 class WhenBranchConditionEnterNode(owner: ControlFlowGraph, override val fir: FirWhenBranch, level: Int) : CFGNode<FirWhenBranch>(owner, level),
     EnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
@@ -504,7 +517,7 @@ class WhenBranchResultExitNode(owner: ControlFlowGraph, override val fir: FirWhe
         return visitor.visitWhenBranchResultExitNode(this, data)
     }
 }
-class WhenSyntheticElseBranchNode(owner: ControlFlowGraph, override val fir: FirWhenExpression, level: Int) : CFGNode<FirWhenExpression>(owner, level) {
+class WhenSyntheticElseBranchNode(owner: ControlFlowGraph, override val fir: FirWhenExpression, val subjectVariable: RealVariable?, level: Int) : CFGNode<FirWhenExpression>(owner, level) {
     init {
         assert(!fir.isProperlyExhaustive)
     }

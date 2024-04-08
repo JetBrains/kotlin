@@ -3307,6 +3307,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantElseInWhen::class
     }
 
+    interface UnsafeExhaustiveness : KaFirDiagnostic<KtWhenExpression> {
+        override val diagnosticClass get() = UnsafeExhaustiveness::class
+    }
+
     interface IllegalDeclarationInWhenSubject : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = IllegalDeclarationInWhenSubject::class
         val illegalReason: String

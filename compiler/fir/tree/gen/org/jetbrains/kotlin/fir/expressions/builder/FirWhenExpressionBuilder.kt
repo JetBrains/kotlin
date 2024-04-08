@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphNodeReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -33,6 +34,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
     val branches: MutableList<FirWhenBranch> = mutableListOf()
     var exhaustivenessStatus: ExhaustivenessStatus? = null
     var usedAsExpression: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var elseControlFlowGraphNodeReference: FirControlFlowGraphNodeReference? = null
 
     override fun build(): FirWhenExpression {
         return FirWhenExpressionImpl(
@@ -45,6 +47,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
             branches,
             exhaustivenessStatus,
             usedAsExpression,
+            elseControlFlowGraphNodeReference,
         )
     }
 

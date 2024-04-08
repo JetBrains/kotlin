@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 sealed class Statement {
@@ -27,15 +28,33 @@ data class OperationStatement(override val variable: DataFlowVariable, val opera
 sealed class TypeStatement : Statement() {
     abstract override val variable: RealVariable
     abstract val exactType: Set<ConeKotlinType>
+    abstract val negativeInformation: Set<BranchStatement>
+    abstract val safeNegativeInformation: Boolean
 
     val isEmpty: Boolean
-        get() = exactType.isEmpty()
+        get() = exactType.isEmpty() && negativeInformation.isEmpty()
 
     val isNotEmpty: Boolean
         get() = !isEmpty
 
     final override fun toString(): String {
-        return "$variable: ${exactType.joinToString(separator = " & ")}"
+        val positives = exactType.map { "$it" }
+        val negatives = negativeInformation.map { "!$it" }
+        return "$variable: ${(positives + negatives).joinToString(" & ")}"
+    }
+}
+
+sealed class BranchStatement {
+    data class Is(val type: ConeKotlinType) : BranchStatement() {
+        override fun toString(): String = type.toString()
+    }
+
+    data class EnumEntry(val entry: FirEnumEntrySymbol) : BranchStatement() {
+        override fun toString(): String = entry.toString()
+    }
+
+    data class BooleanValue(val value: Boolean) : BranchStatement() {
+        override fun toString(): String = value.toString()
     }
 }
 

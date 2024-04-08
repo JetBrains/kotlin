@@ -289,7 +289,7 @@ class Fir2IrTypeConverter(
         }
 
         return when (this) {
-            ConeStarProjection -> IrStarProjectionImpl
+            is ConeStarProjection -> IrStarProjectionImpl
             is ConeKotlinTypeProjectionIn -> toIrTypeArgument(this.type, Variance.IN_VARIANCE)
             is ConeKotlinTypeProjectionOut -> toIrTypeArgument(this.type, Variance.OUT_VARIANCE)
             is ConeKotlinTypeConflictingProjection -> toIrTypeArgument(this.type, Variance.INVARIANT)

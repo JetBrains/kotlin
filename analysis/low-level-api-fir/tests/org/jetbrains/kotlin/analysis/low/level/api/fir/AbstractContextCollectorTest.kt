@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
+import org.jetbrains.kotlin.fir.resolve.dfa.RealVariableFromSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -200,12 +201,16 @@ internal object ElementContextRenderer {
     }
 
     private fun StringBuilder.renderSmartCasts(smartCasts: Map<RealVariable, Set<ConeKotlinType>>) {
+        val smartCasts = smartCasts.filterValues { it.isNotEmpty() }
+
         if (smartCasts.isEmpty()) {
             return
         }
 
         appendBlock("Smart Casts:") {
             for ((realVariable, types) in smartCasts) {
+                if (realVariable !is RealVariableFromSymbol) continue
+
                 appendSymbol(realVariable.symbol).appendLine()
 
                 appendBlock("Types:") {

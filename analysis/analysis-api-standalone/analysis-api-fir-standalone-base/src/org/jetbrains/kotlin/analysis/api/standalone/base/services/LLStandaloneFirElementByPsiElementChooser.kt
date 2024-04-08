@@ -272,7 +272,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
     }
 
     private fun ConeTypeProjection.renderTypeAsKotlinType(): String = when (this) {
-        ConeStarProjection -> "*"
+        is ConeStarProjection -> "*"
         is ConeKotlinTypeProjectionIn -> "in ${type.renderTypeAsKotlinType()}"
         is ConeKotlinTypeProjectionOut -> "out ${type.renderTypeAsKotlinType()}"
         is ConeKotlinTypeConflictingProjection -> "CONFLICTING-PROJECTION ${type.renderTypeAsKotlinType()}"

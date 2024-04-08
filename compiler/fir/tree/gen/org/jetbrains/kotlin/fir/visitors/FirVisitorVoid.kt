@@ -1059,6 +1059,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(controlFlowGraphReference)
     }
 
+    final override fun visitControlFlowGraphNodeReference(controlFlowGraphNodeReference: FirControlFlowGraphNodeReference, data: Nothing?) {
+        visitControlFlowGraphNodeReference(controlFlowGraphNodeReference)
+    }
+
+    open fun visitControlFlowGraphNodeReference(controlFlowGraphNodeReference: FirControlFlowGraphNodeReference) {
+        visitElement(controlFlowGraphNodeReference)
+    }
+
     final override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
         visitTypeRef(typeRef)
     }

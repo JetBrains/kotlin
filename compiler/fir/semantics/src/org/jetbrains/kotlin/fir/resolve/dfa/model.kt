@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.PersistentSet
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import kotlin.contracts.ExperimentalContracts
@@ -16,16 +17,22 @@ import kotlin.contracts.contract
 data class PersistentTypeStatement(
     override val variable: RealVariable,
     override val exactType: PersistentSet<ConeKotlinType>,
+    override val negativeInformation: PersistentSet<BranchStatement>,
+    override val safeNegativeInformation: Boolean = true,
 ) : TypeStatement()
 
 class MutableTypeStatement(
     override val variable: RealVariable,
     override val exactType: MutableSet<ConeKotlinType> = linkedSetOf(),
+    override val negativeInformation: MutableSet<BranchStatement> = linkedSetOf(),
+    override var safeNegativeInformation: Boolean = true,
 ) : TypeStatement()
 
 // --------------------------------------- Aliases ---------------------------------------
 
 typealias TypeStatements = Map<RealVariable, TypeStatement>
+
+fun emptyTypeStatements(): TypeStatements = mapOf()
 
 // --------------------------------------- DSL ---------------------------------------
 
@@ -44,6 +51,21 @@ infix fun OperationStatement.implies(effect: Statement): Implication = Implicati
 
 infix fun RealVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type))
+
+infix fun RealVariable.typeEq(types: Set<ConeKotlinType>): MutableTypeStatement =
+    MutableTypeStatement(this, types.toMutableSet())
+
+infix fun RealVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
+    MutableTypeStatement(this, negativeInformation = if (type is ConeErrorType) linkedSetOf() else linkedSetOf(BranchStatement.Is(type)))
+
+infix fun RealVariable.enumEntryNotEq(entry: FirEnumEntrySymbol): MutableTypeStatement =
+    MutableTypeStatement(this, negativeInformation = linkedSetOf(BranchStatement.EnumEntry(entry)))
+
+infix fun RealVariable.booleanNotEq(value: Boolean): MutableTypeStatement =
+    MutableTypeStatement(this, negativeInformation = linkedSetOf(BranchStatement.BooleanValue(value)))
+
+fun MutableTypeStatement.markNegativeInformationAsUnsafe(): MutableTypeStatement =
+    apply { safeNegativeInformation = false }
 
 // --------------------------------------- Utils ---------------------------------------
 

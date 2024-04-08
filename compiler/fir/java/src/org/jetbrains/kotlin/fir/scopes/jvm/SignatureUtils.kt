@@ -124,7 +124,7 @@ private fun StringBuilder.appendConeType(
             append("[")
             type.typeArguments.forEach { typeArg ->
                 when (typeArg) {
-                    ConeStarProjection -> append("*")
+                    is ConeStarProjection -> append("*")
                     is ConeKotlinTypeProjection -> appendConeType(typeArg.type, typeConversion, visitedTypeParameters)
                 }
             }

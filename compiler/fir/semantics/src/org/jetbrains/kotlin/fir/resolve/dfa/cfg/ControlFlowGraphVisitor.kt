@@ -178,6 +178,14 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitWhenSubjectEnterNode(node: WhenSubjectEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitWhenSubjectExitNode(node: WhenSubjectExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitWhenBranchConditionEnterNode(node: WhenBranchConditionEnterNode, data: D): R {
         return visitNode(node, data)
     }

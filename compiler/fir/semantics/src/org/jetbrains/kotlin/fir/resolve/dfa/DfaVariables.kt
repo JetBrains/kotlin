@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -51,25 +53,42 @@ private enum class PropertyStability(
     DELEGATED_PROPERTY(SmartcastStability.DELEGATED_PROPERTY);
 }
 
-class RealVariable(
-    val symbol: FirBasedSymbol<*>,
-    val isImplicit: Boolean,
-    val dispatchReceiver: RealVariable?,
-    val extensionReceiver: RealVariable?,
-    val originalType: ConeKotlinType,
-) : DataFlowVariable() {
+sealed class RealVariable: DataFlowVariable() {
     companion object {
         fun local(symbol: FirVariableSymbol<*>): RealVariable =
-            RealVariable(symbol, isImplicit = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType)
+            RealVariableFromSymbol(symbol, isImplicit = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType)
 
         fun implicit(symbol: FirBasedSymbol<*>, type: ConeKotlinType): RealVariable =
-            RealVariable(symbol, isImplicit = true, dispatchReceiver = null, extensionReceiver = null, type)
+            RealVariableFromSymbol(symbol, isImplicit = true, dispatchReceiver = null, extensionReceiver = null, type)
+
+        fun whenSubject(whenExpression: FirWhenExpression): RealVariable {
+            val subject = requireNotNull(whenExpression.subject)
+            return RealVariableFromWhenSubject(whenExpression, subject.resolvedType)
+        }
+
+        fun whenSubject(subject: FirWhenSubjectExpression): RealVariable =
+            RealVariableFromWhenSubject(subject.whenRef.value, subject.resolvedType)
     }
 
+    abstract val isImplicit: Boolean
+    abstract val originalType: ConeKotlinType
+    abstract fun getStability(flow: Flow, session: FirSession): SmartcastStability
+
+    fun hasFinalType(flow: Flow, session: FirSession): Boolean =
+        originalType.isFinal(session) || flow.getTypeStatement(this)?.exactType?.any { it.isFinal(session) } == true
+}
+
+class RealVariableFromSymbol(
+    val symbol: FirBasedSymbol<*>,
+    override val isImplicit: Boolean,
+    val dispatchReceiver: RealVariable?,
+    val extensionReceiver: RealVariable?,
+    override val originalType: ConeKotlinType,
+) : RealVariable() {
     // `originalType` cannot be included into equality comparisons because it can be a captured type.
     // Those are normally not equal to each other, but if this variable is stable, then it is in fact the same type.
     override fun equals(other: Any?): Boolean =
-        other is RealVariable && symbol == other.symbol && isImplicit == other.isImplicit &&
+        other is RealVariableFromSymbol && symbol == other.symbol && isImplicit == other.isImplicit &&
                 dispatchReceiver == other.dispatchReceiver && extensionReceiver == other.extensionReceiver
 
     override fun hashCode(): Int =
@@ -95,7 +114,7 @@ class RealVariable(
         }
     }
 
-    fun getStability(flow: Flow, session: FirSession): SmartcastStability {
+    override fun getStability(flow: Flow, session: FirSession): SmartcastStability {
         if (!isImplicit) {
             val stability = propertyStability
 
@@ -114,9 +133,6 @@ class RealVariable(
         }
         return SmartcastStability.STABLE_VALUE
     }
-
-    private fun hasFinalType(flow: Flow, session: FirSession): Boolean =
-        originalType.isFinal(session) || flow.getTypeStatement(this)?.exactType?.any { it.isFinal(session) } == true
 
     private val propertyStability: PropertyStability by lazy {
         when (val fir = symbol.fir) {
@@ -148,6 +164,18 @@ class RealVariable(
             }
         }
     }
+}
+
+class RealVariableFromWhenSubject(
+    val whenRef: FirWhenExpression,
+    override val originalType: ConeKotlinType,
+) : RealVariable() {
+    override val isImplicit: Boolean = false
+    override fun getStability(flow: Flow, session: FirSession): SmartcastStability = SmartcastStability.STABLE_VALUE
+
+    override fun equals(other: Any?): Boolean = other is RealVariableFromWhenSubject && whenRef == other.whenRef
+    override fun hashCode(): Int = whenRef.hashCode()
+    override fun toString(): String = "implicit when subject"
 }
 
 data class SyntheticVariable(val fir: FirExpression) : DataFlowVariable()

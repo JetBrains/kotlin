@@ -186,7 +186,7 @@ open class ConeTypeRenderer(
 
     private fun ConeTypeProjection.render() {
         when (this) {
-            ConeStarProjection -> {
+            is ConeStarProjection -> {
                 builder.append("*")
             }
 

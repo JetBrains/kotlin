@@ -547,7 +547,8 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
             intersectedType.isKindOfNothing &&
             !originalType.isNullableNothing &&
             !originalType.isNothing &&
-            originalType !is ConeStubType
+            originalType !is ConeStubType &&
+            !allTypes.all { it.isKindOfNothing }
         ) {
             smartcastTypeWithoutNullableNothing = buildResolvedTypeRef {
                 source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)

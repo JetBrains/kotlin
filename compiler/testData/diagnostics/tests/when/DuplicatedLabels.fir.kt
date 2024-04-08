@@ -43,7 +43,7 @@ fun third(arg: Any?): Int {
         is <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>Double<!> -> return 2
         <!DUPLICATE_BRANCH_CONDITION_IN_WHEN, SENSELESS_NULL_IN_WHEN!>null<!> -> return 3
         !is String -> return 4
-        else -> return 5
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> return 5
     }
 }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 
 fun ControlFlowGraphBuilder.createStubNode(): StubNode = StubNode(currentGraph, levelCounter)
 
@@ -92,11 +93,17 @@ fun ControlFlowGraphBuilder.createWhenEnterNode(fir: FirWhenExpression): WhenEnt
 fun ControlFlowGraphBuilder.createWhenExitNode(fir: FirWhenExpression): WhenExitNode =
     WhenExitNode(currentGraph, fir, levelCounter)
 
+fun ControlFlowGraphBuilder.createWhenSujectEnterNode(fir: FirWhenExpression): WhenSubjectEnterNode =
+    WhenSubjectEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createWhenSubjectExitNode(fir: FirWhenExpression): WhenSubjectExitNode =
+    WhenSubjectExitNode(currentGraph, fir, levelCounter)
+
 fun ControlFlowGraphBuilder.createWhenBranchResultExitNode(fir: FirWhenBranch): WhenBranchResultExitNode =
     WhenBranchResultExitNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createWhenSyntheticElseBranchNode(fir: FirWhenExpression): WhenSyntheticElseBranchNode =
-    WhenSyntheticElseBranchNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createWhenSyntheticElseBranchNode(fir: FirWhenExpression, subjectVariable: RealVariable?): WhenSyntheticElseBranchNode =
+    WhenSyntheticElseBranchNode(currentGraph, fir, subjectVariable, levelCounter)
 
 fun ControlFlowGraphBuilder.createWhenBranchResultEnterNode(fir: FirWhenBranch): WhenBranchResultEnterNode =
     WhenBranchResultEnterNode(currentGraph, fir, levelCounter)

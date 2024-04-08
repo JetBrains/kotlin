@@ -14,13 +14,13 @@ sealed class ExhaustivenessStatus {
      * This value is used if the subject has type other than `Nothing`, in which case it's literally exhaustive only if type's possible
      * cases are properly covered.
      */
-    object ProperlyExhaustive : ExhaustivenessStatus()
+    data class ProperlyExhaustive(val unusedOrSafeNegativeInformation: Boolean = true) : ExhaustivenessStatus()
 
     /**
      * This value is used when there is an `else` branch present and the subject type is [ProperlyExhaustive].
      * If the subject type is flexible, the upper bound must be [ProperlyExhaustive].
      */
-    object RedundantlyExhaustive : ExhaustivenessStatus()
+    data class RedundantlyExhaustive(val unusedOrSafeNegativeInformation: Boolean = true) : ExhaustivenessStatus()
 
     /**
      *  This value is used if the subject has type `Nothing`, in which case even an empty `when` is considered exhaustive. Also, in this
@@ -38,10 +38,17 @@ sealed class ExhaustivenessStatus {
 
 
 val FirWhenExpression.isExhaustive: Boolean
-    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive ||
+    get() = exhaustivenessStatus is ExhaustivenessStatus.ProperlyExhaustive ||
             exhaustivenessStatus == ExhaustivenessStatus.ExhaustiveAsNothing ||
-            exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive
+            exhaustivenessStatus is ExhaustivenessStatus.RedundantlyExhaustive
 
 val FirWhenExpression.isProperlyExhaustive: Boolean
-    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive ||
-            exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive
+    get() = exhaustivenessStatus is ExhaustivenessStatus.ProperlyExhaustive ||
+            exhaustivenessStatus is ExhaustivenessStatus.RedundantlyExhaustive
+
+val FirWhenExpression.unsafeExhaustiveness: Boolean
+    get() = when (val status = exhaustivenessStatus) {
+        is ExhaustivenessStatus.ProperlyExhaustive -> !status.unusedOrSafeNegativeInformation
+        is ExhaustivenessStatus.RedundantlyExhaustive -> !status.unusedOrSafeNegativeInformation
+        else -> false
+    }

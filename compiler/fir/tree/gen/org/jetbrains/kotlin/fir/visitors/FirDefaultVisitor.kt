@@ -224,6 +224,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: D): R =
         visitReference(controlFlowGraphReference, data)
 
+    override fun visitControlFlowGraphNodeReference(controlFlowGraphNodeReference: FirControlFlowGraphNodeReference, data: D): R =
+        visitReference(controlFlowGraphNodeReference, data)
+
     override fun visitTypeRef(typeRef: FirTypeRef, data: D): R =
         visitAnnotationContainer(typeRef, data)
 

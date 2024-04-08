@@ -1120,6 +1120,10 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(reference)
     }
 
+    val controlFlowGraphNodeReference: Element by element(Reference) {
+        parent(reference)
+    }
+
     val typeRef: Element by sealedElement(TypeRefElement) {
         parent(annotationContainer)
 
@@ -1216,6 +1220,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("branches", whenBranch, withTransform = true)
         +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
         +field("usedAsExpression", boolean)
+        +field("elseControlFlowGraphNodeReference", controlFlowGraphNodeReference, nullable = true, withReplace = true)
     }
 
     val typeProjection: Element by sealedElement(TypeRefElement)

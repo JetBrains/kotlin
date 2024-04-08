@@ -60,7 +60,7 @@ data class ConeKotlinTypeConflictingProjection(override val type: ConeKotlinType
 
 val ConeTypeProjection.type: ConeKotlinType?
     get() = when (this) {
-        ConeStarProjection -> null
+        is ConeStarProjection -> null
         is ConeKotlinTypeProjection -> type
     }
 

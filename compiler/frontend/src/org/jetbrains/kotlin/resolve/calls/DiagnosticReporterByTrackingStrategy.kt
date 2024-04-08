@@ -573,7 +573,7 @@ class DiagnosticReporterByTrackingStrategy(
 
                 trace.reportDiagnosticOnce(typeMismatchDiagnostic.on(expression, error.upperKotlinType, error.lowerKotlinType))
             }
-            BuilderInferencePosition -> {
+            is BuilderInferencePosition -> {
                 // some error reported later?
             }
             is DeclaredUpperBoundConstraintPosition<*> -> {
@@ -602,7 +602,7 @@ class DiagnosticReporterByTrackingStrategy(
             is IncorporationConstraintPosition,
             is InjectedAnotherStubTypeConstraintPosition<*>,
             is SimpleConstraintSystemConstraintPosition,
-            ProvideDelegateFixationPosition,
+            is ProvideDelegateFixationPosition,
             is SemiFixVariableConstraintPosition
             -> {
                 if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
