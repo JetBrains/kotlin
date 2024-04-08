@@ -1300,6 +1300,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("companionWithFoo_commonModule.kt")
+    public void testCompanionWithFoo_commonModule() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled/companionWithFoo_commonModule.kt");
+    }
+
+    @Test
     @TestMetadata("customSerlializable.kt")
     public void testCustomSerlializable() {
       runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled/customSerlializable.kt");

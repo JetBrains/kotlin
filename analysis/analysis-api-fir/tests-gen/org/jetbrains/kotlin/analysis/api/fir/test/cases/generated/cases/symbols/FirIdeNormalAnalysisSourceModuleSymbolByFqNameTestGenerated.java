@@ -122,6 +122,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
     }
 
     @Test
+    @TestMetadata("companionWithFoo_commonModule.kt")
+    public void testCompanionWithFoo_commonModule() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled/companionWithFoo_commonModule.kt");
+    }
+
+    @Test
     @TestMetadata("myInterfaceSupertype.kt")
     public void testMyInterfaceSupertype() {
       runTest("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled/myInterfaceSupertype.kt");

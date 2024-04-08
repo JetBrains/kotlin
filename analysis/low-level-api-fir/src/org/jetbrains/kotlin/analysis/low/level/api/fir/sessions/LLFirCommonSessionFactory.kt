@@ -35,8 +35,9 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
-                    providers = listOf(
+                    providers = listOfNotNull(
                         context.firProvider.symbolProvider,
+                        context.switchableExtensionDeclarationsSymbolProvider,
                     ),
                     context.dependencyProvider,
                 )
