@@ -23202,6 +23202,42 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("syntheticPropertyFromKotlinSubclassGetterOverrides.kt")
+        public void testSyntheticPropertyFromKotlinSubclassGetterOverrides() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinSubclassGetterOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("syntheticPropertyFromKotlinSubclassOfInterfaceGetter.kt")
+        public void testSyntheticPropertyFromKotlinSubclassOfInterfaceGetter() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinSubclassOfInterfaceGetter.kt");
+        }
+
+        @Test
+        @TestMetadata("syntheticPropertyFromKotlinSubclassOfJava.kt")
+        public void testSyntheticPropertyFromKotlinSubclassOfJava() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinSubclassOfJava.kt");
+        }
+
+        @Test
+        @TestMetadata("syntheticPropertyFromKotlinSubclassOfJavaGetterSubclass.kt")
+        public void testSyntheticPropertyFromKotlinSubclassOfJavaGetterSubclass() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinSubclassOfJavaGetterSubclass.kt");
+        }
+
+        @Test
+        @TestMetadata("syntheticPropertyFromKotlinSubclassOfJavaQualifiers.kt")
+        public void testSyntheticPropertyFromKotlinSubclassOfJavaQualifiers() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinSubclassOfJavaQualifiers.kt");
+        }
+
+        @Test
+        @TestMetadata("syntheticPropertyFromKotlinSubclassOfJavaSubclass.kt")
+        public void testSyntheticPropertyFromKotlinSubclassOfJavaSubclass() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinSubclassOfJavaSubclass.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticPropertyFromKotlin_k1Like.kt")
         public void testSyntheticPropertyFromKotlin_k1Like() {
           runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlin_k1Like.kt");
