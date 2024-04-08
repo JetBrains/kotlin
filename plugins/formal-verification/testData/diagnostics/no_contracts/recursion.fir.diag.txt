@@ -1,7 +1,8 @@
 /recursion.kt:(4,13): info: Generated Viper text for recursive:
-method global$fun_recursive$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+method global$fun_recursive$fun_take$$return$T_Unit() returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
+  ret$0 := dom$RuntimeType$unitValue()
   ret$0 := global$fun_recursive$fun_take$$return$T_Unit()
   goto label$ret$0
   label label$ret$0

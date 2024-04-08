@@ -247,84 +247,50 @@ class RuntimeTypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(RUNTI
         val functionType = createDomainFunc("functionType", emptyList(), RuntimeType, true)
 
         // for creation of user types
-        private fun classTypeFunc(name: MangledName) = createDomainFunc(name.mangled, emptyList(), RuntimeType, true)
+        fun classTypeFunc(name: MangledName) = createDomainFunc(name.mangled, emptyList(), RuntimeType, true)
 
         // bijections to primitive types
         val intInjection = Injection("int", Type.Int, intType)
         val boolInjection = Injection("bool", Type.Bool, boolType)
         val allInjections = listOf(intInjection, boolInjection)
 
-        private val operationImages: MutableList<BuiltinFunction> = mutableListOf()
-        fun accompanyingFunctions(): List<BuiltinFunction> = operationImages
-
-        /**
-         * Creates a Viper function that operates on the images of an injection and registers it.
-         * TODO: decide if body is needed in these functions
-         *
-         * @param argsInjection injection that must be applied to the arguments of the binary operation
-         * (note that it must be the same for each of arguments)
-         * @param resultInjection injection that must be applied to the result of the binary operation
-         * (not necessarily the same as `argsInjection`)
-         * @param checkDivisor adds precondition that divisor (second argument) is not zero
-         */
-        private fun createBinaryOperationInjectionImage(
-            name: String,
-            argsInjection: Injection,
-            resultInjection: Injection,
-            checkDivisor: Boolean = false,
-            operation: (Exp, Exp) -> Exp,
-        ) = FunctionBuilder.build(name) {
-            precondition { argument(Type.Ref) isOf argsInjection.typeFunction() }
-            precondition { argument(Type.Ref) isOf argsInjection.typeFunction() }
-            if (checkDivisor) {
-                check(argsInjection == intInjection) { "checkDivisor is only allowed for integers" }
-                precondition { intInjection.fromRef(arg2) ne 0.toExp() }
-            }
-            postcondition { returns(Type.Ref) isOf resultInjection.typeFunction() }
-            val viperResult = operation(argsInjection.fromRef(arg1), argsInjection.fromRef(arg2))
-            postcondition { resultInjection.fromRef(result) eq viperResult }
-//            body { resultInjection.toRef(viperResult) }
-        }.also { operationImages.add(it) }
-
-        private fun createUnaryOperationInjectionImage(
-            name: String,
-            injection: Injection,
-            operation: (Exp) -> Exp
-        ) = FunctionBuilder.build(name) {
-            precondition { argument(Type.Ref) isOf injection.typeFunction() }
-            postcondition { returns(Type.Ref) isOf injection.typeFunction() }
-            val viperResult = operation(injection.fromRef(arg1))
-            postcondition { injection.fromRef(result) eq viperResult }
-//            body { injection.toRef(viperResult) }
-        }.also { operationImages.add(it) }
 
         // Ref translations of primitive operations
-        val plusInts = createBinaryOperationInjectionImage("addInts", intInjection, intInjection) { exp1, exp2 -> exp1 + exp2 }
-        val minusInts = createBinaryOperationInjectionImage("minusInts", intInjection, intInjection) { exp1, exp2 -> exp1 - exp2 }
-        val timesInts = createBinaryOperationInjectionImage("timesInts", intInjection, intInjection) { exp1, exp2 -> exp1 * exp2 }
-        val divInts = createBinaryOperationInjectionImage("divInts", intInjection, intInjection, true) { exp1, exp2 ->
-            exp1 / exp2
+        private val bothArgsInts = listOf(intInjection, intInjection)
+        private val bothArgsBools = listOf(boolInjection, boolInjection)
+
+        val plusInts = InjectionImageFunction("plusInts", PlusInts, bothArgsInts, intInjection)
+        val minusInts = InjectionImageFunction("minusInts", MinusInts, bothArgsInts, intInjection)
+        val timesInts = InjectionImageFunction("timesInts", TimesInts, bothArgsInts, intInjection)
+        val divInts = InjectionImageFunction("divInts", DivInts, bothArgsInts, intInjection) {
+            precondition {
+                intInjection.fromRef(args[1]) ne 0.toExp()
+            }
         }
-        val remInts = createBinaryOperationInjectionImage("remInts", intInjection, intInjection, true) { exp1, exp2 ->
-            exp1 % exp2
+        val remInts = InjectionImageFunction("remInts", RemInts, bothArgsInts, intInjection) {
+            precondition {
+                intInjection.fromRef(args[1]) ne 0.toExp()
+            }
         }
-        val gtInts = createBinaryOperationInjectionImage("gtInts", intInjection, boolInjection) { exp1, exp2 -> exp1 gt exp2 }
-        val ltInts = createBinaryOperationInjectionImage("ltInts", intInjection, boolInjection) { exp1, exp2 -> exp1 lt exp2 }
-        val geInts = createBinaryOperationInjectionImage("geInts", intInjection, boolInjection) { exp1, exp2 -> exp1 ge exp2 }
-        val leInts = createBinaryOperationInjectionImage("leInts", intInjection, boolInjection) { exp1, exp2 -> exp1 le exp2 }
-        val notBool = createUnaryOperationInjectionImage("notBool", boolInjection) { !it }
-        val andBools = createBinaryOperationInjectionImage("andBools", boolInjection, boolInjection) { exp1, exp2 -> exp1 and exp2 }
-        val orBools = createBinaryOperationInjectionImage("orBools", boolInjection, boolInjection) { exp1, exp2 -> exp1 or exp2 }
-        val impliesBools = createBinaryOperationInjectionImage("impliesBools", boolInjection, boolInjection) { exp1, exp2 ->
-            exp1 implies exp2
-        }
+        val gtInts = InjectionImageFunction("gtInts", GtInts, bothArgsInts, boolInjection)
+        val ltInts = InjectionImageFunction("ltInts", LtInts, bothArgsInts, boolInjection)
+        val geInts = InjectionImageFunction("geInts", GeInts, bothArgsInts, boolInjection)
+        val leInts = InjectionImageFunction("leInts", LeInts, bothArgsInts, boolInjection)
+        val notBool = InjectionImageFunction("notBool", NotBool, listOf(boolInjection), boolInjection)
+        val andBools = InjectionImageFunction("andBools", AndBools, bothArgsBools, boolInjection)
+        val orBools = InjectionImageFunction("orBools", OrBools, bothArgsBools, boolInjection)
+        val impliesBools = InjectionImageFunction("impliesBools", ImpliesBools, bothArgsBools, boolInjection)
+        val accompanyingFunctions: List<InjectionImageFunction> = listOf(
+            plusInts, minusInts, timesInts, divInts, remInts, gtInts, ltInts, geInts, leInts, notBool, andBools, orBools, impliesBools
+        )
 
         // special values
         val nullValue = createDomainFunc("nullValue", emptyList(), Ref)
         val unitValue = createDomainFunc("unitValue", emptyList(), Ref)
+
     }
 
-    val classTypes = classes.associateWith { classTypeFunc(it.className) }
+    val classTypes = classes.associateWith { type -> type.runtimeTypeFunc }
 
     val nonNullableTypes = listOf(intType, boolType, unitType, nothingType, anyType, functionType) + classTypes.values
 
@@ -342,6 +308,14 @@ class RuntimeTypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(RUNTI
                         subTrigger { t1 subtype t2 }
                         subTrigger { t2 subtype t3 }
                     }
+                }
+                compoundTrigger {
+                    subTrigger { t1 subtype t2 }
+                    subTrigger { t1 subtype t3 }
+                }
+                compoundTrigger {
+                    subTrigger { t2 subtype t3}
+                    subTrigger { t1 subtype t3}
                 }
                 t1 subtype t3
             }
@@ -435,7 +409,9 @@ class RuntimeTypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(RUNTI
         classTypes.forEach { (typeEmbedding, typeFunction) ->
             typeEmbedding.superTypes.forEach {
                 classTypes[it]?.let { supertypeFunction ->
-                    typeFunction() subtype supertypeFunction()
+                    axiom {
+                        typeFunction() subtype supertypeFunction()
+                    }
                 }
             }
         }

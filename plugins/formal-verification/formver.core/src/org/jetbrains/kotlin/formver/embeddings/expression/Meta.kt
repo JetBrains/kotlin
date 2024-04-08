@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.NamedBranchingNode
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.PlaintextLeaf
@@ -81,7 +82,7 @@ data class SharingContext(override val inner: ExpEmbedding) : PassthroughExpEmbe
  * quite easily by using a fresh variable every time, but that would add unreasonable bloat to many programs.
  * TODO: fix this.
  */
-data class Shared(val inner: ExpEmbedding) : StoredResultExpEmbedding {
+data class Shared(val inner: ExpEmbedding) : StoredResultExpEmbedding, DefaultToBuiltinExpEmbedding {
     private var _context: SharingContext? = null
     val context: SharingContext
         get() = checkNotNull(_context) { "Context of shared used before initialisation is complete." }
@@ -95,7 +96,7 @@ data class Shared(val inner: ExpEmbedding) : StoredResultExpEmbedding {
     }
 
     override fun toViperUnusedResult(ctx: LinearizationContext) {
-        context.tryInitShared { inner.toViperUnusedResult(ctx); UnitLit.pureToViper() }
+        context.tryInitShared { inner.toViperUnusedResult(ctx); UnitLit.pureToViper(toBuiltin = false) }
     }
 
     override fun ignoringMetaNodes() = inner

@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.conversion.AccessPolicy
 import org.jetbrains.kotlin.formver.conversion.SpecialFields
-import org.jetbrains.kotlin.formver.domains.AnyDomain
-import org.jetbrains.kotlin.formver.domains.NullableDomain
-import org.jetbrains.kotlin.formver.domains.TypeDomain
-import org.jetbrains.kotlin.formver.domains.UnitDomain
+import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableSignatureData
 import org.jetbrains.kotlin.formver.embeddings.callables.FieldAccessFunction
 import org.jetbrains.kotlin.formver.embeddings.expression.*
@@ -34,14 +31,9 @@ interface TypeEmbedding {
     /**
      * A Viper expression with the runtime representation of the type.
      *
-     * The Viper values are defined in TypingDomain and are used for casting, subtyping and the `is` operator.
+     * The Viper values are defined in RuntimeTypeDomain and are used for casting, subtyping and the `is` operator.
      */
     val runtimeType: Exp
-
-    /**
-     * The Viper type that is used to represent objects of this type in the Viper result.
-     */
-    val viperType: Type
 
     /**
      * Name representing the type, used for distinguishing overloads.
@@ -83,10 +75,10 @@ interface TypeEmbedding {
      * We can provide these to Viper as assumptions rather than requiring them to be explicitly proven.
      * An example of this is when other systems (e.g. the type checker) have already proven these.
      *
-     * TODO: This should probably always include the `subtypeInvariant`, but primitive types make that harder.
      * TODO: Can be included in the class predicate when unfolding works
      */
-    fun provenInvariants(): List<TypeInvariantEmbedding> = emptyList()
+    fun provenInvariants(): List<TypeInvariantEmbedding> =
+        listOf(SubTypeInvariantEmbedding(this))
 
     /**
      * Invariants that do not depend on the heap, and so do not need to be repeated
@@ -134,16 +126,14 @@ fun <R> TypeEmbedding.mapNotNullUniqueFields(action: (SimpleKotlinName, FieldEmb
     }
 
 data object UnitTypeEmbedding : TypeEmbedding {
-    override val runtimeType = TypeDomain.unitType()
-    override val viperType: Type = UnitDomain.toType()
+    override val runtimeType = RuntimeTypeDomain.unitType()
     override val name = object : MangledName {
         override val mangled: String = "T_Unit"
     }
 }
 
 data object NothingTypeEmbedding : TypeEmbedding {
-    override val runtimeType = TypeDomain.nothingType()
-    override val viperType: Type = UnitDomain.toType()
+    override val runtimeType = RuntimeTypeDomain.nothingType()
     override val name = object : MangledName {
         override val mangled: String = "T_Nothing"
     }
@@ -152,8 +142,7 @@ data object NothingTypeEmbedding : TypeEmbedding {
 }
 
 data object AnyTypeEmbedding : TypeEmbedding {
-    override val runtimeType = TypeDomain.anyType()
-    override val viperType = AnyDomain.toType()
+    override val runtimeType = RuntimeTypeDomain.anyType()
     override val name = object : MangledName {
         override val mangled: String = "T_Any"
     }
@@ -162,33 +151,28 @@ data object AnyTypeEmbedding : TypeEmbedding {
 }
 
 data object IntTypeEmbedding : TypeEmbedding {
-    override val runtimeType = TypeDomain.intType()
-    override val viperType: Type = Type.Int
+    override val runtimeType = RuntimeTypeDomain.intType()
     override val name = object : MangledName {
         override val mangled: String = "T_Int"
     }
 }
 
+
 data object BooleanTypeEmbedding : TypeEmbedding {
-    override val runtimeType = TypeDomain.booleanType()
-    override val viperType: Type = Type.Bool
+    override val runtimeType = RuntimeTypeDomain.boolType()
     override val name = object : MangledName {
         override val mangled: String = "T_Boolean"
     }
 }
 
+
+
 data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding {
-    override val runtimeType = TypeDomain.nullableType(elementType.runtimeType)
-    override val viperType: Type = NullableDomain.nullableType(elementType.viperType)
+    override val runtimeType = RuntimeTypeDomain.nullable(elementType.runtimeType)
     override val name = object : MangledName {
         override val mangled: String = "N" + elementType.name.mangled
     }
 
-    // Due to initialisation order issues, this cannot be a simple `val` field.
-    val nullVal: ExpEmbedding
-        get() = NullLit(elementType)
-
-    override fun provenInvariants(): List<TypeInvariantEmbedding> = listOf(SubTypeInvariantEmbedding(this))
     override fun accessInvariants(): List<TypeInvariantEmbedding> = elementType.accessInvariants().map { IfNonNullInvariant(it) }
 
     // Note: this function will replace accessInvariants when nested unfold will be implemented
@@ -202,10 +186,7 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
 }
 
 abstract class UnspecifiedFunctionTypeEmbedding : TypeEmbedding {
-    override val runtimeType = TypeDomain.functionType()
-    override val viperType: Type = Type.Ref
-
-    override fun provenInvariants(): List<TypeInvariantEmbedding> = listOf(SubTypeInvariantEmbedding(this))
+    override val runtimeType = RuntimeTypeDomain.functionType()
 
     override fun accessInvariants(): List<TypeInvariantEmbedding> =
         listOf(FieldAccessTypeInvariantEmbedding(SpecialFields.FunctionObjectCallCounterField, PermExp.FullPerm()))
@@ -215,8 +196,8 @@ abstract class UnspecifiedFunctionTypeEmbedding : TypeEmbedding {
     object CallCounterMonotonicTypeInvariantEmbedding : TypeInvariantEmbedding {
         override fun fillHole(exp: ExpEmbedding): ExpEmbedding =
             LeCmp(
-                Old(FieldAccess(exp, SpecialFields.FunctionObjectCallCounterField)),
-                FieldAccess(exp, SpecialFields.FunctionObjectCallCounterField)
+                Old(FunctionObjectCallsPrimitiveAccess(exp)),
+                FunctionObjectCallsPrimitiveAccess(exp)
             )
     }
 }
@@ -280,7 +261,7 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
             .map { PredicateAccessTypeInvariantEmbedding(it.name).fillHole(subjectEmbedding) }
 
         val body = (accessFields + accessFieldPredicates + accessSuperTypesPredicates).toConjunction()
-        return Predicate(name, listOf(subjectEmbedding.toLocalVarDecl()), body.pureToViper())
+        return Predicate(name, listOf(subjectEmbedding.toLocalVarDecl()), body.pureToViper(toBuiltin = true))
     }
 
     // Note: This is a preparation for upcoming pull requests, functions for predicates unfolding are just declared and not used.
@@ -288,12 +269,12 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
         val receiver = PlaceholderVariableEmbedding(GetterFunctionSubjectName, this)
         val getPropertyFunctions = fields.values
             .filter { field -> field.accessPolicy != AccessPolicy.ALWAYS_INHALE_EXHALE }
-            .map { field -> FieldAccessFunction(name, field, FieldAccess(receiver, field).pureToViper()) }
+            .map { field -> FieldAccessFunction(name, field, FieldAccess(receiver, field).pureToViper(toBuiltin = false)) }
         val getSuperPropertyFunctions = classSuperTypes.flatMap {
             it.flatMapUniqueFields { _, field ->
                 if (field.accessPolicy != AccessPolicy.ALWAYS_INHALE_EXHALE) {
                     val unfoldingBody =
-                        Exp.FuncApp(GetterFunctionName(it.name, field.name), listOf(receiver.toLocalVarUse()), field.type.viperType)
+                        Exp.FuncApp(GetterFunctionName(it.name, field.name), listOf(receiver.toLocalVarUse()), Type.Ref)
                     listOf(FieldAccessFunction(name, field, unfoldingBody))
                 } else {
                     listOf()
@@ -303,13 +284,13 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
         return getPropertyFunctions + getSuperPropertyFunctions
     }
 
-    override val runtimeType = TypeDomain.classType(className)
-    override val viperType = Type.Ref
-
     // TODO: incorporate generic parameters.
     override val name = object : MangledName {
         override val mangled: String = "T_class_${className.mangled}"
     }
+
+    val runtimeTypeFunc = RuntimeTypeDomain.classTypeFunc(name)
+    override val runtimeType: Exp = runtimeTypeFunc()
 
     override fun findField(name: SimpleKotlinName): FieldEmbedding? = fields[name] ?: findAncestorField(name)
 
@@ -326,5 +307,11 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
     // Note: this function will replace accessInvariants when nested unfold will be implemented
     override fun predicateAccessInvariants(): List<TypeInvariantEmbedding> = listOf(PredicateAccessTypeInvariantEmbedding(name))
 
-    override fun provenInvariants(): List<TypeInvariantEmbedding> = listOf(SubTypeInvariantEmbedding(this))
+}
+
+
+inline fun TypeEmbedding.injectionOr(default: () -> Injection): Injection = when(this) {
+    IntTypeEmbedding -> RuntimeTypeDomain.intInjection
+    BooleanTypeEmbedding -> RuntimeTypeDomain.boolInjection
+    else -> default()
 }

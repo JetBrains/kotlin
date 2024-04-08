@@ -46,7 +46,7 @@ class DomainFunc(
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) : IntoSilver<viper.silver.ast.DomainFunc> {
+) : IntoSilver<viper.silver.ast.DomainFunc>, Applicable {
     override fun toSilver(): viper.silver.ast.DomainFunc =
         viper.silver.ast.DomainFunc(
             name.mangled,
@@ -60,8 +60,8 @@ class DomainFunc(
             trafos.toSilver()
         )
 
-    operator fun invoke(vararg args: Exp, pos: Position = Position.NoPosition, info: Info = Info.NoInfo): Exp.DomainFuncApp =
-        Exp.DomainFuncApp(this, args.toList(), typeArgs.associateWith { it }, pos, info)
+    override fun toFuncApp(args: List<Exp>, pos: Position, info: Info, trafos: Trafos): Exp.DomainFuncApp =
+        Exp.DomainFuncApp(this, args, typeArgs.associateWith { it }, pos, info)
 }
 
 class DomainAxiom(

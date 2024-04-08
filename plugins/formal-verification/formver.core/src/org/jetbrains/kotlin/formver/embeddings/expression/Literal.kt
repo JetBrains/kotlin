@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.domains.NullableDomain
+import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.PlaintextLeaf
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
@@ -24,7 +24,12 @@ data object UnitLit : UnitResultExpEmbedding {
 
 data class IntLit(val value: Int) : PureExpEmbedding {
     override val type = IntTypeEmbedding
-    override fun toViper(source: KtSourceElement?): Exp = Exp.IntLit(value, source.asPosition)
+    override fun toViper(source: KtSourceElement?): Exp =
+        RuntimeTypeDomain.intInjection.toRef(
+            Exp.IntLit(value, source.asPosition, sourceRole.asInfo),
+            pos = source.asPosition,
+            info = sourceRole.asInfo
+        )
 
     override val debugName: String
         get() = "Int"
@@ -35,7 +40,12 @@ data class IntLit(val value: Int) : PureExpEmbedding {
 
 data class BooleanLit(val value: Boolean, override val sourceRole: SourceRole? = null) : PureExpEmbedding {
     override val type = BooleanTypeEmbedding
-    override fun toViper(source: KtSourceElement?): Exp = Exp.BoolLit(value, source.asPosition, sourceRole.asInfo)
+    override fun toViper(source: KtSourceElement?): Exp =
+        RuntimeTypeDomain.boolInjection.toRef(
+            Exp.BoolLit(value, source.asPosition, sourceRole.asInfo),
+            pos = source.asPosition,
+            info = sourceRole.asInfo
+        )
 
     override val debugName: String
         get() = "Boolean"
@@ -44,10 +54,15 @@ data class BooleanLit(val value: Boolean, override val sourceRole: SourceRole? =
         get() = listOf(PlaintextLeaf(value.toString()))
 }
 
-data class NullLit(val elemType: TypeEmbedding) : PureExpEmbedding {
-    override val type = NullableTypeEmbedding(elemType)
-    override fun toViper(source: KtSourceElement?): Exp = NullableDomain.nullVal(elemType.viperType, source)
+data object NullLit : PureExpEmbedding {
+    override val type = NullableTypeEmbedding(NothingTypeEmbedding)
+    override fun toViper(source: KtSourceElement?): Exp =
+        RuntimeTypeDomain.nullValue(pos = source.asPosition)
 
     override val debugName: String
-        get() = "Null[${elemType.name.mangled}]"
+        get() = "Null"
+
+    override val debugExtraSubtrees: List<TreeView>
+        get() = listOf(PlaintextLeaf("null"))
 }
+

@@ -6,19 +6,23 @@
 package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.conversion.AccessPolicy
-import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.*
-import org.jetbrains.kotlin.formver.embeddings.mapNotNullUniqueFields
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.formver.viper.ast.UserMethod
 
 interface FullNamedFunctionSignature : NamedFunctionSignature {
+    /**
+     * Preconditions of function in form of `ExpEmbedding`s with type `boolType()`.
+     */
     fun getPreconditions(returnVariable: VariableEmbedding): List<ExpEmbedding>
+
+    /**
+     * Postconditions of function in form of `ExpEmbedding`s with type `boolType()`.
+     */
     fun getPostconditions(returnVariable: VariableEmbedding): List<ExpEmbedding>
+
     val declarationSource: KtSourceElement?
 }
 
@@ -29,8 +33,8 @@ fun FullNamedFunctionSignature.toViperMethod(
     name,
     formalArgs.map { it.toLocalVarDecl() },
     returnVariable.toLocalVarDecl(),
-    getPreconditions(returnVariable).pureToViper(),
-    getPostconditions(returnVariable).pureToViper(),
+    getPreconditions(returnVariable).pureToViper(toBuiltin = true),
+    getPostconditions(returnVariable).pureToViper(toBuiltin = true),
     body,
     declarationSource.asPosition
 )

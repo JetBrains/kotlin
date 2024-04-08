@@ -50,11 +50,9 @@ class CallsInPlaceError(private val sourceRole: SourceRole.CallsInPlaceEffect) :
     }
 }
 
-class LeakingLambdaError(private val error: VerificationError) : FormattedError {
+class LeakingLambdaError(private val sourceRole: SourceRole.FirSymbolHolder) : FormattedError {
     override fun report(reporter: DiagnosticReporter, source: KtSourceElement?, context: CheckerContext) {
-        // The leaking function symbol is always contained in the first argument of the error's reason.
-        val faultPropositionInfo = error.unverifiableProposition.asCallable().arg(0).info
-        val leakingFunctionSymbol = faultPropositionInfo.unwrap<SourceRole.FirSymbolHolder>().firSymbol
+        val leakingFunctionSymbol = sourceRole.firSymbol
         reporter.reportOn(source, PluginErrors.LAMBDA_MAY_LEAK, leakingFunctionSymbol, context)
     }
 }
@@ -133,7 +131,7 @@ fun VerificationError.formatUserFriendly(): FormattedError? =
         is SourceRole.ReturnsEffect -> ReturnsEffectError(sourceRole)
         is SourceRole.CallsInPlaceEffect -> CallsInPlaceError(sourceRole)
         is SourceRole.ConditionalEffect -> ConditionalEffectError(sourceRole)
-        is SourceRole.ParamFunctionLeakageCheck -> LeakingLambdaError(this)
+        is SourceRole.ParamFunctionLeakageCheck -> LeakingLambdaError(sourceRole.functionRole)
         is SourceRole.ListElementAccessCheck -> IndexOutOfBoundError(this, sourceRole)
         is SourceRole.SubListCreation -> InvalidSubListRangeError(this, sourceRole)
         else -> null

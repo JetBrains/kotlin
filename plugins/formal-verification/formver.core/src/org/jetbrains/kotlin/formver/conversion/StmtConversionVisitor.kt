@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.UnspecifiedFunctionTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
@@ -68,7 +67,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         when (constExpression.kind) {
             ConstantValueKind.Int -> IntLit((constExpression.value as Long).toInt())
             ConstantValueKind.Boolean -> BooleanLit(constExpression.value as Boolean)
-            ConstantValueKind.Null -> data.embedType(constExpression).getNullable().nullVal
+            ConstantValueKind.Null -> NullLit
             else -> handleUnimplementedElement("Constant Expression of type ${constExpression.kind} is not yet implemented.", data)
         }
 
@@ -90,7 +89,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         return if (branch.condition is FirElseIfTrueCondition) {
             data.withNewScope { convert(branch.result) }
         } else {
-            val cond = data.convert(branch.condition)
+            val cond = data.convert(branch.condition).withType(BooleanTypeEmbedding)
             val thenExp = data.withNewScope { convert(branch.result) }
             val elseExp = convertWhenBranches(whenBranches, type, data)
             If(cond, thenExp, elseExp, type)
@@ -139,44 +138,15 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
     }
 
     private fun convertEqCmp(left: ExpEmbedding, right: ExpEmbedding): ExpEmbedding {
-        val leftType = left.type
-        val rightType = right.type
-        // TODO: check whether isNullVal can be used here with no loss of generality.
-        // TODO: In all branches, replace the final Eq comparison with a member call function to `left.equals`
-        return when {
-            leftType is NullableTypeEmbedding && rightType !is NullableTypeEmbedding ->
-                share(left) { sharedLeft ->
-                    And(
-                        NeCmp(sharedLeft, leftType.nullVal),
-                        EqCmp(sharedLeft.withType(leftType.elementType), right.withType(leftType.elementType)),
-                    )
-                }
-            leftType is NullableTypeEmbedding && rightType is NullableTypeEmbedding ->
-                share(left) { sharedLeft ->
-                    share(right) { sharedRight ->
-                        Or(
-                            And(
-                                EqCmp(sharedLeft, leftType.nullVal),
-                                EqCmp(sharedRight, rightType.nullVal),
-                            ),
-                            And(
-                                And(
-                                    NeCmp(sharedLeft, leftType.nullVal),
-                                    NeCmp(sharedRight, rightType.nullVal),
-                                ),
-                                EqCmp(sharedLeft.withType(leftType.elementType), sharedRight.withType(leftType.elementType)),
-                            ),
-                        )
-                    }
-                }
-            else -> EqCmp(left, right.withType(leftType))
-        }
+        //TODO: replace with call to left.equals()
+        return EqCmp(left, right)
     }
 
     override fun visitComparisonExpression(
         comparisonExpression: FirComparisonExpression,
         data: StmtConversionContext,
     ): ExpEmbedding {
+        //TODO: replace with call to all non-Int types
         val dispatchReceiver = checkNotNull(comparisonExpression.compareToCall.dispatchReceiver) {
             "found 'compareTo' call with null receiver"
         }
@@ -206,7 +176,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
     ): ExpEmbedding {
         val receiver = implicitInvokeCall.dispatchReceiver as? FirPropertyAccessExpression
             ?: throw NotImplementedError("Implicit invoke calls only support a limited range of receivers at the moment.")
-         val receiverSymbol = receiver.calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()!!
+        val receiverSymbol = receiver.calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()!!
         val args = implicitInvokeCall.argumentList.arguments.map(data::convert)
         return when (val exp = data.embedLocalSymbol(receiverSymbol).ignoringMetaNodes()) {
             is LambdaExp -> {
@@ -234,7 +204,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): ExpEmbedding {
-        val condition = data.convert(whileLoop.condition)
+        val condition = data.convert(whileLoop.condition).withType(BooleanTypeEmbedding)
         val returnTarget = data.defaultResolvedReturnTarget
         val invariants = when (val sig = data.signature) {
             is FullNamedFunctionSignature -> sig.getPostconditions(returnTarget.variable)
@@ -312,8 +282,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         return when (typeOperatorCall.operation) {
             FirOperation.IS -> Is(argument, conversionType)
             FirOperation.NOT_IS -> Not(Is(argument, conversionType))
-            FirOperation.AS -> Cast(argument, conversionType).withAccessInvariants()
-            FirOperation.SAFE_AS -> SafeCast(argument, conversionType).withAccessInvariants()
+            FirOperation.AS -> Cast(argument, conversionType).withAccessAndProvenInvariants()
+            FirOperation.SAFE_AS -> SafeCast(argument, conversionType).withAccessAndProvenInvariants()
             else -> handleUnimplementedElement("Can't embed type operator ${typeOperatorCall.operation}.", data)
         }
     }
@@ -376,7 +346,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
             If(
                 sharedReceiver.notNullCmp(),
                 data.withCheckedSafeCallSubject(sharedReceiver.withType(checkedSafeCallSubjectType)) { convert(selector) },
-                expType.getNullable().nullVal,
+                NullLit,
                 expType
             )
         }

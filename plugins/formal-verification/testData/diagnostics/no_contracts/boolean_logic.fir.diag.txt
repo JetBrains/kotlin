@@ -1,51 +1,63 @@
 /boolean_logic.kt:(4,12): info: Generated Viper text for negation:
-method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Bool)
-  returns (ret$0: Bool)
+method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
-  ret$0 := !local$x
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$boolType())
+  ret$0 := special$notBool(local$x)
   goto label$ret$0
   label label$ret$0
 }
 
 /boolean_logic.kt:(56,67): info: Generated Viper text for conjunction:
-method global$fun_conjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
-  local$y: Bool)
-  returns (ret$0: Bool)
+method global$fun_conjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Ref,
+  local$y: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
-  if (local$x) {
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$boolType())
+  if (dom$RuntimeType$boolFromRef(local$x)) {
     ret$0 := local$y
   } else {
-    ret$0 := false}
+    ret$0 := dom$RuntimeType$boolToRef(false)}
   goto label$ret$0
   label label$ret$0
 }
 
 /boolean_logic.kt:(127,151): info: Generated Viper text for conjunction_side_effects:
-method global$fun_conjunction_side_effects$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
-  local$y: Bool)
-  returns (ret$0: Bool)
+method global$fun_conjunction_side_effects$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Ref,
+  local$y: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
-  var anonymous$0: Bool
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$boolType())
   anonymous$0 := global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x)
-  if (anonymous$0) {
+  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
     ret$0 := global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$y)
   } else {
-    ret$0 := false}
+    ret$0 := dom$RuntimeType$boolToRef(false)}
   goto label$ret$0
   label label$ret$0
 }
 
-method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Bool)
-  returns (ret: Bool)
+method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
 
 
 /boolean_logic.kt:(324,335): info: Generated Viper text for disjunction:
-method global$fun_disjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
-  local$y: Bool)
-  returns (ret$0: Bool)
+method global$fun_disjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Ref,
+  local$y: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
-  if (local$x) {
-    ret$0 := true
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$boolType())
+  if (dom$RuntimeType$boolFromRef(local$x)) {
+    ret$0 := dom$RuntimeType$boolToRef(true)
   } else {
     ret$0 := local$y}
   goto label$ret$0

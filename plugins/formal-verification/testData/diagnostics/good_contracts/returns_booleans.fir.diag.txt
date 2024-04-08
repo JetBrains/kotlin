@@ -1,72 +1,95 @@
 /returns_booleans.kt:(121,133): info: Generated Viper text for returns_true:
 method global$fun_returns_true$fun_take$$return$T_Boolean()
-  returns (ret$0: Bool)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   ensures true
-  ensures ret$0 == true
+  ensures dom$RuntimeType$boolFromRef(ret$0) == true
 {
-  ret$0 := true
+  ret$0 := dom$RuntimeType$boolToRef(true)
   goto label$ret$0
   label label$ret$0
 }
 
 /returns_booleans.kt:(268,281): info: Generated Viper text for returns_false:
 method global$fun_returns_false$fun_take$$return$T_Boolean()
-  returns (ret$0: Bool)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   ensures true
-  ensures ret$0 == false
+  ensures dom$RuntimeType$boolFromRef(ret$0) == false
 {
-  ret$0 := false
+  ret$0 := dom$RuntimeType$boolToRef(false)
   goto label$ret$0
   label label$ret$0
 }
 
 /returns_booleans.kt:(418,435): info: Generated Viper text for conditional_basic:
-method global$fun_conditional_basic$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
-  returns (ret$0: Bool)
-  ensures ret$0 == true ==> true
-  ensures ret$0 == false ==> local$b
+method global$fun_conditional_basic$fun_take$T_Boolean$return$T_Boolean(local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == true ==> true
+  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==>
+    dom$RuntimeType$boolFromRef(local$b)
 {
-  ret$0 := true
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  ret$0 := dom$RuntimeType$boolToRef(true)
   goto label$ret$0
   label label$ret$0
 }
 
 /returns_booleans.kt:(612,636): info: Generated Viper text for binary_logic_expressions:
-method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Bool,
-  local$b: Bool)
-  returns (ret$0: Bool)
-  ensures ret$0 == false ==> local$b && false
-  ensures ret$0 == true ==> (true || local$a) && (local$b || true)
+method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Ref,
+  local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==>
+    dom$RuntimeType$boolFromRef(local$b) && false
+  ensures dom$RuntimeType$boolFromRef(ret$0) == true ==>
+    (true || dom$RuntimeType$boolFromRef(local$a)) &&
+    (dom$RuntimeType$boolFromRef(local$b) || true)
 {
-  ret$0 := true
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  ret$0 := dom$RuntimeType$boolToRef(true)
   goto label$ret$0
   label label$ret$0
 }
 
 /returns_booleans.kt:(855,866): info: Generated Viper text for logical_not:
-method global$fun_logical_not$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
-  returns (ret$0: Bool)
-  ensures ret$0 == true ==> !local$b && local$b
-  ensures ret$0 == false ==> local$b || !local$b
+method global$fun_logical_not$fun_take$T_Boolean$return$T_Boolean(local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == true ==>
+    !dom$RuntimeType$boolFromRef(local$b) &&
+    dom$RuntimeType$boolFromRef(local$b)
+  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==>
+    dom$RuntimeType$boolFromRef(local$b) ||
+    !dom$RuntimeType$boolFromRef(local$b)
 {
-  ret$0 := false
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  ret$0 := dom$RuntimeType$boolToRef(false)
   goto label$ret$0
   label label$ret$0
 }
 
 /returns_booleans.kt:(1052,1075): info: Generated Viper text for call_fun_with_contracts:
-method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Bool,
-  local$b: Bool)
-  returns (ret: Bool)
-  ensures ret == false ==> local$b && false
-  ensures ret == true ==> (true || local$a) && (local$b || true)
+method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Ref,
+  local$b: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret) == false ==>
+    dom$RuntimeType$boolFromRef(local$b) && false
+  ensures dom$RuntimeType$boolFromRef(ret) == true ==>
+    (true || dom$RuntimeType$boolFromRef(local$a)) &&
+    (dom$RuntimeType$boolFromRef(local$b) || true)
 
 
-method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
-  returns (ret$0: Bool)
-  ensures ret$0 == true
+method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == true
 {
-  var local0$a: Bool
+  var local0$a: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
   local0$a := global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$b,
     local$b)
   ret$0 := local0$a
@@ -75,48 +98,42 @@ method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(lo
 }
 
 /returns_booleans.kt:(1467,1480): info: Generated Viper text for isNullOrEmpty:
-field special$size: Int
+field special$size: Ref
 
-method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(local$collection: dom$Nullable[Ref])
-  returns (ret$0: Bool)
-  requires local$collection != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(local$collection, dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref).special$size, write)
-  requires local$collection != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    (dom$Casting$cast(local$collection, dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref).special$size >=
-    0
-  ensures local$collection != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(local$collection, dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref).special$size, write)
-  ensures local$collection != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    (dom$Casting$cast(local$collection, dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref).special$size >=
-    0
-  ensures ret$0 == false ==>
-    local$collection != (dom$Nullable$null(): dom$Nullable[Ref])
+method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(local$collection: Ref)
+  returns (ret$0: Ref)
+  requires local$collection != dom$RuntimeType$nullValue() ==>
+    acc(local$collection.special$size, write)
+  requires local$collection != dom$RuntimeType$nullValue() ==>
+    dom$RuntimeType$intFromRef(local$collection.special$size) >= 0
+  ensures local$collection != dom$RuntimeType$nullValue() ==>
+    acc(local$collection.special$size, write)
+  ensures local$collection != dom$RuntimeType$nullValue() ==>
+    dom$RuntimeType$intFromRef(local$collection.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==>
+    local$collection != dom$RuntimeType$nullValue()
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$collection): dom$Type),
-    dom$Type$special$Nullable(dom$Type$pkg$kotlin$collections$global$class_Collection()))
-  if (local$collection == (dom$Nullable$null(): dom$Nullable[Ref]) &&
-  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
-  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
-  local$collection != (dom$Nullable$null(): dom$Nullable[Ref]) &&
-  (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
-  (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
-  (dom$Casting$cast(local$collection, dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref) ==
-  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref)) {
-    ret$0 := true
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$collection),
+    dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_Collection()))
+  if (local$collection == dom$RuntimeType$nullValue()) {
+    ret$0 := dom$RuntimeType$boolToRef(true)
   } else {
-    ret$0 := pkg$kotlin$collections$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean((dom$Casting$cast(local$collection,
-      dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref))}
+    ret$0 := pkg$kotlin$collections$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(local$collection)}
   goto label$ret$0
   label label$ret$0
 }
 
 method pkg$kotlin$collections$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: Ref)
-  returns (ret: Bool)
+  returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures this.special$size == old(this.special$size)
-  ensures ret ==> this.special$size == 0
-  ensures !ret ==> this.special$size > 0
-
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
+  ensures dom$RuntimeType$boolFromRef(ret) ==>
+    dom$RuntimeType$intFromRef(this.special$size) == 0
+  ensures !dom$RuntimeType$boolFromRef(ret) ==>
+    dom$RuntimeType$intFromRef(this.special$size) > 0

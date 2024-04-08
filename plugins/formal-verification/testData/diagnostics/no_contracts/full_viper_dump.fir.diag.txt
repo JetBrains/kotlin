@@ -1,322 +1,315 @@
 /full_viper_dump.kt:(134,135): info: Generated Viper text for f:
-domain dom$Any  {
+domain dom$RuntimeType  {
 
+  unique function dom$RuntimeType$intType(): dom$RuntimeType
 
-}
+  unique function dom$RuntimeType$boolType(): dom$RuntimeType
 
-domain dom$Casting[A, B]  {
+  unique function dom$RuntimeType$unitType(): dom$RuntimeType
 
-  function dom$Casting$cast(a: A, newType: dom$Type): B
+  unique function dom$RuntimeType$nothingType(): dom$RuntimeType
 
-  axiom dom$Casting$null_cast {
-    (forall newType: dom$Type ::
-      { (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), newType): dom$Nullable[B]) }
-      dom$Type$is_nullable_type(newType) ==>
-      (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), newType): dom$Nullable[B]) ==
-      (dom$Nullable$null(): dom$Nullable[B]))
+  unique function dom$RuntimeType$anyType(): dom$RuntimeType
+
+  unique function dom$RuntimeType$functionType(): dom$RuntimeType
+
+  unique function dom$RuntimeType$T_class_global$class_Foo(): dom$RuntimeType
+
+  function dom$RuntimeType$nullValue(): Ref
+
+  function dom$RuntimeType$unitValue(): Ref
+
+  function dom$RuntimeType$isSubtype(t1: dom$RuntimeType, t2: dom$RuntimeType): Bool
+
+  function dom$RuntimeType$typeOf(r: Ref): dom$RuntimeType
+
+  function dom$RuntimeType$nullable(t: dom$RuntimeType): dom$RuntimeType
+
+  function dom$RuntimeType$intToRef(v: Int): Ref
+
+  function dom$RuntimeType$intFromRef(r: Ref): Int
+
+  function dom$RuntimeType$boolToRef(v: Bool): Ref
+
+  function dom$RuntimeType$boolFromRef(r: Ref): Bool
+
+  axiom dom$RuntimeType$subtype_reflexive {
+    (forall t: dom$RuntimeType ::dom$RuntimeType$isSubtype(t, t))
   }
 
-  axiom dom$Casting$type_of_cast {
-    (forall a: A, newType: dom$Type ::
-      { (dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type) }
-      dom$Type$isSubtype((dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type),
-      newType))
+  axiom dom$RuntimeType$subtype_transitive {
+    (forall t1: dom$RuntimeType, t2: dom$RuntimeType, t3: dom$RuntimeType ::
+      { dom$RuntimeType$isSubtype(t1, t2), dom$RuntimeType$isSubtype(t2, t3) }
+      { dom$RuntimeType$isSubtype(t1, t2), dom$RuntimeType$isSubtype(t1, t3) }
+      { dom$RuntimeType$isSubtype(t2, t3), dom$RuntimeType$isSubtype(t1, t3) }
+      dom$RuntimeType$isSubtype(t1, t2) &&
+      dom$RuntimeType$isSubtype(t2, t3) ==>
+      dom$RuntimeType$isSubtype(t1, t3))
   }
 
-  axiom dom$Casting$type_of_cast_invariant {
-    (forall a: A, newType: dom$Type ::
-      { (dom$Casting$cast(a, newType): B) }
-      (dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type) ==
-      (dom$TypeOf$typeOf(a): dom$Type))
-  }
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T, newType: dom$Type ::
-      { (dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]) }
-      !dom$Type$is_nullable_type(newType) ==>
-      (dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
+  axiom dom$RuntimeType$subtype_antisymmetric {
+    (forall t1: dom$RuntimeType, t2: dom$RuntimeType ::
+      { dom$RuntimeType$isSubtype(t1, t2), dom$RuntimeType$isSubtype(t2, t1) }
+      dom$RuntimeType$isSubtype(t1, t2) &&
+      dom$RuntimeType$isSubtype(t2, t1) ==>
+      t1 == t2)
   }
 
-  axiom dom$Nullable$null_of_every_nullable_type {
-    (forall nx: dom$Nullable[T], newType: dom$Type ::
-      { dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType) }
-      dom$Type$is_nullable_type(newType) &&
-      nx == (dom$Nullable$null(): dom$Nullable[T]) ==>
-      dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType))
+  axiom dom$RuntimeType$nullable_idempotent {
+    (forall t: dom$RuntimeType ::
+      { dom$RuntimeType$nullable(dom$RuntimeType$nullable(t)) }
+      dom$RuntimeType$nullable(dom$RuntimeType$nullable(t)) ==
+      dom$RuntimeType$nullable(t))
   }
 
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T, newType: dom$Type ::
-      { (dom$Casting$cast((dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]),
-      (dom$TypeOf$typeOf(x): dom$Type)): T) }
-      (dom$Casting$cast((dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]),
-      (dom$TypeOf$typeOf(x): dom$Type)): T) ==
-      x)
+  axiom dom$RuntimeType$nullable_supertype {
+    (forall t: dom$RuntimeType ::
+      { dom$RuntimeType$nullable(t) }
+      dom$RuntimeType$isSubtype(t, dom$RuntimeType$nullable(t)))
   }
 
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall nx: dom$Nullable[T], newType: dom$Type ::
-      { (dom$Casting$cast((dom$Casting$cast(nx, newType): T), (dom$TypeOf$typeOf(nx): dom$Type)): dom$Nullable[T]) }
-      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Casting$cast((dom$Casting$cast(nx, newType): T), (dom$TypeOf$typeOf(nx): dom$Type)): dom$Nullable[T]) ==
-      nx)
+  axiom dom$RuntimeType$nullable_preserves_subtype {
+    (forall t1: dom$RuntimeType, t2: dom$RuntimeType ::
+      { dom$RuntimeType$isSubtype(dom$RuntimeType$nullable(t1), dom$RuntimeType$nullable(t2)) }
+      dom$RuntimeType$isSubtype(t1, t2) ==>
+      dom$RuntimeType$isSubtype(dom$RuntimeType$nullable(t1), dom$RuntimeType$nullable(t2)))
   }
 
-  axiom dom$Nullable$null_val_or_under_type {
-    (forall nx: dom$Nullable[T], newType: dom$Type ::
-      { dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), dom$Type$special$Nullable(newType)) }
-      !dom$Type$is_nullable_type(newType) &&
-      dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), dom$Type$special$Nullable(newType)) ==>
-      nx == (dom$Nullable$null(): dom$Nullable[T]) ||
-      dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType))
-  }
-
-  axiom dom$Nullable$null_not_any {
-    (forall nx: dom$Nullable[T], newType: dom$Type ::
-      { dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType) }
-      !dom$Type$is_nullable_type(newType) &&
-      nx == (dom$Nullable$null(): dom$Nullable[T]) ==>
-      !dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType))
-  }
-}
-
-domain dom$Type  {
-
-  unique function dom$Type$Int(): dom$Type
-
-  unique function dom$Type$Boolean(): dom$Type
-
-  unique function dom$Type$Unit(): dom$Type
-
-  unique function dom$Type$Nothing(): dom$Type
-
-  unique function dom$Type$Any(): dom$Type
-
-  unique function dom$Type$Function(): dom$Type
-
-  unique function dom$Type$global$class_Foo(): dom$Type
-
-  function dom$Type$special$Nullable(t: dom$Type): dom$Type
-
-  function dom$Type$isSubtype(a: dom$Type, b: dom$Type): Bool
-
-  function dom$Type$is_nullable_type(t: dom$Type): Bool
-
-  axiom {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$special$Nullable(t) != dom$Type$Int())
+  axiom dom$RuntimeType$nullable_any_supertype {
+    (forall t: dom$RuntimeType ::dom$RuntimeType$isSubtype(t, dom$RuntimeType$nullable(dom$RuntimeType$anyType())))
   }
 
   axiom {
-    !dom$Type$is_nullable_type(dom$Type$Int())
+    dom$RuntimeType$isSubtype(dom$RuntimeType$intType(), dom$RuntimeType$anyType())
   }
 
   axiom {
-    dom$Type$isSubtype(dom$Type$Int(), dom$Type$Any())
+    dom$RuntimeType$isSubtype(dom$RuntimeType$boolType(), dom$RuntimeType$anyType())
   }
 
   axiom {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$special$Nullable(t) != dom$Type$Boolean())
+    dom$RuntimeType$isSubtype(dom$RuntimeType$unitType(), dom$RuntimeType$anyType())
   }
 
   axiom {
-    !dom$Type$is_nullable_type(dom$Type$Boolean())
+    dom$RuntimeType$isSubtype(dom$RuntimeType$nothingType(), dom$RuntimeType$anyType())
   }
 
   axiom {
-    dom$Type$isSubtype(dom$Type$Boolean(), dom$Type$Any())
+    dom$RuntimeType$isSubtype(dom$RuntimeType$anyType(), dom$RuntimeType$anyType())
   }
 
   axiom {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$special$Nullable(t) != dom$Type$Unit())
+    dom$RuntimeType$isSubtype(dom$RuntimeType$functionType(), dom$RuntimeType$anyType())
   }
 
   axiom {
-    !dom$Type$is_nullable_type(dom$Type$Unit())
+    dom$RuntimeType$isSubtype(dom$RuntimeType$T_class_global$class_Foo(), dom$RuntimeType$anyType())
+  }
+
+  axiom dom$RuntimeType$supertype_of_nothing {
+    (forall t: dom$RuntimeType ::dom$RuntimeType$isSubtype(dom$RuntimeType$nothingType(),
+      t))
+  }
+
+  axiom dom$RuntimeType$any_not_nullable {
+    (forall t: dom$RuntimeType ::!dom$RuntimeType$isSubtype(dom$RuntimeType$nullable(t),
+      dom$RuntimeType$anyType()))
+  }
+
+  axiom dom$RuntimeType$null_smartcast_value_level {
+    (forall r: Ref, t: dom$RuntimeType ::
+      { dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(r), dom$RuntimeType$nullable(t)) }
+      dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(r), dom$RuntimeType$nullable(t)) ==>
+      r == dom$RuntimeType$nullValue() ||
+      dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(r), t))
+  }
+
+  axiom dom$RuntimeType$nothing_empty {
+    (forall r: Ref ::!dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(r), dom$RuntimeType$nothingType()))
+  }
+
+  axiom dom$RuntimeType$null_smartcast_type_level {
+    (forall t1: dom$RuntimeType, t2: dom$RuntimeType ::
+      { dom$RuntimeType$isSubtype(t1, dom$RuntimeType$anyType()), dom$RuntimeType$isSubtype(t1,
+      dom$RuntimeType$nullable(t2)) }
+      dom$RuntimeType$isSubtype(t1, dom$RuntimeType$anyType()) &&
+      dom$RuntimeType$isSubtype(t1, dom$RuntimeType$nullable(t2)) ==>
+      dom$RuntimeType$isSubtype(t1, t2))
+  }
+
+  axiom dom$RuntimeType$type_of_null {
+    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(dom$RuntimeType$nullValue()),
+    dom$RuntimeType$nullable(dom$RuntimeType$nothingType()))
+  }
+
+  axiom dom$RuntimeType$type_of_unit {
+    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(dom$RuntimeType$unitValue()),
+    dom$RuntimeType$unitType())
+  }
+
+  axiom dom$RuntimeType$uniqueness_of_unit {
+    (forall r: Ref ::
+      { dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(r), dom$RuntimeType$unitType()) }
+      dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(r), dom$RuntimeType$unitType()) ==>
+      r == dom$RuntimeType$unitValue())
   }
 
   axiom {
-    dom$Type$isSubtype(dom$Type$Unit(), dom$Type$Any())
+    (forall v: Int ::
+      { dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(dom$RuntimeType$intToRef(v)),
+      dom$RuntimeType$intType()) }
+      dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(dom$RuntimeType$intToRef(v)),
+      dom$RuntimeType$intType()))
   }
 
   axiom {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$special$Nullable(t) != dom$Type$Nothing())
+    (forall v: Int ::
+      { dom$RuntimeType$intFromRef(dom$RuntimeType$intToRef(v)) }
+      dom$RuntimeType$intFromRef(dom$RuntimeType$intToRef(v)) == v)
   }
 
   axiom {
-    !dom$Type$is_nullable_type(dom$Type$Nothing())
+    (forall r: Ref ::
+      { dom$RuntimeType$intToRef(dom$RuntimeType$intFromRef(r)) }
+      dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(r), dom$RuntimeType$intType()) ==>
+      dom$RuntimeType$intToRef(dom$RuntimeType$intFromRef(r)) == r)
   }
 
   axiom {
-    dom$Type$isSubtype(dom$Type$Nothing(), dom$Type$Any())
+    (forall v: Bool ::
+      { dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(dom$RuntimeType$boolToRef(v)),
+      dom$RuntimeType$boolType()) }
+      dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(dom$RuntimeType$boolToRef(v)),
+      dom$RuntimeType$boolType()))
   }
 
   axiom {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$special$Nullable(t) != dom$Type$Any())
+    (forall v: Bool ::
+      { dom$RuntimeType$boolFromRef(dom$RuntimeType$boolToRef(v)) }
+      dom$RuntimeType$boolFromRef(dom$RuntimeType$boolToRef(v)) == v)
   }
 
   axiom {
-    !dom$Type$is_nullable_type(dom$Type$Any())
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$Any(), dom$Type$Any())
-  }
-
-  axiom {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$special$Nullable(t) != dom$Type$Function())
-  }
-
-  axiom {
-    !dom$Type$is_nullable_type(dom$Type$Function())
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$Function(), dom$Type$Any())
-  }
-
-  axiom {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$special$Nullable(t) != dom$Type$global$class_Foo())
-  }
-
-  axiom {
-    !dom$Type$is_nullable_type(dom$Type$global$class_Foo())
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$global$class_Foo(), dom$Type$Any())
-  }
-
-  axiom dom$Type$nullable_injective {
-    (forall t: dom$Type, t2: dom$Type ::t != t2 ==>
-      dom$Type$special$Nullable(t) != dom$Type$special$Nullable(t2))
-  }
-
-  axiom dom$Type$nullable_is_nullable {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$is_nullable_type(dom$Type$special$Nullable(t)))
-  }
-
-  axiom dom$Type$subtype_reflexive {
-    (forall t: dom$Type ::dom$Type$isSubtype(t, t))
-  }
-
-  axiom dom$Type$subtype_transitive {
-    (forall t: dom$Type, t2: dom$Type, t3: dom$Type ::
-      { dom$Type$isSubtype(t, t2), dom$Type$isSubtype(t2, t3) }
-      dom$Type$isSubtype(t, t2) && dom$Type$isSubtype(t2, t3) ==>
-      dom$Type$isSubtype(t, t3))
-  }
-
-  axiom dom$Type$subtype_antisymmetric {
-    (forall t: dom$Type, t2: dom$Type ::
-      { dom$Type$isSubtype(t, t2), dom$Type$isSubtype(t2, t) }
-      dom$Type$isSubtype(t, t2) && dom$Type$isSubtype(t2, t) ==> t == t2)
-  }
-
-  axiom dom$Type$nullable_supertype {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$isSubtype(t, dom$Type$special$Nullable(t)))
-  }
-
-  axiom dom$Type$nullable_covariant {
-    (forall t: dom$Type, t2: dom$Type ::
-      { dom$Type$isSubtype(dom$Type$special$Nullable(t), dom$Type$special$Nullable(t2)) }
-      dom$Type$isSubtype(t, t2) ==>
-      dom$Type$isSubtype(dom$Type$special$Nullable(t), dom$Type$special$Nullable(t2)))
-  }
-
-  axiom dom$Type$nothing_bottom {
-    (forall t: dom$Type ::dom$Type$isSubtype(dom$Type$Nothing(), t))
-  }
-
-  axiom dom$Type$nullable_any_top {
-    (forall t: dom$Type ::dom$Type$isSubtype(t, dom$Type$special$Nullable(dom$Type$Any())))
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$global$class_Foo(), dom$Type$Any())
+    (forall r: Ref ::
+      { dom$RuntimeType$boolToRef(dom$RuntimeType$boolFromRef(r)) }
+      dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(r), dom$RuntimeType$boolType()) ==>
+      dom$RuntimeType$boolToRef(dom$RuntimeType$boolFromRef(r)) == r)
   }
 }
 
-domain dom$TypeOf[T]  {
-
-  function dom$TypeOf$typeOf(x: T): dom$Type
-
-  axiom dom$TypeOf$type_of_int {
-    (forall i: Int ::
-      { (dom$TypeOf$typeOf(i): dom$Type) }
-      (dom$TypeOf$typeOf(i): dom$Type) == dom$Type$Int())
-  }
-
-  axiom dom$TypeOf$type_of_bool {
-    (forall b: Bool ::
-      { (dom$TypeOf$typeOf(b): dom$Type) }
-      (dom$TypeOf$typeOf(b): dom$Type) == dom$Type$Boolean())
-  }
-}
-
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-
-  axiom dom$Unit$type_of_unit {
-    (forall u: dom$Unit ::
-      { (dom$TypeOf$typeOf(u): dom$Type) }
-      (dom$TypeOf$typeOf(u): dom$Type) == dom$Type$Unit())
-  }
-}
-
-field class_Foo$member_x: Int
+field class_Foo$member_x: Ref
 
 field special$function_object_call_counter: Int
 
-function T_class_global$class_Foo$get$class_Foo$member_x(special$get$function$subject: Ref): Int
+function T_class_global$class_Foo$get$class_Foo$member_x(special$get$function$subject: Ref): Ref
   requires acc(T_class_global$class_Foo(special$get$function$subject), write)
 {
   (unfolding acc(T_class_global$class_Foo(special$get$function$subject), write) in
     special$get$function$subject.class_Foo$member_x)
 }
 
-function special$duplicable(anonymous$0: Ref): Bool
+function special$andBools(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(result) ==
+    (dom$RuntimeType$boolFromRef(arg1) && dom$RuntimeType$boolFromRef(arg2))
+
+
+function special$divInts(arg1: Ref, arg2: Ref): Ref
+  requires dom$RuntimeType$intFromRef(arg2) != 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) / dom$RuntimeType$intFromRef(arg2)
+
+
+function special$duplicable(arg1: Ref): Bool
+
+
+function special$geInts(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) >= dom$RuntimeType$intFromRef(arg2)
+
+
+function special$gtInts(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) > dom$RuntimeType$intFromRef(arg2)
+
+
+function special$impliesBools(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(result) ==
+    (dom$RuntimeType$boolFromRef(arg1) ==>
+    dom$RuntimeType$boolFromRef(arg2))
+
+
+function special$leInts(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) <= dom$RuntimeType$intFromRef(arg2)
+
+
+function special$ltInts(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) < dom$RuntimeType$intFromRef(arg2)
+
+
+function special$minusInts(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) - dom$RuntimeType$intFromRef(arg2)
+
+
+function special$notBool(arg1: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(result) ==
+    !dom$RuntimeType$boolFromRef(arg1)
+
+
+function special$orBools(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(result) ==
+    (dom$RuntimeType$boolFromRef(arg1) || dom$RuntimeType$boolFromRef(arg2))
+
+
+function special$plusInts(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) + dom$RuntimeType$intFromRef(arg2)
+
+
+function special$remInts(arg1: Ref, arg2: Ref): Ref
+  requires dom$RuntimeType$intFromRef(arg2) != 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) % dom$RuntimeType$intFromRef(arg2)
+
+
+function special$timesInts(arg1: Ref, arg2: Ref): Ref
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(result) ==
+    dom$RuntimeType$intFromRef(arg1) * dom$RuntimeType$intFromRef(arg2)
 
 
 predicate T_class_global$class_Foo(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.class_Foo$member_x, wildcard)
 }
 
-method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
+method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(ret.class_Foo$member_x, wildcard)
   ensures ret.class_Foo$member_x == local$x
 
 
-method global$fun_f$fun_take$$return$T_Unit() returns (ret$0: dom$Unit)
+method global$fun_f$fun_take$$return$T_Unit() returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$foo: Ref
-  local0$foo := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(0)
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$foo := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(dom$RuntimeType$intToRef(0))
   label label$ret$0
 }
 
@@ -331,6 +324,7 @@ method special$invoke_function_object(anonymous$0: Ref)
 Function(
     name = global$fun_f$fun_take$$return$T_Unit,
     {
+        Var(ret$0) := Unit;
         Declare(
             Var(local0$foo),
             T_class_global$class_Foo,

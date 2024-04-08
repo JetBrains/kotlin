@@ -60,15 +60,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     val program: Program
         get() = Program(
-            domains = listOf(
-                UnitDomain,
-                NullableDomain,
-                CastingDomain,
-                TypeOfDomain,
-                TypeDomain(classes.values.toList()),
-                AnyDomain,
-//                RuntimeTypeDomain(classes.values.toList())
-            ),
+            domains = listOf(RuntimeTypeDomain(classes.values.toList())),
             fields = SpecialFields.all.map { it.toViper() } +
                     classes.values.flatMap { it.flatMapUniqueFields { _, field -> listOf(field.toViper()) } }.distinctBy { it.name },
             functions = SpecialFunctions.all + classes.values.flatMap { it.getterFunctions() }.distinctBy { it.name },
@@ -219,19 +211,21 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, subSignature)
 
         return object : FullNamedFunctionSignature, NamedFunctionSignature by subSignature {
-            override fun getPreconditions(returnVariable: VariableEmbedding) = subSignature.formalArgs.flatMap { it.pureInvariants() } +
-                    subSignature.formalArgs.flatMap { it.accessInvariants() } +
-                    contractVisitor.getPreconditions(ContractVisitorContext(returnVariable, symbol)) +
-                    subSignature.stdLibPreConditions()
+            override fun getPreconditions(returnVariable: VariableEmbedding) =
+                subSignature.formalArgs.flatMap { it.pureInvariants() } +
+                        subSignature.formalArgs.flatMap { it.accessInvariants() } +
+                        contractVisitor.getPreconditions(ContractVisitorContext(returnVariable, symbol)) +
+                        subSignature.stdLibPreConditions()
 
-            override fun getPostconditions(returnVariable: VariableEmbedding) = subSignature.formalArgs.flatMap { it.accessInvariants() } +
-                    subSignature.params.flatMap { it.dynamicInvariants() } +
-                    returnVariable.pureInvariants() +
-                    returnVariable.provenInvariants() +
-                    returnVariable.accessInvariants() +
-                    contractVisitor.getPostconditions(ContractVisitorContext(returnVariable, symbol)) +
-                    subSignature.stdLibPostConditions(returnVariable) +
-                    primaryConstructorInvariants(returnVariable)
+            override fun getPostconditions(returnVariable: VariableEmbedding) =
+                subSignature.formalArgs.flatMap { it.accessInvariants() } +
+                        subSignature.params.flatMap { it.dynamicInvariants() } +
+                        returnVariable.pureInvariants() +
+                        returnVariable.provenInvariants() +
+                        returnVariable.accessInvariants() +
+                        contractVisitor.getPostconditions(ContractVisitorContext(returnVariable, symbol)) +
+                        subSignature.stdLibPostConditions(returnVariable) +
+                        primaryConstructorInvariants(returnVariable)
 
             fun primaryConstructorInvariants(returnVariable: VariableEmbedding) =
                 params.mapNotNull { param ->
@@ -324,7 +318,15 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 scopeIndexProducer.getFresh(),
             )
         val stmtCtx = StmtConverter(methodCtx)
-        val bodyExp = FunctionExp(signature, stmtCtx.convert(firBody), returnTarget.label)
+        val body = stmtCtx.convert(firBody)
+
+        // In the end we ensure that returned value is of some type even if that type is Unit.
+        // However, for Unit we don't assign the result to any value.
+        // One of the simplest solutions is to do is directly in the beginning of the body.
+        val unitExtendedBody: ExpEmbedding =
+            if (signature.returnType != UnitTypeEmbedding) body
+            else Block(Assign(stmtCtx.defaultResolvedReturnTarget.variable, UnitLit), body)
+        val bodyExp = FunctionExp(signature, unitExtendedBody, returnTarget.label)
         val linearizer = Linearizer(SharedLinearizationState(anonVarProducer), SeqnBuilder(declaration.source), declaration.source)
         bodyExp.toViperUnusedResult(linearizer)
         return FunctionBodyEmbedding(linearizer.block, returnTarget, bodyExp)

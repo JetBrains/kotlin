@@ -1,47 +1,54 @@
 /binary_search.kt:(90,110): info: Generated Viper text for mid_increased_by_one:
-field special$size: Int
+field special$size: Ref
 
 method global$fun_mid_increased_by_one$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(local$arr: Ref,
-  local$target: Int)
-  returns (ret$0: Bool)
+  local$target: Ref)
+  returns (ret$0: Ref)
   requires acc(local$arr.special$size, write)
-  requires local$arr.special$size >= 0
+  requires dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
   ensures acc(local$arr.special$size, write)
-  ensures local$arr.special$size >= 0
+  ensures dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
-  var local0$size: Int
-  var local0$mid: Int
-  var anonymous$0: Int
-  var anonymous$1: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$arr): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  var local0$size: Ref
+  var local0$mid: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$arr), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$target), dom$RuntimeType$intType())
   local0$size := local$arr.special$size
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$size), dom$RuntimeType$intType())
   inhale 2 != 0
-  anonymous$0 := local$arr.special$size / 2
-  local0$mid := anonymous$0 + 1
-  anonymous$1 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$arr)
-  if (anonymous$1) {
-    ret$0 := false
+  anonymous$1 := local$arr.special$size
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1), dom$RuntimeType$intType())
+  anonymous$0 := special$divInts(anonymous$1, dom$RuntimeType$intToRef(2))
+  local0$mid := special$plusInts(anonymous$0, dom$RuntimeType$intToRef(1))
+  anonymous$2 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$arr)
+  if (dom$RuntimeType$boolFromRef(anonymous$2)) {
+    ret$0 := dom$RuntimeType$boolToRef(false)
   } else {
-    var anonymous$2: Int
-    anonymous$2 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+    var anonymous$3: Ref
+    anonymous$3 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
       local0$mid)
-    if (anonymous$2 == local$target) {
-      ret$0 := true
+    if (anonymous$3 == local$target) {
+      ret$0 := dom$RuntimeType$boolToRef(true)
     } else {
-      var anonymous$3: Int
-      anonymous$3 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+      var anonymous$4: Ref
+      anonymous$4 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
         local0$mid)
-      if (anonymous$3 < local$target) {
-        var anonymous$4: Ref
-        anonymous$4 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
-          local0$mid + 1, local0$size)
-        ret$0 := global$fun_mid_increased_by_one$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$4,
-          local$target)
-      } else {
+      if (dom$RuntimeType$intFromRef(anonymous$4) <
+      dom$RuntimeType$intFromRef(local$target)) {
         var anonymous$5: Ref
         anonymous$5 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
-          0, local0$mid)
+          special$plusInts(local0$mid, dom$RuntimeType$intToRef(1)), local0$size)
         ret$0 := global$fun_mid_increased_by_one$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$5,
+          local$target)
+      } else {
+        var anonymous$6: Ref
+        anonymous$6 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
+          dom$RuntimeType$intToRef(0), local0$mid)
+        ret$0 := global$fun_mid_increased_by_one$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$6,
           local$target)
       }
     }
@@ -51,91 +58,110 @@ method global$fun_mid_increased_by_one$fun_take$T_class_pkg$kotlin$collections$g
 }
 
 method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
-  local$index: Int)
-  returns (ret: Int)
+  local$index: Ref)
+  returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
-  requires local$index >= 0
-  requires this.special$size > local$index
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
+  requires dom$RuntimeType$intFromRef(local$index) >= 0
+  requires dom$RuntimeType$intFromRef(this.special$size) >
+    dom$RuntimeType$intFromRef(local$index)
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures this.special$size == old(this.special$size)
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
 
 
 method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(this: Ref)
-  returns (ret: Bool)
+  returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures this.special$size == old(this.special$size)
-  ensures ret ==> this.special$size == 0
-  ensures !ret ==> this.special$size > 0
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
+  ensures dom$RuntimeType$boolFromRef(ret) ==>
+    dom$RuntimeType$intFromRef(this.special$size) == 0
+  ensures !dom$RuntimeType$boolFromRef(ret) ==>
+    dom$RuntimeType$intFromRef(this.special$size) > 0
 
 
 method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(this: Ref,
-  local$fromIndex: Int, local$toIndex: Int)
+  local$fromIndex: Ref, local$toIndex: Ref)
   returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
-  requires local$fromIndex <= local$toIndex
-  requires local$fromIndex >= 0
-  requires local$toIndex <= this.special$size
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
+  requires dom$RuntimeType$intFromRef(local$fromIndex) <=
+    dom$RuntimeType$intFromRef(local$toIndex)
+  requires dom$RuntimeType$intFromRef(local$fromIndex) >= 0
+  requires dom$RuntimeType$intFromRef(local$toIndex) <=
+    dom$RuntimeType$intFromRef(this.special$size)
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
   ensures acc(ret.special$size, write)
-  ensures ret.special$size >= 0
-  ensures this.special$size == old(this.special$size)
-  ensures ret.special$size == local$toIndex - local$fromIndex
+  ensures dom$RuntimeType$intFromRef(ret.special$size) >= 0
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
+  ensures dom$RuntimeType$intFromRef(ret.special$size) ==
+    dom$RuntimeType$intFromRef(local$toIndex) -
+    dom$RuntimeType$intFromRef(local$fromIndex)
 
 
 /binary_search.kt:(305,313): warning: Invalid index for list 'arr', the index may be greater than the list's size.
 
 /binary_search.kt:(511,531): info: Generated Viper text for mid_decreased_by_one:
-field special$size: Int
+field special$size: Ref
 
 method global$fun_mid_decreased_by_one$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(local$arr: Ref,
-  local$target: Int)
-  returns (ret$0: Bool)
+  local$target: Ref)
+  returns (ret$0: Ref)
   requires acc(local$arr.special$size, write)
-  requires local$arr.special$size >= 0
+  requires dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
   ensures acc(local$arr.special$size, write)
-  ensures local$arr.special$size >= 0
+  ensures dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
-  var local0$size: Int
-  var local0$mid: Int
-  var anonymous$0: Int
-  var anonymous$1: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$arr): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  var local0$size: Ref
+  var local0$mid: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$arr), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$target), dom$RuntimeType$intType())
   local0$size := local$arr.special$size
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$size), dom$RuntimeType$intType())
   inhale 2 != 0
-  anonymous$0 := local$arr.special$size / 2
-  local0$mid := anonymous$0 - 1
-  anonymous$1 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$arr)
-  if (anonymous$1) {
-    ret$0 := false
+  anonymous$1 := local$arr.special$size
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1), dom$RuntimeType$intType())
+  anonymous$0 := special$divInts(anonymous$1, dom$RuntimeType$intToRef(2))
+  local0$mid := special$minusInts(anonymous$0, dom$RuntimeType$intToRef(1))
+  anonymous$2 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$arr)
+  if (dom$RuntimeType$boolFromRef(anonymous$2)) {
+    ret$0 := dom$RuntimeType$boolToRef(false)
   } else {
-    var anonymous$2: Int
-    anonymous$2 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+    var anonymous$3: Ref
+    anonymous$3 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
       local0$mid)
-    if (anonymous$2 == local$target) {
-      ret$0 := true
+    if (anonymous$3 == local$target) {
+      ret$0 := dom$RuntimeType$boolToRef(true)
     } else {
-      var anonymous$3: Int
-      anonymous$3 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+      var anonymous$4: Ref
+      anonymous$4 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
         local0$mid)
-      if (anonymous$3 < local$target) {
-        var anonymous$4: Ref
-        anonymous$4 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
-          local0$mid + 1, local0$size)
-        ret$0 := global$fun_mid_decreased_by_one$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$4,
-          local$target)
-      } else {
+      if (dom$RuntimeType$intFromRef(anonymous$4) <
+      dom$RuntimeType$intFromRef(local$target)) {
         var anonymous$5: Ref
         anonymous$5 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
-          0, local0$mid)
+          special$plusInts(local0$mid, dom$RuntimeType$intToRef(1)), local0$size)
         ret$0 := global$fun_mid_decreased_by_one$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$5,
+          local$target)
+      } else {
+        var anonymous$6: Ref
+        anonymous$6 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
+          dom$RuntimeType$intToRef(0), local0$mid)
+        ret$0 := global$fun_mid_decreased_by_one$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$6,
           local$target)
       }
     }
@@ -145,89 +171,108 @@ method global$fun_mid_decreased_by_one$fun_take$T_class_pkg$kotlin$collections$g
 }
 
 method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
-  local$index: Int)
-  returns (ret: Int)
+  local$index: Ref)
+  returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
-  requires local$index >= 0
-  requires this.special$size > local$index
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
+  requires dom$RuntimeType$intFromRef(local$index) >= 0
+  requires dom$RuntimeType$intFromRef(this.special$size) >
+    dom$RuntimeType$intFromRef(local$index)
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures this.special$size == old(this.special$size)
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
 
 
 method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(this: Ref)
-  returns (ret: Bool)
+  returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures this.special$size == old(this.special$size)
-  ensures ret ==> this.special$size == 0
-  ensures !ret ==> this.special$size > 0
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
+  ensures dom$RuntimeType$boolFromRef(ret) ==>
+    dom$RuntimeType$intFromRef(this.special$size) == 0
+  ensures !dom$RuntimeType$boolFromRef(ret) ==>
+    dom$RuntimeType$intFromRef(this.special$size) > 0
 
 
 method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(this: Ref,
-  local$fromIndex: Int, local$toIndex: Int)
+  local$fromIndex: Ref, local$toIndex: Ref)
   returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
-  requires local$fromIndex <= local$toIndex
-  requires local$fromIndex >= 0
-  requires local$toIndex <= this.special$size
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
+  requires dom$RuntimeType$intFromRef(local$fromIndex) <=
+    dom$RuntimeType$intFromRef(local$toIndex)
+  requires dom$RuntimeType$intFromRef(local$fromIndex) >= 0
+  requires dom$RuntimeType$intFromRef(local$toIndex) <=
+    dom$RuntimeType$intFromRef(this.special$size)
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
   ensures acc(ret.special$size, write)
-  ensures ret.special$size >= 0
-  ensures this.special$size == old(this.special$size)
-  ensures ret.special$size == local$toIndex - local$fromIndex
+  ensures dom$RuntimeType$intFromRef(ret.special$size) >= 0
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
+  ensures dom$RuntimeType$intFromRef(ret.special$size) ==
+    dom$RuntimeType$intFromRef(local$toIndex) -
+    dom$RuntimeType$intFromRef(local$fromIndex)
 
 
 /binary_search.kt:(726,734): warning: Invalid index for list 'arr', the index may be less than zero.
 
 /binary_search.kt:(932,964): info: Generated Viper text for mid_decreased_by_one_in_rec_call:
-field special$size: Int
+field special$size: Ref
 
 method global$fun_mid_decreased_by_one_in_rec_call$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(local$arr: Ref,
-  local$target: Int)
-  returns (ret$0: Bool)
+  local$target: Ref)
+  returns (ret$0: Ref)
   requires acc(local$arr.special$size, write)
-  requires local$arr.special$size >= 0
+  requires dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
   ensures acc(local$arr.special$size, write)
-  ensures local$arr.special$size >= 0
+  ensures dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
-  var local0$size: Int
-  var local0$mid: Int
-  var anonymous$0: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$arr): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  var local0$size: Ref
+  var local0$mid: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$arr), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$target), dom$RuntimeType$intType())
   local0$size := local$arr.special$size
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$size), dom$RuntimeType$intType())
   inhale 2 != 0
-  local0$mid := local$arr.special$size / 2
-  anonymous$0 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$arr)
-  if (anonymous$0) {
-    ret$0 := false
+  anonymous$0 := local$arr.special$size
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
+  local0$mid := special$divInts(anonymous$0, dom$RuntimeType$intToRef(2))
+  anonymous$1 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$arr)
+  if (dom$RuntimeType$boolFromRef(anonymous$1)) {
+    ret$0 := dom$RuntimeType$boolToRef(false)
   } else {
-    var anonymous$1: Int
-    anonymous$1 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+    var anonymous$2: Ref
+    anonymous$2 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
       local0$mid)
-    if (anonymous$1 == local$target) {
-      ret$0 := true
+    if (anonymous$2 == local$target) {
+      ret$0 := dom$RuntimeType$boolToRef(true)
     } else {
-      var anonymous$2: Int
-      anonymous$2 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+      var anonymous$3: Ref
+      anonymous$3 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
         local0$mid)
-      if (anonymous$2 < local$target) {
-        var anonymous$3: Ref
-        anonymous$3 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
-          local0$mid + 1, local0$size)
-        ret$0 := global$fun_mid_decreased_by_one_in_rec_call$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$3,
-          local$target)
-      } else {
+      if (dom$RuntimeType$intFromRef(anonymous$3) <
+      dom$RuntimeType$intFromRef(local$target)) {
         var anonymous$4: Ref
         anonymous$4 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
-          0, local0$mid - 1)
+          special$plusInts(local0$mid, dom$RuntimeType$intToRef(1)), local0$size)
         ret$0 := global$fun_mid_decreased_by_one_in_rec_call$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$4,
+          local$target)
+      } else {
+        var anonymous$5: Ref
+        anonymous$5 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
+          dom$RuntimeType$intToRef(0), special$minusInts(local0$mid, dom$RuntimeType$intToRef(1)))
+        ret$0 := global$fun_mid_decreased_by_one_in_rec_call$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$5,
           local$target)
       }
     }
@@ -237,98 +282,121 @@ method global$fun_mid_decreased_by_one_in_rec_call$fun_take$T_class_pkg$kotlin$c
 }
 
 method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
-  local$index: Int)
-  returns (ret: Int)
+  local$index: Ref)
+  returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
-  requires local$index >= 0
-  requires this.special$size > local$index
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
+  requires dom$RuntimeType$intFromRef(local$index) >= 0
+  requires dom$RuntimeType$intFromRef(this.special$size) >
+    dom$RuntimeType$intFromRef(local$index)
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures this.special$size == old(this.special$size)
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
 
 
 method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(this: Ref)
-  returns (ret: Bool)
+  returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures this.special$size == old(this.special$size)
-  ensures ret ==> this.special$size == 0
-  ensures !ret ==> this.special$size > 0
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
+  ensures dom$RuntimeType$boolFromRef(ret) ==>
+    dom$RuntimeType$intFromRef(this.special$size) == 0
+  ensures !dom$RuntimeType$boolFromRef(ret) ==>
+    dom$RuntimeType$intFromRef(this.special$size) > 0
 
 
 method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(this: Ref,
-  local$fromIndex: Int, local$toIndex: Int)
+  local$fromIndex: Ref, local$toIndex: Ref)
   returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
-  requires local$fromIndex <= local$toIndex
-  requires local$fromIndex >= 0
-  requires local$toIndex <= this.special$size
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
+  requires dom$RuntimeType$intFromRef(local$fromIndex) <=
+    dom$RuntimeType$intFromRef(local$toIndex)
+  requires dom$RuntimeType$intFromRef(local$fromIndex) >= 0
+  requires dom$RuntimeType$intFromRef(local$toIndex) <=
+    dom$RuntimeType$intFromRef(this.special$size)
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
   ensures acc(ret.special$size, write)
-  ensures ret.special$size >= 0
-  ensures this.special$size == old(this.special$size)
-  ensures ret.special$size == local$toIndex - local$fromIndex
+  ensures dom$RuntimeType$intFromRef(ret.special$size) >= 0
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
+  ensures dom$RuntimeType$intFromRef(ret.special$size) ==
+    dom$RuntimeType$intFromRef(local$toIndex) -
+    dom$RuntimeType$intFromRef(local$fromIndex)
 
 
 /binary_search.kt:(1345,1368): warning: Invalid sub-list range for list 'arr', the range may be greater than the list's size.
 
 /binary_search.kt:(1405,1425): info: Generated Viper text for unsafe_binary_search:
-field special$size: Int
+field special$size: Ref
 
 method global$fun_unsafe_binary_search$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$T_Int$return$T_Boolean(local$arr: Ref,
-  local$target: Int, local$left: Int, local$right: Int)
-  returns (ret$0: Bool)
+  local$target: Ref, local$left: Ref, local$right: Ref)
+  returns (ret$0: Ref)
   requires acc(local$arr.special$size, write)
-  requires local$arr.special$size >= 0
+  requires dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
   ensures acc(local$arr.special$size, write)
-  ensures local$arr.special$size >= 0
+  ensures dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
-  var local0$mid: Int
-  var anonymous$0: Int
-  var anonymous$1: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$arr): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
-  if (local$left > local$right) {
-    ret$0 := false
+  var local0$mid: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$arr), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$target), dom$RuntimeType$intType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$left), dom$RuntimeType$intType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$right), dom$RuntimeType$intType())
+  if (dom$RuntimeType$intFromRef(local$left) >
+  dom$RuntimeType$intFromRef(local$right)) {
+    ret$0 := dom$RuntimeType$boolToRef(false)
     goto label$ret$0
   }
   inhale 2 != 0
-  anonymous$0 := (local$right - local$left) / 2
-  local0$mid := local$left + anonymous$0
+  anonymous$0 := special$divInts(special$minusInts(local$right, local$left),
+    dom$RuntimeType$intToRef(2))
+  local0$mid := special$plusInts(local$left, anonymous$0)
   anonymous$1 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
     local0$mid)
   if (anonymous$1 == local$target) {
-    ret$0 := true
+    ret$0 := dom$RuntimeType$boolToRef(true)
   } else {
-    var anonymous$2: Int
+    var anonymous$2: Ref
     anonymous$2 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
       local0$mid)
-    if (anonymous$2 < local$target) {
+    if (dom$RuntimeType$intFromRef(anonymous$2) <
+    dom$RuntimeType$intFromRef(local$target)) {
       ret$0 := global$fun_unsafe_binary_search$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$T_Int$return$T_Boolean(local$arr,
-        local$target, local0$mid + 1, local$right)
+        local$target, special$plusInts(local0$mid, dom$RuntimeType$intToRef(1)),
+        local$right)
     } else {
       ret$0 := global$fun_unsafe_binary_search$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$T_Int$return$T_Boolean(local$arr,
-        local$target, local$left, local0$mid - 1)}
+        local$target, local$left, special$minusInts(local0$mid, dom$RuntimeType$intToRef(1)))}
   }
   goto label$ret$0
   label label$ret$0
 }
 
 method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
-  local$index: Int)
-  returns (ret: Int)
+  local$index: Ref)
+  returns (ret: Ref)
   requires acc(this.special$size, write)
-  requires this.special$size >= 0
-  requires local$index >= 0
-  requires this.special$size > local$index
+  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
+  requires dom$RuntimeType$intFromRef(local$index) >= 0
+  requires dom$RuntimeType$intFromRef(this.special$size) >
+    dom$RuntimeType$intFromRef(local$index)
   ensures acc(this.special$size, write)
-  ensures this.special$size >= 0
-  ensures this.special$size == old(this.special$size)
+  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+  ensures dom$RuntimeType$intFromRef(this.special$size) ==
+    old(dom$RuntimeType$intFromRef(this.special$size))
 
 
 /binary_search.kt:(1608,1616): warning: Invalid index for list 'arr', the index may be less than zero.

@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.domains.CastingDomain
-import org.jetbrains.kotlin.formver.domains.TypeDomain
-import org.jetbrains.kotlin.formver.domains.TypeOfDomain
+import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.debugTreeView
@@ -22,9 +20,13 @@ data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbeddin
     override val type = BooleanTypeEmbedding
 
     override fun toViper(ctx: LinearizationContext) =
-        TypeDomain.isSubtype(
-            TypeOfDomain.typeOf(inner.toViper(ctx)),
-            comparisonType.runtimeType,
+        RuntimeTypeDomain.boolInjection.toRef(
+            RuntimeTypeDomain.isSubtype(
+                RuntimeTypeDomain.typeOf(inner.toViper(ctx), pos = ctx.source.asPosition),
+                comparisonType.runtimeType,
+                pos = ctx.source.asPosition,
+                info = sourceRole.asInfo
+            ),
             pos = ctx.source.asPosition,
             info = sourceRole.asInfo
         )
@@ -33,9 +35,14 @@ data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbeddin
         get() = listOf(comparisonType.debugTreeView.withDesignation("type"))
 }
 
-// TODO: probably casts need to be more flexible when it comes to containing result-less nodes.
+
+/**
+ * ExpEmbedding to change the TypeEmbedding of an inner ExpEmbedding.
+ * This is needed since most of our invariants require type and hence can be made more precise via Cast.
+ */
 data class Cast(override val inner: ExpEmbedding, override val type: TypeEmbedding) : UnaryDirectResultExpEmbedding {
-    override fun toViper(ctx: LinearizationContext) = CastingDomain.cast(inner.toViper(ctx), type, ctx.source)
+    // TODO: Do we want to assert `inner isOf type` here before making a cast itself?
+    override fun toViper(ctx: LinearizationContext) = inner.toViper(ctx)
     override fun ignoringCasts(): ExpEmbedding = inner.ignoringCasts()
     override fun ignoringCastsAndMetaNodes(): ExpEmbedding = inner.ignoringCastsAndMetaNodes()
 
@@ -43,8 +50,7 @@ data class Cast(override val inner: ExpEmbedding, override val type: TypeEmbeddi
         get() = listOf(type.debugTreeView.withDesignation("target"))
 }
 
-fun ExpEmbedding.withType(newType: TypeEmbedding): ExpEmbedding =
-    if (newType == type) this else Cast(this, newType)
+fun ExpEmbedding.withType(newType: TypeEmbedding): ExpEmbedding = if (type == newType) this else Cast(this, newType)
 
 
 /**
@@ -60,7 +66,7 @@ data class SafeCast(val exp: ExpEmbedding, val targetType: TypeEmbedding) : Stor
     override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         val expViper = exp.toViper(ctx)
         val expWrapped = ExpWrapper(expViper, exp.type)
-        val conditional = If(expWrapped.notNullCmp(), expWrapped, type.nullVal, type)
+        val conditional = If(Is(expWrapped, targetType), expWrapped, NullLit, type)
         conditional.toViperStoringIn(result, ctx)
     }
 
@@ -86,7 +92,7 @@ abstract class InhaleInvariants(val exp: ExpEmbedding) : StoredResultExpEmbeddin
     override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         exp.toViperStoringIn(result, ctx)
         for (invariant in invariants.fillHoles(result)) {
-            ctx.addStatement(Stmt.Inhale(invariant.pureToViper(), ctx.source.asPosition))
+            ctx.addStatement(Stmt.Inhale(invariant.pureToViper(toBuiltin = true, ctx.source), ctx.source.asPosition))
         }
     }
 
@@ -114,3 +120,10 @@ class InhaleAccess(exp: ExpEmbedding) : InhaleInvariants(exp) {
 }
 
 fun ExpEmbedding.withAccessInvariants(): ExpEmbedding = InhaleAccess(this).simplified
+
+class InhaleAccessAndProven(exp: ExpEmbedding) : InhaleInvariants(exp) {
+    override val invariants: List<TypeInvariantEmbedding>
+        get() = type.accessInvariants() + type.provenInvariants()
+}
+
+fun ExpEmbedding.withAccessAndProvenInvariants(): ExpEmbedding = InhaleAccessAndProven(this).simplified

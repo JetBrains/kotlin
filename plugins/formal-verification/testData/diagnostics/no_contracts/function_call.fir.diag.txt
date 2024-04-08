@@ -1,30 +1,36 @@
 /function_call.kt:(99,112): info: Generated Viper text for function_call:
-method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret: Int)
+method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 method global$fun_function_call$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var anonymous$0: Int
-  var anonymous$1: Int
-  anonymous$0 := global$fun_f$fun_take$T_Int$return$T_Int(0)
-  anonymous$1 := global$fun_f$fun_take$T_Int$return$T_Int(0)
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  anonymous$0 := global$fun_f$fun_take$T_Int$return$T_Int(dom$RuntimeType$intToRef(0))
+  anonymous$1 := global$fun_f$fun_take$T_Int$return$T_Int(dom$RuntimeType$intToRef(0))
   label label$ret$0
 }
 
 /function_call.kt:(142,162): info: Generated Viper text for function_call_nested:
-method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret: Int)
+method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 method global$fun_function_call_nested$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var anonymous$0: Int
-  var anonymous$1: Int
-  var anonymous$2: Int
-  anonymous$2 := global$fun_f$fun_take$T_Int$return$T_Int(0)
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  anonymous$2 := global$fun_f$fun_take$T_Int$return$T_Int(dom$RuntimeType$intToRef(0))
   anonymous$1 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$2)
   anonymous$0 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$1)
   label label$ret$0

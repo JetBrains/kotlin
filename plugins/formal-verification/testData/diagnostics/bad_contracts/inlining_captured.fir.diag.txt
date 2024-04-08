@@ -1,23 +1,30 @@
 /inlining_captured.kt:(354,365): info: Generated Viper text for nested_call:
 method global$fun_nested_call$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
-  returns (ret$0: Int)
+  returns (ret$0: Ref)
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
     local$g.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
   ensures local$g.special$function_object_call_counter ==
     old(local$g.special$function_object_call_counter) + 1
 {
-  var ret$1: Int
-  var ret$2: Int
-  var anonymous$0: Int
-  var anonymous$1: Int
-  var anonymous$2: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
-  anonymous$0 := 0
+  var ret$1: Ref
+  var ret$2: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  var anonymous$3: Ref
+  var anonymous$4: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$g), dom$RuntimeType$functionType())
+  anonymous$0 := dom$RuntimeType$intToRef(0)
   special$invoke_function_object(local$g)
+  anonymous$2 := anonymous$1
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
   special$invoke_function_object(local$g)
-  ret$2 := anonymous$2
+  anonymous$4 := anonymous$3
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$4), dom$RuntimeType$intType())
+  ret$2 := anonymous$4
   goto label$ret$2
   label label$ret$2
   ret$1 := ret$2
@@ -32,24 +39,31 @@ method global$fun_nested_call$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
 
 /inlining_captured.kt:(585,596): info: Generated Viper text for double_call:
 method global$fun_double_call$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
-  returns (ret$0: Int)
+  returns (ret$0: Ref)
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
     local$g.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
   ensures local$g.special$function_object_call_counter <=
     old(local$g.special$function_object_call_counter) + 1
 {
-  var ret$1: Int
-  var ret$2: Int
-  var anonymous$0: Int
-  var anonymous$1: Int
-  var anonymous$2: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
-  anonymous$0 := 0
+  var ret$1: Ref
+  var ret$2: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  var anonymous$3: Ref
+  var anonymous$4: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$g), dom$RuntimeType$functionType())
+  anonymous$0 := dom$RuntimeType$intToRef(0)
   special$invoke_function_object(local$g)
+  anonymous$2 := anonymous$1
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
   special$invoke_function_object(local$g)
-  ret$2 := anonymous$2
+  anonymous$4 := anonymous$3
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$4), dom$RuntimeType$intType())
+  ret$2 := anonymous$4
   goto label$ret$2
   label label$ret$2
   ret$1 := ret$2

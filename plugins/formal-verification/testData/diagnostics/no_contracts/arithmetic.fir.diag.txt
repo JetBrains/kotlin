@@ -1,36 +1,48 @@
 /arithmetic.kt:(4,12): info: Generated Viper text for addition:
-method global$fun_addition$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret$0: dom$Unit)
+method global$fun_addition$fun_take$T_Int$return$T_Unit(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$y: Int
-  local0$y := local$x + local$x
+  var local0$y: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$y := special$plusInts(local$x, local$x)
   label label$ret$0
 }
 
 /arithmetic.kt:(47,58): info: Generated Viper text for subtraction:
-method global$fun_subtraction$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret$0: dom$Unit)
+method global$fun_subtraction$fun_take$T_Int$return$T_Unit(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$y: Int
-  local0$y := local$x - local$x
+  var local0$y: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$y := special$minusInts(local$x, local$x)
   label label$ret$0
 }
 
 /arithmetic.kt:(93,107): info: Generated Viper text for multiplication:
-method global$fun_multiplication$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret$0: dom$Unit)
+method global$fun_multiplication$fun_take$T_Int$return$T_Unit(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$y: Int
-  local0$y := local$x * local$x
+  var local0$y: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$y := special$timesInts(local$x, local$x)
   label label$ret$0
 }
 
 /arithmetic.kt:(142,150): info: Generated Viper text for division:
-method global$fun_division$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret$0: dom$Unit)
+method global$fun_division$fun_take$T_Int$return$T_Unit(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$y: Int
-  inhale local$x != 0
-  local0$y := local$x / local$x
+  var local0$y: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+  ret$0 := dom$RuntimeType$unitValue()
+  inhale dom$RuntimeType$intFromRef(local$x) != 0
+  local0$y := special$divInts(local$x, local$x)
   label label$ret$0
 }

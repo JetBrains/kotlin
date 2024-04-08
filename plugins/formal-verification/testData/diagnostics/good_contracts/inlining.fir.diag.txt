@@ -1,34 +1,47 @@
 /inlining.kt:(481,492): info: Generated Viper text for call_invoke:
 method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
-  returns (ret$0: Int)
+  returns (ret$0: Ref)
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
     local$g.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
   ensures local$g.special$function_object_call_counter >
     old(local$g.special$function_object_call_counter)
 {
-  var local0$z: Int
-  var ret$1: Int
-  var local1$x: Int
-  var anonymous$0: Int
-  var anonymous$1: Int
-  var ret$2: Int
-  var local2$x: Int
-  var anonymous$2: Int
-  var anonymous$3: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
+  var local0$z: Ref
+  var ret$1: Ref
+  var local1$x: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  var anonymous$3: Ref
+  var ret$2: Ref
+  var local2$x: Ref
+  var anonymous$4: Ref
+  var anonymous$5: Ref
+  var anonymous$6: Ref
+  var anonymous$7: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$g), dom$RuntimeType$functionType())
   special$invoke_function_object(local$g)
-  local1$x := anonymous$0
+  anonymous$1 := anonymous$0
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1), dom$RuntimeType$intType())
+  local1$x := anonymous$1
   special$invoke_function_object(local$g)
-  ret$1 := anonymous$1
+  anonymous$3 := anonymous$2
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$3), dom$RuntimeType$intType())
+  ret$1 := anonymous$3
   goto label$ret$1
   label label$ret$1
   local0$z := ret$1
   special$invoke_function_object(local$g)
-  local2$x := anonymous$2
+  anonymous$5 := anonymous$4
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$5), dom$RuntimeType$intType())
+  local2$x := anonymous$5
   special$invoke_function_object(local$g)
-  ret$2 := anonymous$3
+  anonymous$7 := anonymous$6
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$7), dom$RuntimeType$intType())
+  ret$2 := anonymous$7
   goto label$ret$2
   label label$ret$2
   ret$0 := ret$2
@@ -38,37 +51,47 @@ method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
 
 /inlining.kt:(725,745): info: Generated Viper text for call_invoke_with_int:
 method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
-  returns (ret$0: Int)
+  returns (ret$0: Ref)
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
     local$g.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
   ensures local$g.special$function_object_call_counter >
     old(local$g.special$function_object_call_counter)
 {
-  var local0$z: Int
-  var ret$1: Int
-  var anonymous$0: Int
-  var local1$x: Int
-  var anonymous$2: Int
-  var ret$2: Int
-  var anonymous$1: Int
-  var anonymous$3: Int
-  var local2$x: Int
-  var anonymous$4: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
-  anonymous$0 := 1
-  local1$x := anonymous$0 + anonymous$0
+  var local0$z: Ref
+  var ret$1: Ref
+  var anonymous$0: Ref
+  var local1$x: Ref
+  var anonymous$2: Ref
+  var anonymous$3: Ref
+  var ret$2: Ref
+  var anonymous$1: Ref
+  var anonymous$4: Ref
+  var anonymous$5: Ref
+  var local2$x: Ref
+  var anonymous$6: Ref
+  var anonymous$7: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$g), dom$RuntimeType$functionType())
+  anonymous$0 := dom$RuntimeType$intToRef(1)
+  local1$x := special$plusInts(anonymous$0, anonymous$0)
   special$invoke_function_object(local$g)
-  ret$1 := anonymous$2
+  anonymous$3 := anonymous$2
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$3), dom$RuntimeType$intType())
+  ret$1 := anonymous$3
   goto label$ret$1
   label label$ret$1
   local0$z := ret$1
   special$invoke_function_object(local$g)
-  anonymous$1 := anonymous$3
-  local2$x := anonymous$1 + anonymous$1
+  anonymous$5 := anonymous$4
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$5), dom$RuntimeType$intType())
+  anonymous$1 := anonymous$5
+  local2$x := special$plusInts(anonymous$1, anonymous$1)
   special$invoke_function_object(local$g)
-  ret$2 := anonymous$4
+  anonymous$7 := anonymous$6
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$7), dom$RuntimeType$intType())
+  ret$2 := anonymous$7
   goto label$ret$2
   label label$ret$2
   ret$0 := ret$2
@@ -78,33 +101,43 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
 
 /inlining.kt:(1005,1017): info: Generated Viper text for name_clashes:
 method global$fun_name_clashes$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
-  returns (ret$0: Int)
+  returns (ret$0: Ref)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var local0$x: Int
-  var ret$1: Int
-  var local1$x: Int
-  var anonymous$0: Int
-  var anonymous$1: Int
-  var ret$2: Int
-  var local2$x: Int
-  var anonymous$2: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  var local0$x: Ref
+  var ret$1: Ref
+  var local1$x: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  var anonymous$3: Ref
+  var ret$2: Ref
+  var local2$x: Ref
+  var anonymous$4: Ref
+  var anonymous$5: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$functionType())
   special$invoke_function_object(local$f)
-  local1$x := anonymous$0
+  anonymous$1 := anonymous$0
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1), dom$RuntimeType$intType())
+  local1$x := anonymous$1
   special$invoke_function_object(local$f)
-  ret$1 := anonymous$1
+  anonymous$3 := anonymous$2
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$3), dom$RuntimeType$intType())
+  ret$1 := anonymous$3
   goto label$ret$1
   label label$ret$1
   local0$x := ret$1
-  local2$x := local0$x + local0$x
+  local2$x := special$plusInts(local0$x, local0$x)
   special$invoke_function_object(local$f)
-  ret$2 := anonymous$2
+  anonymous$5 := anonymous$4
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$5), dom$RuntimeType$intType())
+  ret$2 := anonymous$5
   goto label$ret$2
   label label$ret$2
   ret$0 := ret$2
@@ -114,40 +147,53 @@ method global$fun_name_clashes$fun_take$fun_take$T_Int$return$T_Int$return$T_Int
 
 /inlining.kt:(1262,1283): info: Generated Viper text for different_return_type:
 method global$fun_different_return_type$fun_take$fun_take$T_Int$return$T_Int$return$T_Boolean(local$f: Ref)
-  returns (ret$0: Bool)
+  returns (ret$0: Ref)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var local0$x: Int
-  var ret$1: Int
-  var local1$x: Int
-  var anonymous$0: Int
-  var anonymous$1: Int
-  var anonymous$2: Int
-  var ret$2: Int
-  var local2$x: Int
-  var anonymous$3: Int
-  var anonymous$4: Int
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  var local0$x: Ref
+  var ret$1: Ref
+  var local1$x: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  var anonymous$3: Ref
+  var anonymous$4: Ref
+  var ret$2: Ref
+  var local2$x: Ref
+  var anonymous$5: Ref
+  var anonymous$6: Ref
+  var anonymous$7: Ref
+  var anonymous$8: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$functionType())
   special$invoke_function_object(local$f)
-  local1$x := anonymous$0
+  anonymous$1 := anonymous$0
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1), dom$RuntimeType$intType())
+  local1$x := anonymous$1
   special$invoke_function_object(local$f)
-  ret$1 := anonymous$1
+  anonymous$3 := anonymous$2
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$3), dom$RuntimeType$intType())
+  ret$1 := anonymous$3
   goto label$ret$1
   label label$ret$1
   local0$x := ret$1
   special$invoke_function_object(local$f)
-  local2$x := anonymous$3
+  anonymous$6 := anonymous$5
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$6), dom$RuntimeType$intType())
+  local2$x := anonymous$6
   special$invoke_function_object(local$f)
-  ret$2 := anonymous$4
+  anonymous$8 := anonymous$7
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$8), dom$RuntimeType$intType())
+  ret$2 := anonymous$8
   goto label$ret$2
   label label$ret$2
-  anonymous$2 := ret$2
-  ret$0 := local0$x == anonymous$2
+  anonymous$4 := ret$2
+  ret$0 := dom$RuntimeType$boolToRef(local0$x == anonymous$4)
   goto label$ret$0
   label label$ret$0
 }

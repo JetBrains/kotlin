@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.viper.ast.Info
 
 sealed interface SourceRole {
-    data object ParamFunctionLeakageCheck : SourceRole
+    data class ParamFunctionLeakageCheck(val functionRole: FirSymbolHolder) : SourceRole
 
     data class ListElementAccessCheck(val accessType: AccessCheckType) : SourceRole {
         enum class AccessCheckType {

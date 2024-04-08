@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.conversion.insertInlineFunctionCall
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 
 class InlineNamedFunction(
     val signature: FullNamedFunctionSignature,

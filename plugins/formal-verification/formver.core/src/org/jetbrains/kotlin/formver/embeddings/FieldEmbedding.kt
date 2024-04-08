@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.formver.embeddings.expression.*
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.names.NameMatcher
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.Field
-import org.jetbrains.kotlin.formver.viper.ast.PermExp
+import org.jetbrains.kotlin.formver.viper.ast.*
 
 /**
  * Embedding of a backing field of a property.
@@ -20,12 +19,13 @@ import org.jetbrains.kotlin.formver.viper.ast.PermExp
 interface FieldEmbedding {
     val name: MangledName
     val type: TypeEmbedding
+    val viperType: Type
     val accessPolicy: AccessPolicy
     val includeInShortDump: Boolean
     val symbol: FirPropertySymbol?
         get() = null
 
-    fun toViper(): Field = Field(name, type.viperType, includeInShortDump)
+    fun toViper(): Field = Field(name, viperType, includeInShortDump)
 
     fun extraAccessInvariantsForParameter(): List<TypeInvariantEmbedding> = listOf()
 
@@ -50,6 +50,7 @@ class UserFieldEmbedding(
     override val type: TypeEmbedding,
     override val symbol: FirPropertySymbol
 ) : FieldEmbedding {
+    override val viperType = Type.Ref
     override val accessPolicy: AccessPolicy = if (symbol.isVal) AccessPolicy.ALWAYS_READABLE else AccessPolicy.ALWAYS_INHALE_EXHALE
     override val includeInShortDump: Boolean = true
 }
@@ -58,6 +59,7 @@ class UserFieldEmbedding(
 object ListSizeFieldEmbedding : FieldEmbedding {
     override val name = SpecialName("size")
     override val type = IntTypeEmbedding
+    override val viperType = Type.Ref
     override val accessPolicy = AccessPolicy.ALWAYS_WRITEABLE
     override val includeInShortDump: Boolean = true
     override fun extraAccessInvariantsForParameter(): List<TypeInvariantEmbedding> = listOf(NonNegativeSizeTypeInvariantEmbedding)

@@ -13,21 +13,22 @@ import org.jetbrains.kotlin.formver.viper.ast.*
  * Should be used via `build` method of companion object.
  * It is mandatory that `build` clause will have exactly one `returns` subclause.
  *
- * After `argument` clause arguments can be used via `arg1`, `arg2`.
+ * After `argument` clause arguments can be used via `args` List.
  * After `returns` clause result can be used via `result`.
  */
-internal class FunctionBuilder private constructor() {
+class FunctionBuilder private constructor() {
     private val pres = mutableListOf<Exp>()
     private val posts = mutableListOf<Exp>()
     private val formalArgs = mutableListOf<Var>()
     private lateinit var retType: Type
     private var functionBody: Exp? = null
 
-    val arg1
-        get() = formalArgs[0].use()
+    val args: List<Exp.LocalVar> = object : AbstractList<Exp.LocalVar>() {
+        override val size: Int
+            get() = formalArgs.size
 
-    val arg2
-        get() = formalArgs[1].use()
+        override fun get(index: Int) = formalArgs[index].use()
+    }
 
     val result
         get() = Exp.Result(retType)

@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.formver.asPosition
+import org.jetbrains.kotlin.formver.domains.InjectionImageFunction
+import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.IntTypeEmbedding
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
-import org.jetbrains.kotlin.formver.viper.ast.Exp
 
-sealed interface IntArithmeticExpression : BinaryDirectResultExpEmbedding {
+sealed interface IntArithmeticExpression : OperationBaseExpEmbedding {
     override val type
         get() = IntTypeEmbedding
 }
@@ -19,21 +20,21 @@ data class Add(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
 ) : IntArithmeticExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.Add(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override val refsOperation = RuntimeTypeDomain.plusInts
 }
 
 data class Sub(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
 ) : IntArithmeticExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.Sub(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override val refsOperation = RuntimeTypeDomain.minusInts
 }
 
 data class Mul(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
 ) : IntArithmeticExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.Mul(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override val refsOperation = RuntimeTypeDomain.timesInts
 }
 
 // TODO: handle separately, inhale rhs != 0
@@ -41,12 +42,12 @@ data class Div(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
 ) : IntArithmeticExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.Div(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override val refsOperation = RuntimeTypeDomain.divInts
 }
 
 data class Mod(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
 ) : IntArithmeticExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.Mod(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override val refsOperation = RuntimeTypeDomain.remInts
 }

@@ -1,7 +1,9 @@
 /viper_verify.kt:(125,137): info: Generated Viper text for verify_false:
 method global$fun_verify_false$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
+  ret$0 := dom$RuntimeType$unitValue()
   assert false
   label label$ret$0
 }
@@ -10,15 +12,17 @@ method global$fun_verify_false$fun_take$$return$T_Unit()
 
 /viper_verify.kt:(181,196): info: Generated Viper text for verify_compound:
 method global$fun_verify_compound$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var anonymous$0: Bool
+  var anonymous$0: Ref
+  ret$0 := dom$RuntimeType$unitValue()
   if (true) {
-    anonymous$0 := false
+    anonymous$0 := dom$RuntimeType$boolToRef(false)
   } else {
-    anonymous$0 := false}
-  assert anonymous$0
+    anonymous$0 := dom$RuntimeType$boolToRef(false)}
+  assert dom$RuntimeType$boolFromRef(anonymous$0)
   label label$ret$0
 }
 
-/viper_verify.kt:(212,225): warning: Viper verification error: Assert might fail. Assertion anonymous$0 might not hold.
+/viper_verify.kt:(212,225): warning: Viper verification error: Assert might fail. Assertion dom$RuntimeType$boolFromRef(anonymous$0) might not hold.

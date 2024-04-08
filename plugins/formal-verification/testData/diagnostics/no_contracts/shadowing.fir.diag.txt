@@ -1,19 +1,21 @@
 /shadowing.kt:(4,16): info: Generated Viper text for shadow_local:
 method global$fun_shadow_local$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$foo: Int
-  var local0$x: Int
-  local0$x := 0
-  if (local0$x == 0) {
-    var local2$x: Int
+  var local0$foo: Ref
+  var local0$x: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$x := dom$RuntimeType$intToRef(0)
+  if (dom$RuntimeType$intFromRef(local0$x) == 0) {
+    var local2$x: Ref
     local0$foo := local0$x
-    local2$x := 1
+    local2$x := dom$RuntimeType$intToRef(1)
     local0$foo := local2$x
   } else {
-    var local3$x: Int
+    var local3$x: Ref
     local0$foo := local0$x
-    local3$x := 2
+    local3$x := dom$RuntimeType$intToRef(2)
     local0$foo := local3$x
   }
   local0$foo := local0$x
@@ -21,40 +23,48 @@ method global$fun_shadow_local$fun_take$$return$T_Unit()
 }
 
 /shadowing.kt:(214,226): info: Generated Viper text for shadow_param:
-method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret$0: dom$Unit)
+method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$foo: Int
-  var local0$x: Int
+  var local0$foo: Ref
+  var local0$x: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+  ret$0 := dom$RuntimeType$unitValue()
   local0$foo := local$x
-  local0$x := 0
+  local0$x := dom$RuntimeType$intToRef(0)
   local0$foo := local0$x
   label label$ret$0
 }
 
 /shadowing.kt:(305,318): info: Generated Viper text for shadow_nested:
-method global$fun_shadow_nested$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret$0: dom$Unit)
+method global$fun_shadow_nested$fun_take$T_Int$return$T_Unit(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$foo: Int
-  var local0$x: Int
+  var local0$foo: Ref
+  var local0$x: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+  ret$0 := dom$RuntimeType$unitValue()
   local0$foo := local$x
-  local0$x := 0
+  local0$x := dom$RuntimeType$intToRef(0)
   local0$foo := local0$x
   if (true) {
-    var local2$x: Int
-    var anonymous$0: Bool
+    var local2$x: Ref
+    var anonymous$0: Ref
     local0$foo := local0$x
-    local2$x := 1
+    local2$x := dom$RuntimeType$intToRef(1)
     local0$foo := local2$x
     label label$continue$0
-    anonymous$0 := true
-    while (anonymous$0) {
-      var local3$x: Int
+    anonymous$0 := dom$RuntimeType$boolToRef(true)
+    while (dom$RuntimeType$boolFromRef(anonymous$0))
+      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    {
+      var local3$x: Ref
       local0$foo := local2$x
-      local3$x := 2
+      local3$x := dom$RuntimeType$intToRef(2)
       local0$foo := local3$x
-      anonymous$0 := true
+      anonymous$0 := dom$RuntimeType$boolToRef(true)
     }
     label label$break$0
     local0$foo := local2$x

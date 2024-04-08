@@ -144,6 +144,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("backing_field_getters.kt")
+        public void testBacking_field_getters() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/backing_field_getters.kt");
+        }
+
+        @Test
         @TestMetadata("binary_search.kt")
         public void testBinary_search() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/good_contracts/binary_search.kt");

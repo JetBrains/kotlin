@@ -7,9 +7,32 @@ package org.jetbrains.kotlin.formver.domains
 
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain.Companion.isOf
 import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.viper.ast.Function
 
 /**
  * Produces set of axioms for injections from built-in types in Viper to Ref.
+ *
+ * Example for Bool:
+ *   ```viper
+ *   axiom {
+ *     (forall v: Bool ::
+ *       { isSubtype(typeOf(boolToRef(v)), boolType()) }
+ *       isSubtype(typeOf(boolToRef(v)), boolType()))
+ *   }
+ *
+ *   axiom {
+ *     (forall v: Bool ::
+ *       { boolFromRef(boolToRef(v)) }
+ *       boolFromRef(boolToRef(v)) == v)
+ *   }
+ *
+ *   axiom {
+ *     (forall r: Ref ::
+ *       { boolToRef(boolFromRef(r)) }
+ *       isSubtype(typeOf(r), boolType()) ==>
+ *       boolToRef(boolFromRef(r)) == r)
+ *   }
+ *   ```
  *
  * @param viperType: built-in type which needs to be mapped
  * @param typeFunction: representation of that type as a domain func
@@ -41,3 +64,37 @@ class Injection(
         }
     }
 }
+
+
+/**
+ * Viper function that operates on the images of an injection.
+ *
+ * For example, if `original` Viper function operates on `Int` and returns `Bool`,
+ * then resulting `InjectionImageFunction` will take `Ref` of type `intType()` as an argument
+ * and return `Ref` of type `boolType()`.
+ *
+ *   ```viper
+ *   function special$divInts(arg1: Ref, arg2: Ref): Ref
+ *     requires dom$RuntimeType$intFromRef(arg2) != 0
+ *     ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(result), dom$RuntimeType$intType())
+ *     ensures dom$RuntimeType$intFromRef(result) ==
+ *       dom$RuntimeType$intFromRef(arg1) / dom$RuntimeType$intFromRef(arg2)
+ *   ```
+ *
+ * @param argsInjections injections that must be applied to the arguments of the operation
+ * @param resultInjection injection that must be applied to the result of the operation
+ * @param additionalConditions allows to add additional preconditions and/or postconditions
+ */
+class InjectionImageFunction(
+    name: String,
+    val original: Applicable,
+    argsInjections: List<Injection>,
+    resultInjection: Injection,
+    additionalConditions: FunctionBuilder.() -> Unit = { }
+) : Function by FunctionBuilder.build(name, {
+    val viperResult = original.toFuncApp(argsInjections.map { it.fromRef(argument(Type.Ref)) })
+    returns(Type.Ref)
+    postcondition { result isOf resultInjection.typeFunction() }
+    postcondition { resultInjection.fromRef(result) eq viperResult }
+    additionalConditions()
+})

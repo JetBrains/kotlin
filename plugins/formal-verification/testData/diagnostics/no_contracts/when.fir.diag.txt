@@ -1,49 +1,59 @@
 /when.kt:(4,15): info: Generated Viper text for return_when:
-method global$fun_return_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
-  local$b: Bool, local$c: Bool)
-  returns (ret$0: Int)
+method global$fun_return_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
+  local$b: Ref, local$c: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  if (local$a) {
-    ret$0 := 0
-  } elseif (local$b) {
-    ret$0 := 1
-  } elseif (local$c) {
-    ret$0 := 2
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$boolType())
+  if (dom$RuntimeType$boolFromRef(local$a)) {
+    ret$0 := dom$RuntimeType$intToRef(0)
+  } elseif (dom$RuntimeType$boolFromRef(local$b)) {
+    ret$0 := dom$RuntimeType$intToRef(1)
+  } elseif (dom$RuntimeType$boolFromRef(local$c)) {
+    ret$0 := dom$RuntimeType$intToRef(2)
   } else {
-    ret$0 := 3}
+    ret$0 := dom$RuntimeType$intToRef(3)}
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(153,164): info: Generated Viper text for when_return:
-method global$fun_when_return$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
-  local$b: Bool, local$c: Bool)
-  returns (ret$0: Int)
+method global$fun_when_return$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
+  local$b: Ref, local$c: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  if (local$a) {
-    ret$0 := 0
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$boolType())
+  if (dom$RuntimeType$boolFromRef(local$a)) {
+    ret$0 := dom$RuntimeType$intToRef(0)
     goto label$ret$0
-  } elseif (local$b) {
-    ret$0 := 1
+  } elseif (dom$RuntimeType$boolFromRef(local$b)) {
+    ret$0 := dom$RuntimeType$intToRef(1)
     goto label$ret$0
-  } elseif (local$c) {
-    ret$0 := 2
+  } elseif (dom$RuntimeType$boolFromRef(local$c)) {
+    ret$0 := dom$RuntimeType$intToRef(2)
     goto label$ret$0
   } else {
-    ret$0 := 3
+    ret$0 := dom$RuntimeType$intToRef(3)
     goto label$ret$0
   }
   label label$ret$0
 }
 
 /when.kt:(323,341): info: Generated Viper text for single_branch_when:
-method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Bool)
-  returns (ret$0: Int)
+method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  var local0$x: Int
-  local0$x := 1
-  if (local$a) {
-    local0$x := 2
+  var local0$x: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
+  local0$x := dom$RuntimeType$intToRef(1)
+  if (dom$RuntimeType$boolFromRef(local$a)) {
+    local0$x := dom$RuntimeType$intToRef(2)
   }
   ret$0 := local0$x
   goto label$ret$0
@@ -51,18 +61,22 @@ method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Bo
 }
 
 /when.kt:(431,443): info: Generated Viper text for no_else_when:
-method global$fun_no_else_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
-  local$b: Bool, local$c: Bool)
-  returns (ret$0: Int)
+method global$fun_no_else_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
+  local$b: Ref, local$c: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  var local0$y: Int
-  local0$y := 0
-  if (local$a) {
-    local0$y := 1
-  } elseif (local$b) {
-    local0$y := 2
-  } elseif (local$c) {
-    local0$y := 3
+  var local0$y: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$boolType())
+  local0$y := dom$RuntimeType$intToRef(0)
+  if (dom$RuntimeType$boolFromRef(local$a)) {
+    local0$y := dom$RuntimeType$intToRef(1)
+  } elseif (dom$RuntimeType$boolFromRef(local$b)) {
+    local0$y := dom$RuntimeType$intToRef(2)
+  } elseif (dom$RuntimeType$boolFromRef(local$c)) {
+    local0$y := dom$RuntimeType$intToRef(3)
   }
   ret$0 := local0$y
   goto label$ret$0
@@ -70,63 +84,70 @@ method global$fun_no_else_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_I
 }
 
 /when.kt:(595,616): info: Generated Viper text for when_with_subject_var:
-method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret$0: Int)
+method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  var anonymous$0: Int
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
   anonymous$0 := local$x
-  if (anonymous$0 == 1) {
-    ret$0 := 2
-  } elseif (anonymous$0 == 2) {
-    ret$0 := 3
+  if (dom$RuntimeType$intFromRef(anonymous$0) == 1) {
+    ret$0 := dom$RuntimeType$intToRef(2)
+  } elseif (dom$RuntimeType$intFromRef(anonymous$0) == 2) {
+    ret$0 := dom$RuntimeType$intToRef(3)
   } else {
-    ret$0 := 42}
+    ret$0 := dom$RuntimeType$intToRef(42)}
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(716,738): info: Generated Viper text for when_with_subject_call:
-method global$fun_when_with_subject_call$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret$0: Int)
+method global$fun_when_with_subject_call$fun_take$T_Int$return$T_Int(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  var anonymous$0: Int
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
   anonymous$0 := global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x)
-  if (anonymous$0 == 1) {
-    ret$0 := 2
-  } elseif (anonymous$0 == 2) {
-    ret$0 := 3
+  if (dom$RuntimeType$intFromRef(anonymous$0) == 1) {
+    ret$0 := dom$RuntimeType$intToRef(2)
+  } elseif (dom$RuntimeType$intFromRef(anonymous$0) == 2) {
+    ret$0 := dom$RuntimeType$intToRef(3)
   } else {
-    var anonymous$1: Int
-    anonymous$1 := global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(0)
-    if (anonymous$1 == 3) {
-      ret$0 := 4
-    } elseif (anonymous$1 == 4) {
-      ret$0 := 5
+    var anonymous$1: Ref
+    anonymous$1 := global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(dom$RuntimeType$intToRef(0))
+    if (dom$RuntimeType$intFromRef(anonymous$1) == 3) {
+      ret$0 := dom$RuntimeType$intToRef(4)
+    } elseif (dom$RuntimeType$intFromRef(anonymous$1) == 4) {
+      ret$0 := dom$RuntimeType$intToRef(5)
     } else {
-      ret$0 := 42}
+      ret$0 := dom$RuntimeType$intToRef(42)}
   }
   goto label$ret$0
   label label$ret$0
 }
 
-method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret: Int)
+method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 /when.kt:(962,972): info: Generated Viper text for empty_when:
-method global$fun_empty_when$fun_take$$return$T_Int() returns (ret$0: Int)
+method global$fun_empty_when$fun_take$$return$T_Int() returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  ret$0 := 1
+  ret$0 := dom$RuntimeType$intToRef(1)
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(1015,1028): info: Generated Viper text for unused_result:
 method global$fun_unused_result$fun_take$$return$T_Int()
-  returns (ret$0: Int)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  var local0$x: Int
-  local0$x := 0
+  var local0$x: Ref
+  local0$x := dom$RuntimeType$intToRef(0)
   ret$0 := local0$x
   goto label$ret$0
   label label$ret$0
@@ -134,27 +155,29 @@ method global$fun_unused_result$fun_take$$return$T_Int()
 
 /when.kt:(1222,1229): info: Generated Viper text for when_is:
 method global$fun_when_is$fun_take$T_class_global$class_Foo$return$T_Boolean(local$x: Ref)
-  returns (ret$0: Bool)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
   var anonymous$0: Ref
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$global$class_Foo())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_global$class_Foo())
   anonymous$0 := local$x
-  if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())) {
-    ret$0 := true
+  if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$T_class_global$class_Bar())) {
+    ret$0 := dom$RuntimeType$boolToRef(true)
   } else {
-    ret$0 := false}
+    ret$0 := dom$RuntimeType$boolToRef(false)}
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(1303,1319): info: Generated Viper text for when_subject_val:
 method global$fun_when_subject_val$fun_take$$return$T_Int()
-  returns (ret$0: Int)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  var local1$x: Int
-  local1$x := 0
-  if (local1$x == 1) {
-    ret$0 := 1
+  var local1$x: Ref
+  local1$x := dom$RuntimeType$intToRef(0)
+  if (dom$RuntimeType$intFromRef(local1$x) == 1) {
+    ret$0 := dom$RuntimeType$intToRef(1)
   } else {
     ret$0 := local1$x}
   goto label$ret$0
@@ -163,26 +186,29 @@ method global$fun_when_subject_val$fun_take$$return$T_Int()
 
 /when.kt:(1396,1419): info: Generated Viper text for when_subject_val_nested:
 method global$fun_when_subject_val_nested$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local1$x: Int
-  local1$x := 1
-  if (local1$x == 0) {
+  var local1$x: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  local1$x := dom$RuntimeType$intToRef(1)
+  if (dom$RuntimeType$intFromRef(local1$x) == 0) {
   } else {
-    var anonymous$0: Int
-    var local3$y: Int
-    local3$y := 1
-    if (local3$y == 1) {
-      anonymous$0 := 1
+    var anonymous$0: Ref
+    var local3$y: Ref
+    local3$y := dom$RuntimeType$intToRef(1)
+    if (dom$RuntimeType$intFromRef(local3$y) == 1) {
+      anonymous$0 := dom$RuntimeType$intToRef(1)
     } else {
-      var local6$z: Int
-      local6$z := 1
+      var local6$z: Ref
+      local6$z := dom$RuntimeType$intToRef(1)
       if (local6$z == local3$y) {
-        anonymous$0 := 2
-      } elseif (local6$z == local1$x + 1) {
-        anonymous$0 := 3
+        anonymous$0 := dom$RuntimeType$intToRef(2)
+      } elseif (dom$RuntimeType$intFromRef(local6$z) ==
+      dom$RuntimeType$intFromRef(local1$x) + 1) {
+        anonymous$0 := dom$RuntimeType$intToRef(3)
       } else {
-        anonymous$0 := 4}
+        anonymous$0 := dom$RuntimeType$intToRef(4)}
     }
     if (local1$x == anonymous$0) {
     }
@@ -192,11 +218,13 @@ method global$fun_when_subject_val_nested$fun_take$$return$T_Unit()
 
 /when.kt:(1681,1707): info: Generated Viper text for when_subject_var_shadowing:
 method global$fun_when_subject_var_shadowing$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$x: Int
-  var local1$x: Int
-  local0$x := 0
-  local1$x := 1
+  var local0$x: Ref
+  var local1$x: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$x := dom$RuntimeType$intToRef(0)
+  local1$x := dom$RuntimeType$intToRef(1)
   label label$ret$0
 }

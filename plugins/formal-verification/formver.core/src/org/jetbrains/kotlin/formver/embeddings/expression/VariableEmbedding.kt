@@ -26,15 +26,15 @@ sealed interface VariableEmbedding : PureExpEmbedding, PropertyAccessEmbedding {
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Declaration.LocalVarDecl = Declaration.LocalVarDecl(name, type.viperType, pos, info, trafos)
+    ): Declaration.LocalVarDecl = Declaration.LocalVarDecl(name, Type.Ref, pos, info, trafos)
 
     fun toLocalVarUse(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.LocalVar = Exp.LocalVar(name, type.viperType, pos, info, trafos)
+    ): Exp.LocalVar = Exp.LocalVar(name, Type.Ref, pos, info, trafos)
 
-    override fun toViper(source: KtSourceElement?): Exp.LocalVar = Exp.LocalVar(name, type.viperType, source.asPosition, sourceRole.asInfo)
+    override fun toViper(source: KtSourceElement?): Exp.LocalVar = Exp.LocalVar(name, Type.Ref, source.asPosition, sourceRole.asInfo)
 
     override fun getValue(ctx: StmtConversionContext): ExpEmbedding = this
     override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext): ExpEmbedding = Assign(this, value)

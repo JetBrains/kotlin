@@ -21,3 +21,8 @@ fun <T> <!VIPER_TEXT!>genericFun<!>(t: T): T = t
 fun <!VIPER_TEXT!>callGenericFunc<!>() {
     val x = genericFun(3)
 }
+
+fun <!VIPER_TEXT!>genericAsIfCondition<!>(box: Box<Boolean>): Int {
+    return if (box.t) 20 else 10
+}
+

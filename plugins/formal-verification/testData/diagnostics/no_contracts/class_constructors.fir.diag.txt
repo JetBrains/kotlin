@@ -1,70 +1,83 @@
 /class_constructors.kt:(389,411): info: Generated Viper text for onlySecondConstructors:
-field class_Foo$member_a: Int
+field class_Foo$member_a: Ref
 
-method class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Bool)
+method class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(ret.class_Foo$member_a, wildcard)
 
 
-method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$x1: Int,
-  local$x2: Int)
+method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$x1: Ref,
+  local$x2: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(ret.class_Foo$member_a, wildcard)
 
 
-method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$n: Int)
+method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$n: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(ret.class_Foo$member_a, wildcard)
 
 
 method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$f1: Ref
-  var local0$shouldBeOne: Int
+  var local0$shouldBeOne: Ref
   var local0$f2: Ref
-  var local0$shouldBeAnswer: Int
+  var local0$shouldBeAnswer: Ref
   var local0$f3: Ref
-  var local0$test: Int
-  local0$f1 := class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(true)
+  var local0$test: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$f1 := class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(dom$RuntimeType$boolToRef(true))
   local0$shouldBeOne := local0$f1.class_Foo$member_a
-  local0$f2 := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$shouldBeOne),
+    dom$RuntimeType$intType())
+  local0$f2 := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(dom$RuntimeType$intToRef(42))
   local0$shouldBeAnswer := local0$f2.class_Foo$member_a
-  local0$f3 := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
-    32)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$shouldBeAnswer),
+    dom$RuntimeType$intType())
+  local0$f3 := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(dom$RuntimeType$intToRef(10),
+    dom$RuntimeType$intToRef(32))
   local0$test := local0$f3.class_Foo$member_a
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$test), dom$RuntimeType$intType())
   label label$ret$0
 }
 
 /class_constructors.kt:(590,617): info: Generated Viper text for primaryAndSecondConstructor:
-field class_Bar$member_a: Int
+field class_Bar$member_a: Ref
 
-method class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Bool)
+method class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(ret.class_Bar$member_a, wildcard)
 
 
-method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
+method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(ret.class_Bar$member_a, wildcard)
   ensures ret.class_Bar$member_a == local$a
 
 
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$b1: Ref
-  var local0$shouldBeZero: Int
+  var local0$shouldBeZero: Ref
   var local0$b2: Ref
-  var local0$shouldBeAnswer: Int
-  local0$b1 := class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(false)
+  var local0$shouldBeAnswer: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$b1 := class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(dom$RuntimeType$boolToRef(false))
   local0$shouldBeZero := local0$b1.class_Bar$member_a
-  local0$b2 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(42)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$shouldBeZero),
+    dom$RuntimeType$intType())
+  local0$b2 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(dom$RuntimeType$intToRef(42))
   local0$shouldBeAnswer := local0$b2.class_Bar$member_a
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$shouldBeAnswer),
+    dom$RuntimeType$intType())
   label label$ret$0
 }

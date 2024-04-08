@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
+import org.jetbrains.kotlin.formver.domains.FunctionBuilder
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
+import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain.Companion.boolType
+import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain.Companion.isOf
 import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
-import org.jetbrains.kotlin.formver.embeddings.LegacyUnspecifiedFunctionTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.AnonymousVariableEmbedding
 import org.jetbrains.kotlin.formver.names.GetterFunctionName
 import org.jetbrains.kotlin.formver.names.GetterFunctionSubjectName
-import org.jetbrains.kotlin.formver.names.SpecialName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 import org.jetbrains.kotlin.formver.viper.ast.Function
@@ -34,26 +34,24 @@ class FieldAccessFunction(
     className: MangledName,
     field: FieldEmbedding,
     unfoldingBody: Exp,
-    pos: Position = Position.NoPosition,
-    info: Info = Info.NoInfo,
-    trafos: Trafos = Trafos.NoTrafos,
-) : Function(GetterFunctionName(className, field.name), pos, info, trafos) {
+    override val pos: Position = Position.NoPosition,
+    override val info: Info = Info.NoInfo,
+    override val trafos: Trafos = Trafos.NoTrafos,
+) : Function {
+    override val name = GetterFunctionName(className, field.name)
     private val subject = Exp.LocalVar(GetterFunctionSubjectName, Type.Ref)
     private val subjectAccess = Exp.PredicateAccess(className, listOf(subject))
-    override val retType: Type = field.type.viperType
+    override val retType: Type = Type.Ref
     override val includeInDumpPolicy: IncludeInDumpPolicy = IncludeInDumpPolicy.PREDICATE_DUMP
     override val formalArgs: List<Declaration.LocalVarDecl> = listOf(Declaration.LocalVarDecl(GetterFunctionSubjectName, Type.Ref))
     override val pres: List<Exp> = listOf(subjectAccess)
     override val body: Exp = Exp.Unfolding(subjectAccess, unfoldingBody)
 }
 
-object DuplicableFunction : BuiltinFunction(SpecialName("duplicable")) {
-    private val thisArg = AnonymousVariableEmbedding(0, LegacyUnspecifiedFunctionTypeEmbedding)
-
-    override val formalArgs: List<Declaration.LocalVarDecl> = listOf(thisArg.toLocalVarDecl())
-    override val retType: Type = Type.Bool
-}
-
 object SpecialFunctions {
-    val all = listOf(DuplicableFunction) // + RuntimeTypeDomain.accompanyingFunctions()
+    val duplicableFunction = FunctionBuilder.build("duplicable") {
+        argument { Type.Ref }
+        returns { Type.Bool }
+    }
+    val all = listOf(duplicableFunction) + RuntimeTypeDomain.accompanyingFunctions
 }

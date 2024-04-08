@@ -31,7 +31,7 @@ data class SubTypeInvariantEmbedding(val type: TypeEmbedding) : TypeInvariantEmb
 
 data class IfNonNullInvariant(val invariant: TypeInvariantEmbedding) : TypeInvariantEmbedding {
     override fun fillHole(exp: ExpEmbedding): ExpEmbedding =
-        Implies(NeCmp(exp, exp.type.getNullable().nullVal), invariant.fillHole(exp.withType(exp.type.getNonNullable())))
+        Implies(NeCmp(exp, NullLit), invariant.fillHole(exp.withType(exp.type.getNonNullable())))
 }
 
 data class FieldAccessTypeInvariantEmbedding(val field: FieldEmbedding, val perm: PermExp) : TypeInvariantEmbedding {

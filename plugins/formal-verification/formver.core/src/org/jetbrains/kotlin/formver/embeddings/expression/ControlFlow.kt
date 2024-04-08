@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.NothingTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.UnitTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.InvokeFunctionObjectMethod
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
@@ -44,7 +41,7 @@ data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
 data class If(val condition: ExpEmbedding, val thenBranch: ExpEmbedding, val elseBranch: ExpEmbedding, override val type: TypeEmbedding) :
     OptionalResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
-        val condViper = condition.toViper(ctx)
+        val condViper = condition.toViperBuiltinType(ctx)
         val thenViper = ctx.asBlock { thenBranch.withType(type).toViperMaybeStoringIn(result, this) }
         val elseViper = ctx.asBlock { elseBranch.withType(type).toViperMaybeStoringIn(result, this) }
         ctx.addStatement(Stmt.If(condViper, thenViper, elseViper, ctx.source.asPosition))
@@ -73,8 +70,8 @@ data class While(
         }
         ctx.addStatement(
             Stmt.While(
-                condVar.toViper(ctx),
-                invariants.pureToViper(ctx.source),
+                condVar.toViperBuiltinType(ctx),
+                invariants.pureToViper(toBuiltin = true, ctx.source),
                 bodyBlock,
                 ctx.source.asPosition
             )
@@ -127,7 +124,7 @@ data class GotoChainNode(val label: Label?, val exp: ExpEmbedding, val next: Lab
     override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         label?.let { ctx.addLabel(it) }
         exp.toViperMaybeStoringIn(result, ctx)
-        ctx.addStatement(next.toGoto())
+        ctx.addStatement(next.toGoto(ctx.source.asPosition))
     }
 
     override val debugTreeView: TreeView
@@ -138,7 +135,7 @@ data class NonDeterministically(val exp: ExpEmbedding) : UnitResultExpEmbedding,
     override fun toViperSideEffects(ctx: LinearizationContext) {
         val choice = ctx.freshAnonVar(BooleanTypeEmbedding)
         val expViper = ctx.asBlock { exp.toViper(this) }
-        ctx.addStatement(Stmt.If(choice.toViper(ctx), expViper, Stmt.Seqn(), ctx.source.asPosition))
+        ctx.addStatement(Stmt.If(choice.toViperBuiltinType(ctx), expViper, Stmt.Seqn(), ctx.source.asPosition))
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -188,7 +185,8 @@ data class InvokeFunctionObject(val receiver: ExpEmbedding, val args: List<ExpEm
                 ctx.source.asPosition
             )
         )
-        return variable.toViper(ctx)
+        // TODO: figure out which exactly invariants we want here
+        return variable.withAccessAndProvenInvariants().toViper(ctx)
     }
 
     override val debugTreeView: TreeView
@@ -210,7 +208,7 @@ data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: Exp
             // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
             // provenInvariants don't contain permissions.
             arg.provenInvariants().forEach { invariant ->
-                ctx.addStatement(Stmt.Inhale(invariant.pureToViper(), ctx.source.asPosition))
+                ctx.addStatement(Stmt.Inhale(invariant.toViperBuiltinType(ctx), ctx.source.asPosition))
             }
         }
         body.toViperMaybeStoringIn(result, ctx)

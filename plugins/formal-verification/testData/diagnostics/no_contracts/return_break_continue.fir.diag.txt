@@ -1,42 +1,50 @@
 /return_break_continue.kt:(4,15): info: Generated Viper text for test_return:
-method global$fun_test_return$fun_take$$return$T_Int() returns (ret$0: Int)
+method global$fun_test_return$fun_take$$return$T_Int() returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  ret$0 := 0
+  ret$0 := dom$RuntimeType$intToRef(0)
   goto label$ret$0
-  ret$0 := 1
+  ret$0 := dom$RuntimeType$intToRef(1)
   goto label$ret$0
   label label$ret$0
 }
 
 /return_break_continue.kt:(58,74): info: Generated Viper text for return_from_loop:
 method global$fun_return_from_loop$fun_take$$return$T_Int()
-  returns (ret$0: Int)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  var anonymous$0: Bool
+  var anonymous$0: Ref
   label label$continue$0
-  anonymous$0 := true
-  while (anonymous$0) {
-    ret$0 := 0
+  anonymous$0 := dom$RuntimeType$boolToRef(true)
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+  {
+    ret$0 := dom$RuntimeType$intToRef(0)
     goto label$ret$0
-    anonymous$0 := true
+    anonymous$0 := dom$RuntimeType$boolToRef(true)
   }
   label label$break$0
-  ret$0 := 1
+  ret$0 := dom$RuntimeType$intToRef(1)
   goto label$ret$0
   label label$ret$0
 }
 
 /return_break_continue.kt:(146,157): info: Generated Viper text for while_break:
-method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Bool)
-  returns (ret$0: Int)
+method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
-  var local0$i: Int
-  var anonymous$0: Bool
-  local0$i := 0
+  var local0$i: Ref
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  local0$i := dom$RuntimeType$intToRef(0)
   label label$continue$0
   anonymous$0 := local$b
-  while (anonymous$0) {
-    local0$i := 1
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+  {
+    local0$i := dom$RuntimeType$intToRef(1)
     goto label$break$0
     anonymous$0 := local$b
   }
@@ -48,15 +56,19 @@ method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Bool)
 
 /return_break_continue.kt:(261,275): info: Generated Viper text for while_continue:
 method global$fun_while_continue$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$b: Bool
-  var anonymous$0: Bool
-  local0$b := true
+  var local0$b: Ref
+  var anonymous$0: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$b := dom$RuntimeType$boolToRef(true)
   label label$continue$0
   anonymous$0 := local0$b
-  while (anonymous$0) {
-    local0$b := false
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  {
+    local0$b := dom$RuntimeType$boolToRef(false)
     goto label$continue$0
     anonymous$0 := local0$b
   }
@@ -65,18 +77,25 @@ method global$fun_while_continue$fun_take$$return$T_Unit()
 }
 
 /return_break_continue.kt:(361,373): info: Generated Viper text for while_nested:
-method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
-  returns (ret$0: dom$Unit)
+method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var anonymous$0: Bool
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  ret$0 := dom$RuntimeType$unitValue()
   label label$continue$0
   anonymous$0 := local$b
-  while (anonymous$0) {
-    var anonymous$1: Bool
-    var anonymous$2: Bool
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  {
+    var anonymous$1: Ref
+    var anonymous$2: Ref
     label label$continue$1
     anonymous$1 := local$b
-    while (anonymous$1) {
+    while (dom$RuntimeType$boolFromRef(anonymous$1))
+      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    {
       goto label$break$1
       anonymous$1 := local$b
     }
@@ -84,7 +103,9 @@ method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
     goto label$continue$0
     label label$continue$2
     anonymous$2 := local$b
-    while (anonymous$2) {
+    while (dom$RuntimeType$boolFromRef(anonymous$2))
+      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    {
       goto label$continue$2
       anonymous$2 := local$b
     }
@@ -97,17 +118,24 @@ method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
 }
 
 /return_break_continue.kt:(543,557): info: Generated Viper text for labelled_break:
-method global$fun_labelled_break$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
-  returns (ret$0: dom$Unit)
+method global$fun_labelled_break$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var anonymous$0: Bool
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  ret$0 := dom$RuntimeType$unitValue()
   label label$continue$0
   anonymous$0 := local$b
-  while (anonymous$0) {
-    var anonymous$1: Bool
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  {
+    var anonymous$1: Ref
     label label$continue$1
     anonymous$1 := local$b
-    while (anonymous$1) {
+    while (dom$RuntimeType$boolFromRef(anonymous$1))
+      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    {
       goto label$break$0
       goto label$break$1
       goto label$break$1
@@ -123,17 +151,24 @@ method global$fun_labelled_break$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
 }
 
 /return_break_continue.kt:(742,759): info: Generated Viper text for labelled_continue:
-method global$fun_labelled_continue$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
-  returns (ret$0: dom$Unit)
+method global$fun_labelled_continue$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var anonymous$0: Bool
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  ret$0 := dom$RuntimeType$unitValue()
   label label$continue$0
   anonymous$0 := local$b
-  while (anonymous$0) {
-    var anonymous$1: Bool
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  {
+    var anonymous$1: Ref
     label label$continue$1
     anonymous$1 := local$b
-    while (anonymous$1) {
+    while (dom$RuntimeType$boolFromRef(anonymous$1))
+      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    {
       goto label$continue$0
       goto label$continue$1
       goto label$continue$1
@@ -149,18 +184,25 @@ method global$fun_labelled_continue$fun_take$T_Boolean$return$T_Unit(local$b: Bo
 }
 
 /return_break_continue.kt:(959,983): info: Generated Viper text for labelled_while_shadowing:
-method global$fun_labelled_while_shadowing$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
-  returns (ret$0: dom$Unit)
+method global$fun_labelled_while_shadowing$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var anonymous$0: Bool
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  ret$0 := dom$RuntimeType$unitValue()
   label label$continue$0
   anonymous$0 := local$b
-  while (anonymous$0) {
-    var anonymous$1: Bool
-    var anonymous$2: Bool
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  {
+    var anonymous$1: Ref
+    var anonymous$2: Ref
     label label$continue$1
     anonymous$1 := local$b
-    while (anonymous$1) {
+    while (dom$RuntimeType$boolFromRef(anonymous$1))
+      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    {
       goto label$break$1
       goto label$continue$1
       anonymous$1 := local$b
@@ -168,7 +210,9 @@ method global$fun_labelled_while_shadowing$fun_take$T_Boolean$return$T_Unit(loca
     label label$break$1
     label label$continue$2
     anonymous$2 := local$b
-    while (anonymous$2) {
+    while (dom$RuntimeType$boolFromRef(anonymous$2))
+      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    {
       goto label$break$2
       goto label$continue$2
       anonymous$2 := local$b

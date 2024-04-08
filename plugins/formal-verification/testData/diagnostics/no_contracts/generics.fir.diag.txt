@@ -1,77 +1,77 @@
 /generics.kt:(33,46): info: Generated Viper text for genericMethod:
-field class_Box$member_t: dom$Nullable[dom$Any]
+field class_Box$member_t: Ref
 
 method class_Box$fun_genericMethod$fun_take$T_class_global$class_Box$NT_Any$return$NT_Any(this: Ref,
-  local$x: dom$Nullable[dom$Any])
-  returns (ret$0: dom$Nullable[dom$Any])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Box())
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_Box())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
   ret$0 := local$x
   goto label$ret$0
   label label$ret$0
 }
 
 /generics.kt:(88,97): info: Generated Viper text for createBox:
-field class_Box$member_t: dom$Nullable[dom$Any]
+field class_Box$member_t: Ref
 
-method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
+method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Box())
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Box())
 
 
-method global$fun_createBox$fun_take$$return$T_Int() returns (ret$0: Int)
+method global$fun_createBox$fun_take$$return$T_Int() returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   var local0$boolBox: Ref
-  var local0$b: Bool
-  var anonymous$0: dom$Nullable[dom$Any]
+  var local0$b: Ref
+  var anonymous$0: Ref
   var local0$intBox: Ref
-  var anonymous$1: dom$Nullable[dom$Any]
-  local0$boolBox := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(true,
-    dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
+  var anonymous$1: Ref
+  local0$boolBox := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(dom$RuntimeType$boolToRef(true))
   inhale acc(local0$boolBox.class_Box$member_t, write)
   anonymous$0 := local0$boolBox.class_Box$member_t
   exhale acc(local0$boolBox.class_Box$member_t, write)
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
-  local0$b := (dom$Casting$cast(anonymous$0, dom$Type$Boolean()): Bool)
-  local0$intBox := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(2,
-    dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
+  local0$b := anonymous$0
+  local0$intBox := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(dom$RuntimeType$intToRef(2))
   inhale acc(local0$intBox.class_Box$member_t, write)
   anonymous$1 := local0$intBox.class_Box$member_t
   exhale acc(local0$intBox.class_Box$member_t, write)
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
-  ret$0 := (dom$Casting$cast(anonymous$1, dom$Type$Int()): Int)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
+  ret$0 := anonymous$1
   goto label$ret$0
   label label$ret$0
 }
 
 /generics.kt:(208,223): info: Generated Viper text for setGenericField:
-field class_Box$member_t: dom$Nullable[dom$Any]
+field class_Box$member_t: Ref
 
-method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
+method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: Ref)
   returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Box())
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Box())
 
 
 method global$fun_setGenericField$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$box: Ref
-  local0$box := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(3,
-    dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
+  ret$0 := dom$RuntimeType$unitValue()
+  local0$box := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(dom$RuntimeType$intToRef(3))
   inhale acc(local0$box.class_Box$member_t, write)
-  local0$box.class_Box$member_t := (dom$Casting$cast(5, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any])
+  local0$box.class_Box$member_t := dom$RuntimeType$intToRef(5)
   exhale acc(local0$box.class_Box$member_t, write)
   label label$ret$0
 }
 
 /generics.kt:(274,284): info: Generated Viper text for genericFun:
-method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: dom$Nullable[dom$Any])
-  returns (ret$0: dom$Nullable[dom$Any])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$t): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$t), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
   ret$0 := local$t
   goto label$ret$0
   label label$ret$0
@@ -79,16 +79,39 @@ method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: dom$Nullable
 
 /generics.kt:(303,318): info: Generated Viper text for callGenericFunc:
 method global$fun_callGenericFunc$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var local0$x: Int
-  var anonymous$0: dom$Nullable[dom$Any]
-  anonymous$0 := global$fun_genericFun$fun_take$NT_Any$return$NT_Any((dom$Casting$cast(3,
-    dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
-  local0$x := (dom$Casting$cast(anonymous$0, dom$Type$Int()): Int)
+  var local0$x: Ref
+  var anonymous$0: Ref
+  ret$0 := dom$RuntimeType$unitValue()
+  anonymous$0 := global$fun_genericFun$fun_take$NT_Any$return$NT_Any(dom$RuntimeType$intToRef(3))
+  local0$x := anonymous$0
   label label$ret$0
 }
 
-method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: dom$Nullable[dom$Any])
-  returns (ret: dom$Nullable[dom$Any])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
+
+
+/generics.kt:(356,376): info: Generated Viper text for genericAsIfCondition:
+field class_Box$member_t: Ref
+
+method global$fun_genericAsIfCondition$fun_take$T_class_global$class_Box$return$T_Int(local$box: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+{
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$box), dom$RuntimeType$T_class_global$class_Box())
+  inhale acc(local$box.class_Box$member_t, write)
+  anonymous$0 := local$box.class_Box$member_t
+  exhale acc(local$box.class_Box$member_t, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
+  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
+    ret$0 := dom$RuntimeType$intToRef(20)
+  } else {
+    ret$0 := dom$RuntimeType$intToRef(10)}
+  goto label$ret$0
+  label label$ret$0
+}

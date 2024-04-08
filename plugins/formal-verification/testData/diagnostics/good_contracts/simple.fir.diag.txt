@@ -1,14 +1,18 @@
 /simple.kt:(84,100): info: Generated Viper text for without_contract:
 method global$fun_without_contract$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
+  ret$0 := dom$RuntimeType$unitValue()
   label label$ret$0
 }
 
 /simple.kt:(148,161): info: Generated Viper text for with_contract:
 method global$fun_with_contract$fun_take$$return$T_Unit()
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   ensures true
 {
+  ret$0 := dom$RuntimeType$unitValue()
   label label$ret$0
 }

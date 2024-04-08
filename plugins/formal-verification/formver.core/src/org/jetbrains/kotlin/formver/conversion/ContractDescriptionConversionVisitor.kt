@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.effects
 import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.*
@@ -138,7 +137,7 @@ class ContractDescriptionConversionVisitor(
         data: ContractVisitorContext,
     ): ExpEmbedding {
         val param = callsEffect.valueParameterReference.accept(this, data)
-        val callsFieldAccess = FieldAccess(param, SpecialFields.FunctionObjectCallCounterField)
+        val callsFieldAccess = FunctionObjectCallsPrimitiveAccess(param)
         val targetLambdaByCallsEffect = callsEffect.valueParameterReference.getTargetParameter(data)
         val sourceRole = SourceRole.CallsInPlaceEffect(targetLambdaByCallsEffect, callsEffect.kind)
         return when (callsEffect.kind) {
@@ -212,10 +211,6 @@ class ContractDescriptionConversionVisitor(
     private fun embeddedVarByIndex(ix: Int): VariableEmbedding = resolveByIndex(ix, { signature.receiver!! }) { signature.params[it] }
 
     private fun VariableEmbedding.nullCmp(isNegated: Boolean, sourceRole: SourceRole?): ExpEmbedding =
-        when (val type = this.type) {
-            is NullableTypeEmbedding ->
-                if (isNegated) NeCmp(this, type.nullVal, sourceRole)
-                else EqCmp(this, type.nullVal, sourceRole)
-            else -> BooleanLit(isNegated, sourceRole)
-        }
+        if (isNegated) NeCmp(this, NullLit, sourceRole)
+        else EqCmp(this, NullLit, sourceRole)
 }

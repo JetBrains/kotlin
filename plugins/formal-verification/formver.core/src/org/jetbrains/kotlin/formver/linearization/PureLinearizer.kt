@@ -47,9 +47,10 @@ class PureLinearizer(override val source: KtSourceElement?) : LinearizationConte
         get() = throw PureLinearizerMisuseException("block")
 }
 
-fun ExpEmbedding.pureToViper(source: KtSourceElement? = null): Exp {
+fun ExpEmbedding.pureToViper(toBuiltin: Boolean, source: KtSourceElement? = null): Exp {
     try {
-        return toViper(PureLinearizer(source))
+        val linearizer = PureLinearizer(source)
+        return if (toBuiltin) toViperBuiltinType(linearizer) else toViper(linearizer)
     } catch (e: PureLinearizerMisuseException) {
         val msg =
             "PureLinearizer used to convert non-pure ExpEmbedding; operation ${e.offendingFunction} is not supported in a pure context.\nEmbedding debug view:\n${debugTreeView.print()}"
@@ -57,4 +58,5 @@ fun ExpEmbedding.pureToViper(source: KtSourceElement? = null): Exp {
     }
 }
 
-fun List<ExpEmbedding>.pureToViper(source: KtSourceElement? = null): List<Exp> = map { it.pureToViper(source) }
+fun List<ExpEmbedding>.pureToViper(toBuiltin: Boolean, source: KtSourceElement? = null): List<Exp> =
+    map { it.pureToViper(toBuiltin, source) }

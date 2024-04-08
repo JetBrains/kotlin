@@ -1,23 +1,29 @@
 /loop_invariants.kt:(128,152): info: Generated Viper text for dynamic_lambda_invariant:
 method global$fun_dynamic_lambda_invariant$fun_take$fun_take$$return$T_Int$return$T_Unit(local$f: Ref)
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
-  var anonymous$0: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$functionType())
+  ret$0 := dom$RuntimeType$unitValue()
   label label$continue$0
   anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  while (anonymous$0)
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
     invariant acc(local$f.special$function_object_call_counter, write)
     invariant old(local$f.special$function_object_call_counter) <=
       local$f.special$function_object_call_counter
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   {
-    var anonymous$1: Int
+    var anonymous$1: Ref
+    var anonymous$2: Ref
     special$invoke_function_object(local$f)
+    anonymous$2 := anonymous$1
+    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
     anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   }
   label label$break$0
@@ -25,31 +31,38 @@ method global$fun_dynamic_lambda_invariant$fun_take$fun_take$$return$T_Int$retur
 }
 
 method global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  returns (ret: Bool)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
 
 
 /loop_invariants.kt:(226,245): info: Generated Viper text for function_assignment:
 method global$fun_function_assignment$fun_take$fun_take$$return$T_Int$return$T_Unit(local$f: Ref)
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$g: Ref
-  var anonymous$0: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$functionType())
+  ret$0 := dom$RuntimeType$unitValue()
   local0$g := local$f
   label label$continue$0
   anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  while (anonymous$0)
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
     invariant acc(local$f.special$function_object_call_counter, write)
     invariant old(local$f.special$function_object_call_counter) <=
       local$f.special$function_object_call_counter
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   {
-    var anonymous$1: Int
+    var anonymous$1: Ref
+    var anonymous$2: Ref
     special$invoke_function_object(local0$g)
+    anonymous$2 := anonymous$1
+    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
     anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   }
   label label$break$0
@@ -57,13 +70,14 @@ method global$fun_function_assignment$fun_take$fun_take$$return$T_Int$return$T_U
 }
 
 method global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  returns (ret: Bool)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
 
 
 /loop_invariants.kt:(333,364): info: Generated Viper text for conditional_function_assignment:
-method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$return$T_Int$fun_take$$return$T_Int$return$T_Unit(local$b: Bool,
+method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$return$T_Int$fun_take$$return$T_Int$return$T_Unit(local$b: Ref,
   local$f: Ref, local$h: Ref)
-  returns (ret$0: dom$Unit)
+  returns (ret$0: Ref)
   requires acc(local$f.special$function_object_call_counter, write)
   requires acc(local$h.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
@@ -74,27 +88,34 @@ method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$r
     local$f.special$function_object_call_counter
   ensures old(local$h.special$function_object_call_counter) <=
     local$h.special$function_object_call_counter
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$g: Ref
-  var anonymous$0: Bool
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$h): dom$Type), dom$Type$Function())
-  if (local$b) {
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$functionType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$h), dom$RuntimeType$functionType())
+  ret$0 := dom$RuntimeType$unitValue()
+  if (dom$RuntimeType$boolFromRef(local$b)) {
     local0$g := local$f
   } else {
     local0$g := local$h}
   label label$continue$0
   anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  while (anonymous$0)
+  while (dom$RuntimeType$boolFromRef(anonymous$0))
     invariant acc(local$f.special$function_object_call_counter, write)
     invariant acc(local$h.special$function_object_call_counter, write)
     invariant old(local$f.special$function_object_call_counter) <=
       local$f.special$function_object_call_counter
     invariant old(local$h.special$function_object_call_counter) <=
       local$h.special$function_object_call_counter
+    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   {
-    var anonymous$1: Int
+    var anonymous$1: Ref
+    var anonymous$2: Ref
     special$invoke_function_object(local0$g)
+    anonymous$2 := anonymous$1
+    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
     anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   }
   label label$break$0
@@ -102,4 +123,5 @@ method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$r
 }
 
 method global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  returns (ret: Bool)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
