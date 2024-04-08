@@ -59,6 +59,7 @@
 
 #### Fixes
 
+- [`KT-67185`](https://youtrack.jetbrains.com/issue/KT-67185) K2: Incorrect coercion-to-Unit leading to CCE at runtime
 - [`KT-63836`](https://youtrack.jetbrains.com/issue/KT-63836) K2: No deprecation error message in common metadata compilation
 - [`KT-57618`](https://youtrack.jetbrains.com/issue/KT-57618) K2: complex deprecation messages are not printed in the error
 - [`KT-61787`](https://youtrack.jetbrains.com/issue/KT-61787) K2 doesn't report warnings for some Gradle tasks
