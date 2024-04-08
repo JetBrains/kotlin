@@ -29,6 +29,22 @@ annotation class GradleTestVersions(
     val additionalVersions: Array<String> = [],
 )
 
+/**
+ * Parameterized test against different Gradle versions.
+ * Test should accept [GradleVersion] as a parameter.
+ *
+ * By default, [TestVersions.Gradle.MIN_SUPPORTED] and [TestVersions.Gradle.MAX_SUPPORTED] Gradle versions are provided.
+ * To modify it use additional [GradleTestVersions] annotation on the test method.
+ *
+ * @see [GradleTestVersions]
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@GradleTestVersions
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(GradleArgumentsProvider::class)
+annotation class GradleTest
+
 inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T {
     var nextSuperclass: Class<*>? = context.testClass.get().superclass
     val superClassSequence = if (nextSuperclass != null) {
