@@ -6,9 +6,6 @@ KtFileSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-CALLABLE NAMES:
-[function, functionWithDefault, testVal, initializedVariable, unitializedVariable, lateinitVariable, variableWithBackingField, privateSetter, jvmNameOnSetter, customGetter, jvmNameOnGetter, propertyWithReceiver, propertyWithGenericReceiver, constant, jvmField]
-
 CALLABLE SYMBOLS:
 KtFunctionSymbol:
   annotationsList: []
@@ -1752,9 +1749,6 @@ KtKotlinPropertySymbol:
   javaGetterName: jvmField
   javaSetterName: jvmField
   setterDeprecationStatus: null
-
-CLASSIFIER NAMES:
-[OuterClass]
 
 CLASSIFIER SYMBOLS:
 KtNamedClassOrObjectSymbol:

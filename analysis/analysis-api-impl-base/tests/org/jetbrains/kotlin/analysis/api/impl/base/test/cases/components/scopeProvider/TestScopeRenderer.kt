@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.rendere
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtTypeErrorTypeRenderer
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.scopes.KtScopeLike
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.name.Name
 
 internal object TestScopeRenderer {
     fun renderForTests(
@@ -157,4 +159,25 @@ internal object TestScopeRenderer {
     private val prettyPrintTypeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
         typeErrorTypeRenderer = KtTypeErrorTypeRenderer.WITH_ERROR_MESSAGE
     }
+}
+
+/**
+ * Render the names contained in the scope, provided by [KtScope.getPossibleClassifierNames] and [KtScope.getPossibleCallableNames].
+ * Scope tests should not forget checking contained names, as they're a public part of the [KtScope] API.
+ *
+ * Note: Many scopes wouldn't work correctly if the contained name sets were broken, as these names are often the basis for the search.
+ * But this is not a good reason for a lack of tests, as the scope implementation is not forced to use these name sets internally, and
+ * the contained names are still part of the public API.
+ */
+fun PrettyPrinter.renderNamesContainedInScope(scope: KtScopeLike) {
+    appendLine("Classifier names:")
+    renderSortedNames(scope.getPossibleClassifierNames())
+    appendLine()
+
+    appendLine("Callable names:")
+    renderSortedNames(scope.getPossibleCallableNames())
+}
+
+private fun PrettyPrinter.renderSortedNames(names: Set<Name>) {
+    names.sorted().forEach { appendLine(it.toString()) }
 }

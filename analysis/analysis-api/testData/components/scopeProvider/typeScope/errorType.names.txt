@@ -1,0 +1,5 @@
+KtTypeScope:
+  NO_SCOPE
+
+Declaration Scope:
+  NO_SCOPE
