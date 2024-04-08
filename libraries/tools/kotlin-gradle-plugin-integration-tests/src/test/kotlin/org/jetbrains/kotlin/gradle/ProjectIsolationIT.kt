@@ -46,4 +46,23 @@ class ProjectIsolationIT : KGPBaseTest() {
             build("tasks")
         }
     }
+
+    @DisplayName("Multi-module Android project")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_83)
+    @AndroidGradlePluginTests
+    fun testProjectIsolationAndroid(
+       gradleVersion: GradleVersion,
+       agpVersion: String,
+       jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "AndroidIncrementalMultiModule",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            build("assembleDebug")
+        }
+    }
 }

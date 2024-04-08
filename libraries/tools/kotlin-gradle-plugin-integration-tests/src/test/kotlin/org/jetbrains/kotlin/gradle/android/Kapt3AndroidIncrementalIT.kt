@@ -136,9 +136,10 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
             appProject.buildGradle.modify {
                 //language=Gradle
                 """
-                apply plugin: 'org.jetbrains.kotlin.kapt'
-                $it
-                """.trimIndent()
+                |plugins {
+                |   id("org.jetbrains.kotlin.kapt")
+                |${it.substringAfter("plugins {")}
+                """.trimMargin()
             }
 
             build(":app:testDebugUnitTest")

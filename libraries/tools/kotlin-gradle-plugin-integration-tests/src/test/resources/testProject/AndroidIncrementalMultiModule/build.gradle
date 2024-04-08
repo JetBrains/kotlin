@@ -1,19 +1,4 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        maven { url 'https://maven.google.com' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath('com.android.tools.build:gradle:' + android_tools_version)
-    }
-}
-
-allprojects {
-    repositories {
-        mavenLocal()
-        maven { url 'https://maven.google.com' }
-        mavenCentral()
-    }
+plugins {
+    id("com.android.application") apply false
+    id("org.jetbrains.kotlin.android") apply false
 }
