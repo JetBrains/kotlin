@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.Name
 
 class FirSyntheticPropertyBuilder {
@@ -22,6 +24,7 @@ class FirSyntheticPropertyBuilder {
 
     var status: FirDeclarationStatus? = null
     var delegateSetter: FirSimpleFunction? = null
+    var dispatchReceiverType: ConeSimpleKotlinType? = null
 
 
     @OptIn(FirImplementationDetail::class)
@@ -30,6 +33,7 @@ class FirSyntheticPropertyBuilder {
         status = status ?: delegateGetter.status,
         getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true, symbol),
         setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false, symbol) },
+        dispatchReceiverType = dispatchReceiverType ?: delegateGetter.dispatchReceiverType,
         deprecationsProvider = deprecationsProvider
     )
 }

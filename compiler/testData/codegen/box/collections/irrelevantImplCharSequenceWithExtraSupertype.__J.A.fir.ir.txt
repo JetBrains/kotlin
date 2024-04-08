@@ -29,11 +29,11 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:A modality:OPEN visibility:pu
     $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.J.A
     VALUE_PARAMETER name:start index:0 type:kotlin.Int
     VALUE_PARAMETER name:end index:1 type:kotlin.Int
-  PROPERTY FAKE_OVERRIDE name:length visibility:public modality:FINAL [fake_override,val]
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:length visibility:public modality:FINAL [val]
     overridden:
-      public final length: kotlin.Int [val]
-    FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:FINAL <> ($this:<root>.J.A) returnType:kotlin.Int [fake_override]
-      correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:FINAL [fake_override,val]
+      public abstract length: kotlin.Int [val]
+    FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:<get-length> visibility:public modality:FINAL <> ($this:<root>.J.A) returnType:kotlin.Int
+      correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:length visibility:public modality:FINAL [val]
       overridden:
-        public final fun <get-length> (): kotlin.Int declared in <root>.J.AImpl
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.J.A
+        public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.J.A

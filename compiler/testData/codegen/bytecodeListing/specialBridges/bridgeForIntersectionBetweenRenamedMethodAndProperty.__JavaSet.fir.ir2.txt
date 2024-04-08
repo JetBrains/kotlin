@@ -71,11 +71,11 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaSet modality:OPEN visibil
     TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
     $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JavaSet<T of <root>.JavaSet>
     VALUE_PARAMETER name:a index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.JavaSet.toArray?>?
-  PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:size visibility:public modality:OPEN [val]
     overridden:
-      public open size: kotlin.Int [fake_override,val] declared in <root>.C
-    FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:<root>.JavaSet<T of <root>.JavaSet>) returnType:kotlin.Int [fake_override]
-      correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
+      public abstract size: kotlin.Int [fake_override,val]
+    FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:<get-size> visibility:public modality:OPEN <> ($this:<root>.JavaSet<T of <root>.JavaSet>) returnType:kotlin.Int
+      correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:size visibility:public modality:OPEN [val]
       overridden:
-        public open fun <get-size> (): kotlin.Int [fake_override] declared in <root>.C
-      $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.JavaSet<T of <root>.JavaSet>
+        public abstract fun <get-size> (): kotlin.Int [fake_override] declared in kotlin.collections.MutableSet
+      $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JavaSet<T of <root>.JavaSet>

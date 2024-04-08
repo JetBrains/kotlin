@@ -28,8 +28,9 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val symbol: FirSyntheticPropertySymbol,
     override val status: FirDeclarationStatus,
     override val getter: FirSyntheticPropertyAccessor,
+    override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val setter: FirSyntheticPropertyAccessor? = null,
-    override val deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
+    override val deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
 ) : FirProperty() {
     init {
         symbol.bind(this)
@@ -39,9 +40,6 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
 
     override val returnTypeRef: FirTypeRef
         get() = getter.returnTypeRef
-
-    override val dispatchReceiverType: ConeSimpleKotlinType?
-        get() = getter.dispatchReceiverType
 
     override val source: KtSourceElement?
         get() = null

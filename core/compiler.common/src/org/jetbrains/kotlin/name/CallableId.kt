@@ -93,3 +93,7 @@ class CallableId private constructor(
         }
     }
 }
+
+fun CallableId.withClassId(classId: ClassId): CallableId {
+    return CallableId(classId, callableName)
+}
