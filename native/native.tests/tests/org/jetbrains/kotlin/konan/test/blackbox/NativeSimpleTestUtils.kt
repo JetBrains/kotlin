@@ -206,15 +206,20 @@ internal fun AbstractNativeSimpleTest.compileToStaticCache(
     return compilation.result.assertSuccess().resultingArtifact
 }
 
+/**
+ * [sourcesRoot] points either to a .kt-file, or a folder.
+ *
+ * If it's present, then it's name (without .kt-extension, if it's a file) will be used as 'moduleName' for generated module.
+ */
 internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
-    moduleDir: File?,
+    sourcesRoot: File?,
     freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY,
     extras: TestCase.Extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
 ): TestCase {
-    val moduleName: String = moduleDir?.name?.removeSuffix(".kt") ?: LAUNCHER_MODULE_NAME
+    val moduleName: String = sourcesRoot?.name?.removeSuffix(".kt") ?: LAUNCHER_MODULE_NAME
     val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
 
-    moduleDir?.walkTopDown()
+    sourcesRoot?.walkTopDown()
         ?.filter { it.isFile && it.extension == "kt" }
         ?.forEach { file -> module.files += TestFile.createCommitted(file, module) }
 

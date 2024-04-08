@@ -61,7 +61,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
                 val barCompilationResult: Success<out KLIB> = compileToLibrary(barTestCase, fooLibrary.asLibraryDependency())
                 val barLibrary: KLIB = barCompilationResult.resultingArtifact
 
-                val executableTestCase = generateTestCaseWithSingleModule(moduleDir = null) // No sources.
+                val executableTestCase = generateTestCaseWithSingleModule(sourcesRoot = null) // No sources.
                 executableTestCase to compileToExecutableInOneStage(
                     executableTestCase,
                     fooLibrary.asLibraryDependency(),
