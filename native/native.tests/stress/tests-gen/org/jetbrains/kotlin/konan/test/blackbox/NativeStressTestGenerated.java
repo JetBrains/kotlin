@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/stress/testData")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("stress")
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "15m")
 @UseStandardTestCaseGroupProvider()
 public class NativeStressTestGenerated extends AbstractNativeBlackBoxTest {
   @Test

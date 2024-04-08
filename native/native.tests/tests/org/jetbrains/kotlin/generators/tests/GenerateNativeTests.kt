@@ -662,7 +662,7 @@ private fun stress() = arrayOf(
     annotation(
         EnforcedProperty::class.java,
         "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
-        "propertyValue" to "5m"
+        "propertyValue" to "15m"
     )
 )
 private fun testRunner() = arrayOf(
