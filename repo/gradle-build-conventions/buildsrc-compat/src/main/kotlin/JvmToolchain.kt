@@ -13,14 +13,29 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 enum class JdkMajorVersion(
     val majorVersion: Int,
-    val targetName: String = majorVersion.toString()
+    val targetName: String = majorVersion.toString(),
+    private val overrideMajorVersion: Int? = null,
+    private val mandatory: Boolean = true
 ) {
+    JDK_1_6(6, targetName = "1.6", overrideMajorVersion = 8),
+    JDK_1_7(7, targetName = "1.7", overrideMajorVersion = 8),
     JDK_1_8(8, targetName = "1.8"),
     JDK_9_0(9),
-    JDK_10_0(10),
-    JDK_11_0(11),
-    JDK_17_0(17),
-    JDK_21_0(21);
+    JDK_10_0(10, mandatory = false),
+    JDK_11_0(11, mandatory = false),
+    JDK_17_0(17, mandatory = false),
+    JDK_21_0(21, mandatory = false);
+
+    fun isMandatory(): Boolean = mandatory
+
+    val overrideVersion by lazy {
+        if (overrideMajorVersion != null) {
+            values().firstOrNull() { it.majorVersion == overrideMajorVersion }
+                ?: error("Can't find the value with majorVersion=$overrideMajorVersion")
+        } else {
+            null
+        }
+    }
 
     val envName = name
 }
@@ -31,6 +46,9 @@ fun Project.configureJvmDefaultToolchain() {
     configureJvmToolchain(DEFAULT_JVM_TOOLCHAIN)
 }
 
+fun Project.shouldOverrideObsoleteJdk(jdkVersion: JdkMajorVersion): Boolean =
+    kotlinBuildProperties.isObsoleteJdkOverrideEnabled && jdkVersion.overrideVersion != null
+
 fun Project.configureJvmToolchain(jdkVersion: JdkMajorVersion) {
     @Suppress("NAME_SHADOWING")
     val jdkVersion = chooseJdk_1_8ForJpsBuild(jdkVersion)
@@ -39,9 +57,18 @@ fun Project.configureJvmToolchain(jdkVersion: JdkMajorVersion) {
 
     plugins.withId("org.jetbrains.kotlin.jvm") {
         val kotlinExtension = extensions.getByType<KotlinTopLevelExtension>()
-        kotlinExtension.jvmToolchain {
-            setupToolchain(jdkVersion)
+
+        if (shouldOverrideObsoleteJdk(jdkVersion)) {
+            kotlinExtension.jvmToolchain {
+                setupToolchain(jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode"))
+            }
+            updateJvmTarget(jdkVersion.targetName)
+        } else {
+            kotlinExtension.jvmToolchain {
+                setupToolchain(jdkVersion)
+            }
         }
+
         tasks
             .matching { it.name != "compileJava9Java" && it is JavaCompile }
             .configureEach {
@@ -64,8 +91,18 @@ fun Project.configureJavaOnlyToolchain(
     val jdkVersion = chooseJdk_1_8ForJpsBuild(jdkVersion)
     plugins.withId("java-base") {
         val javaExtension = extensions.getByType<JavaPluginExtension>()
-        javaExtension.toolchain {
-            setupToolchain(jdkVersion)
+        if (shouldOverrideObsoleteJdk(jdkVersion)) {
+            javaExtension.toolchain {
+                setupToolchain(jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode"))
+            }
+            tasks.withType<JavaCompile>().configureEach {
+                targetCompatibility = jdkVersion.targetName
+                sourceCompatibility = jdkVersion.targetName
+            }
+        } else {
+            javaExtension.toolchain {
+                setupToolchain(jdkVersion)
+            }
         }
     }
 }
@@ -81,15 +118,34 @@ fun Project.chooseJdk_1_8ForJpsBuild(jdkVersion: JdkMajorVersion): JdkMajorVersi
 fun KotlinJvmCompile.configureTaskToolchain(
     jdkVersion: JdkMajorVersion
 ) {
-    kotlinJavaToolchain.toolchain.use(
-        project.getToolchainLauncherFor(jdkVersion)
-    )
+    if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
+        kotlinJavaToolchain.toolchain.use(
+            project.getToolchainLauncherFor(
+                jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode")
+            )
+        )
+        compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jdkVersion.targetName))
+    } else {
+        kotlinJavaToolchain.toolchain.use(
+            project.getToolchainLauncherFor(jdkVersion)
+        )
+    }
 }
 
 fun JavaCompile.configureTaskToolchain(
     jdkVersion: JdkMajorVersion
 ) {
-    javaCompiler.set(project.getToolchainCompilerFor(jdkVersion))
+    if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
+        javaCompiler.set(
+            project.getToolchainCompilerFor(
+                jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode")
+            )
+        )
+        targetCompatibility = jdkVersion.targetName
+        sourceCompatibility = jdkVersion.targetName
+    } else {
+        javaCompiler.set(project.getToolchainCompilerFor(jdkVersion))
+    }
 }
 
 fun Project.updateJvmTarget(
@@ -131,13 +187,23 @@ fun Project.getToolchainLauncherFor(
     jdkVersion: JdkMajorVersion
 ): Provider<JavaLauncher> {
     val service = project.extensions.getByType<JavaToolchainService>()
+    val jdkVersionWithOverride = project.getJdkVersionWithOverride(jdkVersion)
     return service.launcherFor {
-        this.languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+        this.languageVersion.set(JavaLanguageVersion.of(jdkVersionWithOverride.majorVersion))
     }
 }
 
 fun Project.getToolchainJdkHomeFor(jdkVersion: JdkMajorVersion): Provider<String> {
     return getToolchainLauncherFor(jdkVersion).map {
         it.metadata.installationPath.asFile.absolutePath
+    }
+}
+
+
+fun Project.getJdkVersionWithOverride(jdkVersion: JdkMajorVersion): JdkMajorVersion {
+    return if (project.shouldOverrideObsoleteJdk(jdkVersion)) {
+        jdkVersion.overrideVersion ?: error("Substitution version should be defined for override mode")
+    } else {
+        jdkVersion
     }
 }
