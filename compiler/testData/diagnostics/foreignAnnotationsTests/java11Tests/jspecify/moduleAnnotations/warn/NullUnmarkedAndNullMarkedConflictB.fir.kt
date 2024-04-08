@@ -1,5 +1,5 @@
 // ALLOW_KOTLIN_PACKAGE
-// JSPECIFY_STATE: strict
+// JSPECIFY_STATE: warn
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: null_marked_module/module-info.java
@@ -73,15 +73,15 @@ public class UnannotatedTypeWithConflictinglyAnnotatedConstructor {
 // FILE: kotlin.kt
 
 interface TestA: conflictinglyannotatedpackage.UnannotatedType {
-    override fun unannotatedProduce(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!>
+    override fun unannotatedProduce(): String?
 }
 
 interface TestB: unannotatedpackage.ConflictinglyAnnotatedType {
-    override fun unannotatedProduce(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!>
+    override fun unannotatedProduce(): String?
 }
 
 interface TestC: unannotatedpackage.UnannotatedType {
-    override fun conflictinglyAnnotatedProduce(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!>
+    override fun conflictinglyAnnotatedProduce(): String?
 }
 
 fun test(
@@ -89,8 +89,8 @@ fun test(
     b: unannotatedpackage.ConflictinglyAnnotatedType,
     c: unannotatedpackage.UnannotatedType
 ) {
-    a.unannotatedConsume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    b.unannotatedConsume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    c.conflictinglyAnnotatedConsume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    unannotatedpackage.UnannotatedTypeWithConflictinglyAnnotatedConstructor(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a.unannotatedConsume(null)
+    b.unannotatedConsume(null)
+    c.conflictinglyAnnotatedConsume(null)
+    unannotatedpackage.UnannotatedTypeWithConflictinglyAnnotatedConstructor(null)
 }

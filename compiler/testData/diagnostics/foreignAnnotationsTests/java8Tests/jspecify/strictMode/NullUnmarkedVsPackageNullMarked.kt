@@ -48,23 +48,18 @@ public class UnannotatedTypeWithNullUnmarkedConstructor {
 // FILE: kotlin.kt
 
 interface TestA: nullmarkedpackage.NullUnmarkedType {
-    // jspecify_nullness_mismatch
-    override fun unannotatedProduce(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!>
+    override fun unannotatedProduce(): String?
 }
 
 interface TestB: nullmarkedpackage.UnannotatedType {
-    // jspecify_nullness_mismatch
-    override fun nullUnmarkedProduce(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!>
+    override fun nullUnmarkedProduce(): String?
 }
 
 fun test(
     a: nullmarkedpackage.NullUnmarkedType,
     b: nullmarkedpackage.UnannotatedType
 ) {
-    // jspecify_nullness_mismatch
-    a.unannotatedConsume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    // jspecify_nullness_mismatch
-    b.nullUnmarkedConsume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    // jspecify_nullness_mismatch
-    nullmarkedpackage.UnannotatedTypeWithNullUnmarkedConstructor(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a.unannotatedConsume(null)
+    b.nullUnmarkedConsume(null)
+    nullmarkedpackage.UnannotatedTypeWithNullUnmarkedConstructor(null)
 }

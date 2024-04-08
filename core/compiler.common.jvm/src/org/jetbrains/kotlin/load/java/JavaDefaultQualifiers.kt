@@ -39,6 +39,11 @@ val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
                 APPLICABILITY_OF_JSPECIFY_DEFAULTS,
                 definitelyNotNull = false
             ),
+    JSPECIFY_NULL_UNMARKED_ANNOTATION_FQ_NAME to
+            JavaDefaultQualifiers(
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY),
+                APPLICABILITY_OF_JSPECIFY_DEFAULTS
+            ),
 )
 
 val JAVAX_DEFAULT_ANNOTATIONS = mapOf(

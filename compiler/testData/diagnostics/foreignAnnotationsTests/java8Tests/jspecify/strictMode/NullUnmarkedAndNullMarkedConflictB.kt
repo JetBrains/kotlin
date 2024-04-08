@@ -62,18 +62,15 @@ public class UnannotatedTypeWithConflictinglyAnnotatedConstructor {
 // FILE: kotlin.kt
 
 interface TestA: conflictinglyannotatedpackage.UnannotatedType {
-    // jspecify_nullness_mismatch
-    override fun unannotatedProduce(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!>
+    override fun unannotatedProduce(): String?
 }
 
 interface TestB: unannotatedpackage.ConflictinglyAnnotatedType {
-    // jspecify_nullness_mismatch
-    override fun unannotatedProduce(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!>
+    override fun unannotatedProduce(): String?
 }
 
 interface TestC: unannotatedpackage.UnannotatedType {
-    // jspecify_nullness_mismatch
-    override fun conflictinglyAnnotatedProduce(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!>
+    override fun conflictinglyAnnotatedProduce(): String?
 }
 
 fun test(
@@ -81,12 +78,8 @@ fun test(
     b: unannotatedpackage.ConflictinglyAnnotatedType,
     c: unannotatedpackage.UnannotatedType
 ) {
-    // jspecify_nullness_mismatch
-    a.unannotatedConsume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    // jspecify_nullness_mismatch
-    b.unannotatedConsume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    // jspecify_nullness_mismatch
-    c.conflictinglyAnnotatedConsume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    // jspecify_nullness_mismatch
-    unannotatedpackage.UnannotatedTypeWithConflictinglyAnnotatedConstructor(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a.unannotatedConsume(null)
+    b.unannotatedConsume(null)
+    c.conflictinglyAnnotatedConsume(null)
+    unannotatedpackage.UnannotatedTypeWithConflictinglyAnnotatedConstructor(null)
 }

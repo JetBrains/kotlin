@@ -44,6 +44,5 @@ fun test() {
     NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    // jspecify_nullness_mismatch
-    NullMarkedType.TargetType.RAW().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    NullMarkedType.TargetType.RAW().consume(null)
 }

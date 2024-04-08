@@ -37,6 +37,8 @@ val JSPECIFY_NULL_MARKED_ANNOTATION_FQ_NAME = FqName("org.jspecify.annotations.N
 
 val JSPECIFY_NULLNESS_UNSPECIFIED_ANNOTATION_FQ_NAME = FqName("org.jspecify.annotations.NullnessUnspecified")
 
+val JSPECIFY_NULL_UNMARKED_ANNOTATION_FQ_NAME = FqName("org.jspecify.annotations.NullUnmarked")
+
 // JSR-305 annotations
 
 val JAVAX_TYPE_QUALIFIER_ANNOTATION_FQ_NAME = FqName("javax.annotation.meta.TypeQualifier")
@@ -126,7 +128,8 @@ val NULLABILITY_ANNOTATIONS: Set<FqName> = mutableSetOf<FqName>() +
         NULLABLE_ANNOTATIONS +
         JAVAX_NONNULL_ANNOTATION_FQ_NAME +
         JSPECIFY_OLD_NULL_MARKED_ANNOTATION_FQ_NAME +
-        JSPECIFY_NULL_MARKED_ANNOTATION_FQ_NAME
+        JSPECIFY_NULL_MARKED_ANNOTATION_FQ_NAME +
+        JSPECIFY_NULL_UNMARKED_ANNOTATION_FQ_NAME
 
 // mutability annotations
 

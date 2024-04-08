@@ -56,8 +56,7 @@ fun test() {
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
-    // jspecify_nullness_mismatch
-    accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce()<!>)
+    accept<Any>(NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce())
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 

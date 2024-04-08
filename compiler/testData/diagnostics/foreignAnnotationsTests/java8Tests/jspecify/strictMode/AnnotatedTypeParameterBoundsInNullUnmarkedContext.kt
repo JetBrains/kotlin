@@ -48,8 +48,7 @@ fun test() {
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.TYPE_ARGUMENT().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    // jspecify_nullness_mismatch
-    accept<Any>(<!TYPE_MISMATCH!>NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce()<!>)
+    accept<Any>(NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce())
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 

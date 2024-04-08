@@ -48,8 +48,7 @@ fun test() {
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.TYPE_ARGUMENT().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    // jspecify_nullness_mismatch
-    accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce()<!>)
+    accept<Any>(NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce())
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
@@ -57,13 +56,11 @@ fun test() {
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    // jspecify_nullness_mismatch
-    accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce()<!>)
+    accept<Any>(NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce())
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    // jspecify_nullness_mismatch
-    accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>NullMarkedType.TargetType.RAW().produce()<!>)
+    accept<Any>(NullMarkedType.TargetType.RAW().produce())
     // jspecify_nullness_mismatch
     NullMarkedType.TargetType.RAW().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
