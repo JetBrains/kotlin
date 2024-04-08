@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.sir
 sealed interface SirOrigin {
     sealed interface Synthetic : SirOrigin
 
+    data class PrivateObjectInit(val `for`: Foreign.SourceCode) : Synthetic
+    data class ObjectAccessor(val `for`: Foreign.SourceCode) : Synthetic
     data class ExternallyDefined(val name: String) : Synthetic
 
     data class Namespace(val path: List<String>) : Synthetic

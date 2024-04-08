@@ -45,12 +45,12 @@ public class SirVisibilityCheckerImpl(
 
     context(KtAnalysisSession)
     private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(): Boolean =
-        classKind == KtClassKind.CLASS
+        ((classKind == KtClassKind.CLASS && !isData) || classKind == KtClassKind.OBJECT)
                 && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
-                && !isData
                 && !isInline
                 && modality == Modality.FINAL
 
     private fun KtSymbolWithVisibility.isPublic(): Boolean = visibility.isPublicAPI
-    private val SUPPORTED_SYMBOL_ORIGINS = setOf(KtSymbolOrigin.SOURCE, KtSymbolOrigin.LIBRARY)
 }
+
+private val SUPPORTED_SYMBOL_ORIGINS = setOf(KtSymbolOrigin.SOURCE, KtSymbolOrigin.LIBRARY)

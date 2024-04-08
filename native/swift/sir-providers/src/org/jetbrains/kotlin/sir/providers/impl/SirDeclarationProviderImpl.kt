@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.addChild
 
 public class SirDeclarationProviderImpl(
@@ -68,7 +69,11 @@ public class SirDeclarationProviderImpl(
         name = symbol.name.asString()
         origin = KotlinSource(symbol)
 
+        declarations += sirSyntheticDeclarations()
+
         documentation = symbol.documentation()
+    }.also { resultedClass ->
+        resultedClass.declarations.forEach { decl -> decl.parent = resultedClass }
     }
 
     context(KtAnalysisSession, SirSession)
@@ -131,7 +136,33 @@ public class SirDeclarationProviderImpl(
         it.setter?.parent = it
     }
 
-    private fun KtSymbol.documentation(): String? = this.psiSafe<KtDeclaration>()?.docComment?.text
+    private fun KtNamedClassOrObjectSymbol.sirSyntheticDeclarations(): List<SirDeclaration> {
+        val symbol = this@sirSyntheticDeclarations
+
+        return if (symbol.classKind == KtClassKind.OBJECT)
+            listOf<SirDeclaration>(
+                buildInit {
+                    origin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(symbol))
+                    visibility = SirVisibility.PRIVATE
+                    kind = SirCallableKind.INSTANCE_METHOD
+                    isFailable = false
+                    initKind = SirInitializerKind.ORDINARY
+                },
+                buildVariable {
+                    origin = SirOrigin.ObjectAccessor(`for` = KotlinSource(symbol))
+                    visibility = SirVisibility.PUBLIC
+                    type = SirNominalType(SirSwiftModule.int32) // todo: fixme when types become available - KT-65808
+                    name = "shared"
+                    getter = buildGetter {
+                        kind = SirCallableKind.STATIC_METHOD
+                    }
+                }.also { it.getter.parent = it }
+            )
+        else
+            emptyList()
+    }
+
+    private fun KtSymbol.documentation(): String? = psiSafe<KtDeclaration>()?.docComment?.text
 
     private val KtCallableSymbol.sirCallableKind: SirCallableKind
         get() = when (symbolKind) {
