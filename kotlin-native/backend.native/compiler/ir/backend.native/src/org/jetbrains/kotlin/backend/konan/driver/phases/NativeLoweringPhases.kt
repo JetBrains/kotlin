@@ -157,7 +157,7 @@ private val contractsDslRemovePhase = createFileLoweringPhase(
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase (see kotlin: dd3f8ecaacd)
 private val provisionalFunctionExpressionPhase = createFileLoweringPhase(
-        { _: Context -> ProvisionalFunctionExpressionLowering() },
+        ::ProvisionalFunctionExpressionLowering,
         name = "FunctionExpression",
         description = "Transform IrFunctionExpression to a local function reference"
 )

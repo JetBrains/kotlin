@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -24,8 +23,8 @@ private val validateIrAfterLowering = makeIrModulePhase(
 )
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
-private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendContext>(
-    { ProvisionalFunctionExpressionLowering() },
+private val provisionalFunctionExpressionPhase = makeIrFilePhase(
+    ::ProvisionalFunctionExpressionLowering,
     name = "FunctionExpression",
     description = "Transform IrFunctionExpression to a local function reference"
 )

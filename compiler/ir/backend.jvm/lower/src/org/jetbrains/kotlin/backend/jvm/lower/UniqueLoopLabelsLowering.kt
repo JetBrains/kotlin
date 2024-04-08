@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
 internal val uniqueLoopLabelsPhase = makeIrFilePhase(
-    { _: JvmBackendContext -> UniqueLoopLabelsLowering() },
+    ::UniqueLoopLabelsLowering,
     name = "UniqueLoopLabels",
     description = "Label all loops for non-local break/continue"
 )
 
-private class UniqueLoopLabelsLowering : FileLoweringPass {
+private class UniqueLoopLabelsLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrElementVisitorVoid {
             // This counter is intentionally not local to every declaration because their names might clash.

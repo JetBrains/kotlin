@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val replaceKFunctionInvokeWithFunctionInvokePhase = makeIrFilePhase<JvmBackendContext>(
-    { ReplaceKFunctionInvokeWithFunctionInvoke() },
+internal val replaceKFunctionInvokeWithFunctionInvokePhase = makeIrFilePhase(
+    ::ReplaceKFunctionInvokeWithFunctionInvoke,
     name = "ReplaceKFunctionInvokeWithFunctionInvoke",
     description = "Replace KFunction{n}.invoke with Function{n}.invoke"
 )
@@ -33,7 +33,8 @@ internal val replaceKFunctionInvokeWithFunctionInvokePhase = makeIrFilePhase<Jvm
  * with `SuspendFunction{n}.invoke`. This is needed because normally the type e.g. `kotlin.reflect.KFunction2` is mapped to
  * `kotlin.reflect.KFunction` (a real class, without arity), which doesn't have the corresponding `invoke`.
  */
-private class ReplaceKFunctionInvokeWithFunctionInvoke : FileLoweringPass, IrElementVisitorVoid {
+private class ReplaceKFunctionInvokeWithFunctionInvoke(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) :
+    FileLoweringPass, IrElementVisitorVoid {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(this)
     }

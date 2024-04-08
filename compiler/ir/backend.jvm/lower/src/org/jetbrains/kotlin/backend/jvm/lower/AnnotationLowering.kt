@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 
-internal val annotationPhase = makeIrFilePhase<JvmBackendContext>(
-    { AnnotationLowering() },
+internal val annotationPhase = makeIrFilePhase(
+    ::AnnotationLowering,
     name = "Annotation",
     description = "Remove constructors of annotation classes"
 )
 
-private class AnnotationLowering : ClassLoweringPass {
+private class AnnotationLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (irClass.isAnnotationClass) {
             irClass.declarations.removeIf { it is IrConstructor }
