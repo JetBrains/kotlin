@@ -125,9 +125,6 @@ public class KmModule {
      * `@OptionalExpectation`-annotated annotation classes declared in this module.
      * Such classes are not materialized to bytecode on JVM, but the Kotlin compiler stores their metadata in the module file on JVM,
      * and loads it during compilation of dependent modules, to avoid reporting "unresolved reference" errors on usages.
-     *
-     * Multiplatform projects are an experimental feature of Kotlin, and their behavior and/or binary format
-     * may change in a subsequent release.
      */
     public val optionalAnnotationClasses: MutableList<KmClass> = ArrayList(0)
 }
