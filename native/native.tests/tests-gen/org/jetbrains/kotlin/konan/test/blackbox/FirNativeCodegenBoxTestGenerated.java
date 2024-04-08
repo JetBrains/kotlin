@@ -59,6 +59,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("deserializedLocalClassArgument.kt")
+      public void testDeserializedLocalClassArgument() {
+        runTest("compiler/testData/codegen/box/annotations/deserializedLocalClassArgument.kt");
+      }
+
+      @Test
       @TestMetadata("genericAnnotations.kt")
       public void testGenericAnnotations() {
         runTest("compiler/testData/codegen/box/annotations/genericAnnotations.kt");
