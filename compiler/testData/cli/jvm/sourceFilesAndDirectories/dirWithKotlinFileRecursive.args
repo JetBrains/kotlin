@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/dirWithKotlinFileRecursive
+-d
+$TEMP_DIR$

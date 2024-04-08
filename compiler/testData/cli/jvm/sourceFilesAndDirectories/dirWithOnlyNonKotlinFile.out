@@ -1,0 +1,3 @@
+warning: scripts are not yet supported with K2 in LightTree mode, consider using K1 or disable LightTree mode with -Xuse-fir-lt=false
+error: no source files
+COMPILATION_ERROR
