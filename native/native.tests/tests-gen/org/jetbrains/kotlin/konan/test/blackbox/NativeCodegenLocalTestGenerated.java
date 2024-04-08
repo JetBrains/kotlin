@@ -762,9 +762,63 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("check_stacktrace_format_coresymbolication.kt")
+    public void testCheck_stacktrace_format_coresymbolication() {
+      runTest("native/native.tests/testData/codegen/exceptions/check_stacktrace_format_coresymbolication.kt");
+    }
+
+    @Test
+    @TestMetadata("check_stacktrace_format_libbacktrace.kt")
+    public void testCheck_stacktrace_format_libbacktrace() {
+      runTest("native/native.tests/testData/codegen/exceptions/check_stacktrace_format_libbacktrace.kt");
+    }
+
+    @Test
+    @TestMetadata("except_constr_w_default.kt")
+    public void testExcept_constr_w_default() {
+      runTest("native/native.tests/testData/codegen/exceptions/except_constr_w_default.kt");
+    }
+
+    @Test
+    @TestMetadata("kt37572_coresymbolication.kt")
+    public void testKt37572_coresymbolication() {
+      runTest("native/native.tests/testData/codegen/exceptions/kt37572_coresymbolication.kt");
+    }
+
+    @Test
+    @TestMetadata("kt37572_libbacktrace.kt")
+    public void testKt37572_libbacktrace() {
+      runTest("native/native.tests/testData/codegen/exceptions/kt37572_libbacktrace.kt");
+    }
+
+    @Test
+    @TestMetadata("kt49240_stack_trace_completeness.kt")
+    public void testKt49240_stack_trace_completeness() {
+      runTest("native/native.tests/testData/codegen/exceptions/kt49240_stack_trace_completeness.kt");
+    }
+
+    @Test
+    @TestMetadata("stack_trace_inline_coresymbolication.kt")
+    public void testStack_trace_inline_coresymbolication() {
+      runTest("native/native.tests/testData/codegen/exceptions/stack_trace_inline_coresymbolication.kt");
+    }
+
+    @Test
+    @TestMetadata("stack_trace_inline_libbacktrace.kt")
+    public void testStack_trace_inline_libbacktrace() {
+      runTest("native/native.tests/testData/codegen/exceptions/stack_trace_inline_libbacktrace.kt");
+    }
+
+    @Test
     @TestMetadata("throw_cleanup.kt")
     public void testThrow_cleanup() {
       runTest("native/native.tests/testData/codegen/exceptions/throw_cleanup.kt");
+    }
+
+    @Test
+    @TestMetadata("throw_from_except_constr.kt")
+    public void testThrow_from_except_constr() {
+      runTest("native/native.tests/testData/codegen/exceptions/throw_from_except_constr.kt");
     }
   }
 

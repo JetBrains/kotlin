@@ -1,43 +1,41 @@
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+// NATIVE_STANDALONE
+// FREE_COMPILER_ARGS: -Xbinary=sourceInfoType=libbacktrace
+// DISABLE_NATIVE: targetFamily=MINGW
+// DISABLE_NATIVE: optimizationMode=NO
+// DISABLE_NATIVE: optimizationMode=OPT
+// FILE: stack_trace_inline.kt
 
 import kotlin.text.Regex
 import kotlin.test.*
 
-var expectedInlinesCount = 0
-var expectedExceptionContrFrames = 0
+val expectedInlinesCount = 1
+val expectedExceptionContrFrames = 0
 
 fun exception() {
     error("FAIL!")
 }
 
-fun main(args: Array<String>) {
-    val sourceInfoType = args.first()
-    val (e, i) = when (sourceInfoType) {
-        "libbacktrace" -> Pair(0, 1)
-        "coresymbolication" -> Pair(4, 0)
-        else -> throw AssertionError("Unknown source info type " + sourceInfoType)
-    }
-    expectedExceptionContrFrames = e
-    expectedInlinesCount = i
-
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+fun box(): String {
     var actualInlinesCount = 0
     try {
         exception()
     }
     catch (e:Exception) {
-        val stackTrace = e.getStackTrace()
+        val stackTrace = e.getStackTrace().take(expectedExceptionContrFrames + expectedInlinesCount + 2)
         actualInlinesCount = stackTrace.count { it.contains("[inlined]")}
-        stackTrace.take(expectedExceptionContrFrames + 2).forEach(::checkFrame)
+        stackTrace.forEach(::checkFrame)
     }
     assertEquals(expectedInlinesCount, actualInlinesCount)
+    return "OK"
 }
 internal val regex = Regex("^(\\d+)\\ +.*/(.*):(\\d+):.*$")
 internal fun checkFrame(value:String) {
     val goldValues = arrayOf<Pair<String, Int>?>(
             *arrayOfNulls(expectedExceptionContrFrames),
             *arrayOfNulls(expectedInlinesCount),
-            "stack_trace_inline.kt" to 10,
-            "stack_trace_inline.kt" to 25)
+            "stack_trace_inline.kt" to 15,
+            "stack_trace_inline.kt" to 22)
     val (pos, file, line) = regex.find(value)!!.destructured
     goldValues[pos.toInt()]?.let {
         assertEquals(it.first, file)

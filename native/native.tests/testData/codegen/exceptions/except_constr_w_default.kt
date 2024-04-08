@@ -1,4 +1,8 @@
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+// NATIVE_STANDALONE
+// FREE_COMPILER_ARGS: -Xbinary=sourceInfoType=libbacktrace
+// DISABLE_NATIVE: targetFamily=MINGW
+// DISABLE_NATIVE: optimizationMode=NO
+// DISABLE_NATIVE: optimizationMode=OPT
 
 import kotlin.text.Regex
 import kotlin.test.*
@@ -10,24 +14,20 @@ fun exception() {
     throw CustomException()
 }
 
-fun main() {
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+fun box(): String {
     try {
         exception()
     }
     catch (e:Exception) {
-        val stackTrace = e.getStackTrace().filter { "kfun:" in it }
-        println("Kotlin part of call stack is:")
-        for (entry in stackTrace)
-            println(entry)
-        println("Verifying...")
+        val stackTrace = e.getStackTrace().filter { "kfun:" in it }.take(2)
         val goldValues = arrayOf(
                 "kfun:#exception(){}",
-                "kfun:#main(){}",
+                "kfun:#box(){}kotlin.String",
         )
-        assertEquals(goldValues.size, stackTrace.size)
         goldValues.zip(stackTrace).forEach { checkFrame(it.first, it.second) }
-        println("Passed")
     }
+    return "OK"
 }
 
 internal val regex = Regex("(kfun.+) \\+ (\\d+)")

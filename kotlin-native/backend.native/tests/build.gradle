@@ -265,65 +265,6 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
     }
 }
 
-standaloneTest("check_stacktrace_format_coresymbolication") {
-    disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
-    arguments = ['coresymbolication']
-    source = "runtime/exceptions/check_stacktrace_format.kt"
-}
-
-standaloneTest("stack_trace_inline") {
-    disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=sourceInfoType=coresymbolication']
-    source = "runtime/exceptions/stack_trace_inline.kt"
-    arguments = ['coresymbolication']
-}
-
-standaloneTest("kt-49240-stack-trace-completeness") {
-    disabled = project.globalTestArgs.contains('-opt')
-    source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
-}
-
-standaloneTest("kt-37572") {
-    disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
-    arguments = ['coresymbolication']
-    source = "runtime/exceptions/kt-37572.kt"
-}
-
-standaloneTest("check_stacktrace_format_libbacktrace") {
-    disabled = !PlatformInfo.supportsLibBacktrace(project)|| project.globalTestArgs.contains('-opt')
-    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
-    arguments = ['libbacktrace']
-    source = "runtime/exceptions/check_stacktrace_format.kt"
-}
-
-standaloneTest("stack_trace_inline_libbacktrace") {
-    disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
-    arguments = ['libbacktrace']
-    source = "runtime/exceptions/stack_trace_inline.kt"
-}
-
-standaloneTest("kt-37572-libbacktrace") {
-    disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
-    arguments = ['libbacktrace']
-    source = "runtime/exceptions/kt-37572.kt"
-}
-
-standaloneTest("except_constr_w_default") {
-    disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
-    source = "runtime/exceptions/except_constr_w_default.kt"
-}
-
-standaloneTest("throw_from_except_constr") {
-    disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
-    source = "runtime/exceptions/throw_from_except_constr.kt"
-}
-
 KotlinNativeTestKt.createTest(project, "kt39548", KonanStandaloneTest) { task ->
     // Test infrastructure doesn't support generated source;
     // workaround by specifying dummy source:

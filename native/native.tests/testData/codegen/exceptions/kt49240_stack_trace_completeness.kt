@@ -1,36 +1,32 @@
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+// NATIVE_STANDALONE
+// DISABLE_NATIVE: optimizationMode=NO
+// DISABLE_NATIVE: optimizationMode=OPT
 
 import kotlin.text.Regex
 import kotlin.test.*
-
-var inlinesCount = 0
 
 fun exception() {
     error("FAIL!")
 }
 
-fun main() {
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+fun box(): String {
     try {
         exception()
     }
     catch (e:Exception) {
-        val stackTrace = e.getStackTrace().filter { "kfun:" in it }
-        println("Kotlin part of call stack is:")
-        for (entry in stackTrace)
-            println(entry)
-        println("Verifying...")
+        val stackTrace = e.getStackTrace().filter { "kfun:" in it }.take(6)
         val goldValues = arrayOf(
                 "kfun:kotlin.Throwable#<init>(kotlin.String?){}",
                 "kfun:kotlin.Exception#<init>(kotlin.String?){}",
                 "kfun:kotlin.RuntimeException#<init>(kotlin.String?){}",
                 "kfun:kotlin.IllegalStateException#<init>(kotlin.String?){}",
                 "kfun:#exception(){}",
-                "kfun:#main(){}",
+                "kfun:#box(){}kotlin.String",
         )
-        assertEquals(goldValues.size, stackTrace.size)
         goldValues.zip(stackTrace).forEach { checkFrame(it.first, it.second) }
-        println("Passed")
     }
+    return "OK"
 }
 
 internal val regex = Regex("(kfun.+) \\+ (\\d+)")

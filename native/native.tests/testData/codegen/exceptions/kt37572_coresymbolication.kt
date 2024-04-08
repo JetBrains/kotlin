@@ -1,35 +1,32 @@
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+// NATIVE_STANDALONE
+// FREE_COMPILER_ARGS: -Xbinary=sourceInfoType=coresymbolication
+// DISABLE_NATIVE: isAppleTarget=false
+// DISABLE_NATIVE: optimizationMode=NO
+// DISABLE_NATIVE: optimizationMode=OPT
+// FILE: kt37572.kt
 
 import kotlin.text.Regex
 import kotlin.test.*
 
-var expectedInlinesCount = 0
-var expectedExceptionContrFrames = 0
+val expectedInlinesCount = 0
+val expectedExceptionContrFrames = 2
 
-fun main(args: Array<String>) {
-    val sourceInfoType = args.first()
-    val (e, i) = when (sourceInfoType) {
-        "libbacktrace" -> Pair(0, 2)
-        "coresymbolication" -> Pair(2, 0)
-        else -> throw AssertionError("Unknown source info type " + sourceInfoType)
-    }
-    expectedExceptionContrFrames = e
-    expectedInlinesCount = i
-
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+fun box(): String {
     var actualInlinesCount = 0
     try {
         foo()
     } catch (tw:Throwable) {
-        val stackTrace = tw.getStackTrace();
+        val stackTrace = tw.getStackTrace().take(expectedExceptionContrFrames + expectedInlinesCount + 3)
         actualInlinesCount = stackTrace.count { it.contains("[inlined]")}
-        stackTrace.take(expectedExceptionContrFrames + 4).forEach(::checkFrame)
+        stackTrace.forEach(::checkFrame)
     }
     assertEquals(expectedInlinesCount, actualInlinesCount)
+    return "OK"
 }
 
 fun foo() {
     myRun {
-        //platform.darwin.NSObject()
         throwException()
     }
 }
@@ -46,14 +43,13 @@ internal val regex = Regex("^(\\d+)\\ +.*/(.*):(\\d+):.*$")
 internal fun checkFrame(value:String) {
     val goldValues = arrayOf<Pair<String, Int>?>(
             *arrayOfNulls(expectedExceptionContrFrames),
-            "kt-37572.kt" to 42,
-            "kt-37572.kt" to 33,
+            "kt37572.kt" to 39,
+            "kt37572.kt" to 30,
             *(if (expectedInlinesCount != 0) arrayOf(
-                    "kt-37572.kt" to 38,
-                    "kt-37572.kt" to 31,
+                    "kt37572.kt" to 35,
+                    "kt37572.kt" to 29,
             ) else emptyArray()),
-            "kt-37572.kt" to 21,
-            "kt-37572.kt" to 9)
+            "kt37572.kt" to 18)
 
     val (pos, file, line) = regex.find(value)!!.destructured
     goldValues[pos.toInt()]?.let {
