@@ -802,6 +802,30 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitution.kt")
+    public void testCyclicSupertypeWithClasspathSubstitution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitution2.kt")
+    public void testCyclicSupertypeWithClasspathSubstitution2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitution2.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionAsLibrary.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionAsLibrary() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionAsLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionAsLibrary2.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionAsLibrary2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionAsLibrary2.kt");
+    }
+
+    @Test
     @TestMetadata("emptyClassWithSuper.kt")
     public void testEmptyClassWithSuper() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/emptyClassWithSuper.kt");

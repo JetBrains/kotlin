@@ -608,11 +608,6 @@ open class SupertypeComputationSession {
     private val newClassifiersForBreakingLoops = mutableListOf<FirClassLikeDeclaration>()
 
     /**
-     * @return **true** if class is already resolved and can't be a part of loops
-     */
-    protected open fun isAlreadyResolved(classLikeDeclaration: FirClassLikeDeclaration): Boolean = false
-
-    /**
      * @param supertypeRefs a collection where at least one element is [FirErrorTypeRef] for looped references
      */
     protected open fun reportLoopErrorRefs(classLikeDeclaration: FirClassLikeDeclaration, supertypeRefs: List<FirResolvedTypeRef>) {
@@ -654,7 +649,7 @@ open class SupertypeComputationSession {
             wasSubtypingInvolved: Boolean,
             wereTypeArgumentsInvolved: Boolean,
         ) {
-            if (classLikeDeclaration == null || isAlreadyResolved(classLikeDeclaration)) return
+            if (classLikeDeclaration == null) return
             require(!wasSubtypingInvolved || !wereTypeArgumentsInvolved) {
                 "This must hold by induction, because otherwise such a loop is allowed"
             }

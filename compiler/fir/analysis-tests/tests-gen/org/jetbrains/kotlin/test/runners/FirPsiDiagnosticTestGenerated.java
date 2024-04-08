@@ -1589,6 +1589,34 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ClasspathSubstitution {
+      @Test
+      public void testAllFilesPresentInClasspathSubstitution() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("cyclicSupertype.kt")
+      public void testCyclicSupertype() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertype.kt");
+      }
+
+      @Test
+      @TestMetadata("cyclicSupertype2.kt")
+      public void testCyclicSupertype2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertype2.kt");
+      }
+
+      @Test
+      @TestMetadata("cyclicSupertypeBetweenModules.kt")
+      public void testCyclicSupertypeBetweenModules() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeBetweenModules.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
     @TestDataPath("$PROJECT_ROOT")
     public class ConstVal {

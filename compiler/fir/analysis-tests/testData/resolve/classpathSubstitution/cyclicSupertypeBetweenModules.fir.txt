@@ -1,0 +1,16 @@
+Module: dependency
+FILE: dependency.kt
+    public abstract interface ToSubstitute : R|kotlin/Any| {
+    }
+    public abstract interface Intermediate : R|ToSubstitute| {
+    }
+Module: main
+FILE: main.kt
+    public abstract interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Intermediate> {
+    }
+    public final class Usage : R|Intermediate| {
+        public constructor(): R|Usage| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
