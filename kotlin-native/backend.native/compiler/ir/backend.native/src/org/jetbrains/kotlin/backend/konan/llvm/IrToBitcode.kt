@@ -1648,12 +1648,7 @@ internal class CodeGeneratorVisitor(
             val resultNullBB = currentBlock.takeIf { !isAfterTerminator() }
 
             positionAtEnd(bbInstanceOf)
-            val checkResult = if (isSuperClassCast) {
-                kTrue
-            } else {
-                if (!isCompanionParentClass(value, dstClass)) kFalse else genInstanceOfImpl(srcArg, dstClass)
-            }
-            val resultInstanceOf = onCheck(srcArg, checkResult)
+            val resultInstanceOf = onCheck(srcArg, if (isSuperClassCast) kTrue else genInstanceOfImpl(srcArg, dstClass))
             val resultInstanceOfBB = currentBlock.also { require(!isAfterTerminator()) }
 
 
@@ -1670,16 +1665,6 @@ internal class CodeGeneratorVisitor(
                 result
             }
         }
-    }
-
-    private fun isCompanionParentClass(value: IrTypeOperatorCall, dstClass: IrClass): Boolean {
-        var result = true
-        if (dstClass.isCompanion) {
-            (dstClass.parent as? IrClass)?.symbol?.let {
-                result = value.argument.type == it
-            }
-        }
-        return result
     }
 
     private fun genInstanceOfImpl(obj: LLVMValueRef, dstClass: IrClass) = with(functionGenerationContext) {
@@ -1701,7 +1686,12 @@ internal class CodeGeneratorVisitor(
                 null
         )
 
-        return if (dstClass.isObjCClass()) {
+        return if (dstClass.isCompanion) {
+            call(
+                    llvm.Kotlin_Interop_IsSameClass,
+                    listOf(objCObject, genGetObjCClass(dstClass))
+            )
+        } else if (dstClass.isObjCClass()) {
             if (dstClass.isInterface) {
                 val isMeta = if (dstClass.isObjCMetaClass()) kTrue else kFalse
                 call(
