@@ -43,30 +43,12 @@ Support for multiplatform programming is one of Kotlin’s key benefits. It redu
 ## Build environment requirements
 
 This repository is using [Gradle toolchains](https://docs.gradle.org/current/userguide/toolchains.html) feature
-to select and auto-provision required JDKs from [AdoptOpenJdk](https://adoptopenjdk.net) project. 
-
-Unfortunately [AdoptOpenJdk](https://adoptopenjdk.net) project does not provide required JDK 1.6 and 1.7 images,
-so you could either download them manually and provide path to installation via `JDK_1_6` and `JDK_1_7` environment variables or
-use following SDK managers:
-- [Asdf-vm](https://asdf-vm.com/)
-- [Jabba](https://github.com/shyiko/jabba)
-- [SDKMAN!](https://sdkman.io/)
+to select and auto-provision required JDKs from [AdoptOpenJdk](https://adoptopenjdk.net) project.
 
 Alternatively, it is still possible to only provide required JDKs via environment variables 
 (see [gradle.properties](./gradle.properties#L5) for supported variable names). To ensure Gradle uses only JDKs 
 from environmental variables - disable Gradle toolchain auto-detection by passing `-Porg.gradle.java.installations.auto-detect=false` option
 (or put it into `$GRADLE_USER_HOME/gradle.properties`).
-
-For local development, if you're not working on the standard library, it's OK to avoid installing JDK 1.6 and JDK 1.7.
-Add `kotlin.build.isObsoleteJdkOverrideEnabled=true` to the `local.properties` file, so build will only use JDK 1.8+. Note, that in this
-case, build will have Gradle remote build cache misses for some tasks. 
-
-Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
-
-```bash
-$ brew tap homebrew/cask-versions
-$ brew install --cask java6
-```
 
 On Windows you might need to add long paths setting to the repo:
 

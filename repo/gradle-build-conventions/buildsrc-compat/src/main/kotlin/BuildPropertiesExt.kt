@@ -40,9 +40,6 @@ val KotlinBuildProperties.pathToYoutrackModularizedTestData: String?
 val KotlinBuildProperties.pathToSpaceModularizedTestData: String?
     get() = getOrNull("kotlin.fir.modularized.testdata.space") as? String
 
-val KotlinBuildProperties.isObsoleteJdkOverrideEnabled: Boolean
-    get() = getBoolean("kotlin.build.isObsoleteJdkOverrideEnabled", false)
-
 val KotlinBuildProperties.isNativeRuntimeDebugInfoEnabled: Boolean
     get() = getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false)
 
