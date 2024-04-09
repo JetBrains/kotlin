@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }

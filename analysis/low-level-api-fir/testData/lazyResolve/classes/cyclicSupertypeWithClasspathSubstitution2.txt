@@ -54,7 +54,7 @@ SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -67,7 +67,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -80,7 +80,7 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -93,7 +93,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -106,7 +106,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -119,7 +119,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -132,7 +132,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -145,7 +145,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -158,7 +158,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dependency.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface ToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : <ERROR TYPE REF: Loop in supertype: /Intermediate -> /ToSubstitute> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Intermediate : R|ToSubstitute| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface ToSubstitute : R|Main| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertype: /ToSubstitute -> /Main> {
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Main : R|Intermediate| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Main : <ERROR TYPE REF: Loop in supertype: /Main -> /Intermediate> {
     }
