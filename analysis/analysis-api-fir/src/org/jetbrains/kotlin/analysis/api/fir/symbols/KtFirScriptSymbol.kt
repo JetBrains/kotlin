@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirScriptSymbolPointer
@@ -41,7 +40,6 @@ internal class KtFirScriptSymbol(
     override val name: Name
         get() = withValidityAssertion { firSymbol.fir.name }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtScriptSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtScriptSymbol>(this)?.let { return it }
 

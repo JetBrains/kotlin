@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10AnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
@@ -31,7 +30,6 @@ internal class KtFe10FileSymbol(
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { if (file.isCompiled) KtSymbolOrigin.LIBRARY else KtSymbolOrigin.SOURCE }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtFileSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFileSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }

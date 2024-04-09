@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10PackageSymbolPointer
@@ -31,7 +30,6 @@ internal class KtFe10PackageSymbol(
         JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
     }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtPackageSymbol> = withValidityAssertion {
         KtFe10PackageSymbolPointer(fqName)
     }

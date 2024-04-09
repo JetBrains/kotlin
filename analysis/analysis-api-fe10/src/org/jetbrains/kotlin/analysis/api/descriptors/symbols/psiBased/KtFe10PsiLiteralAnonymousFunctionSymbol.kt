@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -69,7 +68,6 @@ internal class KtFe10PsiLiteralAnonymousFunctionSymbol(
     override val isExtension: Boolean
         get() = withValidityAssertion { psi.isExtensionDeclaration() }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousFunctionSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }

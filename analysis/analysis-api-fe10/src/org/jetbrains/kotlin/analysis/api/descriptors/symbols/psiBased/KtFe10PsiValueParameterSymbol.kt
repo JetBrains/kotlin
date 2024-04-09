@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -74,7 +73,6 @@ internal class KtFe10PsiValueParameterSymbol(
             else psi.nameAsSafeName
         }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtValueParameterSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }

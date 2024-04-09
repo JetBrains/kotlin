@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirEnumEntryInitializerSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntryInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
@@ -32,10 +31,8 @@ internal class KtFirEnumEntryInitializerSymbol(
      * [org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol]. (It cannot be a subtype in the general Analysis API because enum
      * entry initializers are classes in FE10.)
      */
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtFirEnumEntryInitializerSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFirEnumEntryInitializerSymbol>(this)?.let { return it }
-
-        KtFirEnumEntryInitializerSymbolPointer(requireOwnerPointer())
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFirEnumEntryInitializerSymbol>(this)
+            ?: KtFirEnumEntryInitializerSymbolPointer(analysisSession.createOwnerPointer(this))
     }
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -45,7 +44,6 @@ internal class KtFe10DescAnonymousFunctionSymbol(
     override val contextReceivers: List<KtContextReceiver>
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousFunctionSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }

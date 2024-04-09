@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTypeParameterSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
@@ -38,7 +37,6 @@ internal sealed class KtFirTypeParameterSymbolBase : KtTypeParameterSymbol(), Kt
         }
     }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeParameterSymbol>(this)?.let { return it }
 
@@ -47,7 +45,7 @@ internal sealed class KtFirTypeParameterSymbolBase : KtTypeParameterSymbol(), Kt
         requireNotNull(typeParameters) { "Containing declaration symbol: ${containingDeclarationSymbol::class.simpleName}" }
 
         KtFirTypeParameterSymbolPointer(
-            ownerPointer = requireOwnerPointer(),
+            ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
             index = typeParameters.indexOf(firSymbol),
         )

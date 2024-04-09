@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -64,7 +63,6 @@ internal class KtFe10PsiTypeAliasSymbol(
     override val isActual: Boolean get() = withValidityAssertion { descriptor?.isActual ?: psi.hasActualModifier() }
     override val isExpect: Boolean get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeAliasSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }

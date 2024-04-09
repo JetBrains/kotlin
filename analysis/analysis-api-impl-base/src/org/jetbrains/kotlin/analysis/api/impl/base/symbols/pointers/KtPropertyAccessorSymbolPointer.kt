@@ -7,27 +7,41 @@ package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 
 @KtAnalysisApiInternals
-class KtPropertyAccessorSymbolPointer(
-    private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
-    private val isGetter: Boolean,
-) : KtSymbolPointer<KtPropertyAccessorSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtPropertyAccessorSymbol? {
-        val propertySymbol = with(analysisSession) {
-            propertySymbolPointer.restoreSymbol()
-        } ?: return null
-
-        return if (isGetter) propertySymbol.getter else propertySymbol.setter
+sealed class KtPropertyAccessorSymbolPointer<T : KtPropertyAccessorSymbol>(
+    private val propertySymbolPointer: KtSymbolPointer<KtPropertySymbol>
+) : KtSymbolPointer<T>() {
+    protected fun restorePropertySymbol(analysisSession: KtAnalysisSession): KtPropertySymbol? = with(analysisSession) {
+        return propertySymbolPointer.restoreSymbol()
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtPropertyAccessorSymbolPointer &&
-            other.isGetter == isGetter &&
-            other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
+    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean {
+        return this === other ||
+                other is KtPropertyAccessorSymbolPointer<*> &&
+                other.javaClass == javaClass &&
+                other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
+    }
+}
+
+@KtAnalysisApiInternals
+class KtPropertyGetterSymbolPointer(
+    propertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
+) : KtPropertyAccessorSymbolPointer<KtPropertyGetterSymbol>(propertySymbolPointer) {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtPropertyGetterSymbol? {
+        return restorePropertySymbol(analysisSession)?.getter
+    }
+}
+
+@KtAnalysisApiInternals
+class KtPropertySetterSymbolPointer(
+    propertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
+) : KtPropertyAccessorSymbolPointer<KtPropertySetterSymbol>(propertySymbolPointer) {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtPropertySetterSymbol? {
+        return restorePropertySymbol(analysisSession)?.setter
+    }
 }
