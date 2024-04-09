@@ -5,13 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
+import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.test.CompilerTestUtil
+import org.jetbrains.kotlin.test.KlibTestUtil
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 
 interface KnmTestSupport {
     val ignoreDirective: SimpleDirective
     fun createDecompiler(): KlibMetadataDecompiler<*>
+    fun compileCommonMetadata(inputKtFiles: List<Path>, compilationOutputPath: Path, additionalArguments: List<String>): OutputType
 }
 
 object Fe10KnmTestSupport : KnmTestSupport {
@@ -27,6 +34,21 @@ object Fe10KnmTestSupport : KnmTestSupport {
 
     override fun createDecompiler(): KlibMetadataDecompiler<*> {
         return KotlinNativeMetadataDecompiler()
+    }
+
+    override fun compileCommonMetadata(
+        inputKtFiles: List<Path>,
+        compilationOutputPath: Path,
+        additionalArguments: List<String>,
+    ): OutputType {
+        KlibTestUtil.compileCommonSourcesToKlib(
+            inputKtFiles.map(Path::toFile),
+            libraryName = "library",
+            compilationOutputPath.toFile(),
+            additionalArguments,
+        )
+
+        return OutputType.KLIB
     }
 }
 
@@ -44,4 +66,26 @@ object K2KnmTestSupport : KnmTestSupport {
     override fun createDecompiler(): KlibMetadataDecompiler<*> {
         return K2KotlinNativeMetadataDecompiler()
     }
+
+    override fun compileCommonMetadata(
+        inputKtFiles: List<Path>,
+        compilationOutputPath: Path,
+        additionalArguments: List<String>,
+    ): OutputType {
+        CompilerTestUtil.executeCompilerAssertSuccessful(
+            K2MetadataCompiler(), buildList {
+                addAll(inputKtFiles.map { it.absolutePathString() })
+                add("-d"); add(compilationOutputPath.absolutePathString())
+                add("-module-name"); add("library")
+                add("-classpath"); add(ForTestCompileRuntime.stdlibCommonForTests().absolutePath)
+                addAll(additionalArguments)
+            }
+        )
+
+        return OutputType.UNPACKED
+    }
+}
+
+enum class OutputType {
+    KLIB, UNPACKED
 }

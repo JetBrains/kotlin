@@ -54,11 +54,11 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
     }
 
     protected fun compileToKnmFiles(testDirectoryPath: Path): List<VirtualFile> {
-        val commonKlib = compileCommonKlib(testDirectoryPath)
-        return getKnmFilesFromKlib(commonKlib)
+        val (compilationOutputFile, outputType) = compileCommonMetadata(testDirectoryPath)
+        return getKnmFiles(compilationOutputFile, outputType)
     }
 
-    private fun compileCommonKlib(testDirectory: Path): File {
+    private fun compileCommonMetadata(testDirectory: Path): Pair<File, OutputType> {
         val ktFiles = Files.list(testDirectory).filter { it.extension == "kt" }.collect(Collectors.toList())
         val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib")
         val additionalArgumentsFromLanguageDirectives = ktFiles.flatMap { path ->
@@ -66,20 +66,13 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
                 InTextDirectivesUtils.findListWithPrefixes(fileText, "// !LANGUAGE: ").map { "-XXLanguage:$it" }
             }
         }
-        KlibTestUtil.compileCommonSourcesToKlib(
-            ktFiles.map(Path::toFile),
-            libraryName = "library",
-            testKlib,
-            additionalArgumentsFromLanguageDirectives,
-        )
 
-        return testKlib
+        val outputType = knmTestSupport.compileCommonMetadata(ktFiles, testKlib.toPath(), additionalArgumentsFromLanguageDirectives)
+        return testKlib to outputType
     }
 
-    private fun getKnmFilesFromKlib(klib: File): List<VirtualFile> {
-        val path = klib.toPath()
-        val jarFileSystem = environment.projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
-        val root = jarFileSystem.refreshAndFindFileByPath(path.absolutePathString() + "!/")!!
+    private fun getKnmFiles(compilationOutput: File, outputType: OutputType): List<VirtualFile> {
+        val root = extractVirtualFileRootFromCompiledMetadata(compilationOutput, outputType)
         val files = mutableListOf<VirtualFile>()
         VfsUtilCore.iterateChildrenRecursively(
             root,
@@ -92,6 +85,19 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
             })
 
         return files
+    }
+
+    private fun extractVirtualFileRootFromCompiledMetadata(rootFile: File, outputType: OutputType): VirtualFile {
+        return when (outputType) {
+            OutputType.KLIB -> {
+                val path = rootFile.toPath()
+                val jarFileSystem = environment.projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
+                jarFileSystem.refreshAndFindFileByPath(path.absolutePathString() + "!/")!!
+            }
+            OutputType.UNPACKED -> {
+                environment.projectEnvironment.environment.localFileSystem.findFileByIoFile(rootFile)!!
+            }
+        }
     }
 
     private fun isTestIgnored(testDirectory: Path): Boolean {
