@@ -37,7 +37,7 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmF
         val decompiler = knmTestSupport.createDecompiler()
         val stubTreeBinaryFile = decompiler.stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, environment.project))!!
 
-        val fileViewProviderForDecompiledFile = K2KotlinNativeMetadataDecompiler().createFileViewProvider(
+        val fileViewProviderForDecompiledFile = decompiler.createFileViewProvider(
             knmFile, PsiManager.getInstance(project), physical = false,
         )
 
