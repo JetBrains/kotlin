@@ -648,6 +648,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-test",
             ":kotlin-test:kotlin-test-js-it",
             ":native:native.tests",
+            ":native:native.tests:cli-tests",
             ":native:native.tests:driver",
             ":native:native.tests:stress"
 
@@ -909,3 +910,6 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':native:kotlin-test-native-xctest'
     include ':native:cli-native'
 }
+//include 'native:native.tests:cli'
+//findProject(':native:native.tests:cli')?.name = 'cli'
+
