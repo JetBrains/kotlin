@@ -17904,6 +17904,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("capturedFunctionalType.kt")
+        public void testCapturedFunctionalType() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedFunctionalType.kt");
+        }
+
+        @Test
         @TestMetadata("capturedInTypeInference.kt")
         public void testCapturedInTypeInference() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedInTypeInference.kt");
