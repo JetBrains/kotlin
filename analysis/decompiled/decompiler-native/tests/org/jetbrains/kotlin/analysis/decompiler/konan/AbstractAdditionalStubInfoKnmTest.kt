@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import com.intellij.util.indexing.FileContentImpl
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.DECOMPILED_TEST_DATA_K2_SUFFIX
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.DECOMPILED_TEST_DATA_SUFFIX
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.extractAdditionalStubInfo
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 
 abstract class AbstractAdditionalStubInfoKnmTest : AbstractDecompiledKnmFileTest() {
@@ -25,8 +29,14 @@ abstract class AbstractAdditionalStubInfoKnmTest : AbstractDecompiledKnmFileTest
 
         val stub = stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, environment.project))!!
         KotlinTestUtils.assertEqualsToFile(
-            testDirectoryPath.resolve("${testDirectoryPath.name}.txt"),
+            getExpectedFile(testDirectoryPath),
             extractAdditionalStubInfo(stub)
         )
+    }
+
+    private fun getExpectedFile(testDirectoryPath: Path): File {
+        return testDirectoryPath.resolve("${testDirectoryPath.name}$DECOMPILED_TEST_DATA_K2_SUFFIX").toFile().takeIf { it.exists() }
+            ?: testDirectoryPath.resolve("${testDirectoryPath.name}$DECOMPILED_TEST_DATA_SUFFIX").toFile().takeIf { it.exists() }
+            ?: error("Test data file doesn't exist in: ${testDirectoryPath.absolutePathString()}")
     }
 }
