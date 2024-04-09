@@ -9,18 +9,22 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerWasmCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
+import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
 object FirWasmSessionFactory : FirAbstractSessionFactory() {
     fun createModuleBasedSession(
@@ -46,6 +50,11 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerDefaultComponents()
                 registerExtraComponents(it)
+                @OptIn(SessionConfiguration::class)
+                it.register(
+                    FirDefaultImportProviderHolder::class,
+                    FirDefaultImportProviderHolder(if (wasmTarget == WasmTarget.JS) WasmPlatformAnalyzerServices else WasmWasiPlatformAnalyzerServices)
+                )
             },
             registerExtraCheckers = { it.registerWasmCheckers(wasmTarget) },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
