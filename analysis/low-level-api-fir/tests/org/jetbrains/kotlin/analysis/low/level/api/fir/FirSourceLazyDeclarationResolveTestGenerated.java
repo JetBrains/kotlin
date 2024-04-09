@@ -1114,6 +1114,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("multiLevelClasspathSubstitution2.kt")
+    public void testMultiLevelClasspathSubstitution2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/multiLevelClasspathSubstitution2.kt");
+    }
+
+    @Test
     @TestMetadata("overrideWithTransitiveClass.kt")
     public void testOverrideWithTransitiveClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/overrideWithTransitiveClass.kt");
@@ -1123,6 +1129,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("overrideWithTransitiveClassWithPreresolvedClass.kt")
     public void testOverrideWithTransitiveClassWithPreresolvedClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/overrideWithTransitiveClassWithPreresolvedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("preresolvedMultiLevelClasspathSubstitution.kt")
+    public void testPreresolvedMultiLevelClasspathSubstitution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/preresolvedMultiLevelClasspathSubstitution.kt");
     }
 
     @Test

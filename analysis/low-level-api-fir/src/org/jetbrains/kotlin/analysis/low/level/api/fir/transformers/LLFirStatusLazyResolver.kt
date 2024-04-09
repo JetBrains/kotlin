@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.utils.SmartSet
 
 internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirStatusTargetResolver(
@@ -59,7 +60,20 @@ private fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
     else -> StatusResolveMode.AllCallables
 }
 
-private class LLStatusComputationSession(val useSiteSession: LLFirSession) : StatusComputationSession()
+private class LLStatusComputationSession : StatusComputationSession() {
+    val useSiteSessions: List<LLFirSession> get() = _useSiteSessions
+    private val _useSiteSessions: MutableList<LLFirSession> = mutableListOf<LLFirSession>()
+
+    inline fun withClassSession(regularClass: FirClass, action: () -> Unit) {
+        val newSession = regularClass.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
+        try {
+            newSession?.let(_useSiteSessions::add)
+            action()
+        } finally {
+            newSession?.let { _useSiteSessions.removeLast() }
+        }
+    }
+}
 
 /**
  * This resolver is responsible for [STATUS][FirResolvePhase.STATUS] phase.
@@ -78,7 +92,7 @@ private class LLStatusComputationSession(val useSiteSession: LLFirSession) : Sta
  */
 private class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
-    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(target.session),
+    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(),
     private val resolveMode: StatusResolveMode,
 ) : LLFirTargetResolver(target, FirResolvePhase.STATUS) {
     private val transformer = Transformer(resolveTargetSession, resolveTargetScopeSession)
@@ -206,13 +220,20 @@ private class LLFirStatusTargetResolver(
             return klass
         }
 
-        override fun superTypeToSymbols(typeRef: FirTypeRef): List<FirClassifierSymbol<*>> {
-            val type = typeRef.coneType
-            val originalClassifierSymbol = type.toSymbol(session)
-            val useSiteSymbol = type.toSymbol(computationSession.useSiteSession)
+        override fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
+            computationSession.withClassSession(regularClass) {
+                super.forceResolveStatusesOfSupertypes(regularClass)
+            }
+        }
 
-            // Resolve an 'expect' declaration before an 'actual' as it is like 'super' and 'sub' classes
-            return listOfNotNull(originalClassifierSymbol, useSiteSymbol?.takeIf { it != originalClassifierSymbol })
+        override fun superTypeToSymbols(typeRef: FirTypeRef): Collection<FirClassifierSymbol<*>> {
+            val type = typeRef.coneType
+            return SmartSet.create<FirClassifierSymbol<*>>().apply {
+                // Resolution order: from declaration site to use site
+                for (useSiteSession in computationSession.useSiteSessions.asReversed()) {
+                    type.toSymbol(useSiteSession)?.let(::add)
+                }
+            }
         }
 
         override fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean {

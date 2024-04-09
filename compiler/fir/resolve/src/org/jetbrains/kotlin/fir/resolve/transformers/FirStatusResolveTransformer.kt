@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -326,7 +326,7 @@ abstract class AbstractFirStatusResolveTransformer(
         firClass.transformStatus(this, statusResolver.resolveStatus(firClass, containingClass, isLocal = false))
     }
 
-    fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
+    open fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
         for (superTypeRef in regularClass.superTypeRefs) {
             for (classifierSymbol in superTypeToSymbols(superTypeRef)) {
                 forceResolveStatusOfCorrespondingClass(classifierSymbol)
@@ -337,7 +337,7 @@ abstract class AbstractFirStatusResolveTransformer(
     /**
      * @return symbols which should be resolved to [FirResolvePhase.STATUS] phase
      */
-    protected open fun superTypeToSymbols(typeRef: FirTypeRef): List<FirClassifierSymbol<*>> {
+    protected open fun superTypeToSymbols(typeRef: FirTypeRef): Collection<FirClassifierSymbol<*>> {
         return listOfNotNull(typeRef.coneType.toSymbol(session))
     }
 

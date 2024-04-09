@@ -9,6 +9,8 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(RAW_FIR)] middle.kt
@@ -20,6 +22,8 @@ FILE: [ResolvedTo(RAW_FIR)] middle.kt
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<Top>
         }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -48,6 +52,8 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(RAW_FIR)] middle.kt
@@ -59,6 +65,8 @@ FILE: [ResolvedTo(RAW_FIR)] middle.kt
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<Top>
         }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -87,6 +95,8 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(RAW_FIR)] middle.kt
@@ -98,6 +108,8 @@ FILE: [ResolvedTo(RAW_FIR)] middle.kt
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<Top>
         }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -126,6 +138,8 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(RAW_FIR)] middle.kt
@@ -137,6 +151,8 @@ FILE: [ResolvedTo(RAW_FIR)] middle.kt
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<Top>
         }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -165,6 +181,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -176,6 +194,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<Top>
         }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -204,6 +224,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -215,6 +237,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<Top>
         }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -243,6 +267,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -254,6 +280,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -282,6 +310,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -293,6 +323,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -321,6 +353,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -332,6 +366,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -361,6 +397,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -372,6 +410,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -401,6 +441,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -412,6 +454,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -441,6 +485,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -452,6 +498,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -481,6 +529,8 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             LAZY_super<<implicit>>
         }
 
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
@@ -492,6 +542,8 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
