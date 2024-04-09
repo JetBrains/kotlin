@@ -17,27 +17,50 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.presetName
 
 internal object PlatformSourceSetConventionsChecker : KotlinGradleProjectChecker {
-    data class CheckedPlatformInfo(
+    data class CheckedPlatformInfo<T: KotlinTarget>(
         val expectedTargetName: String,
-        val expectedTargetType: Class<out KotlinTarget>,
+        val expectedTargetType: Class<T>,
+        val matches: (T) -> Boolean,
     )
+
+    inline fun <reified T : KotlinTarget> CheckedPlatformInfo(
+        expectedTargetName: String,
+        noinline matches: (T) -> Boolean = { true }
+    ) = CheckedPlatformInfo(
+        expectedTargetName = expectedTargetName,
+        expectedTargetType = T::class.java,
+        matches = matches
+    )
+
+    private val nativeTargetPresets get() = HostManager()
+            .targetValues
+            .map { konanTarget -> CheckedPlatformInfo<KotlinNativeTarget>(konanTarget.presetName) { it.konanTarget == konanTarget } }
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         listOf(
-            CheckedPlatformInfo("js", KotlinJsTargetDsl::class.java),
-            CheckedPlatformInfo("jvm", KotlinJvmTarget::class.java)
-        ).forEach { checkedPlatformInfo -> runChecks(checkedPlatformInfo) }
+            CheckedPlatformInfo<KotlinJsTargetDsl>("js"),
+            CheckedPlatformInfo<KotlinJvmTarget>("jvm"),
+            CheckedPlatformInfo<KotlinWasmJsTargetDsl>("wasmJs"),
+            CheckedPlatformInfo<KotlinWasmWasiTargetDsl>("wasmJs"),
+        ).plus(nativeTargetPresets).forEach { checkedPlatformInfo ->
+            @Suppress("UNCHECKED_CAST")
+            runChecks(checkedPlatformInfo as CheckedPlatformInfo<KotlinTarget>)
+        }
     }
 
-    private suspend fun KotlinGradleProjectCheckerContext.runChecks(platform: CheckedPlatformInfo) {
+    private suspend fun KotlinGradleProjectCheckerContext.runChecks(platform: CheckedPlatformInfo<KotlinTarget>) {
         val kotlin = project.multiplatformExtensionOrNull ?: return
         val sourceSets = kotlin.awaitSourceSets()
 
-        /* Find jvmMain and jvmTest source sets that have been registered by the convention */
+        /* Find Main and Test source sets that have been registered by the convention */
         val platformSourceSets = listOfNotNull(
             sourceSets.findByName("${platform.expectedTargetName}Main"),
             sourceSets.findByName("${platform.expectedTargetName}Test")
@@ -47,6 +70,7 @@ internal object PlatformSourceSetConventionsChecker : KotlinGradleProjectChecker
 
         /* Check if a custom target name was used */
         val customNamedTarget = kotlin.targets.withType(platform.expectedTargetType)
+            .filter { target -> platform.matches(target) }
             .firstOrNull { target -> target.name != platform.expectedTargetName }
 
         if (customNamedTarget != null) {

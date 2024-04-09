@@ -92,6 +92,30 @@ class MppSourceSetConventionsDiagnosticTests {
     }
 
     @Test
+    fun `test - linuxX64Main and linuxX64Test - without linuxX64 target`() = buildProjectWithMPP().runLifecycleAwareTest {
+        multiplatformExtension.apply {
+            jvm()
+            sourceSets.linuxX64Main
+            sourceSets.linuxX64Test
+
+            configurationResult.await()
+            checkDiagnostics("linuxX64Main-linuxX64Test-without-linuxX64")
+        }
+    }
+
+    @Test
+    fun `test - linuxX64Main and linuxX64Test - with custom linuxX64 target`() = buildProjectWithMPP().runLifecycleAwareTest {
+        multiplatformExtension.apply {
+            linuxX64("custom")
+            sourceSets.linuxX64Main
+            sourceSets.linuxX64Test
+
+            configurationResult.await()
+            checkDiagnostics("linuxX64Main-linuxX64Test-with-custom-linuxX64")
+        }
+    }
+
+    @Test
     fun `test - iosMain and iosTest - without any ios target`() = buildProjectWithMPP().runLifecycleAwareTest {
         multiplatformExtension.linuxX64()
         multiplatformExtension.jvm()
