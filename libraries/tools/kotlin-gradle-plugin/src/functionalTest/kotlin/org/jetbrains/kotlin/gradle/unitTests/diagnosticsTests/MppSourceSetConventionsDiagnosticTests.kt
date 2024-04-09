@@ -7,16 +7,18 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosMain
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosTest
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import kotlin.test.Test
+import org.jetbrains.kotlin.gradle.util.checkDiagnostics as checkDiagnosticsUtil
 
 class MppSourceSetConventionsDiagnosticTests {
+    private fun Project.checkDiagnostics(name: String) = checkDiagnosticsUtil("MppSourceSetConventionsDiagnosticTests/$name")
 
     @Test
     fun `test - jvmMain and jvmTest without jvm target`() = buildProjectWithMPP().runLifecycleAwareTest {
@@ -26,7 +28,7 @@ class MppSourceSetConventionsDiagnosticTests {
             sourceSets.jvmTest
 
             configurationResult.await()
-            checkDiagnostics("PlatformSourceSetConventionUsedWithoutCorrespondingTarget-jvmMain-jvmTest")
+            checkDiagnostics("jvmMain-jvmTest-without-jvm")
         }
     }
 
@@ -38,7 +40,7 @@ class MppSourceSetConventionsDiagnosticTests {
             sourceSets.jvmTest
 
             configurationResult.await()
-            checkDiagnostics("PlatformSourceSetConventionUsedWithCustomTargetName-jvmMain-jvmTest")
+            checkDiagnostics("jvmMain-jvmTest-with-custom-jvm")
         }
     }
 
@@ -50,7 +52,7 @@ class MppSourceSetConventionsDiagnosticTests {
             sourceSets.jsTest
 
             configurationResult.await()
-            checkDiagnostics("PlatformSourceSetConventionUsedWithoutCorrespondingTarget-jsMain-jsTest")
+            checkDiagnostics("jsMain-jsTest-without-js")
         }
     }
 
@@ -62,7 +64,7 @@ class MppSourceSetConventionsDiagnosticTests {
             sourceSets.jsTest
 
             configurationResult.await()
-            checkDiagnostics("PlatformSourceSetConventionUsedWithCustomTargetName-jsMain-jsTest")
+            checkDiagnostics("jsMain-jsTest-with-custom-js")
         }
     }
 
@@ -74,7 +76,7 @@ class MppSourceSetConventionsDiagnosticTests {
             sourceSets.create("jvmTest")
 
             configurationResult.await()
-            checkDiagnostics("PlatformSourceSetConventionUsedWithoutCorrespondingTarget-manually-created-jvmMain-jvmTest")
+            checkDiagnostics("manually-created-jvmMain-jvmTest")
         }
     }
 
@@ -85,7 +87,7 @@ class MppSourceSetConventionsDiagnosticTests {
             sourceSets.androidMain
 
             configurationResult.await()
-            checkDiagnostics("AndroidMainSourceSetConventionUsedWithoutAndroidTarget")
+            checkDiagnostics("androidMain-without-android")
         }
     }
 
@@ -98,6 +100,6 @@ class MppSourceSetConventionsDiagnosticTests {
         multiplatformExtension.sourceSets.iosTest
 
         configurationResult.await()
-        checkDiagnostics("IosSourceSetConventionUsedWithoutIosTarget")
+        checkDiagnostics("iosMain-without-ios")
     }
 }
