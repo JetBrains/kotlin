@@ -278,7 +278,7 @@
 /libraries/examples/kotlin-java-example/ "Kotlin JVM"
 /libraries/examples/scripting/ "Kotlin Compiler Core"
 /libraries/kotlin.test/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
-/libraries/kotlinx-metadata/ Alexander.Udalov A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
+/libraries/kotlinx-metadata/ Alexander.Udalov A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Leonid.Startsev
 /libraries/lib/ "Kotlin Build Infrastructure"
 /libraries/reflect/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
 /libraries/scripting/ "Kotlin Compiler Core"
