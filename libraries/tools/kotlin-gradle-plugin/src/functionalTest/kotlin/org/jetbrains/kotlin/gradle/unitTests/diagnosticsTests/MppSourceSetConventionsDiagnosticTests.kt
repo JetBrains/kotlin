@@ -116,6 +116,22 @@ class MppSourceSetConventionsDiagnosticTests {
     }
 
     @Test
+    fun `test - linuxArm64 and linuxX64 names swapped with actual targets`() = buildProjectWithMPP().runLifecycleAwareTest {
+        multiplatformExtension.apply {
+            linuxX64("linuxArm64")
+            linuxArm64("linuxX64")
+
+            sourceSets.linuxX64Main
+            sourceSets.linuxX64Test
+            sourceSets.linuxArm64Main
+            sourceSets.linuxArm64Test
+
+            configurationResult.await()
+            checkDiagnostics("linuxX64-linuxArm64-swapped")
+        }
+    }
+
+    @Test
     fun `test - iosMain and iosTest - without any ios target`() = buildProjectWithMPP().runLifecycleAwareTest {
         multiplatformExtension.linuxX64()
         multiplatformExtension.jvm()
