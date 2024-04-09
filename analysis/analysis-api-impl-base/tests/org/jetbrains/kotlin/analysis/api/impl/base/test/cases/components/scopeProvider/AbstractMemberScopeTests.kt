@@ -7,40 +7,21 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeP
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolsData
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractMemberScopeTestBase : AbstractSymbolByFqNameTest() {
-    protected abstract fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope
+abstract class AbstractMemberScopeTestBase : AbstractScopeTestBase() {
+    abstract fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope
 
-    protected open fun KtAnalysisSession.getSymbolsFromScope(scope: KtScope): Sequence<KtDeclarationSymbol> = scope.getAllSymbols()
-
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        super.doTestByMainFile(mainFile, mainModule, testServices)
-
-        analyseForTest(mainFile) {
-            val memberScope = getScope(getSymbolWithMembers(mainFile))
-            val actualNames = prettyPrint { renderNamesContainedInScope(memberScope) }
-            testServices.assertions.assertEqualsToTestDataFileSibling(actualNames, extension = ".names.txt")
-        }
-    }
-
-    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData =
-        SymbolsData(getSymbolsFromScope(getScope(getSymbolWithMembers(ktFile))).toList())
-
-    private fun KtAnalysisSession.getSymbolWithMembers(ktFile: KtFile): KtSymbolWithMembers {
+    final override fun KtAnalysisSession.getScope(mainFile: KtFile, testServices: TestServices): KtScope {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
-        val symbols = with(symbolData) { toSymbols(ktFile) }
-        return symbols.singleOrNull() as? KtSymbolWithMembers
+        val symbols = with(symbolData) { toSymbols(mainFile) }
+        val symbol = symbols.singleOrNull() as? KtSymbolWithMembers
             ?: error("Should be a single `${KtSymbolWithMembers::class.simpleName}`, but $symbols found.")
+        return getScope(symbol)
     }
 }
 

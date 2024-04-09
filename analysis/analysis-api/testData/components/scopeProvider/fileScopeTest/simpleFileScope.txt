@@ -1,12 +1,3 @@
-FILE SYMBOL:
-KtFileSymbol:
-  annotationsList: []
-  origin: SOURCE
-  getContainingFileSymbol: null
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-CALLABLE SYMBOLS:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /test
@@ -125,7 +116,6 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-CLASSIFIER SYMBOLS:
 KtNamedClassOrObjectSymbol:
   annotationsList: []
   classIdIfNonLocal: C

@@ -1,0 +1,43 @@
+fun function(): kotlin.Int
+
+@kotlin.jvm.JvmOverloads
+fun functionWithDefault(par1: kotlin.Int)
+
+val testVal: kotlin.Int
+
+var initializedVariable: kotlin.Int
+
+var unitializedVariable: kotlin.Long
+
+lateinit var lateinitVariable: kotlin.String
+
+var variableWithBackingField: kotlin.Long
+  get()
+
+var privateSetter: kotlin.String
+  @kotlin.jvm.JvmName(name = "customPrivateSetter")
+  private set(value: kotlin.String)
+
+var jvmNameOnSetter: kotlin.String
+  @kotlin.jvm.JvmName(name = "customPrivateSetter")
+  private set(value: kotlin.String)
+
+val customGetter: kotlin.Int
+  @kotlin.jvm.JvmName(name = "myCustomGetter")
+  get()
+
+val jvmNameOnGetter: kotlin.Int
+  @kotlin.jvm.JvmName(name = "myCustomGetter")
+  get()
+
+val kotlin.Int.propertyWithReceiver: kotlin.Int
+  get()
+
+val <T> T.propertyWithGenericReceiver: kotlin.Int
+  get()
+
+const val constant: kotlin.Int
+
+var jvmField: kotlin.Long
+
+class OuterClass

@@ -5,36 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractFileScopeTest : AbstractAnalysisApiBasedTest() {
+abstract class AbstractFileScopeTest : AbstractScopeTestBase() {
+    override fun KtAnalysisSession.getScope(mainFile: KtFile, testServices: TestServices): KtScope = mainFile.getFileSymbol().getFileScope()
+
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        executeOnPooledThreadInReadAction {
-            analyseForTest(mainFile) {
-                val symbol = mainFile.getFileSymbol()
-                val scope = symbol.getFileScope()
+        super.doTestByMainFile(mainFile, mainModule, testServices)
 
-                val actual = with(DebugSymbolRenderer(renderExtra = true)) {
-                    val renderedSymbol = render(analysisSession, symbol)
-                    val renderedCallables = scope.getCallableSymbols().map { render(analysisSession, it) }
-                    val renderedClassifiers = scope.getClassifierSymbols().map { render(analysisSession, it) }
-
-                    "FILE SYMBOL:\n" + renderedSymbol + "\n" +
-                            "\nCALLABLE SYMBOLS:\n" + renderedCallables.joinToString(separator = "\n\n", postfix = "\n") +
-                            "\nCLASSIFIER SYMBOLS:\n" + renderedClassifiers.joinToString(separator = "\n\n")
-                }
-                testServices.assertions.assertEqualsToTestDataFileSibling(actual)
-
-                val actualNames = prettyPrint { renderNamesContainedInScope(scope) }
-                testServices.assertions.assertEqualsToTestDataFileSibling(actualNames, extension = ".names.txt")
-            }
+        analyseForTest(mainFile) {
+            val fileSymbol = mainFile.getFileSymbol()
+            val renderedFileSymbol = DebugSymbolRenderer(renderExtra = true).render(analysisSession, fileSymbol)
+            testServices.assertions.assertEqualsToTestDataFileSibling(renderedFileSymbol, extension = ".file_symbol.txt")
         }
     }
 }

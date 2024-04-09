@@ -1,0 +1,6 @@
+KtFileSymbol:
+  annotationsList: []
+  origin: SOURCE
+  getContainingFileSymbol: null
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
