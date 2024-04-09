@@ -677,7 +677,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                     declarationStorage.createAndCacheParameter(
                         valueParameter, index + contextReceiverParametersCount,
-                        useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
+                        useStubForDefaultValueStub = function !is FirConstructor || containingClass?.classId != StandardClassIds.Enum,
                         typeOrigin,
                         skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER,
                         forcedDefaultValueConversion = containingClass?.isAnnotationClass == true
