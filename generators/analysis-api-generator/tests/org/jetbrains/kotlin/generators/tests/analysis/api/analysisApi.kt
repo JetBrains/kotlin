@@ -573,29 +573,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
 
         group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-            test<AbstractSubstitutionOverridesUnwrappingTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "substitutionOverridesUnwrapping")
-            }
-
-            test<AbstractMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                when (it.analysisApiMode) {
-                    AnalysisApiMode.Ide ->
-                        model(it, "memberScope")
-                    AnalysisApiMode.Standalone ->
-                        model(it, "memberScope", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-                }
-            }
-
-            test<AbstractStaticMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "staticMemberScope")
-            }
-
             test<AbstractFileScopeTest> {
                 model(it, "fileScopeTest")
             }
@@ -604,22 +581,39 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 model(it, "delegatedMemberScope")
             }
 
-            test<AbstractDeclaredMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "declaredMemberScope")
-            }
+            group(filter = frontendIs(FrontendKind.Fir)) {
+                test<AbstractSubstitutionOverridesUnwrappingTest> {
+                    model(it, "substitutionOverridesUnwrapping")
+                }
 
-            test<AbstractStaticDeclaredMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "staticDeclaredMemberScope")
-            }
+                test<AbstractMemberScopeTest> {
+                    when (it.analysisApiMode) {
+                        AnalysisApiMode.Ide ->
+                            model(it, "memberScope")
+                        AnalysisApiMode.Standalone ->
+                            model(it, "memberScope", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                    }
+                }
 
-            test<AbstractCombinedDeclaredMemberScopeTest>(
-                filter = frontendIs(FrontendKind.Fir),
-            ) {
-                model(it, "combinedDeclaredMemberScope")
+                test<AbstractStaticMemberScopeTest> {
+                    model(it, "staticMemberScope")
+                }
+
+                test<AbstractDeclaredMemberScopeTest> {
+                    model(it, "declaredMemberScope")
+                }
+
+                test<AbstractStaticDeclaredMemberScopeTest> {
+                    model(it, "staticDeclaredMemberScope")
+                }
+
+                test<AbstractCombinedDeclaredMemberScopeTest> {
+                    model(it, "combinedDeclaredMemberScope")
+                }
+
+                test<AbstractPackageScopeTest> {
+                    model(it, "packageScope")
+                }
             }
         }
     }

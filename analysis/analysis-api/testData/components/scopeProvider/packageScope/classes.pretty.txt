@@ -1,0 +1,11 @@
+abstract class A : test.api.I
+
+internal abstract class InternalA : test.api.InternalI
+
+private abstract class PrivateA : test.api.I
+
+class B : test.A()
+
+internal class InternalB : test.InternalA()
+
+private class PrivateB : test.A()
