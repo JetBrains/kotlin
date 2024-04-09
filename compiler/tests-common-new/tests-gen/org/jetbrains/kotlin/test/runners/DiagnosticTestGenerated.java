@@ -1825,6 +1825,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("AnnotatedStatement.kt")
+      public void testAnnotatedStatement() {
+        runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedStatement.kt");
+      }
+
+      @Test
       @TestMetadata("AnnotatedTryCatch.kt")
       public void testAnnotatedTryCatch() {
         runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedTryCatch.kt");
