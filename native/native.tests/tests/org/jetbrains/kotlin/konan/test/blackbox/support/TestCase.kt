@@ -193,7 +193,7 @@ class TestCase(
     val expectedFailure: Boolean = false,
 ) {
     sealed interface Extras
-    class NoTestRunnerExtras(val entryPoint: String, val inputDataFile: File? = null, val arguments: List<String> = emptyList()) : Extras
+    class NoTestRunnerExtras(val entryPoint: String? = null, val inputDataFile: File? = null, val arguments: List<String> = emptyList()) : Extras
     class WithTestRunnerExtras(val runnerType: TestRunnerType, val ignoredTests: Set<String> = emptySet()) : Extras
 
     init {

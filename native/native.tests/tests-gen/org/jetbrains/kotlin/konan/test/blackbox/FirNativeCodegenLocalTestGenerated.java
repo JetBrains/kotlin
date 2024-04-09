@@ -647,6 +647,25 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   }
 
   @Nested
+  @TestMetadata("native/native.tests/testData/codegen/contracts")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("frontend-fir")
+  @FirPipeline()
+  @UseExtTestCaseGroupProvider()
+  public class Contracts {
+    @Test
+    public void testAllFilesPresentInContracts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+
+    @Test
+    @TestMetadata("assertions.kt")
+    public void testAssertions() {
+      runTest("native/native.tests/testData/codegen/contracts/assertions.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("native/native.tests/testData/codegen/controlflow")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("frontend-fir")

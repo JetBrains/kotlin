@@ -570,28 +570,6 @@ fun main() {
                 model("gc")
             }
         }
-        // Test runner tests
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "NativeTestRunnerTestGenerated",
-                annotations = listOf(
-                    *testRunner(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                )
-            ) {
-                model("testRunner")
-            }
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirNativeTestRunnerTestGenerated",
-                annotations = listOf(
-                    *testRunner(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                    *frontendFir(),
-                )
-            ) {
-                model("testRunner")
-            }
-        }
     }
 }
 
@@ -664,7 +642,4 @@ private fun stress() = arrayOf(
         "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
         "propertyValue" to "15m"
     )
-)
-private fun testRunner() = arrayOf(
-    annotation(Tag::class.java, "testRunner"),
 )

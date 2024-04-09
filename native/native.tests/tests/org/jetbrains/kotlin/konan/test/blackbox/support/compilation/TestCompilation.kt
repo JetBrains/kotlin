@@ -566,7 +566,9 @@ class ExecutableCompilation(
             "-output", expectedArtifact.path
         )
         when (extras) {
-            is NoTestRunnerExtras -> add("-entry", extras.entryPoint)
+            is NoTestRunnerExtras -> extras.entryPoint?.let {
+                add("-entry", it)
+            }
             is WithTestRunnerExtras -> {
                 val testDumpFile: File? = if (sourceModules.isEmpty()
                     && dependencies.includedLibraries.isNotEmpty()

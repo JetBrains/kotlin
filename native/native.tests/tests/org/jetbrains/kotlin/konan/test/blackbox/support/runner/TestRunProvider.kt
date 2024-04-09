@@ -108,7 +108,7 @@ internal class TestRunProvider(
 
         when (testCase.kind) {
             TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
-                val testRunName = testCase.extras<NoTestRunnerExtras>().entryPoint.substringAfterLast('.')
+                val testRunName = (testCase.extras<NoTestRunnerExtras>().entryPoint ?: "main").substringAfterLast('.')
                 val testRun = createTestRun(testRunName, testName = null)
                 TreeNode.oneLevel(testRun)
             }
