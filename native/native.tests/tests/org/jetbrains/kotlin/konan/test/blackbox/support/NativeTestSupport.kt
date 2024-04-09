@@ -92,6 +92,10 @@ internal object CastCompatibleKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader(this::class.java.classLoader)
 }
 
+fun copyNativeHomeProperty() {
+    System.setProperty("kotlin.native.home", ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue())
+}
+
 object NativeTestSupport {
     private val NAMESPACE = ExtensionContext.Namespace.create(NativeTestSupport::class.java.simpleName)
 
@@ -102,7 +106,7 @@ object NativeTestSupport {
             val nativeHome = computeNativeHome()
 
             // Apply the necessary process-wide settings:
-            System.setProperty("kotlin.native.home", nativeHome.dir.path) // Set the essential compiler property.
+            copyNativeHomeProperty() // Set the essential compiler property.
             setUpMemoryTracking() // Set up memory tracking and reporting.
 
             TestProcessSettings(

@@ -948,4 +948,5 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:prepare:kotlin-native-compiler-embeddable'
     include ':native:kotlin-test-native-xctest'
     include ':native:cli-native'
+    include ':native:native.tests:cli-tests'
 }

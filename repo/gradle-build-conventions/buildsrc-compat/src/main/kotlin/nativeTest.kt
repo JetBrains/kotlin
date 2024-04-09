@@ -109,12 +109,14 @@ fun Project.nativeTest(
     allowParallelExecution: Boolean = true,
     releasedCompilerDist: TaskProvider<Sync>? = null,
     maxMetaspaceSizeMb: Int = 512,
+    defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
     maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
-    maxMetaspaceSizeMb = maxMetaspaceSizeMb
+    maxMetaspaceSizeMb = maxMetaspaceSizeMb,
+    defineJDKEnvVariables = defineJDKEnvVariables,
 ) {
     group = "verification"
 

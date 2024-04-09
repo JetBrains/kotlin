@@ -814,6 +814,7 @@ tasks {
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
         dependsOn(":native:analysis-api-klib-reader:check")
         dependsOn(":native:native.tests:test")
+        dependsOn(":native:native.tests:cli-tests:check")
         dependsOn(":native:native.tests:driver:check")
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:native.tests:klib-compatibility:check")
