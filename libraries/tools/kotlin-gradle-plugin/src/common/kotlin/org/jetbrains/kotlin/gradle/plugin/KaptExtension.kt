@@ -120,9 +120,16 @@ open class KaptAnnotationProcessorOptions(
 ): KaptArguments {
     internal val options = LinkedHashMap<String, String>()
 
-    @Suppress("unused")
+    @Deprecated(
+        message = "This function with Any parameters is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameters.",
+        replaceWith = ReplaceWith("arg(name.toString(), *values.map { it.toString() }.toTypedArray())")
+    )
     override fun arg(name: Any, vararg values: Any) {
-        options.put(name.toString(), values.joinToString(" "))
+        arg(name.toString(), *values.map { it.toString() }.toTypedArray())
+    }
+
+    override fun arg(name: String, vararg values: String) {
+        options[name] = values.joinToString(" ")
     }
 
     fun execute(closure: Closure<*>) = executeClosure(closure)
@@ -131,12 +138,28 @@ open class KaptAnnotationProcessorOptions(
 open class KaptJavacOptionsDelegate: KaptJavacOption {
     internal val options = LinkedHashMap<String, String>()
 
+    @Deprecated(
+        message = "This function with Any parameters is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameters.",
+        replaceWith = ReplaceWith("option(name.toString(), value.toString())")
+    )
     override fun option(name: Any, value: Any) {
-        options.put(name.toString(), value.toString())
+        option(name.toString(), value.toString())
     }
 
+    override fun option(name: String, value: String) {
+        options[name] = value
+    }
+
+    @Deprecated(
+        message = "This function with Any parameter is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameter.",
+        replaceWith = ReplaceWith("option")
+    )
     override fun option(name: Any) {
-        options.put(name.toString(), "")
+        option(name.toString())
+    }
+
+    override fun option(name: String) {
+        options[name] = ""
     }
 
     fun execute(closure: Closure<*>) = executeClosure(closure)

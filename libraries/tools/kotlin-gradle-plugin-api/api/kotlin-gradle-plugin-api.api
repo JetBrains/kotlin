@@ -125,6 +125,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget$Companion {
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptArguments {
 	public abstract fun arg (Ljava/lang/Object;[Ljava/lang/Object;)V
+	public abstract fun arg (Ljava/lang/String;[Ljava/lang/String;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig {
@@ -167,6 +168,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig$DefaultIm
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptJavacOption {
 	public abstract fun option (Ljava/lang/Object;)V
 	public abstract fun option (Ljava/lang/Object;Ljava/lang/Object;)V
+	public abstract fun option (Ljava/lang/String;)V
+	public abstract fun option (Ljava/lang/String;Ljava/lang/String;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifact : org/gradle/api/Named, org/gradle/api/plugins/ExtensionAware {
