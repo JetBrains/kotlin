@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName.getSymbolDataFromFile
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
@@ -40,8 +41,13 @@ object SymbolByFqName {
         append(rendered)
     }
 
-
     private const val SYMBOLS_TAG = "// SYMBOLS:"
+}
+
+inline fun <reified S : KtSymbol> KtAnalysisSession.getSingleTestTargetSymbolOfType(mainFile: KtFile, testDataPath: Path): S {
+    val symbols = with(getSymbolDataFromFile(testDataPath)) { toSymbols(mainFile) }
+    return symbols.singleOrNull() as? S
+        ?: error("Expected a single target `${S::class.simpleName}` to be specified, but found the following symbols: $symbols")
 }
 
 sealed class SymbolData {

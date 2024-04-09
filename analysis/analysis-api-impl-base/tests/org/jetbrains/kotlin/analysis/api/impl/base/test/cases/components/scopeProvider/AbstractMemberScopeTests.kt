@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
+import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
@@ -16,13 +16,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractMemberScopeTestBase : AbstractScopeTestBase() {
     abstract fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope
 
-    final override fun KtAnalysisSession.getScope(mainFile: KtFile, testServices: TestServices): KtScope {
-        val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
-        val symbols = with(symbolData) { toSymbols(mainFile) }
-        val symbol = symbols.singleOrNull() as? KtSymbolWithMembers
-            ?: error("Should be a single `${KtSymbolWithMembers::class.simpleName}`, but $symbols found.")
-        return getScope(symbol)
-    }
+    final override fun KtAnalysisSession.getScope(mainFile: KtFile, testServices: TestServices): KtScope =
+        getScope(getSingleTestTargetSymbolOfType<KtSymbolWithMembers>(mainFile, testDataPath))
 }
 
 abstract class AbstractMemberScopeTest : AbstractMemberScopeTestBase() {

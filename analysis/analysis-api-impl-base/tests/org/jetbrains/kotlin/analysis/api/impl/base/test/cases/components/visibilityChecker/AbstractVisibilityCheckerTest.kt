@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
+import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -33,10 +33,7 @@ private const val USE_SITE_ELEMENT_NAME = "usesite"
 abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actualText = analyseForTest(mainFile) {
-            val declarationSymbol = with(SymbolByFqName.getSymbolDataFromFile(testDataPath)) {
-                toSymbols(mainFile).singleOrNull() as? KtSymbolWithVisibility
-                    ?: error("Expected a single target `${KtSymbolWithVisibility::class.simpleName}` to be specified.")
-            }
+            val declarationSymbol = getSingleTestTargetSymbolOfType<KtSymbolWithVisibility>(mainFile, testDataPath)
 
             val useSiteElement = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
                 ?: findFirstUseSiteElement(mainFile)

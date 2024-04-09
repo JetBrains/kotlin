@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName.getSymbolDataFromFile
+import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
@@ -46,10 +46,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         if (declaration != null) {
             return declaration.getSymbol() as KtCallableSymbol
         }
-
-        val symbolData = getSymbolDataFromFile(testDataPath)
-        val symbols = with(symbolData) { toSymbols(mainFile) }
-        return symbols.single() as KtCallableSymbol
+        return getSingleTestTargetSymbolOfType<KtCallableSymbol>(mainFile, testDataPath)
     }
 
     private fun KtAnalysisSession.renderSignature(symbol: KtCallableSymbol): String = buildString {
