@@ -112,8 +112,8 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         ^resolveMe R|<local>/i|.R|/JavaInterface.id|
     }
 
-FILE: [ResolvedTo(RAW_FIR)] KotlinAnnotation.kt
-    @java.lang.annotation.Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+FILE: [ResolvedTo(IMPORTS)] KotlinAnnotation.kt
+    @R|java/lang/annotation/Target|[Types](ElementType#.TYPE_USE#) public final? [ResolvedTo(TYPES)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -126,8 +126,8 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         ^resolveMe R|<local>/i|.R|/JavaInterface.id|
     }
 
-FILE: [ResolvedTo(RAW_FIR)] KotlinAnnotation.kt
-    @java.lang.annotation.Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+FILE: [ResolvedTo(IMPORTS)] KotlinAnnotation.kt
+    @R|java/lang/annotation/Target|[Types](ElementType#.TYPE_USE#) public final? [ResolvedTo(TYPES)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -140,8 +140,8 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         ^resolveMe R|<local>/i|.R|/JavaInterface.id|
     }
 
-FILE: [ResolvedTo(RAW_FIR)] KotlinAnnotation.kt
-    @java.lang.annotation.Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+FILE: [ResolvedTo(IMPORTS)] KotlinAnnotation.kt
+    @R|java/lang/annotation/Target|[Types](ElementType#.TYPE_USE#) public final? [ResolvedTo(TYPES)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -154,8 +154,8 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         ^resolveMe R|<local>/i|.R|/JavaInterface.id|
     }
 
-FILE: [ResolvedTo(RAW_FIR)] KotlinAnnotation.kt
-    @java.lang.annotation.Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+FILE: [ResolvedTo(IMPORTS)] KotlinAnnotation.kt
+    @R|java/lang/annotation/Target|[Types](ElementType#.TYPE_USE#) public final? [ResolvedTo(TYPES)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }

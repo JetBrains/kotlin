@@ -41,7 +41,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         val resultBuilder = StringBuilder()
         val renderer = lazyResolveRenderer(resultBuilder)
 
-        resolveWithClearCaches(ktFile) { firResolveSession ->
+        resolveWithCaches(ktFile) { firResolveSession ->
             checkSession(firResolveSession)
             val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
 
