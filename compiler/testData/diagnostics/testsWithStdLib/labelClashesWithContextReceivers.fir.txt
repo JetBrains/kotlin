@@ -1,0 +1,34 @@
+FILE: labelClashesWithContextReceivers.fir.kt
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(R|Some|, R|kotlin/String|)
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/Some.foo|
+            this@R|/Some.foo|
+        }
+
+        context(R|Some|)
+        public final val self: R|Some|
+            public get(): R|Some| {
+                ^ this@R|/Some.self|
+            }
+
+    }
+    private final typealias Extension = R|TypedThis|
+    public final class TypedThis : R|kotlin/Any| {
+        public constructor(): R|TypedThis| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|TypedThis|.baz(): R|kotlin/Unit| {
+            this@R|/TypedThis.baz|
+        }
+
+        public final fun R|Extension|.bar(): R|kotlin/Unit| {
+            this@R|/TypedThis|
+        }
+
+    }

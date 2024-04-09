@@ -1,7 +1,7 @@
-/labelClashes.fir.kt:(84,87): error: Unresolved reference 'inc'.
+/labelClashes.fir.kt:(157,160): error: Unresolved reference 'inc'.
 
-/labelClashes.fir.kt:(151,154): error: Unresolved reference 'inc'.
+/labelClashes.fir.kt:(224,227): error: Unresolved reference 'inc'.
 
-/labelClashes.fir.kt:(268,271): error: Unresolved reference 'foo'.
+/labelClashes.fir.kt:(341,344): error: Unresolved reference 'foo'.
 
-/labelClashes.fir.kt:(331,334): error: Unresolved reference 'foo'.
+/labelClashes.fir.kt:(404,407): error: Unresolved reference 'foo'.

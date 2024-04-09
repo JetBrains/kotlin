@@ -1,4 +1,7 @@
+// !LANGUAGE: -ContextReceivers
 // !RENDER_DIAGNOSTICS_FULL_TEXT
+// ISSUE: KT-49015, KT-51433
+// FIR_DUMP
 
 fun Int.with() {
     with("") {
