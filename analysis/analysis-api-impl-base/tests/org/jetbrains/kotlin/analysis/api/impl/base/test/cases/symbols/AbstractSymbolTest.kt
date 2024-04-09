@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import kotlin.test.fail
 
 abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
@@ -91,9 +92,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         val pointersWithRendered = executeOnPooledThreadInReadAction {
             analyseForTest(mainFile) {
                 val (symbols, symbolForPrettyRendering) = collectSymbols(mainFile, testServices)
-                for (symbol in symbols) {
-                    checkContainingFileSymbol(mainFile.getFileSymbol(), symbol, testServices)
-                }
+
+                checkContainingFiles(symbols, mainFile, testServices)
 
                 val pointerWithRenderedSymbol = symbols
                     .asSequence()
@@ -166,6 +166,27 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             "The symbol is not equal to itself: ${pointer::class}"
         }
     }
+
+    private fun KtAnalysisSession.checkContainingFiles(symbols: List<KtSymbol>, mainFile: KtFile, testServices: TestServices) {
+        val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty { it.getFileSymbol() }
+
+        for (symbol in symbols) {
+            if (symbol.origin != KtSymbolOrigin.SOURCE) continue
+
+            val containingFileSymbol = symbol.getContainingFileSymbol()
+            if (containingFileSymbol !in allowedContainingFileSymbols) {
+                testServices.assertions.fail {
+                    "Invalid file for `$symbol`: Found `$containingFileSymbol`, which is not an allowed file symbol."
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the set of [KtFile]s which may contain any of the found symbols. If a symbol is not contained in one of these files, the test
+     * fails.
+     */
+    open fun getAllowedContainingFiles(mainFile: KtFile, testServices: TestServices): Set<KtFile> = setOf(mainFile)
 
     private fun RegisteredDirectives.doNotCheckSymbolRestoreDirective(): Directive? = findSpecificDirective(
         commonDirective = DO_NOT_CHECK_SYMBOL_RESTORE,
