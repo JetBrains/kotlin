@@ -24,6 +24,13 @@ object StandardClassIds {
     val BASE_CONCURRENT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("concurrent"))
     val BASE_TEST_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("test"))
 
+    val builtInsPackagesWithDefaultNamedImport = setOf(
+        BASE_KOTLIN_PACKAGE,
+        BASE_COLLECTIONS_PACKAGE,
+        BASE_RANGES_PACKAGE,
+        BASE_ANNOTATION_PACKAGE,
+    )
+
     val builtInsPackages = setOf(
         BASE_KOTLIN_PACKAGE,
         BASE_COLLECTIONS_PACKAGE,
