@@ -826,6 +826,60 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottom.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottom() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottom.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomBase.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomBase() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomBase.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomBaseWithLibrary.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomBaseWithLibrary() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomBaseWithLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomWithLibrary.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomWithLibrary() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromBottomWithLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromMiddle.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromMiddle() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromMiddle.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromMiddleBase.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromMiddleBase() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromMiddleBase.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopBase.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopBase() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopBase.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopmost.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopmost() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopmost.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopmostBase.kt")
+    public void testCyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopmostBase() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/cyclicSupertypeWithClasspathSubstitutionOnEachLevelFromTopmostBase.kt");
+    }
+
+    @Test
     @TestMetadata("emptyClassWithSuper.kt")
     public void testEmptyClassWithSuper() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/emptyClassWithSuper.kt");
@@ -871,6 +925,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("hierarchyWithOverrideAndNestedClass4.kt")
     public void testHierarchyWithOverrideAndNestedClass4() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/hierarchyWithOverrideAndNestedClass4.kt");
+    }
+
+    @Test
+    @TestMetadata("multiLevelClasspathSubstitution.kt")
+    public void testMultiLevelClasspathSubstitution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/multiLevelClasspathSubstitution.kt");
     }
 
     @Test
