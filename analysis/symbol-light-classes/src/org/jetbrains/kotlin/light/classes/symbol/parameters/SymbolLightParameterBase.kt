@@ -77,10 +77,9 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
 
     abstract override fun isVarArgs(): Boolean
 
-    context(KtAnalysisSession)
-    protected fun KtType.typeMappingMode(): KtTypeMappingMode {
+    protected fun KtAnalysisSession.getTypeMappingMode(type: KtType): KtTypeMappingMode {
         return when {
-            this@typeMappingMode.isSuspendFunctionType -> KtTypeMappingMode.DEFAULT
+            type.isSuspendFunctionType -> KtTypeMappingMode.DEFAULT
             // TODO: extract type mapping mode from annotation?
             // TODO: methods with declaration site wildcards?
             else -> KtTypeMappingMode.VALUE_PARAMETER
