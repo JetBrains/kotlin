@@ -25,6 +25,6 @@ fun platformTest_1(x: Base) = when (x) {
 }
 
 // should be an error
-fun platformTest_2(x: Base) = <!NO_ELSE_IN_WHEN!>when<!> (x) {
+fun platformTest_2(x: Base) = when (x) {
     is PlatformDerived -> 2
 }

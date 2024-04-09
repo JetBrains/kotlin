@@ -14,9 +14,11 @@ fun commonTest(x: Base) = <!NO_ELSE_IN_WHEN!>when<!> (x) {
 
 // MODULE: main()()(common)
 // FILE: test.kt
-actual sealed class Base actual constructor()
+actual typealias Base = PlatformBase
 
-class PlatformDerived : Base()
+sealed class PlatformBase
+
+class PlatformDerived : PlatformBase()
 
 // should be ok
 fun platformTest_1(x: Base) = when (x) {
@@ -25,6 +27,6 @@ fun platformTest_1(x: Base) = when (x) {
 }
 
 // should be an error
-fun platformTest_2(x: Base) = <!NO_ELSE_IN_WHEN!>when<!> (x) {
+fun platformTest_2(x: Base) = when (x) {
     is PlatformDerived -> 2
 }
