@@ -9,6 +9,7 @@
 # OWNER_LIST: "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 # OWNER_LIST: "Kotlin Compiler Core"
 # OWNER_LIST: "Kotlin Build Infrastructure" "Kotlin Build Tools"
+# OWNER_LIST: "Kotlin Performance QA"
 # OWNER_LIST: "Kotlin IDE Analysis Core"
 # OWNER_LIST: "Kotlin Release"
 # OWNER_LIST: "Kotlin Apple Ecosystem"
@@ -276,6 +277,10 @@
 /kotlin-native/runtime/**/*.mm Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 /kotlin-native/licenses/ "Kotlin Build Infrastructure"
 /kotlin-native/klib/ "Kotlin Common Backend"
+/kotlin-native/tools/benchmarks "Kotlin Native" "Kotlin Performance QA"
+/kotlin-native/tools/benchmarksAnalyzer "Kotlin Native" "Kotlin Performance QA"
+/kotlin-native/tools/performance-server "Kotlin Native" "Kotlin Performance QA"
+/kotlin-native/performance "Kotlin Native" "Kotlin Performance QA"
 
 /libraries/examples/annotation-processor-example/ "Kotlin Compiler Core"
 /libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Compiler Core"
