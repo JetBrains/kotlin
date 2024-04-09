@@ -46,20 +46,27 @@ object KotlinSourceSetConvention :
         thisRef: NamedDomainObjectContainer<KotlinSourceSet>, property: KProperty<*>,
     ): NamedDomainObjectProvider<KotlinSourceSet> {
         val name = property.name
-        if (name in thisRef.names) return thisRef.named(name)
-        val trace = Trace()
-        return thisRef.register(name) { sourceSet ->
-            sourceSet.isRegisteredByKotlinSourceSetConventionAt = trace
+        val trace = Trace() // trace should be created eagarly to have better stacktrace
+        return if (name in thisRef.names) {
+            thisRef.named(name) { sourceSet ->
+                if (sourceSet.isAccessedByKotlinSourceSetConventionAt == null) {
+                    sourceSet.isAccessedByKotlinSourceSetConventionAt = trace
+                }
+            }
+        } else {
+            thisRef.register(name) { sourceSet ->
+                sourceSet.isAccessedByKotlinSourceSetConventionAt = trace
+            }
         }
     }
 
     /**
-     * @return the stacktrace when the user was using a [KotlinSourceSetConvention] that indeed created/registered a new SourceSet.
-     * This will be null if SourceSet already existed and was referenced using the convention, or of no convention was used at all.
+     * @return the stacktrace when the user was using a [KotlinSourceSetConvention] that was already created.
+     * This will be null if SourceSet was never accessed by convention DSL.
      */
     @Suppress("UnusedReceiverParameter") // Diagnostic is wrong
-    internal var KotlinSourceSet.isRegisteredByKotlinSourceSetConventionAt: Trace?
-            by extrasReadWriteProperty("isRegisteredByKotlinSourceSetConvention")
+    internal var KotlinSourceSet.isAccessedByKotlinSourceSetConventionAt: Trace?
+            by extrasReadWriteProperty("isAccessedByKotlinSourceSetConventionAt")
         private set
 }
 

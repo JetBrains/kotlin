@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
+import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
@@ -65,7 +65,7 @@ internal object PlatformSourceSetConventionsChecker : KotlinGradleProjectChecker
             sourceSets.findByName("${platform.expectedTargetName}Main"),
             sourceSets.findByName("${platform.expectedTargetName}Test")
         )
-            .filter { it.isRegisteredByKotlinSourceSetConventionAt != null }
+            .filter { it.isAccessedByKotlinSourceSetConventionAt != null }
             .ifEmpty { return }
 
         /* Check if a custom target name was used */
@@ -93,7 +93,7 @@ internal object AndroidMainSourceSetConventionsChecker : KotlinGradleProjectChec
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         val kotlin = project.multiplatformExtensionOrNull ?: return
         val androidMainSourceSet = kotlin.awaitSourceSets().findByName("androidMain") ?: return
-        if (androidMainSourceSet.isRegisteredByKotlinSourceSetConventionAt == null) return
+        if (androidMainSourceSet.isAccessedByKotlinSourceSetConventionAt == null) return
         val androidTarget = kotlin.awaitTargets().findByName("android")
         if (androidTarget == null) {
             project.reportDiagnostic(AndroidMainSourceSetConventionUsedWithoutAndroidTarget(androidMainSourceSet))
@@ -107,7 +107,7 @@ internal object IosSourceSetConventionChecker : KotlinGradleProjectChecker {
 
         val iosSourceSets = listOf("iosMain", "iosTest")
             .mapNotNull { sourceSetName -> kotlin.awaitSourceSets().findByName(sourceSetName) }
-            .filter { it.isRegisteredByKotlinSourceSetConventionAt != null }
+            .filter { it.isAccessedByKotlinSourceSetConventionAt != null }
 
 
         val hasIosTarget = kotlin.awaitTargets()

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
-import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
+import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -469,7 +469,7 @@ object KotlinToolingDiagnostics {
                 |       $expectedTargetName()
                 |   }
             """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+            throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt
         )
     }
 
@@ -485,7 +485,7 @@ object KotlinToolingDiagnostics {
                  |      }
                  |  }
                 """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+            throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt
         )
     }
 
@@ -510,7 +510,7 @@ object KotlinToolingDiagnostics {
                 |        androidTarget() /* <- register the androidTarget */
                 |    }
             """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+            throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt
         )
     }
 
@@ -530,7 +530,7 @@ object KotlinToolingDiagnostics {
                 |     }
                 |  }
             """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+            throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt
         )
     }
 
