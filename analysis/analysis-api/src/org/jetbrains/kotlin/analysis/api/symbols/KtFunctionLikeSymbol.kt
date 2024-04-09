@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -24,7 +23,6 @@ public sealed class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKind 
      */
     public abstract val hasStableParameterNames: Boolean
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionLikeSymbol>
 }
 
@@ -35,14 +33,12 @@ public abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol>
 }
 
 public abstract class KtSamConstructorSymbol : KtFunctionLikeSymbol(), KtNamedSymbol {
     final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.SAM_CONSTRUCTOR }
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol>
 }
 
@@ -67,7 +63,6 @@ public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
      */
     public abstract val isBuiltinFunctionInvoke: Boolean
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionSymbol>
 }
 
@@ -85,6 +80,5 @@ public abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     final override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KtContextReceiver> get() = withValidityAssertion { emptyList() }
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>
 }

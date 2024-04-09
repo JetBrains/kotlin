@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 
@@ -22,7 +21,6 @@ public interface KtSymbol : KtLifetimeOwner {
      */
     public val psi: PsiElement?
 
-    context(KtAnalysisSession)
     public fun createPointer(): KtSymbolPointer<KtSymbol>
 }
 

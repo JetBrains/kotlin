@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
@@ -28,7 +27,7 @@ internal class KtFe10DescDefaultBackingFieldSymbol(
     override val owningProperty: KtKotlinPropertySymbol,
     override val analysisContext: Fe10AnalysisContext
 ) : KtBackingFieldSymbol(), KtFe10Symbol {
-    context(KtAnalysisSession) override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> = withValidityAssertion {
+    override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertySymbol>(owningProperty)
             ?.let { KtFe10PsiDefaultBackingFieldSymbolPointer(it) }
             ?: KtFe10NeverRestoringSymbolPointer()

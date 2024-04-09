@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
@@ -41,6 +40,5 @@ public abstract class KtDestructuringDeclarationSymbol : KtDeclarationSymbol, Kt
      */
     public abstract val entries: List<KtLocalVariableSymbol>
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtDestructuringDeclarationSymbol>
 }
