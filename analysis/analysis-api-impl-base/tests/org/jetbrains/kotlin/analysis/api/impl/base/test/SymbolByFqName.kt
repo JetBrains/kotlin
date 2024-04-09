@@ -53,6 +53,13 @@ inline fun <reified S : KtSymbol> KtAnalysisSession.getSingleTestTargetSymbolOfT
 sealed class SymbolData {
     abstract fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol>
 
+    data class PackageData(val packageFqName: FqName) : SymbolData() {
+        override fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol> {
+            val symbol = getPackageSymbolIfPackageExists(packageFqName) ?: error("Cannot find a symbol for the package `$packageFqName`.")
+            return listOf(symbol)
+        }
+    }
+
     data class ClassData(val classId: ClassId) : SymbolData() {
         override fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol> {
             val symbol = getClassOrObjectSymbolByClassId(classId) ?: error("Class $classId is not found")
@@ -125,10 +132,11 @@ sealed class SymbolData {
     }
 
     companion object {
-        val identifiers = arrayOf("callable:", "class:", "typealias:", "enum_entry_initializer:", "script")
+        val identifiers = arrayOf("package:", "callable:", "class:", "typealias:", "enum_entry_initializer:", "script")
 
         fun create(data: String): SymbolData = when {
             data == "script" -> ScriptData
+            data.startsWith("package:") -> PackageData(extractPackageFqName(data))
             data.startsWith("class:") -> ClassData(ClassId.fromString(data.removePrefix("class:").trim()))
             data.startsWith("typealias:") -> TypeAliasData(ClassId.fromString(data.removePrefix("typealias:").trim()))
             data.startsWith("callable:") -> CallableData(extractCallableId(data, "callable:"))
@@ -136,6 +144,10 @@ sealed class SymbolData {
             else -> error("Invalid symbol kind, expected one of: $identifiers")
         }
     }
+}
+
+private fun extractPackageFqName(data: String): FqName {
+    return FqName.fromSegments(data.removePrefix("package:").trim().split('.'))
 }
 
 private fun extractCallableId(data: String, prefix: String): CallableId {
