@@ -5,7 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-description = "Infrastructure of transformations over SIR"
+description = "Implementation of SwiftIR backed by Analysis API"
 
 kotlin {
     explicitApi()

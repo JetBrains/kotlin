@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.session
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.*
+import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 internal class StandaloneSirSession(
     ktAnalysisSession: KtAnalysisSession,
@@ -20,9 +21,11 @@ internal class StandaloneSirSession(
         ktAnalysisSession = ktAnalysisSession,
         sirSession = sirSession,
     )
-    override val declarationProvider = SirDeclarationProviderImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
+    override val declarationProvider = CachingSirDeclarationProvider(
+        declarationsProvider = SirDeclarationFromKtSymbolProvider(
+            ktAnalysisSession = ktAnalysisSession,
+            sirSession = sirSession,
+        )
     )
     override val parentProvider = SirParentProviderImpl(
         ktAnalysisSession = ktAnalysisSession,
