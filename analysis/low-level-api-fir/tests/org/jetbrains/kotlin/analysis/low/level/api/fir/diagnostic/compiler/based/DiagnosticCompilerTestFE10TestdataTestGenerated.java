@@ -17978,6 +17978,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("capturedAssignment.kt")
+        public void testCapturedAssignment() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedAssignment.kt");
+        }
+
+        @Test
         @TestMetadata("capturedFlexibleIntersectionTypesWithDifferentBounds.kt")
         public void testCapturedFlexibleIntersectionTypesWithDifferentBounds() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedFlexibleIntersectionTypesWithDifferentBounds.kt");
