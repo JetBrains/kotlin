@@ -71,8 +71,8 @@ TEST(ObjectTraversalTest, TraverseEmptyObjectFields) {
 
 TEST(ObjectTraversalTest, TraverseObjectFields) {
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
-    ObjHeader field1;
-    ObjHeader field3;
+    ObjHeader field1{};
+    ObjHeader field3{};
     test_support::Object<Payload> object(type.typeInfo());
     object->field1.direct() = &field1;
     object->field3.direct() = &field3;
@@ -88,9 +88,9 @@ TEST(ObjectTraversalTest, TraverseObjectFieldsWithException) {
     constexpr int kException = 1;
 
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
-    ObjHeader field1;
-    ObjHeader field2;
-    ObjHeader field3;
+    ObjHeader field1{};
+    ObjHeader field2{};
+    ObjHeader field3{};
     test_support::Object<Payload> object(type.typeInfo());
     object->field1.direct() = &field1;
     object->field2.direct() = &field2;
@@ -118,8 +118,8 @@ TEST(ObjectTraversalTest, TraverseEmptyArrayFields) {
 }
 
 TEST(ObjectTraversalTest, TraverseArrayFields) {
-    ObjHeader element1;
-    ObjHeader element3;
+    ObjHeader element1{};
+    ObjHeader element3{};
     test_support::ObjectArray<3> array;
     array.elements()[0].direct() = &element1;
     array.elements()[2].direct() = &element3;
@@ -134,9 +134,9 @@ TEST(ObjectTraversalTest, TraverseArrayFields) {
 TEST(ObjectTraversalTest, TraverseArrayFieldsWithException) {
     constexpr int kException = 1;
 
-    ObjHeader element1;
-    ObjHeader element2;
-    ObjHeader element3;
+    ObjHeader element1{};
+    ObjHeader element2{};
+    ObjHeader element3{};
     test_support::ObjectArray<3> array;
     array.elements()[0].direct() = &element1;
     array.elements()[1].direct() = &element2;
@@ -182,8 +182,8 @@ TEST(ObjectTraversalTest, TraverseEmptyObjectRefs) {
 
 TEST(ObjectTraversalTest, TraverseObjectRefs) {
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
-    ObjHeader field1;
-    ObjHeader field3;
+    ObjHeader field1{};
+    ObjHeader field3{};
     test_support::Object<Payload> object(type.typeInfo());
     object->field1.direct() = &field1;
     object->field3.direct() = &field3;
@@ -198,9 +198,9 @@ TEST(ObjectTraversalTest, TraverseObjectRefsWithException) {
     constexpr int kException = 1;
 
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
-    ObjHeader field1;
-    ObjHeader field2;
-    ObjHeader field3;
+    ObjHeader field1{};
+    ObjHeader field2{};
+    ObjHeader field3{};
     test_support::Object<Payload> object(type.typeInfo());
     object->field1.direct() = &field1;
     object->field2.direct() = &field2;
@@ -228,8 +228,8 @@ TEST(ObjectTraversalTest, TraverseEmptyArrayRefs) {
 }
 
 TEST(ObjectTraversalTest, TraverseArrayRefs) {
-    ObjHeader element1;
-    ObjHeader element3;
+    ObjHeader element1{};
+    ObjHeader element3{};
     test_support::ObjectArray<3> array;
     array.elements()[0].direct() = &element1;
     array.elements()[2].direct() = &element3;
@@ -243,9 +243,9 @@ TEST(ObjectTraversalTest, TraverseArrayRefs) {
 TEST(ObjectTraversalTest, TraverseArrayRefsWithException) {
     constexpr int kException = 1;
 
-    ObjHeader element1;
-    ObjHeader element2;
-    ObjHeader element3;
+    ObjHeader element1{};
+    ObjHeader element2{};
+    ObjHeader element3{};
     test_support::ObjectArray<3> array;
     array.elements()[0].direct() = &element1;
     array.elements()[1].direct() = &element2;

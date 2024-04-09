@@ -42,7 +42,7 @@ TEST_F(ExceptionObjHolderTest, Throw) {
     RunInNewThread([](mm::ThreadData& threadData) {
         ASSERT_THAT(Collect(threadData), testing::IsEmpty());
 
-        ObjHeader exception;
+        ObjHeader exception{};
         try {
             ExceptionObjHolder::Throw(&exception);
         } catch (...) {
@@ -56,11 +56,11 @@ TEST_F(ExceptionObjHolderTest, ThrowInsideCatch) {
     RunInNewThread([](mm::ThreadData& threadData) {
         ASSERT_THAT(Collect(threadData), testing::IsEmpty());
 
-        ObjHeader exception1;
+        ObjHeader exception1{};
         try {
             ExceptionObjHolder::Throw(&exception1);
         } catch (...) {
-            ObjHeader exception2;
+            ObjHeader exception2{};
             try {
                 ExceptionObjHolder::Throw(&exception2);
             } catch (...) {
@@ -76,7 +76,7 @@ TEST_F(ExceptionObjHolderTest, StoreException) {
     RunInNewThread([](mm::ThreadData& threadData) {
         ASSERT_THAT(Collect(threadData), testing::IsEmpty());
 
-        ObjHeader exception1;
+        ObjHeader exception1{};
         std::exception_ptr storedException1;
         try {
             ExceptionObjHolder::Throw(&exception1);
@@ -85,7 +85,7 @@ TEST_F(ExceptionObjHolderTest, StoreException) {
         }
         EXPECT_THAT(Collect(threadData), testing::ElementsAre(&exception1));
 
-        ObjHeader exception2;
+        ObjHeader exception2{};
         std::exception_ptr storedException2;
         try {
             ExceptionObjHolder::Throw(&exception2);

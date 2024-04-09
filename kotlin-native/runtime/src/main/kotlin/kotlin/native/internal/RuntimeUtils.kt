@@ -20,6 +20,7 @@ public external fun dereferenceSpecialRef(ref: COpaquePointer?): Any?
 
 @ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_Interop_createSpecialRef")
+@Escapes(0b01)
 public external fun createSpecialRef(ref: Any?): COpaquePointer?
 
 @ExperimentalNativeApi

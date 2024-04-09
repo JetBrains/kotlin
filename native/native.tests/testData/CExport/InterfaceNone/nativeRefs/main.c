@@ -28,8 +28,6 @@ void test(uintptr_t obj1, uintptr_t obj2, _Bool (*comparator)(uintptr_t, uintptr
 }
 
 int main() {
-    return 0; // <- Mute. See https://youtrack.jetbrains.com/issue/KT-67095/Native-fix-testNativeRefs-export-test
-
     test(get_singleton_object(), get_singleton_object(), compare_identities, -1);
     test(get_static_object(), get_static_object(), compare_identities, -2);
     test(get_local_object(), get_local_object(), compare_objects, -3);

@@ -64,6 +64,8 @@ class SpecialRefRegistry : private Pinned {
         Node(ObjHeader* obj, Rc rc) noexcept : obj_(obj), rc_(rc) {
             RuntimeAssert(obj != nullptr, "Creating StableRef for null object");
             RuntimeAssert(rc >= 0, "Creating StableRef with negative rc %d", rc);
+            // Runtime tests occasionaly use sentinel values under 8 for opaque objects
+            RuntimeAssert(reinterpret_cast<uintptr_t>(obj) < 8u || !obj->local(), "Creating StableRef to a stack-allocated object %p", obj);
         }
 
         Node() noexcept : obj_(nullptr), rc_(disposedMarker) {}
