@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.UseSiteTargetsList
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
+private val defaultAnnotationTargetsWithExpression = KotlinTarget.DEFAULT_TARGET_SET + KotlinTarget.EXPRESSION
 
 fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.ALL_TARGET_SET
@@ -54,12 +55,18 @@ fun FirRegularClass.getAllowedAnnotationTargets(session: FirSession): Set<Kotlin
 
 fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-    val targetAnnotation = getTargetAnnotation(session) ?: return defaultAnnotationTargets
-    val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument(flattenArrays = true).orEmpty()
+    // In KT-67014, we decided to allow EXPRESSION targets for Java annotations
+    val targetAnnotation = getTargetAnnotation(session)
+        ?: return if (isJavaOrEnhancement) defaultAnnotationTargetsWithExpression else defaultAnnotationTargets
+    val arguments =
+        targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument(flattenArrays = true).orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetName = argument.extractEnumValueArgumentInfo()?.enumEntryName?.asString() ?: return@mapNotNullTo null
         KotlinTarget.entries.firstOrNull { target -> target.name == targetName }
+    }.let {
+        // In KT-67014, we decided to allow EXPRESSION targets for Java annotations
+        if (isJavaOrEnhancement) it + KotlinTarget.EXPRESSION else it
     }
 }
 
