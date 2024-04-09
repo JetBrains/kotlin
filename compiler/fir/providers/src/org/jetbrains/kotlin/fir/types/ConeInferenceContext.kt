@@ -541,11 +541,14 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
-        return fullyExpandedType(session).let {
-            val simpleType = it.lowerBoundIfFlexible()
-            if ((simpleType as ConeKotlinType).isSomeFunctionType(session))
-                this
-            else {
+        val simpleType = fullyExpandedType(session).lowerBoundIfFlexible() as ConeSimpleKotlinType
+
+        return when {
+            simpleType.isSomeFunctionType(session) -> this
+            simpleType is ConeCapturedType -> {
+                simpleType.constructor.supertypes?.firstNotNullOfOrNull { it.getFunctionTypeFromSupertypes() }
+            }
+            else -> {
                 var functionalSupertype: KotlinTypeMarker? = null
                 simpleType.anySuperTypeConstructor { type ->
                     simpleType.fastCorrespondingSupertypes(type.typeConstructor())?.any { superType ->
@@ -557,10 +560,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                     } ?: false
                 }
                 functionalSupertype
-                    ?: errorWithAttachment("Failed to find functional supertype for ${simpleType::class.java}") {
-                    withConeTypeEntry("type", simpleType)
-                }
             }
+        } ?: errorWithAttachment("Failed to find functional supertype for ${simpleType::class.java}") {
+            withConeTypeEntry("type", simpleType)
         }
     }
 

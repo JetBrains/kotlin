@@ -17998,6 +17998,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("capturedFunctionalType.kt")
+        public void testCapturedFunctionalType() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedFunctionalType.kt");
+        }
+
+        @Test
         @TestMetadata("capturedInTypeInference.kt")
         public void testCapturedInTypeInference() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedInTypeInference.kt");
