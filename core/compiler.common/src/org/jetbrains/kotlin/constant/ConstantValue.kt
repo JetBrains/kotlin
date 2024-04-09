@@ -139,6 +139,8 @@ class KClassValue private constructor(value: Value) : ConstantValue<KClassValue.
         data object LocalClass : Value()
     }
 
+    constructor() : this(Value.LocalClass)
+
     constructor(value: ClassLiteralValue) : this(Value.NormalClass(value))
 
     constructor(classId: ClassId, arrayDimensions: Int) : this(ClassLiteralValue(classId, arrayDimensions))

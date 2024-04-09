@@ -146,17 +146,20 @@ internal abstract class IrConstTransformer(
             throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
         }
 
-        evaluatedConstTracker?.save(
-            result.startOffset, result.endOffset, irFile.nameWithPackage,
-            constant = if (result is IrErrorExpression) ErrorValue.create(result.description)
-            else (result as IrConst<*>).toConstantValue()
-        )
+        result.saveInConstTracker()
 
         if (result is IrConst<*>) {
             reportInlinedJavaConst(result)
         }
 
         return if (failAsError) result.reportIfError(this) else result.warningIfError(this)
+    }
+
+    protected fun IrExpression.saveInConstTracker() {
+        evaluatedConstTracker?.save(
+            startOffset, endOffset, irFile.nameWithPackage,
+            constant = if (this is IrErrorExpression) ErrorValue.create(description) else this.toConstantValue()
+        )
     }
 
     private fun IrExpression.reportInlinedJavaConst(result: IrConst<*>) {
