@@ -76,6 +76,12 @@ public class FirNativePartialLinkageTestGenerated extends AbstractNativePartialL
   }
 
   @Test
+  @TestMetadata("frameworkTest")
+  public void testFrameworkTest() {
+    runTest("compiler/testData/klib/partial-linkage/frameworkTest/");
+  }
+
+  @Test
   @TestMetadata("functionTransformations")
   public void testFunctionTransformations() {
     runTest("compiler/testData/klib/partial-linkage/functionTransformations/");
