@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescMemberSymbol
@@ -56,7 +55,6 @@ internal class KtFe10DescEnumEntrySymbol(
     override val enumEntryInitializer: KtEnumEntryInitializerSymbol?
         get() = this
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtEnumEntrySymbol>(this)?.let {
             return it

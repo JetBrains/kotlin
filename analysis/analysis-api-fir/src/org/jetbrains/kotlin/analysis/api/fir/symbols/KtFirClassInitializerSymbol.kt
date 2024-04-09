@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
@@ -26,7 +25,6 @@ internal class KtFirClassInitializerSymbol(
 ) : KtClassInitializerSymbol(), KtFirSymbol<FirAnonymousInitializerSymbol> {
     override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtClassInitializerSymbol>(this)?.let { return it }
         TODO("Figure out how to create such a pointer. Should we give an index to class initializers?")

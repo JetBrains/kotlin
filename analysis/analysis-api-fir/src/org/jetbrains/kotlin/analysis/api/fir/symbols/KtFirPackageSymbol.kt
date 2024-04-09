@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirPackageSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
@@ -36,7 +35,6 @@ class KtFirPackageSymbol(
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { KtSymbolOrigin.SOURCE } // TODO
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtPackageSymbol> = KtFirPackageSymbolPointer(fqName)
 
     override fun equals(other: Any?): Boolean {

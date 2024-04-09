@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirEnumEntrySymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
@@ -61,9 +60,9 @@ internal class KtFirEnumEntrySymbol(
             ?: error("The anonymous object symbol for an enum entry initializer should be a ${KtFirEnumEntryInitializerSymbol::class.simpleName}")
     }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtEnumEntrySymbol>(this) ?: KtFirEnumEntrySymbolPointer(requireOwnerPointer(), firSymbol.name)
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtEnumEntrySymbol>(this)
+            ?: KtFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), firSymbol.name)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

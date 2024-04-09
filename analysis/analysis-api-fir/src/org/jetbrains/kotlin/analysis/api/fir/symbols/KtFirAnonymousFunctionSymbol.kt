@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -51,7 +50,6 @@ internal class KtFirAnonymousFunctionSymbol(
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
 
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousFunctionSymbol>(this)
             ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)

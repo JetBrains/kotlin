@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -123,7 +122,6 @@ internal class KtFirKotlinPropertySymbol(
     override val hasGetter: Boolean get() = withValidityAssertion { firSymbol.getterSymbol != null }
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtVariableLikeSymbol>(this)?.let { psiPointer ->
             return KtFirPsiBasedPropertySymbolPointer(psiPointer)
@@ -132,7 +130,7 @@ internal class KtFirKotlinPropertySymbol(
         return when (val kind = symbolKind) {
             KtSymbolKind.TOP_LEVEL -> {
                 if (firSymbol.fir.origin is FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
-                    KtFirResultPropertySymbolPointer(requireOwnerPointer())
+                    KtFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this))
                 } else {
                     KtFirTopLevelPropertySymbolPointer(
                         firSymbol.callableId,
@@ -143,7 +141,7 @@ internal class KtFirKotlinPropertySymbol(
 
             KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberPropertySymbolPointer(
-                    ownerPointer = requireOwnerPointer(),
+                    ownerPointer = analysisSession.createOwnerPointer(this),
                     name = firSymbol.name,
                     signature = FirCallableSignature.createSignature(firSymbol),
                     isStatic = firSymbol.isStatic,

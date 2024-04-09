@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirJavaFieldSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -51,9 +50,8 @@ internal class KtFirJavaFieldSymbol(
 
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> = withValidityAssertion {
-        KtFirJavaFieldSymbolPointer(requireOwnerPointer(), name, firSymbol.isStatic)
+        KtFirJavaFieldSymbolPointer(analysisSession.createOwnerPointer(this), name, firSymbol.isStatic)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

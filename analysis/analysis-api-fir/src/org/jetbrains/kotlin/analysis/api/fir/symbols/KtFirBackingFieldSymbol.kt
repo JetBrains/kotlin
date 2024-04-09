@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
@@ -36,7 +35,6 @@ internal class KtFirBackingFieldSymbol(
             builder.variableLikeBuilder.buildPropertySymbol(firSymbol.propertySymbol) as KtKotlinPropertySymbol
         }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> = withValidityAssertion {
         KtFirBackingFieldSymbolPointer(owningProperty.createPointer())
     }

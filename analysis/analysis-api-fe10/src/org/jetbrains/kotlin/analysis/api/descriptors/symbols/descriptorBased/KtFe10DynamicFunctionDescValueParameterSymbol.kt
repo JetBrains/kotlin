@@ -61,7 +61,6 @@ internal class KtFe10DynamicFunctionDescValueParameterSymbol(
     override val returnType: KtType
         get() = withValidityAssertion { createDynamicType(analysisContext.builtIns).toKtType(analysisContext) }
 
-    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
         Pointer(owner.createPointer())
     }

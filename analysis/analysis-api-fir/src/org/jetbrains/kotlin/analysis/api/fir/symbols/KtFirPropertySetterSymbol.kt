@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KtPropertyAccessorSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KtPropertySetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
@@ -96,13 +95,10 @@ internal class KtFirPropertySetterSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
 
-    context(KtAnalysisSession)
     @OptIn(KtAnalysisApiInternals::class)
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertySetterSymbol>(this)?.let { return it }
-
-        @Suppress("UNCHECKED_CAST")
-        KtPropertyAccessorSymbolPointer(requireOwnerPointer(), isGetter = false) as KtSymbolPointer<KtPropertySetterSymbol>
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertySetterSymbol>(this)
+            ?: KtPropertySetterSymbolPointer(analysisSession.createOwnerPointer(this))
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

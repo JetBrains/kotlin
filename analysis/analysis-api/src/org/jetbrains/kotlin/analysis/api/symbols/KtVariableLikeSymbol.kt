@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 public sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind, KtPossibleMemberSymbol {
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 }
 
@@ -48,7 +46,6 @@ public abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol>
 
     public companion object {
@@ -96,7 +93,6 @@ public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithKi
      */
     public abstract val enumEntryInitializer: KtEnumEntryInitializerSymbol?
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
 
@@ -126,7 +122,6 @@ public interface KtEnumEntryInitializerSymbol : KtSymbolWithMembers
 public sealed class KtVariableSymbol : KtVariableLikeSymbol() {
     public abstract val isVal: Boolean
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtVariableSymbol>
 }
 
@@ -145,7 +140,6 @@ public abstract class KtJavaFieldSymbol :
 
     public abstract val isStatic: Boolean
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol>
 }
 
@@ -180,7 +174,6 @@ public sealed class KtPropertySymbol : KtVariableSymbol(),
      */
     public abstract val initializer: KtInitializerValue?
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
 }
 
@@ -189,7 +182,6 @@ public abstract class KtKotlinPropertySymbol : KtPropertySymbol(), KtPossibleMul
 
     public abstract val isConst: Boolean
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol>
 }
 
@@ -206,7 +198,6 @@ public abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
     public abstract val javaGetterSymbol: KtFunctionSymbol
     public abstract val javaSetterSymbol: KtFunctionSymbol?
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol>
 }
 
@@ -219,7 +210,6 @@ public abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKi
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol>
 }
 
@@ -261,7 +251,6 @@ public abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtParamet
      */
     public abstract val isImplicitLambdaParameter: Boolean
 
-    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol>
 
     /**
