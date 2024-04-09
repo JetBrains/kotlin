@@ -47,7 +47,9 @@ public final class test/SomeClass : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           ICONST_1
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (10)
+          RETURN
+        LABEL (L2)
     }
 }

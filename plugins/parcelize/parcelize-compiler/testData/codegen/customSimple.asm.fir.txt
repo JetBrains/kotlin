@@ -110,7 +110,9 @@ public final class User : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           ILOAD (2)
           INVOKEVIRTUAL (User$Companion, write, (LUser;Landroid/os/Parcel;I)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (19)
+          RETURN
+        LABEL (L2)
     }
 }

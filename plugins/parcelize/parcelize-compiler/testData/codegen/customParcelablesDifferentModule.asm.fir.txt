@@ -63,7 +63,9 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           CHECKCAST (android/os/Parcelable)
           ILOAD (2)
           INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (11)
+          RETURN
+        LABEL (L2)
     }
 }

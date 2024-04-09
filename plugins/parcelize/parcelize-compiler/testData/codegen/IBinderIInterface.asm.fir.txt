@@ -83,7 +83,9 @@ public final class User : java/lang/Object, android/os/Parcelable {
           GETFIELD (User, binderArrayList, Ljava/util/ArrayList;)
           CHECKCAST (java/util/List)
           INVOKEVIRTUAL (android/os/Parcel, writeBinderList, (Ljava/util/List;)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (17)
+          RETURN
+        LABEL (L2)
     }
 }

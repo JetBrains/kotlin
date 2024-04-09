@@ -84,7 +84,9 @@ public final class User : java/lang/Object, android/os/Parcelable {
           GETFIELD (User, nullable, LSerializableSimple;)
           CHECKCAST (java/io/Serializable)
           INVOKEVIRTUAL (android/os/Parcel, writeSerializable, (Ljava/io/Serializable;)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (11)
+          RETURN
+        LABEL (L2)
     }
 }

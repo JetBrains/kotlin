@@ -95,9 +95,12 @@ public final class User : java/lang/Object, android/os/Parcelable {
             0 this: LUser;
 
         LABEL (L0)
+        LINENUMBER (8)
           ICONST_0
-          IRETURN
         LABEL (L1)
+        LINENUMBER (9)
+          IRETURN
+        LABEL (L2)
     }
 
     public final int getAge() {
@@ -152,7 +155,9 @@ public final class User : java/lang/Object, android/os/Parcelable {
           ICONST_0
         LABEL (L2)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
-          RETURN
         LABEL (L3)
+        LINENUMBER (9)
+          RETURN
+        LABEL (L4)
     }
 }

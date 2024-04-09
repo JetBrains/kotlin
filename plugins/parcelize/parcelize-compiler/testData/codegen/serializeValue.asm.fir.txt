@@ -50,9 +50,12 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public final int describeContents() {
         LABEL (L0)
+        LINENUMBER (9)
           ICONST_0
-          IRETURN
         LABEL (L1)
+        LINENUMBER (10)
+          IRETURN
+        LABEL (L2)
     }
 
     public final Value getValue()
@@ -66,8 +69,10 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           ALOAD (0)
           GETFIELD (Test, value, LValue;)
           INVOKEVIRTUAL (android/os/Parcel, writeValue, (Ljava/lang/Object;)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (10)
+          RETURN
+        LABEL (L2)
     }
 }
 

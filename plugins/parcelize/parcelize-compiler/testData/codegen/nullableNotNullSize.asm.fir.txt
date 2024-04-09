@@ -32,8 +32,10 @@ public final class TestNotNull : java/lang/Object, android/os/Parcelable {
           ALOAD (0)
           GETFIELD (TestNotNull, a, Landroid/util/Size;)
           INVOKEVIRTUAL (android/os/Parcel, writeSize, (Landroid/util/Size;)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (12)
+          RETURN
+        LABEL (L2)
     }
 }
 
@@ -84,6 +86,7 @@ public final class TestNullable : java/lang/Object, android/os/Parcelable {
           ALOAD (3)
           INVOKEVIRTUAL (android/os/Parcel, writeSize, (Landroid/util/Size;)V)
         LABEL (L2)
+        LINENUMBER (9)
           RETURN
         LABEL (L3)
     }

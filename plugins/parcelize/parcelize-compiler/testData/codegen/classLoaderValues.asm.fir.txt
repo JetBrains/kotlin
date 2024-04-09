@@ -77,7 +77,9 @@ public final class A : java/lang/Object, android/os/Parcelable {
           ALOAD (0)
           GETFIELD (A, c, Landroid/os/PersistableBundle;)
           INVOKEVIRTUAL (android/os/Parcel, writePersistableBundle, (Landroid/os/PersistableBundle;)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (15)
+          RETURN
+        LABEL (L2)
     }
 }

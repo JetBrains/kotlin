@@ -61,7 +61,9 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           GETFIELD (test/Foo, parcelable, Landroid/os/Parcelable;)
           ILOAD (2)
           INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (37)
+          RETURN
+        LABEL (L2)
     }
 }

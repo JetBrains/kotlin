@@ -64,6 +64,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           INVOKEVIRTUAL (android/os/Parcel, writeStringList, (Ljava/util/List;)V)
           GOTO (L3)
         LABEL (L2)
+        LINENUMBER (8)
           RETURN
         LABEL (L4)
     }

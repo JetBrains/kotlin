@@ -96,6 +96,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           ALOAD (3)
           INVOKEVIRTUAL (android/os/Parcel, writeSize, (Landroid/util/Size;)V)
         LABEL (L2)
+        LINENUMBER (10)
           RETURN
         LABEL (L3)
     }
@@ -199,6 +200,7 @@ public final class TestF : java/lang/Object, android/os/Parcelable {
           ALOAD (3)
           INVOKEVIRTUAL (android/os/Parcel, writeSizeF, (Landroid/util/SizeF;)V)
         LABEL (L2)
+        LINENUMBER (13)
           RETURN
         LABEL (L3)
     }
