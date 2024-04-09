@@ -250,8 +250,8 @@ KBoolean Kotlin_math_Float_signBit(KFloat thiz) { return signbit(thiz) != 0; }
 
 // region Integer math.
 
-KInt Kotlin_math_absi(KInt x) { return labs(x); }
-KLong Kotlin_math_absl(KLong x) { return llabs(x); }
+KInt Kotlin_math_absi(KInt x) { return __builtin_elementwise_abs(x); }
+KLong Kotlin_math_absl(KLong x) { return __builtin_elementwise_abs(x); }
 
 // endregion
 
