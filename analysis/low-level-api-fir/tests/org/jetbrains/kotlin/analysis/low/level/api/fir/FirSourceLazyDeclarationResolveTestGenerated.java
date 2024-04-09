@@ -1108,6 +1108,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("multiLevelClasspathSubstitution.kt")
+    public void testMultiLevelClasspathSubstitution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/multiLevelClasspathSubstitution.kt");
+    }
+
+    @Test
     @TestMetadata("overrideWithTransitiveClass.kt")
     public void testOverrideWithTransitiveClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/overrideWithTransitiveClass.kt");
