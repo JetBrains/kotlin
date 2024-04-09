@@ -97,3 +97,9 @@ open class OpenClass {
     fun newInlineFunction2Caller(x: Int): String = newInlineFunction2(x)
     fun newNonInlineFunctionCaller(x: Int): String = newNonInlineFunction(x)
 }
+
+
+interface KT59153 {
+    // fun test(f: () -> String) = "foo".run { f() }
+    fun test(f: Any.() -> String) = "foo".run { f() }
+}

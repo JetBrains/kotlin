@@ -179,3 +179,6 @@ fun nonLocalReturnFromIntArrayConstructorLambda(expected: Int, unexpected: Int):
         unexpected
     }[0]
 }[0]
+
+val objectKT59153 = object : KT59153 {}
+val objectKT59153Delegate = object : KT59153 by objectKT59153 {}
