@@ -13,6 +13,7 @@ import java.nio.file.Files
 import kotlin.io.path.writeText
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
 class KotlinWasmGradlePluginIT : KGPBaseTest() {
@@ -226,7 +227,10 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @DisplayName("Browser print works with null type")
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
-    @Disabled("The CI can't run the test, so, ignore it until we add headless Chrome browser to our CI")
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+        enabledOnCI = []
+    ) // The CI can't run the test, so, ignore it until we add headless Chrome browser to our CI
     fun testBrowserNullPrint(gradleVersion: GradleVersion) {
         project("kt-63230", gradleVersion) {
             build("check", "-Pkotlin.tests.individualTaskReports=true") {
