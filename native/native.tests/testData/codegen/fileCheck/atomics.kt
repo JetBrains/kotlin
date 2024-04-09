@@ -309,7 +309,7 @@ fun refArr_compareAndExchange() = refArr.compareAndExchange(0, null, null)
 // CHECK: call ptr @Kotlin_arrayGetElementAddress(ptr noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK-AAPCS: call i1 @CompareAndSetVolatileHeapRef(ptr %{{[0-9]+}}, ptr null, ptr null)
 // CHECK-DEFAULTABI: cmpxchg ptr %{{[0-9]+}}, ptr null, ptr null seq_cst seq_cst
-// CHECK-WINDOWSX64: call zeroext i1 @CompareAndSetVolatileHeapRef(ptr %{{[0-9]+}}, ptr null, ptr null)
+// CHECK-WINDOWSX64: cmpxchg ptr %{{[0-9]+}}, ptr null, ptr null seq_cst seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_compareAndSet() = refArr.compareAndSet(0, null, null)
 
