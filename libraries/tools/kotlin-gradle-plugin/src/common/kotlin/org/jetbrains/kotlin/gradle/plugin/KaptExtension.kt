@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.KaptJavacOption
 import java.util.*
 
-open class KaptExtension: KaptExtensionConfig {
+open class KaptExtension : KaptExtensionConfig {
     open var generateStubs: Boolean = false
 
     open var inheritedAnnotations: Boolean = true
@@ -39,7 +39,7 @@ open class KaptExtension: KaptExtensionConfig {
     override var strictMode: Boolean = false
 
     override var stripMetadata: Boolean = false
-    
+
     override var showProcessorStats: Boolean = false
 
     override var detectMemoryLeaks: String = "default"
@@ -69,20 +69,8 @@ open class KaptExtension: KaptExtensionConfig {
         fqName.forEach(this::annotationProcessor)
     }
 
-    fun arguments(closure: Closure<*>) {
-        apOptionsActions += { apOptions ->
-            apOptions.executeClosure(closure)
-        }
-    }
-
     override fun arguments(action: KaptArguments.() -> Unit) {
         apOptionsActions += action
-    }
-
-    open fun javacOptions(closure: Closure<*>) {
-        javacOptionsActions += { javacOptions ->
-            javacOptions.executeClosure(closure)
-        }
     }
 
     override fun javacOptions(action: KaptJavacOption.() -> Unit) {
@@ -90,34 +78,49 @@ open class KaptExtension: KaptExtensionConfig {
     }
 
     override fun getJavacOptions(): Map<String, String> {
+        @Suppress("DEPRECATION")
         val result = KaptJavacOptionsDelegate()
         javacOptionsActions.forEach { it(result) }
         return result.options
     }
 
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated(message = "Scheduled for removal in Kotlin 2.2.")
     fun getAdditionalArguments(project: Project, variantData: Any?, androidExtension: Any?): Map<String, String> {
-        val result = KaptAnnotationProcessorOptions(project, variantData, androidExtension)
+        return getAdditionalArguments()
+    }
+
+    internal fun getAdditionalArguments(): Map<String, String> {
+        @Suppress("DEPRECATION")
+        val result = KaptAnnotationProcessorOptions()
         apOptionsActions.forEach { it(result) }
         return result.options
     }
 
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated(message = "Scheduled for removal in Kotlin 2.2.")
     fun getAdditionalArgumentsForJavac(project: Project, variantData: Any?, androidExtension: Any?): List<String> {
         val javacArgs = mutableListOf<String>()
-        for ((key, value) in getAdditionalArguments(project, variantData, androidExtension)) {
+        for ((key, value) in getAdditionalArguments()) {
             javacArgs += "-A" + key + (if (value.isNotEmpty()) "=$value" else "")
         }
         return javacArgs
     }
 }
 
-/**
- * [project], [variant] and [android] properties are intended to be used inside the closure.
- */
-open class KaptAnnotationProcessorOptions(
-    @Suppress("unused") open val project: Project,
-    @Suppress("unused") open val variant: Any?,
-    @Suppress("unused") open val android: Any?
-): KaptArguments {
+@Deprecated("This is an internal class of KGP. Consider using the `KaptArguments` interface. Scheduled to be hidden in Kotlin 2.2.")
+open class KaptAnnotationProcessorOptions() : KaptArguments {
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated(
+        message = "This constructor with parameters is scheduled for removal in Kotlin 2.2. Consider migrating to the constructor without parameters.",
+        replaceWith = ReplaceWith("KaptAnnotationProcessorOptions()")
+    )
+    constructor(
+        project: Project,
+        variant: Any?,
+        android: Any?
+    ) : this()
+
     internal val options = LinkedHashMap<String, String>()
 
     @Deprecated(
@@ -132,10 +135,12 @@ open class KaptAnnotationProcessorOptions(
         options[name] = values.joinToString(" ")
     }
 
+    @Deprecated("Scheduled for removal in Kotlin 2.2.")
     fun execute(closure: Closure<*>) = executeClosure(closure)
 }
 
-open class KaptJavacOptionsDelegate: KaptJavacOption {
+@Deprecated("This is an internal class of KGP. Consider using the `KaptJavacOption` interface. Scheduled to be hidden in Kotlin 2.2.")
+open class KaptJavacOptionsDelegate : KaptJavacOption {
     internal val options = LinkedHashMap<String, String>()
 
     @Deprecated(
@@ -162,6 +167,7 @@ open class KaptJavacOptionsDelegate: KaptJavacOption {
         options[name] = ""
     }
 
+    @Deprecated("Scheduled for removal in Kotlin 2.2.")
     fun execute(closure: Closure<*>) = executeClosure(closure)
 }
 

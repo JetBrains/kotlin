@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
@@ -236,15 +235,11 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
     private fun Kapt3SubpluginContext.getDslKaptApOptions(): Provider<List<SubpluginOption>> = project.provider {
         val androidVariantData = KaptWithAndroid.androidVariantData(this)
 
-        val androidExtension = androidVariantData?.let {
-            project.extensions.findByName("android") as? BaseExtension
-        }
-
         val androidOptions = androidVariantData?.annotationProcessorOptions ?: emptyMap()
         val androidSubpluginOptions = androidOptions.toList().map { SubpluginOption(it.first, it.second) }
 
         androidSubpluginOptions + getNonAndroidDslApOptions(
-            kaptExtension, project, listOf(kotlinSourcesOutputDir.get().asFile), androidVariantData, androidExtension
+            kaptExtension, project, listOf(kotlinSourcesOutputDir.get().asFile)
         ).get()
     }
 
@@ -470,11 +465,9 @@ internal fun getNonAndroidDslApOptions(
     kaptExtension: KaptExtension,
     project: Project,
     kotlinSourcesOutputDir: Iterable<File>,
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variantData: DeprecatedAndroidBaseVariant?,
-    androidExtension: BaseExtension?
 ): Provider<List<SubpluginOption>> {
     return project.provider {
-        kaptExtension.getAdditionalArguments(project, variantData, androidExtension).toList()
+        kaptExtension.getAdditionalArguments().toList()
             .map { SubpluginOption(it.first, it.second) } +
                 FilesSubpluginOption(Kapt3GradleSubplugin.KAPT_KOTLIN_GENERATED, kotlinSourcesOutputDir)
     }

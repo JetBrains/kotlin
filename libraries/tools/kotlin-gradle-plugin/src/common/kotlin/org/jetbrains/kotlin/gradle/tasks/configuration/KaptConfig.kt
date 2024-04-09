@@ -224,7 +224,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
     constructor(project: Project, ext: KaptExtension) : super(project, ext) {
         configureTask { task ->
             val kotlinSourceDir = objectFactory.fileCollection().from(task.kotlinSourcesDestinationDir)
-            val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir, null, null)
+            val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir)
             task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
         }
     }
