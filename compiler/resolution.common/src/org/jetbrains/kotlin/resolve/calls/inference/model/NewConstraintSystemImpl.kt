@@ -367,21 +367,23 @@ class NewConstraintSystemImpl(
             typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
         }
 
-        val currentInitialConstraints = storage.initialConstraints.toSet()
 
-        otherSystem.initialConstraints.filterTo(storage.initialConstraints) {
-            it !in currentInitialConstraints
-        }
+        storage.initialConstraints.addOnlyNewElements(otherSystem.initialConstraints)
 
         storage.maxTypeDepthFromInitialConstraints =
             max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
-        storage.errors.addAll(otherSystem.errors)
+        storage.errors.addOnlyNewElements(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
+        // Can't be non-empty in K2/PCLA, thus no need to use `addOnlyNewElements`
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
 
     }
 
+    private fun <E> MutableList<E>.addOnlyNewElements(other: Collection<E>) {
+        val currentSet = toSet()
+        other.filterTo(this) { it !in currentSet }
+    }
 
     @AssertionsOnly
     private fun runOuterCSRelatedAssertions(otherSystem: ConstraintStorage, isAddingOuter: Boolean) {
