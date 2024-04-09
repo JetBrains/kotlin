@@ -337,10 +337,10 @@ class NewConstraintSystemImpl(
     }
 
     fun replaceContentWith(otherSystem: ConstraintStorage) {
-        addOtherSystem(otherSystem, isAddingOuter = false, clearNotFixedTypeVariables = true)
+        addOtherSystem(otherSystem, isAddingOuter = false, replacingContent = true)
     }
 
-    private fun addOtherSystem(otherSystem: ConstraintStorage, isAddingOuter: Boolean, clearNotFixedTypeVariables: Boolean = false) {
+    private fun addOtherSystem(otherSystem: ConstraintStorage, isAddingOuter: Boolean, replacingContent: Boolean = false) {
         @OptIn(AssertionsOnly::class)
         runOuterCSRelatedAssertions(otherSystem, isAddingOuter)
 
@@ -352,11 +352,12 @@ class NewConstraintSystemImpl(
             notProperTypesCache.clear()
         }
 
-        // `clearNotFixedTypeVariables` means that we're mostly replacing the content, thus we need to remove variables that have been fixed
-        // in `otherSystem` from `this.notFixedTypeVariables`, too
-        if (clearNotFixedTypeVariables) {
+        if (replacingContent) {
             notFixedTypeVariables.clear()
             typeVariableDependencies.clear()
+            storage.initialConstraints.clear()
+            storage.errors.clear()
+            // NB: `postponedTypeVariables` can't be non-empty in K2/PCLA, thus no need to clear it
         }
 
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
@@ -367,11 +368,8 @@ class NewConstraintSystemImpl(
             typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
         }
 
-        val currentInitialConstraints = storage.initialConstraints.toSet()
 
-        otherSystem.initialConstraints.filterTo(storage.initialConstraints) {
-            it !in currentInitialConstraints
-        }
+        storage.initialConstraints.addAll(otherSystem.initialConstraints)
 
         storage.maxTypeDepthFromInitialConstraints =
             max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
@@ -381,7 +379,6 @@ class NewConstraintSystemImpl(
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
 
     }
-
 
     @AssertionsOnly
     private fun runOuterCSRelatedAssertions(otherSystem: ConstraintStorage, isAddingOuter: Boolean) {
