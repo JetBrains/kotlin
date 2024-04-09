@@ -1940,6 +1940,7 @@ internal class CodeGeneratorVisitor(
                     //
                     //  Child(constantValue) could be initialized constantly. This is required for function references.
                     val delegatedCallConstants = constructor.body?.statements
+                            ?.map { ((it as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock)?.inlineCall ?: it }
                             ?.filterIsInstance<IrDelegatingConstructorCall>()
                             ?.singleOrNull()
                             ?.getArgumentsWithIr()
