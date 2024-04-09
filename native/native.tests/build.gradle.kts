@@ -15,6 +15,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(project(":native:kotlin-native-utils"))
+    testApi(project(":native:cli-native"))
     testApi(project(":native:executors"))
 
     testImplementation(projectTests(":generators:test-generator"))
@@ -26,6 +27,7 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
@@ -58,10 +60,16 @@ val klibTest = nativeTest("klibTest", "klib")
 val standaloneTest = nativeTest("standaloneTest", "standalone")
 val gcTest = nativeTest("gcTest", "gc")
 
+// JDK variables are required for the argument normalization (e.g. org.jetbrains.kotlin.cli.AbstractCliTest#getNormalizedCompilerOutput).
+val jdkVersionsForCliTests = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+val cliTest by nativeTest("cliTest", null, defineJDKEnvVariables = jdkVersionsForCliTests) {
+    include("org/jetbrains/kotlin/konan/test/cli/*")
+}
+
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 // Note: arbitrary JUnit tag expressions can be used in this property.
 // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
-val test by nativeTest("test", testTags, requirePlatformLibs = true)
+val test by nativeTest("test", testTags, requirePlatformLibs = true, defineJDKEnvVariables = jdkVersionsForCliTests)
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))

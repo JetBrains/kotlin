@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
+import org.jetbrains.kotlin.konan.test.cli.AbstractNativeCliTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractDiagnosticsNativeTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsTest
@@ -24,12 +27,31 @@ import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
+import java.util.stream.Stream
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
+    val mainClassName = TestGeneratorUtil.getMainClassName()
+
+    Stream.of(::generateJUnit3CompilerTests, ::generateJUnit5CompilerTests)
+        .parallel()
+        .forEach { it.invoke(arrayOf(), mainClassName) }
+}
+
+fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
+    generateTestGroupSuite(args, mainClassName) {
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeCliTest> {
+                model("cli/native", extension = "args", testMethod =  "doNativeTest", recursive = false)
+            }
+        }
+    }
+}
+
+fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
     val k2BoxTestDir = listOf("multiplatform/k2")
 
-    generateTestGroupSuiteWithJUnit5 {
+    generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         // Former konan local tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeCodegenBoxTest>(
