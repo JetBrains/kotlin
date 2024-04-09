@@ -1,5 +1,4 @@
 // ISSUE: KT-68727
-// IGNORE_BACKEND_K2: ANY
 // MODULE: lib
 // FILE: lib.kt
 

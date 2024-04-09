@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrLazyConstructor(
@@ -110,10 +112,11 @@ class Fir2IrLazyConstructor(
             )
 
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
+                val parentClass = parent as? IrClass
                 callablesGenerator.createIrParameter(
                     valueParameter, index + contextReceiverParametersCount,
-                    useStubForDefaultValueStub = (parent as? IrClass)?.name != Name.identifier("Enum"),
-                    forcedDefaultValueConversion = (parent as? IrClass)?.isAnnotationClass == true
+                    useStubForDefaultValueStub = parentClass?.classId != StandardClassIds.Enum,
+                    forcedDefaultValueConversion = parentClass?.isAnnotationClass == true
                 ).apply {
                     this.parent = this@Fir2IrLazyConstructor
                 }
