@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.path.appendText
 
 // We temporarily disable it for windows until a proper fix is found for this issue: KT-62761
 @OsCondition(
@@ -102,5 +104,32 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
     fun testMacosNativeDependencies(gradleVersion: GradleVersion) {
         testNativeDependencies("KT-66982-macos-target", "compileKotlinMacosArm64", gradleVersion)
+    }
+
+    @DisplayName("Test kotlin native prebuilt should not override `kotlin.native.version property`")
+    @GradleTest
+    fun kotlinNativePrebuiltShouldNotOverrideNativeVersion(gradleVersion: GradleVersion) {
+        nativeProject("native-simple-project", gradleVersion) {
+
+            buildGradleKts.modify {
+                """
+                    configurations.all {
+                        resolutionStrategy.eachDependency {
+                            if (requested.name == "kotlin-native-prebuilt") {
+                                useVersion("$STABLE_RELEASE")
+                                because("override version for test")
+                            }
+                        }
+                    }    
+                    $it
+                """.trimIndent()
+            }
+
+            buildAndFail("assemble") {
+                assertOutputContains(
+                    "Kotlin Native bundle dependency was used. Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
+                )
+            }
+        }
     }
 }
