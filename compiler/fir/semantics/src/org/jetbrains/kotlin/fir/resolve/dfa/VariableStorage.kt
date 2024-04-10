@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.util.SetMultimap
@@ -28,11 +24,8 @@ class VariableStorage(private val session: FirSession) {
     private val memberVariables: SetMultimap<RealVariable, RealVariable> = setMultimapOf()
 
     /**
-     * Retrieve a [DataFlowVariable] representing the given [FirElement]. If [fir] is a property access (read, assignment, or
-     * declaration), return a [RealVariable], otherwise a [SyntheticVariable].
-     *
-     * @param fir An expression, a variable assignment, or a variable declaration. Although it is technically allowed to create
-     * variables for other kinds of statements, it is meaningless.
+     * Retrieve a [DataFlowVariable] representing the given [FirExpression]. If [fir] is a property reference,
+     * return a [RealVariable], otherwise a [SyntheticVariable].
      *
      * @param createReal Whether to create a new [RealVariable] for [fir] if one has never been created before. This is a
      * performance optimization: always setting this to true is semantically correct, so it should be set to false whenever
@@ -46,15 +39,15 @@ class VariableStorage(private val session: FirSession) {
      * if it is a qualified access expression.
      */
     fun get(
-        fir: FirElement,
+        fir: FirExpression,
         createReal: Boolean,
         unwrapAlias: (RealVariable) -> RealVariable?,
         unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
     ): DataFlowVariable? {
-        val unwrapped = fir.unwrapElement()
+        val unwrapped = fir.unwrapElement() ?: return null
         val isReceiver = unwrapped is FirThisReceiverExpression
         val symbol = when (unwrapped) {
-            is FirDeclaration -> unwrapped.symbol
+            is FirWhenSubjectExpression -> unwrapped.whenRef.value.subjectVariable?.symbol
             is FirResolvedQualifier -> unwrapped.symbol?.fullyExpandedClass(session)
             is FirResolvable -> unwrapped.calleeReference.symbol
             else -> null
@@ -69,13 +62,7 @@ class VariableStorage(private val session: FirSession) {
         val extensionReceiverVar = qualifiedAccess?.extensionReceiver?.let {
             (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
         }
-        val originalType = when (unwrapped) {
-            is FirExpression -> unwrapped.resolvedType
-            is FirVariableAssignment -> unwrapped.unwrapLValue()?.resolvedType
-            is FirProperty -> unwrapped.returnTypeRef.coneType
-            else -> null
-        }
-        val prototype = RealVariable(symbol, isReceiver, dispatchReceiverVar, extensionReceiverVar, originalType)
+        val prototype = RealVariable(symbol, isReceiver, dispatchReceiverVar, extensionReceiverVar, unwrapped.resolvedType)
         val real = if (createReal) rememberWithKnownReceivers(prototype) else realVariables[prototype] ?: return null
         return unwrapAlias(real)
     }
@@ -113,15 +100,18 @@ class VariableStorage(private val session: FirSession) {
         }
     }
 
-    private tailrec fun FirElement.unwrapElement(): FirElement {
+    private tailrec fun FirExpression.unwrapElement(): FirExpression? {
         return when (this) {
-            is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject ?: return this }.unwrapElement()
+            is FirWhenSubjectExpression -> (whenRef.value.takeIf { it.subjectVariable == null }?.subject ?: return this).unwrapElement()
             is FirSmartCastExpression -> originalExpression.unwrapElement()
-            is FirSafeCallExpression -> selector.unwrapElement()
+            // Safe assignments (a?.x = b) have non-expression selectors. In this case the entire safe call
+            // is not really an expression either, so we shouldn't produce any kinds of statements on it.
+            // For example, saying that `(a?.x = b) != null => a != null` makes no sense, since an assignment
+            // has no value in the first place, null or otherwise.
+            is FirSafeCallExpression -> (selector as? FirExpression ?: return null).unwrapElement()
             is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
             is FirCheckNotNullCall -> argument.unwrapElement()
             is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapElement()
-            is FirVariableAssignment -> lValue.unwrapElement()
             else -> this
         }
     }

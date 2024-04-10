@@ -103,7 +103,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         if (operation != null) {
             if (resultExpression is FirLiteralExpression) {
                 if (!operation.isTrueFor(resultExpression.value)) return false
-            } else {
+            } else if (resultExpression is FirExpression) {
                 if (expressionType != null && !operation.canBeTrueFor(context.session, expressionType)) return false
                 val resultVar = logicSystem.variableStorage.get(resultExpression, createReal = true, unwrapAlias = flow::unwrapVariable)
                 if (resultVar != null) {

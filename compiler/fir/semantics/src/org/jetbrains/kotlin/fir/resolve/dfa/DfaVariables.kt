@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -54,7 +55,7 @@ class RealVariable(
     val isReceiver: Boolean,
     val dispatchReceiver: RealVariable?,
     val extensionReceiver: RealVariable?,
-    val originalType: ConeKotlinType?,
+    val originalType: ConeKotlinType,
 ) : DataFlowVariable() {
     companion object {
         fun local(symbol: FirVariableSymbol<*>): RealVariable =
@@ -105,7 +106,7 @@ class RealVariable(
     }
 
     private fun hasFinalType(flow: Flow, session: FirSession): Boolean =
-        originalType?.isFinal(session) == true || flow.getTypeStatement(this)?.exactType?.any { it.isFinal(session) } == true
+        originalType.isFinal(session) || flow.getTypeStatement(this)?.exactType?.any { it.isFinal(session) } == true
 
     private val propertyStability: PropertyStability by lazy {
         when (val fir = symbol.fir) {
@@ -139,7 +140,7 @@ class RealVariable(
     }
 }
 
-data class SyntheticVariable(val fir: FirElement) : DataFlowVariable()
+data class SyntheticVariable(val fir: FirExpression) : DataFlowVariable()
 
 private fun ConeKotlinType.isFinal(session: FirSession): Boolean = when (this) {
     is ConeFlexibleType -> lowerBound.isFinal(session)

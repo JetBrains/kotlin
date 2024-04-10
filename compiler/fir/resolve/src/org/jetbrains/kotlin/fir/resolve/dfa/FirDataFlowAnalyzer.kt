@@ -1046,7 +1046,7 @@ abstract class FirDataFlowAnalyzer(
                 } ?: continue // TODO: do what if the result is known to be false?
             if (operation == null) {
                 flow.addAllStatements(statements)
-            } else {
+            } else if (qualifiedAccess is FirExpression) {
                 val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess)
                 if (functionCallVariable != null) {
                     flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
@@ -1078,7 +1078,7 @@ abstract class FirDataFlowAnalyzer(
             if (property.isLocal || property.isVal) {
                 exitVariableInitialization(flow, assignment.rValue, property, assignment.lValue, hasExplicitType = false)
             } else {
-                val variable = flow.getRealVariableWithoutUnwrappingAlias(assignment)
+                val variable = flow.getRealVariableWithoutUnwrappingAlias(assignment.lValue)
                 if (variable != null) {
                     logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
                 }
@@ -1094,8 +1094,11 @@ abstract class FirDataFlowAnalyzer(
         assignmentLhs: FirExpression?,
         hasExplicitType: Boolean,
     ) {
-        val propertyVariable = flow.getVariableWithoutUnwrappingAlias(assignmentLhs ?: property, createReal = true)
-                as? RealVariable ?: return
+        val propertyVariable = if (assignmentLhs != null) {
+            flow.getVariableWithoutUnwrappingAlias(assignmentLhs, createReal = true) as? RealVariable ?: return
+        } else {
+            variableStorage.remember(RealVariable.local(property.symbol))
+        }
         val isAssignment = assignmentLhs != null
         if (isAssignment) {
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
@@ -1518,7 +1521,7 @@ abstract class FirDataFlowAnalyzer(
         currentSmartCastPosition = flow
     }
 
-    private fun isSameValueIn(other: PersistentFlow, fir: FirElement, original: MutableFlow): Boolean {
+    private fun isSameValueIn(other: PersistentFlow, fir: FirExpression, original: MutableFlow): Boolean {
         val variable = other.getRealVariableWithoutUnwrappingAlias(fir)
         return variable == null || logicSystem.isSameValueIn(other, original, variable)
     }
@@ -1561,31 +1564,31 @@ abstract class FirDataFlowAnalyzer(
         addAllStatements(logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true))
     }
 
-    private fun Flow.getVariable(fir: FirElement, createReal: Boolean): DataFlowVariable? =
+    private fun Flow.getVariable(fir: FirExpression, createReal: Boolean): DataFlowVariable? =
         variableStorage.get(fir, createReal, unwrapAlias = { unwrapVariableIfStable(it) })
 
-    private fun Flow.getVariableWithoutUnwrappingAlias(fir: FirElement, createReal: Boolean): DataFlowVariable? =
+    private fun Flow.getVariableWithoutUnwrappingAlias(fir: FirExpression, createReal: Boolean): DataFlowVariable? =
         variableStorage.get(fir, createReal, unwrapAlias = { it }, unwrapAliasInReceivers = { unwrapVariableIfStable(it) })
 
     // Use this when making non-type statements, such as `variable eq true`.
     // Returns null if the statement would be useless (the variable has not been used in any implications).
-    private fun Flow.getVariableIfUsed(fir: FirElement): DataFlowVariable? =
+    private fun Flow.getVariableIfUsed(fir: FirExpression): DataFlowVariable? =
         getVariable(fir, createReal = false)?.takeIf { !getImplications(it).isNullOrEmpty() }
 
     // Use this when making type statements, such as `variable typeEq ...` or `variable notEq null`.
     // Returns null if the statement would be useless (the variable is synthetic and has not been used in any implications).
-    private fun Flow.getVariableIfUsedOrReal(fir: FirElement): DataFlowVariable? =
+    private fun Flow.getVariableIfUsedOrReal(fir: FirExpression): DataFlowVariable? =
         getVariable(fir, createReal = true)?.takeIf { it.isReal() || !getImplications(it).isNullOrEmpty() }
 
     // Use this for variables on the left side of an implication if `fir` could be a variable access. Most statements
     // that create implications are not variable accesses, in which case `SyntheticVariable` can be created directly.
     // Returns null only if the variable is an unstable alias, and so cannot be used at all.
-    private fun Flow.getOrCreateVariable(fir: FirElement): DataFlowVariable? =
+    private fun Flow.getOrCreateVariable(fir: FirExpression): DataFlowVariable? =
         getVariable(fir, createReal = true)
 
     // Use this for calling `getTypeStatement` or accessing reassignment information.
     // Returns null if it's already known that no statements about the variable were made ever.
-    private fun Flow.getRealVariableWithoutUnwrappingAlias(fir: FirElement): RealVariable? =
+    private fun Flow.getRealVariableWithoutUnwrappingAlias(fir: FirExpression): RealVariable? =
         getVariableWithoutUnwrappingAlias(fir, createReal = false) as? RealVariable
 
     private fun Flow.unwrapVariableIfStable(variable: RealVariable): RealVariable? =
