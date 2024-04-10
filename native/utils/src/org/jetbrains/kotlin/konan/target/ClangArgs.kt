@@ -135,9 +135,6 @@ sealed class ClangArgs(
             add(listOf("-D__ENVIRONMENT_OS_VERSION_MIN_REQUIRED__=$environmentOsVersionMinRequired"))
         }
 
-        // Workaround to make Xcode 15.3 SDK headers work with older Clang from K/N. This should be removed after LLVM update: KT-49279
-        // We don't handle simulator targets here, because they use different machinery for macro-expansion (see DYNAMIC_TARGETS_ENABLED)
-        // YouTrack ticket:  KT-65542
         val targetConditionals = when (target) {
             KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
                 "TARGET_OS_OSX" to "1",
