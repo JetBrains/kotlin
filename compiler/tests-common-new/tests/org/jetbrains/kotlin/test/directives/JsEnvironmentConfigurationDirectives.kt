@@ -96,12 +96,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val ERROR_POLICY by enumDirective<ErrorTolerancePolicy>(
-        description = "",
-        applicability = DirectiveApplicability.Global,
-        additionalParser = { ErrorTolerancePolicy.resolvePolicy(it) }
-    )
-
     val PROPERTY_LAZY_INITIALIZATION by directive(
         description = "",
         applicability = DirectiveApplicability.Global

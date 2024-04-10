@@ -183,20 +183,12 @@ fun main(args: Array<String>) {
                 model("codegen/box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
-            testClass<AbstractIrJsCodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
-            }
-
             testClass<AbstractIrJsCodegenInlineTest> {
                 model("codegen/boxInline")
             }
 
             testClass<AbstractIrJsES6CodegenBoxTest> {
                 model("codegen/box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
-            }
-
-            testClass<AbstractIrJsES6CodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractIrJsES6CodegenInlineTest> {
@@ -305,10 +297,6 @@ fun main(args: Array<String>) {
                 model("codegen/box", excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractFirJsCodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
-            }
-
             testClass<AbstractFirJsCodegenInlineTest> {
                 model("codegen/boxInline")
             }
@@ -319,10 +307,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirJsES6CodegenBoxTest> {
                 model("codegen/box", excludeDirs = jvmOnlyBoxTests)
-            }
-
-            testClass<AbstractFirJsES6CodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
             }
 
             testClass<AbstractFirJsES6CodegenInlineTest> {

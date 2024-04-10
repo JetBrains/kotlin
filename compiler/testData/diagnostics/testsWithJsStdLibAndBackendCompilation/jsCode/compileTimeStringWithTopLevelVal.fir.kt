@@ -1,6 +1,6 @@
 // FIR_DIFFERENCE
 // The difference is okay: K1 and K2 report a bit differently
-// ERROR_POLICY: SEMANTIC
+// IGNORE_BACKEND_K1: JS_IR
 
 // MODULE: lib1
 // FILE: A.kt

@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.js.config
 
-import java.util.*
+enum class ErrorTolerancePolicy {
+    NONE;
 
-enum class ErrorTolerancePolicy(val allowSyntaxErrors: Boolean, val allowSemanticErrors: Boolean) {
-    NONE(false, false),
-    SEMANTIC(false, true),
-    ALL(true, true);
-
-    val allowErrors: Boolean get() = allowSyntaxErrors || allowSemanticErrors
+    val allowSemanticErrors = false
+    val allowSyntaxErrors = false
+    val allowErrors = false
 
     companion object {
         val DEFAULT = NONE
@@ -20,9 +18,8 @@ enum class ErrorTolerancePolicy(val allowSyntaxErrors: Boolean, val allowSemanti
         fun resolvePolicy(key: String): ErrorTolerancePolicy {
             return when (key.uppercase()) {
                 "NONE" -> NONE
-                "SEMANTIC" -> SEMANTIC
-                "SYNTAX", "ALL" -> ALL
-                else -> error("Unknown error tolerance policy '$key'")
+                else -> error("KT-65018: -Xerror-tolerance-policy is deprecated and will be removed in next compiler version. " +
+                                      "Only `NONE` value is allowed now.")
             }
         }
     }

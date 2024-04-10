@@ -553,7 +553,8 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
             field = value
         }
 
-    @Argument(value = "-Xerror-tolerance-policy", description = "Set up an error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL).")
+    @Argument(value = "-Xerror-tolerance-policy", description = "Set up an error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL). " +
+            "Deprecated, will be removed in next compiler version.")
     var errorTolerancePolicy: String? = null
         set(value) {
             checkFrozen()

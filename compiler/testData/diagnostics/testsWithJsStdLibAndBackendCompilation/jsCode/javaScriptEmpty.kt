@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// ERROR_POLICY: SEMANTIC
+// IGNORE_BACKEND_K1: JS_IR
 
 fun testEmptyString() {
     js(<!JSCODE_NO_JAVASCRIPT_PRODUCED!>""<!>)

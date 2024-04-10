@@ -1,6 +1,6 @@
 // FIR_DIFFERENCE
 // The difference is okay: K1 and K2 report a bit differently
-// ERROR_POLICY: SEMANTIC
+// IGNORE_BACKEND_K1: JS_IR
 @file:Suppress("NOTHING_TO_INLINE")
 
 fun function1() = "function1"
