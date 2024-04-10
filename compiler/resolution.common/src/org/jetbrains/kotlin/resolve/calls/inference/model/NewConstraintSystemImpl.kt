@@ -376,7 +376,7 @@ class NewConstraintSystemImpl(
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         // Can't be non-empty in K2/PCLA, thus no need to use `addOnlyNewElements`
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
-        storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
+        storage.constraintsFromAllForkPoints.addOnlyNewElements(otherSystem.constraintsFromAllForkPoints)
 
     }
 
