@@ -38,6 +38,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("excludedDefaultImports.kt")
+  public void testExcludedDefaultImports() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/excludedDefaultImports.kt");
+  }
+
+  @Test
   @TestMetadata("externalInterfaceClassLiteral.kt")
   public void testExternalInterfaceClassLiteral() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalInterfaceClassLiteral.kt");
