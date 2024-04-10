@@ -1,10 +1,13 @@
-// ISSUE: KT-67014, KT-67254
+// ISSUE: KT-67014, KT-67254, KT-60234
 // WITH_STDLIB
 // FILE: JavaAnn.java
 
 public @interface JavaAnn {}
 
 // FILE: JavaAnnWithTarget.java
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 public @interface JavaAnnWithTarget {}
@@ -38,4 +41,9 @@ fun foo(list: MutableList<Int>, arr: Array<String>) {
 
     @JavaAnnWithTarget @JavaAnn @KotlinAnn
     arr[1] += "*"
+
+    <!WRONG_ANNOTATION_TARGET!>@JavaAnnWithTarget<!> @JavaAnn @KotlinAnn
+    { bar() }
 }
+
+fun bar() {}
