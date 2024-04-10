@@ -11,19 +11,35 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtSamConstructorSymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtSamConstructorSymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtSamConstructorSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object NOT_RENDER : KtSamConstructorSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtSamConstructorSymbol, printer: PrettyPrinter): Unit = printer {
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtSamConstructorSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {}
         }
     }
 
     public object AS_FUNCTION : KtSamConstructorSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtSamConstructorSymbol, printer: PrettyPrinter): Unit = printer {
-            callableSignatureRenderer.renderCallableSignature(symbol, keyword = null, printer)
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtSamConstructorSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                declarationRenderer.callableSignatureRenderer
+                    .renderCallableSignature(analysisSession, symbol, keyword = null, declarationRenderer, printer)
+            }
         }
     }
 }

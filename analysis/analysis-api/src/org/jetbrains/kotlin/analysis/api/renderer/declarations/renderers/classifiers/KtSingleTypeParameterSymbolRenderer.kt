@@ -12,44 +12,66 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
 public interface KtSingleTypeParameterSymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtTypeParameterSymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtTypeParameterSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object NO : KtSingleTypeParameterSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtTypeParameterSymbol, printer: PrettyPrinter) {
-        }
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtTypeParameterSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {}
     }
 
 
     public object WITHOUT_BOUNDS : KtSingleTypeParameterSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtTypeParameterSymbol, printer: PrettyPrinter): Unit = printer {
-            " ".separated(
-                { annotationRenderer.renderAnnotations(symbol, printer) },
-                { modifiersRenderer.renderDeclarationModifiers(symbol, printer) },
-                { nameRenderer.renderName(symbol, printer) },
-            )
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtTypeParameterSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                " ".separated(
+                    { declarationRenderer.annotationRenderer.renderAnnotations(analysisSession, symbol, printer) },
+                    { declarationRenderer.modifiersRenderer.renderDeclarationModifiers(analysisSession, symbol, printer) },
+                    { declarationRenderer.nameRenderer.renderName(analysisSession, symbol, declarationRenderer, printer) },
+                )
+            }
         }
     }
 
     public object WITH_COMMA_SEPARATED_BOUNDS : KtSingleTypeParameterSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtTypeParameterSymbol, printer: PrettyPrinter): Unit = printer {
-            " ".separated(
-                { annotationRenderer.renderAnnotations(symbol, printer) },
-                { modifiersRenderer.renderDeclarationModifiers(symbol, printer) },
-                { nameRenderer.renderName(symbol, printer) },
-                {
-                    if (symbol.upperBounds.isNotEmpty()) {
-                        withPrefix(": ") {
-                            printCollection(symbol.upperBounds) {
-                                typeRenderer.renderType(declarationTypeApproximator.approximateType(it, Variance.OUT_VARIANCE), printer)
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtTypeParameterSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                " ".separated(
+                    { declarationRenderer.annotationRenderer.renderAnnotations(analysisSession, symbol, printer) },
+                    { declarationRenderer.modifiersRenderer.renderDeclarationModifiers(analysisSession, symbol, printer) },
+                    { declarationRenderer.nameRenderer.renderName(analysisSession, symbol,declarationRenderer, printer) },
+                    {
+                        if (symbol.upperBounds.isNotEmpty()) {
+                            withPrefix(": ") {
+                                printCollection(symbol.upperBounds) {
+                                    val approximatedType = declarationRenderer.declarationTypeApproximator
+                                        .approximateType(analysisSession, it, Variance.OUT_VARIANCE)
+
+                                    declarationRenderer.typeRenderer.renderType(analysisSession, approximatedType, printer)
+                                }
                             }
                         }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

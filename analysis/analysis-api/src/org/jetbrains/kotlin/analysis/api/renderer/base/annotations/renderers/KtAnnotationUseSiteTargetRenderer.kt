@@ -14,18 +14,32 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 
 public interface KtAnnotationUseSiteTargetRenderer {
-    context(KtAnalysisSession, KtAnnotationRenderer)
-    public fun renderUseSiteTarget(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter)
+    public fun renderUseSiteTarget(
+        analysisSession: KtAnalysisSession,
+        annotation: KtAnnotationApplication,
+        owner: KtAnnotated,
+        annotationRenderer: KtAnnotationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object WITHOUT_USE_SITE : KtAnnotationUseSiteTargetRenderer {
-        context(KtAnalysisSession, KtAnnotationRenderer)
-        override fun renderUseSiteTarget(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter) {
-        }
+        override fun renderUseSiteTarget(
+            analysisSession: KtAnalysisSession,
+            annotation: KtAnnotationApplication,
+            owner: KtAnnotated,
+            annotationRenderer: KtAnnotationRenderer,
+            printer: PrettyPrinter,
+        ) {}
     }
 
     public object WITH_USES_SITE : KtAnnotationUseSiteTargetRenderer {
-        context(KtAnalysisSession, KtAnnotationRenderer)
-        override fun renderUseSiteTarget(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter) {
+        override fun renderUseSiteTarget(
+            analysisSession: KtAnalysisSession,
+            annotation: KtAnnotationApplication,
+            owner: KtAnnotated,
+            annotationRenderer: KtAnnotationRenderer,
+            printer: PrettyPrinter,
+        ) {
             val useSite = annotation.useSiteTarget ?: return
             printer.append(useSite.renderName)
             printer.append(':')
@@ -33,8 +47,13 @@ public interface KtAnnotationUseSiteTargetRenderer {
     }
 
     public object WITH_NON_DEFAULT_USE_SITE : KtAnnotationUseSiteTargetRenderer {
-        context(KtAnalysisSession, KtAnnotationRenderer)
-        override fun renderUseSiteTarget(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter) {
+        override fun renderUseSiteTarget(
+            analysisSession: KtAnalysisSession,
+            annotation: KtAnnotationApplication,
+            owner: KtAnnotated,
+            annotationRenderer: KtAnnotationRenderer,
+            printer: PrettyPrinter,
+        ) {
             val print = when (owner) {
                 is KtReceiverParameterSymbol -> true
                 !is KtCallableSymbol -> return
@@ -46,9 +65,10 @@ public interface KtAnnotationUseSiteTargetRenderer {
                 is KtSamConstructorSymbol -> true
                 is KtBackingFieldSymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.FIELD
                 is KtEnumEntrySymbol -> true
-                is KtValueParameterSymbol ->
-                    owner.getContainingSymbol() !is KtPropertySetterSymbol || annotation.useSiteTarget != AnnotationUseSiteTarget.SETTER_PARAMETER
-
+                is KtValueParameterSymbol -> {
+                    val containingSymbol = with(analysisSession) { owner.getContainingSymbol() }
+                    containingSymbol !is KtPropertySetterSymbol || annotation.useSiteTarget != AnnotationUseSiteTarget.SETTER_PARAMETER
+                }
                 is KtJavaFieldSymbol -> true
                 is KtLocalVariableSymbol -> true
                 is KtPropertySymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY
@@ -56,7 +76,7 @@ public interface KtAnnotationUseSiteTargetRenderer {
             }
 
             if (print) {
-                WITH_USES_SITE.renderUseSiteTarget(annotation, owner, printer)
+                WITH_USES_SITE.renderUseSiteTarget(analysisSession, annotation, owner, annotationRenderer, printer)
             }
         }
     }

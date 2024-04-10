@@ -11,23 +11,22 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
 public interface KtCallableReturnTypeFilter {
-    context (KtAnalysisSession)
-    public fun shouldRenderReturnType(type: KtType, symbol: KtCallableSymbol): Boolean
+    public fun shouldRenderReturnType(analysisSession: KtAnalysisSession, type: KtType, symbol: KtCallableSymbol): Boolean
 
     public object ALWAYS : KtCallableReturnTypeFilter {
-        context(KtAnalysisSession)
-        override fun shouldRenderReturnType(type: KtType, symbol: KtCallableSymbol): Boolean {
+        override fun shouldRenderReturnType(analysisSession: KtAnalysisSession, type: KtType, symbol: KtCallableSymbol): Boolean {
             return true
         }
 
     }
 
     public object NO_UNIT_FOR_FUNCTIONS : KtCallableReturnTypeFilter {
-        context(KtAnalysisSession)
-        override fun shouldRenderReturnType(type: KtType, symbol: KtCallableSymbol): Boolean {
-            return when (symbol) {
-                is KtFunctionSymbol -> !type.isUnit
-                else -> true
+        override fun shouldRenderReturnType(analysisSession: KtAnalysisSession, type: KtType, symbol: KtCallableSymbol): Boolean {
+            with(analysisSession) {
+                return when (symbol) {
+                    is KtFunctionSymbol -> !type.isUnit
+                    else -> true
+                }
             }
         }
     }

@@ -87,29 +87,28 @@ public class KtDeclarationRenderer private constructor(
     public val scriptInitializerRenderer: KtScriptInitializerRenderer
 ) {
 
-    context(KtAnalysisSession)
-    public fun renderDeclaration(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
+    public fun renderDeclaration(analysisSession: KtAnalysisSession, symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
         when (symbol) {
-            is KtAnonymousObjectSymbol -> anonymousObjectRenderer.renderSymbol(symbol, printer)
-            is KtNamedClassOrObjectSymbol -> classOrObjectRenderer.renderSymbol(symbol, printer)
-            is KtTypeAliasSymbol -> typeAliasRenderer.renderSymbol(symbol, printer)
-            is KtAnonymousFunctionSymbol -> anonymousFunctionRenderer.renderSymbol(symbol, printer)
-            is KtConstructorSymbol -> constructorRenderer.renderSymbol(symbol, printer)
-            is KtFunctionSymbol -> functionSymbolRenderer.renderSymbol(symbol, printer)
-            is KtPropertyGetterSymbol -> getterRenderer.renderSymbol(symbol, printer)
-            is KtPropertySetterSymbol -> setterRenderer.renderSymbol(symbol, printer)
-            is KtSamConstructorSymbol -> samConstructorRenderer.renderSymbol(symbol, printer)
-            is KtBackingFieldSymbol -> backingFieldRenderer.renderSymbol(symbol, printer)
-            is KtEnumEntrySymbol -> enumEntryRenderer.renderSymbol(symbol, printer)
-            is KtValueParameterSymbol -> valueParameterRenderer.renderSymbol(symbol, printer)
-            is KtJavaFieldSymbol -> javaFieldRenderer.renderSymbol(symbol, printer)
-            is KtLocalVariableSymbol -> localVariableRenderer.renderSymbol(symbol, printer)
-            is KtKotlinPropertySymbol -> kotlinPropertyRenderer.renderSymbol(symbol, printer)
-            is KtSyntheticJavaPropertySymbol -> syntheticJavaPropertyRenderer.renderSymbol(symbol, printer)
-            is KtTypeParameterSymbol -> singleTypeParameterRenderer.renderSymbol(symbol, printer)
-            is KtClassInitializerSymbol -> classInitializerRender.renderClassInitializer(symbol, printer)
-            is KtScriptSymbol -> scriptRenderer.renderSymbol(symbol, printer)
-            is KtDestructuringDeclarationSymbol -> destructuringDeclarationRenderer.renderSymbol(symbol, printer)
+            is KtAnonymousObjectSymbol -> anonymousObjectRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtNamedClassOrObjectSymbol -> classOrObjectRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtTypeAliasSymbol -> typeAliasRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtAnonymousFunctionSymbol -> anonymousFunctionRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtConstructorSymbol -> constructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtFunctionSymbol -> functionSymbolRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtPropertyGetterSymbol -> getterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtPropertySetterSymbol -> setterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtSamConstructorSymbol -> samConstructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtBackingFieldSymbol -> backingFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtEnumEntrySymbol -> enumEntryRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtValueParameterSymbol -> valueParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtJavaFieldSymbol -> javaFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtLocalVariableSymbol -> localVariableRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtKotlinPropertySymbol -> kotlinPropertyRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtSyntheticJavaPropertySymbol -> syntheticJavaPropertyRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtTypeParameterSymbol -> singleTypeParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtClassInitializerSymbol -> classInitializerRender.renderClassInitializer(analysisSession, symbol, this, printer)
+            is KtScriptSymbol -> scriptRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KtDestructuringDeclarationSymbol -> destructuringDeclarationRenderer.renderSymbol(analysisSession, symbol, this, printer)
         }
     }
 

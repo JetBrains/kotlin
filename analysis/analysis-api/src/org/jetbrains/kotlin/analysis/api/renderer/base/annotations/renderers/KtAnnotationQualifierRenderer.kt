@@ -13,29 +13,48 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.renderer.render
 
 public interface KtAnnotationQualifierRenderer {
-    context(KtAnalysisSession, KtAnnotationRenderer)
-    public fun renderQualifier(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter)
+    public fun renderQualifier(
+        analysisSession: KtAnalysisSession,
+        annotation: KtAnnotationApplication,
+        owner: KtAnnotated,
+        annotationRenderer: KtAnnotationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object WITH_QUALIFIED_NAMES : KtAnnotationQualifierRenderer {
-        context(KtAnalysisSession, KtAnnotationRenderer)
-        override fun renderQualifier(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter): Unit = printer {
-            val classId = annotation.classId
-            if (classId != null) {
-                append(classId.asSingleFqName().render())
-            } else {
-                append("ERROR_ANNOTATION")
+        override fun renderQualifier(
+            analysisSession: KtAnalysisSession,
+            annotation: KtAnnotationApplication,
+            owner: KtAnnotated,
+            annotationRenderer: KtAnnotationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                val classId = annotation.classId
+                if (classId != null) {
+                    append(classId.asSingleFqName().render())
+                } else {
+                    append("ERROR_ANNOTATION")
+                }
             }
         }
     }
 
     public object WITH_SHORT_NAMES : KtAnnotationQualifierRenderer {
-        context(KtAnalysisSession, KtAnnotationRenderer)
-        override fun renderQualifier(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter): Unit = printer {
-            val classId = annotation.classId
-            if (classId != null) {
-                printer.append(classId.shortClassName.render())
-            } else {
-                printer.append("ERROR_ANNOTATION")
+        override fun renderQualifier(
+            analysisSession: KtAnalysisSession,
+            annotation: KtAnnotationApplication,
+            owner: KtAnnotated,
+            annotationRenderer: KtAnnotationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                val classId = annotation.classId
+                if (classId != null) {
+                    printer.append(classId.shortClassName.render())
+                } else {
+                    printer.append("ERROR_ANNOTATION")
+                }
             }
         }
     }

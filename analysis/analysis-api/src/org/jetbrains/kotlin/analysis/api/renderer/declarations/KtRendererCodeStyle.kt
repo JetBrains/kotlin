@@ -14,34 +14,29 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
 public interface KtRendererCodeStyle {
-    context(KtAnalysisSession)
-    public fun getIndentSize(): Int
+    public fun getIndentSize(analysisSession: KtAnalysisSession): Int
 
-    context(KtAnalysisSession)
-    public fun getSeparatorAfterContextReceivers(): String
+    public fun getSeparatorAfterContextReceivers(analysisSession: KtAnalysisSession): String
 
-    context(KtAnalysisSession)
-    public fun getSeparatorBetweenAnnotationAndOwner(symbol: KtAnnotated): String
+    public fun getSeparatorBetweenAnnotationAndOwner(analysisSession: KtAnalysisSession, symbol: KtAnnotated): String
 
-    context(KtAnalysisSession)
-    public fun getSeparatorBetweenAnnotations(symbol: KtAnnotated): String
+    public fun getSeparatorBetweenAnnotations(analysisSession: KtAnalysisSession, symbol: KtAnnotated): String
 
-    context(KtAnalysisSession)
-    public fun getSeparatorBetweenModifiers(): String
+    public fun getSeparatorBetweenModifiers(analysisSession: KtAnalysisSession): String
 
-    context(KtAnalysisSession)
-    public fun getSeparatorBetweenMembers(first: KtDeclarationSymbol, second: KtDeclarationSymbol): String
+    public fun getSeparatorBetweenMembers(
+        analysisSession: KtAnalysisSession,
+        first: KtDeclarationSymbol,
+        second: KtDeclarationSymbol,
+    ): String
 }
 
 public object KtRecommendedRendererCodeStyle : KtRendererCodeStyle {
-    context(KtAnalysisSession)
-    override fun getIndentSize(): Int = 4
+    override fun getIndentSize(analysisSession: KtAnalysisSession): Int = 4
 
-    context(KtAnalysisSession)
-    override fun getSeparatorAfterContextReceivers(): String = "\n"
+    override fun getSeparatorAfterContextReceivers(analysisSession: KtAnalysisSession): String = "\n"
 
-    context(KtAnalysisSession)
-    override fun getSeparatorBetweenAnnotationAndOwner(symbol: KtAnnotated): String {
+    override fun getSeparatorBetweenAnnotationAndOwner(analysisSession: KtAnalysisSession, symbol: KtAnnotated): String {
         return when (symbol) {
             is KtType -> " "
             is KtTypeParameterSymbol -> " "
@@ -50,8 +45,7 @@ public object KtRecommendedRendererCodeStyle : KtRendererCodeStyle {
         }
     }
 
-    context(KtAnalysisSession)
-    override fun getSeparatorBetweenAnnotations(symbol: KtAnnotated): String {
+    override fun getSeparatorBetweenAnnotations(analysisSession: KtAnalysisSession, symbol: KtAnnotated): String {
         return when (symbol) {
             is KtType -> " "
             is KtTypeParameterSymbol -> " "
@@ -60,11 +54,9 @@ public object KtRecommendedRendererCodeStyle : KtRendererCodeStyle {
         }
     }
 
-    context(KtAnalysisSession)
-    override fun getSeparatorBetweenModifiers(): String = " "
+    override fun getSeparatorBetweenModifiers(analysisSession: KtAnalysisSession): String = " "
 
-    context(KtAnalysisSession)
-    override fun getSeparatorBetweenMembers(first: KtDeclarationSymbol, second: KtDeclarationSymbol): String {
+    override fun getSeparatorBetweenMembers(analysisSession: KtAnalysisSession, first: KtDeclarationSymbol, second: KtDeclarationSymbol): String {
         return when {
             first is KtEnumEntrySymbol && second is KtEnumEntrySymbol -> ",\n"
             first is KtEnumEntrySymbol && second !is KtEnumEntrySymbol -> ";\n\n"

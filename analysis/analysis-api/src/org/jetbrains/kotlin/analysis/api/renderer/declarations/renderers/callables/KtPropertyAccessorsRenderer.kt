@@ -15,34 +15,60 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public interface KtPropertyAccessorsRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderAccessors(symbol: KtPropertySymbol, printer: PrettyPrinter)
+    public fun renderAccessors(
+        analysisSession: KtAnalysisSession,
+        symbol: KtPropertySymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object ALL : KtPropertyAccessorsRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderAccessors(symbol: KtPropertySymbol, printer: PrettyPrinter): Unit = printer {
-            val toRender = listOfNotNull(symbol.getter, symbol.setter).ifEmpty { return }
-            append("\n")
-            withIndent {
-                "\n".separated(
-                    { toRender.firstIsInstanceOrNull<KtPropertyGetterSymbol>()?.let { getterRenderer.renderSymbol(it, printer) } },
-                    { toRender.firstIsInstanceOrNull<KtPropertySetterSymbol>()?.let { setterRenderer.renderSymbol(it, printer) } },
-                )
+        override fun renderAccessors(
+            analysisSession: KtAnalysisSession,
+            symbol: KtPropertySymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                val toRender = listOfNotNull(symbol.getter, symbol.setter).ifEmpty { return }
+                append("\n")
+                withIndent {
+                    "\n".separated(
+                        {
+                            toRender.firstIsInstanceOrNull<KtPropertyGetterSymbol>()
+                                ?.let { declarationRenderer.getterRenderer.renderSymbol(analysisSession, it, declarationRenderer, printer) }
+                        },
+                        {
+                            toRender.firstIsInstanceOrNull<KtPropertySetterSymbol>()
+                                ?.let { declarationRenderer.setterRenderer.renderSymbol(analysisSession, it, declarationRenderer, printer) }
+                        },
+                    )
+                }
             }
         }
     }
 
     public object NO_DEFAULT : KtPropertyAccessorsRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderAccessors(symbol: KtPropertySymbol, printer: PrettyPrinter): Unit = printer {
+        override fun renderAccessors(
+            analysisSession: KtAnalysisSession,
+            symbol: KtPropertySymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ): Unit = printer {
             val toRender = listOfNotNull(symbol.getter, symbol.setter)
                 .filter { !it.isDefault || it.annotations.isNotEmpty() }
                 .ifEmpty { return }
             append("\n")
             withIndent {
                 "\n".separated(
-                    { toRender.firstIsInstanceOrNull<KtPropertyGetterSymbol>()?.let { getterRenderer.renderSymbol(it, printer) } },
-                    { toRender.firstIsInstanceOrNull<KtPropertySetterSymbol>()?.let { setterRenderer.renderSymbol(it, printer) } },
+                    {
+                        toRender.firstIsInstanceOrNull<KtPropertyGetterSymbol>()
+                            ?.let { declarationRenderer.getterRenderer.renderSymbol(analysisSession, it, declarationRenderer, printer) }
+                    },
+                    {
+                        toRender.firstIsInstanceOrNull<KtPropertySetterSymbol>()
+                            ?.let { declarationRenderer.setterRenderer.renderSymbol(analysisSession, it, declarationRenderer, printer) }
+                    },
                 )
             }
 
@@ -51,9 +77,12 @@ public interface KtPropertyAccessorsRenderer {
 
 
     public object NONE : KtPropertyAccessorsRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderAccessors(symbol: KtPropertySymbol, printer: PrettyPrinter) {
-        }
+        override fun renderAccessors(
+            analysisSession: KtAnalysisSession,
+            symbol: KtPropertySymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {}
     }
 
 }

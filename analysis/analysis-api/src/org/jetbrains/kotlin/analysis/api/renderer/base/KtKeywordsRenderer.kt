@@ -16,14 +16,12 @@ public class KtKeywordsRenderer private constructor(
     public val keywordFilter: KtRendererKeywordFilter,
 ) {
 
-    context(KtAnalysisSession)
-    public fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
-        keywordRenderer.renderKeyword(keyword, owner, printer)
+    public fun renderKeyword(analysisSession: KtAnalysisSession, keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
+        keywordRenderer.renderKeyword(analysisSession, keyword, owner, this, printer)
     }
 
-    context(KtAnalysisSession)
-    public fun renderKeywords(keywords: List<KtKeywordToken>, owner: KtAnnotated, printer: PrettyPrinter) {
-        keywordRenderer.renderKeywords(keywords, owner, printer)
+    public fun renderKeywords(analysisSession: KtAnalysisSession, keywords: List<KtKeywordToken>, owner: KtAnnotated, printer: PrettyPrinter) {
+        keywordRenderer.renderKeywords(analysisSession, keywords, owner, this, printer)
     }
 
     public inline fun with(action: Builder.() -> Unit): KtKeywordsRenderer {

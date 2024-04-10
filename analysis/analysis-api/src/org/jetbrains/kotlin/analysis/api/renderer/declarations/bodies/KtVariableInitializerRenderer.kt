@@ -12,18 +12,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtVariableInitializerRenderer {
-    context(KtAnalysisSession)
-    public fun renderInitializer(symbol: KtVariableSymbol, printer: PrettyPrinter)
+    public fun renderInitializer(analysisSession: KtAnalysisSession, symbol: KtVariableSymbol, printer: PrettyPrinter)
 
     public object NO_INITIALIZER : KtVariableInitializerRenderer {
-        context(KtAnalysisSession)
-        override fun renderInitializer(symbol: KtVariableSymbol, printer: PrettyPrinter) {
+        override fun renderInitializer(analysisSession: KtAnalysisSession, symbol: KtVariableSymbol, printer: PrettyPrinter) {
         }
     }
 
     public object ONLY_CONST_VALUE_INITIALIZERS : KtVariableInitializerRenderer {
-        context(KtAnalysisSession)
-        override fun renderInitializer(symbol: KtVariableSymbol, printer: PrettyPrinter) {
+        override fun renderInitializer(analysisSession: KtAnalysisSession, symbol: KtVariableSymbol, printer: PrettyPrinter) {
             //todo add initializer to KtVariableSymbol and render for it too KT-54794/
             val initializer = (symbol as? KtPropertySymbol)?.initializer as? KtConstantInitializerValue ?: return
             printer.append(" = ")

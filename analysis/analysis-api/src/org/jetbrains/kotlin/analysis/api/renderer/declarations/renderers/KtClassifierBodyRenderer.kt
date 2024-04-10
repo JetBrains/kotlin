@@ -14,18 +14,29 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrintWithSettingsFrom
 
 public interface KtClassifierBodyRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderBody(symbol: KtSymbolWithMembers, printer: PrettyPrinter)
+    public fun renderBody(
+        analysisSession: KtAnalysisSession,
+        symbol: KtSymbolWithMembers,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object NO_BODY : KtClassifierBodyRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderBody(symbol: KtSymbolWithMembers, printer: PrettyPrinter) {
-        }
+        override fun renderBody(
+            analysisSession: KtAnalysisSession,
+            symbol: KtSymbolWithMembers,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {}
     }
 
     public object EMPTY_BRACES : KtClassifierBodyRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderBody(symbol: KtSymbolWithMembers, printer: PrettyPrinter) {
+        override fun renderBody(
+            analysisSession: KtAnalysisSession,
+            symbol: KtSymbolWithMembers,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
             printer.append("{\n}")
         }
     }
@@ -46,28 +57,34 @@ public interface KtClassifierBodyRenderer {
 public abstract class KtClassifierBodyWithMembersRenderer : KtClassifierBodyRenderer {
     public abstract fun renderEmptyBodyForEmptyMemberScope(symbol: KtSymbolWithMembers): Boolean
 
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public override fun renderBody(symbol: KtSymbolWithMembers, printer: PrettyPrinter) {
-        val members = bodyMemberScopeProvider.getMemberScope(symbol).filter { it !is KtConstructorSymbol || !it.isPrimary }
-            .let { bodyMemberScopeSorter.sortMembers(it, symbol) }
+    public override fun renderBody(
+        analysisSession: KtAnalysisSession,
+        symbol: KtSymbolWithMembers,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    ) {
+        val members = declarationRenderer.bodyMemberScopeProvider.getMemberScope(analysisSession, symbol)
+            .filter { it !is KtConstructorSymbol || !it.isPrimary }
+            .let { declarationRenderer.bodyMemberScopeSorter.sortMembers(analysisSession, it, symbol) }
+
         val membersToPrint = members.mapNotNull { member ->
             val rendered = prettyPrintWithSettingsFrom(printer) {
-                renderDeclaration(member, this)
+                declarationRenderer.renderDeclaration(analysisSession, member, this)
             }
             if (rendered.isNotEmpty()) member to rendered else null
         }
+
         if (membersToPrint.isEmpty() && !renderEmptyBodyForEmptyMemberScope(symbol)) return
 
         printer.withIndentInBraces {
             var previous: KtDeclarationSymbol? = null
             for ((member, rendered) in membersToPrint) {
                 if (previous != null) {
-                    printer.append(codeStyle.getSeparatorBetweenMembers(previous, member))
+                    printer.append(declarationRenderer.codeStyle.getSeparatorBetweenMembers(analysisSession, previous, member))
                 }
                 previous = member
                 printer.append(rendered)
             }
         }
     }
-
 }

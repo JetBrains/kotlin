@@ -14,29 +14,43 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 
 public interface KtModifierListRenderer {
-    context(KtAnalysisSession, KtDeclarationModifiersRenderer)
-    public fun renderModifiers(symbol: KtDeclarationSymbol, printer: PrettyPrinter)
+    public fun renderModifiers(
+        analysisSession: KtAnalysisSession,
+        symbol: KtDeclarationSymbol,
+        declarationModifiersRenderer: KtDeclarationModifiersRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_LIST : KtModifierListRenderer {
-        context(KtAnalysisSession, KtDeclarationModifiersRenderer)
-        override fun renderModifiers(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
-            val modifiers = getModifiers(symbol)
+        override fun renderModifiers(
+            analysisSession: KtAnalysisSession,
+            symbol: KtDeclarationSymbol,
+            declarationModifiersRenderer: KtDeclarationModifiersRenderer,
+            printer: PrettyPrinter,
+        ) {
+            val modifiers = getModifiers(analysisSession, symbol, declarationModifiersRenderer)
                 .distinct()
-                .let { modifiersSorter.sort(it, symbol) }
+                .let { declarationModifiersRenderer.modifiersSorter.sort(analysisSession, it, symbol) }
                 .ifEmpty { return }
-            keywordsRenderer.renderKeywords(modifiers, symbol, printer)
+
+            declarationModifiersRenderer.keywordsRenderer.renderKeywords(analysisSession, modifiers, symbol, printer)
         }
 
-        context(KtAnalysisSession, KtDeclarationModifiersRenderer)
-        private fun getModifiers(symbol: KtDeclarationSymbol): List<KtModifierKeywordToken> {
+        private fun getModifiers(
+            analysisSession: KtAnalysisSession,
+            symbol: KtDeclarationSymbol,
+            declarationModifiersRenderer: KtDeclarationModifiersRenderer,
+        ): List<KtModifierKeywordToken> {
             return buildList {
                 if (symbol is KtSymbolWithVisibility) {
-                    visibilityProvider.getVisibilityModifier(symbol)?.let(::add)
+                    declarationModifiersRenderer.visibilityProvider.getVisibilityModifier(analysisSession, symbol)?.let(::add)
                 }
+
                 if (symbol is KtSymbolWithModality) {
-                    modalityProvider.getModalityModifier(symbol)?.let(::add)
+                    declarationModifiersRenderer.modalityProvider.getModalityModifier(analysisSession, symbol)?.let(::add)
                 }
-                addAll(otherModifiersProvider.getOtherModifiers(symbol))
+
+                addAll(declarationModifiersRenderer.otherModifiersProvider.getOtherModifiers(analysisSession, symbol))
             }
         }
     }

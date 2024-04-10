@@ -12,16 +12,24 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtEnumEntrySymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtEnumEntrySymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtEnumEntrySymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_SOURCE : KtEnumEntrySymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtEnumEntrySymbol, printer: PrettyPrinter): Unit = printer {
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtEnumEntrySymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ): Unit = printer {
             " ".separated(
-                { renderAnnotationsModifiersAndContextReceivers(symbol, printer) },
-                { nameRenderer.renderName(symbol, printer) },
-                { symbol.enumEntryInitializer?.let { classifierBodyRenderer.renderBody(it, printer) } },
+                { renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer) },
+                { declarationRenderer.nameRenderer.renderName(analysisSession, symbol, declarationRenderer, printer) },
+                { symbol.enumEntryInitializer?.let { declarationRenderer.classifierBodyRenderer.renderBody(analysisSession, it, declarationRenderer, printer) } },
             )
         }
     }

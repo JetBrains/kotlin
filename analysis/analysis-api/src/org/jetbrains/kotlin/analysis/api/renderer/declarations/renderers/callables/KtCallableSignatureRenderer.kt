@@ -14,35 +14,53 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
 public interface KtCallableSignatureRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderCallableSignature(symbol: KtCallableSymbol, keyword: KtKeywordToken?, printer: PrettyPrinter)
+    public fun renderCallableSignature(
+        analysisSession: KtAnalysisSession,
+        symbol: KtCallableSymbol,
+        keyword: KtKeywordToken?,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object FOR_SOURCE : KtCallableSignatureRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderCallableSignature(symbol: KtCallableSymbol, keyword: KtKeywordToken?, printer: PrettyPrinter): Unit = printer {
+        override fun renderCallableSignature(
+            analysisSession: KtAnalysisSession,
+            symbol: KtCallableSymbol,
+            keyword: KtKeywordToken?,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ): Unit = printer {
             " ".separated(
                 {
-                    if (keyword != null) renderAnnotationsModifiersAndContextReceivers(symbol, printer, keyword)
-                    else renderAnnotationsModifiersAndContextReceivers(symbol, printer)
+                    if (keyword != null) {
+                        renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer, keyword)
+                    } else {
+                        renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer)
+                    }
                 },
-                { typeParametersRenderer.renderTypeParameters(symbol, printer) },
+                { declarationRenderer.typeParametersRenderer.renderTypeParameters(analysisSession, symbol, declarationRenderer, printer) },
                 {
                     val receiverSymbol = symbol.receiverParameter
                     if (receiverSymbol != null) {
-                        withSuffix(".") { callableReceiverRenderer.renderReceiver(receiverSymbol, printer) }
+                        withSuffix(".") {
+                            declarationRenderer.callableReceiverRenderer
+                                .renderReceiver(analysisSession, receiverSymbol, declarationRenderer, printer)
+                        }
                     }
 
                     if (symbol is KtNamedSymbol) {
-                        nameRenderer.renderName(symbol, printer)
+                        declarationRenderer.nameRenderer.renderName(analysisSession, symbol, declarationRenderer, printer)
                     }
                 },
             )
             " ".separated(
                 {
-                    valueParametersRenderer.renderValueParameters(symbol, printer)
-                    withPrefix(": ") { returnTypeRenderer.renderReturnType(symbol, printer) }
+                    declarationRenderer.valueParametersRenderer.renderValueParameters(analysisSession, symbol, declarationRenderer, printer)
+                    withPrefix(": ") {
+                        declarationRenderer.returnTypeRenderer.renderReturnType(analysisSession, symbol, declarationRenderer, printer)
+                    }
                 },
-                { typeParametersRenderer.renderWhereClause(symbol, printer) },
+                { declarationRenderer.typeParametersRenderer.renderWhereClause(analysisSession, symbol, declarationRenderer, printer) },
             )
         }
     }
