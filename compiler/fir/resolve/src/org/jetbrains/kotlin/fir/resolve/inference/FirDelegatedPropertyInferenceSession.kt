@@ -43,6 +43,9 @@ class FirDelegatedPropertyInferenceSession(
     private val nonTrivialParentSession: FirInferenceSession? =
         resolutionContext.bodyResolveContext.inferenceSession.takeIf { it !== DEFAULT }
 
+    val parentSessionIsNonTrivial: Boolean
+        get() = nonTrivialParentSession != null
+
     private val delegateCandidate = (delegateExpression as? FirResolvable)?.candidate()
     private val parentConstraintSystem =
         delegateCandidate?.system
