@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-67221
 
 class Data<A>(val initial: A)
