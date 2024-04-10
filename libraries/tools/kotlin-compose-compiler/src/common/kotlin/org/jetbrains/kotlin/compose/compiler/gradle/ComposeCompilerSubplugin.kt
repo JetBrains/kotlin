@@ -79,9 +79,6 @@ class ComposeCompilerGradleSubplugin
                 add(composeCompilerExtension.enableNonSkippingGroupOptimization.map {
                     SubpluginOption("nonSkippingGroupOptimization", it.toString())
                 })
-                add(composeCompilerExtension.suppressKotlinVersionCompatibilityCheck.map {
-                    SubpluginOption("suppressKotlinVersionCompatibilityCheck", it)
-                }.orElse(EMPTY_OPTION))
                 add(composeCompilerExtension.enableExperimentalStrongSkippingMode.map {
                     SubpluginOption("experimentalStrongSkipping", it.toString())
                 })

@@ -85,19 +85,6 @@ class ExtensionConfigurationTest {
     }
 
     @Test
-    fun testSuppressKotlinVersionCompatibilityCheck() {
-        testComposeOptions(
-            { extension, _ ->
-                extension.suppressKotlinVersionCompatibilityCheck.value("2.0.5")
-            }
-        ) { options, _ ->
-            assertTrue(
-                options.contains("suppressKotlinVersionCompatibilityCheck" to "2.0.5")
-            )
-        }
-    }
-
-    @Test
     fun notIncludeSourceInformationOnAgpPresence() {
         testComposeOptions(
             { _, project ->
