@@ -28,7 +28,7 @@ class FirSingleLevelDefaultStarImportingScope(
 ) : FirAbstractStarImportingScope(
     session, scopeSession,
     lookupInFir = session.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage),
-    excludedImportNames
+    excludedImportNames + session.defaultImportProvider.excludedImports
 ), DefaultStarImportingScopeMarker {
     // TODO: put languageVersionSettings into FirSession?
     override val starImports = run {
