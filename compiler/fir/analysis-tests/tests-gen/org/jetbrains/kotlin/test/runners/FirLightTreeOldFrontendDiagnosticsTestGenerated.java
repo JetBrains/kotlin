@@ -13843,6 +13843,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("funInterfaceWithAnyOverrides.kt")
+      public void testFunInterfaceWithAnyOverrides() {
+        runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceWithAnyOverrides.kt");
+      }
+
+      @Test
       @TestMetadata("funIsNotInheritedFromBaseInterface.kt")
       public void testFunIsNotInheritedFromBaseInterface() {
         runTest("compiler/testData/diagnostics/tests/funInterface/funIsNotInheritedFromBaseInterface.kt");

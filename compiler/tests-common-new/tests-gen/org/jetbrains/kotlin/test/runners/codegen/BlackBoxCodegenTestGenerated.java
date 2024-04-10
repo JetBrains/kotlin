@@ -50242,6 +50242,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("samWithAbstractToString.kt")
+    public void testSamWithAbstractToString() {
+      runTest("compiler/testData/codegen/box/sam/samWithAbstractToString.kt");
+    }
+
+    @Test
     @TestMetadata("smartCastSamConversion.kt")
     public void testSmartCastSamConversion() {
       runTest("compiler/testData/codegen/box/sam/smartCastSamConversion.kt");

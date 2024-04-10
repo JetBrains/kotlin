@@ -54136,6 +54136,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("samWithAbstractToString.kt")
+    public void testSamWithAbstractToString() {
+      runTest("compiler/testData/codegen/box/sam/samWithAbstractToString.kt");
+    }
+
+    @Test
     @TestMetadata("samWithInferenceToDefaultBounds.kt")
     public void testSamWithInferenceToDefaultBounds() {
       runTest("compiler/testData/codegen/box/sam/samWithInferenceToDefaultBounds.kt");
