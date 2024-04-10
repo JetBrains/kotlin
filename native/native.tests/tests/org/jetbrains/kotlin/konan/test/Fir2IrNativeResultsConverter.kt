@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -36,7 +37,11 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
     }
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
-        return resolveLibraries(compilerConfiguration, getAllNativeDependenciesPaths(module, testServices))
+        return resolveLibraries(
+            compilerConfiguration,
+            getAllNativeDependenciesPaths(module, testServices),
+            knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
+        )
     }
 
     override val klibFactories: KlibMetadataFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)

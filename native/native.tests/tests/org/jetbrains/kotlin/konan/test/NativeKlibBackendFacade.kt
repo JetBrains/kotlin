@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.*
@@ -51,7 +52,8 @@ abstract class AbstractNativeKlibBackendFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
-        val dependencies = resolveLibraries(configuration, dependencyPaths).map { it.library }
+        val dependencies = resolveLibraries(configuration, dependencyPaths, knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER))
+            .map { it.library }
 
         val serializerOutput = serialize(configuration, dependencies, module, inputArtifact)
 

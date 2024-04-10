@@ -15,8 +15,13 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.getKlibDependencies
 import java.io.File
 
-fun resolveLibraries(configuration: CompilerConfiguration, paths: List<String>): List<KotlinResolvedLibrary> {
-    return CommonKLibResolver.resolve(paths, configuration.getLogger(treatWarningsAsErrors = true)).getFullResolvedList()
+fun resolveLibraries(
+    configuration: CompilerConfiguration,
+    paths: List<String>,
+    knownIrProviders: List<String> = emptyList(),
+): List<KotlinResolvedLibrary> {
+    return CommonKLibResolver.resolve(paths, configuration.getLogger(treatWarningsAsErrors = true), knownIrProviders = knownIrProviders)
+        .getFullResolvedList()
 }
 
 fun getTransitivesAndFriendsPaths(module: TestModule, testServices: TestServices): List<String> {

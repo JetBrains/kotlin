@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractDiagnosticsNativeTest
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsTest
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsWithBackendTestBase
+import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
@@ -364,6 +361,17 @@ fun main() {
                 annotations = listOf(*frontendFir(), klib())
             ) {
                 model("diagnostics/klibSerializationTests")
+                // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
+                model("diagnostics/nativeTests/specialBackendChecks")
+            }
+
+            testClass<AbstractFirLightTreeNativeDiagnosticsWithBackendTestBase>(
+                suiteTestClassName = "FirLightTreeNativeKlibDiagnosticsTestGenerated",
+                annotations = listOf(*frontendFir(), klib())
+            ) {
+                model("diagnostics/klibSerializationTests")
+                // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
+                model("diagnostics/nativeTests/specialBackendChecks")
             }
         }
 
