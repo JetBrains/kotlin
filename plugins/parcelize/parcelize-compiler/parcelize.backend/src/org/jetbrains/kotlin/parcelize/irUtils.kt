@@ -113,6 +113,16 @@ fun IrBuilderWithScope.parcelableCreatorCreateFromParcel(creator: IrExpression, 
     }
 }
 
+fun IrSimpleFunction.isParcelableCreatorIntrinsic(): Boolean =
+    dispatchReceiverParameter == null
+            && extensionReceiverParameter == null
+            && valueParameters.isEmpty()
+            && isInline
+            && isTopLevelInPackage("parcelableCreator", FqName("kotlinx.parcelize"))
+            && typeParameters.singleOrNull()?.let {
+        it.isReified && it.superTypes.singleOrNull()?.classFqName == PARCELABLE_FQN
+    } == true
+
 // Construct an expression to access the parcelable creator field in the given class.
 fun AndroidIrBuilder.getParcelableCreator(irClass: IrClass): IrExpression {
     // For classes annotated with `Parcelize` in the same module we can
