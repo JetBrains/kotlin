@@ -1339,23 +1339,29 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             // There can be multiple $completion variables because of inlining, do not duplicate them
             if (method.localVariables.any { it.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME }) continue
 
-            // $completion should behave like ordinary parameter - span the whole function,
-            // unlike other parameters, it is safe to do so, since it always will have some value
-            // either completion (when there was no suspension) or continuation, when there was suspension.
-            // It is OK to have this discrepancy, since debugger walks through completion chain and to them
-            // there is no difference whether there is an additional link in the chain.
-            variable.start = method.getOrCreateStartingLabel()
-            variable.end = method.getOrCreateEndingLabel()
-            variable.index = getLastParameterIndex(method.desc, method.access)
-            method.localVariables.add(variable)
+            method.extendCompletionsRange(variable, getLastParameterIndex(method.desc, method.access))
             continue
         }
         // this acts like $continuation for lambdas. For example, it is used by debugger to create async stack trace. Keep it.
         if (variable.name == "this" && !isForNamedFunction) {
-            method.localVariables.add(variable)
+            method.extendCompletionsRange(variable, 0)
             continue
         }
     }
+}
+
+// $completion should behave like ordinary parameter - span the whole function,
+// unlike other parameters, it is safe to do so, since it always will have some value
+// either completion (when there was no suspension) or continuation, when there was suspension.
+// It is OK to have this discrepancy, since debugger walks through completion chain and to them
+// there is no difference whether there is an additional link in the chain.
+//
+// The same applies for suspend lambdas and `this`, but there is no additional link in the chain.
+private fun MethodNode.extendCompletionsRange(completion: LocalVariableNode, slot: Int) {
+    completion.start = getOrCreateStartingLabel()
+    completion.end = getOrCreateEndingLabel()
+    completion.index = slot
+    localVariables.add(completion)
 }
 
 fun MethodNode.getOrCreateStartingLabel(): LabelNode {
