@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 val FirElementWithResolveState.llFirModuleData: LLFirModuleData
     get() {
@@ -59,8 +58,6 @@ class LLFirModuleData private constructor(val ktModule: KtModule) : FirModuleDat
     override val platform: TargetPlatform get() = ktModule.platform
 
     override val isCommon: Boolean get() = ktModule.platform.isCommon()
-
-    override val analyzerServices: PlatformDependentAnalyzerServices get() = ktModule.analyzerServices
 
     override val session: FirSession
         get() = boundSession ?: LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)

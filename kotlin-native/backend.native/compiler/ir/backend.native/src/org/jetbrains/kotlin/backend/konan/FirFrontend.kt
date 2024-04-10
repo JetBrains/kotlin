@@ -39,7 +39,7 @@ internal inline fun <F> PhaseContext.firFrontend(
     val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
     val mainModuleName = Name.special("<${config.moduleId}>")
     val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
-    val binaryModuleData = BinaryModuleData.initialize(mainModuleName, CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices)
+    val binaryModuleData = BinaryModuleData.initialize(mainModuleName, CommonPlatforms.defaultCommonPlatform)
     val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
         val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isInterop }
         dependencies(regularLibs.map { it.libraryFile.absolutePath })
@@ -47,7 +47,7 @@ internal inline fun <F> PhaseContext.firFrontend(
             val interopModuleData =
                     BinaryModuleData.createDependencyModuleData(
                             Name.special("<regular interop dependencies of $mainModuleName>"),
-                            CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices,
+                            CommonPlatforms.defaultCommonPlatform,
                             FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                     )
             dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })

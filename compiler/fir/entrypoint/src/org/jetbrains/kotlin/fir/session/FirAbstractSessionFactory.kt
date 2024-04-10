@@ -55,7 +55,6 @@ abstract class FirAbstractSessionFactory {
             val builtinsModuleData = BinaryModuleData.createDependencyModuleData(
                 Name.special("<builtins of ${mainModuleName.asString()}"),
                 moduleDataProvider.platform,
-                moduleDataProvider.analyzerServices,
             )
             builtinsModuleData.bindSession(this)
 

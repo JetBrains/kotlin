@@ -87,7 +87,6 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
             FirSessionFactoryHelper.createSessionWithDependencies(
                 Name.identifier(info.name.asString().removeSurrounding("<", ">")),
                 info.platform,
-                info.analyzerServices,
                 externalSessionProvider = sessionProvider,
                 projectEnvironment,
                 config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT,

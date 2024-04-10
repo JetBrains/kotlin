@@ -26,14 +26,11 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 object FirSessionFactoryHelper {
     inline fun createSessionWithDependencies(
         moduleName: Name,
         platform: TargetPlatform,
-        analyzerServices: PlatformDependentAnalyzerServices,
         externalSessionProvider: FirProjectSessionProvider?,
         projectEnvironment: AbstractProjectEnvironment,
         languageVersionSettings: LanguageVersionSettings,
@@ -48,7 +45,7 @@ object FirSessionFactoryHelper {
         dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
-        val binaryModuleData = BinaryModuleData.initialize(moduleName, platform, analyzerServices)
+        val binaryModuleData = BinaryModuleData.initialize(moduleName, platform)
         val dependencyList = DependencyListForCliModule.build(binaryModuleData, init = dependenciesConfigurator)
         val sessionProvider = externalSessionProvider ?: FirProjectSessionProvider()
         val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
@@ -71,7 +68,6 @@ object FirSessionFactoryHelper {
             dependencyList.dependsOnDependencies,
             dependencyList.friendsDependencies,
             platform,
-            analyzerServices
         )
         return FirJvmSessionFactory.createModuleBasedSession(
             mainModuleData,
@@ -102,7 +98,6 @@ object FirSessionFactoryHelper {
                 dependsOnDependencies = emptyList(),
                 friendDependencies = emptyList(),
                 platform = JvmPlatforms.unspecifiedJvmPlatform,
-                analyzerServices = JvmPlatformAnalyzerServices
             )
             registerModuleData(moduleData)
             moduleData.bindSession(this)
