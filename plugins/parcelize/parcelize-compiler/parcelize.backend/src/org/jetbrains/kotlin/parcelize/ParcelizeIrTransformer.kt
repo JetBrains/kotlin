@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -63,16 +62,6 @@ class ParcelizeIrTransformer(
                 expression.symbol = symbolMap[expression.symbol] ?: return expression
                 return expression
             }
-
-            private fun IrSimpleFunction.isParcelableCreatorIntrinsic(): Boolean =
-                dispatchReceiverParameter == null
-                        && extensionReceiverParameter == null
-                        && valueParameters.isEmpty()
-                        && isInline
-                        && fqNameWhenAvailable?.asString() == "kotlinx.parcelize.ParcelableCreatorKt.parcelableCreator"
-                        && typeParameters.singleOrNull()?.let {
-                    it.isReified && it.superTypes.singleOrNull()?.classFqName == PARCELABLE_FQN
-                } == true
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildren(this, null)

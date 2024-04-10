@@ -11,9 +11,14 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
 import org.jetbrains.kotlin.parcelize.fir.ParcelizePluginKey
@@ -27,6 +32,20 @@ class ParcelizeFirIrTransformer(
     fun transform(moduleFragment: IrModuleFragment) {
         moduleFragment.accept(this, null)
         deferredOperations.forEach { it() }
+
+        moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                val callee = expression.symbol.owner
+                if (callee.isParcelableCreatorIntrinsic()) {
+                    expression.getTypeArgument(0)?.getClass()?.let { parcelableClass ->
+                        androidSymbols.createBuilder(expression.symbol).apply {
+                            return getParcelableCreator(parcelableClass)
+                        }
+                    }
+                }
+                return expression
+            }
+        })
     }
 
     override fun visitElement(element: IrElement) = element.acceptChildren(this, null)
