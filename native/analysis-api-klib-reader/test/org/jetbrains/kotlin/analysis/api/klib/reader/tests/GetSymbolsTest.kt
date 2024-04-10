@@ -190,6 +190,15 @@ class GetSymbolsTest {
         }
     }
 
+    @Test
+    fun `test - klibScope`() {
+        withTestProjectLibraryAnalysisSession {
+            val klibScope = KlibScope(useSiteModule as KtLibraryModule, analysisSession)
+            val symbols = klibScope.getAllSymbols().toList()
+            if (symbols.size != 1) fail("Expected exactly one symbol")
+        }
+    }
+
     /**
      * Runs the given [block] in an analysis session that will have the built library as [KtAnalysisSession.useSiteModule]
      */

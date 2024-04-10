@@ -6,53 +6,66 @@
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.native.analysis.api.KlibScope
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.builder.buildModuleCopy
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
+import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
 
 internal fun buildSwiftModule(
-    input: SwiftExportInput,
+    input: InputModule,
     kotlinDistribution: Distribution,
     shouldSortInputFiles: Boolean,
     bridgeModuleName: String,
 ): SirModule {
-    val (module, ktFiles) = extractModuleWithFiles(kotlinDistribution, input, shouldSortInputFiles)
+
+    val (module, scopeProvider) = when (input) {
+        is InputModule.BinaryModule -> constructLibraryModule(kotlinDistribution, input)
+        is InputModule.SourceModule -> constructSourceModule(kotlinDistribution, input, shouldSortInputFiles)
+    }
 
     return analyze(module) {
         with(StandaloneSirSession(this, bridgeModuleName)) {
             val result = module.sirModule()
-            ktFiles.flatMap {
-                it.getFileSymbol().getFileScope().extractDeclarations()
+            scopeProvider(this@analyze).flatMap {
+                it.extractDeclarations()
             }
             result
         }
     }
 }
 
+internal data class ModuleWithScopeProvider(
+    val ktModule: KtModule,
+    val scopeProvider: (KtAnalysisSession) -> List<KtScope>
+)
+
 @OptIn(KtAnalysisApiInternals::class)
-private fun extractModuleWithFiles(
+private fun constructAnalysisAPISession(
     kotlinDistribution: Distribution,
-    input: SwiftExportInput,
-    shouldSortInputFiles: Boolean,
-): Pair<KtSourceModule, List<KtFile>> {
+    moduleBuilder: KtModuleProviderBuilder.(stdlibModule: KtLibraryModule) -> KtModule,
+): StandaloneAnalysisAPISession {
     val analysisAPISession = buildStandaloneAnalysisAPISession {
         registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform
-
             val stdlib = addModule(
                 buildKtLibraryModule {
                     addBinaryRoot(Path(kotlinDistribution.stdlib))
@@ -60,25 +73,62 @@ private fun extractModuleWithFiles(
                     libraryName = "stdlib"
                 }
             )
-
-            addModule(
-                buildKtSourceModule {
-                    addSourceRoot(input.sourceRoot)
-                    platform = NativePlatforms.unspecifiedNativePlatform
-                    moduleName = input.moduleName
-                    addRegularDependency(stdlib)
-                }
-            )
+            addModule(moduleBuilder(stdlib))
         }
     }
+    return analysisAPISession
+}
 
-    val (sourceModule, rawFiles) = analysisAPISession.modulesWithFiles.entries.single()
-
-    var ktFiles = rawFiles.filterIsInstance<KtFile>()
-
-    if (shouldSortInputFiles) {
-        ktFiles = ktFiles.sortedBy { it.name }
+private fun constructLibraryModule(
+    kotlinDistribution: Distribution,
+    input: InputModule.BinaryModule,
+): ModuleWithScopeProvider {
+    lateinit var module: KtLibraryModule
+    lateinit var fakeSrcModule: KtSourceModule
+    constructAnalysisAPISession(kotlinDistribution) { stdlibModule ->
+        module = buildKtLibraryModule {
+            addBinaryRoot(input.path)
+            platform = NativePlatforms.unspecifiedNativePlatform
+            libraryName = input.name
+            addRegularDependency(stdlibModule)
+        }
+        fakeSrcModule = buildKtSourceModule {
+            val tempFile = kotlin.io.path.createTempFile("fake", ".kt")
+            addSourceRoot(tempFile)
+            platform = NativePlatforms.unspecifiedNativePlatform
+            moduleName = "fake"
+            addRegularDependency(module)
+            addRegularDependency(stdlibModule)
+        }
+        fakeSrcModule
     }
+    return ModuleWithScopeProvider(fakeSrcModule) { ktAnalysisSession ->
+        listOf(KlibScope(module, ktAnalysisSession))
+    }
+}
 
-    return Pair(sourceModule, ktFiles)
+private fun constructSourceModule(
+    kotlinDistribution: Distribution,
+    input: InputModule.SourceModule,
+    shouldSortInputFiles: Boolean,
+): ModuleWithScopeProvider {
+    val analysisAPISession = constructAnalysisAPISession(kotlinDistribution) { stdlibModule ->
+        buildKtSourceModule {
+            addSourceRoot(input.path)
+            platform = NativePlatforms.unspecifiedNativePlatform
+            moduleName = input.name
+            addRegularDependency(stdlibModule)
+        }
+    }
+    val (sourceModule, rawFiles) = analysisAPISession.modulesWithFiles.entries.single()
+    val ktFiles = rawFiles.filterIsInstance<KtFile>().run {
+        if (shouldSortInputFiles) {
+            sortedBy { it.name }
+        } else this
+    }
+    return ModuleWithScopeProvider(sourceModule) { analysisSession ->
+        with(analysisSession) {
+            ktFiles.map { it.getFileSymbol().getFileScope() }
+        }
+    }
 }

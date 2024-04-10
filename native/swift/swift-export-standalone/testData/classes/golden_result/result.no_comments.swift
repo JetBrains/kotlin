@@ -1,9 +1,6 @@
 import KotlinBridges
 import KotlinRuntime
 
-/**
-* this is a sample comment for class without public constructor
-*/
 public class ClassWithNonPublicConstructor {
     public var a: Swift.Int32 {
         get {
@@ -11,27 +8,13 @@ public class ClassWithNonPublicConstructor {
         }
     }
 }
-/**
-* this is a sample comment for class without package
-* in order to support documentation for primary constructor - we will have to start parsing comment content:
-* https://kotlinlang.org/docs/kotlin-doc.html#constructor
-*/
 public class Foo {
-    /**
-    * this is a sample comment for INSIDE_CLASS without package
-    */
     public class INSIDE_CLASS {
-        /**
-        * this is a sample comment for val on INSIDE_CLASS without package
-        */
         public var my_value_inner: Swift.UInt32 {
             get {
                 fatalError()
             }
         }
-        /**
-        * this is a sample comment for var on INSIDE_CLASS without package
-        */
         public var my_variable_inner: Swift.Int64 {
             get {
                 fatalError()
@@ -40,30 +23,18 @@ public class Foo {
                 fatalError()
             }
         }
-        /**
-        * this is a sample comment for INSIDE_CLASS without package
-        */
         public init() {
             fatalError()
         }
-        /**
-        * this is a sample comment for func on INSIDE_CLASS without package
-        */
         public func my_func() -> Swift.Bool {
             fatalError()
         }
     }
-    /**
-    * this is a sample comment for val on class without package
-    */
     public var my_value: Swift.UInt32 {
         get {
             fatalError()
         }
     }
-    /**
-    * this is a sample comment for var on class without package
-    */
     public var my_variable: Swift.Int64 {
         get {
             fatalError()
@@ -77,24 +48,15 @@ public class Foo {
     ) {
         fatalError()
     }
-    /**
-    * this is a sample comment for secondary constructor
-    */
     public init(
         f: Swift.Float
     ) {
         fatalError()
     }
-    /**
-    * this is a sample comment for func on class without package
-    */
     public func foo() -> Swift.Bool {
         fatalError()
     }
 }
-/**
-demo comment for packageless object
-*/
 public class OBJECT_NO_PACKAGE {
     public class Bar {
         public class CLASS_INSIDE_CLASS_INSIDE_OBJECT {
@@ -158,28 +120,16 @@ public class OBJECT_NO_PACKAGE {
 }
 public extension main.namespace {
     public class Foo {
-        /**
-        * this is a sample comment for INSIDE_CLASS with package
-        */
         public class INSIDE_CLASS {
-            /**
-            * this is a sample comment for INSIDE_CLASS with package
-            */
             public init() {
                 fatalError()
             }
         }
-        /**
-        * this is a sample comment for val on class with package
-        */
         public var my_value: Swift.UInt32 {
             get {
                 fatalError()
             }
         }
-        /**
-        * this is a sample comment for var on class with package
-        */
         public var my_variable: Swift.Int64 {
             get {
                 fatalError()
@@ -191,22 +141,11 @@ public extension main.namespace {
         public init() {
             fatalError()
         }
-        /**
-        * this is a sample comment for func on class with package
-        */
         public func foo() -> Swift.Bool {
             fatalError()
         }
     }
-    /**
-    *  demo comment for
-    *  NAMESPACED_CLASS
-    */
     public class NAMESPACED_CLASS {
-        /**
-        *  demo comment for
-        *  NAMESPACED_CLASS
-        */
         public init() {
             fatalError()
         }
@@ -281,14 +220,8 @@ public extension main.namespace.deeper {
             fatalError()
         }
     }
-    /**
-    demo comment for packaged object
-    */
     public class OBJECT_WITH_PACKAGE {
         public class Bar {
-            /**
-            * demo comment for inner object
-            */
             public class OBJECT_INSIDE_CLASS {
                 public static var shared: Swift.Int32 {
                     get {

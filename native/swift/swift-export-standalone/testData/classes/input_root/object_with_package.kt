@@ -23,9 +23,3 @@ object OBJECT_WITH_PACKAGE {
 }
 
 private object PRIVATE_OBJECT
-
-data object DATA_OBJECT_WITH_PACKAGE {
-    fun foo(): Int = 5
-    val value: Int = 5
-    var variable: Int = 5
-}

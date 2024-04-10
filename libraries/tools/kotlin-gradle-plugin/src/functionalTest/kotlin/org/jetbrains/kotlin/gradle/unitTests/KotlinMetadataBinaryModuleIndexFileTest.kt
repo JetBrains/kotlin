@@ -16,7 +16,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class KotlinMetadataLibrariesIndexFileTest {
+class KotlinMetadataBinaryModuleIndexFileTest {
 
     @get:Rule
     val temporaryFolder = TemporaryFolder()

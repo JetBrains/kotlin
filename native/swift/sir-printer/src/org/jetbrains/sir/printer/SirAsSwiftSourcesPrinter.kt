@@ -6,17 +6,24 @@
 package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
 public class SirAsSwiftSourcesPrinter(
     private val printer: SmartPrinter,
+    private val skipDocComments: Boolean,
+    private val sortDeclarations: Boolean = false,
 ) : IndentingPrinter by printer {
 
     public companion object {
-        public fun print(module: SirModule): String {
-            val printer = SirAsSwiftSourcesPrinter(SmartPrinter(StringBuilder()))
+        public fun print(module: SirModule, skipDocComments: Boolean, sortDeclarations: Boolean): String {
+            val printer = SirAsSwiftSourcesPrinter(
+                SmartPrinter(StringBuilder()),
+                skipDocComments = skipDocComments,
+                sortDeclarations = sortDeclarations,
+            )
             with(printer) { module.print() }
             return printer.toString().trimIndent()
         }
@@ -38,12 +45,6 @@ public class SirAsSwiftSourcesPrinter(
         }
     }
 
-    private fun SirModule.printExtensions() {
-        allExtensions().forEach {
-            it.print()
-        }
-    }
-
     private fun SirDeclarationContainer.print() {
         (this as? SirDeclaration)?.let {
             printDocumentation()
@@ -62,23 +63,32 @@ public class SirAsSwiftSourcesPrinter(
     }
 
     private fun SirDeclarationContainer.printChildren() {
-        allNonPackageEnums().forEach {
-            it.print()
+        allNonPackageEnums()
+            .sortIfNeededWith(stableNamedComparator)
+            .forEach { it.print() }
+        allClasses()
+            .sortIfNeededWith(stableNamedComparator)
+            .forEach { it.print() }
+        allVariables()
+            .sortIfNeededWith(stableVariableComparator)
+            .forEach { it.print() }
+        allCallables()
+            .sortIfNeededWith(stableCallableComparator)
+            .forEach { it.print() }
+        if (this is SirModule) {
+            allExtensions()
+                .sortIfNeededWith(stableExtensionComparator)
+                .forEach { it.print() }
         }
-        allClasses().forEach {
-            it.print()
-        }
-        allVariables().forEach {
-            it.print()
-        }
-        allCallables().forEach {
-            it.print()
-        }
-        (this as? SirModule)?.printExtensions()
-        allPackageEnums().forEach {
-            it.print()
-        }
+        allPackageEnums()
+            .sortIfNeededWith(stableNamedComparator)
+            .forEach { it.print() }
     }
+
+    private inline fun <reified T> Sequence<T>.sortIfNeededWith(comparator: Comparator<in T>): Sequence<T> =
+        if (sortDeclarations) {
+            sortedWith(comparator)
+        } else this
 
     private fun SirVariable.print() {
         printDocumentation()
@@ -116,6 +126,7 @@ public class SirAsSwiftSourcesPrinter(
     }
 
     private fun SirDeclaration.printDocumentation() {
+        if (skipDocComments) return
         documentation?.lines()?.forEach { println(it.trimIndent()) }
     }
 

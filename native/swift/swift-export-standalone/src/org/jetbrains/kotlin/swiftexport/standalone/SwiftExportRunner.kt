@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEBUG_MODE_ENABLED
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
-import org.jetbrains.kotlin.swiftexport.standalone.builders.buildFunctionBridges
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.SKIP_DOC_RENDERING
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.SORT_DECLARATIONS
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
+import org.jetbrains.kotlin.swiftexport.standalone.builders.collectBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Path
@@ -33,14 +35,29 @@ public data class SwiftExportConfig(
         public const val BRIDGE_MODULE_NAME: String = "BRIDGE_MODULE_NAME"
 
         public const val DEFAULT_BRIDGE_MODULE_NAME: String = "KotlinBridges"
+
+        public const val SKIP_DOC_RENDERING: String = "SKIP_DOC_RENDERING"
+        public const val SORT_DECLARATIONS: String = "SORT_DECLARATIONS"
     }
 }
 
-public data class SwiftExportInput(
-    val moduleName: String = "main",
-    val sourceRoot: Path, // todo: we do not support multi-modules currently. see KT-65220
-    val libraries: List<Path> = emptyList(), // todo: not supported currently. see KT-65221
-)
+public sealed interface InputModule {
+    public val name: String
+    public val path: Path
+    public val dependencies: List<InputModule>
+
+    public data class SourceModule(
+        override val name: String = "main",
+        override val path: Path,
+        override val dependencies: List<InputModule> = emptyList(), // todo: not supported currently. see KT-65221
+    ) : InputModule
+
+    public data class BinaryModule(
+        override val name: String = "main",
+        override val path: Path,
+        override val dependencies: List<InputModule> = emptyList(),
+    ) : InputModule
+}
 
 public data class SwiftExportOutput(
     val swiftApi: Path,
@@ -75,7 +92,7 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
  * A root function for running Swift Export from build tool
  */
 public fun runSwiftExport(
-    input: SwiftExportInput,
+    input: InputModule,
     config: SwiftExportConfig = SwiftExportConfig(),
     output: SwiftExportOutput,
 ) {
@@ -88,6 +105,8 @@ public fun runSwiftExport(
         DEFAULT_BRIDGE_MODULE_NAME
     }
 
+    val skipDocComments = config.settings.containsKey(SKIP_DOC_RENDERING)
+    val sortDeclarations = config.settings.containsKey(SORT_DECLARATIONS)
 
     val module = buildSwiftModule(
         input,
@@ -95,6 +114,6 @@ public fun runSwiftExport(
         isDebugModeEnabled,
         bridgeModuleName
     )
-    val bridgeRequests = module.buildFunctionBridges()
-    module.dumpResultToFiles(bridgeRequests, output)
+    val bridgeRequests = collectBridgeRequests(module)
+    module.dumpResultToFiles(bridgeRequests, sortDeclarations = sortDeclarations, skipDocComments = skipDocComments, output = output)
 }

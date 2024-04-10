@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
@@ -74,10 +73,9 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
         moduleName: String,
         testPathFull: File
     ): SwiftExportOutput {
-        val swiftExportInput = SwiftExportInput(
-            moduleName = moduleName,
-            sourceRoot = testPathFull.toPath(),
-            libraries = emptyList()
+        val swiftExportInput = InputModule.SourceModule(
+            name = moduleName,
+            path = testPathFull.toPath(),
         )
         val exportResultsPath = buildDir.toPath().resolve("swift_export_results")
         val swiftExportOutput = SwiftExportOutput(
@@ -88,6 +86,7 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
         val swiftExportConfig = SwiftExportConfig(
             settings = mapOf(
                 SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
+                SwiftExportConfig.SORT_DECLARATIONS to "true",
             ),
             logger = createDummyLogger()
         )

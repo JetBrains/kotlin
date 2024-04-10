@@ -25,26 +25,31 @@ public class SirModuleProviderImpl(
     private val sirSession: SirSession,
 ) : SirModuleProvider {
 
+    private val x by lazy {
+        buildModule {
+            name = "main"
+        }.also {
+            // imports should be reworked - KT-66727
+            it.addChild {
+                buildImport {
+                    moduleName = "KotlinBridges"
+                }
+            }
+
+            it.addChild {
+                buildImport {
+                    moduleName = KOTLIN_RUNTIME_MODULE_NAME
+                }
+            }
+        }
+    }
+
+
     private val seenModule: MutableMap<KtModule, SirModule> = mutableMapOf()
 
     override fun KtModule.sirModule(): SirModule = withSirAnalyse(sirSession, ktAnalysisSession) {
         seenModule.getOrPut(this@sirModule) {
-            buildModule {
-                name = moduleName()
-            }.also {
-                // imports should be reworked - KT-66727
-                it.addChild {
-                    buildImport {
-                        moduleName = bridgeModuleName
-                    }
-                }
-
-                it.addChild {
-                    buildImport {
-                        moduleName = KOTLIN_RUNTIME_MODULE_NAME
-                    }
-                }
-            }
+            x
         }
     }
 

@@ -14,64 +14,53 @@ import org.jetbrains.kotlin.sir.bridge.createFunctionBodyFromRequest
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal fun SirModule.buildFunctionBridges(): List<BridgeRequest> {
-    return BridgeGenerationPass.run(this)
+internal fun collectBridgeRequests(container: SirDeclarationContainer): List<BridgeRequest> = buildList {
+    addAll(
+        container
+            .allCallables()
+            .filterIsInstance<SirFunction>()
+            .map { it.constructBridgeRequests() }
+            .flatten()
+    )
+    addAll(
+        container
+            .allVariables()
+            .map { it.constructBridgeRequests() }
+            .flatten()
+    )
+    addAll(
+        container
+            .allContainers()
+            .flatMap { collectBridgeRequests(it) }
+    )
+}.sortedBy { it.bridgeName }
+
+
+private fun SirFunction.constructBridgeRequests(): List<BridgeRequest> {
+    val fqName = ((origin as? KotlinSource)?.symbol as? KtFunctionLikeSymbol)
+        ?.callableIdIfNonLocal?.asSingleFqName()
+        ?.pathSegments()?.map { it.toString() }
+        ?: return emptyList()
+
+    return listOfNotNull(
+        patchCallableBodyAndGenerateRequest(fqName)
+    )
 }
 
-private object BridgeGenerationPass {
-    fun run(container: SirDeclarationContainer): List<BridgeRequest> {
-        val requests = mutableListOf<BridgeRequest>()
+private fun SirVariable.constructBridgeRequests(): List<BridgeRequest> {
+    val fqName = ((origin as? KotlinSource)?.symbol as? KtVariableLikeSymbol)
+        ?.callableIdIfNonLocal?.asSingleFqName()
+        ?.pathSegments()?.map { it.toString() }
+        ?: return emptyList()
 
-        requests.addAll(
-            container
-                .allCallables()
-                .filterIsInstance<SirFunction>()
-                .map { it.constructBridgeRequests() }
-                .flatten()
-        )
-
-        requests.addAll(
-            container
-                .allVariables()
-                .map { it.constructBridgeRequests() }
-                .flatten()
-        )
-
-        requests.addAll(
-            container
-                .allContainers()
-                .flatMap { run(it) }
-        )
-
-        return requests.toList()
-    }
-
-    private fun SirFunction.constructBridgeRequests(): List<BridgeRequest> {
-        val fqName = ((origin as? KotlinSource)?.symbol as? KtFunctionLikeSymbol)
-            ?.callableIdIfNonLocal?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
-            ?: return emptyList()
-
-        return listOfNotNull(
-            patchCallableBodyAndGenerateRequest(fqName)
+    val res = mutableListOf<BridgeRequest>()
+    accessors.forEach {
+        res.addIfNotNull(
+            it.patchCallableBodyAndGenerateRequest(fqName)
         )
     }
 
-    private fun SirVariable.constructBridgeRequests(): List<BridgeRequest> {
-        val fqName = ((origin as? KotlinSource)?.symbol as? KtVariableLikeSymbol)
-            ?.callableIdIfNonLocal?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
-            ?: return emptyList()
-
-        val res = mutableListOf<BridgeRequest>()
-        accessors.forEach {
-            res.addIfNotNull(
-                it.patchCallableBodyAndGenerateRequest(fqName)
-            )
-        }
-
-        return res.toList()
-    }
+    return res.toList()
 }
 
 private fun SirCallable.patchCallableBodyAndGenerateRequest(

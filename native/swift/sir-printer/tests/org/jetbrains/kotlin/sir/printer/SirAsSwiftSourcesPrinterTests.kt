@@ -860,7 +860,7 @@ class SirAsSwiftSourcesPrinterTests {
 
     private fun runTest(module: SirModule, goldenDataFile: String) {
         val expectedSwiftSrc = File(KtTestUtil.getHomeDirectory()).resolve("$goldenDataFile.golden.swift")
-        val actualSwiftSrc = SirAsSwiftSourcesPrinter.print(module)
+        val actualSwiftSrc = SirAsSwiftSourcesPrinter.print(module, sortDeclarations = false, skipDocComments = false)
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
     }
 }
