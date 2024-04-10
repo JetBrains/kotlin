@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.ide.plugins.ContainerDescriptor
+import com.intellij.ide.plugins.DataLoader
 import com.intellij.ide.plugins.PluginXmlPathResolver
 import com.intellij.ide.plugins.RawPluginDescriptor
 import com.intellij.ide.plugins.ReadModuleContext
@@ -15,16 +16,16 @@ import com.intellij.mock.MockComponentManager
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.extensions.PluginDescriptor
-import com.intellij.platform.util.plugins.DataLoader
-import com.intellij.util.NoOpXmlInterner
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.lang.ZipFilePool
 import com.intellij.util.messages.ListenerDescriptor
 import com.intellij.util.messages.impl.MessageBusEx
+import com.intellij.util.xml.dom.NoOpXmlInterner
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.utils.SmartList
 import java.io.InputStream
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * The Analysis API has an XML-based declaration way to define services, extensions and so on.
@@ -141,7 +142,7 @@ object PluginStructureProvider {
             return
         }
 
-        val listenersMap = mutableMapOf<String, MutableList<ListenerDescriptor>>()
+        val listenersMap = ConcurrentHashMap<String, MutableList<ListenerDescriptor>>()
         for (listenerDescriptor in listenerDescriptors) {
             listenerDescriptor.pluginDescriptor = fakePluginDescriptor
             listenersMap.computeIfAbsent(listenerDescriptor.topicClassName) { SmartList() }.add(listenerDescriptor)
