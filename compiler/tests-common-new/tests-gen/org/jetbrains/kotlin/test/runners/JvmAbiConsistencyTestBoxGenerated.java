@@ -53452,6 +53452,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("samWithAbstractToString.kt")
+    public void testSamWithAbstractToString() {
+      runTest("compiler/testData/codegen/box/sam/samWithAbstractToString.kt");
+    }
+
+    @Test
     @TestMetadata("samWithInferenceToDefaultBounds.kt")
     public void testSamWithInferenceToDefaultBounds() {
       runTest("compiler/testData/codegen/box/sam/samWithInferenceToDefaultBounds.kt");

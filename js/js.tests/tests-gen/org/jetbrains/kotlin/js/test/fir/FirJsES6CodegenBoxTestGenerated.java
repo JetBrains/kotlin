@@ -38511,6 +38511,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       runTest("compiler/testData/codegen/box/sam/kt64116.kt");
     }
 
+    @Test
+    @TestMetadata("samWithAbstractToString.kt")
+    public void testSamWithAbstractToString() {
+      runTest("compiler/testData/codegen/box/sam/samWithAbstractToString.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam/adapters")
     @TestDataPath("$PROJECT_ROOT")
