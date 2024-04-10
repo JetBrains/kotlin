@@ -357,6 +357,7 @@ class NewConstraintSystemImpl(
             typeVariableDependencies.clear()
             storage.initialConstraints.clear()
             storage.errors.clear()
+            storage.constraintsFromAllForkPoints.clear()
             // NB: `postponedTypeVariables` can't be non-empty in K2/PCLA, thus no need to clear it
         }
 
