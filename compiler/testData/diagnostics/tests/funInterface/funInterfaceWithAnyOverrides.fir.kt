@@ -39,31 +39,31 @@ fun test() {
     <!INTERFACE_AS_FUNCTION!>J2<!> { TODO() }
     <!INTERFACE_AS_FUNCTION!>J3<!> { TODO() }
 
-    <!INTERFACE_AS_FUNCTION!>KJ1<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJ2<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJ3<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJ4<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJ5<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJ6<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJ7<!> { TODO() }
+    KJ1 { TODO() }
+    KJ2 { TODO() }
+    KJ3 { TODO() }
+    KJ4 { TODO() }
+    KJ5 { TODO() }
+    KJ6 { TODO() }
+    KJ7 { TODO() }
 
-    <!INTERFACE_AS_FUNCTION!>K1<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>K2<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>K3<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>K4<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>K5<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>K6<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>K7<!> { TODO() }
+    K1 { TODO() }
+    K2 { TODO() }
+    K3 { TODO() }
+    K4 { TODO() }
+    K5 { TODO() }
+    K6 { TODO() }
+    K7 { TODO() }
 
     <!INTERFACE_AS_FUNCTION!>JK1<!> { TODO() }
     <!INTERFACE_AS_FUNCTION!>JK2<!> { TODO() }
     <!INTERFACE_AS_FUNCTION!>JK3<!> { TODO() }
 
-    <!INTERFACE_AS_FUNCTION!>KJK1<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJK2<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJK3<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJK4<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJK5<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJK6<!> { TODO() }
-    <!INTERFACE_AS_FUNCTION!>KJK7<!> { TODO() }
+    KJK1 { TODO() }
+    KJK2 { TODO() }
+    KJK3 { TODO() }
+    KJK4 { TODO() }
+    KJK5 { TODO() }
+    KJK6 { TODO() }
+    KJK7 { TODO() }
 }

@@ -465,11 +465,16 @@ private fun FirRegularClass.hasMoreThenOneAbstractFunctionOrHasAbstractProperty(
 private val FirCallableDeclaration.resolvedIsAbstract: Boolean
     get() = symbol.isAbstract
 
-// From the definition of function interfaces in the Java specification (pt. 9.8):
-// "methods that are members of I that do not have the same signature as any public instance method of the class Object"
-// It means that if an interface declares `int hashCode()` then the method won't be taken into account when
-// checking if the interface is SAM.
-fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
+/**
+ * From the definition of function interfaces in the Java specification (pt. 9.8):
+ * "methods that are members of I that do not have the same signature as any public instance method of the class Object"
+ * It means that if an interface declares `int hashCode()` then the method won't be taken into account when
+ * checking if the interface is SAM.
+ *
+ * For K1 compatibility, this only applies to members declared in Java, see KT-67283.
+ */
+private fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
+    if (!isJavaOrEnhancement) return false
     if (name.asString() !in PUBLIC_METHOD_NAMES_IN_OBJECT) return false
     if (checkOnlyName) return true
 
