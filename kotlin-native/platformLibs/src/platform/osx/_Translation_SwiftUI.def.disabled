@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._Translation_SwiftUI
+
+modules = _Translation_SwiftUI
+compilerOpts = -framework _Translation_SwiftUI
+linkerOpts = -framework _Translation_SwiftUI
+#Disabled: Unavailable

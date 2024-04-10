@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.LightweightCodeRequirements
+
+modules = LightweightCodeRequirements
+compilerOpts = -framework LightweightCodeRequirements
+linkerOpts = -framework LightweightCodeRequirements
+#Disabled: Swift-only framework

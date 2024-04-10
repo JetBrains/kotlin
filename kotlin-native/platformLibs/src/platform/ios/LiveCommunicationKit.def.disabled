@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.LiveCommunicationKit
+
+modules = LiveCommunicationKit
+compilerOpts = -framework LiveCommunicationKit
+linkerOpts = -framework LiveCommunicationKit
+#Disabled: Not officially available for ios

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.BrowserEngineKit
+
+modules = BrowserEngineKit
+compilerOpts = -framework BrowserEngineKit
+linkerOpts = -framework BrowserEngineKit
+#Disabled: Not officially available for tvos

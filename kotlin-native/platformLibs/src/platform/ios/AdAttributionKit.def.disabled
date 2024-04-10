@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.AdAttributionKit
+
+modules = AdAttributionKit
+compilerOpts = -framework AdAttributionKit
+linkerOpts = -framework AdAttributionKit
+#Disabled: Swift-only framework
