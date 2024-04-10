@@ -97,8 +97,8 @@ class LLFirSessionCache(private val project: Project) : Disposable {
             // Non-isolated session creation may need to access other sessions, so we should create the session outside `computeIfAbsent` to
             // avoid recursive update exceptions.
             storage[module] ?: run {
-                val danglingSession = factory(module)
-                storage.computeIfAbsent(module) { danglingSession }
+                val newSession = factory(module)
+                storage.computeIfAbsent(module) { newSession }
             }
         }
 
@@ -203,7 +203,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
     }
 
     /**
-     * Whether the session for [module] can be created without getting other sessions from the cache. Should be kept in sync with
+     * Whether the session for this [KtModule] can be created without getting other sessions from the cache. Should be kept in sync with
      * [createSession].
      */
     private val KtModule.supportsIsolatedSessionCreation: Boolean
