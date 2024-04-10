@@ -1,4 +1,4 @@
-depends = AVFAudio AVFoundation ApplicationServices AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreMIDI CoreML CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MediaToolbox Metal OpenGLCommon QuartzCore Security UniformTypeIdentifiers cups darwin libkern osx posix
+depends = AVFAudio ApplicationServices AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreML CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security cups darwin libkern osx posix
 language = Objective-C
 package = platform.SoundAnalysis
 modules = SoundAnalysis

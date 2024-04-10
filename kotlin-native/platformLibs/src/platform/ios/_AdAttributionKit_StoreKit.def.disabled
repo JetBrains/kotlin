@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._AdAttributionKit_StoreKit
+
+modules = _AdAttributionKit_StoreKit
+compilerOpts = -framework _AdAttributionKit_StoreKit
+linkerOpts = -framework _AdAttributionKit_StoreKit
+#Disabled: Unavailable
