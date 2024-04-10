@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.generateExtensionProperty
 import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -63,6 +64,7 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
         val callableId: CallableId
     )
 
+    @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     override fun getTopLevelCallableIds(): Set<CallableId> {
         return buildSet {
             fields.mapTo(this) { it.callableId }
