@@ -11,7 +11,6 @@ group = "org.jetbrains.kotlinx.dataframe"
 val kotlinVersion: String by project.properties
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
 }
@@ -41,7 +40,7 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
 
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-compiler-internal-test-framework:$kotlinVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-compiler-internal-test-framework:2.0.0-RC1")
 
     testImplementation(platform("org.junit:junit-bom:5.8.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
