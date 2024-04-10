@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-fun FirTypeRef.approximateDeclarationType(
+fun <T> T.approximateDeclarationType(
     session: FirSession,
     containingCallableVisibility: Visibility?,
     isLocal: Boolean,
     isInlineFunction: Boolean = false,
     stripEnhancedNullability: Boolean = true
-): FirTypeRef {
-    val baseType = (this as? FirResolvedTypeRef)?.type ?: return this
-
+): T {
+    if (this !is FirResolvedTypeRef) return this
+    val baseType = this.type
     val configuration = when (isLocal) {
         true -> TypeApproximatorConfiguration.LocalDeclaration
         false -> when (shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility, isInlineFunction)) {
@@ -34,7 +34,8 @@ fun FirTypeRef.approximateDeclarationType(
     if (approximatedType.contains { type -> type.attributes.any { !it.keepInInferredDeclarationType } }) {
         approximatedType = UnnecessaryAttributesRemover(session).substituteOrSelf(approximatedType)
     }
-    return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() }
+    @Suppress("UNCHECKED_CAST")
+    return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() } as T
 }
 
 private class UnnecessaryAttributesRemover(session: FirSession) : AbstractConeSubstitutor(session.typeContext) {

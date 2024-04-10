@@ -290,7 +290,7 @@ fun ConeKotlinType.toFirResolvedTypeRef(
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
 
-fun FirTypeRef.withoutEnhancedNullability(): FirTypeRef {
+fun FirTypeRef.withoutEnhancedNullability(): FirResolvedTypeRef {
     require(this is FirResolvedTypeRef)
     if (!hasEnhancedNullability()) return this
     return buildResolvedTypeRef {
