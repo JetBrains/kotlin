@@ -214,7 +214,6 @@ abstract class LlvmOptimizationPipeline(
                 LLVMSetTimePasses(1)
             }
             executeCustomPreprocessing(config, llvmModule)
-            if (passes.isEmpty()) return
             val passDescription = passes.joinToString(",")
             logger?.log {
                 """
@@ -228,6 +227,7 @@ abstract class LlvmOptimizationPipeline(
                     passes: ${passDescription}
                 """.trimIndent()
             }
+            if (passes.isEmpty()) return
             val errorCode = LLVMRunPasses(llvmModule, passDescription, targetMachine, options)
             require(errorCode == null) {
                 LLVMGetErrorMessage(errorCode)!!.toKString()
