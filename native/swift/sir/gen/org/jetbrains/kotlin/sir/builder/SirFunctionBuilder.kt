@@ -18,23 +18,23 @@ import org.jetbrains.kotlin.sir.impl.SirFunctionImpl
 class SirFunctionBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
+    var documentation: String? = null
     lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
     lateinit var name: String
     val parameters: MutableList<SirParameter> = mutableListOf()
     lateinit var returnType: SirType
-    var documentation: String? = null
 
     fun build(): SirFunction {
         return SirFunctionImpl(
             origin,
             visibility,
+            documentation,
             kind,
             body,
             name,
             parameters,
             returnType,
-            documentation,
         )
     }
 
@@ -56,11 +56,11 @@ inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() 
     val copyBuilder = SirFunctionBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
+    copyBuilder.documentation = original.documentation
     copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     copyBuilder.name = original.name
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.returnType = original.returnType
-    copyBuilder.documentation = original.documentation
     return copyBuilder.apply(init).build()
 }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.sir.SirVisibility
 internal class SirImportImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
-    override var documentation: String?,
+    override val documentation: String?,
     override val moduleName: String,
 ) : SirImport() {
     override lateinit var parent: SirDeclarationParent

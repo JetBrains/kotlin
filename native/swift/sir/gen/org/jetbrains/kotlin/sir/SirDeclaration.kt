@@ -14,6 +14,6 @@ package org.jetbrains.kotlin.sir
 sealed interface SirDeclaration : SirElement {
     val origin: SirOrigin
     val visibility: SirVisibility
-    var documentation: String?
+    val documentation: String?
     var parent: SirDeclarationParent
 }

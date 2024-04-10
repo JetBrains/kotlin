@@ -18,21 +18,21 @@ import org.jetbrains.kotlin.sir.impl.SirVariableImpl
 class SirVariableBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
+    var documentation: String? = null
     lateinit var name: String
     lateinit var type: SirType
     lateinit var getter: SirGetter
     var setter: SirSetter? = null
-    var documentation: String? = null
 
     fun build(): SirVariable {
         return SirVariableImpl(
             origin,
             visibility,
+            documentation,
             name,
             type,
             getter,
             setter,
-            documentation,
         )
     }
 
@@ -54,10 +54,10 @@ inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() 
     val copyBuilder = SirVariableBuilder()
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
+    copyBuilder.documentation = original.documentation
     copyBuilder.name = original.name
     copyBuilder.type = original.type
     copyBuilder.getter = original.getter
     copyBuilder.setter = original.setter
-    copyBuilder.documentation = original.documentation
     return copyBuilder.apply(init).build()
 }

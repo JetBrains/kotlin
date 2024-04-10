@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
+import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirCallableKind
 
 internal class SirInitFromKtSymbol(
@@ -21,36 +22,32 @@ internal class SirInitFromKtSymbol(
     override val sirSession: SirSession,
 ) : SirInit(), SirFromKtSymbol {
 
-    override val origin: SirOrigin
     override val visibility: SirVisibility = SirVisibility.PUBLIC
-    override val kind: SirCallableKind
-    override var body: SirFunctionBody? = null
-    override val isFailable: Boolean
-    override val parameters: MutableList<SirParameter> = mutableListOf()
-    override val initKind: SirInitializerKind
-    override var documentation: String?
+    override val isFailable: Boolean = false
+    override val initKind: SirInitializerKind = SirInitializerKind.ORDINARY
+
+    override val origin: SirOrigin by lazyWithSessions {
+        KotlinSource(ktSymbol)
+    }
+    override val kind: SirCallableKind by lazyWithSessions {
+        ktSymbol.sirCallableKind
+    }
+    override val parameters: MutableList<SirParameter> by lazyWithSessions {
+        mutableListOf<SirParameter>().apply {
+            ktSymbol.valueParameters.mapTo(this) {
+                SirParameter(argumentName = it.name.asString(), type = it.returnType.translateType())
+            }
+        }
+    }
+    override val documentation: String? by lazyWithSessions {
+        ktSymbol.documentation()
+    }
+
     override var parent: SirDeclarationParent
         get() = withSirAnalyse(sirSession, analysisApiSession) {
             ktSymbol.getSirParent()
         }
         set(_) = Unit
 
-    init {
-        withSirAnalyse(sirSession, analysisApiSession) {
-            origin = KotlinSource(ktSymbol)
-
-            kind = ktSymbol.sirCallableKind
-            isFailable = false
-            initKind = SirInitializerKind.ORDINARY
-
-            ktSymbol.valueParameters.mapTo(parameters) {
-                SirParameter(
-                    argumentName = it.name.asString(),
-                    type = it.returnType.translateType()
-                )
-            }
-
-            documentation = ktSymbol.documentation()
-        }
-    }
+    override var body: SirFunctionBody? = null
 }

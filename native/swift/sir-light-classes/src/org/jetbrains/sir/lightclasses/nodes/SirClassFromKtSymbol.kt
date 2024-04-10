@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
+import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 
 internal class SirClassFromKtSymbol(
     override val ktSymbol: KtNamedClassOrObjectSymbol,
@@ -25,10 +26,18 @@ internal class SirClassFromKtSymbol(
     override val sirSession: SirSession,
 ) : SirClass(), SirFromKtSymbol {
 
-    override val origin: SirOrigin
-    override val visibility: SirVisibility = SirVisibility.PUBLIC
-    override var documentation: String?
-    override val name: String
+    override val origin: SirOrigin by lazyWithSessions {
+        KotlinSource(ktSymbol)
+    }
+    override val visibility: SirVisibility by lazyWithSessions {
+        SirVisibility.PUBLIC
+    }
+    override val documentation: String? by lazyWithSessions {
+        ktSymbol.documentation()
+    }
+    override val name: String by lazyWithSessions {
+        ktSymbol.name.asString()
+    }
 
     override var parent: SirDeclarationParent
         get() = withSirAnalyse(sirSession, analysisApiSession) {
@@ -36,21 +45,15 @@ internal class SirClassFromKtSymbol(
         }
         set(_) = Unit
 
-    init {
-        name = ktSymbol.name.asString()
-        origin = KotlinSource(ktSymbol)
-        documentation = ktSymbol.documentation()
-    }
-
-    override val declarations: List<SirDeclaration> by lazy {
+    override val declarations: List<SirDeclaration> by lazyWithSessions {
         childDeclarations() + syntheticDeclarations()
     }
 
-    private fun childDeclarations(): List<SirDeclaration> = withSirAnalyse(sirSession, analysisApiSession) {
+    context(SirSession, KtAnalysisSession)
+    private fun childDeclarations(): List<SirDeclaration> =
         ktSymbol.getCombinedDeclaredMemberScope()
             .extractDeclarations()
             .toList()
-    }
 
     private fun syntheticDeclarations(): List<SirDeclaration> = if (ktSymbol.classKind == KtClassKind.OBJECT)
         listOf<SirDeclaration>(

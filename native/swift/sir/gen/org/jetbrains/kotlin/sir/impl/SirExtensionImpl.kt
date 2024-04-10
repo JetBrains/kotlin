@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.sir.*
 internal class SirExtensionImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
-    override var documentation: String?,
+    override val documentation: String?,
     override val declarations: MutableList<SirDeclaration>,
     override val extendedType: SirType,
 ) : SirExtension() {

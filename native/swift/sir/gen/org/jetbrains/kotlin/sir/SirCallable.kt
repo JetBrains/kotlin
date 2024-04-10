@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.sir
 sealed class SirCallable : SirElementBase(), SirDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
-    abstract override var documentation: String?
+    abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract val kind: SirCallableKind
     abstract var body: SirFunctionBody?

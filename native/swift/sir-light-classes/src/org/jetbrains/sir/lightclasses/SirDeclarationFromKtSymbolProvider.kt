@@ -52,11 +52,6 @@ public class SirDeclarationFromKtSymbolProvider(
                 )
             }
             else -> TODO("encountered unknown symbol type - $ktSymbol. Error system should be reworked KT-65980")
-        }.also {
-            val parent = getSirParent()
-            if (parent is SirMutableDeclarationContainer) {
-                parent.declarations += it
-            }
         }
     }
 }

@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.sir.*
 internal class SirVariableImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
+    override val documentation: String?,
     override val name: String,
     override val type: SirType,
     override val getter: SirGetter,
     override val setter: SirSetter?,
-    override var documentation: String?,
 ) : SirVariable() {
     override lateinit var parent: SirDeclarationParent
 }

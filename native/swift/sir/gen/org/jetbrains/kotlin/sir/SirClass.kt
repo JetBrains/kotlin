@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.sir
 abstract class SirClass : SirDeclarationContainer(), SirNamedDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
-    abstract override var documentation: String?
+    abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>

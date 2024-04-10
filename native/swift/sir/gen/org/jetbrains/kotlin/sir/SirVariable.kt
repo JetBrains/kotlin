@@ -14,10 +14,10 @@ package org.jetbrains.kotlin.sir
 abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationParent {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
+    abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract val name: String
     abstract val type: SirType
     abstract val getter: SirGetter
     abstract val setter: SirSetter?
-    abstract override var documentation: String?
 }

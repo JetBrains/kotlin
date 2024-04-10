@@ -45,7 +45,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = rootElement
         +field("origin", originType)
         +field("visibility", swiftVisibilityType)
-        +field(name = "documentation", string, nullable = true, mutable = true)
+        +field(name = "documentation", string, nullable = true, mutable = false)
         +field("parent", declarationParent, mutable = true, isChild = false) {
             useInBaseTransformerDetection = false
         }
@@ -115,8 +115,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("name", string)
         +listField("parameters", parameterType)
         +field("returnType", typeType)
-
-        +field(name = "documentation", string, nullable = true, mutable = true)
     }
 
     val accessor by sealedElement {
@@ -144,8 +142,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
         +field("getter", getter)
         +field("setter", setter, nullable = true)
-
-        +field(name = "documentation", string, nullable = true, mutable = true)
     }
 
     val import by element {
