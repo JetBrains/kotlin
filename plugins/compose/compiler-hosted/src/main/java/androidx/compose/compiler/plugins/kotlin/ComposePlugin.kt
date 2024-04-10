@@ -310,6 +310,16 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                     "suppressKotlinVersionCompatibilityCheck flag is deprecated for Compose compiler bundled with Kotlin releases."
                 )
             }
+
+            val decoysEnabled =
+                configuration.get(ComposeConfiguration.DECOYS_ENABLED_KEY, false)
+            if (decoysEnabled) {
+                msgCollector?.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Decoys generation should be disabled for Compose Multiplatform projects"
+                )
+                return false
+            }
             return true
         }
 
