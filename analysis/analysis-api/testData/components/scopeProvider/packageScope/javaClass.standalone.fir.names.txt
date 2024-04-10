@@ -1,8 +1,6 @@
 Classifier names:
-C
-I
-O
+JavaClass
+KotlinClass
+SuperClass
 
 Callable names:
-testFunction
-testValue

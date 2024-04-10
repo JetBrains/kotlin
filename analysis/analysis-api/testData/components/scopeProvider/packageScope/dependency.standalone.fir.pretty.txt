@@ -34,6 +34,12 @@ internal fun dependency.api.InternalC1.internalBarApi2(): dependency.api.Interna
 
 private fun dependency.api.PrivateC1.privateBarApi2(): dependency.api.I
 
+interface FakeI : dependency.api.I
+
+internal interface InternalFakeI : dependency.api.I
+
+private interface PrivateFakeI : dependency.api.I
+
 interface I
 
 internal interface InternalI
@@ -45,9 +51,3 @@ class C1 : dependency.api.I
 internal class InternalC1 : dependency.api.InternalI
 
 private class PrivateC1 : dependency.api.I
-
-interface FakeI : dependency.api.I
-
-internal interface InternalFakeI : dependency.api.I
-
-private interface PrivateFakeI : dependency.api.I

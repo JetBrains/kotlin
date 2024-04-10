@@ -720,6 +720,96 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
+  classIdIfNonLocal: dependency/api/FakeI
+  classKind: INTERFACE
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: ABSTRACT
+  name: FakeI
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: dependency/api/I
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: dependency/api/InternalFakeI
+  classKind: INTERFACE
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: ABSTRACT
+  name: InternalFakeI
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: dependency/api/I
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Internal
+  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: dependency/api/PrivateFakeI
+  classKind: INTERFACE
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: ABSTRACT
+  name: PrivateFakeI
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: dependency/api/I
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Private
+  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
   classIdIfNonLocal: dependency/api/I
   classKind: INTERFACE
   companionObject: null
@@ -895,95 +985,5 @@ KtNamedClassOrObjectSymbol:
   visibility: Private
   getContainingFileSymbol: KtFileSymbol(C1.kt)
   getContainingModule: KtSourceModule "Sources of dependency"
-  annotationApplicableTargets: null
-  deprecationStatus: null
-
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: dependency/api/FakeI
-  classKind: INTERFACE
-  companionObject: null
-  contextReceivers: []
-  isActual: false
-  isData: false
-  isExpect: false
-  isExternal: false
-  isFun: false
-  isInline: false
-  isInner: false
-  modality: ABSTRACT
-  name: FakeI
-  origin: SOURCE
-  superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: dependency/api/I
-  ]
-  symbolKind: TOP_LEVEL
-  typeParameters: []
-  visibility: Public
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
-  getContainingModule: KtSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
-
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: dependency/api/InternalFakeI
-  classKind: INTERFACE
-  companionObject: null
-  contextReceivers: []
-  isActual: false
-  isData: false
-  isExpect: false
-  isExternal: false
-  isFun: false
-  isInline: false
-  isInner: false
-  modality: ABSTRACT
-  name: InternalFakeI
-  origin: SOURCE
-  superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: dependency/api/I
-  ]
-  symbolKind: TOP_LEVEL
-  typeParameters: []
-  visibility: Internal
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
-  getContainingModule: KtSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
-
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: dependency/api/PrivateFakeI
-  classKind: INTERFACE
-  companionObject: null
-  contextReceivers: []
-  isActual: false
-  isData: false
-  isExpect: false
-  isExternal: false
-  isFun: false
-  isInline: false
-  isInner: false
-  modality: ABSTRACT
-  name: PrivateFakeI
-  origin: SOURCE
-  superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: dependency/api/I
-  ]
-  symbolKind: TOP_LEVEL
-  typeParameters: []
-  visibility: Private
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
-  getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

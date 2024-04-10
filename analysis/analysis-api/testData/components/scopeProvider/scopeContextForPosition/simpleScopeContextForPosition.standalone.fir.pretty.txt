@@ -1,0 +1,159 @@
+element: e
+implicit receivers:
+  type: A
+  owner symbol: KtFirAnonymousFunctionSymbol
+
+  type: B
+  owner symbol: KtFirAnonymousFunctionSymbol
+
+  type: C
+  owner symbol: KtFirNamedClassOrObjectSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 4
+      fun memberInA()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 4
+      fun memberInB()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 1
+      val localVarA: kotlin.Int
+    constructors: 0
+
+  LocalScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 1
+      lambdaArg: kotlin.String
+    constructors: 0
+
+  LocalScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 2
+      val localVarB: kotlin.Int
+      fun localFunB()
+    constructors: 0
+
+  LocalScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 1
+      param: kotlin.String?
+    constructors: 0
+
+  TypeParameterScope, index = 10
+    packages: 0
+    classifiers: 1
+      T
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 11
+    packages: 0
+    classifiers: 2
+      class NestedInC
+      class NestedInJavaClass
+    callables: 4
+      fun <T> methodInC(param: kotlin.String?)
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  StaticMemberScope, index = 12
+    packages: 0
+    classifiers: 1
+      class NestedInC
+    callables: 0
+    constructors: 0
+
+  StaticMemberScope, index = 13
+    packages: 0
+    classifiers: 1
+      class NestedInJavaClass
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 14
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 15
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 4
+      class A
+      class B
+      class C : JavaClass()
+      class JavaClass
+    callables: 4
+      fun withA(f: A.() -> kotlin.Unit)
+      fun withB(f: B.() -> kotlin.Unit)
+      fun withJavaClass(f: JavaClass.() -> kotlin.Unit)
+      fun topLevel(): kotlin.Int
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 16
+
+  DefaultSimpleImportingScope, index = 17
+
+  ExplicitStarImportingScope, index = 18
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 19
+
