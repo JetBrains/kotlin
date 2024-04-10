@@ -1,0 +1,29 @@
+class Controller<T> {
+    fun yield(t: T): Boolean = true
+}
+
+fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
+
+interface A<E>
+
+interface B : A<Int>
+interface C : A<Long>
+
+fun <F> Controller<*>.baz(a: A<F>, f: F) {}
+
+fun <T> bar(a: A<T>, w: T) {
+    generate {
+        yield("")
+        baz(a, w)
+
+        if (a is B) {
+            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, 1)
+            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, <!TYPE_MISMATCH!>w<!>)
+            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, <!TYPE_MISMATCH!>""<!>)
+        }
+
+        if (a is B || a is C) {
+            baz(a, w)
+        }
+    }
+}

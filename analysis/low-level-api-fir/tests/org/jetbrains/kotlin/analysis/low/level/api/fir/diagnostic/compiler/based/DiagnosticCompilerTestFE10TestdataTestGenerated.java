@@ -17688,6 +17688,52 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/csForks")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CsForks {
+          @Test
+          public void testAllFilesPresentInCsForks() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/csForks"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          }
+
+          @Test
+          @TestMetadata("postponingForksNecessary.kt")
+          public void testPostponingForksNecessary() {
+            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/postponingForksNecessary.kt");
+          }
+
+          @Test
+          @TestMetadata("postponingForksNecessaryWithLambda.kt")
+          public void testPostponingForksNecessaryWithLambda() {
+            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/postponingForksNecessaryWithLambda.kt");
+          }
+
+          @Test
+          @TestMetadata("relatedToOuter.kt")
+          public void testRelatedToOuter() {
+            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/relatedToOuter.kt");
+          }
+
+          @Test
+          @TestMetadata("relatedToOuterGreen.kt")
+          public void testRelatedToOuterGreen() {
+            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/relatedToOuterGreen.kt");
+          }
+
+          @Test
+          @TestMetadata("simple.kt")
+          public void testSimple() {
+            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/simple.kt");
+          }
+
+          @Test
+          @TestMetadata("simpleGreen.kt")
+          public void testSimpleGreen() {
+            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/simpleGreen.kt");
+          }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/regresssions")
         @TestDataPath("$PROJECT_ROOT")
         public class Regresssions {
