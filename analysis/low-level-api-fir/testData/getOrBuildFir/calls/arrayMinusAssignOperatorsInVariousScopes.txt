@@ -1,6 +1,6 @@
 KT element: KtBinaryExpression
 FIR element: FirFunctionCallImpl
-FIR source kind: DesugaredArrayMinusAssign
+FIR source kind: DesugaredMinusAssign
 
 FIR element rendered:
 R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/Foo.Companion.get|(R|<local>/<index_0>|).R|kotlin/Int.minus|(Int(5)))

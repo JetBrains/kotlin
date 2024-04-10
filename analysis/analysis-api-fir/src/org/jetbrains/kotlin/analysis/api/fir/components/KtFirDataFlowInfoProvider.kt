@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.KtFakeSourceElementKind.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
+import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot
 import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot.VariableReassignment
@@ -361,7 +362,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
             val targetSource = lValue.source
             if (targetSource != null) {
                 when (targetSource.kind) {
-                    is DesugaredCompoundAssignment, is DesugaredIncrementOrDecrement -> return true
+                    is DesugaredAugmentedAssign, is DesugaredIncrementOrDecrement -> return true
                     else -> {}
                 }
             }

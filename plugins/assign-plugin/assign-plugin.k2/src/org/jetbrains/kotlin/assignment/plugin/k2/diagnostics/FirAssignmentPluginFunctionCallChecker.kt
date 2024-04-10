@@ -44,7 +44,7 @@ object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker(MppChecke
     }
 
     private fun FirFunctionCall.isOverloadAssignCallCandidate() =
-        arguments.size == 1 && source?.kind == KtFakeSourceElementKind.DesugaredCompoundAssignment
+        arguments.size == 1 && source?.kind == KtFakeSourceElementKind.AssignmentPluginAltered
 
     private fun FirFunctionCall.isOverloadedAssignCallError(session: FirSession, diagnostic: ConeDiagnostic): Boolean {
         val functionName = when (diagnostic) {

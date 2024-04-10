@@ -51,7 +51,7 @@ class FirAssignmentPluginAssignAltererExtension(
         val leftResolvedType = leftSymbol.resolvedReturnTypeRef
         val rightArgument = variableAssignment.rValue
         return buildFunctionCall {
-            source = variableAssignment.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+            source = variableAssignment.source?.fakeElement(KtFakeSourceElementKind.AssignmentPluginAltered)
             explicitReceiver = buildPropertyAccessExpression {
                 source = leftArgument.source
                 coneTypeOrNull = leftResolvedType.type

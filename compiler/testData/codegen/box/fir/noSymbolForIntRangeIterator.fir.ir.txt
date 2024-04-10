@@ -42,9 +42,9 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Unit
             VALUE_PARAMETER name:it index:0 type:kotlin.String
             BLOCK_BODY
-              CALL 'public final fun <set-result> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+              CALL 'public final fun <set-result> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
                 <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                  $this: CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
                   other: BLOCK type=kotlin.Int origin=ELVIS
                     VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]
                       CALL 'public final fun toIntOrNull (): kotlin.Int? declared in kotlin.text' type=kotlin.Int? origin=null

@@ -185,9 +185,9 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
-      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
           other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.div' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun div ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
@@ -202,14 +202,14 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
-      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
           other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.divAssign' type=kotlin.Int origin=null
-      CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=DIVEQ
         $this: GET_VAR '<this>: <root>.Result declared in <root>.divAssign' type=<root>.Result origin=null
         <set-?>: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIVEQ
-          $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=DIVEQ
             $this: GET_VAR '<this>: <root>.Result declared in <root>.divAssign' type=<root>.Result origin=null
           other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'other: <root>.Result declared in <root>.divAssign' type=<root>.Result origin=null
@@ -219,9 +219,9 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
-      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
           other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.minus' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun minus ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
@@ -236,14 +236,14 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
-      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
           other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.minusAssign' type=kotlin.Int origin=null
-      CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=MINUSEQ
         $this: GET_VAR '<this>: <root>.Result declared in <root>.minusAssign' type=<root>.Result origin=null
         <set-?>: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUSEQ
-          $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=MINUSEQ
             $this: GET_VAR '<this>: <root>.Result declared in <root>.minusAssign' type=<root>.Result origin=null
           other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'other: <root>.Result declared in <root>.minusAssign' type=<root>.Result origin=null
@@ -253,9 +253,9 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
-      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
           other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.plus' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun plus ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
@@ -270,14 +270,14 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
-      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
           other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.plusAssign' type=kotlin.Int origin=null
-      CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=PLUSEQ
         $this: GET_VAR '<this>: <root>.Result declared in <root>.plusAssign' type=<root>.Result origin=null
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=PLUSEQ
             $this: GET_VAR '<this>: <root>.Result declared in <root>.plusAssign' type=<root>.Result origin=null
           other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'other: <root>.Result declared in <root>.plusAssign' type=<root>.Result origin=null
@@ -287,9 +287,9 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
-      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
           other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.times' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun times ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
@@ -304,14 +304,14 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
-      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
           other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.timesAssign' type=kotlin.Int origin=null
-      CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=MULTEQ
         $this: GET_VAR '<this>: <root>.Result declared in <root>.timesAssign' type=<root>.Result origin=null
         <set-?>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MULTEQ
-          $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=MULTEQ
             $this: GET_VAR '<this>: <root>.Result declared in <root>.timesAssign' type=<root>.Result origin=null
           other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'other: <root>.Result declared in <root>.timesAssign' type=<root>.Result origin=null

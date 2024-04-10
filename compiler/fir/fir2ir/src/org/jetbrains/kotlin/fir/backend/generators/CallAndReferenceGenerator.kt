@@ -126,7 +126,9 @@ class CallAndReferenceGenerator(
                     conversionScope.parentFromStack()
                 ).symbol
                 val property = propertySymbol.syntheticProperty
-                val referencedPropertyGetterSymbol = declarationStorage.getIrFunctionSymbol(property.getter.delegate.unwrapUseSiteSubstitutionOverrides().symbol) as? IrSimpleFunctionSymbol ?: return null
+                val referencedPropertyGetterSymbol =
+                    declarationStorage.getIrFunctionSymbol(property.getter.delegate.unwrapUseSiteSubstitutionOverrides().symbol) as? IrSimpleFunctionSymbol
+                        ?: return null
                 val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
                     property.setter?.delegate?.unwrapUseSiteSubstitutionOverrides()?.symbol?.let {
                         declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol? ?: return null
@@ -325,7 +327,7 @@ class CallAndReferenceGenerator(
                 kind is KtFakeSourceElementKind.DesugaredPostfixInc -> IrDynamicOperator.POSTFIX_INCREMENT
                 kind is KtFakeSourceElementKind.DesugaredPostfixDec -> IrDynamicOperator.POSTFIX_DECREMENT
 
-                kind is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign -> when (calleeReference.resolved?.name) {
+                kind is KtFakeSourceElementKind.DesugaredAugmentedAssign -> when (calleeReference.resolved?.name) {
                     OperatorNameConventions.SET -> IrDynamicOperator.EQ
                     OperatorNameConventions.GET -> IrDynamicOperator.ARRAY_ACCESS
                     else -> error("Unexpected name")
@@ -490,8 +492,10 @@ class CallAndReferenceGenerator(
                      */
                     if (
                         explicitReceiverExpression != null &&
-                        calleeReference.source?.kind is KtFakeSourceElementKind.DesugaredCompoundAssignment &&
-                        callOrigin != null
+                        calleeReference.source?.kind is KtFakeSourceElementKind.DesugaredAugmentedAssign &&
+                        callOrigin != null &&
+                        // This is to reproduce K1 behavior. K1 does not set origin for augmented assignment-originated `get` and `set`
+                        firSymbol.name != OperatorNameConventions.GET && firSymbol.name != OperatorNameConventions.SET
                     ) {
                         explicitReceiverExpression.updateStatementOrigin(callOrigin)
                     }
@@ -527,6 +531,7 @@ class CallAndReferenceGenerator(
                                 typeArgumentsCount = property.typeParameters.size,
                                 valueArgumentsCount = property.contextReceivers.size,
                                 origin = incOrDeclSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
+                                    ?: augmentedAssignSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
                                     ?: IrStatementOrigin.GET_PROPERTY,
                                 superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                             )
@@ -1072,7 +1077,10 @@ class CallAndReferenceGenerator(
                 val parameterType = parameter.returnTypeRef.coneType
                 val unwrappedParameterType = if (parameter.isVararg) parameterType.arrayElementType()!! else parameterType
                 val samFunctionType = getFunctionTypeForPossibleSamType(unwrappedParameterType)
-                irArgument = irArgument.applySuspendConversionIfNeeded(argument, substitutor.substituteOrSelf(samFunctionType ?: unwrappedParameterType))
+                irArgument = irArgument.applySuspendConversionIfNeeded(
+                    argument,
+                    substitutor.substituteOrSelf(samFunctionType ?: unwrappedParameterType)
+                )
                 irArgument = irArgument.applySamConversionIfNeeded(argument, parameter)
             }
         }
@@ -1303,7 +1311,8 @@ class CallAndReferenceGenerator(
             is IrFieldAccessExpression -> {
                 val firDeclaration = qualifiedAccess.toResolvedCallableSymbol()!!.fir.propertyIfBackingField
                 // Top-level properties are considered as static in IR
-                val fieldIsStatic = firDeclaration.isStatic || (firDeclaration is FirProperty && !firDeclaration.isLocal && firDeclaration.containingClassLookupTag() == null)
+                val fieldIsStatic =
+                    firDeclaration.isStatic || (firDeclaration is FirProperty && !firDeclaration.isLocal && firDeclaration.containingClassLookupTag() == null)
                 if (!fieldIsStatic) {
                     receiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                 }

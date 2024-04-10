@@ -46,19 +46,19 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
   FUN name:testProperty visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun plusAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
-        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=GET_PROPERTY
+        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=PLUSEQ
         s: CONST String type=kotlin.String value="+="
       CALL 'public final fun minusAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MINUSEQ
-        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=GET_PROPERTY
+        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=MINUSEQ
         s: CONST String type=kotlin.String value="-="
       CALL 'public final fun timesAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MULTEQ
-        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=GET_PROPERTY
+        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=MULTEQ
         s: CONST String type=kotlin.String value="*="
       CALL 'public final fun divAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=DIVEQ
-        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=GET_PROPERTY
+        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=DIVEQ
         s: CONST String type=kotlin.String value="/="
       CALL 'public final fun remAssign (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PERCEQ
-        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=GET_PROPERTY
+        $receiver: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=PERCEQ
         s: CONST String type=kotlin.String value="%="
   FUN name:testVariable visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY

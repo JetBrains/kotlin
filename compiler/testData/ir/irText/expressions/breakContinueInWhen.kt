@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +AllowBreakAndContinueInsideWhen
 // IGNORE_BACKEND: JS_IR
 

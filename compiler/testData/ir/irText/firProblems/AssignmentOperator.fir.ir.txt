@@ -102,59 +102,59 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
           <T>: foo.A
           t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
         <set-?>: CONST Int type=kotlin.Int value=10
-      BLOCK type=kotlin.Unit origin=null
+      BLOCK type=kotlin.Unit origin=PLUSEQ
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:foo.A [val]
           CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=foo.A origin=null
             <T>: foo.A
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
-        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
+        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=PLUSEQ
           $this: GET_VAR 'val tmp_0: foo.A declared in foo.runMe' type=foo.A origin=null
           <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=PLUSEQ
               $this: GET_VAR 'val tmp_0: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=20
-      BLOCK type=kotlin.Unit origin=null
+      BLOCK type=kotlin.Unit origin=MINUSEQ
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:foo.A [val]
           CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=foo.A origin=null
             <T>: foo.A
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
-        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
+        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=MINUSEQ
           $this: GET_VAR 'val tmp_1: foo.A declared in foo.runMe' type=foo.A origin=null
           <set-?>: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUSEQ
-            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=MINUSEQ
               $this: GET_VAR 'val tmp_1: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=20
-      BLOCK type=kotlin.Unit origin=null
+      BLOCK type=kotlin.Unit origin=MULTEQ
         VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:foo.A [val]
           CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=foo.A origin=null
             <T>: foo.A
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
-        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
+        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=MULTEQ
           $this: GET_VAR 'val tmp_2: foo.A declared in foo.runMe' type=foo.A origin=null
           <set-?>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MULTEQ
-            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=MULTEQ
               $this: GET_VAR 'val tmp_2: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=2
-      BLOCK type=kotlin.Unit origin=null
+      BLOCK type=kotlin.Unit origin=DIVEQ
         VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:foo.A [val]
           CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=foo.A origin=null
             <T>: foo.A
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
-        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
+        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=DIVEQ
           $this: GET_VAR 'val tmp_3: foo.A declared in foo.runMe' type=foo.A origin=null
           <set-?>: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIVEQ
-            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=DIVEQ
               $this: GET_VAR 'val tmp_3: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=5
-      BLOCK type=kotlin.Unit origin=null
+      BLOCK type=kotlin.Unit origin=PERCEQ
         VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:foo.A [val]
           CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=foo.A origin=null
             <T>: foo.A
             t: GET_VAR 'val a: foo.A declared in foo.runMe' type=foo.A origin=null
-        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=EQ
+        CALL 'public final fun <set-prop> (<set-?>: kotlin.Int): kotlin.Unit declared in foo.A' type=kotlin.Unit origin=PERCEQ
           $this: GET_VAR 'val tmp_4: foo.A declared in foo.runMe' type=foo.A origin=null
           <set-?>: CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PERCEQ
-            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-prop> (): kotlin.Int declared in foo.A' type=kotlin.Int origin=PERCEQ
               $this: GET_VAR 'val tmp_4: foo.A declared in foo.runMe' type=foo.A origin=null
             other: CONST Int type=kotlin.Int value=3
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit

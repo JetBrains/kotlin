@@ -1,6 +1,6 @@
 KT element: KtNameReferenceExpression
 FIR element: FirVariableAssignmentImpl
-FIR source kind: KtRealSourceElementKind
+FIR source kind: DesugaredPlusAssign
 
 FIR element rendered:
 R|<local>/i| = R|<local>/i|.R|kotlin/Int.plus|(Int(1))

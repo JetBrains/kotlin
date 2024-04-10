@@ -199,10 +199,6 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // and it have a fake source
     object DesugaredSafeCallExpression : KtFakeSourceElementKind()
 
-    // a += 2 --> a = a + 2
-    // where a + 2 will have a fake source
-    object DesugaredCompoundAssignment : KtFakeSourceElementKind()
-
     // `a > b` will be wrapped in FirComparisonExpression
     // with real source which points to initial `a > b` expression
     // and inner FirFunctionCall will refer to a fake source
@@ -215,15 +211,16 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // list[0] -> list.get(0) where name reference will have a fake source element
     object ArrayAccessNameReference : KtFakeSourceElementKind()
 
-    // a[b] += c -> a.set(b, a.get(b) + c) or a.get(b).plusAssign(c)
-    // set, get, '+', and plusAssign will have a fake source element
-    sealed class DesugaredArrayAugmentedAssign : KtFakeSourceElementKind()
-    object DesugaredArrayPlusAssign : DesugaredArrayAugmentedAssign()
-    object DesugaredArrayMinusAssign : DesugaredArrayAugmentedAssign()
-    object DesugaredArrayTimesAssign : DesugaredArrayAugmentedAssign()
-    object DesugaredArrayDivAssign : DesugaredArrayAugmentedAssign()
-    object DesugaredArrayRemAssign : DesugaredArrayAugmentedAssign()
+    // a += b -> a = a + b or a.plusAssign(b)
+    // '=', '+', and plusAssign will have a fake source element
+    sealed class DesugaredAugmentedAssign : KtFakeSourceElementKind()
+    object DesugaredPlusAssign : DesugaredAugmentedAssign()
+    object DesugaredMinusAssign : DesugaredAugmentedAssign()
+    object DesugaredTimesAssign : DesugaredAugmentedAssign()
+    object DesugaredDivAssign : DesugaredAugmentedAssign()
+    object DesugaredRemAssign : DesugaredAugmentedAssign()
 
+    object AssignmentPluginAltered : KtFakeSourceElementKind()
 
     // a[b]++
     // b -> val <index0> = b where b will have fake property

@@ -907,8 +907,8 @@ class Fir2IrVisitor(
             is FirBlock -> {
                 val origin = when (expression.source?.kind) {
                     is KtFakeSourceElementKind.DesugaredForLoop -> IrStatementOrigin.FOR_LOOP
-                    is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign ->
-                        augmentedArrayAssignSourceKindToIrStatementOrigin[expression.source?.kind]
+                    is KtFakeSourceElementKind.DesugaredAugmentedAssign ->
+                        augmentedAssignSourceKindToIrStatementOrigin[expression.source?.kind]
                     is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> incOrDeclSourceKindToIrStatementOrigin[expression.source?.kind]
                     else -> null
                 }

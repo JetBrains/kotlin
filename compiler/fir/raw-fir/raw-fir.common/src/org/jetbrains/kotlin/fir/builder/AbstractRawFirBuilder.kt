@@ -864,6 +864,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
         if (operation in FirOperation.ASSIGNMENTS && operation != FirOperation.ASSIGN) {
             val lhsReceiver = this@generateAssignment?.convert()
+            if (lhsReceiver is FirQualifiedAccessExpression) {
+                @OptIn(FirImplementationDetail::class)
+                lhsReceiver.replaceSource(lhsReceiver.source?.fakeElement(operation.toAugmentedAssignSourceKind()))
+            }
 
             val receiverToUse =
                 if (lhsReceiver is FirSafeCallExpression)

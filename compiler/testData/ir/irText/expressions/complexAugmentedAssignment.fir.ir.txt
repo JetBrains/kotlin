@@ -64,10 +64,10 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.B
       VALUE_PARAMETER name:b index:0 type:<root>.B
       BLOCK_BODY
-        CALL 'public final fun <set-s> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
+        CALL 'public final fun <set-s> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=PLUSEQ
           $this: GET_VAR '<this>: <root>.B declared in <root>.Host.plusAssign' type=<root>.B origin=null
           <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-            $this: CALL 'public final fun <get-s> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-s> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=PLUSEQ
               $this: GET_VAR '<this>: <root>.B declared in <root>.Host.plusAssign' type=<root>.B origin=null
             other: CALL 'public final fun <get-s> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'b: <root>.B declared in <root>.Host.plusAssign' type=<root>.B origin=null

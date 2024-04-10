@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/kt47527.kt
     BLOCK_BODY
       VAR name:result type:kotlin.String [var]
         CONST String type=kotlin.String value=""
-      SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
+      SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=PLUSEQ
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
           $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=PLUSEQ
           other: BLOCK type=kotlin.String origin=ELVIS
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/kt47527.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.box' type=kotlin.String? origin=null
-      SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
+      SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=PLUSEQ
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
           $this: GET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.String origin=PLUSEQ
           other: BLOCK type=kotlin.String origin=ELVIS

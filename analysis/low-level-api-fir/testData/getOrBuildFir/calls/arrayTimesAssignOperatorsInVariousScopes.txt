@@ -1,6 +1,6 @@
 KT element: KtBinaryExpression
 FIR element: FirFunctionCallImpl
-FIR source kind: DesugaredArrayTimesAssign
+FIR source kind: DesugaredTimesAssign
 
 FIR element rendered:
 R|<local>/bar|.R|/get|(Int(1)).R|/timesAssign|(String(bar))

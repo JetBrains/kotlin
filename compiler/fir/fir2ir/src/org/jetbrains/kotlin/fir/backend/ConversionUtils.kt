@@ -550,18 +550,8 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
             source?.kind is KtFakeSourceElementKind.DesugaredComponentFunctionCall ->
                 IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix(DATA_CLASS_COMPONENT_PREFIX).toInt())
 
-            source?.kind is KtFakeSourceElementKind.DesugaredCompoundAssignment -> when (name) {
-                OperatorNameConventions.PLUS_ASSIGN, OperatorNameConventions.PLUS -> IrStatementOrigin.PLUSEQ
-                OperatorNameConventions.MINUS_ASSIGN, OperatorNameConventions.MINUS -> IrStatementOrigin.MINUSEQ
-                OperatorNameConventions.TIMES_ASSIGN, OperatorNameConventions.TIMES -> IrStatementOrigin.MULTEQ
-                OperatorNameConventions.DIV_ASSIGN, OperatorNameConventions.DIV -> IrStatementOrigin.DIVEQ
-                OperatorNameConventions.MOD_ASSIGN, OperatorNameConventions.MOD,
-                OperatorNameConventions.REM_ASSIGN, OperatorNameConventions.REM -> IrStatementOrigin.PERCEQ
-                else -> null
-            }
-
-            source?.kind is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign ->
-                augmentedArrayAssignSourceKindToIrStatementOrigin[source?.kind]
+            source?.kind is KtFakeSourceElementKind.DesugaredAugmentedAssign ->
+                augmentedAssignSourceKindToIrStatementOrigin[source?.kind]
 
             source?.kind is KtFakeSourceElementKind.ArrayAccessNameReference -> when (name) {
                 OperatorNameConventions.GET -> IrStatementOrigin.GET_ARRAY_ELEMENT
@@ -756,6 +746,7 @@ private val PREFIX_POSTFIX_ORIGIN_MAP: Map<NameWithElementType, IrStatementOrigi
 
 fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
     incOrDeclSourceKindToIrStatementOrigin[source?.kind]?.let { return it }
+    augmentedAssignSourceKindToIrStatementOrigin[source?.kind]?.let { return it }
     val callableName = getCallableNameFromIntClassIfAny() ?: return IrStatementOrigin.EQ
     PREFIX_POSTFIX_ORIGIN_MAP[callableName to source?.elementType]?.let { return it }
 
@@ -765,14 +756,6 @@ fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
     return when (kind) {
         KtFakeSourceElementKind.DesugaredPrefixInc, KtFakeSourceElementKind.DesugaredPostfixInc -> IrStatementOrigin.PLUSEQ
         KtFakeSourceElementKind.DesugaredPrefixDec, KtFakeSourceElementKind.DesugaredPostfixDec -> IrStatementOrigin.MINUSEQ
-        KtFakeSourceElementKind.DesugaredCompoundAssignment -> when (callableName) {
-            OperatorNameConventions.PLUS -> IrStatementOrigin.PLUSEQ
-            OperatorNameConventions.MINUS -> IrStatementOrigin.MINUSEQ
-            OperatorNameConventions.TIMES -> IrStatementOrigin.MULTEQ
-            OperatorNameConventions.DIV -> IrStatementOrigin.DIVEQ
-            OperatorNameConventions.REM, OperatorNameConventions.MOD -> IrStatementOrigin.PERCEQ
-            else -> IrStatementOrigin.EQ
-        }
         else -> IrStatementOrigin.EQ
     }
 }
@@ -900,12 +883,12 @@ internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(c: Fi
     return ConeSubstitutorByMap.create(map, c.session)
 }
 
-val augmentedArrayAssignSourceKindToIrStatementOrigin = mapOf(
-    KtFakeSourceElementKind.DesugaredArrayPlusAssign to IrStatementOrigin.PLUSEQ,
-    KtFakeSourceElementKind.DesugaredArrayMinusAssign to IrStatementOrigin.MINUSEQ,
-    KtFakeSourceElementKind.DesugaredArrayTimesAssign to IrStatementOrigin.MULTEQ,
-    KtFakeSourceElementKind.DesugaredArrayDivAssign to IrStatementOrigin.DIVEQ,
-    KtFakeSourceElementKind.DesugaredArrayRemAssign to IrStatementOrigin.PERCEQ
+val augmentedAssignSourceKindToIrStatementOrigin = mapOf(
+    KtFakeSourceElementKind.DesugaredPlusAssign to IrStatementOrigin.PLUSEQ,
+    KtFakeSourceElementKind.DesugaredMinusAssign to IrStatementOrigin.MINUSEQ,
+    KtFakeSourceElementKind.DesugaredTimesAssign to IrStatementOrigin.MULTEQ,
+    KtFakeSourceElementKind.DesugaredDivAssign to IrStatementOrigin.DIVEQ,
+    KtFakeSourceElementKind.DesugaredRemAssign to IrStatementOrigin.PERCEQ
 )
 
 val incOrDeclSourceKindToIrStatementOrigin = mapOf(
