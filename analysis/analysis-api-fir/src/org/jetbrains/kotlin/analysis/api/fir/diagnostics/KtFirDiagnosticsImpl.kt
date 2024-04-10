@@ -411,6 +411,7 @@ internal class MissingDependencySuperclassImpl(
 
 internal class MissingDependencyClassInLambdaParameterImpl(
     override val type: KtType,
+    override val parameterName: Name,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.MissingDependencyClassInLambdaParameter

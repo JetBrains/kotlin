@@ -14,8 +14,8 @@ fun withGenericParameter(arg: (InaccessibleGenericType<*>) -> Unit) {}
 // FILE: end.kt
 
 fun test() {
-    withConcreteParameter(fun(arg) {})
-    withGenericParameter(fun(arg) {})
+    withConcreteParameter(fun(<!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>arg<!>) {})
+    withGenericParameter(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
 
     withConcreteParameter(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleConcreteType<!>) {})
     withGenericParameter(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleGenericType<!><*>) {})
