@@ -25357,6 +25357,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("expectShouldBeJSExportable.kt")
+      public void testExpectShouldBeJSExportable() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectShouldBeJSExportable.kt");
+      }
+
+      @Test
       @TestMetadata("expectTailrec.kt")
       public void testExpectTailrec() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectTailrec.kt");
