@@ -118,6 +118,7 @@ internal interface FirMissingDependencyClassProxy {
 
     enum class MissingTypeOrigin {
         LAMBDA_PARAMETER,
+        LAMBDA_RECEIVER,
         EXPRESSION,
         OTHER
     }
@@ -140,6 +141,10 @@ internal interface FirMissingDependencyClassProxy {
                 missingTypeOrigin == LAMBDA_PARAMETER && missingType.typeArguments.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, withoutArguments, context)
+                }
+                missingTypeOrigin == LAMBDA_RECEIVER && missingType.typeArguments.isEmpty() &&
+                        !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
+                    reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER, withoutArguments, context)
                 }
                 missingTypeOrigin == EXPRESSION &&
                         !languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent) -> {

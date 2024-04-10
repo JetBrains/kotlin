@@ -360,6 +360,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val type: KtType
     }
 
+    interface MissingDependencyClassInLambdaReceiver : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingDependencyClassInLambdaReceiver::class
+        val type: KtType
+    }
+
     interface CreatingAnInstanceOfAbstractClass : KtFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CreatingAnInstanceOfAbstractClass::class
     }

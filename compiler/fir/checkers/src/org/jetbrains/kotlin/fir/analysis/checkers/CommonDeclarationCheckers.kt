@@ -203,6 +203,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirInlinedLambdaNonSourceAnnotationsChecker,
             FirAnonymousFunctionSyntaxChecker,
             FirSuspendAnonymousFunctionChecker,
+            FirMissingDependencyClassForLambdaReceiverChecker,
         )
 
     override val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker>
