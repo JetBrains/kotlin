@@ -29,6 +29,11 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/cli-tests/testData/cli"), Pattern.compile("^(.+)\\.args$"), null, false);
   }
 
+  @TestMetadata("llvmIrDumpDirectoryDoesntExist.args")
+  public void testLlvmIrDumpDirectoryDoesntExist() {
+    runTest("native/native.tests/cli-tests/testData/cli/llvmIrDumpDirectoryDoesntExist.args");
+  }
+
   @TestMetadata("simple.args")
   public void testSimple() {
     runTest("native/native.tests/cli-tests/testData/cli/simple.args");
