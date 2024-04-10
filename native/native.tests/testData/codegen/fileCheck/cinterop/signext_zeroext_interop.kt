@@ -97,72 +97,72 @@ fun box(): String {
 // CHECK-DEFAULTABI: [[CHAR_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*char_id}}
 // CHECK-DEFAULTABI: call signext i8 [[CHAR_ID_PTR]](i8 noundef signext %0)
 
-// CHECK-AAPCS: i8 [[CHAR_ID_BRIDGE]](i8 %0)
-// CHECK-AAPCS: [[CHAR_ID_PTR:%[0-9]+]] = load i8 (i8)*, i8 (i8)** @{{.*char_id}}
-// CHECK-AAPCS: call i8 [[CHAR_ID_PTR]](i8 %0)
+// CHECK-AAPCS: i8 [[CHAR_ID_BRIDGE]](i8 noundef %0)
+// CHECK-AAPCS: [[CHAR_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*char_id}}
+// CHECK-AAPCS: call i8 [[CHAR_ID_PTR]](i8 noundef %0)
 
-// CHECK-WINDOWSX64: i8 [[CHAR_ID_BRIDGE]](i8 %0)
-// CHECK-WINDOWSX64: [[CHAR_ID_PTR:%[0-9]+]] = load i8 (i8)*, i8 (i8)** @{{.*char_id}}
-// CHECK-WINDOWSX64: call i8 [[CHAR_ID_PTR]](i8 %0)
+// CHECK-WINDOWSX64: i8 [[CHAR_ID_BRIDGE]](i8 noundef %0)
+// CHECK-WINDOWSX64: [[CHAR_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*char_id}}
+// CHECK-WINDOWSX64: call i8 [[CHAR_ID_PTR]](i8 noundef %0)
 
 
 // CHECK-DEFAULTABI: zeroext i8 [[UNSIGNED_CHAR_ID_BRIDGE]](i8 noundef zeroext %0)
 // CHECK-DEFAULTABI: [[UNSIGNED_CHAR_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*unsigned_char_id}}
 // CHECK-DEFAULTABI: call zeroext i8 [[UNSIGNED_CHAR_ID_PTR]](i8 noundef zeroext %0)
 
-// CHECK-AAPCS: i8 [[UNSIGNED_CHAR_ID_BRIDGE]](i8 %0)
-// CHECK-AAPCS: [[UNSIGNED_CHAR_ID_PTR:%[0-9]+]] = load i8 (i8)*, i8 (i8)** @{{.*unsigned_char_id}}
-// CHECK-AAPCS: call i8 [[UNSIGNED_CHAR_ID_PTR]](i8 %0)
+// CHECK-AAPCS: i8 [[UNSIGNED_CHAR_ID_BRIDGE]](i8 noundef %0)
+// CHECK-AAPCS: [[UNSIGNED_CHAR_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*unsigned_char_id}}
+// CHECK-AAPCS: call i8 [[UNSIGNED_CHAR_ID_PTR]](i8 noundef %0)
 
-// CHECK-WINDOWSX64: i8 [[UNSIGNED_CHAR_ID_BRIDGE]](i8 %0)
-// CHECK-WINDOWSX64: [[UNSIGNED_CHAR_ID_PTR:%[0-9]+]] = load i8 (i8)*, i8 (i8)** @{{.*unsigned_char_id}}
-// CHECK-WINDOWSX64: call i8 [[UNSIGNED_CHAR_ID_PTR]](i8 %0)
+// CHECK-WINDOWSX64: i8 [[UNSIGNED_CHAR_ID_BRIDGE]](i8 noundef %0)
+// CHECK-WINDOWSX64: [[UNSIGNED_CHAR_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*unsigned_char_id}}
+// CHECK-WINDOWSX64: call i8 [[UNSIGNED_CHAR_ID_PTR]](i8 noundef %0)
 
 
 // CHECK-DEFAULTABI: signext i16 [[SHORT_ID_BRIDGE]](i16 noundef signext %0)
 // CHECK-DEFAULTABI: [[SHORT_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*short_id}}
 // CHECK-DEFAULTABI: call signext i16 [[SHORT_ID_PTR]](i16 noundef signext %0)
 
-// CHECK-AAPCS: i16 [[SHORT_ID_BRIDGE]](i16 %0)
-// CHECK-AAPCS: [[SHORT_ID_PTR:%[0-9]+]] = load i16 (i16)*, i16 (i16)** @{{.*short_id}}
-// CHECK-AAPCS: call i16 [[SHORT_ID_PTR]](i16 %0)
+// CHECK-AAPCS: i16 [[SHORT_ID_BRIDGE]](i16 noundef %0)
+// CHECK-AAPCS: [[SHORT_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*short_id}}
+// CHECK-AAPCS: call i16 [[SHORT_ID_PTR]](i16 noundef %0)
 
-// CHECK-WINDOWSX64: i16 [[SHORT_ID_BRIDGE]](i16 %0)
-// CHECK-WINDOWSX64: [[SHORT_ID_PTR:%[0-9]+]] = load i16 (i16)*, i16 (i16)** @{{.*short_id}}
-// CHECK-WINDOWSX64: call i16 [[SHORT_ID_PTR]](i16 %0)
+// CHECK-WINDOWSX64: i16 [[SHORT_ID_BRIDGE]](i16 noundef %0)
+// CHECK-WINDOWSX64: [[SHORT_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*short_id}}
+// CHECK-WINDOWSX64: call i16 [[SHORT_ID_PTR]](i16 noundef %0)
 
 
 // CHECK-DEFAULTABI: zeroext i16 [[UNSIGNED_SHORT_ID_BRIDGE]](i16 noundef zeroext %0)
 // CHECK-DEFAULTABI: [[UNSIGNED_SHORT_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*unsigned_short_id}}
 // CHECK-DEFAULTABI: call zeroext i16 [[UNSIGNED_SHORT_ID_PTR]](i16 noundef zeroext %0)
 
-// CHECK-AAPCS: i16 [[UNSIGNED_SHORT_ID_BRIDGE]](i16 %0)
-// CHECK-AAPCS: [[UNSIGNED_SHORT_ID_PTR:%[0-9]+]] = load i16 (i16)*, i16 (i16)** @{{.*unsigned_short_id}}
-// CHECK-AAPCS: call i16 [[UNSIGNED_SHORT_ID_PTR]](i16 %0)
+// CHECK-AAPCS: i16 [[UNSIGNED_SHORT_ID_BRIDGE]](i16 noundef %0)
+// CHECK-AAPCS: [[UNSIGNED_SHORT_ID_PTR:%[0-9]+]] = load ptr @{{.*unsigned_short_id}}
+// CHECK-AAPCS: call i16 [[UNSIGNED_SHORT_ID_PTR]](i16 noundef %0)
 
-// CHECK-WINDOWSX64: i16 [[UNSIGNED_SHORT_ID_BRIDGE]](i16 %0)
-// CHECK-WINDOWSX64: [[UNSIGNED_SHORT_ID_PTR:%[0-9]+]] = load i16 (i16)*, i16 (i16)** @{{.*unsigned_short_id}}
-// CHECK-WINDOWSX64: call i16 [[UNSIGNED_SHORT_ID_PTR]](i16 %0)
+// CHECK-WINDOWSX64: i16 [[UNSIGNED_SHORT_ID_BRIDGE]](i16 noundef %0)
+// CHECK-WINDOWSX64: [[UNSIGNED_SHORT_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*unsigned_short_id}}
+// CHECK-WINDOWSX64: call i16 [[UNSIGNED_SHORT_ID_PTR]](i16 noundef %0)
 
 
 // CHECK-DEFAULTABI: i32 [[STATIC_C_FUNCTION_BRIDGE]](i32 noundef %0, i16 noundef signext %1)
 // CHECK-DEFAULTABI: call i32 {{@_.*_knbridge[0-9]+}}(i32 noundef %0, i16 noundef signext %1)
 
-// CHECK-AAPCS: i32 [[STATIC_C_FUNCTION_BRIDGE]](i32 %0, i16 %1)
-// CHECK-AAPCS: call i32 {{@_.*_knbridge[0-9]+}}(i32 %0, i16 %1)
+// CHECK-AAPCS: i32 [[STATIC_C_FUNCTION_BRIDGE]](i32 noundef %0, i16 noundef %1)
+// CHECK-AAPCS: call i32 {{@_.*_knbridge[0-9]+}}(i32 noundef %0, i16 noundef %1)
 
-// CHECK-WINDOWSX64: i32 [[STATIC_C_FUNCTION_BRIDGE]](i32 %0, i16 %1)
-// CHECK-WINDOWSX64: call i32 {{@_.*_knbridge[0-9]+}}(i32 %0, i16 %1)
+// CHECK-WINDOWSX64: i32 [[STATIC_C_FUNCTION_BRIDGE]](i32 noundef %0, i16 noundef %1)
+// CHECK-WINDOWSX64: call i32 {{@_.*_knbridge[0-9]+}}(i32 noundef %0, i16 noundef %1)
 
 
 // CHECK-DEFAULTABI: i32 [[CALLBACK_USER_BRIDGE]](ptr noundef %0)
 // CHECK-DEFAULTABI: [[CALLBACK_USER_PTR:%[0-9]+]] = load ptr, ptr @{{.*callbackUser}}
 // CHECK-DEFAULTABI: call i32 [[CALLBACK_USER_PTR]](ptr noundef %0)
 
-// CHECK-AAPCS: i32 [[CALLBACK_USER_BRIDGE]](i8* %0)
-// CHECK-AAPCS: [[CALLBACK_USER_PTR:%[0-9]+]] = load i32 (i8*)*, i32 (i8*)** @{{.*callbackUser}}
-// CHECK-AAPCS: call i32 [[CALLBACK_USER_PTR]](i8* %0)
+// CHECK-AAPCS: i32 [[CALLBACK_USER_BRIDGE]](ptr noundef %0)
+// CHECK-AAPCS: [[CALLBACK_USER_PTR:%[0-9]+]] = load ptr, ptr @{{.*callbackUser}}
+// CHECK-AAPCS: call i32 [[CALLBACK_USER_PTR]](ptr noundef %0)
 
-// CHECK-WINDOWSX64: i32 [[CALLBACK_USER_BRIDGE]](i8* %0)
-// CHECK-WINDOWSX64: [[CALLBACK_USER_PTR:%[0-9]+]] = load i32 (i8*)*, i32 (i8*)** @{{.*callbackUser}}
-// CHECK-WINDOWSX64: call i32 [[CALLBACK_USER_PTR]](i8* %0)
+// CHECK-WINDOWSX64: i32 [[CALLBACK_USER_BRIDGE]](ptr noundef %0)
+// CHECK-WINDOWSX64: [[CALLBACK_USER_PTR:%[0-9]+]] = load ptr, ptr @{{.*callbackUser}}
+// CHECK-WINDOWSX64: call i32 [[CALLBACK_USER_PTR]](ptr noundef %0)
