@@ -65,11 +65,12 @@ object DeprecatedCallChecker : CallChecker {
 
         if (deprecations.isNotEmpty()) {
             for (deprecation in deprecations) {
-                val targetFqNameIfAny = targetDescriptor.containingDeclaration.fqNameOrNull()
+                val targetFqNameIfAny = targetDescriptor.fqNameOrNull()
                 trace.report(
                     createDeprecationDiagnostic(
                         element, deprecation, languageVersionSettings,
-                        forceWarningForSimpleDeprecation = isSuperCall && targetFqNameIfAny == DeprecationResolver.KOTLIN_LIST
+                        // see the comment at another usage of DeprecationResolver.KOTLIN_LIST_FIRST_LAST
+                        forceWarningForSimpleDeprecation = isSuperCall && targetFqNameIfAny in DeprecationResolver.KOTLIN_LIST_FIRST_LAST
                     )
                 )
             }
