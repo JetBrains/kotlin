@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.nio.file.Path
 
 object FirTestSessionFactoryHelper {
@@ -35,7 +34,6 @@ object FirTestSessionFactoryHelper {
     ): FirSession = FirSessionFactoryHelper.createSessionWithDependencies(
         Name.identifier(moduleName),
         JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices,
         externalSessionProvider = null,
         projectEnvironment,
         languageVersionSettings,
@@ -64,7 +62,6 @@ object FirTestSessionFactoryHelper {
         return FirSessionFactoryHelper.createSessionWithDependencies(
             Name.identifier(moduleName),
             JvmPlatforms.unspecifiedJvmPlatform,
-            JvmPlatformAnalyzerServices,
             externalSessionProvider = null,
             VfsBasedProjectEnvironment(
                 project,

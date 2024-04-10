@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.OptInLanguageVersionSettingsCheckers
@@ -17,10 +16,7 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.js.config.wasmTarget
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -32,13 +28,8 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
-import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
-import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
 val isCommonSourceForPsi: (KtFile) -> Boolean = { it.isCommonSource == true }
 val fileBelongsToModuleForPsi: (KtFile, String) -> Boolean = { file, moduleName -> file.hmppModuleName == moduleName }
@@ -77,7 +68,7 @@ fun <F> prepareJvmSessions(
 
     return prepareSessions(
         files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices, metadataCompilationMode = false, libraryList, isCommonSource, isScript, fileBelongsToModule,
+        metadataCompilationMode = false, libraryList, isCommonSource, isScript, fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJvmSessionFactory.createLibrarySession(
                 rootModuleName,
@@ -147,7 +138,7 @@ fun <F> prepareJsSessions(
     icData: KlibIcData?,
 ): List<SessionWithSources<F>> {
     return prepareSessions(
-        files, configuration, rootModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices,
+        files, configuration, rootModuleName, JsPlatforms.defaultJsPlatform,
         metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
         fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
@@ -195,7 +186,7 @@ fun <F> prepareNativeSessions(
     registerExtraComponents: ((FirSession) -> Unit) = {},
 ): List<SessionWithSources<F>> {
     return prepareSessions(
-        files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices,
+        files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform,
         metadataCompilationMode, libraryList, isCommonSource, isScript = { false },
         fileBelongsToModule, createLibrarySession = { sessionProvider ->
             FirNativeSessionFactory.createLibrarySession(
@@ -239,12 +230,8 @@ fun <F> prepareWasmSessions(
     lookupTracker: LookupTracker?,
     icData: KlibIcData?,
 ): List<SessionWithSources<F>> {
-    val analyzerServices = when (configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
-        WasmTarget.JS -> WasmJsPlatformAnalyzerServices
-        WasmTarget.WASI -> WasmWasiPlatformAnalyzerServices
-    }
     return prepareSessions(
-        files, configuration, rootModuleName, WasmPlatforms.Default, analyzerServices,
+        files, configuration, rootModuleName, WasmPlatforms.Default,
         metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
         fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
@@ -292,7 +279,7 @@ fun <F> prepareCommonSessions(
     createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
     return prepareSessions(
-        files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform, CommonPlatformAnalyzerServices,
+        files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform,
         metadataCompilationMode = true, libraryList, isCommonSource, isScript = { false }, fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirCommonSessionFactory.createLibrarySession(
@@ -334,7 +321,6 @@ private inline fun <F> prepareSessions(
     configuration: CompilerConfiguration,
     rootModuleName: Name,
     targetPlatform: TargetPlatform,
-    analyzerServices: PlatformDependentAnalyzerServices,
     metadataCompilationMode: Boolean,
     libraryList: DependencyListForCliModule,
     isCommonSource: (F) -> Boolean,
@@ -362,19 +348,19 @@ private inline fun <F> prepareSessions(
         metadataCompilationMode || !isMppEnabled -> {
             listOf(
                 createSingleSession(
-                    nonScriptFiles, rootModuleName, libraryList, targetPlatform, analyzerServices,
+                    nonScriptFiles, rootModuleName, libraryList, targetPlatform,
                     sessionProvider, sessionConfigurator, createSourceSession
                 )
             )
         }
 
         hmppModuleStructure == null -> createSessionsForLegacyMppProject(
-            nonScriptFiles, rootModuleName, libraryList, targetPlatform, analyzerServices,
+            nonScriptFiles, rootModuleName, libraryList, targetPlatform,
             sessionProvider, sessionConfigurator, isCommonSource, createSourceSession
         )
 
         else -> createSessionsForHmppProject(
-            nonScriptFiles, rootModuleName, hmppModuleStructure, libraryList, targetPlatform, analyzerServices,
+            nonScriptFiles, rootModuleName, hmppModuleStructure, libraryList, targetPlatform,
             sessionProvider, sessionConfigurator, fileBelongsToModule, createSourceSession
         )
     }
@@ -383,7 +369,7 @@ private inline fun <F> prepareSessions(
     else nonScriptSessions +
             createScriptsSession(
                 scripts, rootModuleName, libraryList, nonScriptSessions.last().session.moduleData,
-                targetPlatform, analyzerServices, sessionProvider, sessionConfigurator, createSourceSession
+                targetPlatform, sessionProvider, sessionConfigurator, createSourceSession
             )
 }
 
@@ -393,7 +379,6 @@ private inline fun <F> createScriptsSession(
     libraryList: DependencyListForCliModule,
     lastModuleData: FirModuleData,
     targetPlatform: TargetPlatform,
-    analyzerServices: PlatformDependentAnalyzerServices,
     sessionProvider: FirProjectSessionProvider,
     noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
     createSourceSession: FirSessionProducer<F>,
@@ -406,7 +391,7 @@ private inline fun <F> createScriptsSession(
             libraryList.friendsDependencies,
             libraryList.moduleDataProvider
         ),
-        targetPlatform, analyzerServices,
+        targetPlatform,
         sessionProvider, sessionConfigurator, createSourceSession
     )
 
@@ -415,7 +400,6 @@ private inline fun <F> createSingleSession(
     rootModuleName: Name,
     libraryList: DependencyListForCliModule,
     targetPlatform: TargetPlatform,
-    analyzerServices: PlatformDependentAnalyzerServices,
     sessionProvider: FirProjectSessionProvider,
     noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
     createFirSession: FirSessionProducer<F>,
@@ -426,7 +410,6 @@ private inline fun <F> createSingleSession(
         libraryList.dependsOnDependencies,
         libraryList.friendsDependencies,
         targetPlatform,
-        analyzerServices
     )
 
     val session = createFirSession(files, platformModuleData, sessionProvider) {
@@ -441,7 +424,6 @@ private inline fun <F> createSessionsForLegacyMppProject(
     rootModuleName: Name,
     libraryList: DependencyListForCliModule,
     targetPlatform: TargetPlatform,
-    analyzerServices: PlatformDependentAnalyzerServices,
     sessionProvider: FirProjectSessionProvider,
     noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
     isCommonSource: (F) -> Boolean,
@@ -453,7 +435,6 @@ private inline fun <F> createSessionsForLegacyMppProject(
         listOf(),
         libraryList.friendsDependencies,
         targetPlatform,
-        analyzerServices,
         isCommon = true
     )
 
@@ -463,7 +444,6 @@ private inline fun <F> createSessionsForLegacyMppProject(
         listOf(commonModuleData),
         libraryList.friendsDependencies,
         targetPlatform,
-        analyzerServices,
         isCommon = false
     )
 
@@ -493,7 +473,6 @@ private inline fun <F> createSessionsForHmppProject(
     hmppModuleStructure: HmppCliModuleStructure,
     libraryList: DependencyListForCliModule,
     targetPlatform: TargetPlatform,
-    analyzerServices: PlatformDependentAnalyzerServices,
     sessionProvider: FirProjectSessionProvider,
     noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
     fileBelongsToModule: (F, String) -> Boolean,
@@ -511,7 +490,6 @@ private inline fun <F> createSessionsForHmppProject(
             dependsOnDependencies = dependencies,
             libraryList.friendsDependencies,
             targetPlatform,
-            analyzerServices,
             isCommon = index < hmppModuleStructure.modules.size - 1
         )
         moduleDataForHmppModule[module] = moduleData

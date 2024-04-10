@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 private typealias SessionStorage = CleanableSoftValueCache<KtModule, LLFirSession>
 
@@ -261,7 +260,6 @@ fun createEmptySession(): FirSession {
             dependsOnDependencies = emptyList(),
             friendDependencies = emptyList(),
             platform = JvmPlatforms.unspecifiedJvmPlatform,
-            analyzerServices = JvmPlatformAnalyzerServices
         )
         registerModuleData(moduleData)
         moduleData.bindSession(this)

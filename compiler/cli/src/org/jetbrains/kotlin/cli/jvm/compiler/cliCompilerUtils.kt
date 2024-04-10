@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.io.File
 
 fun Module.getSourceFiles(
@@ -227,7 +226,6 @@ fun createLibraryListForJvm(
     val binaryModuleData = BinaryModuleData.initialize(
         Name.identifier(moduleName),
         JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices
     )
     val libraryList = DependencyListForCliModule.build(binaryModuleData) {
         dependencies(configuration.jvmClasspathRoots.map { it.toPath() })

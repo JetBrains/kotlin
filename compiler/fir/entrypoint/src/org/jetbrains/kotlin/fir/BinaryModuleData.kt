@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 class BinaryModuleData(
     val regular: FirModuleData,
@@ -18,7 +17,6 @@ class BinaryModuleData(
         fun createDependencyModuleData(
             name: Name,
             platform: TargetPlatform,
-            analyzerServices: PlatformDependentAnalyzerServices,
             capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
         ): FirModuleData {
             return FirModuleDataImpl(
@@ -27,7 +25,6 @@ class BinaryModuleData(
                 dependsOnDependencies = emptyList(),
                 friendDependencies = emptyList(),
                 platform,
-                analyzerServices,
                 capabilities
             )
         }
@@ -35,10 +32,9 @@ class BinaryModuleData(
         fun initialize(
             mainModuleName: Name,
             platform: TargetPlatform,
-            analyzerServices: PlatformDependentAnalyzerServices
         ): BinaryModuleData {
             fun createData(name: String): FirModuleData =
-                createDependencyModuleData(Name.special(name), platform, analyzerServices)
+                createDependencyModuleData(Name.special(name), platform)
 
             return BinaryModuleData(
                 createData("<regular dependencies of $mainModuleName>"),

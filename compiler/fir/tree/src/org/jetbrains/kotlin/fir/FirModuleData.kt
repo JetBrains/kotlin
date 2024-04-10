@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 /**
  * [FirModuleData] is an abstraction over modules module inside FIR compiler.
@@ -55,10 +54,6 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val platform: TargetPlatform
     abstract val isCommon: Boolean
 
-    // TODO: analyzerServices are needed only as default imports providers
-    //   refactor them to make API clearer
-    abstract val analyzerServices: PlatformDependentAnalyzerServices
-
     open val capabilities: FirModuleCapabilities
         get() = FirModuleCapabilities.Empty
 
@@ -85,7 +80,6 @@ class FirModuleDataImpl(
     override val dependsOnDependencies: List<FirModuleData>,
     override val friendDependencies: List<FirModuleData>,
     override val platform: TargetPlatform,
-    override val analyzerServices: PlatformDependentAnalyzerServices,
     override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
     override val isCommon: Boolean = platform.isCommon(),
 ) : FirModuleData() {

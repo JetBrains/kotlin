@@ -167,7 +167,6 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         val binaryModuleData = BinaryModuleData.initialize(
             moduleName,
             targetPlatform,
-            platformAnalyzerServices
         )
         val libraryList = FirFrontendFacade.initializeLibraryList(
             emptyModule, binaryModuleData, targetPlatform, configuration, testServices

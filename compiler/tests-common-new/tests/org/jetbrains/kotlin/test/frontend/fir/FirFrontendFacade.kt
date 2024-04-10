@@ -136,7 +136,7 @@ open class FirFrontendFacade(
         // the special name is required for `KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns`
         // it doesn't seem convincingly legitimate, probably should be refactored
         val moduleName = Name.special("<${mainModule.name}>")
-        val binaryModuleData = BinaryModuleData.initialize(moduleName, targetPlatform, analyzerServices)
+        val binaryModuleData = BinaryModuleData.initialize(moduleName, targetPlatform)
 
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(mainModule)
@@ -157,7 +157,6 @@ open class FirFrontendFacade(
                 dependsOnModules,
                 friendModules,
                 mainModule.targetPlatform,
-                mainModule.targetPlatform.getAnalyzerServices(),
                 isCommon = module.targetPlatform.isCommon(),
             )
 
