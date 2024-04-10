@@ -17747,6 +17747,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
           public void testExponentialErrorsInCSInitial() {
             runTest("compiler/testData/diagnostics/tests/inference/builderInference/regresssions/exponentialErrorsInCSInitial.kt");
           }
+
+          @Test
+          @TestMetadata("exponentialForksInCS.kt")
+          public void testExponentialForksInCS() {
+            runTest("compiler/testData/diagnostics/tests/inference/builderInference/regresssions/exponentialForksInCS.kt");
+          }
         }
 
         @Nested
