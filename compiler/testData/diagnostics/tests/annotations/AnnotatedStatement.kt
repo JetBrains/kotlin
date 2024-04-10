@@ -4,33 +4,38 @@
 
 public @interface JavaAnn {}
 
+// FILE: JavaAnnWithTarget.java
+
+@Target(ElementType.TYPE)
+public @interface JavaAnnWithTarget {}
+
 // FILE: test.kt
 annotation class KotlinAnn
 
 fun foo(list: MutableList<Int>, arr: Array<String>) {
-    @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     when { else -> {} }
 
-    @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     while (true) { break }
 
-    @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     if (true) {}
 
     var x = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>1<!>
 
-    @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     x = 2
 
-    @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     x += 2
 
-    @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     list += 2
 
-    @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     arr[0] = ""
 
-    @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     arr[1] += "*"
 }
