@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCand
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 
 /**
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker
@@ -67,12 +68,12 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
         }
         reportMissingTypes(
             expression.source, missingTypes, context, reporter,
-            missingTypeOrigin = OTHER
+            missingTypeOrigin = Other
         )
         if (missingTypes.isEmpty()) {
             reportMissingTypes(
                 expression.source, missingTypesFromExpression, context, reporter,
-                missingTypeOrigin = EXPRESSION
+                missingTypeOrigin = Expression
             )
         }
     }
@@ -116,11 +117,11 @@ internal interface FirMissingDependencyClassProxy {
         }
     }
 
-    enum class MissingTypeOrigin {
-        LAMBDA_PARAMETER,
-        LAMBDA_RECEIVER,
-        EXPRESSION,
-        OTHER
+    sealed class MissingTypeOrigin {
+        class LambdaParameter(val name: Name) : MissingTypeOrigin()
+        object LambdaReceiver : MissingTypeOrigin()
+        object Expression : MissingTypeOrigin()
+        object Other : MissingTypeOrigin()
     }
 
     fun reportMissingTypes(
@@ -138,15 +139,17 @@ internal interface FirMissingDependencyClassProxy {
             // We report an error MISSING_DEPENDENCY_CLASS generally,
             // but report a deprecation warning in two corner cases instead to avoid breaking code immediately
             when {
-                missingTypeOrigin == LAMBDA_PARAMETER && missingType.typeArguments.isEmpty() &&
+                missingTypeOrigin is LambdaParameter && missingType.typeArguments.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
-                    reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, withoutArguments, context)
+                    reporter.reportOn(
+                        source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, withoutArguments, missingTypeOrigin.name, context
+                    )
                 }
-                missingTypeOrigin == LAMBDA_RECEIVER && missingType.typeArguments.isEmpty() &&
+                missingTypeOrigin is LambdaReceiver && missingType.typeArguments.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER, withoutArguments, context)
                 }
-                missingTypeOrigin == EXPRESSION &&
+                missingTypeOrigin is Expression &&
                         !languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent) -> {
                     reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE, withoutArguments, context)
                 }

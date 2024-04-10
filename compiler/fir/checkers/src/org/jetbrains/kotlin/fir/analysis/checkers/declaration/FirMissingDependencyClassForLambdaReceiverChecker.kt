@@ -27,7 +27,7 @@ object FirMissingDependencyClassForLambdaReceiverChecker :
         considerType(receiverType, missingTypes, context)
         reportMissingTypes(
             declaration.source, missingTypes, context, reporter,
-            missingTypeOrigin = FirMissingDependencyClassProxy.MissingTypeOrigin.LAMBDA_RECEIVER
+            missingTypeOrigin = FirMissingDependencyClassProxy.MissingTypeOrigin.LambdaReceiver
         )
     }
 }
