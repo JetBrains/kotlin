@@ -12,30 +12,53 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtFunctionSymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtFunctionSymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtFunctionSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_SOURCE : KtFunctionSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtFunctionSymbol, printer: PrettyPrinter) {
-            callableSignatureRenderer.renderCallableSignature(symbol, KtTokens.FUN_KEYWORD, printer)
-            functionLikeBodyRenderer.renderBody(symbol, printer)
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtFunctionSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            declarationRenderer.callableSignatureRenderer
+                .renderCallableSignature(analysisSession, symbol, KtTokens.FUN_KEYWORD, declarationRenderer, printer)
+
+            declarationRenderer.functionLikeBodyRenderer.renderBody(analysisSession, symbol, printer)
         }
     }
 
     public object AS_RAW_SIGNATURE : KtFunctionSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtFunctionSymbol, printer: PrettyPrinter) {
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtFunctionSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
             printer {
                 val receiverSymbol = symbol.receiverParameter
                 if (receiverSymbol != null) {
-                    withSuffix(".") { callableReceiverRenderer.renderReceiver(receiverSymbol, printer) }
+                    withSuffix(".") {
+                        declarationRenderer.callableReceiverRenderer
+                            .renderReceiver(analysisSession, receiverSymbol, declarationRenderer, printer)
+                    }
                 }
-                nameRenderer.renderName(symbol, printer)
+
+                declarationRenderer.nameRenderer.renderName(analysisSession, symbol, declarationRenderer, printer)
+
                 printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
-                    typeRenderer.renderType(it.returnType, printer)
+                    declarationRenderer.typeRenderer.renderType(analysisSession, it.returnType, printer)
                 }
-                withPrefix(": ") { returnTypeRenderer.renderReturnType(symbol, printer) }
+
+                withPrefix(": ") {
+                    declarationRenderer.returnTypeRenderer
+                        .renderReturnType(analysisSession, symbol, declarationRenderer, printer)
+                }
             }
         }
     }

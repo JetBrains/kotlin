@@ -61,7 +61,7 @@ internal object TestScopeRenderer {
         printPretty: Boolean
     ): String = prettyPrint {
         if (printPretty) {
-            prettyPrintTypeRenderer.renderType(type, this)
+            prettyPrintTypeRenderer.renderType(analysisSession, type, this)
         } else {
             append(debugRenderer.renderType(type))
         }

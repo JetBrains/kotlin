@@ -25,14 +25,14 @@ open class KtRendererProviderImpl(
 
     override fun renderType(type: KtType, renderer: KtTypeRenderer, position: Variance): String {
         return with(analysisSession) {
-            val approximatedType = KtRendererTypeApproximator.TO_DENOTABLE.approximateType(type, position)
-            prettyPrint { renderer.renderType(approximatedType, this) }
+            val approximatedType = KtRendererTypeApproximator.TO_DENOTABLE.approximateType(analysisSession, type, position)
+            prettyPrint { renderer.renderType(analysisSession, approximatedType, this) }
         }
     }
 
     override fun renderDeclaration(symbol: KtDeclarationSymbol, renderer: KtDeclarationRenderer): String {
         return with(analysisSession) {
-            prettyPrint { renderer.renderDeclaration(symbol, this) }
+            prettyPrint { renderer.renderDeclaration(analysisSession, symbol, this) }
         }
     }
 }

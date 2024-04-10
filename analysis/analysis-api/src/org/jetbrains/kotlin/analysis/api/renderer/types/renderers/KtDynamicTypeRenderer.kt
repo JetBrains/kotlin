@@ -13,13 +13,21 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 
 public interface KtDynamicTypeRenderer {
-    context(KtAnalysisSession, KtTypeRenderer)
-    public fun renderType(type: KtDynamicType, printer: PrettyPrinter)
+    public fun renderType(
+        analysisSession: KtAnalysisSession,
+        type: KtDynamicType,
+        typeRenderer: KtTypeRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_DYNAMIC_WORD : KtDynamicTypeRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderType(type: KtDynamicType, printer: PrettyPrinter) {
-            keywordsRenderer.renderKeyword(KtTokens.DYNAMIC_KEYWORD, type, printer)
+        override fun renderType(
+            analysisSession: KtAnalysisSession,
+            type: KtDynamicType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
+            typeRenderer.keywordsRenderer.renderKeyword(analysisSession, KtTokens.DYNAMIC_KEYWORD, type, printer)
         }
     }
 }

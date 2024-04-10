@@ -13,13 +13,26 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
 public interface KtSuperTypeRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSuperType(type: KtType, symbol: KtClassOrObjectSymbol, printer: PrettyPrinter)
+    public fun renderSuperType(
+        analysisSession: KtAnalysisSession,
+        type: KtType,
+        symbol: KtClassOrObjectSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object WITH_OUT_APPROXIMATION : KtSuperTypeRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSuperType(type: KtType, symbol: KtClassOrObjectSymbol, printer: PrettyPrinter) {
-            typeRenderer.renderType(declarationTypeApproximator.approximateType(type, Variance.OUT_VARIANCE), printer)
+        override fun renderSuperType(
+            analysisSession: KtAnalysisSession,
+            type: KtType,
+            symbol: KtClassOrObjectSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            val approximatedType = declarationRenderer.declarationTypeApproximator
+                .approximateType(analysisSession, type, Variance.OUT_VARIANCE)
+
+            declarationRenderer.typeRenderer.renderType(analysisSession, approximatedType, printer)
         }
     }
 }

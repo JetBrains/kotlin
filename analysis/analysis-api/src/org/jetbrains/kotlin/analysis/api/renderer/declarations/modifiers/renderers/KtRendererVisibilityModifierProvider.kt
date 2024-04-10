@@ -14,44 +14,47 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtRendererVisibilityModifierProvider {
-    context(KtAnalysisSession)
-    public fun getVisibilityModifier(symbol: KtSymbolWithVisibility): KtModifierKeywordToken?
+    public fun getVisibilityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithVisibility): KtModifierKeywordToken?
 
     public fun onlyIf(
-        condition: context(KtAnalysisSession) (symbol: KtSymbolWithVisibility) -> Boolean
+        condition: KtAnalysisSession.(symbol: KtSymbolWithVisibility) -> Boolean
     ): KtRendererVisibilityModifierProvider {
         val self = this
         return object : KtRendererVisibilityModifierProvider {
-            context(KtAnalysisSession)
-            override fun getVisibilityModifier(symbol: KtSymbolWithVisibility): KtModifierKeywordToken? =
-                if (condition(this@KtAnalysisSession, symbol)) self.getVisibilityModifier(symbol)
-                else null
+            override fun getVisibilityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithVisibility): KtModifierKeywordToken? =
+                if (condition(analysisSession, symbol)) self.getVisibilityModifier(analysisSession, symbol) else null
         }
     }
 
     public object NO_IMPLICIT_VISIBILITY : KtRendererVisibilityModifierProvider {
-        context(KtAnalysisSession)
-        override fun getVisibilityModifier(symbol: KtSymbolWithVisibility): KtModifierKeywordToken? {
-            when (symbol) {
-                is KtFunctionSymbol -> if (symbol.isOverride) return null
-                is KtPropertySymbol -> if (symbol.isOverride) return null
-                is KtConstructorSymbol -> {
-                    if ((symbol.getContainingSymbol() as? KtClassOrObjectSymbol)?.classKind == KtClassKind.ENUM_CLASS) return null
+        override fun getVisibilityModifier(
+            analysisSession: KtAnalysisSession,
+            symbol: KtSymbolWithVisibility,
+        ): KtModifierKeywordToken? {
+            with(analysisSession) {
+                when (symbol) {
+                    is KtFunctionSymbol -> if (symbol.isOverride) return null
+                    is KtPropertySymbol -> if (symbol.isOverride) return null
+                    is KtConstructorSymbol -> {
+                        if ((symbol.getContainingSymbol() as? KtClassOrObjectSymbol)?.classKind == KtClassKind.ENUM_CLASS) return null
+                    }
                 }
-            }
 
-            return when (symbol.visibility) {
-                Visibilities.Public -> null
-                JavaVisibilities.PackageVisibility -> null
-                JavaVisibilities.ProtectedStaticVisibility, JavaVisibilities.ProtectedAndPackage -> null
-                else -> WITH_IMPLICIT_VISIBILITY.getVisibilityModifier(symbol)
+                return when (symbol.visibility) {
+                    Visibilities.Public -> null
+                    JavaVisibilities.PackageVisibility -> null
+                    JavaVisibilities.ProtectedStaticVisibility, JavaVisibilities.ProtectedAndPackage -> null
+                    else -> WITH_IMPLICIT_VISIBILITY.getVisibilityModifier(analysisSession, symbol)
+                }
             }
         }
     }
 
     public object WITH_IMPLICIT_VISIBILITY : KtRendererVisibilityModifierProvider {
-        context(KtAnalysisSession)
-        override fun getVisibilityModifier(symbol: KtSymbolWithVisibility): KtModifierKeywordToken? {
+        override fun getVisibilityModifier(
+            analysisSession: KtAnalysisSession,
+            symbol: KtSymbolWithVisibility,
+        ): KtModifierKeywordToken? {
             return when (symbol.visibility) {
                 Visibilities.Private, Visibilities.PrivateToThis -> KtTokens.PRIVATE_KEYWORD
                 Visibilities.Protected -> KtTokens.PROTECTED_KEYWORD

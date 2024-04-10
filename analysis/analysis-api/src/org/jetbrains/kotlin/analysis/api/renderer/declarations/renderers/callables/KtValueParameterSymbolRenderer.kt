@@ -11,23 +11,42 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtValueParameterSymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtValueParameterSymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtValueParameterSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_SOURCE : KtValueParameterSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtValueParameterSymbol, printer: PrettyPrinter): Unit = printer {
-            " = ".separated(
-                { callableSignatureRenderer.renderCallableSignature(symbol, keyword = null, printer) },
-                { parameterDefaultValueRenderer.renderDefaultValue(symbol, printer) },
-            )
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtValueParameterSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                " = ".separated(
+                    {
+                        declarationRenderer.callableSignatureRenderer
+                            .renderCallableSignature(analysisSession, symbol, keyword = null, declarationRenderer, printer)
+                    },
+                    { declarationRenderer.parameterDefaultValueRenderer.renderDefaultValue(analysisSession, symbol, printer) },
+                )
+            }
         }
     }
 
     public object TYPE_ONLY : KtValueParameterSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtValueParameterSymbol, printer: PrettyPrinter): Unit = printer {
-            typeRenderer.renderType(symbol.returnType, printer)
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtValueParameterSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                declarationRenderer.typeRenderer.renderType(analysisSession, symbol.returnType, printer)
+            }
         }
     }
 }

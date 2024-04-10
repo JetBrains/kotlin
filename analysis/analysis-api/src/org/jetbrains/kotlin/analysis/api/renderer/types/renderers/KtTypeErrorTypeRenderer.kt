@@ -11,12 +11,20 @@ import org.jetbrains.kotlin.analysis.api.types.KtTypeErrorType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtTypeErrorTypeRenderer {
-    context(KtAnalysisSession, KtTypeRenderer)
-    public fun renderType(type: KtTypeErrorType, printer: PrettyPrinter)
+    public fun renderType(
+        analysisSession: KtAnalysisSession,
+        type: KtTypeErrorType,
+        typeRenderer: KtTypeRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_CODE_IF_POSSIBLE : KtTypeErrorTypeRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderType(type: KtTypeErrorType, printer: PrettyPrinter) {
+        override fun renderType(
+            analysisSession: KtAnalysisSession,
+            type: KtTypeErrorType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
             type.tryRenderAsNonErrorType()?.let {
                 printer.append(it)
                 return
@@ -26,15 +34,23 @@ public interface KtTypeErrorTypeRenderer {
     }
 
     public object AS_ERROR_WORD : KtTypeErrorTypeRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderType(type: KtTypeErrorType, printer: PrettyPrinter) {
+        override fun renderType(
+            analysisSession: KtAnalysisSession,
+            type: KtTypeErrorType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
             printer.append("ERROR")
         }
     }
 
     public object WITH_ERROR_MESSAGE : KtTypeErrorTypeRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderType(type: KtTypeErrorType, printer: PrettyPrinter) {
+        override fun renderType(
+            analysisSession: KtAnalysisSession,
+            type: KtTypeErrorType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
             printer.append("ERROR(${type.errorMessage})")
         }
     }

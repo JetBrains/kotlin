@@ -12,21 +12,33 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 
 public interface KtCapturedTypeRenderer {
-    context(KtAnalysisSession, KtTypeRenderer)
-    public fun renderType(type: KtCapturedType, printer: PrettyPrinter)
+    public fun renderType(
+        analysisSession: KtAnalysisSession,
+        type: KtCapturedType,
+        typeRenderer: KtTypeRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_PROJECTION : KtCapturedTypeRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderType(type: KtCapturedType, printer: PrettyPrinter) {
-            typeProjectionRenderer.renderTypeProjection(type.projection, printer)
+        override fun renderType(
+            analysisSession: KtAnalysisSession,
+            type: KtCapturedType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
+            typeRenderer.typeProjectionRenderer.renderTypeProjection(analysisSession, type.projection, typeRenderer, printer)
         }
     }
 
     public object AS_CAPTURED_TYPE_WITH_PROJECTION : KtCapturedTypeRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderType(type: KtCapturedType, printer: PrettyPrinter) {
+        override fun renderType(
+            analysisSession: KtAnalysisSession,
+            type: KtCapturedType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
             printer.append("CapturedType(")
-            AS_PROJECTION.renderType(type, printer)
+            AS_PROJECTION.renderType(analysisSession, type, typeRenderer, printer)
             printer.append(")")
         }
     }

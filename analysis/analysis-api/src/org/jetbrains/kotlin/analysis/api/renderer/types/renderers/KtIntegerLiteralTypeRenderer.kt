@@ -12,15 +12,25 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 
 public interface KtIntegerLiteralTypeRenderer {
-    context(KtAnalysisSession, KtTypeRenderer)
-    public fun renderType(type: KtIntegerLiteralType, printer: PrettyPrinter)
+    public fun renderType(
+        analysisSession: KtAnalysisSession,
+        type: KtIntegerLiteralType,
+        typeRenderer: KtTypeRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_ILT_WITH_VALUE : KtIntegerLiteralTypeRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderType(type: KtIntegerLiteralType, printer: PrettyPrinter): Unit = printer {
-            append("ILT(")
-            printer.append(type.value.toString())
-            append(')')
+        override fun renderType(
+            analysisSession: KtAnalysisSession,
+            type: KtIntegerLiteralType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                append("ILT(")
+                printer.append(type.value.toString())
+                append(')')
+            }
         }
     }
 }

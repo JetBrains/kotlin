@@ -14,13 +14,24 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtAnnotationListRenderer {
-    context(KtAnalysisSession, KtAnnotationRenderer)
-    public fun renderAnnotations(owner: KtAnnotated, printer: PrettyPrinter)
+    public fun renderAnnotations(
+        analysisSession: KtAnalysisSession,
+        owner: KtAnnotated,
+        annotationRenderer: KtAnnotationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object FOR_SOURCE : KtAnnotationListRenderer {
-        context(KtAnalysisSession, KtAnnotationRenderer)
-        override fun renderAnnotations(owner: KtAnnotated, printer: PrettyPrinter) {
-            val annotations = owner.annotations.filter { annotationFilter.filter(it, owner) }.ifEmpty { return }
+        override fun renderAnnotations(
+            analysisSession: KtAnalysisSession,
+            owner: KtAnnotated,
+            annotationRenderer: KtAnnotationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            val annotations = owner.annotations
+                .filter { annotationRenderer.annotationFilter.filter(analysisSession, it, owner) }
+                .ifEmpty { return }
+
             printer.printCollection(
                 annotations,
                 separator = when (owner) {
@@ -30,9 +41,15 @@ public interface KtAnnotationListRenderer {
                 }
             ) { annotation ->
                 append('@')
-                annotationUseSiteTargetRenderer.renderUseSiteTarget(annotation, owner, printer)
-                annotationsQualifiedNameRenderer.renderQualifier(annotation, owner, printer)
-                annotationArgumentsRenderer.renderAnnotationArguments(annotation, owner, printer)
+
+                annotationRenderer.annotationUseSiteTargetRenderer
+                    .renderUseSiteTarget(analysisSession, annotation, owner, annotationRenderer, printer)
+
+                annotationRenderer.annotationsQualifiedNameRenderer
+                    .renderQualifier(analysisSession, annotation, owner, annotationRenderer, printer)
+
+                annotationRenderer.annotationArgumentsRenderer
+                    .renderAnnotationArguments(analysisSession, annotation, owner, annotationRenderer, printer)
             }
         }
     }

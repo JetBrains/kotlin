@@ -12,51 +12,54 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.StandardClassIds
 
 public fun interface KtSuperTypesFilter {
-    context(KtAnalysisSession)
-    public fun filter(superType: KtType, symbol: KtClassOrObjectSymbol): Boolean
+    public fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean
 
     public object NO_DEFAULT_TYPES : KtSuperTypesFilter {
-        context(KtAnalysisSession)
-        override fun filter(superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
-            if (superType.isAny) return false
-            if (symbol.classKind == KtClassKind.ANNOTATION_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Annotation)) return false
-            if (symbol.classKind == KtClassKind.ENUM_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Enum)) return false
-            return true
+        override fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
+            with(analysisSession) {
+                if (superType.isAny) {
+                    return false
+                }
+
+                if (symbol.classKind == KtClassKind.ANNOTATION_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Annotation)) {
+                    return false
+                }
+
+                if (symbol.classKind == KtClassKind.ENUM_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Enum)) {
+                    return false
+                }
+
+                return true
+            }
         }
     }
 
     public object NO_ANY_FOR_INTERFACES : KtSuperTypesFilter {
-        context(KtAnalysisSession)
-        override fun filter(superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
-            return when (symbol.classKind) {
-                KtClassKind.INTERFACE -> !superType.isAny
-                else -> true
+        override fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
+            with(analysisSession) {
+                return when (symbol.classKind) {
+                    KtClassKind.INTERFACE -> !superType.isAny
+                    else -> true
+                }
             }
         }
     }
 
     public object ALL : KtSuperTypesFilter {
-        context(KtAnalysisSession)
-        override fun filter(superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
+        override fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
             return true
         }
     }
 
     public object NONE : KtSuperTypesFilter {
-        context(KtAnalysisSession)
-        override fun filter(superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
+        override fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
             return false
         }
     }
 
-
     public companion object {
-        public operator fun invoke(
-            predicate: context(KtAnalysisSession) (type: KtType, symbol: KtClassOrObjectSymbol) -> Boolean
-        ): KtSuperTypesFilter = object : KtSuperTypesFilter {
-            context(KtAnalysisSession) override fun filter(superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
-                return predicate(this@KtAnalysisSession, superType, symbol)
-            }
+        public operator fun invoke(predicate: KtAnalysisSession.(type: KtType, symbol: KtClassOrObjectSymbol) -> Boolean): KtSuperTypesFilter {
+            return KtSuperTypesFilter { analysisSession, superType, symbol -> predicate(analysisSession, superType, symbol) }
         }
     }
 }

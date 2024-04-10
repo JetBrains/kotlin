@@ -11,12 +11,19 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtScriptInitializerRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderInitializer(symbol: KtScriptSymbol, printer: PrettyPrinter)
+    public fun renderInitializer(
+        analysisSession: KtAnalysisSession,
+        symbol: KtScriptSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object NO_INITIALIZER : KtScriptInitializerRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderInitializer(symbol: KtScriptSymbol, printer: PrettyPrinter) {
-        }
+        override fun renderInitializer(
+            analysisSession: KtAnalysisSession,
+            symbol: KtScriptSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter
+        ) {}
     }
 }

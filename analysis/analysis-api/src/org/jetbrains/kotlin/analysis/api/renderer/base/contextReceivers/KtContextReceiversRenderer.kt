@@ -16,9 +16,13 @@ public class KtContextReceiversRenderer(
     public val contextReceiverListRenderer: KtContextReceiverListRenderer,
     public val contextReceiverLabelRenderer: KtContextReceiverLabelRenderer,
 ) {
-    context(KtAnalysisSession, KtTypeRenderer)
-    public fun renderContextReceivers(owner: KtContextReceiversOwner, printer: PrettyPrinter) {
-        contextReceiverListRenderer.renderContextReceivers(owner, printer)
+    public fun renderContextReceivers(
+        analysisSession: KtAnalysisSession,
+        owner: KtContextReceiversOwner,
+        typeRenderer: KtTypeRenderer,
+        printer: PrettyPrinter,
+    ) {
+        contextReceiverListRenderer.renderContextReceivers(analysisSession, owner, this, typeRenderer, printer)
     }
 
     public inline fun with(action: Builder.() -> Unit): KtContextReceiversRenderer {
