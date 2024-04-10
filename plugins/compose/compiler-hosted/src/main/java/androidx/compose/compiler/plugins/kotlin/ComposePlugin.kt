@@ -71,7 +71,7 @@ object ComposeConfiguration {
             "Enabled optimization to remove groups around non-skipping functions"
         )
     val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK = CompilerConfigurationKey<String?>(
-        "Version of Kotlin for which version compatibility check should be suppressed"
+        "Deprecated. Version of Kotlin for which version compatibility check should be suppressed"
     )
     val DECOYS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Generate decoy methods in IR transform")
@@ -153,7 +153,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         val SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION = CliOption(
             "suppressKotlinVersionCompatibilityCheck",
             "<kotlin_version>",
-            "Suppress Kotlin version compatibility check",
+            "Deprecated. Suppress Kotlin version compatibility check",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -287,80 +287,15 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
 
     companion object {
         fun checkCompilerVersion(configuration: CompilerConfiguration): Boolean {
-            try {
-                val KOTLIN_VERSION_EXPECTATION = "2.0.0-Beta4"
-                KotlinCompilerVersion.getVersion()?.let { version ->
-                    val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                    val suppressKotlinVersionCheck = configuration.get(
-                        ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK
-                    )
-                    if (
-                        suppressKotlinVersionCheck != null &&
-                        suppressKotlinVersionCheck != version
-                    ) {
-                        if (suppressKotlinVersionCheck == "true") {
-                            msgCollector?.report(
-                                CompilerMessageSeverity.STRONG_WARNING,
-                                " `suppressKotlinVersionCompatibilityCheck` should" +
-                                    " specify the version of Kotlin for which you want the" +
-                                    " compatibility check to be disabled. For example," +
-                                    " `suppressKotlinVersionCompatibilityCheck=$version`"
-                            )
-                        } else {
-                            msgCollector?.report(
-                                CompilerMessageSeverity.STRONG_WARNING,
-                                " `suppressKotlinVersionCompatibilityCheck` is set to a" +
-                                    " version of Kotlin ($suppressKotlinVersionCheck) that you" +
-                                    " are not using and should be set properly. (you are using" +
-                                    " Kotlin $version)"
-                            )
-                        }
-                    }
-                    if (suppressKotlinVersionCheck == KOTLIN_VERSION_EXPECTATION) {
-                        msgCollector?.report(
-                            CompilerMessageSeverity.STRONG_WARNING,
-                            " `suppressKotlinVersionCompatibilityCheck` is set to the" +
-                                " same version of Kotlin that the Compose Compiler was already" +
-                                " expecting (Kotlin $suppressKotlinVersionCheck), and thus has" +
-                                " no effect and should be removed."
-                        )
-                    }
-                    if (suppressKotlinVersionCheck != "true" &&
-                        version != KOTLIN_VERSION_EXPECTATION &&
-                        version != suppressKotlinVersionCheck
-                    ) {
-                        msgCollector?.report(
-                            CompilerMessageSeverity.ERROR,
-                            "This version (${VersionChecker.compilerVersion}) of the" +
-                                " Compose Compiler requires Kotlin version" +
-                                " $KOTLIN_VERSION_EXPECTATION but you appear to be using Kotlin" +
-                                " version $version which is not known to be compatible.  Please" +
-                                " consult the Compose-Kotlin compatibility map located at" +
-                                " https://developer.android.com" +
-                                "/jetpack/androidx/releases/compose-kotlin" +
-                                " to choose a compatible version pair (or" +
-                                " `suppressKotlinVersionCompatibilityCheck` but don't say I" +
-                                " didn't warn you!)."
-                        )
-
-                        // Return without registering the Compose plugin because the registration
-                        // APIs may have changed and thus throw an exception during registration,
-                        // preventing the diagnostic from being emitted.
-                        return false
-                    }
-                }
-                return true
-            } catch (t: Throwable) {
-                throw Error(
-                    "Something went wrong while checking for version compatibility" +
-                        " between the Compose Compiler and the Kotlin Compiler.  It is possible" +
-                        " that the versions are incompatible.  Please verify your kotlin version " +
-                        " and consult the Compose-Kotlin compatibility map located at" +
-                        " https://developer.android.com" +
-                        "/jetpack/androidx/releases/compose-kotlin",
-                    t
+            val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val suppressKotlinVersionCheck = configuration.get(ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK)
+            if (suppressKotlinVersionCheck != null) {
+                msgCollector?.report(
+                    CompilerMessageSeverity.WARNING,
+                    "suppressKotlinVersionCompatibilityCheck flag is deprecated for Compose compiler bundled with Kotlin releases."
                 )
             }
+            return true
         }
 
         fun registerCommonExtensions(project: Project) {

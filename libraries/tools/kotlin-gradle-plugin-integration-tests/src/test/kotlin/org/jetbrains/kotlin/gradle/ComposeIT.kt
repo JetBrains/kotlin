@@ -37,10 +37,6 @@ class ComposeIT : KGPBaseTest() {
                 |    id "org.jetbrains.kotlin.plugin.compose"
                 |${originalBuildScript.substringAfter("plugins {")}
                 |
-                |composeCompiler {
-                |    suppressKotlinVersionCompatibilityCheck.set("${buildOptions.kotlinVersion}")
-                |}
-                |
                 |dependencies {
                 |    implementation "androidx.compose.runtime:runtime:1.6.4"
                 |}
@@ -61,7 +57,6 @@ class ComposeIT : KGPBaseTest() {
                             "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:nonSkippingGroupOptimization=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=${buildOptions.kotlinVersion}," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=false",
                     LogLevel.INFO
@@ -84,15 +79,6 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
         ) {
-            buildGradleKts.appendText(
-                """
-                |
-                |composeCompiler {
-                |    suppressKotlinVersionCompatibilityCheck.set("${buildOptions.kotlinVersion}")
-                |}
-                """.trimMargin()
-            )
-
             build("assembleDebug") {
                 assertOutputContains("Detected Android Gradle Plugin compose compiler configuration")
             }
@@ -158,7 +144,6 @@ class ComposeIT : KGPBaseTest() {
                 """
                 |
                 |composeCompiler {
-                |    suppressKotlinVersionCompatibilityCheck.set("${buildOptions.kotlinVersion}")
                 |    metricsDestination.set(project.layout.buildDirectory.dir("metrics"))
                 |    reportsDestination.set(project.layout.buildDirectory.dir("reports"))
                 |    stabilityConfigurationFile.set(project.layout.projectDirectory.file("stability-configuration.conf"))

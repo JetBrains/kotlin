@@ -85,19 +85,6 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
     val enableNonSkippingGroupOptimization: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
-     * Suppress Kotlin version compatibility check.
-     *
-     * By default, this compatibility check verifies that the specified version of Compose Compiler is compatible with the specified
-     * version of Kotlin.  In most cases, users should only be using versions that are known to be compatible, and so setting this flag
-     * should be unnecessary.  However, in rare cases (such as custom compiler builds, or to take a fix in one compiler without upgrading
-     * the other compiler), users may wish to suppress the compatibility check in order to use a combination of Compose Compiler and Kotlin
-     * Compiler that is not officially supported.
-     *
-     * As a value, you should provide a Kotlin version which is used with the compose compiler.
-     */
-    abstract val suppressKotlinVersionCompatibilityCheck: Property<String>
-
-    /**
      * Enable experimental strong skipping mode.
      *
      * Strong Skipping is an experimental mode that improves the runtime performance of your application by skipping unnecessary
