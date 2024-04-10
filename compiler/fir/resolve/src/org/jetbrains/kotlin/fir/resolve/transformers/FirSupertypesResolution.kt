@@ -475,6 +475,10 @@ open class FirSupertypeResolverVisitor(
             supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = it.transform<FirTypeRef, ScopeClassDeclaration>(transformer, scopeDeclaration)
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
+                val typealiasSymbol = superTypeRef.coneTypeSafe<ConeClassLikeType>()?.toSymbol(session) as? FirTypeAliasSymbol
+                if (typealiasSymbol != null) {
+                    visitTypeAlias(typealiasSymbol.fir, null)
+                }
                 when {
                     typeParameterType != null ->
                         buildErrorTypeRef {
