@@ -13,23 +13,37 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtTypeAliasSymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtTypeAliasSymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtTypeAliasSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_SOURCE : KtTypeAliasSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtTypeAliasSymbol, printer: PrettyPrinter): Unit = printer {
-            " ".separated(
-                { renderAnnotationsModifiersAndContextReceivers(symbol, printer, KtTokens.TYPE_ALIAS_KEYWORD) },
-                {
-                    " = ".separated(
-                        {
-                            nameRenderer.renderName(symbol, printer)
-                            typeParametersRenderer.renderTypeParameters(symbol, printer)
-                        },
-                        { typeRenderer.renderType(symbol.expandedType, printer) })
-                }
-            )
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtTypeAliasSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                " ".separated(
+                    {
+                        renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer, KtTokens.TYPE_ALIAS_KEYWORD)
+                    },
+                    {
+                        " = ".separated(
+                            {
+                                declarationRenderer.nameRenderer.renderName(analysisSession, symbol, declarationRenderer, printer)
+
+                                declarationRenderer.typeParametersRenderer
+                                    .renderTypeParameters(analysisSession, symbol, declarationRenderer, printer)
+                            },
+                            { declarationRenderer.typeRenderer.renderType(analysisSession, symbol.expandedType, printer) })
+                    }
+                )
+            }
         }
     }
 }

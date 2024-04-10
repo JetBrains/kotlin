@@ -13,16 +13,24 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
 public interface KtCallableReturnTypeRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderReturnType(symbol: KtCallableSymbol, printer: PrettyPrinter)
+    public fun renderReturnType(
+        analysisSession: KtAnalysisSession,
+        symbol: KtCallableSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object WITH_OUT_APPROXIMATION : KtCallableReturnTypeRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderReturnType(symbol: KtCallableSymbol, printer: PrettyPrinter) {
+        override fun renderReturnType(
+            analysisSession: KtAnalysisSession,
+            symbol: KtCallableSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
             if (symbol is KtConstructorSymbol) return
-            val type = declarationTypeApproximator.approximateType(symbol.returnType, Variance.OUT_VARIANCE)
-            if (!returnTypeFilter.shouldRenderReturnType(type, symbol)) return
-            typeRenderer.renderType(type, printer)
+            val type = declarationRenderer.declarationTypeApproximator.approximateType(analysisSession, symbol.returnType, Variance.OUT_VARIANCE)
+            if (!declarationRenderer.returnTypeFilter.shouldRenderReturnType(analysisSession, type, symbol)) return
+            declarationRenderer.typeRenderer.renderType(analysisSession, type, printer)
         }
     }
 }

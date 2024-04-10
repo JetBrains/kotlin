@@ -16,15 +16,31 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.renderer.render
 
 public interface KtDeclarationNameRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderName(symbol: KtNamedSymbol, printer: PrettyPrinter): Unit = renderName(symbol.name, symbol, printer)
+    public fun renderName(
+        analysisSession: KtAnalysisSession,
+        symbol: KtNamedSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter
+    ) {
+        renderName(analysisSession, symbol.name, symbol, declarationRenderer, printer)
+    }
 
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderName(name: Name, symbol: KtNamedSymbol?, printer: PrettyPrinter)
+    public fun renderName(
+        analysisSession: KtAnalysisSession,
+        name: Name,
+        symbol: KtNamedSymbol?,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object QUOTED : KtDeclarationNameRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderName(name: Name, symbol: KtNamedSymbol?, printer: PrettyPrinter) {
+        override fun renderName(
+            analysisSession: KtAnalysisSession,
+            name: Name,
+            symbol: KtNamedSymbol?,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
             if (symbol is KtClassOrObjectSymbol && symbol.classKind == KtClassKind.COMPANION_OBJECT && symbol.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
                 return
             printer.append(name.render())
@@ -32,8 +48,13 @@ public interface KtDeclarationNameRenderer {
     }
 
     public object UNQUOTED : KtDeclarationNameRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderName(name: Name, symbol: KtNamedSymbol?, printer: PrettyPrinter) {
+        override fun renderName(
+            analysisSession: KtAnalysisSession,
+            name: Name,
+            symbol: KtNamedSymbol?,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
             if (symbol is KtClassOrObjectSymbol && symbol.classKind == KtClassKind.COMPANION_OBJECT && symbol.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
                 return
             printer.append(name.asString())

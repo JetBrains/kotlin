@@ -12,18 +12,28 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtBackingFieldSymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtBackingFieldSymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtBackingFieldSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_FIELD_KEYWORD : KtBackingFieldSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtBackingFieldSymbol, printer: PrettyPrinter): Unit = printer {
-            codeStyle.getSeparatorBetweenAnnotationAndOwner(symbol).separated(
-                { annotationRenderer.renderAnnotations(symbol, printer) },
-                {
-                    keywordsRenderer.renderKeyword(KtTokens.FIELD_KEYWORD, symbol, printer)
-                },
-            )
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtBackingFieldSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                declarationRenderer.codeStyle.getSeparatorBetweenAnnotationAndOwner(analysisSession, symbol).separated(
+                    { declarationRenderer.annotationRenderer.renderAnnotations(analysisSession, symbol, printer) },
+                    {
+                        declarationRenderer.keywordsRenderer.renderKeyword(analysisSession, KtTokens.FIELD_KEYWORD, symbol, printer)
+                    },
+                )
+            }
         }
     }
 }

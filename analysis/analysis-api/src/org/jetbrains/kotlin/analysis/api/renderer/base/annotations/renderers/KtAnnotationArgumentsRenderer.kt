@@ -15,21 +15,31 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.renderer.render
 
 public interface KtAnnotationArgumentsRenderer {
-    context(KtAnalysisSession, KtAnnotationRenderer)
-    public fun renderAnnotationArguments(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter)
+    public fun renderAnnotationArguments(
+        analysisSession: KtAnalysisSession,
+        annotation: KtAnnotationApplication,
+        owner: KtAnnotated,
+        annotationRenderer: KtAnnotationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object NONE : KtAnnotationArgumentsRenderer {
-        context(KtAnalysisSession, KtAnnotationRenderer)
-        override fun renderAnnotationArguments(annotation: KtAnnotationApplication, owner: KtAnnotated, printer: PrettyPrinter) {
-        }
+        override fun renderAnnotationArguments(
+            analysisSession: KtAnalysisSession,
+            annotation: KtAnnotationApplication,
+            owner: KtAnnotated,
+            annotationRenderer: KtAnnotationRenderer,
+            printer: PrettyPrinter,
+        ) {}
     }
 
     public object IF_ANY : KtAnnotationArgumentsRenderer {
-        context(KtAnalysisSession, KtAnnotationRenderer)
         override fun renderAnnotationArguments(
+            analysisSession: KtAnalysisSession,
             annotation: KtAnnotationApplication,
             owner: KtAnnotated,
-            printer: PrettyPrinter
+            annotationRenderer: KtAnnotationRenderer,
+            printer: PrettyPrinter,
         ) {
             if (annotation !is KtAnnotationApplicationWithArgumentsInfo) return
 

@@ -12,16 +12,28 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtKotlinPropertySymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtKotlinPropertySymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtKotlinPropertySymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_SOURCE : KtKotlinPropertySymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtKotlinPropertySymbol, printer: PrettyPrinter): Unit = printer {
-            val mutabilityKeyword = if (symbol.isVal) KtTokens.VAL_KEYWORD else KtTokens.VAR_KEYWORD
-            callableSignatureRenderer.renderCallableSignature(symbol, mutabilityKeyword, printer)
-            variableInitializerRenderer.renderInitializer(symbol, printer)
-            propertyAccessorsRenderer.renderAccessors(symbol, printer)
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtKotlinPropertySymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                val mutabilityKeyword = if (symbol.isVal) KtTokens.VAL_KEYWORD else KtTokens.VAR_KEYWORD
+                declarationRenderer.callableSignatureRenderer
+                    .renderCallableSignature(analysisSession, symbol, mutabilityKeyword, declarationRenderer, printer)
+
+                declarationRenderer.variableInitializerRenderer.renderInitializer(analysisSession, symbol, printer)
+                declarationRenderer.propertyAccessorsRenderer.renderAccessors(analysisSession, symbol, declarationRenderer, printer)
+            }
         }
     }
 }

@@ -11,12 +11,18 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.addRemoveModifier.sortModifiers
 
 public interface KtModifiersSorter {
-    context(KtAnalysisSession)
-    public fun sort(modifiers: List<KtModifierKeywordToken>, owner: KtDeclarationSymbol): List<KtModifierKeywordToken>
+    public fun sort(
+        analysisSession: KtAnalysisSession,
+        modifiers: List<KtModifierKeywordToken>,
+        owner: KtDeclarationSymbol,
+    ): List<KtModifierKeywordToken>
 
     public object CANONICAL : KtModifiersSorter {
-        context(KtAnalysisSession)
-        override fun sort(modifiers: List<KtModifierKeywordToken>, owner: KtDeclarationSymbol): List<KtModifierKeywordToken> {
+        override fun sort(
+            analysisSession: KtAnalysisSession,
+            modifiers: List<KtModifierKeywordToken>,
+            owner: KtDeclarationSymbol,
+        ): List<KtModifierKeywordToken> {
             return sortModifiers(modifiers)
         }
     }

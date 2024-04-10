@@ -19,9 +19,8 @@ public class KtDeclarationModifiersRenderer private constructor(
     public val otherModifiersProvider: KtRendererOtherModifiersProvider,
     public val keywordsRenderer: KtKeywordsRenderer,
 ) {
-    context(KtAnalysisSession)
-    public fun renderDeclarationModifiers(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
-        modifierListRenderer.renderModifiers(symbol, printer)
+    public fun renderDeclarationModifiers(analysisSession: KtAnalysisSession, symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
+        modifierListRenderer.renderModifiers(analysisSession, symbol, this, printer)
     }
 
     public inline fun with(action: Builder.() -> Unit): KtDeclarationModifiersRenderer {

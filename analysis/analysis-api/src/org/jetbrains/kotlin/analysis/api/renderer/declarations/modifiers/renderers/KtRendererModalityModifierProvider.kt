@@ -13,24 +13,21 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtRendererModalityModifierProvider {
-    context(KtAnalysisSession)
-    public fun getModalityModifier(symbol: KtSymbolWithModality): KtModifierKeywordToken?
+    public fun getModalityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithModality): KtModifierKeywordToken?
 
     public fun onlyIf(
-        condition: context(KtAnalysisSession) (symbol: KtSymbolWithModality) -> Boolean
+        condition: KtAnalysisSession.(symbol: KtSymbolWithModality) -> Boolean
     ): KtRendererModalityModifierProvider {
         val self = this
         return object : KtRendererModalityModifierProvider {
-            context(KtAnalysisSession)
-            override fun getModalityModifier(symbol: KtSymbolWithModality): KtModifierKeywordToken? =
-                if (condition(this@KtAnalysisSession, symbol)) self.getModalityModifier(symbol)
+            override fun getModalityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithModality): KtModifierKeywordToken? =
+                if (condition(analysisSession, symbol)) self.getModalityModifier(analysisSession, symbol)
                 else null
         }
     }
 
     public object WITH_IMPLICIT_MODALITY : KtRendererModalityModifierProvider {
-        context(KtAnalysisSession)
-        override fun getModalityModifier(symbol: KtSymbolWithModality): KtModifierKeywordToken? {
+        override fun getModalityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithModality): KtModifierKeywordToken? {
             if (symbol is KtPropertyAccessorSymbol) return null
             return when (symbol.modality) {
                 Modality.SEALED -> KtTokens.SEALED_KEYWORD
@@ -42,17 +39,19 @@ public interface KtRendererModalityModifierProvider {
     }
 
     public object WITHOUT_IMPLICIT_MODALITY : KtRendererModalityModifierProvider {
-        context(KtAnalysisSession) override fun getModalityModifier(symbol: KtSymbolWithModality): KtModifierKeywordToken? {
-            when (symbol) {
-                is KtFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
-                is KtPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
-            }
-            if ((symbol as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE) return null
-            if ((symbol.getContainingSymbol() as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE) return null
+        override fun getModalityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithModality): KtModifierKeywordToken? {
+            with(analysisSession) {
+                when (symbol) {
+                    is KtFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
+                    is KtPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
+                }
+                if ((symbol as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE) return null
+                if ((symbol.getContainingSymbol() as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE) return null
 
-            return when (symbol.modality) {
-                Modality.FINAL -> null
-                else -> WITH_IMPLICIT_MODALITY.getModalityModifier(symbol)
+                return when (symbol.modality) {
+                    Modality.FINAL -> null
+                    else -> WITH_IMPLICIT_MODALITY.getModalityModifier(analysisSession, symbol)
+                }
             }
         }
     }

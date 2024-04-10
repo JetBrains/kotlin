@@ -13,19 +13,29 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtPropertyGetterSymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtPropertyGetterSymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        analysisSession: KtAnalysisSession,
+        symbol: KtPropertyGetterSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_SOURCE : KtPropertyGetterSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtPropertyGetterSymbol, printer: PrettyPrinter): Unit = printer {
-            " ".separated(
-                {
-                    renderAnnotationsModifiersAndContextReceivers(symbol, printer, KtTokens.GET_KEYWORD)
-                    valueParametersRenderer.renderValueParameters(symbol, printer)
-                },
-                { accessorBodyRenderer.renderBody(symbol, printer) },
-            )
+        override fun renderSymbol(
+            analysisSession: KtAnalysisSession,
+            symbol: KtPropertyGetterSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                " ".separated(
+                    {
+                        renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer, KtTokens.GET_KEYWORD)
+                        declarationRenderer.valueParametersRenderer.renderValueParameters(analysisSession, symbol, declarationRenderer, printer)
+                    },
+                    { declarationRenderer.accessorBodyRenderer.renderBody(analysisSession, symbol, printer) },
+                )
+            }
         }
     }
 }

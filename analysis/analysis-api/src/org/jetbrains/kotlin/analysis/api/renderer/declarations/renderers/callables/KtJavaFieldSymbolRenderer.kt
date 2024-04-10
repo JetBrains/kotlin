@@ -12,15 +12,27 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtJavaFieldSymbolRenderer {
-    context(KtAnalysisSession, KtDeclarationRenderer)
-    public fun renderSymbol(symbol: KtJavaFieldSymbol, printer: PrettyPrinter)
+    public fun renderSymbol(
+        session: KtAnalysisSession,
+        symbol: KtJavaFieldSymbol,
+        declarationRenderer: KtDeclarationRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object AS_SOURCE : KtJavaFieldSymbolRenderer {
-        context(KtAnalysisSession, KtDeclarationRenderer)
-        override fun renderSymbol(symbol: KtJavaFieldSymbol, printer: PrettyPrinter): Unit = printer {
-            val mutabilityKeyword = if (symbol.isVal) KtTokens.VAL_KEYWORD else KtTokens.VAR_KEYWORD
-            callableSignatureRenderer.renderCallableSignature(symbol, mutabilityKeyword, printer)
-            variableInitializerRenderer.renderInitializer(symbol, printer)
+        override fun renderSymbol(
+            session: KtAnalysisSession,
+            symbol: KtJavaFieldSymbol,
+            declarationRenderer: KtDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                val mutabilityKeyword = if (symbol.isVal) KtTokens.VAL_KEYWORD else KtTokens.VAR_KEYWORD
+                declarationRenderer.callableSignatureRenderer
+                    .renderCallableSignature(session, symbol, mutabilityKeyword, declarationRenderer, printer)
+
+                declarationRenderer.variableInitializerRenderer.renderInitializer(session, symbol, printer)
+            }
         }
     }
 }

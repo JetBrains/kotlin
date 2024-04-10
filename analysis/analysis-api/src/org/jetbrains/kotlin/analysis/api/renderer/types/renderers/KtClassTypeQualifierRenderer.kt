@@ -16,42 +16,70 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.renderer.render
 
 public interface KtClassTypeQualifierRenderer {
-    context(KtAnalysisSession, KtTypeRenderer)
-    public fun renderClassTypeQualifier(type: KtClassType, printer: PrettyPrinter)
+    public fun renderClassTypeQualifier(
+        analysisSession: KtAnalysisSession,
+        type: KtClassType,
+        typeRenderer: KtTypeRenderer,
+        printer: PrettyPrinter,
+    )
 
     public object WITH_SHORT_NAMES : KtClassTypeQualifierRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderClassTypeQualifier(type: KtClassType, printer: PrettyPrinter) {
-            type.qualifiers.last().render(type, printer)
+        override fun renderClassTypeQualifier(
+            analysisSession: KtAnalysisSession,
+            type: KtClassType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
+            type.qualifiers.last().render(analysisSession, type, typeRenderer, printer)
         }
     }
 
     public object WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS : KtClassTypeQualifierRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderClassTypeQualifier(type: KtClassType, printer: PrettyPrinter): Unit = printer {
-            printCollection(type.qualifiers, separator = ".") { qualifier -> qualifier.render(type, printer) }
+        override fun renderClassTypeQualifier(
+            analysisSession: KtAnalysisSession,
+            type: KtClassType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                printCollection(type.qualifiers, separator = ".") { qualifier ->
+                    qualifier.render(analysisSession, type, typeRenderer, printer)
+                }
+            }
         }
     }
 
     public object WITH_QUALIFIED_NAMES : KtClassTypeQualifierRenderer {
-        context(KtAnalysisSession, KtTypeRenderer)
-        override fun renderClassTypeQualifier(type: KtClassType, printer: PrettyPrinter): Unit = printer {
-            ".".separated(
-                {
-                    if (type is KtNonErrorClassType && type.classId.packageFqName != CallableId.PACKAGE_FQ_NAME_FOR_LOCAL) {
-                        append(type.classId.packageFqName.render())
-                    }
-                },
-                { WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS.renderClassTypeQualifier(type, printer) },
-            )
+        override fun renderClassTypeQualifier(
+            analysisSession: KtAnalysisSession,
+            type: KtClassType,
+            typeRenderer: KtTypeRenderer,
+            printer: PrettyPrinter,
+        ) {
+            printer {
+                ".".separated(
+                    {
+                        if (type is KtNonErrorClassType && type.classId.packageFqName != CallableId.PACKAGE_FQ_NAME_FOR_LOCAL) {
+                            append(type.classId.packageFqName.render())
+                        }
+                    },
+                    { WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS.renderClassTypeQualifier(analysisSession, type, typeRenderer, printer) },
+                )
+            }
         }
     }
 }
 
-context(KtAnalysisSession, KtTypeRenderer)
-private fun KtClassTypeQualifier.render(type: KtType, printer: PrettyPrinter) = printer {
-    typeNameRenderer.renderName(name, type, printer)
-    printCollectionIfNotEmpty(typeArguments, prefix = "<", postfix = ">") {
-        typeProjectionRenderer.renderTypeProjection(it, this)
+private fun KtClassTypeQualifier.render(
+    analysisSession: KtAnalysisSession,
+    type: KtType,
+    typeRenderer: KtTypeRenderer,
+    printer: PrettyPrinter,
+) {
+    printer {
+        typeRenderer.typeNameRenderer.renderName(analysisSession, name, type, typeRenderer, printer)
+        printCollectionIfNotEmpty(typeArguments, prefix = "<", postfix = ">") {
+            typeRenderer.typeProjectionRenderer.renderTypeProjection(analysisSession, it, typeRenderer, this)
+        }
     }
 }
