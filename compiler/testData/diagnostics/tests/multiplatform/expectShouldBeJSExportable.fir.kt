@@ -8,7 +8,7 @@ expect class File
 
 @kotlin.js.ExperimentalJsExport
 @kotlin.js.JsExport
-fun process(<!NON_EXPORTABLE_TYPE!>file: File<!>) {
+fun process(<!NON_EXPORTABLE_TYPE{METADATA}!>file: File<!>) {
 }
 
 // MODULE: m2-js()()(m1-common)
