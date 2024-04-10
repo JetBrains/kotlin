@@ -16,7 +16,7 @@ data class KotlinWebpackOutput(
     @Optional
     var libraryTarget: String?,
     @Input
-    var globalObject: String = "window"
+    var globalObject: String = "globalThis"
 ) {
     object Target {
         const val VAR = "var"

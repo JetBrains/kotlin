@@ -138,7 +138,6 @@ constructor(
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
         library = project.archivesName.orNull,
         libraryTarget = KotlinWebpackOutput.Target.UMD,
-        globalObject = "this"
     )
 
     @get:Internal
