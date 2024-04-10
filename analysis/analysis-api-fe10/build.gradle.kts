@@ -73,6 +73,12 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     inputs.file(File(rootDir, "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml"))
     inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar"))
     inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar"))
+    distribution {
+        enabled.set(true)
+        remoteExecutionPreferred.set(true)
+        maxRemoteExecutors.set(2)
+        maxLocalExecutors.set(0)
+    }
 }
 
 testsJar()
