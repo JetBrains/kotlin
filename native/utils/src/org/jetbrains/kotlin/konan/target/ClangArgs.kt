@@ -134,31 +134,6 @@ sealed class ClangArgs(
         if (environmentOsVersionMinRequired != null) {
             add(listOf("-D__ENVIRONMENT_OS_VERSION_MIN_REQUIRED__=$environmentOsVersionMinRequired"))
         }
-
-        val targetConditionals = when (target) {
-            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
-                "TARGET_OS_OSX" to "1",
-            )
-            KonanTarget.IOS_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_IOS" to "1",
-            )
-            KonanTarget.TVOS_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_TV" to "1",
-            )
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_WATCH" to "1",
-            )
-            else -> null
-        }
-        if (targetConditionals != null) {
-            add(targetConditionals.map { "-D${it.key}=${it.value}" })
-        }
     }.flatten()
 
     private val specificClangArgs: List<String> = when (target) {
