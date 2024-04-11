@@ -37,12 +37,11 @@ internal class KtFirJavaSyntheticPropertySymbolPointer(
         return firSymbolBuilder.variableLikeBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty.symbol)
     }
 
-    context(KtFirAnalysisSession)
-    override fun getSearchScope(owner: FirClassSymbol<*>): FirScope? {
-        val baseScope = super.getSearchScope(owner) as? FirTypeScope ?: return null
+    override fun getSearchScope(analysisSession: KtFirAnalysisSession, owner: FirClassSymbol<*>): FirScope? {
+        val baseScope = super.getSearchScope(analysisSession, owner) as? FirTypeScope ?: return null
         return if (isSynthetic) {
             FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
-                session = useSiteSession,
+                session = analysisSession.useSiteSession,
                 dispatchReceiverType = owner.defaultType(),
                 baseScope = baseScope,
             )
