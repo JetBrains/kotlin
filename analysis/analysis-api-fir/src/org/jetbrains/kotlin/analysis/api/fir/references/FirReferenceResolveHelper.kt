@@ -59,7 +59,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
-        val type = getDeclaredType() as? ConeLookupTagBasedType
+        // When you call a method from Java with type arguments, in FIR they are currently represented as flexible types.
+        // TODO Consider handling other non-ConeLookupTagBasedType types here (see KT-66418)
+        val type = getDeclaredType()?.lowerBoundIfFlexible() as? ConeLookupTagBasedType
 
         return type?.toTargetSymbol(session, symbolBuilder) ?: run {
             val diagnostic = (this as? FirErrorTypeRef)?.diagnostic
