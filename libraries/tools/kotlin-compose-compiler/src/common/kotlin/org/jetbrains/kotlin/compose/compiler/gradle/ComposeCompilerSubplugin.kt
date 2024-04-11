@@ -79,7 +79,8 @@ class ComposeCompilerGradleSubplugin
                 add(composeCompilerExtension.enableNonSkippingGroupOptimization.map {
                     SubpluginOption("nonSkippingGroupOptimization", it.toString())
                 })
-                add(composeCompilerExtension.enableExperimentalStrongSkippingMode.map {
+                add(composeCompilerExtension.enableStrongSkippingMode.map {
+                    // Rename once the option in Compose compiler is also renamed
                     SubpluginOption("experimentalStrongSkipping", it.toString())
                 })
                 add(composeCompilerExtension.stabilityConfigurationFile.map<SubpluginOption> {
