@@ -1,6 +1,6 @@
 // MODULE: common
 // TARGET_PLATFORM: Common
-<!AMBIGUOUS_ACTUALS{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun foo()<!>
+<!AMBIGUOUS_ACTUALS{JVM}!>expect fun foo()<!>
 
 // MODULE: intermediate()()(common)
 // TARGET_PLATFORM: Common

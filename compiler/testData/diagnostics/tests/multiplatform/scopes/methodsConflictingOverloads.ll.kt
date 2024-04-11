@@ -32,7 +32,7 @@ actual abstract class B() {
 
 actual class C : B(), I {}
 
-actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!> {
+actual abstract class D {
     <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
     <!CONFLICTING_OVERLOADS!>fun <!ACTUAL_MISSING!>foo<!>()<!> {}
 }
