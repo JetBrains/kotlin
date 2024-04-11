@@ -113,8 +113,6 @@ interface IrStatementOrigin {
         val PARTIAL_LINKAGE_RUNTIME_ERROR by IrStatementOriginImpl
     }
 
-    // todo: replace suppress with @ConsistentCopyVisibility annotation after bootstrap
-    @Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
     data class COMPONENT_N private constructor(val index: Int) : IrStatementOrigin {
         override val debugName: String = "COMPONENT_$index"
 
