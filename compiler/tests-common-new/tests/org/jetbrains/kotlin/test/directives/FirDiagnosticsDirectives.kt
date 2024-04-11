@@ -26,6 +26,13 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         """.trimIndent(),
     )
 
+    val DUMP_VFIR by directive(
+        description = """
+            Dumps verbose FIR representation to `testName.vfir` file
+        """.trimIndent(),
+        applicability = Global
+    )
+
     val FIR_DUMP by directive(
         description = """
             Dumps resulting fir to `testName.fir` file

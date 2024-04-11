@@ -1,0 +1,16 @@
+FILE: for.kt
+    public final fun main(): R|kotlin/Unit| {
+        lvar v: R|kotlin/Int| = Int(0)
+         {
+            lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/Int.rangeTo|(Int(3)).R|kotlin/ranges/IntProgression.iterator|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                 {
+                    R|<local>/v| = R|<local>/v|.R|kotlin/Int.plus|(Int(1))
+                }
+
+            }
+
+        }
+
+    }

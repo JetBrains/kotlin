@@ -1,0 +1,63 @@
+FirFileImpl
+ FirControlFlowGraphReferenceImpl
+ FirPackageDirectiveImpl
+ FirSimpleFunctionImpl
+  FirResolvedDeclarationStatusImpl
+  FirImplicitUnitTypeRef
+  FirControlFlowGraphReferenceImpl
+  FirBlockImpl
+  {
+   source.kind: KtRealSourceElementKind
+  }
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirLiteralExpressionImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirBlockImpl
+   {
+    source.kind: DesugaredForLoop
+   }
+    FirPropertyImpl
+     FirResolvedDeclarationStatusImpl
+     FirResolvedTypeRefImpl
+     FirFunctionCallImpl
+      FirFunctionCallImpl
+       FirLiteralExpressionImpl
+       FirResolvedArgumentListImpl
+        FirLiteralExpressionImpl
+       FirResolvedNamedReferenceImpl
+      FirResolvedArgumentListImpl
+      FirResolvedNamedReferenceImpl
+    FirWhileLoopImpl
+     FirFunctionCallImpl
+      FirPropertyAccessExpressionImpl
+       FirResolvedNamedReferenceImpl
+      FirResolvedArgumentListImpl
+      FirResolvedNamedReferenceImpl
+     FirBlockImpl
+     {
+      source.kind: KtRealSourceElementKind
+     }
+      FirPropertyImpl
+       FirResolvedDeclarationStatusImpl
+       FirResolvedTypeRefImpl
+       FirFunctionCallImpl
+        FirPropertyAccessExpressionImpl
+         FirResolvedNamedReferenceImpl
+        FirResolvedArgumentListImpl
+        FirResolvedNamedReferenceImpl
+      FirBlockImpl
+      {
+       source.kind: KtRealSourceElementKind
+      }
+       FirVariableAssignmentImpl
+        FirDesugaredAssignmentValueReferenceExpressionImpl
+        FirFunctionCallImpl
+         FirPropertyAccessExpressionImpl
+          FirResolvedNamedReferenceImpl
+         FirResolvedArgumentListImpl
+          FirLiteralExpressionImpl
+         FirResolvedNamedReferenceImpl

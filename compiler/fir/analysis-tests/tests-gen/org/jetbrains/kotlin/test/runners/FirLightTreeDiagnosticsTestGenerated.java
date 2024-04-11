@@ -5247,6 +5247,32 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/vfir")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Vfir {
+      @Test
+      public void testAllFilesPresentInVfir() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/vfir/expressions")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Expressions {
+        @Test
+        public void testAllFilesPresentInExpressions() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir/expressions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("for.kt")
+        public void testFor() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/vfir/expressions/for.kt");
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/visibility")
     @TestDataPath("$PROJECT_ROOT")
     public class Visibility {

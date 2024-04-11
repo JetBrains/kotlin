@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DUMP_VFIR
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
@@ -138,6 +139,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
             ::FirDiagnosticsHandler,
             ::FirDumpHandler,
             ::FirCfgDumpHandler,
+            ::FirVFirDumpHandler,
             ::FirCfgConsistencyHandler,
             ::FirResolvedTypesVerifier,
             ::FirScopeDumpHandler,
@@ -153,6 +155,12 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     forTestsMatching("compiler/fir/analysis-tests/testData/*") {
         defaultDirectives {
             +FIR_DUMP
+        }
+    }
+
+    forTestsMatching("compiler/fir/analysis-tests/testData/resolve/vfir/*") {
+        defaultDirectives {
+            +DUMP_VFIR
         }
     }
 

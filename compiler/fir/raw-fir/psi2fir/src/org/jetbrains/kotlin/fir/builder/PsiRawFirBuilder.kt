@@ -2785,7 +2785,7 @@ open class PsiRawFirBuilder(
                     target = prepareTarget(expression)
                 }.configure(target) {
                     val blockBuilder = FirBlockBuilder().apply {
-                        source = expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
+                        source = expression.toFirSourceElement()
                     }
                     if (ktParameter != null) {
                         val multiDeclaration = ktParameter.destructuringDeclaration
