@@ -41,5 +41,5 @@ internal interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
 
 internal fun KotlinType.asStringForDebugging(analysisContext: Fe10AnalysisContext): String {
     val renderer = KtFe10DebugTypeRenderer()
-    return prettyPrint { with(analysisContext) { renderer.render(this@asStringForDebugging, this@prettyPrint) } }
+    return prettyPrint { renderer.render(analysisContext, this@asStringForDebugging, this@prettyPrint) }
 }
