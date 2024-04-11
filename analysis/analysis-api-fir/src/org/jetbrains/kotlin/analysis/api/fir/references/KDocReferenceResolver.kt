@@ -102,7 +102,7 @@ internal object KDocReferenceResolver {
         if (symbol !is KtDeclarationSymbol && symbol !is KtPackageSymbol) return null
 
         if (symbol is KtDeclarationSymbol) {
-            symbol.goToNthParent(goBackSteps)?.let { return it }
+            goToNthParent(symbol, goBackSteps)?.let { return it }
         }
 
         return getPackageSymbolIfPackageExists(selectedFqName)
@@ -112,8 +112,8 @@ internal object KDocReferenceResolver {
      * N.B. Works only for [KtClassOrObjectSymbol] parents chain.
      */
     context(KtAnalysisSession)
-    private fun KtDeclarationSymbol.goToNthParent(steps: Int): KtDeclarationSymbol? {
-        var currentSymbol = this
+    private fun goToNthParent(symbol: KtDeclarationSymbol, steps: Int): KtDeclarationSymbol? {
+        var currentSymbol = symbol
 
         repeat(steps) {
             currentSymbol = currentSymbol.getContainingSymbol() as? KtClassOrObjectSymbol ?: return null
@@ -221,7 +221,7 @@ internal object KDocReferenceResolver {
             if (ktDeclaration is KtClassOrObject) {
                 val symbol = ktDeclaration.getClassOrObjectSymbol() ?: continue
 
-                val scope = symbol.getCompositeCombinedMemberAndCompanionObjectScope()
+                val scope = getCompositeCombinedMemberAndCompanionObjectScope(symbol)
 
                 val symbolsFromScope = getSymbolsFromMemberScope(fqName, scope)
                 if (symbolsFromScope.isNotEmpty()) return symbolsFromScope
@@ -231,15 +231,15 @@ internal object KDocReferenceResolver {
     }
 
     context(KtAnalysisSession)
-    private fun KtSymbolWithMembers.getCompositeCombinedMemberAndCompanionObjectScope(): KtScope =
+    private fun getCompositeCombinedMemberAndCompanionObjectScope(symbol: KtSymbolWithMembers): KtScope =
         listOfNotNull(
-            getCombinedMemberScope(),
-            getCompanionObjectMemberScope(),
+            symbol.getCombinedMemberScope(),
+            getCompanionObjectMemberScope(symbol),
         ).asCompositeScope()
 
     context(KtAnalysisSession)
-    private fun KtSymbolWithMembers.getCompanionObjectMemberScope(): KtScope? {
-        val namedClassSymbol = this as? KtNamedClassOrObjectSymbol ?: return null
+    private fun getCompanionObjectMemberScope(symbol: KtSymbolWithMembers): KtScope? {
+        val namedClassSymbol = symbol as? KtNamedClassOrObjectSymbol ?: return null
         val companionSymbol = namedClassSymbol.companionObject ?: return null
         return companionSymbol.getMemberScope()
     }
@@ -247,8 +247,10 @@ internal object KDocReferenceResolver {
     context(KtAnalysisSession)
     private fun getSymbolsFromPackageScope(fqName: FqName, contextElement: KtElement): Collection<KtDeclarationSymbol> {
         //ensure file context is provided for "non-physical" code as well
-        var containingFile =
-            (PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false) ?: contextElement).containingKtFile
+        val contextDeclarationOrSelf = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
+            ?: contextElement
+
+        val containingFile = contextDeclarationOrSelf.containingKtFile
         val packageFqName = containingFile.packageFqName
         val packageSymbol = getPackageSymbolIfPackageExists(packageFqName) ?: return emptyList()
         val packageScope = packageSymbol.getPackageScope()
@@ -273,7 +275,7 @@ internal object KDocReferenceResolver {
                 currentScope
                     .getClassifierSymbols(fqNamePart)
                     .filterIsInstance<KtSymbolWithMembers>()
-                    .map { it.getCompositeCombinedMemberAndCompanionObjectScope() }
+                    .map { getCompositeCombinedMemberAndCompanionObjectScope(it) }
                     .toList()
                     .asCompositeScope()
             }
@@ -319,7 +321,7 @@ internal object KDocReferenceResolver {
 
         return possibleReceivers.flatMap { receiverClassSymbol ->
             val receiverType = buildClassType(receiverClassSymbol)
-            val applicableExtensions = possibleExtensions.filter { it.canBeReferencedAsExtensionOn(receiverType) }
+            val applicableExtensions = possibleExtensions.filter { canBeReferencedAsExtensionOn(it, receiverType) }
 
             applicableExtensions.map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
         }
@@ -352,10 +354,9 @@ internal object KDocReferenceResolver {
      * This check might change in the future, as Dokka team advances with KDoc rules.
      */
     context(KtAnalysisSession)
-    private fun KtCallableSymbol.canBeReferencedAsExtensionOn(actualReceiverType: KtType): Boolean {
-        val extensionReceiverType = receiverParameter?.type ?: return false
-
-        return extensionReceiverType.isPossiblySuperTypeOf(actualReceiverType)
+    private fun canBeReferencedAsExtensionOn(symbol: KtCallableSymbol, actualReceiverType: KtType): Boolean {
+        val extensionReceiverType = symbol.receiverParameter?.type ?: return false
+        return isPossiblySuperTypeOf(extensionReceiverType, actualReceiverType)
     }
 
     /**
@@ -364,18 +365,16 @@ internal object KDocReferenceResolver {
      * For a similar function in the `intellij` repository, see `isPossiblySubTypeOf`.
      */
     context(KtAnalysisSession)
-    private fun KtType.isPossiblySuperTypeOf(actualReceiverType: KtType): Boolean {
+    private fun isPossiblySuperTypeOf(type: KtType, actualReceiverType: KtType): Boolean {
         // Type parameters cannot act as receiver types in KDoc
         if (actualReceiverType is KtTypeParameterType) return false
 
-        val expectedType = this
-
-        if (expectedType is KtTypeParameterType) {
-            return expectedType.symbol.upperBounds.all { it.isPossiblySuperTypeOf(actualReceiverType) }
+        if (type is KtTypeParameterType) {
+            return type.symbol.upperBounds.all { isPossiblySuperTypeOf(it, actualReceiverType) }
         }
 
         val receiverExpanded = actualReceiverType.expandedClassSymbol
-        val expectedExpanded = expectedType.expandedClassSymbol
+        val expectedExpanded = type.expandedClassSymbol
 
         // if the underlying classes are equal, we consider the check successful
         // despite the possibility of different type bounds
@@ -386,57 +385,58 @@ internal object KDocReferenceResolver {
             return true
         }
 
-        return actualReceiverType.isSubTypeOf(expectedType)
+        return actualReceiverType.isSubTypeOf(type)
     }
 
     context(KtAnalysisSession)
     private fun getNonImportedSymbolsByFullyQualifiedName(fqName: FqName): Collection<KtSymbol> = buildSet {
         generateNameInterpretations(fqName).forEach { interpretation ->
-            collectSymbolsByFqNameInterpretation(interpretation)
+            collectSymbolsByFqNameInterpretation(interpretation, this@buildSet)
         }
     }
 
     context(KtAnalysisSession)
-    private fun MutableCollection<KtSymbol>.collectSymbolsByFqNameInterpretation(
-        interpretation: FqNameInterpretation,
-    ) {
+    private fun collectSymbolsByFqNameInterpretation(interpretation: FqNameInterpretation, consumer: MutableCollection<KtSymbol>) {
         when (interpretation) {
             is FqNameInterpretation.FqNameInterpretationAsCallableId -> {
-                collectSymbolsByFqNameInterpretationAsCallableId(interpretation.callableId)
+                collectSymbolsByFqNameInterpretationAsCallableId(interpretation.callableId, consumer)
             }
 
             is FqNameInterpretation.FqNameInterpretationAsClassId -> {
-                collectSymbolsByClassId(interpretation.classId)
+                collectSymbolsByClassId(interpretation.classId, consumer)
             }
 
             is FqNameInterpretation.FqNameInterpretationAsPackage -> {
-                collectSymbolsByPackage(interpretation.packageFqName)
+                collectSymbolsByPackage(interpretation.packageFqName, consumer)
             }
         }
     }
 
     context(KtAnalysisSession)
-    private fun MutableCollection<KtSymbol>.collectSymbolsByPackage(packageFqName: FqName) {
-        getPackageSymbolIfPackageExists(packageFqName)?.let(::add)
+    private fun collectSymbolsByPackage(packageFqName: FqName, consumer: MutableCollection<KtSymbol>) {
+        val symbol = getPackageSymbolIfPackageExists(packageFqName)
+        consumer.addIfNotNull(symbol)
     }
 
     context(KtAnalysisSession)
-    private fun MutableCollection<KtSymbol>.collectSymbolsByClassId(classId: ClassId) {
-        (getClassOrObjectSymbolByClassId(classId) ?: getTypeAliasByClassId(classId))?.let(::add)
+    private fun collectSymbolsByClassId(classId: ClassId, consumer: MutableCollection<KtSymbol>) {
+        val symbol = getClassOrObjectSymbolByClassId(classId) ?: getTypeAliasByClassId(classId)
+        consumer.addIfNotNull(symbol)
     }
 
     context(KtAnalysisSession)
-    private fun MutableCollection<KtSymbol>.collectSymbolsByFqNameInterpretationAsCallableId(callableId: CallableId) {
+    private fun collectSymbolsByFqNameInterpretationAsCallableId(callableId: CallableId, consumer: MutableCollection<KtSymbol>) {
         when (val classId = callableId.classId) {
             null -> {
-                addAll(getTopLevelCallableSymbols(callableId.packageName, callableId.callableName))
+                consumer.addAll(getTopLevelCallableSymbols(callableId.packageName, callableId.callableName))
             }
 
             else -> {
-                getClassOrObjectSymbolByClassId(classId)
-                    ?.getCompositeCombinedMemberAndCompanionObjectScope()
-                    ?.getCallableSymbols(callableId.callableName)
-                    ?.let(::addAll)
+                val symbol = getClassOrObjectSymbolByClassId(classId)
+                if (symbol != null) {
+                    val scope = getCompositeCombinedMemberAndCompanionObjectScope(symbol)
+                    consumer.addAll(scope.getCallableSymbols(callableId.callableName))
+                }
             }
         }
     }
