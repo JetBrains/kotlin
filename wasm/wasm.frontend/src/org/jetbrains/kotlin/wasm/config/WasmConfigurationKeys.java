@@ -26,4 +26,7 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_USE_NEW_EXCEPTION_PROPOSAL =
             CompilerConfigurationKey.create("use wasm new exception proposal");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_INITIALIZE_IN_START_FUNCTION =
+            CompilerConfigurationKey.create("Initialize Wasm module in a special Wasm 'start' function");
 }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 class WasmCompiledModuleFragment(
     val irBuiltIns: IrBuiltIns,
     generateTrapsInsteadOfExceptions: Boolean,
+    val initializeInStartFunction: Boolean,
 ) {
     val functions =
         ReferencableAndDefinable<IrFunctionSymbol, WasmFunction>()
@@ -237,7 +238,7 @@ class WasmCompiledModuleFragment(
             memories = listOf(memory),
             globals = globals,
             exports = exports,
-            startFunction = null,  // Module is initialized via export call
+            startFunction = masterInitFunction.takeIf { initializeInStartFunction },
             elements = emptyList(),
             data = data,
             dataCount = true,

@@ -645,6 +645,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
         }
 
     @Argument(
+        value = "-Xwasm-initialize-in-start-function",
+        description = "Initialize module in Wasm 'start' function. Otherwise initialization is done separately by calling exported '_initialize' function."
+    )
+    var wasmInitializeInStartFunction = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xoptimize-generated-js",
         description = "Perform additional optimizations on the generated JS code."
     )
