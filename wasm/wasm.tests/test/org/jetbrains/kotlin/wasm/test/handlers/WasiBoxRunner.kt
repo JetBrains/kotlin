@@ -82,9 +82,9 @@ class WasiBoxRunner(
             val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
-                vm.runWithCathedExceptions(
+                vm.runWithCaughtExceptions(
                     debugMode = debugMode,
-                    disableExceptions = false,
+                    useNewExceptionHandling = false,
                     failsIn = failsIn,
                     entryMjs = collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,

@@ -313,6 +313,11 @@ class WasmIrToBinary(
             is WasmImmediate.HeapType -> appendHeapType(x.value)
             is WasmImmediate.ConstString ->
                 error("Instructions with pseudo immediates should be skipped")
+
+            is WasmImmediate.Catch -> {
+                b.writeVarUInt32(x.type.opcode)
+                x.immediates.forEach(this::appendImmediate)
+            }
         }
     }
 

@@ -21,8 +21,8 @@ internal sealed class WasmVM(val shortName: String) {
         entryMjs: String,
         jsFiles: List<String>,
         workingDirectory: File?,
-        disableExceptionHandlingIfPossible: Boolean = false,
-        toolArgs: List<String> = emptyList()
+        useNewExceptionHandling: Boolean = false,
+        toolArgs: List<String> = emptyList(),
     ): String
 
     object V8 : WasmVM("V8") {
@@ -30,13 +30,14 @@ internal sealed class WasmVM(val shortName: String) {
             entryMjs: String,
             jsFiles: List<String>,
             workingDirectory: File?,
-            disableExceptionHandlingIfPossible: Boolean,
-            toolArgs: List<String>
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 *jsFiles.toTypedArray(),
                 "--module",
+                *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
                 entryMjs,
                 workingDirectory = workingDirectory,
             )
@@ -47,13 +48,12 @@ internal sealed class WasmVM(val shortName: String) {
             entryMjs: String,
             jsFiles: List<String>,
             workingDirectory: File?,
-            disableExceptionHandlingIfPossible: Boolean,
-            toolArgs: List<String>
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 "--wasm-verbose",
-                *if (disableExceptionHandlingIfPossible) arrayOf("--no-wasm-exceptions") else emptyArray(),
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
                 "--module=$entryMjs",
                 workingDirectory = workingDirectory,
@@ -65,7 +65,7 @@ internal sealed class WasmVM(val shortName: String) {
             entryMjs: String,
             jsFiles: List<String>,
             workingDirectory: File?,
-            disableExceptionHandlingIfPossible: Boolean,
+            useNewExceptionHandling: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(

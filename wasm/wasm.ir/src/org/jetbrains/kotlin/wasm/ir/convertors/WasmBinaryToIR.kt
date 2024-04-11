@@ -439,6 +439,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.TYPE_IMM -> TODO()
                 WasmImmediateKind.HEAP_TYPE -> WasmImmediate.HeapType(readRefType())
                 WasmImmediateKind.LOCAL_DEFS -> TODO()
+                WasmImmediateKind.CATCH_VECTOR -> TODO()
             }
         }
 
