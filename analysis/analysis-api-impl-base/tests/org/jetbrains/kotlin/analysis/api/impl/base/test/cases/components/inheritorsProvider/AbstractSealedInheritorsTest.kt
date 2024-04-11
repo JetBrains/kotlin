@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheri
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.types.KtExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtUsualClassTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -48,7 +48,7 @@ abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
                 // We want to render `class A : C()` in both cases, so we need to expand the type alias.
                 val declarationRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
                     typeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
-                        usualClassTypeRenderer = KtUsualClassTypeRenderer.AS_FULLY_EXPANDED_CLASS_TYPE_WITH_TYPE_ARGUMENTS
+                        expandedTypeRenderingMode = KtExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE
                     }
                 }
 

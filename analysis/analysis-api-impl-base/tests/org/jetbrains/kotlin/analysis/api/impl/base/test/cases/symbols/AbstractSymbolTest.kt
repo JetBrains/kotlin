@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTest
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KtClassifierBodyRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.KtExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtFunctionalTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtUsualClassTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
@@ -362,8 +362,8 @@ enum class PrettyRendererOption(val transformation: (KtDeclarationRenderer) -> K
         { renderer ->
             renderer.with {
                 typeRenderer = typeRenderer.with {
-                    usualClassTypeRenderer = KtUsualClassTypeRenderer.AS_FULLY_EXPANDED_CLASS_TYPE_WITH_TYPE_ARGUMENTS
-                    functionalTypeRenderer = KtFunctionalTypeRenderer.AS_FULLY_EXPANDED_CLASS_TYPE_FOR_REFELCTION_TYPES
+                    expandedTypeRenderingMode = KtExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE
+                    functionalTypeRenderer = KtFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
                 }
             }
         }

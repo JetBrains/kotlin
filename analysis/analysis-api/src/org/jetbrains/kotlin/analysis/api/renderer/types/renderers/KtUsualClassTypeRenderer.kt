@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -38,51 +37,6 @@ public interface KtUsualClassTypeRenderer {
                         }
                     },
                 )
-            }
-        }
-    }
-
-    /**
-     * Renders class type and in case of type alias adds a comment containing fully expanded class type, for example:
-     * ```
-     * typealias MyInt = Int
-     * ```
-     * `MyInt` is rendered as `MyInt /* = Int */`
-     */
-    public object AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS_VERBOSE : KtUsualClassTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtUsualClassType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                printer {
-                    AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(analysisSession, type, typeRenderer, printer)
-                    if (type.classSymbol is KtTypeAliasSymbol) {
-                        append(" /* = ")
-                        typeRenderer.renderTypeIgnoringAbbreviation(type.fullyExpandedType, printer)
-                        append(" */")
-                    }
-                }
-            }
-        }
-    }
-
-    public object AS_FULLY_EXPANDED_CLASS_TYPE_WITH_TYPE_ARGUMENTS : KtUsualClassTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtUsualClassType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                val fullyExpandedType = type.fullyExpandedType
-                if (fullyExpandedType is KtUsualClassType) {
-                    AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(analysisSession, fullyExpandedType, typeRenderer, printer)
-                } else {
-                    typeRenderer.renderType(analysisSession, fullyExpandedType, printer)
-                }
             }
         }
     }
