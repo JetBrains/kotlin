@@ -158,7 +158,7 @@ class CompilerPluginRuntimeVersionCheckTest {
 
             android {
                 namespace "androidx.compose.compiler.test"
-                compileSdkVersion ${projectSetup.props.compileSdkVersion}
+                compileSdk ${projectSetup.props.compileSdk}
                 buildToolsVersion "${projectSetup.props.buildToolsVersion}"
                 defaultConfig {
                     minSdkVersion 21
