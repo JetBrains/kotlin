@@ -47,6 +47,12 @@ public class TypeCheckSwiftExportGoldenData extends SwiftTypeCheckBaseTest {
       public void testResult() {
         runTest("native/swift/swift-export-standalone/testData/classes/golden_result/result.swift");
       }
+
+      @Test
+      @TestMetadata("result.no_comments.swift")
+      public void testResult_no_comments() {
+        runTest("native/swift/swift-export-standalone/testData/classes/golden_result/result.no_comments.swift");
+      }
     }
 
     @Nested
@@ -82,6 +88,12 @@ public class TypeCheckSwiftExportGoldenData extends SwiftTypeCheckBaseTest {
       @TestMetadata("result.swift")
       public void testResult() {
         runTest("native/swift/swift-export-standalone/testData/documentation/golden_result/result.swift");
+      }
+
+      @Test
+      @TestMetadata("result.no_comments.swift")
+      public void testResult_no_comments() {
+        runTest("native/swift/swift-export-standalone/testData/documentation/golden_result/result.no_comments.swift");
       }
     }
 
