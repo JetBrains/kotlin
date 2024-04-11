@@ -1506,6 +1506,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
     }
 
     @Test
+    @TestMetadata("JavaCallWithGenerics.kt")
+    public void testJavaCallWithGenerics() {
+      runTest("analysis/analysis-api/testData/referenceResolve/java/JavaCallWithGenerics.kt");
+    }
+
+    @Test
     @TestMetadata("JavaConstructorNotNullParameter.kt")
     public void testJavaConstructorNotNullParameter() {
       runTest("analysis/analysis-api/testData/referenceResolve/java/JavaConstructorNotNullParameter.kt");
