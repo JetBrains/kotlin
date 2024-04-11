@@ -32,11 +32,10 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
  * entities retrieved from it will become invalid. An analysis session also shouldn't be leaked from the [analyze] call it was created in.
  *
  * It is forbidden to store an analysis session in a variable, parameter, or property. From the [analyze] block which provides the analysis
- * session, the analysis session should be passed to functions via context receivers. For example:
+ * session, the analysis session should be passed to functions via an extension receiver, or as an ordinary parameter. For example:
  *
  * ```kotlin
- * context(KtAnalysisSession)
- * fun foo() { ... }
+ * fun KtAnalysisSession.foo() { ... }
  * ```
  *
  * **Class context receivers** should not be used to pass analysis sessions. While a context receiver on a class will make the analysis
