@@ -180,10 +180,12 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
 }
 
 context(KtAnalysisSession)
+@Deprecated("Use 'getSymbol()' instead", ReplaceWith("this.getSymbol() as S"))
 public inline fun <reified S : KtSymbol> KtDeclaration.getSymbolOfType(): S =
     withValidityAssertion { getSymbol() } as S
 
 context(KtAnalysisSession)
+@Deprecated("Use 'getSymbol()' instead", ReplaceWith("this.getSymbol() as? S"))
 public inline fun <reified S : KtSymbol> KtDeclaration.getSymbolOfTypeSafe(): S? =
     withValidityAssertion { getSymbol() } as? S
 
