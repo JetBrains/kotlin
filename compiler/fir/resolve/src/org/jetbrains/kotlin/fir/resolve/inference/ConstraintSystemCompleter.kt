@@ -60,11 +60,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
-        if (completionMode == ConstraintSystemCompletionMode.FULL || completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA) {
-            resolveForkPointsConstraints()
-        }
-
         completion@ while (true) {
+            if (completionMode.shouldForkPointConstraintsBeResolved) {
+                resolveForkPointsConstraints()
+            }
+
             // TODO: This is very slow, KT-59680
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
 
