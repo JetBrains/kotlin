@@ -917,36 +917,29 @@ class Fir2IrDeclarationStorage(
         return getIrPropertyForwardedSymbol(firBackingFieldSymbol.fir.propertySymbol.fir)
     }
 
-    fun getIrDelegateFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
-        return getIrPropertyForwardedSymbol(firVariableSymbol.fir)
+    fun getIrDelegateFieldSymbol(delegateFieldSymbol: FirDelegateFieldSymbol): IrSymbol {
+        return getIrPropertyForwardedSymbol(delegateFieldSymbol.fir)
     }
 
-    private fun getIrPropertyForwardedSymbol(fir: FirVariable): IrSymbol {
-        return when (fir) {
-            is FirProperty -> {
-                if (fir.isLocal) {
-                    // local property cannot be referenced before declaration, so it's safe to take an owner from the symbol
-                    @OptIn(UnsafeDuringIrConstructionAPI::class)
-                    val delegatedProperty = localStorage.getDelegatedProperty(fir)?.owner
-                    return delegatedProperty?.delegate?.symbol ?: getIrVariableSymbol(fir)
-                }
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                propertyCache[fir]?.ownerIfBound()?.let { return it.backingField!!.symbol }
-                val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag = null)
-                val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-                createAndCacheIrProperty(fir, irParent, predefinedOrigin = parentOrigin).backingField!!.symbol
-            }
-            else -> {
-                getIrVariableSymbol(fir)
-            }
+    private fun getIrPropertyForwardedSymbol(fir: FirProperty): IrSymbol {
+        if (fir.isLocal) {
+            // local property cannot be referenced before declaration, so it's safe to take an owner from the symbol
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            val delegatedProperty = localStorage.getDelegatedProperty(fir)?.owner
+            return delegatedProperty?.delegate?.symbol ?: getIrVariableSymbol(fir)
         }
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        propertyCache[fir]?.ownerIfBound()?.let { return it.backingField!!.symbol }
+        val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag = null)
+        val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
+        return createAndCacheIrProperty(fir, irParent, predefinedOrigin = parentOrigin).backingField!!.symbol
     }
 
-    fun getCachedIrDelegateOrBackingFieldSymbol(field: FirField): IrFieldSymbol? {
+    fun getCachedIrFieldSymbolForSupertypeDelegateField(field: FirField): IrFieldSymbol? {
         return fieldCache[field]
     }
 
-    fun recordDelegateFieldMappedToBackingField(field: FirField, irFieldSymbol: IrFieldSymbol) {
+    fun recordSupertypeDelegateFieldMappedToBackingField(field: FirField, irFieldSymbol: IrFieldSymbol) {
         fieldCache[field] = irFieldSymbol
     }
 
@@ -955,7 +948,7 @@ class Fir2IrDeclarationStorage(
         return fieldStaticOverrideCache[FieldStaticOverrideKey(ownerLookupTag, field.name)]
     }
 
-    internal fun createDelegateIrField(field: FirField, irClass: IrClass): IrField {
+    internal fun createSupertypeDelegateIrField(field: FirField, irClass: IrClass): IrField {
         return createAndCacheIrField(
             field,
             irParent = irClass,

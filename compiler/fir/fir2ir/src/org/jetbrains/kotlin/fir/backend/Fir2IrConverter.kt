@@ -570,7 +570,7 @@ class Fir2IrConverter(
                     delegateFieldToPropertyMap?.remove(declaration)?.let { delegateFields ->
                         val backingField = irProperty.backingField!!
                         for (delegateField in delegateFields) {
-                            declarationStorage.recordDelegateFieldMappedToBackingField(delegateField, backingField.symbol)
+                            declarationStorage.recordSupertypeDelegateFieldMappedToBackingField(delegateField, backingField.symbol)
                             delegatedMemberGenerator.generateWithBodiesIfNeeded(
                                 firField = delegateField,
                                 irField = backingField,
@@ -590,7 +590,7 @@ class Fir2IrConverter(
                 require(parent is IrClass)
                 val correspondingClassProperty = declaration.findCorrespondingDelegateProperty(containingClass)
                 if (correspondingClassProperty == null || correspondingClassProperty.isVar) {
-                    val irField = declarationStorage.createDelegateIrField(declaration, parent)
+                    val irField = declarationStorage.createSupertypeDelegateIrField(declaration, parent)
                     delegatedMemberGenerator.generateWithBodiesIfNeeded(declaration, irField, containingClass, parent)
                 } else {
                     delegateFieldToPropertyMap.putValue(correspondingClassProperty, declaration)
