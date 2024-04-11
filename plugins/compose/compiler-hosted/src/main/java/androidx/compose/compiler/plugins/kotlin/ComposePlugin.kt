@@ -167,9 +167,16 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             allowMultipleOccurrences = false
         )
         val STRONG_SKIPPING_OPTION = CliOption(
+            "strongSkipping",
+            "<true|false>",
+            "Enable strong skipping mode",
+            required = false,
+            allowMultipleOccurrences = false
+        )
+        val EXPERIMENTAL_STRONG_SKIPPING_OPTION = CliOption(
             "experimentalStrongSkipping",
             "<true|false>",
-            "Enable experimental strong skipping mode",
+            "Deprecated - Use strongSkipping instead",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -201,6 +208,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION,
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION,
         DECOYS_ENABLED_OPTION,
+        EXPERIMENTAL_STRONG_SKIPPING_OPTION,
         STRONG_SKIPPING_OPTION,
         STABLE_CONFIG_PATH_OPTION,
         TRACE_MARKERS_OPTION,
@@ -251,6 +259,18 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.DECOYS_ENABLED_KEY,
             value == "true"
         )
+        EXPERIMENTAL_STRONG_SKIPPING_OPTION -> {
+            val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            msgCollector?.report(
+                CompilerMessageSeverity.WARNING,
+                "${EXPERIMENTAL_STRONG_SKIPPING_OPTION.optionName} is deprecated." +
+                    " Use ${STRONG_SKIPPING_OPTION.optionName} instead."
+            )
+            configuration.put(
+                ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
+                value == "true"
+            )
+        }
         STRONG_SKIPPING_OPTION -> configuration.put(
             ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
             value == "true"
@@ -407,6 +427,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             )
 
             val useK2 = configuration.languageVersionSettings.languageVersion.usesK2
+
             val strongSkippingEnabled = configuration.get(
                 ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
                 false
