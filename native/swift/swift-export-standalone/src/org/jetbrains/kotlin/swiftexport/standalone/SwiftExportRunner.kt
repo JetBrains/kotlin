@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEBUG_MODE_ENABLED
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.STABLE_DECLARATIONS_ORDER
@@ -23,8 +22,6 @@ public data class SwiftExportConfig(
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath)
 ) {
     public companion object {
-        public const val DEBUG_MODE_ENABLED: String = "DEBUG_MODE_ENABLED"
-
         /**
          * How should the generated stubs refer to C bridging module?
          * ```swift
@@ -85,7 +82,6 @@ public fun runSwiftExport(
     config: SwiftExportConfig = SwiftExportConfig(),
     output: SwiftExportOutput,
 ) {
-    val isDebugModeEnabled = config.settings.containsKey(DEBUG_MODE_ENABLED)
     val stableDeclarationsOrder = config.settings.containsKey(STABLE_DECLARATIONS_ORDER)
     val renderDocComments = config.settings[RENDER_DOC_COMMENTS] != "false"
     val bridgeModuleName = config.settings.getOrElse(BRIDGE_MODULE_NAME) {
@@ -99,7 +95,6 @@ public fun runSwiftExport(
     val module = buildSwiftModule(
         input,
         config.distribution,
-        shouldSortInputFiles = isDebugModeEnabled,
         bridgeModuleName = bridgeModuleName
     )
     val bridgeRequests = module.buildFunctionBridges()

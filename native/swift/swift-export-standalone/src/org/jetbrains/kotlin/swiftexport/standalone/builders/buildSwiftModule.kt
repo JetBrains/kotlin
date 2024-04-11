@@ -27,10 +27,9 @@ import kotlin.io.path.Path
 internal fun buildSwiftModule(
     input: SwiftExportInput,
     kotlinDistribution: Distribution,
-    shouldSortInputFiles: Boolean,
     bridgeModuleName: String,
 ): SirModule {
-    val (module, ktFiles) = extractModuleWithFiles(kotlinDistribution, input, shouldSortInputFiles)
+    val (module, ktFiles) = extractModuleWithFiles(kotlinDistribution, input)
 
     return analyze(module) {
         val sirSession = StandaloneSirSession(this) { _, _ ->
@@ -57,7 +56,6 @@ internal fun buildSwiftModule(
 private fun extractModuleWithFiles(
     kotlinDistribution: Distribution,
     input: SwiftExportInput,
-    shouldSortInputFiles: Boolean,
 ): Pair<KtSourceModule, List<KtFile>> {
     val analysisAPISession = buildStandaloneAnalysisAPISession {
         registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
@@ -85,12 +83,5 @@ private fun extractModuleWithFiles(
     }
 
     val (sourceModule, rawFiles) = analysisAPISession.modulesWithFiles.entries.single()
-
-    var ktFiles = rawFiles.filterIsInstance<KtFile>()
-
-    if (shouldSortInputFiles) {
-        ktFiles = ktFiles.sortedBy { it.name }
-    }
-
-    return Pair(sourceModule, ktFiles)
+    return Pair(sourceModule, rawFiles.filterIsInstance<KtFile>())
 }

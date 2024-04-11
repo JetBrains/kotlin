@@ -50,7 +50,6 @@ abstract class AbstractSwiftRunnerTestBase(private val renderDocComments: Boolea
             output = output,
             config = SwiftExportConfig(
                 settings = mapOf(
-                    SwiftExportConfig.DEBUG_MODE_ENABLED to "true",
                     SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
                     SwiftExportConfig.RENDER_DOC_COMMENTS to (if (renderDocComments) "true" else "false"),
                     SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,

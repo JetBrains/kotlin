@@ -36,7 +36,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
             ),
             config = SwiftExportConfig(
                 settings = mapOf(
-                    SwiftExportConfig.DEBUG_MODE_ENABLED to parameters.debugMode.getOrElse(false).toString(),
+                    SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.debugMode.getOrElse(false).toString(),
                     SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
                 ),
                 Companion,
