@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
@@ -68,6 +69,7 @@ public class KtTypeRenderer private constructor(
     private fun KtAnalysisSession.renderExpandedTypeComment(type: KtType, printer: PrettyPrinter) {
         val expandedType = when {
             type.abbreviatedType != null -> type
+            type.classSymbol is KtTypeAliasSymbol -> type.fullyExpandedType
             else -> return
         }
 
@@ -77,11 +79,13 @@ public class KtTypeRenderer private constructor(
     }
 
     private fun KtAnalysisSession.renderExpandedType(type: KtType, printer: PrettyPrinter) {
-        renderTypeAsIs(type, printer)
+        renderTypeAsIs(type.fullyExpandedType, printer)
     }
 
     private fun KtAnalysisSession.renderAbbreviatedTypeComment(type: KtType, printer: PrettyPrinter) {
-        val abbreviatedType = type.abbreviatedType ?: return
+        val abbreviatedType = type.abbreviatedType
+            ?: type.takeIf { it.classSymbol is KtTypeAliasSymbol }
+            ?: return
 
         printer.append(" /* from: ")
         renderTypeAsIs(abbreviatedType, printer)
