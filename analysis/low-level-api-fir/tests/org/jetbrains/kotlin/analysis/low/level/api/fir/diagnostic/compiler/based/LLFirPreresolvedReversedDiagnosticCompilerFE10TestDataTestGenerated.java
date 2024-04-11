@@ -964,6 +964,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("missingVisibilityErrorAccessThroughTypealias.kt")
+    public void testMissingVisibilityErrorAccessThroughTypealias() {
+      runTest("compiler/testData/diagnostics/tests/missingVisibilityErrorAccessThroughTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("missingWrongAnnotationTarget.kt")
     public void testMissingWrongAnnotationTarget() {
       runTest("compiler/testData/diagnostics/tests/missingWrongAnnotationTarget.kt");
