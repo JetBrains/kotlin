@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.psi.KtElement
  *
  * ```
  *   class AdditionalKDocResolutionProviderBasedOnNameMatch : AdditionalKDocResolutionProvider {
- *     context(KtAnalysisSession)
- *     override fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> =
+ *     override fun resolveKdocFqName(analysisSession: KtAnalysisSession, fqName: FqName, contextElement: KtElement): Collection<KtSymbol> =
  *       contextElement.containingKtFile.declarations.filter { it.name == fqName.shortName().asString() }.map { it.getSymbol() }
  *   }
  * ```
@@ -38,15 +37,13 @@ public interface AdditionalKDocResolutionProvider {
     /**
      * This function must return additional symbols for [contextElement] in KDoc.
      */
-    context(KtAnalysisSession)
-    public fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol>
+    public fun resolveKdocFqName(analysisSession: KtAnalysisSession, fqName: FqName, contextElement: KtElement): Collection<KtSymbol>
 
     public companion object {
         public val EP_NAME: ExtensionPointName<AdditionalKDocResolutionProvider> =
             ExtensionPointName<AdditionalKDocResolutionProvider>("org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider")
 
-        context(KtAnalysisSession)
-        public fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> =
-            EP_NAME.extensions.flatMap { it.resolveKdocFqName(fqName, contextElement) }
+        public fun resolveKdocFqName(analysisSession: KtAnalysisSession, fqName: FqName, contextElement: KtElement): Collection<KtSymbol> =
+            EP_NAME.extensions.flatMap { it.resolveKdocFqName(analysisSession, fqName, contextElement) }
     }
 }
