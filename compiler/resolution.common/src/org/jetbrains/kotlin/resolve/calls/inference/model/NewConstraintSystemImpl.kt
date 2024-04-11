@@ -559,9 +559,9 @@ class NewConstraintSystemImpl(
                     position,
                 )
 
-                if (constraintsFromAllForkPoints.isNotEmpty()) {
-                    resolveForkPointsConstraints()
-                }
+                // Some new fork points constraints might be introduced, and we apply them immediately because we anyway at the
+                // completion state (as we already started resolving them)
+                resolveForkPointsConstraints()
 
                 !hasContradiction
             }
