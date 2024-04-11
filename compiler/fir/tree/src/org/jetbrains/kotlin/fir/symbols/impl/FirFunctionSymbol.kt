@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.mpp.FunctionSymbolMarker
 import org.jetbrains.kotlin.mpp.SimpleFunctionSymbolMarker
 import org.jetbrains.kotlin.name.*
 
-sealed class FirFunctionSymbol<D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>(), FunctionSymbolMarker {
+sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>(), FunctionSymbolMarker {
     val valueParameterSymbols: List<FirValueParameterSymbol>
         get() = fir.valueParameters.map { it.symbol }
 
@@ -106,7 +106,7 @@ abstract class FirSyntheticPropertySymbol(propertyId: CallableId, val getterId: 
 
 // ------------------------ unnamed ------------------------
 
-sealed class FirFunctionWithoutNameSymbol<F : FirFunction>(stubName: Name) : FirFunctionSymbol<F>(CallableId(FqName("special"), stubName))
+sealed class FirFunctionWithoutNameSymbol<out F : FirFunction>(stubName: Name) : FirFunctionSymbol<F>(CallableId(FqName("special"), stubName))
 
 class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(Name.identifier("anonymous")) {
     val label: FirLabel? get() = fir.label

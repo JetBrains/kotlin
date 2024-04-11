@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
+abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
     abstract val callableId: CallableId
 
     val resolvedReturnTypeRef: FirResolvedTypeRef

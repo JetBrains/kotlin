@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-abstract class FirBasedSymbol<E : FirDeclaration> : DeclarationSymbolMarker {
+abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker {
     private var _fir: E? = null
 
     @SymbolInternals
@@ -32,7 +32,7 @@ abstract class FirBasedSymbol<E : FirDeclaration> : DeclarationSymbolMarker {
                 withFirSymbolIdEntry("symbol", this@FirBasedSymbol)
             }
 
-    fun bind(e: E) {
+    fun bind(e: @UnsafeVariance E) {
         _fir = e
     }
 

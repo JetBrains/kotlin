@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-sealed class FirVariableSymbol<E : FirVariable>(override val callableId: CallableId) : FirCallableSymbol<E>() {
+sealed class FirVariableSymbol<out E : FirVariable>(override val callableId: CallableId) : FirCallableSymbol<E>() {
     val resolvedInitializer: FirExpression?
         get() {
             if (fir.initializer == null) return null

@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.mpp.ClassifierSymbolMarker
 
-sealed class FirClassifierSymbol<E : FirDeclaration> : FirBasedSymbol<E>(), ClassifierSymbolMarker {
+sealed class FirClassifierSymbol<out E : FirDeclaration> : FirBasedSymbol<E>(), ClassifierSymbolMarker {
     abstract fun toLookupTag(): ConeClassifierLookupTag
 }
