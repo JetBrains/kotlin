@@ -78,7 +78,7 @@ private class KtFirResolveExtensionScope(
         return getClassifierSymbols { it in namesSet }
     }
 
-    private inline fun <D : KtNamedDeclaration, reified S : KtDeclaration> getTopLevelDeclarations(
+    private inline fun <D : KtNamedDeclaration, reified S : KtDeclarationSymbol> getTopLevelDeclarations(
         crossinline nameFilter: KtScopeNameFilter,
         crossinline getDeclarationsByProvider: (LLFirResolveExtensionToolDeclarationProvider) -> Sequence<D>,
     ): Sequence<S> = sequence {
@@ -87,7 +87,7 @@ private class KtFirResolveExtensionScope(
                 val declarationName = declaration.nameAsName ?: continue
                 if (!nameFilter(declarationName)) continue
                 with(analysisSession) {
-                    yield(declaration.getSymbolOfType())
+                    yield(declaration.getSymbol() as S)
                 }
             }
         }
