@@ -85,18 +85,16 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
     val enableNonSkippingGroupOptimization: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
-     * Enable experimental strong skipping mode.
+     * Enable strong skipping mode.
      *
-     * Strong Skipping is an experimental mode that improves the runtime performance of your application by skipping unnecessary
-     * invocations of composable functions for which the parameters have not changed.  In particular, when enabled, Composables with
+     * Strong Skipping is a mode that improves the runtime performance of your application by skipping unnecessary
+     * invocations of composable functions for which the parameters have not changed. In particular, when enabled, Composables with
      * unstable parameters become skippable and lambdas with unstable captures will be memoized.
-     *
-     * String skipping is still considered experimental and is thus disabled by default.
      *
      * For more information, see this link:
      *  - [AndroidX strong skipping](https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/strong-skipping.md)
      */
-    val enableExperimentalStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
      * Path to the stability configuration file.
