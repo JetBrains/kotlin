@@ -56,7 +56,7 @@ fun box(foo: Foo<*>) {
     // Z has two supertypes --> (Bar<out Foo<Z>>, Bar<Y>)
     // ... went into recursion
 
-    foo.<!UPPER_BOUND_VIOLATED!>bar<!>()
+    foo.bar()
 
     foo.test
 }

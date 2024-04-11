@@ -843,5 +843,7 @@ fun FirResolvedQualifier.isStandalone(
     return true
 }
 
-val FirTypeProjection.isExplicit: Boolean
-    get() = source != null && source?.kind !is KtFakeSourceElementKind.ImplicitTypeArgument
+fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =
+    source != null && source.kind !is KtFakeSourceElementKind.ImplicitTypeArgument
+
+val FirTypeProjection.isExplicit: Boolean get() = isExplicitTypeArgumentSource(source)

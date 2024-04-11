@@ -1,6 +1,6 @@
 // ISSUE: KT-61077
 
-val test: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, UPPER_BOUND_VIOLATED!>materializeDelegate()<!>
+val test: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>materializeDelegate()<!>
 
 fun <T: CharSequence> materializeDelegate(): Box<T> = TODO()
 

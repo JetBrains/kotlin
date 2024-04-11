@@ -192,7 +192,7 @@ fun checkUpperBoundViolated(
         val argumentTypeRef = sourceAttribute?.typeRef
         val argumentSource = sourceAttribute?.source
 
-        if (argumentType != null && argumentSource != null) {
+        if (argumentType != null && isExplicitTypeArgumentSource(argumentSource)) {
             if (!isIgnoreTypeParameters || (argumentType.typeArguments.isEmpty() && argumentType !is ConeTypeParameterType)) {
                 val intersection =
                     typeSystemContext.intersectTypes(typeParameters[index].resolvedBounds.map { it.coneType })

@@ -7,6 +7,6 @@ sealed class Subtype<A1, B1> {
 }
 
 fun <A, B> unsafeCast(value: A): B {
-    val proof: Subtype<A, B> = Subtype.<!UPPER_BOUND_VIOLATED!>Trivial<!>()
+    val proof: Subtype<A, B> = Subtype.Trivial()
     return proof.cast(value)
 }

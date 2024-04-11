@@ -1,5 +1,4 @@
 // !LANGUAGE: -ProperTypeInferenceConstraintsProcessing
-// IGNORE_BACKEND_K2: ANY
 
 sealed class Subtype<A1, B1> {
     abstract fun cast(value: A1): B1
