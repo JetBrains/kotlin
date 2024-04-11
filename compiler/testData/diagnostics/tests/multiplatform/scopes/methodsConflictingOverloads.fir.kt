@@ -10,9 +10,9 @@ expect abstract class B
 
 expect class C : B
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect abstract class D() {
-    <!AMBIGUOUS_ACTUALS{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>fun foo()<!>
-}<!>
+expect abstract class D() {
+    <!AMBIGUOUS_ACTUALS{JVM}!>fun foo()<!>
+}
 
 class E : D()
 
@@ -32,7 +32,7 @@ actual abstract class B() {
 
 actual class C : B(), I {}
 
-actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!> {
+actual abstract class D {
     <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
     <!CONFLICTING_OVERLOADS!>fun <!ACTUAL_MISSING!>foo<!>()<!> {}
 }

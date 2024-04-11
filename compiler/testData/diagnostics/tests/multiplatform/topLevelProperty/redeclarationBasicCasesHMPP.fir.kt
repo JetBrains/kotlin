@@ -4,9 +4,9 @@
 // TARGET_PLATFORM: Common
 expect val <!REDECLARATION!>x1<!>: Int
 
-<!AMBIGUOUS_ACTUALS{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>expect val x2: Int<!>
+<!AMBIGUOUS_ACTUALS{JVM}!>expect val x2: Int<!>
 
-<!AMBIGUOUS_ACTUALS{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>expect val x3: Int<!>
+<!AMBIGUOUS_ACTUALS{JVM}!>expect val x3: Int<!>
 
 // MODULE: intermediate()()(common)
 // TARGET_PLATFORM: Common
