@@ -56,7 +56,7 @@ object AbstractExpectActualMatcher {
             expectClassSymbol = null,
             actualClassSymbol = null,
             mismatchedMembers = null,
-        )
+        ).singleOrNull()
     }
 
     fun matchClassifiers(
@@ -75,9 +75,7 @@ object AbstractExpectActualMatcher {
     }
 
     /**
-     * Besides returning the matched declaration
-     *
-     * The function has an additional side effects:
+     * Besides returning the matched declarations, the function has an additional side effects:
      * - It adds mismatched members to `mismatchedMembers`
      * - It calls `onMatchedMembers` and `onMismatchedMembersFromClassScope` callbacks
      */
@@ -88,7 +86,7 @@ object AbstractExpectActualMatcher {
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
         mismatchedMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker?>>>>?,
-    ): DeclarationSymbolMarker? {
+    ): List<DeclarationSymbolMarker> {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
                 is CallableSymbolMarker -> getCallablesCompatibility(
@@ -118,11 +116,13 @@ object AbstractExpectActualMatcher {
             }
         }
 
-        matched.singleOrNull()?.let { return it }
+        if (matched.isNotEmpty()) {
+            return matched
+        }
 
         mismatchedMembers?.add(expectMember to mismatched)
         onMismatchedMembersFromClassScope(expectMember, mismatched, expectClassSymbol, actualClassSymbol)
-        return null
+        return emptyList()
     }
 
     private fun ExpectActualMatchingContext<*>.getCallablesCompatibility(

@@ -194,10 +194,10 @@ object AbstractExpectActualChecker {
                 mismatchedMembers,
             )
 
-            if (matched != null) {
+            matched.forEach {
                 checkSingleExpectAgainstMatchedActual(
                     expectMember,
-                    matched,
+                    it,
                     substitutor,
                     expectClassSymbol,
                     actualClassSymbol,

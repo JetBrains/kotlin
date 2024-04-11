@@ -32,7 +32,7 @@ actual abstract class B() {
 
 actual class C : B(), I {}
 
-actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!> {
+actual abstract class D {
     actual val <!REDECLARATION!>x<!> = 0
     val <!ACTUAL_MISSING, REDECLARATION!>x<!> = 0
 }
