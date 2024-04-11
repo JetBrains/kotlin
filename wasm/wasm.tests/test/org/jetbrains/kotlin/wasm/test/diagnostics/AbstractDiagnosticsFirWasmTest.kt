@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -37,6 +39,7 @@ abstract class AbstractFirWasmDiagnosticTestBase(
             frontend = FrontendKinds.FIR
             targetPlatform = this@AbstractFirWasmDiagnosticTestBase.targetPlatform
             dependencyKind = DependencyKind.Source
+            targetBackend = TargetBackend.WASM
         }
 
         configureFirParser(parser)
@@ -54,6 +57,7 @@ abstract class AbstractFirWasmDiagnosticTestBase(
             ::CoroutineHelpersSourceFilesProvider,
         )
         useAdditionalService(::LibraryProvider)
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         facadeStep(::FirFrontendFacade)
 

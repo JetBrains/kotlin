@@ -517,6 +517,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("promiseUnit.kt")
+    public void testPromiseUnit() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/promiseUnit.kt");
+    }
+
+    @Test
     @TestMetadata("secondaryConstructorWithoutJsName.kt")
     public void testSecondaryConstructorWithoutJsName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsName.kt");
