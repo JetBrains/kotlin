@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.NativeFullCrossDistKt
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.CopySamples
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
-import java.util.concurrent.ConcurrentHashMap
 import plugins.KotlinBuildPublishingPluginKt
 import java.security.MessageDigest
 
@@ -400,12 +399,15 @@ tasks.register("dist") {
             "distStdlibCache"
 }
 
+def copyDarwinKlibsForFullCrossDist = NativeFullCrossDistKt.setupCrossDistCopyTask(project)
+
 tasks.register("crossDist") {
     dependsOn "distCompiler",
             "crossDistRuntime",
             "distDef",
             "distStdlib",
-            "crossDistStdlibCache"
+            "crossDistStdlibCache",
+            copyDarwinKlibsForFullCrossDist
 }
 
 tasks.register("bundle") {
