@@ -417,6 +417,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val OPT_IN_USAGE_ERROR by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ClassId>("optInMarkerClassId")
             parameter<String>("message")
+            isSuppressible = true
         }
         val OPT_IN_OVERRIDE by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<ClassId>("optInMarkerClassId")
@@ -425,6 +426,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val OPT_IN_OVERRIDE_ERROR by error<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<ClassId>("optInMarkerClassId")
             parameter<String>("message")
+            isSuppressible = true
         }
 
         val OPT_IN_IS_NOT_ENABLED by warning<KtAnnotationEntry>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)

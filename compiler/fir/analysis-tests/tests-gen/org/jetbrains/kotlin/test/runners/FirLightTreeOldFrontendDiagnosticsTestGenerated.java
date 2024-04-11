@@ -418,6 +418,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("errorSuppressionsWithoutWarning.kt")
+    public void testErrorSuppressionsWithoutWarning() {
+      runTest("compiler/testData/diagnostics/tests/errorSuppressionsWithoutWarning.kt");
+    }
+
+    @Test
     @TestMetadata("expressionsInQaSelectorsCornerCases.kt")
     public void testExpressionsInQaSelectorsCornerCases() {
       runTest("compiler/testData/diagnostics/tests/expressionsInQaSelectorsCornerCases.kt");
