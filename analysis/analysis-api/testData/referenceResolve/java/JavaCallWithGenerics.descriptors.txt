@@ -1,0 +1,29 @@
+<caret_constructor_MyClass> resolved to:
+0: (in test) class MyClass
+
+<caret_constructor_MyClass_fqn> resolved to:
+0: (in test) class MyClass
+
+<caret_constructor_List> resolved to:
+0: (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
+<caret_constructor_MutableList> resolved to:
+0: (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
+
+<caret_constructor_List_MyClass> resolved to:
+0: (in test) class MyClass
+
+<caret_staticMember_MyClass> resolved to:
+0: (in test) class MyClass
+
+<caret_staticMember_MyClass_fqn> resolved to:
+0: (in test) class MyClass
+
+<caret_staticMember_List> resolved to:
+0: (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
+<caret_staticMember_MutableList> resolved to:
+0: (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
+
+<caret_staticMember_List_MyClass> resolved to:
+0: (in test) class MyClass
