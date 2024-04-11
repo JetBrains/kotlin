@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiAnnotationsOnDeclarationsTest : AbstractAnalysisApiBasedTest() {
-
-    context(KtAnalysisSession)
-    open fun renderAnnotations(annotations: KtAnnotationsList): String = TestAnnotationRenderer.renderAnnotations(annotations)
+    open fun renderAnnotations(analysisSession: KtAnalysisSession, annotations: KtAnnotationsList): String {
+        return TestAnnotationRenderer.renderAnnotations(analysisSession, annotations)
+    }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val ktDeclaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
@@ -27,7 +27,7 @@ abstract class AbstractAnalysisApiAnnotationsOnDeclarationsTest : AbstractAnalys
             val declarationSymbol = ktDeclaration.getSymbol() as KtAnnotatedSymbol
             buildString {
                 appendLine("KtDeclaration: ${ktDeclaration::class.simpleName} ${ktDeclaration.name}")
-                append(renderAnnotations(declarationSymbol.annotationsList))
+                append(renderAnnotations(analysisSession, declarationSymbol.annotationsList))
             }
         }
 
