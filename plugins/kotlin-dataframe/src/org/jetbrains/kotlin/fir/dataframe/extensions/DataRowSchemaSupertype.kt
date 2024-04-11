@@ -34,7 +34,6 @@ class DataRowSchemaSupertype(session: FirSession) : FirSupertypeGenerationExtens
         return declaration is FirRegularClass
             && declaration.classKind == ClassKind.CLASS
             && session.predicateBasedProvider.matches(PREDICATE, declaration)
-            && declaration.superTypeRefs.none { it.toClassLikeSymbol(session)?.classId == dataRowSchema }
     }
 
     context(TypeResolveServiceContainer)
@@ -42,6 +41,7 @@ class DataRowSchemaSupertype(session: FirSession) : FirSupertypeGenerationExtens
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>
     ): List<FirResolvedTypeRef> {
+        if (resolvedSupertypes.any { it.toClassLikeSymbol(session)?.classId == dataRowSchema }) return emptyList()
         return listOf(
             buildResolvedTypeRef {
                 type = dataRowSchema.constructClassLikeType(emptyArray())

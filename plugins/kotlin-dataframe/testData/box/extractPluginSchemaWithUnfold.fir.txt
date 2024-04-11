@@ -1,7 +1,7 @@
 FILE: extractPluginSchemaWithUnfold.kt
     package org.jetbrains.kotlinx.dataframe
 
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Bridge : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Bridge : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(type: R|org/jetbrains/kotlinx/dataframe/Type|, approximation: R|kotlin/String|, converter: R|kotlin/String|, lens: R|kotlin/String|, supported: R|kotlin/Boolean| = Boolean(false)): R|org/jetbrains/kotlinx/dataframe/Bridge| {
             super<R|kotlin/Any|>()
         }
@@ -40,7 +40,7 @@ FILE: extractPluginSchemaWithUnfold.kt
         public final fun copy(name: R|kotlin/String| = this@R|org/jetbrains/kotlinx/dataframe/Type|.R|org/jetbrains/kotlinx/dataframe/Type.name|, vararg: R|kotlin/Boolean| = this@R|org/jetbrains/kotlinx/dataframe/Type|.R|org/jetbrains/kotlinx/dataframe/Type.vararg|): R|org/jetbrains/kotlinx/dataframe/Type|
 
     }
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Parameter : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Parameter : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(name: R|kotlin/String|, returnType: R|org/jetbrains/kotlinx/dataframe/Type|, defaultValue: R|kotlin/String?|): R|org/jetbrains/kotlinx/dataframe/Parameter| {
             super<R|kotlin/Any|>()
         }
@@ -55,7 +55,7 @@ FILE: extractPluginSchemaWithUnfold.kt
             public get(): R|kotlin/String?|
 
     }
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Function : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class Function : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(receiverType: R|kotlin/String|, function: R|kotlin/String|, functionReturnType: R|org/jetbrains/kotlinx/dataframe/Type|, parameters: R|kotlin/collections/List<org/jetbrains/kotlinx/dataframe/Parameter>|): R|org/jetbrains/kotlinx/dataframe/Function| {
             super<R|kotlin/Any|>()
         }
@@ -73,7 +73,7 @@ FILE: extractPluginSchemaWithUnfold.kt
             public get(): R|kotlin/collections/List<org/jetbrains/kotlinx/dataframe/Parameter>|
 
     }
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class RefinedFunction : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class RefinedFunction : R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(receiverType: R|kotlin/String|, function: R|kotlin/String|, functionReturnType: R|org/jetbrains/kotlinx/dataframe/Type|, parameters: R|kotlin/collections/List<org/jetbrains/kotlinx/dataframe/Parameter>|, startingSchema: R|org/jetbrains/kotlinx/dataframe/Parameter|): R|org/jetbrains/kotlinx/dataframe/RefinedFunction| {
             super<R|kotlin/Any|>()
         }
