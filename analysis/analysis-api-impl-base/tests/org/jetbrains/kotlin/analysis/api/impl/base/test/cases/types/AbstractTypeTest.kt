@@ -21,7 +21,7 @@ abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
             val type = getType(mainFile, mainModule, testServices)
 
             buildString {
-                appendLine(DebugSymbolRenderer(renderTypeByProperties = true).renderType(type))
+                appendLine(DebugSymbolRenderer(renderTypeByProperties = true).renderType(analysisSession, type))
 
                 appendLine()
                 appendLine("Rendered type:")
