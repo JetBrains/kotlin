@@ -592,21 +592,6 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getOrCreateIrPropertyByPureField(
-        field: FirField,
-        irParent: IrDeclarationParent
-    ): IrProperty {
-        return fieldToPropertyCache.getOrPut(field to irParent) {
-            val containingClassId = (irParent as? IrClass)?.classId
-            createAndCacheIrProperty(
-                field.toStubProperty(),
-                irParent,
-                fakeOverrideOwnerLookupTag = containingClassId?.toLookupTag(),
-                allowLazyDeclarationsCreation = true // pure fields exist only in java
-            )
-        }
-    }
-
     fun createAndCacheIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
@@ -836,6 +821,21 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ fields ------------------------------------
 
+    fun getOrCreateIrPropertyByPureField(
+        field: FirField,
+        irParent: IrDeclarationParent
+    ): IrProperty {
+        return fieldToPropertyCache.getOrPut(field to irParent) {
+            val containingClassId = (irParent as? IrClass)?.classId
+            createAndCacheIrProperty(
+                field.toStubProperty(),
+                irParent,
+                fakeOverrideOwnerLookupTag = containingClassId?.toLookupTag(),
+                allowLazyDeclarationsCreation = true // pure fields exist only in java
+            )
+        }
+    }
+
     fun getOrCreateIrField(
         firFieldSymbol: FirFieldSymbol,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
@@ -878,6 +878,40 @@ class Fir2IrDeclarationStorage(
             fieldStaticOverrideCache[staticFakeOverrideKey]
         }
     }
+
+    private fun createAndCacheIrField(
+        field: FirField,
+        irParent: IrDeclarationParent?,
+        type: ConeKotlinType = field.returnTypeRef.coneType,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    ): IrField {
+        val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
+        val symbol = createFieldSymbol()
+
+        val irField = callablesGenerator.createIrField(field, irParent, symbol, type, origin)
+
+        val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
+        if (staticFakeOverrideKey == null) {
+            fieldCache[field] = irField.symbol
+        } else {
+            fieldStaticOverrideCache[staticFakeOverrideKey] = irField.symbol
+        }
+        return irField
+    }
+
+    private fun createFieldSymbol(): IrFieldSymbol {
+        return IrFieldSymbolImpl()
+    }
+
+    // This function returns null if this field/ownerClassId combination does not describe static fake override
+    private fun getFieldStaticFakeOverrideKey(field: FirField, ownerLookupTag: ConeClassLikeLookupTag?): FieldStaticOverrideKey? {
+        if (ownerLookupTag == null || !field.isStatic ||
+            !field.isSubstitutionOrIntersectionOverride && ownerLookupTag == field.containingClassLookupTag()
+        ) return null
+        return FieldStaticOverrideKey(ownerLookupTag, field.name)
+    }
+
+    // ------------------------------------ backing and delegate fields ------------------------------------
 
     fun getIrBackingFieldSymbol(firBackingFieldSymbol: FirBackingFieldSymbol): IrSymbol {
         return getIrPropertyForwardedSymbol(firBackingFieldSymbol.fir.propertySymbol.fir)
@@ -928,38 +962,6 @@ class Fir2IrDeclarationStorage(
             type = field.initializer?.resolvedType ?: field.returnTypeRef.coneType,
             origin = IrDeclarationOrigin.DELEGATE
         )
-    }
-
-    private fun createAndCacheIrField(
-        field: FirField,
-        irParent: IrDeclarationParent?,
-        type: ConeKotlinType = field.returnTypeRef.coneType,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-    ): IrField {
-        val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
-        val symbol = createFieldSymbol()
-
-        val irField = callablesGenerator.createIrField(field, irParent, symbol, type, origin)
-
-        val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
-        if (staticFakeOverrideKey == null) {
-            fieldCache[field] = irField.symbol
-        } else {
-            fieldStaticOverrideCache[staticFakeOverrideKey] = irField.symbol
-        }
-        return irField
-    }
-
-    private fun createFieldSymbol(): IrFieldSymbol {
-        return IrFieldSymbolImpl()
-    }
-
-    // This function returns null if this field/ownerClassId combination does not describe static fake override
-    private fun getFieldStaticFakeOverrideKey(field: FirField, ownerLookupTag: ConeClassLikeLookupTag?): FieldStaticOverrideKey? {
-        if (ownerLookupTag == null || !field.isStatic ||
-            !field.isSubstitutionOrIntersectionOverride && ownerLookupTag == field.containingClassLookupTag()
-        ) return null
-        return FieldStaticOverrideKey(ownerLookupTag, field.name)
     }
 
     // ------------------------------------ parameters ------------------------------------
