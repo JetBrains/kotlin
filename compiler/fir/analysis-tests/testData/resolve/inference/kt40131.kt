@@ -2,7 +2,7 @@
 
 import kotlin.reflect.KClass
 
-val <U> KClass<U>.javaImpl: Class<U>
+val <U> KClass<<!UPPER_BOUND_VIOLATED!>U<!>>.javaImpl: Class<U>
     get() = null!!
 
 val <T : KClass<*>> T.myJava1: Class<*>
