@@ -26,6 +26,6 @@ fun <T> bar(a: A<T>, w: T) {
             baz(<!DEBUG_INFO_SMARTCAST!>a<!>) {}
         }
 
-        yield(<!TYPE_MISMATCH, TYPE_MISMATCH!>w<!>) // Error: Argument type mismatch: actual type is 'T', but 'F' was expected.
+        yield(<!TYPE_MISMATCH, TYPE_MISMATCH!>w<!>)
     }
 }
