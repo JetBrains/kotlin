@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 
 abstract class AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest : AbstractAnalysisApiAnnotationsOnDeclarationsTest() {
-    context(KtAnalysisSession)
-    override fun renderAnnotations(annotations: KtAnnotationsList) = TestAnnotationRenderer.renderAnnotationsWithMeta(annotations)
+    override fun renderAnnotations(analysisSession: KtAnalysisSession, annotations: KtAnnotationsList): String {
+        return TestAnnotationRenderer.renderAnnotationsWithMeta(analysisSession, annotations)
+    }
 }
