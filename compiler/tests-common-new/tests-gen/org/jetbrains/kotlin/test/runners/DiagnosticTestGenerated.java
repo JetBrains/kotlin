@@ -25365,6 +25365,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("ambiguousActualsJavaPrimitiveIntTypeVsIntegerObject.kt")
+      public void testAmbiguousActualsJavaPrimitiveIntTypeVsIntegerObject() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/ambiguousActualsJavaPrimitiveIntTypeVsIntegerObject.kt");
+      }
+
+      @Test
       @TestMetadata("annotationArgArrayVsOutArray.kt")
       public void testAnnotationArgArrayVsOutArray() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/annotationArgArrayVsOutArray.kt");
