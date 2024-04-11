@@ -210,6 +210,30 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
         }
     }
 
+    /**
+     * This test checks that `iosArm64` will successfully resolve `iosArm64`, even on
+     * non-Mac hosts. If the test fails on non-Mac host, please DO NOT add @OsCondition
+     * and investiagate
+     */
+    @Test
+    fun leafHostSpecificSourceSetsDependencies() {
+        val appProject = buildProject(projectBuilder = { withName("app") })
+        val libProject = buildProject(projectBuilder = { withName("lib").withParent(appProject) })
+
+        assertSourceSetDependenciesResolution("leafHostSpecificSourceSetsDependencies.txt", withProject = appProject) {
+            appProject.applyMultiplatformPlugin().apply {
+                jvm()
+                iosArm64()
+                sourceSets.getByName("commonMain").dependencies { api(project(":lib")) }
+            }
+
+            libProject.applyMultiplatformPlugin().apply {
+                jvm()
+                iosArm64()
+            }
+        }
+    }
+
     private fun Project.defaultTargets() {
         kotlin { jvm(); linuxX64(); js(); applyDefaultHierarchyTemplate() }
     }
