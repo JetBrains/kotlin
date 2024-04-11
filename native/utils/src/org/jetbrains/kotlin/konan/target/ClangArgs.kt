@@ -63,10 +63,7 @@ sealed class ClangArgs(
                     "USE_PE_COFF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.PE_COFF },
                     "UNICODE".takeIf { target.family == Family.MINGW },
                     "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
-                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() },
-                    // Clang 11 does not support this attribute. We don't need to handle it properly,
-                    // so just undefine it.
-                    "NS_FORMAT_ARGUMENT(A)=".takeIf { target.family.isAppleFamily },
+                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
             )
             return (konanOptions + otherOptions).map { "-D$it" }
         }
@@ -119,49 +116,6 @@ sealed class ClangArgs(
             // See KT-43502.
             add(listOf("-fPIC"))
         }
-        // See https://github.com/apple/llvm-project/commit/dfa99c49306262eac46becbf1f7f5ba33ecc2fe3
-        // TL;DR: This commit adds an OS-agnostic __ENVIRONMENT_OS_VERSION_MIN_REQUIRED__ macro and now
-        // some of the Xcode headers use it instead of platform-specific ones. Workaround this problem
-        // by manually setting this macro.
-        // YouTrack ticket: KT-59167
-        val environmentOsVersionMinRequired = when (target.family) {
-            Family.OSX -> "__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__"
-            Family.IOS -> "__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__"
-            Family.TVOS -> "__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__"
-            Family.WATCHOS -> "__ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__"
-            else -> null
-        }
-        if (environmentOsVersionMinRequired != null) {
-            add(listOf("-D__ENVIRONMENT_OS_VERSION_MIN_REQUIRED__=$environmentOsVersionMinRequired"))
-        }
-
-        // Workaround to make Xcode 15.3 SDK headers work with older Clang from K/N. This should be removed after LLVM update: KT-49279
-        // We don't handle simulator targets here, because they use different machinery for macro-expansion (see DYNAMIC_TARGETS_ENABLED)
-        // YouTrack ticket:  KT-65542
-        val targetConditionals = when (target) {
-            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
-                "TARGET_OS_OSX" to "1",
-            )
-            KonanTarget.IOS_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_IOS" to "1",
-            )
-            KonanTarget.TVOS_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_TV" to "1",
-            )
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_WATCH" to "1",
-            )
-            else -> null
-        }
-        if (targetConditionals != null) {
-            add(targetConditionals.map { "-D${it.key}=${it.value}" })
-        }
     }.flatten()
 
     private val specificClangArgs: List<String> = when (target) {
@@ -206,9 +160,7 @@ sealed class ClangArgs(
      */
     val clangXXArgs: Array<String> = clangArgs + when (configurables) {
         is AppleConfigurables -> arrayOf(
-                "-stdlib=libc++",
-                // KT-57848
-                "-Dat_quick_exit=atexit", "-Dquick_exit=exit",
+                "-stdlib=libc++"
         )
         else -> emptyArray()
     }
