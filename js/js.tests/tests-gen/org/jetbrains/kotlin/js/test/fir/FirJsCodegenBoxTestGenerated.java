@@ -29384,6 +29384,18 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("jsExportNameClash.kt")
+    public void testJsExportNameClash() {
+      runTest("compiler/testData/codegen/box/package/jsExportNameClash.kt");
+    }
+
+    @Test
+    @TestMetadata("jsExportNameClashIntermodule.kt")
+    public void testJsExportNameClashIntermodule() {
+      runTest("compiler/testData/codegen/box/package/jsExportNameClashIntermodule.kt");
+    }
+
+    @Test
     @TestMetadata("kt57353.kt")
     public void testKt57353() {
       runTest("compiler/testData/codegen/box/package/kt57353.kt");
