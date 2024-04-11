@@ -31,7 +31,6 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("klibCrossCompilationWithGradlePropertyEnabled")
-    @Disabled("For now, fails with an error from klib resolver about mismatched stdlib targets; needs KT-66967")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion) {
         nativeProject("klibCrossCompilationWithGradlePropertyEnabled", gradleVersion) {
