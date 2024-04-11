@@ -23,7 +23,7 @@ abstract class AbstractAnalysisApiSignatureSubstitutionTest : AbstractAnalysisAp
         val actual = analyseForTest(declaration) {
             val symbol = declaration.getSymbol() as KtCallableSymbol
 
-            val substitutor = SubstitutionParser.parseSubstitutor(mainFile, declaration)
+            val substitutor = SubstitutionParser.parseSubstitutor(analysisSession, mainFile, declaration)
 
             val signatureBeforeSubstitution = symbol.asSignature()
             val signatureAfterSubstitution = signatureBeforeSubstitution.substitute(substitutor)

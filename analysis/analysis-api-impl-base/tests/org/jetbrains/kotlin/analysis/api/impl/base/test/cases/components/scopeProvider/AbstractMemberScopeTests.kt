@@ -15,44 +15,61 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractMemberScopeTestBase : AbstractSymbolByFqNameTest() {
-    context(KtAnalysisSession)
-    protected abstract fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol>
+    protected abstract fun getSymbolsFromScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): Sequence<KtDeclarationSymbol>
 
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
         val symbols = with(symbolData) { toSymbols(ktFile) }
         val symbolWithMembers = symbols.singleOrNull() as? KtSymbolWithMembers
             ?: error("Should be a single `${KtSymbolWithMembers::class.simpleName}`, but $symbols found.")
-        return SymbolsData(symbolWithMembers.getSymbolsFromScope().toList())
+        return SymbolsData(getSymbolsFromScope(analysisSession, symbolWithMembers).toList())
     }
 }
 
 abstract class AbstractMemberScopeTest : AbstractMemberScopeTestBase() {
-    context(KtAnalysisSession)
-    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getMemberScope().getAllSymbols()
+    override fun getSymbolsFromScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): Sequence<KtDeclarationSymbol> {
+        with(analysisSession) {
+            return symbol.getMemberScope().getAllSymbols()
+        }
+    }
 }
 
 abstract class AbstractStaticMemberScopeTest : AbstractMemberScopeTestBase() {
-    context(KtAnalysisSession)
-    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getStaticMemberScope().getAllSymbols()
+    override fun getSymbolsFromScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): Sequence<KtDeclarationSymbol> {
+        with(analysisSession) {
+            return symbol.getStaticMemberScope().getAllSymbols()
+        }
+    }
 }
 
 abstract class AbstractDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    context(KtAnalysisSession)
-    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getDeclaredMemberScope().getAllSymbols()
+    override fun getSymbolsFromScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): Sequence<KtDeclarationSymbol> {
+        with(analysisSession) {
+            return symbol.getDeclaredMemberScope().getAllSymbols()
+        }
+    }
 }
 
 abstract class AbstractStaticDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    context(KtAnalysisSession)
-    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getStaticDeclaredMemberScope().getAllSymbols()
+    override fun getSymbolsFromScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): Sequence<KtDeclarationSymbol> {
+        with(analysisSession) {
+            return symbol.getStaticDeclaredMemberScope().getAllSymbols()
+        }
+    }
 }
 
 abstract class AbstractCombinedDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    context(KtAnalysisSession)
-    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getCombinedDeclaredMemberScope().getAllSymbols()
+    override fun getSymbolsFromScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): Sequence<KtDeclarationSymbol> {
+        with(analysisSession) {
+            return symbol.getCombinedDeclaredMemberScope().getAllSymbols()
+        }
+    }
 }
 
 abstract class AbstractDelegateMemberScopeTest : AbstractMemberScopeTestBase() {
-    context(KtAnalysisSession)
-    override fun KtSymbolWithMembers.getSymbolsFromScope(): Sequence<KtDeclarationSymbol> = getDelegatedMemberScope().getCallableSymbols()
+    override fun getSymbolsFromScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): Sequence<KtDeclarationSymbol> {
+        with(analysisSession) {
+            return symbol.getDelegatedMemberScope().getCallableSymbols()
+        }
+    }
 }
