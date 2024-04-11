@@ -13432,6 +13432,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         runTest("compiler/testData/diagnostics/tests/extensions/variableInvoke.kt");
       }
 
+      @Test
+      @TestMetadata("ViolatedUpperBoundInExtensionReceiver.kt")
+      public void testViolatedUpperBoundInExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/extensions/ViolatedUpperBoundInExtensionReceiver.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/extensions/contextReceivers")
       @TestDataPath("$PROJECT_ROOT")
