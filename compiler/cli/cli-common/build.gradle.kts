@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -30,4 +32,8 @@ optInToExperimentalCompilerApi()
 tasks.getByName<Jar>("jar") {
     //excludes unused bunch files
     exclude("META-INF/extensions/*.xml.**")
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }
