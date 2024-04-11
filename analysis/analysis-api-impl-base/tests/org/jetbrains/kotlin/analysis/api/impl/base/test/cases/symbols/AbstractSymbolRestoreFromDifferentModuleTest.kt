@@ -37,13 +37,13 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
         val (debugRendered, prettyRendered, pointer) = analyseForTest(declaration) {
             val symbol = declaration.getSymbol()
             val pointer = symbol.createPointer()
-            Triple(DebugSymbolRenderer().render(symbol), symbol.render(defaultRenderer), pointer)
+            Triple(DebugSymbolRenderer().render(analysisSession, symbol), symbol.render(defaultRenderer), pointer)
         }
         configurator.doGlobalModuleStateModification(project)
 
         val (debugRenderedRestored, prettyRenderedRestored) = analyseForTest(restoreAt) {
             val symbol = pointer.restoreSymbol() as? KtDeclarationSymbol
-            symbol?.let { DebugSymbolRenderer().render(it) } to symbol?.render(defaultRenderer)
+            symbol?.let { DebugSymbolRenderer().render(analysisSession, it) } to symbol?.render(defaultRenderer)
         }
 
         val actualDebug = prettyPrint {

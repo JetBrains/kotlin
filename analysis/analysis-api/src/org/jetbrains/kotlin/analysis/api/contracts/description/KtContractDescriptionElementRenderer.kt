@@ -58,7 +58,7 @@ private fun Context.renderKtContractBooleanExpression(value: KtContractBooleanEx
             is KtContractIsInstancePredicateExpression -> {
                 appendProperty(value::argument, ::renderKtContractParameterValue)
                 appendProperty(value::type, renderer = { type, _ ->
-                    appendLine(with(session) { symbolRenderer.renderType(type) })
+                    appendLine(with(session) { symbolRenderer.renderType(analysisSession, type) })
                 })
                 appendSimpleProperty(value::isNegated, endWithNewLine)
             }
@@ -73,7 +73,7 @@ private fun Context.renderKtContractBooleanExpression(value: KtContractBooleanEx
     }
 
 private fun Context.renderKtParameterSymbol(value: KtParameterSymbol, endWithNewLine: Boolean = true) {
-    val renderedValue = with(session) { symbolRenderer.render(value) }
+    val renderedValue = symbolRenderer.render(session, value)
     if (endWithNewLine) printer.appendLine(renderedValue) else printer.append(renderedValue)
 }
 

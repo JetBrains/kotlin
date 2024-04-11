@@ -37,7 +37,7 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
 
                     checkContainingFileSymbol(fileSymbol, symbol, testServices)
 
-                    debugPrinter.appendLine(debugRenderer.render(symbol))
+                    debugPrinter.appendLine(debugRenderer.render(analysisSession, symbol))
                     debugPrinter.appendLine()
 
                     prettyPrinter.withIndents(indentCount = declaration.parentsOfType<KtDeclaration>(withSelf = false).count()) {
