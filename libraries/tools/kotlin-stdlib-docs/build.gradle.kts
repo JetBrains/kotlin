@@ -19,7 +19,7 @@ val rootProperties = java.util.Properties().apply {
 }
 val defaultSnapshotVersion: String by rootProperties
 
-val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
+val githubRevision = "1.8.20"
 val artifactsVersion by extra(if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion)
 val artifactsRepo by extra(if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlin_root/build/repo")
 val dokka_version: String by project
