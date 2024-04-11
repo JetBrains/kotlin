@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
+import org.jetbrains.kotlin.analysis.api.renderer.types.KtExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
 
 public object KtTypeRendererForSource {
     public val WITH_QUALIFIED_NAMES: KtTypeRenderer = KtTypeRenderer {
-        expandedTypeRenderer = KtExpandedTypeRenderer.AS_ABBREVIATED_TYPE
+        expandedTypeRenderingMode = KtExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE
         capturedTypeRenderer = KtCapturedTypeRenderer.AS_PROJECTION
         definitelyNotNullTypeRenderer = KtDefinitelyNotNullTypeRenderer.AS_TYPE_INTERSECTION
         dynamicTypeRenderer = KtDynamicTypeRenderer.AS_DYNAMIC_WORD
