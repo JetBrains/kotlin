@@ -1,3 +1,1 @@
-warning: KLIB resolver: Skipping '$KONAN_HOME/klib/common/stdlib'. The target doesn't match. Expected 'ios_arm64', found [linux_x64, linux_arm32_hfp, linux_arm64, mingw_x64, android_x86, android_x64, android_arm32, android_arm64].
-error: KLIB resolver: Could not find "stdlib" in [<klib roots>]
-COMPILATION_ERROR
+OK

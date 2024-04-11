@@ -629,16 +629,16 @@ val stdlibTask = tasks.register<Copy>("nativeStdlib") {
     from(stdlibBuildTask.map { it.outputs.files })
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 
-    val targetList = targetList
+    val allPossibleTargets = project.extensions.getByType<PlatformManager>().targetValues.map { it.name }
     val kotlinVersion = kotlinVersion
     eachFile {
         if (name == "manifest") {
             // Stdlib is a common library that doesn't depend on anything target-specific.
-            // The current compiler can't create a library with manifest file that lists all supported targets.
-            // So, add all supported targets to the manifest file.
+            // The current compiler can't create a library with manifest file that lists all targets.
+            // So, add all targets to the manifest file.
             KFile(file.absolutePath).run {
                 val props = loadProperties()
-                props[KLIB_PROPERTY_NATIVE_TARGETS] = targetList.joinToString(separator = " ")
+                props[KLIB_PROPERTY_NATIVE_TARGETS] = allPossibleTargets.joinToString(separator = " ")
 
                 // Check that we didn't get other than the requested version from cache, previous build or due to some other build issue
                 val versionFromManifest = props[KLIB_PROPERTY_COMPILER_VERSION]
