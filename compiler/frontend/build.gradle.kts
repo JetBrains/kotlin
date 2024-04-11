@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -24,4 +26,8 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }

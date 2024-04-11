@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
@@ -64,4 +65,8 @@ dependencies {
     testImplementation(kotlinTest("junit5"))
     testImplementation(project(":compiler:tests-common", "tests-jar"))
     testImplementation(project(":analysis:analysis-api-standalone"))
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }
