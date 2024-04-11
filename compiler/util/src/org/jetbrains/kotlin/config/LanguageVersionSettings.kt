@@ -310,6 +310,8 @@ enum class LanguageFeature(
     DfaBooleanVariables(KOTLIN_2_0), // KT-25747
     LightweightLambdas(KOTLIN_2_0, kind = OTHER), // KT-45375
     ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, kind = OTHER), // KT-61323
+    ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_0, kind = BUG_FIX), // KT-11914 Deprecation phase 2
+    DataClassCopyRespectsConstructorVisibility(sinceVersion = KOTLIN_2_0), // KT-11914 Deprecation phase 3
     // 2.1
 
     ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
@@ -324,13 +326,10 @@ enum class LanguageFeature(
     ProhibitTypealiasAsCallableQualifierInImport(KOTLIN_2_1, kind = BUG_FIX), // KT-64350
     ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection(KOTLIN_2_1, kind = BUG_FIX), // KT-60305
     JsExternalPropertyParameters(KOTLIN_2_1), // KT-65965
-    ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_1, kind = BUG_FIX), // KT-11914 Deprecation phase 2
 
     // End of 2.* language features --------------------------------------------------
 
     ExpectActualClasses(sinceVersion = null), // KT-62885
-
-    DataClassCopyRespectsConstructorVisibility(sinceVersion = null), // KT-11914 Deprecation phase 3
 
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
