@@ -134,8 +134,8 @@ internal fun FirClassSymbol<*>.isExternalObjCClass(session: FirSession): Boolean
                     it.hasAnnotation(NativeStandardInteropNames.externalObjCClassClassId, session)
                 }
 
-fun FirClassSymbol<*>.parentsWithSelf(session: FirSession): Sequence<FirClassLikeSymbol<out FirClassLikeDeclaration>> {
-    return generateSequence<FirClassLikeSymbol<out FirClassLikeDeclaration>>(this) { it.getContainingDeclaration(session) }
+fun FirClassSymbol<*>.parentsWithSelf(session: FirSession): Sequence<FirClassLikeSymbol<FirClassLikeDeclaration>> {
+    return generateSequence<FirClassLikeSymbol<FirClassLikeDeclaration>>(this) { it.getContainingDeclaration(session) }
 }
 
 fun FirClassSymbol<*>.isKotlinObjCClass(session: FirSession): Boolean = isObjCClass(session) && !isExternalObjCClass(session)

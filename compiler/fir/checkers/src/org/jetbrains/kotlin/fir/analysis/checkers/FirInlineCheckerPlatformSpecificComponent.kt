@@ -29,7 +29,7 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirSessionComponent {
         function: FirSimpleFunction,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        overriddenSymbols: List<FirCallableSymbol<out FirCallableDeclaration>>,
+        overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
     }
 }

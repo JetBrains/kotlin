@@ -560,7 +560,7 @@ private fun FirClassLikeDeclaration.containingNonLocalClass(session: FirSession)
  * The returned fir can be passed to the visibility checker, but don't
  * use it for anything else.
  */
-val <D, S : FirBasedSymbol<out D>> S.firForVisibilityChecker: D
+val <D, S : FirBasedSymbol<D>> S.firForVisibilityChecker: D
     get() = fir.also {
         lazyResolveToPhase(FirResolvePhase.STATUS)
     }

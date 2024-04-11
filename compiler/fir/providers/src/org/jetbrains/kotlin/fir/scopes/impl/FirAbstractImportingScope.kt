@@ -62,7 +62,7 @@ abstract class FirAbstractImportingScope(
         }
     }
 
-    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<out D>> processCallablesFromImportsByName(
+    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> processCallablesFromImportsByName(
         name: Name?,
         imports: List<FirResolvedImport>,
         crossinline processor: (S) -> Unit,

@@ -41,7 +41,7 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
     abstract override val contextReceivers: List<FirContextReceiver>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract override val symbol: FirFunctionSymbol<out FirFunction>
+    abstract override val symbol: FirFunctionSymbol<FirFunction>
     abstract val valueParameters: List<FirValueParameter>
     abstract val body: FirBlock?
 

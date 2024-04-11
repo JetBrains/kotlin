@@ -39,7 +39,7 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
     abstract override val contextReceivers: List<FirContextReceiver>
     abstract val name: Name
-    abstract override val symbol: FirVariableSymbol<out FirVariable>
+    abstract override val symbol: FirVariableSymbol<FirVariable>
     abstract val initializer: FirExpression?
     abstract val delegate: FirExpression?
     abstract val isVar: Boolean

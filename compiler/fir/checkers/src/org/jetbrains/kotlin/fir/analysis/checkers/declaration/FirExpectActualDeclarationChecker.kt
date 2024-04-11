@@ -213,7 +213,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     }
 
     private fun reportClassScopesIncompatibility(
-        symbol: FirBasedSymbol<out FirDeclaration>,
+        symbol: FirBasedSymbol<FirDeclaration>,
         expectedSingleCandidate: FirBasedSymbol<*>?,
         declaration: FirMemberDeclaration,
         checkingCompatibility: ExpectActualCheckingCompatibility.ClassScopes<FirBasedSymbol<*>>,

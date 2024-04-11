@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
-    abstract override val symbol: FirBasedSymbol<out FirDeclaration>
+    abstract override val symbol: FirBasedSymbol<FirDeclaration>
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes

@@ -206,7 +206,7 @@ inline fun FirTypeScope.processDirectlyOverriddenProperties(
 fun FirTypeScope.getDirectOverriddenMembers(
     member: FirCallableSymbol<*>,
     unwrapIntersectionAndSubstitutionOverride: Boolean = false,
-): List<FirCallableSymbol<out FirCallableDeclaration>> =
+): List<FirCallableSymbol<FirCallableDeclaration>> =
     when (member) {
         is FirNamedFunctionSymbol -> getDirectOverriddenFunctions(member, unwrapIntersectionAndSubstitutionOverride)
         is FirPropertySymbol -> getDirectOverriddenProperties(member, unwrapIntersectionAndSubstitutionOverride)

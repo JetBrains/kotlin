@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
-fun <D> FirBasedSymbol<out D>.isCompiledToJvmDefault(
+fun <D> FirBasedSymbol<D>.isCompiledToJvmDefault(
     session: FirSession,
     jvmDefaultMode: JvmDefaultMode,
 ): Boolean where D : FirAnnotationContainer, D : FirDeclaration {

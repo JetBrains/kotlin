@@ -43,7 +43,7 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
     }
 
     private fun checkJsPlainObjectAnnotationTargets(
-        classSymbol: FirClassSymbol<out FirClass>,
+        classSymbol: FirClassSymbol<FirClass>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
@@ -60,7 +60,7 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
     }
 
     private fun checkJsPlainObjectMembers(
-        classSymbol: FirClassSymbol<out FirClass>,
+        classSymbol: FirClassSymbol<FirClass>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
@@ -75,7 +75,7 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
     }
 
     private fun checkJsPlainObjectSuperTypes(
-        classSymbol: FirClassSymbol<out FirClass>,
+        classSymbol: FirClassSymbol<FirClass>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
@@ -99,7 +99,7 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
     }
 
     private fun checkJsPlainObjectAsSuperInterface(
-        classSymbol: FirClassSymbol<out FirClass>,
+        classSymbol: FirClassSymbol<FirClass>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {

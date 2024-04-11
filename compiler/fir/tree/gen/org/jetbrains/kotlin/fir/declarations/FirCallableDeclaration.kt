@@ -33,7 +33,7 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract val returnTypeRef: FirTypeRef
     abstract val receiverParameter: FirReceiverParameter?
     abstract val deprecationsProvider: DeprecationsProvider
-    abstract override val symbol: FirCallableSymbol<out FirCallableDeclaration>
+    abstract override val symbol: FirCallableSymbol<FirCallableDeclaration>
     abstract val containerSource: DeserializedContainerSource?
     abstract val dispatchReceiverType: ConeSimpleKotlinType?
     abstract val contextReceivers: List<FirContextReceiver>

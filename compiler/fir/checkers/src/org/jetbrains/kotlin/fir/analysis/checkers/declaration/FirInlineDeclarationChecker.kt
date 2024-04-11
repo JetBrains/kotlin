@@ -382,7 +382,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     private fun checkParameters(
         function: FirSimpleFunction,
-        overriddenSymbols: List<FirCallableSymbol<out FirCallableDeclaration>>,
+        overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

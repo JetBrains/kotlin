@@ -91,7 +91,7 @@ fun List<FirAnnotation>.hasAnnotationSafe(classId: ClassId, session: FirSession)
     return this.any { it.toAnnotationClassIdSafe(session) == classId }
 }
 
-fun <D> FirBasedSymbol<out D>.getAnnotationByClassId(
+fun <D> FirBasedSymbol<D>.getAnnotationByClassId(
     classId: ClassId,
     session: FirSession
 ): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {

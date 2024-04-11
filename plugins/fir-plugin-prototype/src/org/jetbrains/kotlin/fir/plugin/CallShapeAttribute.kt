@@ -18,7 +18,7 @@ class Column(val name: Name, val type: FirTypeRef)
 sealed interface CallShapeData {
     class Schema(val columns: List<Column>) : CallShapeData
 
-    class Scope(val token: FirClassSymbol<out FirClass>, val columns: List<Column>) : CallShapeData
+    class Scope(val token: FirClassSymbol<FirClass>, val columns: List<Column>) : CallShapeData
 
     class RefinedType(val scopes: List<FirRegularClassSymbol>) : CallShapeData
 }

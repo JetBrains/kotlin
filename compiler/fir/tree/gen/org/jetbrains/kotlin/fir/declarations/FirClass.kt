@@ -33,7 +33,7 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
     abstract override val status: FirDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract override val symbol: FirClassSymbol<out FirClass>
+    abstract override val symbol: FirClassSymbol<FirClass>
     abstract val classKind: ClassKind
     abstract val superTypeRefs: List<FirTypeRef>
     abstract val declarations: List<FirDeclaration>

@@ -236,5 +236,5 @@ class DelegatedWrapperData<D : FirCallableDeclaration>(
 var <D : FirCallableDeclaration>
         D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
 
-val <D : FirCallableDeclaration> FirCallableSymbol<out D>.delegatedWrapperData: DelegatedWrapperData<D>?
+val <D : FirCallableDeclaration> FirCallableSymbol<D>.delegatedWrapperData: DelegatedWrapperData<D>?
     get() = fir.delegatedWrapperData

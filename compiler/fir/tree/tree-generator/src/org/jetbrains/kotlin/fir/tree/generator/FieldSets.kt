@@ -50,7 +50,7 @@ object FieldSets {
     }
 
     fun AbstractFieldConfigurator<*>.ConfigureContext.symbolWithPackageWithArgument(packageName: String, symbolClassName: String) =
-        field("symbol", type(packageName, symbolClassName).withArgs(TypeRefWithVariance(Variance.OUT_VARIANCE, element)))
+        field("symbol", type(packageName, symbolClassName).withArgs(element))
 
     fun symbolWithPackage(packageName: String, symbolClassName: String): Field =
         field("symbol", type(packageName, symbolClassName))

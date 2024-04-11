@@ -70,7 +70,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         }
     }
 
-    private fun CheckerContext.checkMetaSerializableApplicable(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
+    private fun CheckerContext.checkMetaSerializableApplicable(classSymbol: FirClassSymbol<FirClass>, reporter: DiagnosticReporter) {
         if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) return
         if (!classSymbol.classId.isNestedClass) return
         val anno = classSymbol.resolvedAnnotationsWithClassIds
@@ -80,7 +80,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     }
 
     private fun CheckerContext.checkInheritableSerialInfoNotRepeatable(
-        classSymbol: FirClassSymbol<out FirClass>,
+        classSymbol: FirClassSymbol<FirClass>,
         reporter: DiagnosticReporter,
     ) {
         if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) return

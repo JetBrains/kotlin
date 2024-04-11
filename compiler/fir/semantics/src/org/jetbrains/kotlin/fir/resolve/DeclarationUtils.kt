@@ -34,7 +34,7 @@ fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirCl
     return null
 }
 
-fun FirClassLikeSymbol<out FirClassLikeDeclaration>.getContainingDeclaration(session: FirSession): FirClassLikeSymbol<out FirClassLikeDeclaration>? {
+fun FirClassLikeSymbol<FirClassLikeDeclaration>.getContainingDeclaration(session: FirSession): FirClassLikeSymbol<FirClassLikeDeclaration>? {
     if (isLocal) {
         return (this as? FirRegularClassSymbol)?.containingClassForLocalAttr?.toFirRegularClassSymbol(session)
     } else {

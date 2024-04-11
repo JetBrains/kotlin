@@ -43,7 +43,7 @@ class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent()
         function: FirSimpleFunction,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        overriddenSymbols: List<FirCallableSymbol<out FirCallableDeclaration>>,
+        overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
         val paramsWithDefaults = overriddenSymbols.flatMap {
             if (it !is FirFunctionSymbol<*>) return@flatMap emptyList<Int>()
