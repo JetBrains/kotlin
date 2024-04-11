@@ -40,6 +40,7 @@ abstract class AbstractSwiftRunnerTestBase {
             config = SwiftExportConfig(
                 settings = mapOf(
                     SwiftExportConfig.DEBUG_MODE_ENABLED to "true",
+                    SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
                     SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
                 ),
                 logger = createDummyLogger(),

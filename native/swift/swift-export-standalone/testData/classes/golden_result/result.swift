@@ -11,6 +11,32 @@ public class ClassWithNonPublicConstructor {
         }
     }
 }
+public class DATA_OBJECT_WITHOUT_PACKAGE {
+    public static var shared: Swift.Int32 {
+        get {
+            fatalError()
+        }
+    }
+    public var value: Swift.Int32 {
+        get {
+            fatalError()
+        }
+    }
+    public var variable: Swift.Int32 {
+        get {
+            fatalError()
+        }
+        set {
+            fatalError()
+        }
+    }
+    private init() {
+        fatalError()
+    }
+    public func foo() -> Swift.Int32 {
+        fatalError()
+    }
+}
 /**
 * this is a sample comment for class without package
 * in order to support documentation for primary constructor - we will have to start parsing comment content:
@@ -41,15 +67,15 @@ public class Foo {
             }
         }
         /**
-        * this is a sample comment for func on INSIDE_CLASS without package
-        */
-        public func my_func() -> Swift.Bool {
-            fatalError()
-        }
-        /**
         * this is a sample comment for INSIDE_CLASS without package
         */
         public init() {
+            fatalError()
+        }
+        /**
+        * this is a sample comment for func on INSIDE_CLASS without package
+        */
+        public func my_func() -> Swift.Bool {
             fatalError()
         }
     }
@@ -72,12 +98,6 @@ public class Foo {
             fatalError()
         }
     }
-    /**
-    * this is a sample comment for func on class without package
-    */
-    public func foo() -> Swift.Bool {
-        fatalError()
-    }
     public init(
         a: Swift.Int32
     ) {
@@ -89,6 +109,12 @@ public class Foo {
     public init(
         f: Swift.Float
     ) {
+        fatalError()
+    }
+    /**
+    * this is a sample comment for func on class without package
+    */
+    public func foo() -> Swift.Bool {
         fatalError()
     }
 }
@@ -104,11 +130,6 @@ public class CLASS_WITH_SAME_NAME {
 demo comment for packageless object
 */
 public class OBJECT_NO_PACKAGE {
-    public class Foo {
-        public init() {
-            fatalError()
-        }
-    }
     public class Bar {
         public class CLASS_INSIDE_CLASS_INSIDE_OBJECT {
             public init() {
@@ -130,12 +151,17 @@ public class OBJECT_NO_PACKAGE {
                 fatalError()
             }
         }
-        public func bar() -> Swift.Int32 {
-            fatalError()
-        }
         public init(
             i: Swift.Int32
         ) {
+            fatalError()
+        }
+        public func bar() -> Swift.Int32 {
+            fatalError()
+        }
+    }
+    public class Foo {
+        public init() {
             fatalError()
         }
     }
@@ -149,6 +175,11 @@ public class OBJECT_NO_PACKAGE {
             fatalError()
         }
     }
+    public static var shared: Swift.Int32 {
+        get {
+            fatalError()
+        }
+    }
     public var value: Swift.Int32 {
         get {
             fatalError()
@@ -162,47 +193,37 @@ public class OBJECT_NO_PACKAGE {
             fatalError()
         }
     }
-    public static var shared: Swift.Int32 {
-        get {
-            fatalError()
-        }
-    }
-    public func foo() -> Swift.Int32 {
-        fatalError()
-    }
     private init() {
         fatalError()
     }
-}
-public class DATA_OBJECT_WITHOUT_PACKAGE {
-    public var value: Swift.Int32 {
-        get {
-            fatalError()
-        }
-    }
-    public var variable: Swift.Int32 {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
-    }
-    public static var shared: Swift.Int32 {
-        get {
-            fatalError()
-        }
-    }
     public func foo() -> Swift.Int32 {
-        fatalError()
-    }
-    private init() {
         fatalError()
     }
 }
 public extension main.namespace.deeper {
-    public class NAMESPACED_CLASS {
-        public init() {
+    public class DATA_OBJECT_WITH_PACKAGE {
+        public static var shared: Swift.Int32 {
+            get {
+                fatalError()
+            }
+        }
+        public var value: Swift.Int32 {
+            get {
+                fatalError()
+            }
+        }
+        public var variable: Swift.Int32 {
+            get {
+                fatalError()
+            }
+            set {
+                fatalError()
+            }
+        }
+        private init() {
+            fatalError()
+        }
+        public func foo() -> Swift.Int32 {
             fatalError()
         }
     }
@@ -222,10 +243,10 @@ public extension main.namespace.deeper {
                         fatalError()
                     }
                 }
-                public func foo() -> Swift.Bool {
+                public init() {
                     fatalError()
                 }
-                public init() {
+                public func foo() -> Swift.Bool {
                     fatalError()
                 }
             }
@@ -242,10 +263,10 @@ public extension main.namespace.deeper {
                     fatalError()
                 }
             }
-            public func foo() -> Swift.Bool {
+            public init() {
                 fatalError()
             }
-            public init() {
+            public func foo() -> Swift.Bool {
                 fatalError()
             }
         }
@@ -262,9 +283,14 @@ public extension main.namespace.deeper {
                 fatalError()
             }
         }
+        public init() {
+            fatalError()
+        }
         public func foo() -> Swift.Bool {
             fatalError()
         }
+    }
+    public class NAMESPACED_CLASS {
         public init() {
             fatalError()
         }
@@ -273,11 +299,6 @@ public extension main.namespace.deeper {
     demo comment for packaged object
     */
     public class OBJECT_WITH_PACKAGE {
-        public class Foo {
-            public init() {
-                fatalError()
-            }
-        }
         public class Bar {
             /**
             * demo comment for inner object
@@ -297,12 +318,17 @@ public extension main.namespace.deeper {
                     fatalError()
                 }
             }
-            public func bar() -> Swift.Int32 {
-                fatalError()
-            }
             public init(
                 i: Swift.Int32
             ) {
+                fatalError()
+            }
+            public func bar() -> Swift.Int32 {
+                fatalError()
+            }
+        }
+        public class Foo {
+            public init() {
                 fatalError()
             }
         }
@@ -316,6 +342,11 @@ public extension main.namespace.deeper {
                 fatalError()
             }
         }
+        public static var shared: Swift.Int32 {
+            get {
+                fatalError()
+            }
+        }
         public var value: Swift.Int32 {
             get {
                 fatalError()
@@ -329,59 +360,15 @@ public extension main.namespace.deeper {
                 fatalError()
             }
         }
-        public static var shared: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
-        public func foo() -> Swift.Int32 {
-            fatalError()
-        }
         private init() {
             fatalError()
         }
-    }
-    public class DATA_OBJECT_WITH_PACKAGE {
-        public var value: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
-        public var variable: Swift.Int32 {
-            get {
-                fatalError()
-            }
-            set {
-                fatalError()
-            }
-        }
-        public static var shared: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
         public func foo() -> Swift.Int32 {
-            fatalError()
-        }
-        private init() {
             fatalError()
         }
     }
 }
 public extension main.namespace {
-    /**
-    *  demo comment for
-    *  NAMESPACED_CLASS
-    */
-    public class NAMESPACED_CLASS {
-        /**
-        *  demo comment for
-        *  NAMESPACED_CLASS
-        */
-        public init() {
-            fatalError()
-        }
-    }
     public class Foo {
         /**
         * this is a sample comment for INSIDE_CLASS with package
@@ -413,12 +400,25 @@ public extension main.namespace {
                 fatalError()
             }
         }
+        public init() {
+            fatalError()
+        }
         /**
         * this is a sample comment for func on class with package
         */
         public func foo() -> Swift.Bool {
             fatalError()
         }
+    }
+    /**
+    *  demo comment for
+    *  NAMESPACED_CLASS
+    */
+    public class NAMESPACED_CLASS {
+        /**
+        *  demo comment for
+        *  NAMESPACED_CLASS
+        */
         public init() {
             fatalError()
         }

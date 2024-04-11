@@ -88,6 +88,7 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
         val swiftExportConfig = SwiftExportConfig(
             settings = mapOf(
                 SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
+                SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
             ),
             logger = createDummyLogger()
         )
