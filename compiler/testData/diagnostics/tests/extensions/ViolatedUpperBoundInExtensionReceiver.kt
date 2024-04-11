@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +ContextReceivers
 interface I<T: Number>
 
