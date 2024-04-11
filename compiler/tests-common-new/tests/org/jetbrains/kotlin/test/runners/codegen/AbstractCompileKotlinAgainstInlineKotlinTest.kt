@@ -73,10 +73,10 @@ open class AbstractCompileKotlinAgainstInlineKotlinTest :
         get() = ::ClassicJvmBackendFacade
 }
 
-open class AbstractIrCompileKotlinAgainstInlineKotlinTest :
+open class AbstractIrCompileKotlinAgainstInlineKotlinTest(targetBackend: TargetBackend = TargetBackend.JVM_IR) :
     AbstractCompileKotlinAgainstInlineKotlinTestBase<ClassicFrontendOutputArtifact, IrBackendInput>(
         FrontendKinds.ClassicFrontend,
-        TargetBackend.JVM_IR
+        targetBackend
     ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade
@@ -99,7 +99,9 @@ private fun TestConfigurationBuilder.configureForSerialization() {
     }
 }
 
-open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrCompileKotlinAgainstInlineKotlinTest() {
+open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest :
+    AbstractIrCompileKotlinAgainstInlineKotlinTest(TargetBackend.JVM_IR_SERIALIZE)
+{
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForSerialization()

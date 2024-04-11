@@ -45,7 +45,7 @@ class ClassicFrontend2IrConverter(
 
     override fun transform(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
         return when (module.targetBackend) {
-            TargetBackend.JVM_IR -> transformToJvmIr(module, inputArtifact)
+            TargetBackend.JVM_IR, TargetBackend.JVM_IR_SERIALIZE -> transformToJvmIr(module, inputArtifact)
             TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> transformToJsIr(module, inputArtifact)
             TargetBackend.WASM -> transformToWasmIr(module, inputArtifact)
             else -> testServices.assertions.fail { "Target backend ${module.targetBackend} not supported for transformation into IR" }
