@@ -147,7 +147,7 @@ fun FirResult.convertToIrAndActualize(
         }
     }
 
-    val irActualizer = if (dependentIrFragments.isEmpty()) null else IrActualizer(
+    val irActualizer = IrActualizer(
         KtDiagnosticReporterWithImplicitIrBasedContext(
             fir2IrConfiguration.diagnosticReporter,
             fir2IrConfiguration.languageVersionSettings
@@ -164,11 +164,11 @@ fun FirResult.convertToIrAndActualize(
         // So to avoid even more changes, when this mode is disabled, we don't run classifiers
         // actualization separately. This should go away, after useIrFakeOverrideBuilder becomes
         // always enabled
-        irActualizer?.actualizeClassifiers()
+        irActualizer.actualizeClassifiers()
         val temporaryResolver = SpecialFakeOverrideSymbolsResolver(emptyMap())
         platformComponentsStorage.fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, temporaryResolver)
     }
-    val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: emptyMap()
+    val expectActualMap = irActualizer.actualizeCallablesAndMergeModules()
     val fakeOverrideResolver = runIf(!platformComponentsStorage.configuration.useFirBasedFakeOverrideGenerator) {
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
         mainIrFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
@@ -177,7 +177,7 @@ fun FirResult.convertToIrAndActualize(
         fakeOverrideResolver
     }
     Fir2IrConverter.evaluateConstants(mainIrFragment, platformComponentsStorage)
-    val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
+    val actualizationResult = irActualizer.runChecksAndFinalize(expectActualMap)
 
     fakeOverrideResolver?.cacheFakeOverridesOfAllClasses(mainIrFragment)
 

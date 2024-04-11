@@ -108,15 +108,15 @@ class IrActualizer(
     fun runChecksAndFinalize(expectActualMap: Map<IrSymbol, IrSymbol>) : IrActualizedResult {
         //   Remove top-only expect declarations since they are not needed anymore and should not be presented in the final IrFragment
         //   Also, it doesn't remove unactualized expect declarations marked with @OptionalExpectation
-        val removedExpectDeclarations = removeExpectDeclarations(dependentFragments, expectActualMap)
+        val removedExpectDeclarations = removeExpectDeclarations(dependentFragments + mainFragment, expectActualMap)
 
         IrExpectActualCheckers(expectActualMap, classActualizationInfo, typeSystemContext, ktDiagnosticReporter).check()
         return IrActualizedResult(removedExpectDeclarations, expectActualMap)
     }
 
-    private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>): List<IrDeclaration> {
+    private fun removeExpectDeclarations(fragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>): List<IrDeclaration> {
         val removedExpectDeclarations = mutableListOf<IrDeclaration>()
-        for (fragment in dependentFragments) {
+        for (fragment in fragments) {
             for (file in fragment.files) {
                 file.declarations.removeIf {
                     if (shouldRemoveExpectDeclaration(it, expectActualMap)) {

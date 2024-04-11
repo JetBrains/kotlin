@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
+import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -121,12 +122,13 @@ object GenerationUtils {
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
         firAnalyzerFacade.runResolution()
-        val (moduleFragment, components, pluginContext) = firAnalyzerFacade.result.convertToIrAndActualizeForJvm(
-            fir2IrExtensions,
-            configuration,
-            diagnosticReporter,
-            irGeneratorExtensions = emptyList()
-        )
+        val (moduleFragment, components, pluginContext, actualizedExpectDeclarations) =
+            firAnalyzerFacade.result.convertToIrAndActualizeForJvm(
+                fir2IrExtensions,
+                configuration,
+                diagnosticReporter,
+                irGeneratorExtensions = emptyList()
+            )
 
         val dummyBindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
 
@@ -148,8 +150,13 @@ object GenerationUtils {
         generationState.beforeCompile()
         generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, components.symbolTable, components.irProviders,
-            fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
+            generationState,
+            moduleFragment,
+            components.symbolTable,
+            components.irProviders,
+            fir2IrExtensions,
+            FirJvmBackendExtension(components, actualizedExpectDeclarations?.actualizedExpectDeclarations?.extractFirDeclarations()),
+            pluginContext,
         ) {}
 
         generationState.factory.done()
