@@ -54,6 +54,7 @@ class FirJavaField @FirImplementationDetail constructor(
         private set
 
     init {
+        @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
 
         @OptIn(ResolveStateAccess::class)

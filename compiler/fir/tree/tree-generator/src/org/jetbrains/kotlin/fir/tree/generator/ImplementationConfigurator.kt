@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
+import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.declaration
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
-import org.jetbrains.kotlin.generators.tree.AbstractField
+import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.Object
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 
@@ -664,6 +665,18 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")
             additionalImports(firImplicitTypeWithoutSourceType)
+        }
+
+        configureAllImplementations(
+            implementationPredicate = {
+                fun hasDeclarationSupertype(element: Element): Boolean {
+                    if (element == declaration) return true
+                    return element.allParents.any { hasDeclarationSupertype(it) }
+                }
+                hasDeclarationSupertype(it.element)
+            }
+        ) {
+            optInToInternals()
         }
     }
 

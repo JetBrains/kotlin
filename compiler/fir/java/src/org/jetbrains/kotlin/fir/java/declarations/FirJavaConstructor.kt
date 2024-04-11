@@ -45,6 +45,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val contractDescription: FirContractDescription? get() = null
 
     init {
+        @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
 
         @OptIn(ResolveStateAccess::class)

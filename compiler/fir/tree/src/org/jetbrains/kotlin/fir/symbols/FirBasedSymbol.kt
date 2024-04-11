@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -32,6 +33,7 @@ abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker 
                 withFirSymbolIdEntry("symbol", this@FirBasedSymbol)
             }
 
+    @FirImplementationDetail
     fun bind(e: @UnsafeVariance E) {
         _fir = e
     }

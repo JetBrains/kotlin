@@ -150,6 +150,26 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
         }
     }
 
+    /**
+     * Allows to batch-apply [config] to _all_ the implementations that satisfy the given
+     * [implementationPredicate].
+     *
+     * @param implementationPredicate Only implementations satisfying this predicate will be used in this configuration.
+     * @param config The configuration block. Accepts the field name as an argument.
+     * See [ImplementationContext]'s documentation for description of its DSL methods.
+     */
+    protected fun configureAllImplementations(
+        implementationPredicate: (Implementation) -> Boolean = { true },
+        config: ImplementationContext.() -> Unit,
+    ) {
+        for (element in elementsWithImpl) {
+            for (implementation in element.implementations) {
+                if (!implementationPredicate(implementation)) continue
+                ImplementationContext(implementation).config()
+            }
+        }
+    }
+
     protected abstract class FieldContainerContext<Field>(
         private val fieldContainer: FieldContainer<Field>,
     ) where Field : AbstractField<*> {

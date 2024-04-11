@@ -33,6 +33,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
 ) : FirProperty() {
     init {
+        @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
     }
 

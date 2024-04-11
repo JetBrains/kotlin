@@ -180,7 +180,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false
-                }.also { parameterSymbol.bind(it) }
+                }
                 body = buildBlock {
                     this.coneTypeOrNull = returnType
 
@@ -205,7 +205,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 }
                 invocationKind = EventOccurrencesRange.EXACTLY_ONCE
                 inlineStatus = InlineStatus.Inline
-            }.also { fSymbol.bind(it) }
+            }
         }
 
         val newCall = buildFunctionCall {

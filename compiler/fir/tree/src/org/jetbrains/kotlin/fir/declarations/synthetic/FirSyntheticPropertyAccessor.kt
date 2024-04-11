@@ -70,6 +70,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
         get() = delegate.attributes
 
     override val symbol: FirSyntheticPropertyAccessorSymbol = FirSyntheticPropertyAccessorSymbol().apply {
+        @OptIn(FirImplementationDetail::class)
         bind(this@FirSyntheticPropertyAccessor)
     }
 

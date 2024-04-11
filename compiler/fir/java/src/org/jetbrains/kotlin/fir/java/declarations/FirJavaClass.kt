@@ -60,6 +60,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         get() = emptyList()
 
     init {
+        @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
 
         @OptIn(ResolveStateAccess::class)

@@ -47,6 +47,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override val dispatchReceiverType: ConeSimpleKotlinType?,
 ) : FirSimpleFunction() {
     init {
+        @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
 
         @OptIn(ResolveStateAccess::class)

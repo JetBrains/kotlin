@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-@OptIn(ResolveStateAccess::class)
+@OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
