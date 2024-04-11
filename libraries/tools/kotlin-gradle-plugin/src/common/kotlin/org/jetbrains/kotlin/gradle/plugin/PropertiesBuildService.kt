@@ -32,11 +32,11 @@ internal abstract class PropertiesBuildService : BuildService<PropertiesBuildSer
         val localProperties: MapProperty<String, String>
     }
 
-    private val propertiesManager = ConcurrentHashMap<Project, PropertiesManager>()
+    private val propertiesManager = ConcurrentHashMap<String, PropertiesManager>()
 
     /** Returns a [Provider] of the value of the property with the given [propertyName] in the given [project]. */
     fun property(propertyName: String, project: Project): Provider<String> {
-        return propertiesManager.computeIfAbsent(project) { PropertiesManager(project, parameters.localProperties.get()) }
+        return propertiesManager.computeIfAbsent(project.path) { PropertiesManager(project, parameters.localProperties.get()) }
             .property(propertyName)
     }
 
