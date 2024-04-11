@@ -59150,6 +59150,358 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/wasm-new-exception-handling")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Wasm_new_exception_handling {
+    @Test
+    public void testAllFilesPresentInWasm_new_exception_handling() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/wasm-new-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("breakAndOuterFinally.kt")
+    public void testBreakAndOuterFinally() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/breakAndOuterFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("catch1.kt")
+    public void testCatch1() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/catch1.kt");
+    }
+
+    @Test
+    @TestMetadata("catch2.kt")
+    public void testCatch2() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/catch2.kt");
+    }
+
+    @Test
+    @TestMetadata("catch3.kt")
+    public void testCatch3() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/catch3.kt");
+    }
+
+    @Test
+    @TestMetadata("catch4.kt")
+    public void testCatch4() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/catch4.kt");
+    }
+
+    @Test
+    @TestMetadata("catch5.kt")
+    public void testCatch5() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/catch5.kt");
+    }
+
+    @Test
+    @TestMetadata("catch6.kt")
+    public void testCatch6() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/catch6.kt");
+    }
+
+    @Test
+    @TestMetadata("catch7.kt")
+    public void testCatch7() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/catch7.kt");
+    }
+
+    @Test
+    @TestMetadata("catch8.kt")
+    public void testCatch8() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/catch8.kt");
+    }
+
+    @Test
+    @TestMetadata("continueAndOuterFinally.kt")
+    public void testContinueAndOuterFinally() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/continueAndOuterFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("decrementInFinally.kt")
+    public void testDecrementInFinally() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/decrementInFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("extend0.kt")
+    public void testExtend0() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/extend0.kt");
+    }
+
+    @Test
+    @TestMetadata("finally1.kt")
+    public void testFinally1() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally1.kt");
+    }
+
+    @Test
+    @TestMetadata("finally10.kt")
+    public void testFinally10() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally10.kt");
+    }
+
+    @Test
+    @TestMetadata("finally11.kt")
+    public void testFinally11() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally11.kt");
+    }
+
+    @Test
+    @TestMetadata("finally2.kt")
+    public void testFinally2() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally2.kt");
+    }
+
+    @Test
+    @TestMetadata("finally3.kt")
+    public void testFinally3() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally3.kt");
+    }
+
+    @Test
+    @TestMetadata("finally4.kt")
+    public void testFinally4() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally4.kt");
+    }
+
+    @Test
+    @TestMetadata("finally5.kt")
+    public void testFinally5() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally5.kt");
+    }
+
+    @Test
+    @TestMetadata("finally6.kt")
+    public void testFinally6() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally6.kt");
+    }
+
+    @Test
+    @TestMetadata("finally7.kt")
+    public void testFinally7() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally7.kt");
+    }
+
+    @Test
+    @TestMetadata("finally8.kt")
+    public void testFinally8() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally8.kt");
+    }
+
+    @Test
+    @TestMetadata("finally9.kt")
+    public void testFinally9() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finally9.kt");
+    }
+
+    @Test
+    @TestMetadata("finallyAndFinally.kt")
+    public void testFinallyAndFinally() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/finallyAndFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("kt31923_break.kt")
+    public void testKt31923_break() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt31923_break.kt");
+    }
+
+    @Test
+    @TestMetadata("kt31923_continue.kt")
+    public void testKt31923_continue() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt31923_continue.kt");
+    }
+
+    @Test
+    @TestMetadata("kt31923_return.kt")
+    public void testKt31923_return() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt31923_return.kt");
+    }
+
+    @Test
+    @TestMetadata("kt3549.kt")
+    public void testKt3549() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt3549.kt");
+    }
+
+    @Test
+    @TestMetadata("kt3706.kt")
+    public void testKt3706() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt3706.kt");
+    }
+
+    @Test
+    @TestMetadata("kt3867.kt")
+    public void testKt3867() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt3867.kt");
+    }
+
+    @Test
+    @TestMetadata("kt3874.kt")
+    public void testKt3874() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt3874.kt");
+    }
+
+    @Test
+    @TestMetadata("kt3894.kt")
+    public void testKt3894() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt3894.kt");
+    }
+
+    @Test
+    @TestMetadata("kt4134.kt")
+    public void testKt4134() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/kt4134.kt");
+    }
+
+    @Test
+    @TestMetadata("loopAndFinally.kt")
+    public void testLoopAndFinally() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/loopAndFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedFinallyAndNonFinallyTry.kt")
+    public void testNestedFinallyAndNonFinallyTry() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/nestedFinallyAndNonFinallyTry.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedFinallyAndNonFinallyTry2.kt")
+    public void testNestedFinallyAndNonFinallyTry2() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/nestedFinallyAndNonFinallyTry2.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedFinallyAndNonFinallyTry3.kt")
+    public void testNestedFinallyAndNonFinallyTry3() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/nestedFinallyAndNonFinallyTry3.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedFinallyAndNonFinallyTry4.kt")
+    public void testNestedFinallyAndNonFinallyTry4() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/nestedFinallyAndNonFinallyTry4.kt");
+    }
+
+    @Test
+    @TestMetadata("notChainCatch.kt")
+    public void testNotChainCatch() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/notChainCatch.kt");
+    }
+
+    @Test
+    @TestMetadata("objectInFinally.kt")
+    public void testObjectInFinally() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/objectInFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("rethrow.kt")
+    public void testRethrow() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/rethrow.kt");
+    }
+
+    @Test
+    @TestMetadata("returnNullFromInlined.kt")
+    public void testReturnNullFromInlined() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/returnNullFromInlined.kt");
+    }
+
+    @Test
+    @TestMetadata("returnsDifferentTypes.kt")
+    public void testReturnsDifferentTypes() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/returnsDifferentTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("someStuff.kt")
+    public void testSomeStuff() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/someStuff.kt");
+    }
+
+    @Test
+    @TestMetadata("throw0.kt")
+    public void testThrow0() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/throw0.kt");
+    }
+
+    @Test
+    @TestMetadata("throw_from_catch.kt")
+    public void testThrow_from_catch() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/throw_from_catch.kt");
+    }
+
+    @Test
+    @TestMetadata("try1.kt")
+    public void testTry1() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/try1.kt");
+    }
+
+    @Test
+    @TestMetadata("try2.kt")
+    public void testTry2() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/try2.kt");
+    }
+
+    @Test
+    @TestMetadata("try3.kt")
+    public void testTry3() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/try3.kt");
+    }
+
+    @Test
+    @TestMetadata("try4.kt")
+    public void testTry4() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/try4.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatch.kt")
+    public void testTryCatch() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/tryCatch.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchFinallyWithHandleResult.kt")
+    public void testTryCatchFinallyWithHandleResult() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/tryCatchFinallyWithHandleResult.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchWithHandleResult.kt")
+    public void testTryCatchWithHandleResult() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/tryCatchWithHandleResult.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally.kt")
+    public void testTryFinally() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/tryFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinallyInsideInlineLambda.kt")
+    public void testTryFinallyInsideInlineLambda() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/tryFinallyInsideInlineLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinallyWithHandleResult.kt")
+    public void testTryFinallyWithHandleResult() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/tryFinallyWithHandleResult.kt");
+    }
+
+    @Test
+    @TestMetadata("tryLoopTry.kt")
+    public void testTryLoopTry() {
+      runTest("compiler/testData/codegen/box/wasm-new-exception-handling/tryLoopTry.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/when")
   @TestDataPath("$PROJECT_ROOT")
   public class When {

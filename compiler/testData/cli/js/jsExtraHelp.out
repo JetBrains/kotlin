@@ -60,6 +60,8 @@ where advanced options include:
   -Xwasm-generate-wat        Generate a .wat file.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
+  -Xwasm-use-new-exception-proposal
+                             Use an updated version of the exception proposal with try_table.
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
   -Xallow-any-scripts-in-source-roots

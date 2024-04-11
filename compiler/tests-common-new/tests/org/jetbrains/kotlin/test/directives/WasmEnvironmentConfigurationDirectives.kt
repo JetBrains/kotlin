@@ -17,6 +17,10 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Generate wasm without EH proposal and test in runtime with EH turned off",
     )
 
+    val USE_NEW_EXCEPTION_HANDLING_PROPOSAL by directive(
+        description = "Generate wasm the updated EH proposal and test in runtime with EH turned on",
+    )
+
     // Next directives are used only inside test system and must not be present in test file
 
     val PATH_TO_TEST_DIR by stringDirective(

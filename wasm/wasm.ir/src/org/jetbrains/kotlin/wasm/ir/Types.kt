@@ -28,6 +28,9 @@ object WasmEqRef : WasmType("eqref", -0x13)
 object WasmRefNullrefType : WasmType("nullref", -0x0F) // Shorthand for (ref null none)
 object WasmRefNullExternrefType : WasmType("nullexternref", -0x0E) // Shorthand for (ref null noextern)
 
+object WasmExnRefType : WasmType("exnref", -0x17) // Shorthand for (ref null exn)
+object WasmNullExnRefType : WasmType("nullexnref", -0x0c) // Shorthand for (ref null noexn)
+
 data class WasmRefNullType(val heapType: WasmHeapType) : WasmType("ref null", -0x1D)
 data class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x1C)
 

@@ -634,6 +634,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
         }
 
     @Argument(
+        value = "-Xwasm-use-new-exception-proposal",
+        description = "Use an updated version of the exception proposal with try_table."
+    )
+    var wasmUseNewExceptionProposal = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xoptimize-generated-js",
         description = "Perform additional optimizations on the generated JS code."
     )

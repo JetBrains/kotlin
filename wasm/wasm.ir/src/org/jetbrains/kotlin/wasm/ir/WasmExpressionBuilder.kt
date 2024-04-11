@@ -88,7 +88,6 @@ abstract class WasmExpressionBuilder {
         buildInstrWithNoLocation(WasmOp.END)
     }
 
-
     fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, location: SourceLocation) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
@@ -133,6 +132,44 @@ abstract class WasmExpressionBuilder {
     fun buildTry(label: String?, resultType: WasmType? = null) {
         numberOfNestedBlocks++
         buildInstrWithNoLocation(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun buildTryTable(
+        label: String?,
+        catches: List<WasmImmediate.Catch>,
+        resultType: WasmType? = null
+    ) {
+        numberOfNestedBlocks++
+        buildInstrWithNoLocation(
+            WasmOp.TRY_TABLE,
+            WasmImmediate.BlockType.Value(resultType),
+            WasmImmediate.ConstI32(catches.size),
+            *catches.toTypedArray()
+        )
+    }
+
+    fun createNewCatch(tagIdx: Int, absoluteBlockLevel: Int) =
+        createNewCatchImmediate(WasmImmediate.Catch.CatchType.CATCH, absoluteBlockLevel, tagIdx)
+
+    fun createNewCatchAll(absoluteBlockLevel: Int) =
+        createNewCatchImmediate(WasmImmediate.Catch.CatchType.CATCH_ALL, absoluteBlockLevel)
+
+    private fun createNewCatchImmediate(
+        catchType: WasmImmediate.Catch.CatchType,
+        absoluteBlockLevel: Int,
+        tagIdx: Int? = null
+    ): WasmImmediate.Catch {
+        val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
+        assert(relativeLevel >= 0) { "Negative relative block index" }
+
+        return WasmImmediate.Catch(
+            catchType,
+            listOfNotNull(
+                tagIdx?.let(WasmImmediate::TableIdx),
+                WasmImmediate.LabelIdx(relativeLevel)
+            )
+        )
     }
 
     fun buildCatch(tagIdx: Int) {
