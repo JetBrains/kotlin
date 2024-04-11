@@ -10,9 +10,16 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import kotlin.io.path.*
 
-open class AbstractSwiftRunnerTest : AbstractSwiftRunnerTestBase()
+abstract class AbstractSwiftRunnerTest : AbstractSwiftRunnerTestBase(
+    renderDocComments = true
+)
 
-abstract class AbstractSwiftRunnerTestBase {
+// Going to be replaced by klib-based tests in the subsequent MRs.
+abstract class AbstractNoCommentsBasedSwiftRunnerTest : AbstractSwiftRunnerTestBase(
+    renderDocComments = false
+)
+
+abstract class AbstractSwiftRunnerTestBase(private val renderDocComments: Boolean) {
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
@@ -22,7 +29,11 @@ abstract class AbstractSwiftRunnerTestBase {
         val moduleRoot = path / "input_root/"
         assert(expectedFiles.isDirectory() && moduleRoot.isDirectory()) { "setup for $path is incorrect" }
 
-        val expectedSwift = expectedFiles / "result.swift"
+        val expectedSwift = if (!renderDocComments && (expectedFiles / "result.no_comments.swift").exists()) {
+            expectedFiles / "result.no_comments.swift"
+        } else {
+            expectedFiles / "result.swift"
+        }
         val expectedCHeader = expectedFiles / "result.h"
         val expectedKotlinBridge = expectedFiles / "result.kt"
 
@@ -41,6 +52,7 @@ abstract class AbstractSwiftRunnerTestBase {
                 settings = mapOf(
                     SwiftExportConfig.DEBUG_MODE_ENABLED to "true",
                     SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
+                    SwiftExportConfig.RENDER_DOC_COMMENTS to (if (renderDocComments) "true" else "false"),
                     SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
                 ),
                 logger = createDummyLogger(),

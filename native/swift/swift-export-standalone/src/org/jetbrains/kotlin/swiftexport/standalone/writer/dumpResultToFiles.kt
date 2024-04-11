@@ -15,21 +15,26 @@ import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.File
 
 
-internal fun SirModule.dumpResultToFiles(requests: List<BridgeRequest>, output: SwiftExportOutput, stableDeclarationsOrder: Boolean) {
+internal fun SirModule.dumpResultToFiles(
+    requests: List<BridgeRequest>,
+    output: SwiftExportOutput,
+    stableDeclarationsOrder: Boolean,
+    renderDocComments: Boolean,
+) {
     val cHeaderFile = output.cHeaderBridges.toFile()
     val ktBridgeFile = output.kotlinBridges.toFile()
     val swiftFile = output.swiftApi.toFile()
 
     val bridges = generateBridgeSources(requests, stableDeclarationsOrder)
-    val swiftSrc = generateSwiftSrc(stableDeclarationsOrder)
+    val swiftSrc = generateSwiftSrc(stableDeclarationsOrder, renderDocComments)
 
     dumpTextAtFile(bridges.ktSrc, ktBridgeFile)
     dumpTextAtFile(bridges.cSrc, cHeaderFile)
     dumpTextAtFile(sequenceOf(swiftSrc), swiftFile)
 }
 
-private fun SirModule.generateSwiftSrc(stableDeclarationsOrder: Boolean): String {
-    return SirAsSwiftSourcesPrinter.print(this, stableDeclarationsOrder)
+private fun SirModule.generateSwiftSrc(stableDeclarationsOrder: Boolean, renderDocComments: Boolean): String {
+    return SirAsSwiftSourcesPrinter.print(this, stableDeclarationsOrder, renderDocComments)
 }
 
 private fun generateBridgeSources(requests: List<BridgeRequest>, stableDeclarationsOrder: Boolean): BridgeSources {

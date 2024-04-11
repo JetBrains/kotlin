@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests.native.swift.sir
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
+import org.jetbrains.kotlin.swiftexport.standalone.AbstractNoCommentsBasedSwiftRunnerTest
 import org.jetbrains.kotlin.swiftexport.standalone.AbstractSwiftRunnerTest
 
 
@@ -29,6 +30,11 @@ fun main() {
         ) {
             testClass<AbstractSwiftRunnerTest>(
                 suiteTestClassName = "SwiftExportRunnerTest"
+            ) {
+                model("", extension = null, recursive = false)
+            }
+            testClass<AbstractNoCommentsBasedSwiftRunnerTest>(
+                suiteTestClassName = "NoCommentsSwiftExportRunnerTest"
             ) {
                 model("", extension = null, recursive = false)
             }

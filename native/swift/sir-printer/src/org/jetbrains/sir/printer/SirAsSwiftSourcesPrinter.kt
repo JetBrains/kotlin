@@ -13,12 +13,17 @@ import org.jetbrains.kotlin.utils.withIndent
 
 public class SirAsSwiftSourcesPrinter(
     private val printer: SmartPrinter,
-    private val stableDeclarationsOrder: Boolean
+    private val stableDeclarationsOrder: Boolean,
+    private val renderDocComments: Boolean,
 ) : IndentingPrinter by printer {
 
     public companion object {
-        public fun print(module: SirModule, stableDeclarationsOrder: Boolean): String {
-            val printer = SirAsSwiftSourcesPrinter(SmartPrinter(StringBuilder()), stableDeclarationsOrder = stableDeclarationsOrder)
+        public fun print(module: SirModule, stableDeclarationsOrder: Boolean, renderDocComments: Boolean): String {
+            val printer = SirAsSwiftSourcesPrinter(
+                SmartPrinter(StringBuilder()),
+                stableDeclarationsOrder = stableDeclarationsOrder,
+                renderDocComments = renderDocComments,
+            )
             with(printer) { module.print() }
             return printer.toString().trimIndent()
         }
@@ -131,6 +136,7 @@ public class SirAsSwiftSourcesPrinter(
     }
 
     private fun SirDeclaration.printDocumentation() {
+        if (!renderDocComments) return
         documentation?.lines()?.forEach { println(it.trimIndent()) }
     }
 
