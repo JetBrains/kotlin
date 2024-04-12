@@ -33929,6 +33929,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("variableRedeclaration.kt")
+      public void testVariableRedeclaration() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/variableRedeclaration.kt");
+      }
+
+      @Test
       @TestMetadata("whenExprNonNull.kt")
       public void testWhenExprNonNull() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/whenExprNonNull.kt");
