@@ -14,6 +14,7 @@
 # OWNER_LIST: "Kotlin Apple Ecosystem"
 # OWNER_LIST: "Kotlin Language Evolution"
 # OWNER_LIST: "Kotlin in Fleet"
+# OWNER_LIST: Compose
 # OWNER_LIST: Mikhail.Glukhikh
 # OWNER_LIST: Yan.Zhulanow
 # OWNER_LIST: Dmitry.Gridin
@@ -371,7 +372,7 @@
 /plugins/android-extensions/ "Kotlin Compiler Core"
 /plugins/assign-plugin/ "Kotlin Compiler Core"
 /plugins/atomicfu/ "Kotlin Libraries"
-/plugins/compose/ Simon.Ogorodnik
+/plugins/compose/ Compose
 /plugins/fir-plugin-prototype/ "Kotlin Compiler Core"
 /plugins/imports-dumper/ "Kotlin Compiler Core"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
