@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -187,11 +188,19 @@ class TestCase(
     val modules: Set<TestModule.Exclusive>,
     val freeCompilerArgs: TestCompilerArgs,
     val nominalPackageName: PackageName,
-    val checks: TestRunChecks,
+    checks: TestRunChecks,
     val extras: Extras,
     val fileCheckStage: String? = null, // KT-62157: TODO move it to extras
     val expectedFailure: Boolean = false,
 ) {
+    val checks = when (kind) {
+        TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> checks
+        TestKind.REGULAR, TestKind.STANDALONE -> checks.copy(
+            // With these two kinds tests will be run with `--ktest_no_exit_code`, so there must be a TCTestOutputFilter present.
+            testFiltering = TestRunCheck.TestFiltering(TCTestOutputFilter)
+        )
+    }
+
     sealed interface Extras
     class NoTestRunnerExtras(val entryPoint: String? = null, val inputDataFile: File? = null, val arguments: List<String> = emptyList()) : Extras
     class WithTestRunnerExtras(val runnerType: TestRunnerType, val ignoredTests: Set<String> = emptySet()) : Extras

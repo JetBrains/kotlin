@@ -9,8 +9,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addIfNotNull
+import kotlin.test.assertIs
 
 internal open class BaseTestRunProvider {
     protected fun createTestRun(testCase: TestCase, executable: TestExecutable, testRunName: String, testName: TestName?): TestRun {
@@ -42,6 +45,8 @@ internal open class BaseTestRunProvider {
                 add(TestRunParameter.WithFreeCommandLineArguments(extras.arguments))
             }
             TestKind.STANDALONE -> {
+                // WithTCLogger relies on TCTestOutputFilter to be present in the checkers.
+                assertIs<TCTestOutputFilter>(testCase.checks.testFiltering.testOutputFilter)
                 add(TestRunParameter.WithTCTestLogger)
                 if (testName != null)
                     add(TestRunParameter.WithTestFilter(testName))
@@ -53,6 +58,8 @@ internal open class BaseTestRunProvider {
                 }
             }
             TestKind.REGULAR -> {
+                // WithTCLogger relies on TCTestOutputFilter to be present in the checkers.
+                assertIs<TCTestOutputFilter>(testCase.checks.testFiltering.testOutputFilter)
                 add(TestRunParameter.WithTCTestLogger)
                 addIfNotNull(
                     testName?.let(TestRunParameter::WithTestFilter) ?: TestRunParameter.WithPackageFilter(testCase.nominalPackageName)
