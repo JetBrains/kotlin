@@ -68,7 +68,7 @@ digraph secondaryConstructorCfg_kt {
     2 -> {3 6 9 12 16} [style=dashed];
     3 -> {4};
     4 -> {5};
-    5 -> {6} [color=green label="return@/B.B"];
+    5 -> {6} [color=green];
     5 -> {25} [color=red];
     6 -> {7};
     7 -> {8};
@@ -88,12 +88,97 @@ digraph secondaryConstructorCfg_kt {
     21 -> {22};
     22 -> {23};
     23 -> {24};
-    24 -> {25} [color=green label="return@/B.B"];
-    24 -> {30} [color=green];
+    24 -> {25 30} [color=green];
     25 -> {26};
     26 -> {27};
     27 -> {28};
     28 -> {29};
     29 -> {30} [color=green];
+
+    subgraph cluster_9 {
+        color=red
+        31 [label="Enter class C" style="filled" fillcolor=red];
+        subgraph cluster_10 {
+            color=blue
+            32 [label="Enter function <init>" style="filled" fillcolor=red];
+            33 [label="Const: String()"];
+            34 [label="Delegated constructor call: this<R|C|>(...)" style="filled" fillcolor=yellow];
+            subgraph cluster_11 {
+                color=blue
+                35 [label="Enter function <init>" style="filled" fillcolor=red];
+                36 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+                subgraph cluster_12 {
+                    color=blue
+                    37 [label="Enter block"];
+                    38 [label="Access variable this@R|/C|"];
+                    39 [label="Access variable R|<local>/x|"];
+                    40 [label="Assignment: R|/C.x|"];
+                    41 [label="Exit block"];
+                }
+                42 [label="Exit function <init>" style="filled" fillcolor=red];
+            }
+            subgraph cluster_13 {
+                color=blue
+                43 [label="Enter block"];
+                subgraph cluster_14 {
+                    color=blue
+                    44 [label="Try expression enter"];
+                    subgraph cluster_15 {
+                        color=blue
+                        45 [label="Try main block enter"];
+                        subgraph cluster_16 {
+                            color=blue
+                            46 [label="Enter block"];
+                            47 [label="Exit block"];
+                        }
+                        48 [label="Try main block exit"];
+                    }
+                    subgraph cluster_17 {
+                        color=blue
+                        49 [label="Enter finally"];
+                        subgraph cluster_18 {
+                            color=blue
+                            50 [label="Enter block"];
+                            51 [label="Exit block"];
+                        }
+                        52 [label="Exit finally"];
+                    }
+                    53 [label="Try expression exit"];
+                }
+                54 [label="Exit block"];
+            }
+            55 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        56 [label="Exit class C" style="filled" fillcolor=red];
+    }
+    31 -> {32 35} [color=green];
+    31 -> {56} [style=dotted];
+    31 -> {32 35} [style=dashed];
+    32 -> {33};
+    33 -> {34};
+    34 -> {35} [color=green];
+    34 -> {43} [color=red];
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    41 -> {42};
+    42 -> {43 56} [color=green];
+    43 -> {44};
+    44 -> {45};
+    44 -> {49} [label="onUncaughtException"];
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52};
+    52 -> {53};
+    53 -> {54};
+    54 -> {55};
+    55 -> {56} [color=green];
 
 }
