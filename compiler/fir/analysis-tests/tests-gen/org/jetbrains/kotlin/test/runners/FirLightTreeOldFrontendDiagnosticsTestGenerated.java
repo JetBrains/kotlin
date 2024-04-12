@@ -34378,6 +34378,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("lambdaWithCallInPlaceAndAssignmentOperator.kt")
+        public void testLambdaWithCallInPlaceAndAssignmentOperator() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAndAssignmentOperator.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaWithCallInPlaceAndBounds.kt")
         public void testLambdaWithCallInPlaceAndBounds() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAndBounds.kt");
@@ -34399,6 +34405,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("lambdaWithCallInPlaceAndOperators.kt")
         public void testLambdaWithCallInPlaceAndOperators() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAndOperators.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithCallInPlaceAssignmnetsAndCycles.kt")
+        public void testLambdaWithCallInPlaceAssignmnetsAndCycles() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAssignmnetsAndCycles.kt");
         }
 
         @Test
@@ -34526,6 +34538,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("doWhileWithAssignment.kt")
+        public void testDoWhileWithAssignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/loops/doWhileWithAssignment.kt");
+        }
+
+        @Test
         @TestMetadata("elvisBreakInsideDoWhile.kt")
         public void testElvisBreakInsideDoWhile() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/loops/elvisBreakInsideDoWhile.kt");
@@ -34547,6 +34565,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("elvisLeftBreakInsideWhileTrue.kt")
         public void testElvisLeftBreakInsideWhileTrue() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/loops/elvisLeftBreakInsideWhileTrue.kt");
+        }
+
+        @Test
+        @TestMetadata("forLoopWithAssignment.kt")
+        public void testForLoopWithAssignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/loops/forLoopWithAssignment.kt");
         }
 
         @Test
