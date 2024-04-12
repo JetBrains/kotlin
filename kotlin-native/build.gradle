@@ -618,22 +618,11 @@ tasks.register("compdb", Copy) {
 }
 
 targetList.each { targetName ->
-    tasks.register("${targetName}CheckPlatformAbiCompatibility", CompareDistributionSignatures) {
-        dependsOn "${targetName}PlatformLibs"
-
-        libraries = new CompareDistributionSignatures.Libraries.Platform(targetName)
-        oldDistribution = getKotlinBuildProperties(project).getOrNull("anotherDistro")
-        onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
-    }
+    CompareDistributionSignatures.registerForPlatform(project, targetName)
 }
 
-tasks.register("checkStdlibAbiCompatibility", CompareDistributionSignatures) {
-    dependsOn "distRuntime"
+CompareDistributionSignatures.registerForStdlib(project)
 
-    libraries = CompareDistributionSignatures.Libraries.Standard.INSTANCE
-    oldDistribution = getKotlinBuildProperties(project).getOrNull("anotherDistro")
-    onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
-}
 // FIXME: should be a part of Host/TargetManager
 String platformName(KonanTarget target) {
     def result
