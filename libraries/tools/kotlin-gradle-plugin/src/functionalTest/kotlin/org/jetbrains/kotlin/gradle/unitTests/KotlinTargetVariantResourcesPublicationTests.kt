@@ -110,13 +110,16 @@ class KotlinTargetVariantResourcesPublicationTests {
         shouldPublishVariant: Boolean,
         targetsToTest: List<KotlinMultiplatformExtension.() -> KotlinTarget>,
     ) {
-        val project = buildProjectWithMPP {
+        val project = buildProjectWithMPP(
+            preApplyCode = {
+                enableMppResourcesPublication(enableResourcePublication)
+            }
+        ) {
             kotlin {
                 targetsToTest.forEach { createTarget ->
                     createTarget()
                 }
             }
-            enableMppResourcesPublication(enableResourcePublication)
         }.evaluate()
 
         targetsToTest.forEach { targetToTest ->

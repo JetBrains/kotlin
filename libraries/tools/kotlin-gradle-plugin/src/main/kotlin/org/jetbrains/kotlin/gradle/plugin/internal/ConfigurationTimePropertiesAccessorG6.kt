@@ -17,4 +17,9 @@ internal class ConfigurationTimePropertiesAccessorG6 : ConfigurationTimeProperti
     }
 
     override fun <T> Provider<T>.usedAtConfigurationTime(): Provider<T> = forUseAtConfigurationTime()
+
+    companion object {
+        @JvmStatic
+        private val serialVersionUID = 1L
+    }
 }

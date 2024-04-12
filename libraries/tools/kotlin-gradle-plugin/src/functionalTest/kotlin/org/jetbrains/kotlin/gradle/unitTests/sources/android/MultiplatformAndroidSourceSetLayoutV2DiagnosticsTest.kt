@@ -20,7 +20,9 @@ import org.junit.Test
 
 class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
 
-    private fun buildMinimalAndroidMultiplatformProject(): ProjectInternal = buildProjectWithMPP {
+    private fun buildMinimalAndroidMultiplatformProject(
+        preApplyCode: Project.() -> Unit = {}
+    ): ProjectInternal = buildProjectWithMPP(preApplyCode = preApplyCode) {
         setMultiplatformAndroidSourceSetLayoutVersion(2)
         plugins.apply(LibraryPlugin::class.java)
         androidLibrary {
@@ -75,8 +77,9 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
 
     @Test
     fun `test - nowarn flag - android style source dir usage checker`() {
-        val project = buildMinimalAndroidMultiplatformProject()
-        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN, "true")
+        val project = buildMinimalAndroidMultiplatformProject {
+            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN, "true")
+        }
         val androidStyleMain = project.file("src/main/kotlin")
         val androidStyleUnitTest = project.file("src/test/kotlin")
         val androidStyleInstrumentedTest = project.file("src/androidTest/kotlin")

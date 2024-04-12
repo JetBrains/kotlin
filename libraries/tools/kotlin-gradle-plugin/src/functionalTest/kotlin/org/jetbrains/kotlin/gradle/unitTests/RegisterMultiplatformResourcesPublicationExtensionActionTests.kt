@@ -21,9 +21,12 @@ class RegisterMultiplatformResourcesPublicationExtensionActionTests {
     @Test
     fun `test mppResourcesPublication toggle - prevents extension creation`() {
         assertNull(
-            buildProjectWithMPP {
+            buildProjectWithMPP(
+                preApplyCode = {
+                    enableMppResourcesPublication(false)
+                }
+            ) {
                 kotlin { jvm() }
-                enableMppResourcesPublication(false)
             }.evaluate().multiplatformExtension.resourcesPublicationExtension
         )
     }
