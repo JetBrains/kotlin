@@ -136,7 +136,7 @@ class Fir2IrTypeConverter(
                 }
 
                 if (isExtensionFunctionType && annotations.getAnnotationsByClassId(ExtensionFunctionType, session).isEmpty()) {
-                    builtIns.extensionFunctionTypeAnnotationConstructorCall()?.let {
+                    irBuiltIns.extensionFunctionTypeAnnotationCall?.let {
                         typeAnnotations += it
                     }
                 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -126,6 +127,16 @@ class IrBuiltInsOverFir(
 
     override val stringClass: IrClassSymbol by lazy { loadClass(StandardClassIds.String) }
     override val stringType: IrType get() = stringClass.defaultTypeWithoutArguments
+
+    val extensionFunctionTypeAnnotationCall: IrConstructorCall? by lazy {
+        val firSymbol =
+            session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Annotations.ExtensionFunctionType) as? FirRegularClassSymbol
+                ?: return@lazy null
+        val irSymbol = firSymbol.toSymbol(c, ConversionTypeOrigin.DEFAULT) as? IrClassSymbol ?: return@lazy null
+        val firConstructorSymbol = firSymbol.unsubstitutedScope(c).getDeclaredConstructors().singleOrNull() ?: return@lazy null
+        val constructorSymbol = c.declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
+        return@lazy IrConstructorCallImpl.fromSymbolOwner(irSymbol.defaultType, constructorSymbol)
+    }
 
     private class IntrinsicConstAnnotation(val classSymbol: IrClassSymbol, val annotationCall: IrConstructorCall)
 
