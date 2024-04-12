@@ -1,0 +1,36 @@
+library {
+  // module name: <simpleSmoke>
+
+  library fragment {
+    // package name: simple
+
+    // class name: simple/I
+    // class name: simple/I.Companion
+
+    public abstract interface simple/I : kotlin/Any {
+
+      public abstract fun interfaceFun(default: kotlin/Int /* = ... */): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object simple/I.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val companionObjectVal: kotlin/String /* = "foo" */
+        public final get
+    }
+
+    package {
+
+      public final fun functionCalls(i: simple/I): kotlin/Unit
+
+      public final fun getBoolean(): kotlin/Boolean
+
+      public final fun <T#0 /* T */> take(x: T#0): kotlin/Unit
+    }
+  }
+}
