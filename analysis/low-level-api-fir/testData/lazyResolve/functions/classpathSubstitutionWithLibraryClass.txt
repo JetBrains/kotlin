@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
     }
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
     }

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.platformSupertypeUpdater
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 
 internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.SUPER_TYPES) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirSuperTypeTargetResolver(target)
@@ -220,19 +221,16 @@ private class LLFirSuperTypeTargetResolver(
         if (classLikeDeclaration !is FirClassLikeDeclaration) return
         if (classLikeDeclaration in visitedElements) return
 
-        if (classLikeDeclaration is FirJavaClass) {
+        if (classLikeDeclaration.resolvePhase >= resolverPhase) {
             visitedElements += classLikeDeclaration
-
-            val session = classLikeDeclaration.llFirSession
-            val parentClass = classLikeDeclaration.outerClass(session)
-            supertypeComputationSession.withDeclarationSession(classLikeDeclaration) {
-                if (parentClass != null) {
-                    crawlSupertype(parentClass.defaultType())
+            if (classLikeDeclaration is FirJavaClass) {
+                // We do not have phases guarantees for Java classes, so we should process them with an assumption
+                // that there are some unresolved supertypes from the declaration site point of view
+                supertypeComputationSession.withDeclarationSession(classLikeDeclaration) {
+                    crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
                 }
-
-                classLikeDeclaration.superTypeRefs.filterIsInstance<FirResolvedTypeRef>().forEach {
-                    crawlSupertype(it.type)
-                }
+            } else {
+                crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
             }
 
             return
@@ -244,13 +242,36 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
+    private fun crawlSupertypeFromResolvedDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
+        val parentClass = classLikeDeclaration.outerClass()
+        if (parentClass != null) {
+            crawlSupertype(parentClass.defaultType())
+        }
+
+        val superTypeRefs = when (classLikeDeclaration) {
+            is FirTypeAlias -> listOf(classLikeDeclaration.expandedTypeRef)
+            is FirClass -> classLikeDeclaration.superTypeRefs
+        }
+
+        for (typeRef in superTypeRefs) {
+            val coneType = typeRef.coneTypeOrNull ?: errorWithFirSpecificEntries(
+                "The declaration super type must be resolved, but the actual type reference is not resolved",
+                fir = classLikeDeclaration,
+            ) {
+                withFirEntry("typeRef", typeRef)
+            }
+
+            crawlSupertype(coneType)
+        }
+    }
+
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         error("Should be resolved without lock in ${::doResolveWithoutLock.name}")
     }
 }
 
-private fun FirClassLikeDeclaration.outerClass(session: FirSession): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
-    session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)?.fir as? FirRegularClass
+private fun FirClassLikeDeclaration.outerClass(): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
+    llFirSession.symbolProvider.getClassLikeSymbolByClassId(parentClassId)?.fir as? FirRegularClass
 }
 
 private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
