@@ -33,7 +33,7 @@ fun Project.configureJava9Compilation(
 
     tasks.withType<KotlinJvmCompile>().configureEach {
         if (name in kotlinCompileTaskNames) {
-            configureTaskToolchain(JdkMajorVersion.JDK_11_0)
+            configureTaskToolchain(JdkMajorVersion.JDK_17_0)
             compilerOptions.jvmTarget.set(JvmTarget.fromTarget(JdkMajorVersion.JDK_9_0.targetName))
             compilerOptions.freeCompilerArgs.add("-Xjdk-release=${JdkMajorVersion.JDK_9_0.targetName}")
         }
@@ -44,7 +44,7 @@ fun Project.configureJava9Compilation(
 
         targetCompatibility = JavaVersion.VERSION_1_9.toString()
         sourceCompatibility = JavaVersion.VERSION_1_9.toString()
-        configureTaskToolchain(JdkMajorVersion.JDK_11_0)
+        configureTaskToolchain(JdkMajorVersion.JDK_17_0)
 
         // module-info.java should be in java9 source set by convention
         val java9SourceSet = sourceSets[sourceSetName].java
@@ -73,7 +73,6 @@ private class Java9AdditionalArgumentsProvider(
     override fun asArguments(): Iterable<String> = listOf(
         "--module-path", modulePath.asPath,
         "--patch-module", "$moduleName=${moduleFiles.asPath}",
-        "-Xlint:-requires-transitive-automatic", // suppress automatic module transitive dependencies in kotlin.test
         "--release", "9"
     )
 }
