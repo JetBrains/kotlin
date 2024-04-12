@@ -12,15 +12,12 @@ import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 internal class StandaloneSirSession(
     ktAnalysisSession: KtAnalysisSession,
-    override val bridgeModuleName: String,
+    moduleProviderBuilder: (KtAnalysisSession, SirSession) -> SirModuleProvider
 ) : SirSession {
 
     override val declarationNamer = SirDeclarationNamerImpl()
     override val enumGenerator = SirEnumGeneratorImpl()
-    override val moduleProvider = SirModuleProviderImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
+    override val moduleProvider = moduleProviderBuilder(ktAnalysisSession, sirSession)
     override val declarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = SirDeclarationFromKtSymbolProvider(
             ktAnalysisSession = ktAnalysisSession,

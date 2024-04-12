@@ -44,8 +44,6 @@ public interface SirSession :
     public val visibilityChecker: SirVisibilityChecker
     public val childrenProvider: SirChildrenProvider
 
-    public val bridgeModuleName: String
-
     override fun FqName.sirPackageEnum(module: SirModule): SirEnum = with(enumGenerator) { this@sirPackageEnum.sirPackageEnum(module) }
 
     override fun KtDeclarationSymbol.sirDeclarationName(): String = with(declarationNamer) { this@sirDeclarationName.sirDeclarationName() }
