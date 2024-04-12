@@ -90,6 +90,15 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testDataClassInternalConstructorUsageWillBecomeInaccessible(gradleVersion: GradleVersion) {
+        project("dataClassInternalConstructorUsageWillBecomeInaccessible", gradleVersion) {
+            buildAndFail("assemble") {
+                assertOutputContains("This 'copy()' exposes the non-public primary constructor of a 'data class'. Please migrate the usage.")
+            }
+        }
+    }
+
+    @GradleTest
     @DisplayName("Should produce '.kotlin_module' file with specified name")
     fun testModuleName(gradleVersion: GradleVersion) {
         project("moduleName", gradleVersion) {
