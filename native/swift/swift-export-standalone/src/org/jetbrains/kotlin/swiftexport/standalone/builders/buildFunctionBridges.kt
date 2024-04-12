@@ -80,22 +80,30 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
     SirCallableKind.FUNCTION,
     SirCallableKind.STATIC_METHOD,
     -> {
-        val suffix = bridgeSuffix
-        val request = BridgeRequest(
-            this,
-            fqName.forBridge.joinToString("_") + suffix,
-            fqName
-        )
-        body = createFunctionBodyFromRequest(request)
-        request
+        val typesUsed = listOf(returnType) + allParameters.map { it.type }
+        if (typesUsed.none { !it.isSupported }) {
+            val suffix = bridgeSuffix
+            val request = BridgeRequest(
+                this,
+                fqName.forBridge.joinToString("_") + suffix,
+                fqName
+            )
+            body = createFunctionBodyFromRequest(request)
+            request
+        } else {
+            null
+        }
+
     }
     SirCallableKind.INSTANCE_METHOD,
     SirCallableKind.CLASS_METHOD,
     -> {
-        body = SirFunctionBody(listOf("fatalError()"))
         null
     }
 }
+
+private val SirType.isSupported: Boolean
+    get() = this is SirNominalType && type.parent == SirSwiftModule
 
 private val SirCallable.bridgeSuffix: String
     get() = when (this) {

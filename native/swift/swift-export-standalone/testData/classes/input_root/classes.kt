@@ -60,3 +60,7 @@ class Foo (a: Int) {
         fun COMPANION_OBJECT_FUNCTION_SHOULD_BE_IGNORED(): Int = TODO()
     }
 }
+
+class CLASS_WITH_SAME_NAME {
+    fun foo(): Int = TODO()
+}

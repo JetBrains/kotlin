@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.sir.SirNamedDeclaration
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -41,7 +42,22 @@ public class SirTypeProviderImpl(
 
             it.isDouble -> SirSwiftModule.double
             it.isFloat -> SirSwiftModule.float
-            else -> throw IllegalArgumentException("Swift Export does not support argument type: ${it.asStringForDebugging()}")
+
+            else -> when (it) {
+                is KtUsualClassType -> {
+                    it.classSymbol.sirDeclaration() as SirNamedDeclaration
+                }
+                is KtCapturedType,
+                is KtClassErrorType,
+                is KtFunctionalType,
+                is KtDefinitelyNotNullType,
+                is KtDynamicType,
+                is KtTypeErrorType,
+                is KtFlexibleType,
+                is KtIntegerLiteralType,
+                is KtIntersectionType,
+                is KtTypeParameterType -> error("Swift Export does not support argument type: $it")
+            }
         }
     )
 }

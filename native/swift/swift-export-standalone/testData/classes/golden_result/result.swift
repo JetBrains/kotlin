@@ -92,6 +92,14 @@ public class Foo {
         fatalError()
     }
 }
+public class CLASS_WITH_SAME_NAME {
+    public func foo() -> Swift.Int32 {
+        fatalError()
+    }
+    public init() {
+        fatalError()
+    }
+}
 /**
 demo comment for packageless object
 */
@@ -416,7 +424,30 @@ public extension main.namespace {
         }
     }
 }
+public extension main.why_we_need_module_names {
+    public class CLASS_WITH_SAME_NAME {
+        public func foo() -> Swift.Void {
+            fatalError()
+        }
+        public init() {
+            fatalError()
+        }
+    }
+    public static func foo() -> main.CLASS_WITH_SAME_NAME {
+        fatalError()
+    }
+    /**
+    * this will calculate the return type of `foo` on `CLASS_WITH_SAME_NAME`.
+    * Return type of CLASS_WITH_SAME_NAME differs, so we can detect which one was used on Swift side.
+    * We are expecting it to be the one that does not have a module - so it will be Swift.Int32.
+    */
+    public static func bar() -> Swift.Int32 {
+        return why_we_need_module_names_bar()
+    }
+}
 public enum namespace {
     public enum deeper {
     }
+}
+public enum why_we_need_module_names {
 }

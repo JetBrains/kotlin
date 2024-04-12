@@ -247,7 +247,9 @@ private val SirType.swift
 
 private val SirNamedDeclaration.swiftFqName: String
     get() {
-        val parentName = (parent as? SirNamedDeclaration)?.swiftFqName ?: ((parent as? SirNamed)?.name)
+        val parentName = (parent as? SirNamedDeclaration)?.swiftFqName
+            ?: ((parent as? SirNamed)?.name)
+            ?: ((parent as? SirExtension)?.extendedType?.swift)
         return parentName?.let { "$it.$name" } ?: name
     }
 
