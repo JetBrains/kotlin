@@ -1610,6 +1610,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Test
+      @TestMetadata("cyclicSupertype3.kt")
+      public void testCyclicSupertype3() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertype3.kt");
+      }
+
+      @Test
       @TestMetadata("cyclicSupertypeBetweenModules.kt")
       public void testCyclicSupertypeBetweenModules() {
         runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeBetweenModules.kt");
