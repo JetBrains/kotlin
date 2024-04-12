@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services
 
+import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.rethrow
@@ -73,10 +74,9 @@ object JUnit5Assertions : AssertionsService() {
         val (equalsToFile, expected) =
             doesEqualToFile(expectedFile, actual, sanitizer, fileNotFoundMessageTeamCity, fileNotFoundMessageLocal)
         if (!equalsToFile) {
-            throw AssertionFailedError(
+            throw FileComparisonFailure(
                 "${differenceObtainedMessage()}: ${expectedFile.name}",
-                FileInfo(expectedFile.absolutePath, expected.toByteArray(StandardCharsets.UTF_8)),
-                actual,
+                expected, actual, expectedFile.absolutePath
             )
         }
     }
