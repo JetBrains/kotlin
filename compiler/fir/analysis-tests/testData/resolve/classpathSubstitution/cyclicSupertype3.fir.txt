@@ -20,13 +20,13 @@ Module: middle
 FILE: middle.kt
     package org.example
 
-    public abstract interface Base : R|org/example/MiddleAdditional| {
+    public abstract interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public abstract fun middle(): R|kotlin/Unit|
 
     }
-    public abstract interface MiddleAdditional : R|org/example/Middle| {
+    public abstract interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public abstract interface Middle : R|org/example/Top| {
+    public abstract interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 Module: bottom
 FILE: bottom.kt

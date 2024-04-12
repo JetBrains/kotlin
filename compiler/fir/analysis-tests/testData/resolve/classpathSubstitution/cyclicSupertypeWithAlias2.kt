@@ -39,22 +39,22 @@ public interface Top extends Topmost {
 // FILE: middle.kt
 package org.example
 
-<!MISSING_DEPENDENCY_SUPERCLASS!>interface Base : MiddleAdditional {
+interface Base : <!CYCLIC_INHERITANCE_HIERARCHY!>MiddleAdditional<!> {
     fun middle()
-}<!>
+}
 
-<!MISSING_DEPENDENCY_SUPERCLASS!>interface MiddleAdditional : Middle<!>
+interface MiddleAdditional : <!CYCLIC_INHERITANCE_HIERARCHY!>Middle<!>
 
-<!MISSING_DEPENDENCY_SUPERCLASS!>interface Middle : Top<!>
+interface Middle : <!CYCLIC_INHERITANCE_HIERARCHY!>Top<!>
 
 // MODULE: bottom(middle)
 // FILE: bottom.kt
 package org.example
 
-<!MISSING_DEPENDENCY_SUPERCLASS!>interface Base : BottomAdditional {
+interface Base : BottomAdditional {
     fun bottom()
-}<!>
+}
 
-<!MISSING_DEPENDENCY_SUPERCLASS!>interface BottomAdditional : Bottom<!>
+interface BottomAdditional : Bottom
 
-<!MISSING_DEPENDENCY_SUPERCLASS!>interface Bottom : Middle<!>
+interface Bottom : Middle

@@ -164,13 +164,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Middle : R|org/example/Top| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
@@ -201,13 +201,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public final? [ResolvedTo(TYPES)] interface Middle : R|org/example/Top| {
+    public final? [ResolvedTo(TYPES)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
@@ -238,13 +238,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public abstract [ResolvedTo(STATUS)] interface Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(STATUS)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
@@ -275,13 +275,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
@@ -312,13 +312,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public abstract [ResolvedTo(CONTRACTS)] interface Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(CONTRACTS)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
@@ -349,13 +349,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
@@ -386,13 +386,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
@@ -423,13 +423,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
@@ -460,13 +460,13 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|org/example/MiddleAdditional| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
         public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : R|org/example/Middle| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
