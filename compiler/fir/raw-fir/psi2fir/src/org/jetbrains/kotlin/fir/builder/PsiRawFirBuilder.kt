@@ -876,7 +876,7 @@ open class PsiRawFirBuilder(
                             }
                             entry.extractArgumentsTo(this)
                             typeArguments.appendTypeArguments(entry.typeArguments)
-                            containingDeclarationSymbol = this@buildTypeParameter.symbol
+                            containingDeclarationSymbol = context.containerSymbol
                         }
                     }
                 }

@@ -64,6 +64,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("annotationOnTypeParameterInWhereClause.kt")
+    public void testAnnotationOnTypeParameterInWhereClause() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnTypeParameterInWhereClause.kt");
+    }
+
+    @Test
     @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
     public void testAnnotationsOnNullableParenthesizedTypes() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");

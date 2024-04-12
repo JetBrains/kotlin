@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -117,8 +116,9 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
             symbolsToResolve = buildList {
                 target.forEachDeclarationWhichCanHavePostponedSymbols {
                     addAll(it.postponedSymbolsForAnnotationResolution.orEmpty())
-                    addOriginalSymbolsForCopyDeclarations(it)
                 }
+
+                addSymbolsFromForeignAnnotations(target)
             }
         }
 
@@ -129,14 +129,12 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
         return false
     }
 
-    private fun MutableList<FirBasedSymbol<*>>.addOriginalSymbolsForCopyDeclarations(target: FirCallableDeclaration) {
-        if (!target.isSubstitutionOrIntersectionOverride) return
-
+    private fun MutableList<FirBasedSymbol<*>>.addSymbolsFromForeignAnnotations(target: FirDeclaration) {
         // It is fine to just visit the declaration recursively as copy declarations don't have a body
         target.accept(ForeignAnnotationsCollector, ForeignAnnotationsContext(this, target.symbol))
     }
 
-    private class ForeignAnnotationsContext(val collection: MutableCollection<FirBasedSymbol<*>>, val currentSymbol: FirCallableSymbol<*>)
+    private class ForeignAnnotationsContext(val collection: MutableCollection<FirBasedSymbol<*>>, val currentSymbol: FirBasedSymbol<*>)
     private object ForeignAnnotationsCollector : NonLocalAnnotationVisitor<ForeignAnnotationsContext>() {
         override fun processAnnotation(annotation: FirAnnotation, data: ForeignAnnotationsContext) {
             if (annotation !is FirAnnotationCall) return

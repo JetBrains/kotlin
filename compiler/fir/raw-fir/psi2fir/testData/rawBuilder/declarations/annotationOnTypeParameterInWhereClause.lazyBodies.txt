@@ -1,0 +1,16 @@
+FILE: annotationOnTypeParameterInWhereClause.kt
+    @Repeatable() @Target(LAZY_EXPRESSION) public final? annotation class TypeParameterAnn : R|kotlin/Annotation| {
+        public? constructor(name: String): R|TypeParameterAnn| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val name: String = R|<local>/name|
+            public? get(): String
+
+    }
+    public final? class Foo<@TypeParameterAnn(LAZY_EXPRESSION) @TypeParameterAnn(LAZY_EXPRESSION) T : Any> : R|kotlin/Any| {
+        public? constructor<@TypeParameterAnn(LAZY_EXPRESSION) @TypeParameterAnn(LAZY_EXPRESSION) T : Any>(): R|Foo<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
