@@ -1,0 +1,64 @@
+MODULE_FRAGMENT name:<stdlibReferences>
+  FILE fqName:test fileName:stdlibReferences.kt
+    CLASS CLASS name:Foo signature:test/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Foo
+      CONSTRUCTOR signature:test/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:test.Foo [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:test/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]'
+    PROPERTY name:boolean signature:test/boolean|{}boolean[0] visibility:public modality:FINAL [val]
+      FUN name:<get-boolean> signature:test/boolean.<get-boolean>|<get-boolean>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl>
+        correspondingProperty: PROPERTY name:boolean signature:test/boolean|{}boolean[0] visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun <get-boolean> (): <unbound IrClassPublicSymbolImpl> declared in test'
+            CONST Boolean type=<unbound IrClassPublicSymbolImpl> value=true
+    CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl><test.E>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.E
+      CONSTRUCTOR signature:test/E.<init>|<init>(){}[0] visibility:private <> () returnType:test.E [primary]
+        BLOCK_BODY
+          ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
+            <1>: test.E
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl><test.E>]'
+      ENUM_ENTRY name:A signature:test/E.A|null[0]
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.E'
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/E.values|values#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl><test.E>
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/E.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL <> (value:<unbound IrClassPublicSymbolImpl>) returnType:test.E
+        VALUE_PARAMETER name:value index:0 type:<unbound IrClassPublicSymbolImpl>
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> signature:test/E.entries.<get-entries>|<get-entries>#static(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl><test.E>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries signature:test/E.entries|#static{}entries[0] visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    FUN name:main signature:test/main|main(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl>
+      annotations:
+        <unbound>
+      BLOCK_BODY
+        VAR name:a type:<unbound IrClassPublicSymbolImpl><<unbound IrClassPublicSymbolImpl>> [val]
+          CALL 'UNBOUND IrSimpleFunctionPublicSymbolImpl' type=<unbound IrClassPublicSymbolImpl><<unbound IrClassPublicSymbolImpl>> origin=null
+            <1>: <unbound IrClassPublicSymbolImpl>
+            1: VARARG type=<unbound IrClassPublicSymbolImpl><out <unbound IrClassPublicSymbolImpl>> varargElementType=<unbound IrClassPublicSymbolImpl>
+              CONST Int type=<unbound IrClassPublicSymbolImpl> value=1
+              CONST Int type=<unbound IrClassPublicSymbolImpl> value=2
+              CONST Int type=<unbound IrClassPublicSymbolImpl> value=3
+        CALL 'UNBOUND IrSimpleFunctionPublicSymbolImpl' type=<unbound IrClassPublicSymbolImpl> origin=null
+          1: CALL 'public final fun <get-boolean> (): <unbound IrClassPublicSymbolImpl> declared in test' type=<unbound IrClassPublicSymbolImpl> origin=GET_PROPERTY
+          2: FUN_EXPR type=<unbound IrClassPublicSymbolImpl><<unbound IrClassPublicSymbolImpl>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl>
+              BLOCK_BODY
+                RETURN type=<unbound IrClassPublicSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassPublicSymbolImpl> declared in test.main'
+                  CONST String type=<unbound IrClassPublicSymbolImpl> value="Some message"
+        VAR name:c type:<unbound IrClassPublicSymbolImpl><*> [val]
+          CLASS_REFERENCE 'CLASS CLASS name:Foo signature:test/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]' type=<unbound IrClassPublicSymbolImpl><test.Foo>
+        VAR name:d type:<unbound IrClassPublicSymbolImpl> [val]
+          CALL 'UNBOUND IrSimpleFunctionPublicSymbolImpl' type=<unbound IrClassPublicSymbolImpl> origin=null
+            1: FUN_EXPR type=<unbound IrClassPublicSymbolImpl><<unbound IrClassPublicSymbolImpl>> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl>
+                BLOCK_BODY
+                  RETURN type=<unbound IrClassPublicSymbolImpl> from='local final fun <anonymous> (): <unbound IrClassPublicSymbolImpl> declared in test.main'
+                    GET_OBJECT 'UNBOUND IrClassPublicSymbolImpl' type=<unbound IrClassPublicSymbolImpl>
+        VAR name:e type:<unbound IrClassPublicSymbolImpl><*> [val]
+          GET_ENUM 'ENUM_ENTRY name:A signature:test/E.A|null[0]' type=test.E
+        VAR name:f type:<unbound IrClassPublicSymbolImpl> [val]
+          GET_ENUM 'UNBOUND IrEnumEntryPublicSymbolImpl' type=<unbound IrClassPublicSymbolImpl>

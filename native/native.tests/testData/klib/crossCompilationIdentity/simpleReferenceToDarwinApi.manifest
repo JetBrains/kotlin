@@ -1,0 +1,14 @@
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+dependency_version_org.jetbrains.kotlin.native.platform.CoreFoundation = unspecified
+dependency_version_org.jetbrains.kotlin.native.platform.CoreFoundationBase = unspecified
+dependency_version_org.jetbrains.kotlin.native.platform.Foundation = unspecified
+dependency_version_org.jetbrains.kotlin.native.platform.Security = unspecified
+dependency_version_org.jetbrains.kotlin.native.platform.darwin = unspecified
+dependency_version_org.jetbrains.kotlin.native.platform.posix = unspecified
+depends = stdlib org.jetbrains.kotlin.native.platform.posix org.jetbrains.kotlin.native.platform.darwin org.jetbrains.kotlin.native.platform.CoreFoundationBase org.jetbrains.kotlin.native.platform.CoreFoundation org.jetbrains.kotlin.native.platform.Security org.jetbrains.kotlin.native.platform.Foundation
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = <test-run-target>
+unique_name = simpleReferenceToDarwinApi

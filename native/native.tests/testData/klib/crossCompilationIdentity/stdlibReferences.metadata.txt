@@ -1,0 +1,37 @@
+library {
+  // module name: <stdlibReferences>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/E
+    // class name: test/E.A
+    // class name: test/Foo
+
+    public final enum class test/E : kotlin/Enum<test/E> {
+
+      private constructor()
+
+      A,
+
+      // has Enum.entries
+    }
+
+    public final enum entry test/E.A : test/E {
+    }
+
+    public final class test/Foo : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      @kotlin/experimental/ExperimentalNativeApi
+      public final fun main(): kotlin/Unit
+
+      public final val boolean: kotlin/Boolean
+        public final /* non-default */ get
+    }
+  }
+}

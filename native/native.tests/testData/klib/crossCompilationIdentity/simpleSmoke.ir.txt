@@ -1,0 +1,50 @@
+MODULE_FRAGMENT name:<simpleSmoke>
+  FILE fqName:simple fileName:simpleSmoke.kt
+    CLASS INTERFACE name:I signature:simple/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:simple.I
+      FUN name:interfaceFun signature:simple/I.interfaceFun|interfaceFun(kotlin.Int){}[0] visibility:public modality:ABSTRACT <> ($this:simple.I, default:<unbound IrClassPublicSymbolImpl>) returnType:<unbound IrClassPublicSymbolImpl>
+        $this: VALUE_PARAMETER name:<this> type:simple.I
+        VALUE_PARAMETER name:default index:0 type:<unbound IrClassPublicSymbolImpl>
+          EXPRESSION_BODY
+            CONST Int type=<unbound IrClassPublicSymbolImpl> value=42
+      CLASS OBJECT name:Companion signature:simple/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassPublicSymbolImpl>]
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:simple.I.Companion
+        CONSTRUCTOR signature:simple/I.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:simple.I.Companion [primary]
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:simple/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassPublicSymbolImpl>]'
+        PROPERTY name:companionObjectVal signature:simple/I.Companion.companionObjectVal|{}companionObjectVal[0] visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ simple/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassPublicSymbolImpl> visibility:private [final]
+            EXPRESSION_BODY
+              CONST String type=<unbound IrClassPublicSymbolImpl> value="foo"
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-companionObjectVal> signature:simple/I.Companion.companionObjectVal.<get-companionObjectVal>|<get-companionObjectVal>(){}[0] visibility:public modality:FINAL <> ($this:simple.I.Companion) returnType:<unbound IrClassPublicSymbolImpl>
+            correspondingProperty: PROPERTY name:companionObjectVal signature:simple/I.Companion.companionObjectVal|{}companionObjectVal[0] visibility:public modality:FINAL [val]
+            $this: VALUE_PARAMETER name:<this> type:simple.I.Companion
+            BLOCK_BODY
+              RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun <get-companionObjectVal> (): <unbound IrClassPublicSymbolImpl> declared in simple.I.Companion'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ simple/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassPublicSymbolImpl> visibility:private [final]' type=<unbound IrClassPublicSymbolImpl> origin=null
+                  receiver: GET_VAR '<this>: simple.I.Companion declared in simple.I.Companion.<get-companionObjectVal>' type=simple.I.Companion origin=null
+    FUN name:take signature:simple/take|take(0:0){0§<kotlin.Any?>}[0] visibility:public modality:FINAL <T> (x:T of simple.take) returnType:<unbound IrClassPublicSymbolImpl>
+      TYPE_PARAMETER name:T index:0 variance: signature:[ simple/take|take(0:0){0§<kotlin.Any?>}[0] <- Local[<TP>,0|TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false] ] superTypes:[<unbound IrClassPublicSymbolImpl>?] reified:false
+      VALUE_PARAMETER name:x index:0 type:T of simple.take
+      BLOCK_BODY
+    FUN name:getBoolean signature:simple/getBoolean|getBoolean(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl>
+      BLOCK_BODY
+        RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun getBoolean (): <unbound IrClassPublicSymbolImpl> declared in simple'
+          CONST Boolean type=<unbound IrClassPublicSymbolImpl> value=true
+    FUN name:functionCalls signature:simple/functionCalls|functionCalls(simple.I){}[0] visibility:public modality:FINAL <> (i:simple.I) returnType:<unbound IrClassPublicSymbolImpl>
+      VALUE_PARAMETER name:i index:0 type:simple.I
+      BLOCK_BODY
+        WHEN type=<unbound IrClassPublicSymbolImpl> origin=IF
+          BRANCH
+            if: CALL 'public final fun getBoolean (): <unbound IrClassPublicSymbolImpl> declared in simple' type=<unbound IrClassPublicSymbolImpl> origin=null
+            then: BLOCK type=<unbound IrClassPublicSymbolImpl> origin=null
+              CALL 'public final fun take <T> (x: T of simple.take): <unbound IrClassPublicSymbolImpl> declared in simple' type=<unbound IrClassPublicSymbolImpl> origin=null
+                <T>: <unbound IrClassPublicSymbolImpl>
+                x: CALL 'public final fun <get-companionObjectVal> (): <unbound IrClassPublicSymbolImpl> declared in simple.I.Companion' type=<unbound IrClassPublicSymbolImpl> origin=GET_PROPERTY
+                  $this: GET_OBJECT 'CLASS OBJECT name:Companion signature:simple/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassPublicSymbolImpl>]' type=simple.I.Companion
+        WHILE label=null origin=WHILE_LOOP
+          condition: CALL 'public final fun getBoolean (): <unbound IrClassPublicSymbolImpl> declared in simple' type=<unbound IrClassPublicSymbolImpl> origin=null
+          body: BLOCK type=<unbound IrClassPublicSymbolImpl> origin=null
+            CALL 'public abstract fun interfaceFun (default: <unbound IrClassPublicSymbolImpl>): <unbound IrClassPublicSymbolImpl> declared in simple.I' type=<unbound IrClassPublicSymbolImpl> origin=null
+              $this: GET_VAR 'i: simple.I declared in simple.functionCalls' type=simple.I origin=null
