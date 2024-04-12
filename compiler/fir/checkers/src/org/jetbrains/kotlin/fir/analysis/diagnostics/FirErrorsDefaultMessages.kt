@@ -1527,7 +1527,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, "Type parameter of a property must be used in its receiver type.")
 
-        map.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression is required in a function with a block body ('{...}').")
+        map.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "Missing return statement.")
 
         map.put(
             RETURN_TYPE_MISMATCH,
