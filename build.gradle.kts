@@ -1152,6 +1152,8 @@ afterEvaluate {
     }
 }
 
+// Some change
+
 afterEvaluate {
     checkExpectedGradlePropertyValues()
 }
