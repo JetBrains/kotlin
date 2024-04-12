@@ -48,7 +48,8 @@ public class SirVisibilityCheckerImpl(
 
     context(KtAnalysisSession)
     private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(): Boolean =
-        ((classKind == KtClassKind.CLASS && !isData) || classKind == KtClassKind.OBJECT)
+        ((classKind == KtClassKind.CLASS) || classKind == KtClassKind.OBJECT)
+                && !isData // KT-67362
                 && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
                 && !isInline
                 && modality == Modality.FINAL

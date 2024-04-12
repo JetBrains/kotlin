@@ -19,32 +19,6 @@ public class ClassWithNonPublicConstructor {
         }
     }
 }
-public class DATA_OBJECT_WITHOUT_PACKAGE {
-    public static var shared: Swift.Int32 {
-        get {
-            fatalError()
-        }
-    }
-    public var value: Swift.Int32 {
-        get {
-            fatalError()
-        }
-    }
-    public var variable: Swift.Int32 {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
-    }
-    private init() {
-        fatalError()
-    }
-    public func foo() -> Swift.Int32 {
-        fatalError()
-    }
-}
 /**
 * this is a sample comment for class without package
 * in order to support documentation for primary constructor - we will have to start parsing comment content:
@@ -136,16 +110,6 @@ public class OBJECT_NO_PACKAGE {
                 fatalError()
             }
         }
-        public class DATA_OBJECT_INSIDE_CLASS_INSIDE_OBJECT {
-            public static var shared: Swift.Int32 {
-                get {
-                    fatalError()
-                }
-            }
-            private init() {
-                fatalError()
-            }
-        }
         public var i: Swift.Int32 {
             get {
                 fatalError()
@@ -201,32 +165,6 @@ public class OBJECT_NO_PACKAGE {
     }
 }
 public extension main.namespace.deeper {
-    public class DATA_OBJECT_WITH_PACKAGE {
-        public static var shared: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
-        public var value: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
-        public var variable: Swift.Int32 {
-            get {
-                fatalError()
-            }
-            set {
-                fatalError()
-            }
-        }
-        private init() {
-            fatalError()
-        }
-        public func foo() -> Swift.Int32 {
-            fatalError()
-        }
-    }
     public class Foo {
         public class INSIDE_CLASS {
             public class DEEPER_INSIDE_CLASS {

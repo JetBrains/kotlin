@@ -16,32 +16,6 @@ public class ClassWithNonPublicConstructor {
         }
     }
 }
-public class DATA_OBJECT_WITHOUT_PACKAGE {
-    public static var shared: Swift.Int32 {
-        get {
-            fatalError()
-        }
-    }
-    public var value: Swift.Int32 {
-        get {
-            fatalError()
-        }
-    }
-    public var variable: Swift.Int32 {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
-    }
-    private init() {
-        fatalError()
-    }
-    public func foo() -> Swift.Int32 {
-        fatalError()
-    }
-}
 public class Foo {
     public class INSIDE_CLASS {
         public var my_value_inner: Swift.UInt32 {
@@ -95,16 +69,6 @@ public class OBJECT_NO_PACKAGE {
     public class Bar {
         public class CLASS_INSIDE_CLASS_INSIDE_OBJECT {
             public init() {
-                fatalError()
-            }
-        }
-        public class DATA_OBJECT_INSIDE_CLASS_INSIDE_OBJECT {
-            public static var shared: Swift.Int32 {
-                get {
-                    fatalError()
-                }
-            }
-            private init() {
                 fatalError()
             }
         }
@@ -163,32 +127,6 @@ public class OBJECT_NO_PACKAGE {
     }
 }
 public extension main.namespace.deeper {
-    public class DATA_OBJECT_WITH_PACKAGE {
-        public static var shared: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
-        public var value: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
-        public var variable: Swift.Int32 {
-            get {
-                fatalError()
-            }
-            set {
-                fatalError()
-            }
-        }
-        private init() {
-            fatalError()
-        }
-        public func foo() -> Swift.Int32 {
-            fatalError()
-        }
-    }
     public class Foo {
         public class INSIDE_CLASS {
             public class DEEPER_INSIDE_CLASS {

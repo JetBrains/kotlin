@@ -42,3 +42,9 @@ object OBJECT_WITH_GENERIC_INHERITANCE: ListIterator<Nothing> {
     override fun next(): Nothing = throw NoSuchElementException()
     override fun previous(): Nothing = throw NoSuchElementException()
 }
+
+data object DATA_OBJECT_WITH_PACKAGE {
+    fun foo(): Int = 5
+    val value: Int = 5
+    var variable: Int = 5
+}
