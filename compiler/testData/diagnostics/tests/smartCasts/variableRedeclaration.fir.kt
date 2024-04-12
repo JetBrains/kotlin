@@ -10,13 +10,13 @@ fun testLoop(b: Boolean) {
     }
     x.length
     while (b) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         var x: Any = "hello"
         x = 1
     }
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
     invokeLater {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
@@ -86,7 +86,7 @@ fun testLambda() {
     }
     x.length
     invokeLater {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         var x: Any = "hello"
         x = 1
     }

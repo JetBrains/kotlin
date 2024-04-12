@@ -44,8 +44,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class DataFlowAnalyzerContext(session: FirSession) {
     val graphBuilder = ControlFlowGraphBuilder()
-    val preliminaryLoopVisitor = PreliminaryLoopVisitor()
-    val variablesClearedBeforeLoop = stackOf<List<RealVariable>>()
     internal val variableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
 
     var variableStorage = VariableStorageImpl(session)
@@ -59,8 +57,6 @@ class DataFlowAnalyzerContext(session: FirSession) {
 
     fun reset() {
         graphBuilder.reset()
-        preliminaryLoopVisitor.resetState()
-        variablesClearedBeforeLoop.reset()
         variableAssignmentAnalyzer.reset()
         variableStorage = variableStorage.clear()
     }
@@ -181,6 +177,8 @@ abstract class FirDataFlowAnalyzer(
     fun enterFunction(function: FirFunction) {
         if (function is FirDefaultPropertyAccessor) return
 
+        val assignedInside = context.variableAssignmentAnalyzer.enterFunction(function)
+
         val (localFunctionNode, functionEnterNode) = if (function is FirAnonymousFunction) {
             null to graphBuilder.enterAnonymousFunction(function)
         } else {
@@ -192,22 +190,17 @@ abstract class FirDataFlowAnalyzer(
              * Anonymous functions which can be revisited, either in-place or not in-place, are treated as repeatable statements. This
              * causes any assignments to local variables within the anonymous function body to clear type statements for those local
              * variables.
-             * TODO(KT-57678): is it possible for FirLocalVariableAssignmentAnalyzer to handle this for both lambdas and loops?
              */
             if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
-                enterRepeatableStatement(flow, function)
+                enterRepeatableStatement(flow, assignedInside)
             }
         }
-        context.variableAssignmentAnalyzer.enterFunction(function)
     }
 
     fun exitFunction(function: FirFunction): FirControlFlowGraphReference? {
         if (function is FirDefaultPropertyAccessor) return null
 
         context.variableAssignmentAnalyzer.exitFunction()
-        if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
-            exitRepeatableStatement(function)
-        }
 
         if (function is FirAnonymousFunction) {
             val (functionExitNode, postponedLambdaExitNode, graph) = graphBuilder.exitAnonymousFunction(function)
@@ -699,9 +692,10 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- While Loop -----------------------------------
 
     fun enterWhileLoop(loop: FirLoop) {
+        val assignedInside = context.variableAssignmentAnalyzer.enterLoop(loop)
         val (loopEnterNode, loopConditionEnterNode) = graphBuilder.enterWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow()
-        loopConditionEnterNode.mergeIncomingFlow { _, flow -> enterRepeatableStatement(flow, loop) }
+        loopConditionEnterNode.mergeIncomingFlow { _, flow -> enterRepeatableStatement(flow, assignedInside) }
     }
 
     fun exitWhileLoopCondition(loop: FirLoop) {
@@ -716,17 +710,25 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitWhileLoop(loop: FirLoop) {
+        val assignedInside = context.variableAssignmentAnalyzer.exitLoop()
         val (conditionEnterNode, blockExitNode, exitNode) = graphBuilder.exitWhileLoop(loop)
         blockExitNode.mergeIncomingFlow()
         exitNode.mergeIncomingFlow { path, flow ->
-            processWhileLoopExit(path, flow, exitNode, conditionEnterNode)
+            processWhileLoopExit(path, flow, exitNode, conditionEnterNode, assignedInside)
             processLoopExit(flow, exitNode, exitNode.firstPreviousNode as LoopConditionExitNode)
         }
     }
 
-    private fun processWhileLoopExit(path: FlowPath, flow: MutableFlow, node: LoopExitNode, conditionEnterNode: LoopConditionEnterNode) {
-        val possiblyChangedVariables = exitRepeatableStatement(node.fir)
-        if (possiblyChangedVariables.isNullOrEmpty()) return
+    private fun processWhileLoopExit(
+        path: FlowPath,
+        flow: MutableFlow,
+        node: LoopExitNode,
+        conditionEnterNode: LoopConditionEnterNode,
+        reassigned: Set<FirPropertySymbol>,
+    ) {
+        if (reassigned.isEmpty()) return
+        val possiblyChangedVariables = variableStorage.realVariables.values.filter { it.identifier.symbol in reassigned }
+        if (possiblyChangedVariables.isEmpty()) return
         // While analyzing the loop we might have added some backwards jumps to `conditionEnterNode` which weren't
         // there at the time its flow was computed - which is why we erased all information about `possiblyChangedVariables`
         // from it. Now that we have those edges, we can restore type information for the code after the loop.
@@ -758,33 +760,20 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private fun enterRepeatableStatement(flow: MutableFlow, statement: FirStatement) {
-        val reassignedNames = context.preliminaryLoopVisitor.enterCapturingStatement(statement)
-        if (reassignedNames.isEmpty()) return
-        // TODO: only choose the innermost variable for each name, KT-59688
-        val possiblyChangedVariables = variableStorage.realVariables.values.filter {
-            val identifier = it.identifier
-            val symbol = identifier.symbol
-            // Non-local vars can never produce stable smart casts anyway.
-            identifier.dispatchReceiver == null && identifier.extensionReceiver == null &&
-                    symbol is FirPropertySymbol && symbol.isVar && symbol.name in reassignedNames
-        }
+    private fun enterRepeatableStatement(flow: MutableFlow, reassigned: Set<FirPropertySymbol>) {
+        if (reassigned.isEmpty()) return
+        val possiblyChangedVariables = variableStorage.realVariables.values.filter { it.identifier.symbol in reassigned }
         for (variable in possiblyChangedVariables) {
             logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
         }
-        context.variablesClearedBeforeLoop.push(possiblyChangedVariables)
-    }
-
-    private fun exitRepeatableStatement(statement: FirStatement): List<RealVariable>? {
-        if (context.preliminaryLoopVisitor.exitCapturingStatement(statement).isEmpty()) return null
-        return context.variablesClearedBeforeLoop.pop()
     }
 
     // ----------------------------------- Do while Loop -----------------------------------
 
     fun enterDoWhileLoop(loop: FirLoop) {
+        val assignedInside = context.variableAssignmentAnalyzer.enterLoop(loop)
         val (loopEnterNode, loopBlockEnterNode) = graphBuilder.enterDoWhileLoop(loop)
-        loopEnterNode.mergeIncomingFlow { _, flow -> enterRepeatableStatement(flow, loop) }
+        loopEnterNode.mergeIncomingFlow { _, flow -> enterRepeatableStatement(flow, assignedInside) }
         loopBlockEnterNode.mergeIncomingFlow()
     }
 
@@ -795,12 +784,12 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitDoWhileLoop(loop: FirLoop) {
+        context.variableAssignmentAnalyzer.exitLoop()
         val (loopConditionExitNode, loopExitNode) = graphBuilder.exitDoWhileLoop(loop)
         loopConditionExitNode.mergeIncomingFlow()
         loopExitNode.mergeIncomingFlow { _, flow ->
             processLoopExit(flow, loopExitNode, loopConditionExitNode)
         }
-        exitRepeatableStatement(loop)
     }
 
     // ----------------------------------- Try-catch-finally -----------------------------------
