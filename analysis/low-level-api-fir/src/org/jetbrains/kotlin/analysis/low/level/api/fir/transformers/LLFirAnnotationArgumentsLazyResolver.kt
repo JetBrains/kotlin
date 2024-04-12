@@ -126,8 +126,6 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
     }
 
     private fun MutableList<FirBasedSymbol<*>>.addOriginalSymbolsForCopyDeclarations(target: FirCallableDeclaration) {
-        if (!target.isSubstitutionOrIntersectionOverride) return
-
         // It is fine to just visit the declaration recursively as copy declarations don't have a body
         target.accept(ForeignAnnotationsCollector, ForeignAnnotationsContext(this, target.symbol))
     }
@@ -135,7 +133,7 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
     private class ForeignAnnotationsContext(val collection: MutableCollection<FirBasedSymbol<*>>, val currentSymbol: FirCallableSymbol<*>)
     private object ForeignAnnotationsCollector : NonLocalAnnotationVisitor<ForeignAnnotationsContext>() {
         override fun processAnnotation(annotation: FirAnnotation, data: ForeignAnnotationsContext) {
-            if (annotation !is FirAnnotationCall) return
+            if (annotation !is FirAnnotationCall || annotation is FirErrorAnnotationCall) return
             val symbolToPostpone = annotation.containingDeclarationSymbol.symbolToPostponeIfCanBeResolvedOnDemand() ?: return
             if (symbolToPostpone != data.currentSymbol) {
                 data.collection += symbolToPostpone
