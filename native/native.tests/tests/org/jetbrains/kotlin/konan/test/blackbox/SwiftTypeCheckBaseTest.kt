@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.konan.target.withOSVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.invokeSwiftC
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createModuleMap
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.utils.KotlinNativePaths
-import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
-import java.io.File
+import kotlin.io.path.*
 
 
 abstract class SwiftTypeCheckBaseTest : AbstractNativeSimpleTest() {
@@ -49,9 +50,13 @@ abstract class SwiftTypeCheckBaseTest : AbstractNativeSimpleTest() {
     ) {
         Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily && targets.testTarget.family.isAppleFamily)
 
-        val swiftFile = File(swiftFilePath)
-        val cHeader = swiftFile.withReplacedExtensionOrNull("swift", "h")
-            ?: throw IllegalArgumentException("SwiftTypeCheckBaseTest input should have .h counterpart")
+        val testDirectory = getAbsoluteFile(swiftFilePath).resolve("golden_result")
+        require(testDirectory.exists() && testDirectory.isDirectory())
+
+        val swiftFile = testDirectory.walk().find { it.extension == "swift" }
+            ?: error("Could not find swift file for test $testDirectory")
+        val cHeader = testDirectory.walk().find { it.extension == "h" }
+            ?: error("Could not find header for test $testDirectory")
 
         val configs = testRunSettings.configurables as AppleConfigurables
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()

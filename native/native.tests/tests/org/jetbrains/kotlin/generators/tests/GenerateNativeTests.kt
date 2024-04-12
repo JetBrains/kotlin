@@ -508,7 +508,7 @@ fun main() {
             testClass<SwiftTypeCheckBaseTest>(
                 suiteTestClassName = "TypeCheckSwiftExportGoldenData"
             ) {
-                model("", extension = "swift", recursive = true)
+                model("", pattern = "^([^_](.+))\$", recursive = false)
             }
         }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
