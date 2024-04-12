@@ -97,7 +97,7 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
             val ktModule = ktTestModule.ktModule as KtModuleByCompilerConfiguration
 
             val project = ktModule.project
-            val firResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(ktModule as KtModule)
+            val firResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(ktModule as KtModule)
 
             val allFirFiles = module.files.filter { it.isKtFile }.zip(
                 ktModule.psiFiles
