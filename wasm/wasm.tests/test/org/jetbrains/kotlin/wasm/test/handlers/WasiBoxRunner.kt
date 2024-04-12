@@ -41,9 +41,8 @@ class WasiBoxRunner(
             let boxTestPassed = false;
             try {
                 let jsModule = await import('./index.mjs');
-                let wasmExports = jsModule.default;
-                ${if (startUnitTests) "wasmExports.startUnitTests();" else ""}
-                boxTestPassed = wasmExports.runBoxTest();
+                ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
+                boxTestPassed = jsModule.runBoxTest();
             } catch(e) {
                 console.log('Failed with exception!');
                 console.log(e);

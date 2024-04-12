@@ -472,11 +472,8 @@ export default new Proxy(exports, {
     get(target, prop) {
         if (!this._shownError) {
             this._shownError = true;
-            if (typeof console !== "undefined") {
-                console.error("Do not use default import. Use corresponding named import instead.")
-            }
+            throw new Error("Do not use default import. Use corresponding named import instead.")
         }
-        return target[prop];
     }
 });
 ${exportNames?.let { "export $it = exports;" }}

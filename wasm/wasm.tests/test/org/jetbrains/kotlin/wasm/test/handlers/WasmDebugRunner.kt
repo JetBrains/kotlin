@@ -70,7 +70,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             }
             
             const jsModule = await import('./index.mjs');
-            const box = jsModule.default.box;
+            const box = jsModule.box;
             
             enableDebugger();
             setBreakpoint(box);
@@ -103,7 +103,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                                 let test = document.getElementById("test")
                                 try {
                                     const jsModule = await import('./index.mjs');
-                                    try { jsModule.default.box(); } catch(e) { alert(e) }
+                                    try { jsModule.box(); } catch(e) { alert(e) }
                                     
                                     test.style.backgroundColor = "#0f0";
                                     test.textContent = "OK"
