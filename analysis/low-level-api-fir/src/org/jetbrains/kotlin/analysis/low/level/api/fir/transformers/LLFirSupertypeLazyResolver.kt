@@ -118,8 +118,9 @@ private class LLFirSuperTypeTargetResolver(
                         supertypeResolver.resolveSpecificClassLikeSupertypes(target, it)
                     }
                 },
-                superTypeUpdater = {
-                    target.replaceSuperTypeRefs(it)
+                superTypeUpdater = { superTypeRefs ->
+                    val expandedTypeRefs = superTypeRefs.map { supertypeComputationSession.expandTypealiasInPlace(it, target.llFirSession) }
+                    target.replaceSuperTypeRefs(expandedTypeRefs)
                     resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, resolveTargetScopeSession)
                 },
             )
@@ -127,7 +128,10 @@ private class LLFirSuperTypeTargetResolver(
                 declaration = target,
                 superTypeRefsForTransformation = { target.expandedTypeRef },
                 resolver = { supertypeResolver.resolveTypeAliasSupertype(target, it, resolveRecursively = false) },
-                superTypeUpdater = { target.replaceExpandedTypeRef(it.single()) },
+                superTypeUpdater = { superTypeRefs ->
+                    val expandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(superTypeRefs.single(), target.llFirSession)
+                    target.replaceExpandedTypeRef(expandedTypeRef)
+                },
             )
             else -> {
                 performCustomResolveUnderLock(target) {
