@@ -63,7 +63,6 @@ internal class SirClassFromKtSymbol(
                 kind = SirCallableKind.INSTANCE_METHOD
                 isFailable = false
                 initKind = SirInitializerKind.ORDINARY
-                parent = this@SirClassFromKtSymbol
             },
             buildVariable {
                 origin = SirOrigin.ObjectAccessor(`for` = KotlinSource(ktSymbol))
@@ -73,9 +72,11 @@ internal class SirClassFromKtSymbol(
                 getter = buildGetter {
                     kind = SirCallableKind.STATIC_METHOD
                 }
-                parent = this@SirClassFromKtSymbol
-            }.also { it.getter.parent = it }
+            }.also {
+                it.getter.parent = it
+            }
         )
+            .map { it.also { it.parent = this } }
     else
         emptyList()
 }

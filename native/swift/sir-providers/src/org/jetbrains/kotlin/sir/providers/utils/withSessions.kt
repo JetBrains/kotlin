@@ -12,7 +12,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-public inline fun <R> withSirAnalyse(
+public inline fun <reified R> withSirAnalyse(
     sirSession: SirSession,
     analysisSession: KtAnalysisSession,
     block: context(SirSession, KtAnalysisSession) () -> R
