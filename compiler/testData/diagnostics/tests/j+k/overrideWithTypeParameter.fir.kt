@@ -14,7 +14,7 @@ public interface SuperGeneric<A> {
 }
 
 // FILE: OtherSuperGeneric.java
-public interface OtherSuperGeneric<A> extends Super<A> {
+public interface OtherSuperGeneric<A> extends SuperGeneric<A> {
 }
 
 // FILE: Sub.kt
@@ -48,11 +48,11 @@ open class NullableGeneric<B : Any?> : SuperGeneric<B> {
     override fun foo(klass: Class<B>): B = TODO()
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class NullableSubGeneric<!><B : Any?> : OtherSuperGeneric<B>, NullableGeneric<B>()
+class NullableSubGeneric<B : Any?> : OtherSuperGeneric<B>, NullableGeneric<B>()
 
 open class NotNullGeneric<B : Any> : SuperGeneric<B> {
     override fun foo(klass: Class<B>): B = TODO()
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class NotNullSubGeneric<!><B : Any> : OtherSuperGeneric<B>, NotNullGeneric<B>()
+class NotNullSubGeneric<B : Any> : OtherSuperGeneric<B>, NotNullGeneric<B>()
 

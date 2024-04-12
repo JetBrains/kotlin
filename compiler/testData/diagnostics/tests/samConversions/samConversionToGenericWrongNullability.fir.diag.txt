@@ -4,45 +4,57 @@
 
 /test.kt:(321,358): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/test.kt:(416,498): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+/test.kt:(416,453): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/test.kt:(563,585): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+/test.kt:(510,592): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/test.kt:(616,638): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+/test.kt:(657,679): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/test.kt:(693,715): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+/test.kt:(710,732): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/test.kt:(846,868): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+/test.kt:(787,809): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/test.kt:(1122,1144): error: Return type mismatch: expected 'kotlin.String', actual 'kotlin.String?'.
+/test.kt:(1194,1216): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/test.kt:(1122,1144): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected.
+/test.kt:(1299,1321): error: Return type mismatch: expected 'kotlin.String', actual 'kotlin.String?'.
 
-/test.kt:(1256,1278): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+/test.kt:(1299,1321): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected.
 
-/test.kt:(1367,1389): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+/test.kt:(1413,1512): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<ERROR CLASS: Unknown return lambda parameter type>' was expected.
 
-/test.kt:(1468,1475): error: Return type of 'get' is not a subtype of the return type of the overridden member 'fun get(): String'.
+/test.kt:(1413,1512): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String>' was expected.
 
-/test.kt:(1561,1564): error: Return type of 'get' is not a subtype of the return type of the overridden member 'fun get(): String'.
-/edge-cases.kt:(242,284): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
+/test.kt:(1458,1480): error: Return type mismatch: expected 'kotlin.String', actual 'kotlin.String?'.
 
-/edge-cases.kt:(323,376): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
+/test.kt:(1596,1618): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/edge-cases.kt:(348,370): error: Return type mismatch: expected 'kotlin.Unit', actual 'kotlin.String?'.
+/test.kt:(1710,1810): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<ERROR CLASS: Unknown return lambda parameter type>' was expected.
 
-/edge-cases.kt:(348,370): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.Unit' was expected.
+/test.kt:(1710,1810): error: Argument type mismatch: actual type is 'kotlin.String!', but 'kotlin.Function0<kotlin.String?>' was expected.
 
-/edge-cases.kt:(415,473): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
+/test.kt:(1875,1897): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
 
-/edge-cases.kt:(445,467): error: Return type mismatch: expected 'kotlin.Unit', actual 'kotlin.String?'.
+/test.kt:(1976,1983): error: Return type of 'get' is not a subtype of the return type of the overridden member 'fun get(): String'.
 
-/edge-cases.kt:(445,467): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.Unit' was expected.
+/test.kt:(2069,2072): error: Return type of 'get' is not a subtype of the return type of the overridden member 'fun get(): String'.
+/edge-cases.kt:(268,318): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
 
-/edge-cases.kt:(520,576): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
+/edge-cases.kt:(357,418): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
 
-/edge-cases.kt:(642,649): warning: Argument type mismatch: actual type is 'T?', but 'T' was expected. This will become an error in a future release.
+/edge-cases.kt:(386,408): error: Return type mismatch: expected 'kotlin.Unit', actual 'kotlin.String?'.
 
-/edge-cases.kt:(739,746): warning: Argument type mismatch: actual type is 'T?', but 'T' was expected. This will become an error in a future release.
+/edge-cases.kt:(386,408): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.Unit' was expected.
 
-/edge-cases.kt:(862,891): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.
+/edge-cases.kt:(457,523): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
+
+/edge-cases.kt:(491,513): error: Return type mismatch: expected 'kotlin.Unit', actual 'kotlin.String?'.
+
+/edge-cases.kt:(491,513): error: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.Unit' was expected.
+
+/edge-cases.kt:(570,634): error: Argument type mismatch: actual type is 'kotlin.Unit', but 'kotlin.String' was expected.
+
+/edge-cases.kt:(700,707): warning: Argument type mismatch: actual type is 'T?', but 'T' was expected. This will become an error in a future release.
+
+/edge-cases.kt:(797,804): warning: Argument type mismatch: actual type is 'T?', but 'T' was expected. This will become an error in a future release.
+
+/edge-cases.kt:(920,949): warning: Argument type mismatch: actual type is 'kotlin.String?', but 'kotlin.String' was expected. This will become an error in a future release.

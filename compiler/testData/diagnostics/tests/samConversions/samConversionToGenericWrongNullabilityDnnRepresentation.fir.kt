@@ -26,6 +26,8 @@ public class TestValueProvider {
 // FILE: test.kt
 import java.util.function.Supplier
 
+inline fun run(fn: () -> Unit) = fn()
+
 typealias StringAlias = String
 
 fun main() {
@@ -38,6 +40,10 @@ fun main() {
     }
 
     Supplier<String> {
+        <!ARGUMENT_TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
+    }
+
+    val sam: Supplier<String> = Supplier{
         <!ARGUMENT_TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
     }
 
@@ -65,12 +71,20 @@ fun main() {
         returnNullableString()
     }
 
+    val sam2: Supplier<String?> = Supplier {
+        returnNullableString()
+    }
+
     Supplier<_> {
         returnNullableString()
     }
 
     Supplier {
         returnNullableString()
+    }
+
+    val sam3: Supplier<String> = Supplier{
+        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     Supplier<String>(
@@ -80,6 +94,13 @@ fun main() {
         }
     )
 
+    val sam4: Supplier<String> = Supplier {
+        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String {
+            if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+            return ""
+        }<!>
+    }
+
     Supplier<String>(
         <!ARGUMENT_TYPE_MISMATCH!>fun(): String? {
             if (true) return returnNullableString()
@@ -87,13 +108,16 @@ fun main() {
         }<!>
     )
 
+    val sam5: Supplier<String> = Supplier {
+        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String? {
+            if (true) return returnNullableString()
+            return ""
+        }<!>
+    }
+
     Supplier<String> {
         if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
         ""
-    }
-
-    val sam: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     object : Supplier<String> {
@@ -105,6 +129,10 @@ fun main() {
     }
 
     MySupplier<String> {
+        returnNullableString()
+    }
+
+    val mySam: MySupplier<String> = MySupplier{
         returnNullableString()
     }
 
@@ -143,20 +171,20 @@ fun scopes () {
 
     Supplier<String> {
         <!ARGUMENT_TYPE_MISMATCH!>run {
-            return@run returnNullableString()
+            return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
         }<!>
     }
 
     Supplier<String> {
         <!ARGUMENT_TYPE_MISMATCH!>run run@ {
-            return@run returnNullableString()
+            return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
         }<!>
     }
 
     Supplier<String> lambda@ {
-        run {
+        <!ARGUMENT_TYPE_MISMATCH!>run {
             return@lambda <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
-        }
+        }<!>
     }
 }
 

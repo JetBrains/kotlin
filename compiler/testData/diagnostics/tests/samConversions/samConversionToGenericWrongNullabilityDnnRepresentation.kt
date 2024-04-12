@@ -26,6 +26,8 @@ public class TestValueProvider {
 // FILE: test.kt
 import java.util.function.Supplier
 
+inline fun run(fn: () -> Unit) = fn()
+
 typealias StringAlias = String
 
 fun main() {
@@ -41,6 +43,10 @@ fun main() {
         TestValueProvider.getNullableString()
     }
 
+    val sam: Supplier<String> = Supplier{
+        <!TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
+    }
+
     Supplier<String> {
         val x = 1
         when(x) {
@@ -52,16 +58,20 @@ fun main() {
     Supplier<String> {
         if (true) return@Supplier returnNullableString()
         run { return@Supplier returnNullableString() }
-        <!UNREACHABLE_CODE!>try {
+        try {
             if (true) return@Supplier returnNullableString()
             2
         } finally {
             Unit
-        }<!>
-        <!UNREACHABLE_CODE!>""<!>
+        }
+        ""
     }
 
     Supplier<String?> {
+        returnNullableString()
+    }
+
+    val sam2: Supplier<String?> = Supplier {
         returnNullableString()
     }
 
@@ -73,12 +83,23 @@ fun main() {
         returnNullableString()
     }
 
+    val sam3: Supplier<String> = Supplier{
+        <!TYPE_MISMATCH!>returnNullableString()<!>
+    }
+
     Supplier<String>(
         fun(): String {
             if (true) return <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }
     )
+
+    val sam4: Supplier<String> = Supplier {
+        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun(): String {
+            if (true) return <!TYPE_MISMATCH!>returnNullableString()<!>
+            return ""
+        }<!>
+    }
 
     Supplier<String>(
         <!TYPE_MISMATCH!>fun(): String? {
@@ -87,13 +108,16 @@ fun main() {
         }<!>
     )
 
+    val sam5: Supplier<String> = Supplier {
+        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun(): String? {
+            if (true) return returnNullableString()
+            return ""
+        }<!>
+    }
+
     Supplier<String> {
         if (true) return@Supplier returnNullableString()
         ""
-    }
-
-    val sam: Supplier<String> = Supplier {
-        <!TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     object : Supplier<String> {
@@ -105,6 +129,10 @@ fun main() {
     }
 
     MySupplier<String> {
+        returnNullableString()
+    }
+
+    val mySam: MySupplier<String> = MySupplier{
         returnNullableString()
     }
 
@@ -136,27 +164,27 @@ import java.util.function.Supplier
 
 fun scopes () {
     Supplier<String> {
-        run {
+        <!TYPE_MISMATCH!>run {
             returnNullableString()
-        }
+        }<!>
     }
 
     Supplier<String> {
-        run {
-            return@run returnNullableString()
-        }
+        <!TYPE_MISMATCH!>run {
+            return@run <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+        }<!>
     }
 
     Supplier<String> {
-        run run@ {
-            return@run returnNullableString()
-        }
+        <!TYPE_MISMATCH!>run run@ {
+            return@run <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+        }<!>
     }
 
     Supplier<String> lambda@ {
-        run {
+        <!TYPE_MISMATCH!>run {
             return@lambda returnNullableString()
-        }
+        }<!>
     }
 }
 

@@ -22213,6 +22213,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("collectionsInKJKcall.kt")
+      public void testCollectionsInKJKcall() {
+        runTest("compiler/testData/diagnostics/tests/j+k/collectionsInKJKcall.kt");
+      }
+
+      @Test
       @TestMetadata("collectorInference.kt")
       public void testCollectorInference() {
         runTest("compiler/testData/diagnostics/tests/j+k/collectorInference.kt");
@@ -22930,6 +22936,54 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("typeAliasWithSamConstructor.kt")
       public void testTypeAliasWithSamConstructor() {
         runTest("compiler/testData/diagnostics/tests/j+k/typeAliasWithSamConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromGenericFunWithAnnotation.kt")
+      public void testTypeFromGenericFunWithAnnotation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromGenericFunWithAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromGenericFunWithAnnotationDnnRepresentation.kt")
+      public void testTypeFromGenericFunWithAnnotationDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromGenericFunWithAnnotationDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromGenericWithAnnotation.kt")
+      public void testTypeFromGenericWithAnnotation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromGenericWithAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromGenericWithAnnotationDnnRepresentation.kt")
+      public void testTypeFromGenericWithAnnotationDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromGenericWithAnnotationDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromJavaGeneric.kt")
+      public void testTypeFromJavaGeneric() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromJavaGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromJavaGenericDnnRepresentation.kt")
+      public void testTypeFromJavaGenericDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromJavaGenericDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromJavaGenericFun.kt")
+      public void testTypeFromJavaGenericFun() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromJavaGenericFun.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFromJavaGenericFunDnnRepresentation.kt")
+      public void testTypeFromJavaGenericFunDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/typeFromJavaGenericFunDnnRepresentation.kt");
       }
 
       @Test
@@ -31669,9 +31723,21 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
-      @TestMetadata("samConversionToGenericWrongNullabilityAfter.kt")
-      public void testSamConversionToGenericWrongNullabilityAfter() {
-        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullabilityAfter.kt");
+      @TestMetadata("samConversionToGenericWrongNullabilityDnnRepresentation.kt")
+      public void testSamConversionToGenericWrongNullabilityDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullabilityDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionWithCallableReference.kt")
+      public void testSamConversionWithCallableReference() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCallableReference.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionWithCallableReferenceDnnRepresentation.kt")
+      public void testSamConversionWithCallableReferenceDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCallableReferenceDnnRepresentation.kt");
       }
 
       @Test
@@ -31684,6 +31750,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("samConversionWithConditionJava.kt")
       public void testSamConversionWithConditionJava() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithConditionJava.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionWithJavaFlexibleType.kt")
+      public void testSamConversionWithJavaFlexibleType() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithJavaFlexibleType.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionWithJavaFlexibleTypeDnnRepresentation.kt")
+      public void testSamConversionWithJavaFlexibleTypeDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithJavaFlexibleTypeDnnRepresentation.kt");
       }
 
       @Test
@@ -31720,6 +31798,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("samPriorityVsGenericCompatibilityEnabled.kt")
       public void testSamPriorityVsGenericCompatibilityEnabled() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samPriorityVsGenericCompatibilityEnabled.kt");
+      }
+
+      @Test
+      @TestMetadata("samWithLambda.kt")
+      public void testSamWithLambda() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samWithLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("samWithLambdaDnnRepresentation.kt")
+      public void testSamWithLambdaDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samWithLambdaDnnRepresentation.kt");
       }
 
       @Test
