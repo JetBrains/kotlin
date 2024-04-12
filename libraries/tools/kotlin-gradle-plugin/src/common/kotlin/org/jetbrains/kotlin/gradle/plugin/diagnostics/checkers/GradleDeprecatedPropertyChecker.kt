@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
-import org.jetbrains.kotlin.gradle.plugin.PropertiesBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics

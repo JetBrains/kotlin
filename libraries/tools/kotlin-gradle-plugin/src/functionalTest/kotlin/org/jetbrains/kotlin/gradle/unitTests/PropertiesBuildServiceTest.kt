@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.jetbrains.kotlin.gradle.plugin.PropertiesBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.registerMinimalVariantImplementationFactoriesForTests
