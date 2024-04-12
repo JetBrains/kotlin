@@ -18484,6 +18484,18 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("kt67218c.kt")
+    public void testKt67218c() {
+      runTest("compiler/testData/codegen/box/devirtualization/kt67218c.kt");
+    }
+
+    @Test
+    @TestMetadata("kt67218i.kt")
+    public void testKt67218i() {
+      runTest("compiler/testData/codegen/box/devirtualization/kt67218i.kt");
+    }
+
+    @Test
     @TestMetadata("lateinitInterface.kt")
     public void testLateinitInterface() {
       runTest("compiler/testData/codegen/box/devirtualization/lateinitInterface.kt");
