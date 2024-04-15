@@ -110,27 +110,31 @@ FILE: boundSmartcastsInBranches.kt
         lval z: R|kotlin/String?| = Null(null)
         lvar y: R|kotlin/String?| = R|<local>/z|
         lval x: R|kotlin/String?| = R|<local>/y|
+        lval w: R|kotlin/CharSequence?| = R|<local>/y|
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
-                R|<local>/z|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/y|.R|kotlin/String.length|
+                R|<local>/z|.R|kotlin/String.length|
+                R|<local>/w|.R|kotlin/CharSequence.length<Inapplicable(UNSAFE_CALL): kotlin/CharSequence.length>#|
             }
         }
 
         when () {
             !=(R|<local>/y|, Null(null)) ->  {
-                R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/x|.R|kotlin/String.length|
                 R|<local>/y|.R|kotlin/String.length|
-                R|<local>/z|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/z|.R|kotlin/String.length|
+                R|<local>/w|.R|kotlin/CharSequence.length<Inapplicable(UNSAFE_CALL): kotlin/CharSequence.length>#|
             }
         }
 
         when () {
             !=(R|<local>/z|, Null(null)) ->  {
-                R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
-                R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/x|.R|kotlin/String.length|
+                R|<local>/y|.R|kotlin/String.length|
                 R|<local>/z|.R|kotlin/String.length|
+                R|<local>/w|.R|kotlin/CharSequence.length<Inapplicable(UNSAFE_CALL): kotlin/CharSequence.length>#|
             }
         }
 
@@ -139,7 +143,7 @@ FILE: boundSmartcastsInBranches.kt
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
                 R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
-                R|<local>/z|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/z|.R|kotlin/String.length|
             }
         }
 
@@ -153,7 +157,7 @@ FILE: boundSmartcastsInBranches.kt
 
         when () {
             !=(R|<local>/z|, Null(null)) ->  {
-                R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/x|.R|kotlin/String.length|
                 R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
                 R|<local>/z|.R|kotlin/String.length|
             }

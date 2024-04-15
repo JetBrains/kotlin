@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -1108,7 +1109,10 @@ abstract class FirDataFlowAnalyzer(
 
         if (propertyVariable.isStable || propertyVariable.hasLocalStability) {
             val initializerVariable = getOrCreateIfRealWithoutUnwrappingAlias(flow, initializer)
-            if (!hasExplicitType && initializerVariable is RealVariable && initializerVariable.isStableOrLocalStableAccess(initializer)) {
+            if ((!hasExplicitType || components.session.typeContext.equalTypes(property.returnTypeRef.coneType, initializer.resultType)) &&
+                initializerVariable is RealVariable &&
+                initializerVariable.isStableOrLocalStableAccess(initializer)
+            ) {
                 // val a = ...
                 // val b = a
                 // if (b != null) { /* a != null */ }

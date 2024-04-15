@@ -80,24 +80,28 @@ fun test_6(a: A) {
 
 fun test_7() {
     val z: String? = null
-    var y : String? = z
+    var y: String? = z
     val x: String? = y
+    val w: CharSequence? = y
 
     if (x != null) {
         x.length // OK
-        y<!UNSAFE_CALL!>.<!>length // Bad
-        z<!UNSAFE_CALL!>.<!>length // Bad
+        y.length // OK
+        z.length // OK
+        w<!UNSAFE_CALL!>.<!>length // Bad
     }
     if (y != null) {
-        x<!UNSAFE_CALL!>.<!>length // Bad
+        x.length // OK
         y.length // OK
-        z<!UNSAFE_CALL!>.<!>length // Bad
+        z.length // OK
+        w<!UNSAFE_CALL!>.<!>length // Bad
     }
 
     if (z != null) {
-        x<!UNSAFE_CALL!>.<!>length // Bad
-        y<!UNSAFE_CALL!>.<!>length // Bad
+        x.length // OK
+        y.length // OK
         z.length // OK
+        w<!UNSAFE_CALL!>.<!>length // Bad
     }
 
     y = null
@@ -105,7 +109,7 @@ fun test_7() {
     if (x != null) {
         x.length // OK
         y<!UNSAFE_CALL!>.<!>length // Bad
-        z<!UNSAFE_CALL!>.<!>length // Bad
+        z.length // Bad
     }
     if (<!SENSELESS_COMPARISON!>y != null<!>) {
         x<!UNSAFE_CALL!>.<!>length // Bad
@@ -114,7 +118,7 @@ fun test_7() {
     }
 
     if (z != null) {
-        x<!UNSAFE_CALL!>.<!>length // Bad
+        x.length // Bad
         y<!UNSAFE_CALL!>.<!>length // Bad
         z.length // OK
     }
