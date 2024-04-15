@@ -43,3 +43,8 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
 compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
 compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
 linkerOpts = -ldl -lz -lcurses -lbz2 -lcompression -late -lbsm
+---
+
+// Defined manually because predefined macros (through -D) aren't exported as constants
+// Part of the workaround for KT-65542, should be removed after LLVM update (KT-49279)
+#define TARGET_OS_OSX 1

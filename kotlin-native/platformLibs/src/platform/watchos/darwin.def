@@ -46,3 +46,12 @@ linkerOpts = -ldl -lz -lbz2 -lcompression
 ---
 // AppleTextureEncoder.h is not available for WatchOS simulator
 // menu.h is excluded so far due to interop issues.
+
+// Defined manually because predefined macros (through -D) aren't exported as constants
+// Part of the workaround for KT-65542, should be removed after LLVM update (KT-49279)
+#if !(TARGET_OS_SIMULATOR)
+    #define TARGET_OS_TV 1
+    #define TARGET_OS_IPHONE 1
+    #define TARGET_OS_WATCH 1
+#endif
+
