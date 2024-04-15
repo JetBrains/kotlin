@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.annotations.Interpretable
+import kotlin.reflect.KClass
 
 object Names {
     val DF_CLASS_ID: ClassId
@@ -34,4 +35,15 @@ object Names {
 
     val DATA_SCHEMA_CLASS_ID = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier("DataSchema"))
     val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))
+    val DURATION_CLASS_ID = kotlin.time.Duration::class.classId()
+    val LOCAL_DATE_CLASS_ID = kotlinx.datetime.LocalDate::class.classId()
+    val LOCAL_DATE_TIME_CLASS_ID = kotlinx.datetime.LocalDateTime::class.classId()
+    val INSTANT_CLASS_ID = kotlinx.datetime.Instant::class.classId()
+}
+
+private fun KClass<*>.classId(): ClassId {
+    val fqName = this.qualifiedName ?: throw IllegalStateException("KClass does not have a qualified name")
+    val packageFqName = fqName.substringBeforeLast(".", missingDelimiterValue = "")
+    val className = fqName.substringAfterLast(".")
+    return ClassId(FqName(packageFqName), Name.identifier(className))
 }
