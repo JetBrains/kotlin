@@ -261,7 +261,7 @@ class ComposeIrGenerationExtension(
                 pluginContext,
                 symbolRemapper,
                 metrics,
-                idSignatureBuilder!!,
+                idSignatureBuilder,
                 stabilityInferencer,
                 decoysEnabled
             ).lower(moduleFragment)

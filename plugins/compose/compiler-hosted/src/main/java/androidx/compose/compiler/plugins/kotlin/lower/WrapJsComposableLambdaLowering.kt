@@ -22,7 +22,6 @@ import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.AbstractDecoysLowering
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
@@ -89,15 +87,14 @@ class WrapJsComposableLambdaLowering(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
-    signatureBuilder: IdSignatureFactory,
+    signatureBuilder: IdSignatureFactory?,
     stabilityInferencer: StabilityInferencer,
     private val decoysEnabled: Boolean
-) : AbstractDecoysLowering(
+) : AbstractComposeLowering(
     context,
     symbolRemapper,
     metrics,
     stabilityInferencer,
-    signatureBuilder
 ) {
     private val rememberFunSymbol by lazy {
         val composerParamTransformer = ComposerParamTransformer(
@@ -108,21 +105,25 @@ class WrapJsComposableLambdaLowering(
                 it.valueParameters.size == 2 && !it.valueParameters.first().isVararg
             }.symbol
         ).owner.let {
-            if (!decoysEnabled) {
+            if (!decoysEnabled || signatureBuilder == null) {
                 composerParamTransformer.visitSimpleFunction(it) as IrSimpleFunction
-            } else if (!it.isDecoy()) {
+            } else {
                 // If a module didn't have any explicit remember calls,
                 // so `fun remember` wasn't transformed yet, then we have to transform it now.
                 val createDecoysTransformer = CreateDecoysTransformer(
                     context, symbolRemapper, signatureBuilder, stabilityInferencer, metrics
                 )
-                createDecoysTransformer.visitSimpleFunction(it) as IrSimpleFunction
-                createDecoysTransformer.updateParents()
-                composerParamTransformer.visitSimpleFunction(
-                    it.getComposableForDecoy().owner as IrSimpleFunction
-                ) as IrSimpleFunction
-            } else {
-                it.getComposableForDecoy().owner as IrSimpleFunction
+                with(createDecoysTransformer) {
+                    if (!it.isDecoy()) {
+                        visitSimpleFunction(it) as IrSimpleFunction
+                        updateParents()
+                        composerParamTransformer.visitSimpleFunction(
+                            it.getComposableForDecoy().owner as IrSimpleFunction
+                        ) as IrSimpleFunction
+                    } else {
+                        it.getComposableForDecoy().owner as IrSimpleFunction
+                    }
+                }
             }
         }.symbol
     }
