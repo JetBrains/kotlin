@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 class IrFakeOverrideBuilder(
     private val typeSystem: IrTypeSystemContext,
-    private val strategy: FakeOverrideBuilderStrategy,
+    val strategy: FakeOverrideBuilderStrategy,
     private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) {
     private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)

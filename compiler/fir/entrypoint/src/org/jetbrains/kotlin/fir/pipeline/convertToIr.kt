@@ -173,6 +173,10 @@ fun FirResult.convertToIrAndActualize(
 
     fakeOverrideResolver?.cacheFakeOverridesOfAllClasses(mainIrFragment)
 
+    if (!fir2IrConfiguration.useFirBasedFakeOverrideGenerator) {
+        (platformComponentsStorage.fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy).clearFakeOverrideFields()
+    }
+
     val pluginContext = Fir2IrPluginContext(platformComponentsStorage, platformComponentsStorage.moduleDescriptor)
     pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
     return Fir2IrActualizedResult(mainIrFragment, platformComponentsStorage, pluginContext, actualizationResult)
