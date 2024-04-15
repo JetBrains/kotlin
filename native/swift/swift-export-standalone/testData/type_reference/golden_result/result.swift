@@ -1,51 +1,6 @@
 import KotlinBridges
 import KotlinRuntime
 
-public class Class_without_package {
-    public class INNER_CLASS {
-        public init() {
-            fatalError()
-        }
-    }
-    public class INNER_OBJECT {
-        public static var shared: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
-        private init() {
-            fatalError()
-        }
-    }
-    public init() {
-        fatalError()
-    }
-}
-public class Object_without_package {
-    public class INNER_CLASS {
-        public init() {
-            fatalError()
-        }
-    }
-    public class INNER_OBJECT {
-        public static var shared: Swift.Int32 {
-            get {
-                fatalError()
-            }
-        }
-        private init() {
-            fatalError()
-        }
-    }
-    public static var shared: Swift.Int32 {
-        get {
-            fatalError()
-        }
-    }
-    private init() {
-        fatalError()
-    }
-}
 public class Demo {
     public class INNER_CLASS {
         public init() {
@@ -112,6 +67,51 @@ public class Demo {
         arg3: main.Object_without_package,
         arg4: main.namespace.deeper.Object_with_package
     ) {
+        fatalError()
+    }
+}
+public class Class_without_package {
+    public class INNER_CLASS {
+        public init() {
+            fatalError()
+        }
+    }
+    public class INNER_OBJECT {
+        public static var shared: Swift.Int32 {
+            get {
+                fatalError()
+            }
+        }
+        private init() {
+            fatalError()
+        }
+    }
+    public init() {
+        fatalError()
+    }
+}
+public class Object_without_package {
+    public class INNER_CLASS {
+        public init() {
+            fatalError()
+        }
+    }
+    public class INNER_OBJECT {
+        public static var shared: Swift.Int32 {
+            get {
+                fatalError()
+            }
+        }
+        private init() {
+            fatalError()
+        }
+    }
+    public static var shared: Swift.Int32 {
+        get {
+            fatalError()
+        }
+    }
+    private init() {
         fatalError()
     }
 }
