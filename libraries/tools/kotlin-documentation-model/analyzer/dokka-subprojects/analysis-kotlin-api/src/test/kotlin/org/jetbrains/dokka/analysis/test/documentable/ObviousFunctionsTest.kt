@@ -71,8 +71,8 @@ class ObviousFunctionsTest {
         }
     }
 
-    // when running with K2 - inherited from java enum functions available: "clone", "finalize", "getDeclaringClass"
-    @OnlyDescriptors("#3196")
+    // when running with K2 - kotlin package is skipped
+    @OnlyDescriptors("#3354")
     @Test
     fun `kotlin_Enum should not have obvious members`() {
         val project = kotlinJvmTestProject {
@@ -103,8 +103,6 @@ class ObviousFunctionsTest {
         )
     }
 
-    // when running with K2 there is no equals, hashCode, toString present
-    @OnlyDescriptors("#3196")
     @Test
     fun `kotlin_Enum should not have obvious members via external documentable provider`() {
         val project = kotlinJvmTestProject {
