@@ -8,8 +8,8 @@ fun interface Foo<T> {
 fun <T> Foo(value: T): T = value
 
 fun test() {
-    consume<Foo<String>>(Foo <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ "" }<!>)
-    consume<() -> String>(Foo { "" })
+    consume<Foo<String>>(Foo { "" })
+    consume<() -> String>(<!ARGUMENT_TYPE_MISMATCH!>Foo { "" }<!>)
 }
 
 fun <T> consume(t: T) {}
@@ -24,8 +24,8 @@ fun interface Foo<T> {
 fun <T> Foo(value: () -> T): T = value()
 
 fun test() {
-    consume<Foo<String>>(<!ARGUMENT_TYPE_MISMATCH!>Foo { "" }<!>)
-    consume<String>(Foo { "" })
+    consume<Foo<String>>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>Foo<!> { "" })
+    consume<String>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>Foo<!> { "" })
 }
 
 fun <T> consume(t: T) {}
