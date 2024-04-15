@@ -31,13 +31,6 @@ internal sealed class KlibToolCommand(
         protected val output: KlibToolOutput,
         protected val args: KlibToolArguments
 ) {
-    protected val klibRepoDeprecationWarning = KlibRepoDeprecationWarning()
-
-    protected val repository: File = args.repository?.let {
-        klibRepoDeprecationWarning.logOnceIfNecessary() // Due to use of "-repository" option.
-        File(it)
-    } ?: getDefaultRepository()
-
     abstract fun execute()
 
     protected fun checkLibraryHasIr(library: KotlinLibrary): Boolean {
@@ -69,33 +62,24 @@ internal sealed class KlibToolCommand(
         }
     }
 
-    protected fun libraryInRepo(repository: File, name: String) =
-            resolverByName(listOf(repository.absolutePath), skipCurrentDir = true, logger = KlibToolLogger(output)).resolve(name)
+    /** TODO: unify with [libraryInDefaultRepoOrCurrentDir] */
+    protected fun libraryInCurrentDir(name: String): KotlinLibrary =
+            resolverByName(
+                    emptyList(),
+                    logger = KlibToolLogger(output)
+            ).resolve(name)
 
-    protected fun libraryInCurrentDir(name: String) = resolverByName(emptyList(), logger = KlibToolLogger(output)).resolve(name)
-
-    protected fun libraryInRepoOrCurrentDir(repository: File, name: String) =
-            resolverByName(listOf(repository.absolutePath), logger = KlibToolLogger(output)).resolve(name)
-
-    protected inner class KlibRepoDeprecationWarning {
-        private var alreadyLogged = false
-
-        fun logOnceIfNecessary() {
-            if (!alreadyLogged) {
-                alreadyLogged = true
-                output.logWarning("Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
-            }
-        }
-    }
-
-    companion object {
-        private fun getDefaultRepository(): File = File(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
-    }
+    /** TODO: unify with [libraryInCurrentDir] */
+    protected fun libraryInDefaultRepoOrCurrentDir(name: String): KotlinLibrary =
+            resolverByName(
+                    listOf(DependencyDirectories.localKonanDir.resolve("klib").absolutePath),
+                    logger = KlibToolLogger(output)
+            ).resolve(name)
 }
 
 internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        val library = libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath)
+        val library = libraryInDefaultRepoOrCurrentDir(args.libraryNameOrPath)
         val headerAbiVersion = library.versions.abiVersion
         val headerCompilerVersion = library.versions.compilerVersion
         val headerLibraryVersion = library.versions.libraryVersion
@@ -119,7 +103,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun execute() {
-        val library = libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath)
+        val library = libraryInDefaultRepoOrCurrentDir(args.libraryNameOrPath)
 
         if (!checkLibraryHasIr(library)) return
 
@@ -219,7 +203,7 @@ internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArgu
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val module = ModuleDescriptorLoader(output).load(libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath))
+        val module = ModuleDescriptorLoader(output).load(libraryInDefaultRepoOrCurrentDir(args.libraryNameOrPath))
         val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer(idSignatureRenderer))
 
         printer.print(module)
