@@ -58,6 +58,12 @@ public class FirIdeNormalAnalysisSourceModuleFirPluginPrototypeMultiModuleCompil
   }
 
   @Test
+  @TestMetadata("compilerPluginUsage.kt")
+  public void testCompilerPluginUsage() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/compilerPluginUsage.kt");
+  }
+
+  @Test
   @TestMetadata("composableFunctionMultiModules.kt")
   public void testComposableFunctionMultiModules() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/firPluginPrototypeMultiModule/composableFunctionMultiModules.kt");

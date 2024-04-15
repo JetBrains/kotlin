@@ -65,8 +65,6 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.File
 import kotlin.test.assertFalse
 
-abstract class AbstractMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest()
-
 abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
     override fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> =
         arrayOf(::PluginRuntimeAnnotationsProvider)

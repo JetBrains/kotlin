@@ -8,6 +8,7 @@ fun lib(a: Int = 5): String {
 }
 
 // MODULE: main(lib)
+// COMPILATION_ERRORS
 // FILE: main.kt
 
 import lib.lib
