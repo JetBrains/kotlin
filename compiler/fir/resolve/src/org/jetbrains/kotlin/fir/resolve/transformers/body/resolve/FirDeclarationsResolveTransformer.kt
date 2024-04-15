@@ -198,7 +198,7 @@ open class FirDeclarationsResolveTransformer(
                             withFirEntry("property", property)
                         }
 
-                        property.resolveAccessors(SetterResolutionMode.FULLY_RESOLVE, shouldResolveEverything = true)
+                        property.resolveAccessors(mayResolveSetterBody = true, shouldResolveEverything = true)
                     } else {
                         transformPropertyAccessorsWithDelegate(property, delegate, shouldResolveEverything)
                         if (property.delegateFieldSymbol != null) {
@@ -217,7 +217,7 @@ open class FirDeclarationsResolveTransformer(
                     val mayResolveGetter = mayResolveSetter || !propertyTypeIsKnown
                     if (mayResolveGetter) {
                         property.resolveAccessors(
-                            if (mayResolveSetter) SetterResolutionMode.FULLY_RESOLVE else SetterResolutionMode.ONLY_IMPLICIT_PARAMETER_TYPE,
+                            mayResolveSetterBody = mayResolveSetter,
                             shouldResolveEverything,
                         )
                         property.replaceBodyResolveState(
@@ -364,7 +364,7 @@ open class FirDeclarationsResolveTransformer(
                 }
 
                 else -> {
-                    property.resolveAccessors(SetterResolutionMode.FULLY_RESOLVE, shouldResolveEverything)
+                    property.resolveAccessors(mayResolveSetterBody = true, shouldResolveEverything)
                     property.returnTypeRef
                 }
             } as FirResolvedTypeRef
@@ -609,7 +609,7 @@ open class FirDeclarationsResolveTransformer(
                 storeVariableReturnType(variable)
             }
             variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
-            variable.resolveAccessors()
+            variable.resolveAccessors(mayResolveSetterBody = true)
         }
 
         // We need this return type transformation to resolve annotations from an implicit type
@@ -626,19 +626,16 @@ open class FirDeclarationsResolveTransformer(
         return variable
     }
 
-    // In IDE there's a need to resolve setter's parameter types on the implicit-resolution stage
-    // See ad183434137939a0c9eeea2f7df9ef522672a18e commit.
-    // But for delegate inference case, we don't need both body of the setter and its parameter resolved (SKIP mode)
-    private enum class SetterResolutionMode {
-        FULLY_RESOLVE, ONLY_IMPLICIT_PARAMETER_TYPE, SKIP
-    }
-
     /**
      * Note that this function updates the return type of the property using type from setter, if the property itself had
      *   an implicit return type
+     *
+     * In IDE there's a need to resolve setter's parameter types on the implicit-resolution stage
+     *   See ad183434137939a0c9eeea2f7df9ef522672a18e commit.
+     *   But for delegate inference case, we don't need both body of the setter and its parameter resolved (SKIP mode)
      */
     private fun FirProperty.resolveAccessors(
-        setterResolutionMode: SetterResolutionMode = SetterResolutionMode.FULLY_RESOLVE,
+        mayResolveSetterBody: Boolean,
         shouldResolveEverything: Boolean = true,
     ) {
         resolveGetter(shouldResolveEverything)
@@ -649,9 +646,7 @@ open class FirDeclarationsResolveTransformer(
             getter?.transformTypeWithPropertyType(returnTypeRef, forceUpdateForNonImplicitTypes = true)
         }
 
-        if (setterResolutionMode != SetterResolutionMode.SKIP) {
-            resolveSetter(mayResolveSetterBody = setterResolutionMode == SetterResolutionMode.FULLY_RESOLVE, shouldResolveEverything)
-        }
+        resolveSetter(mayResolveSetterBody, shouldResolveEverything)
     }
 
     private fun FirProperty.resolveGetter(shouldResolveEverything: Boolean) {
