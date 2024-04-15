@@ -5,21 +5,19 @@
 
 package org.jetbrains.kotlin.ir.interpreter.checker
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.*
-import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
-import org.jetbrains.kotlin.ir.interpreter.correspondingProperty
-import org.jetbrains.kotlin.ir.interpreter.fqName
-import org.jetbrains.kotlin.ir.interpreter.isAccessToNotNullableObject
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isEnumName
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isKCallableNameCall
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.isStringClassType
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isToString
-import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
 
@@ -120,7 +118,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     }
 
     override fun visitConst(expression: IrConst<*>, data: IrInterpreterCheckerData): Boolean {
-        return true
+        return data.mode.canEvaluateExpression(expression)
     }
 
     override fun visitVararg(expression: IrVararg, data: IrInterpreterCheckerData): Boolean {
@@ -133,14 +131,14 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: IrInterpreterCheckerData): Boolean {
         return expression.arguments.all { arg ->
-            val toString = arg.type.classOrNull?.owner?.declarations
-                ?.filterIsInstance<IrSimpleFunction>()
-                ?.singleOrNull { it.isToString() }
+            // TODO always check `toString` method. Right now it takes too much time due to lazy evaluations in fir2ir nodes.
+            when (arg) {
+                is IrGetObjectValue -> {
+                    val toString = arg.symbol.owner.functions.single { it.isToString() }
+                    data.mode.canEvaluateFunction(toString) && visitBodyIfNeeded(toString, data)
+                }
 
-            when {
-                toString == null || arg.type.isUnsigned() -> arg.accept(this, data)
-                arg is IrGetObjectValue -> data.mode.canEvaluateFunction(toString) && visitBodyIfNeeded(toString, data)
-                else -> arg.accept(this, data) && data.mode.canEvaluateFunction(toString) && visitBodyIfNeeded(toString, data)
+                else -> arg.accept(this, data)
             }
         }
     }
