@@ -61,27 +61,14 @@ class SpecialRefRegistry : private Pinned {
         inline static constexpr Rc disposedMarker = std::numeric_limits<Rc>::min();
         static_assert(disposedMarker < 0, "disposedMarker must be an impossible Rc value");
 
-        Node(ObjHeader* obj, Rc rc) noexcept : obj_(obj), rc_(rc) {
+        Node(SpecialRefRegistry& registry, ObjHeader* obj, Rc rc) noexcept : obj_(obj), rc_(rc) {
             RuntimeAssert(obj != nullptr, "Creating StableRef for null object");
             RuntimeAssert(rc >= 0, "Creating StableRef with negative rc %d", rc);
             // Runtime tests occasionally use sentinel values under 8 for opaque objects
             RuntimeAssert(reinterpret_cast<uintptr_t>(obj) < 8u || !obj->local(), "Creating StableRef to a stack-allocated object %p", obj);
 
             if (rc > 0) {
-                // TODO:
-                // is everything here OK?
-
-                // Regular publishing happens before the global root scanning,
-                // so this insertion will definitely be processed.
-                // Publishing during the thread destruction is a bit more complicated.
-                // But the GC makes sure to process all threads before scanning global
-                // roots. So, it'll either publish the dying thread itself, or
-                // if the dying thread has already deregistered, it means it published
-                // itself. In any case, global root scanning happens afterwards.
-                // TODO: With CMS root-set-write barrier for marking `node.obj_` should be here.
-                // TODO: No barrier that uses mm::ThreadData can be placed here.
-
-                SpecialRefRegistry::instance().insertIntoRootsHead(*this);
+                registry.insertIntoRootsHead(*this);
             }
         }
 
@@ -221,7 +208,7 @@ public:
 
         [[nodiscard("must be manually disposed")]] Node& registerNode(ObjHeader* obj, Node::Rc rc, bool allowFastDeletion) noexcept {
             RuntimeAssert(obj != nullptr, "Creating node for null object");
-            queue_.emplace_back(obj, rc);
+            queue_.emplace_back(owner_, obj, rc);
             auto& node = queue_.back();
             return node;
         }
