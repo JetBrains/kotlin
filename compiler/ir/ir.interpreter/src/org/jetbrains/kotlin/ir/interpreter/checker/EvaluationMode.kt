@@ -117,6 +117,7 @@ sealed class EvaluationMode {
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.statements.size == 1
         override fun canEvaluateExpression(expression: IrExpression): Boolean {
             return when {
+                expression is IrConst<*> -> true
                 expression is IrWhen -> expression.origin in allowedOriginsForWhen
                 expression !is IrCall -> false
                 expression.hasUnsignedArgs() -> expression.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.String.plus"
@@ -140,7 +141,7 @@ sealed class EvaluationMode {
 
         private fun IrFunction.isFloatingPointOperation(): Boolean {
             val parentType = (this.parent as? IrClass)?.defaultType ?: return false
-            return parentType.isFloat() || parentType.isDouble() || this.returnType.isFloat() || this.returnType.isDouble()
+            return parentType.isDoubleOrFloatWithoutNullability() || this.returnType.isDoubleOrFloatWithoutNullability()
         }
 
         private fun IrFunction?.isCompileTimePropertyAccessor(): Boolean {
@@ -151,6 +152,9 @@ sealed class EvaluationMode {
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.origin == IrStatementOrigin.WHEN || block.statements.size == 1
 
         override fun canEvaluateExpression(expression: IrExpression): Boolean {
+            if (isFloatingPointOptimizationDisabled && expression.type.isDoubleOrFloatWithoutNullability()) {
+                return false
+            }
             return OnlyBuiltins.canEvaluateExpression(expression) || expression is IrWhen
         }
     }
