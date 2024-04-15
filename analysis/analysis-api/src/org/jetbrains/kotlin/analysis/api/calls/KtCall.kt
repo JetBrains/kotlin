@@ -17,6 +17,17 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.KtExpression
 
+public sealed class KaCallResolutionAttempt : KtLifetimeOwner
+
+public class KaCallResolutionError(
+    private val _candidateCalls: List<KtCall>,
+    private val _diagnostic: KtDiagnostic,
+    override val token: KtLifetimeToken,
+) : KaCallResolutionAttempt() {
+    public val candidateCalls: List<KtCall> get() = withValidityAssertion { _candidateCalls }
+    public val diagnostic: KtDiagnostic get() = withValidityAssertion { _diagnostic }
+}
+
 /**
  * Call information at call site.
  */
@@ -116,7 +127,7 @@ public class KtInapplicableCallCandidateInfo(
 /**
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
-public sealed class KtCall : KtLifetimeOwner
+public sealed class KtCall : KaCallResolutionAttempt()
 
 /**
  * A callable symbol partially applied with receivers and type arguments. Essentially, this is a call that misses some information. For
@@ -245,6 +256,7 @@ public class KtDelegatedConstructorCall(
     partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
     kind: Kind,
     argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
+    private val _typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>,
 ) : KtFunctionCall<KtConstructorSymbol>(argumentMapping) {
     private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol> = partiallyAppliedSymbol
 
@@ -255,14 +267,7 @@ public class KtDelegatedConstructorCall(
      */
     override val partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
-    override val typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>
-        get() = withValidityAssertion {
-            check(partiallyAppliedSymbol.symbol.typeParameters.isEmpty()) {
-                "Type arguments for delegation constructor to java constructor with type parameters not supported. " +
-                        "Symbol: ${partiallyAppliedSymbol.symbol}"
-            }
-            emptyMap()
-        }
+    override val typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType> get() = withValidityAssertion { _typeArgumentsMapping }
 
     public val kind: Kind by validityAsserted(kind)
 

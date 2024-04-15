@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -135,6 +135,8 @@ private constructor(
     override val dataFlowInfoProviderImpl: KtDataFlowInfoProvider = KtFirDataFlowInfoProvider(this)
 
     override val klibSourceFileProviderImpl: KtKlibSourceFileNameProvider = KtFirKlibSourceFileNameProvider(this)
+
+    override val resolverImpl: KaResolver = KaFirResolver(this)
 
     internal val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession
     internal val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider

@@ -1,0 +1,522 @@
+KtAnnotationEntry(18,161): '@Target('
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      AnnotationTarget.TYPE_PARAMETER -> (KtVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableIdIfNonLocal = null),
+      AnnotationTarget.FUNCTION -> (KtVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableIdIfNonLocal = null),
+      AnnotationTarget.VALUE_PARAMETER -> (KtVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableIdIfNonLocal = null),
+      AnnotationTarget.TYPE -> (KtVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(244,267): '@Anno("function $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "function $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(273,302): '@Anno("type parameter $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "type parameter $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(307,332): '@Anno("bound type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "bound type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(338,370): '@Anno("nested bound type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested bound type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(380,412): '@receiver:Anno("receiver $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "receiver $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(413,441): '@Anno("receiver type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "receiver type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(447,482): '@Anno("nested receiver type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested receiver type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(488,530): '@Anno("nested nested receiver type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested receiver type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(546,570): '@Anno("parameter $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "parameter $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(578,607): '@Anno("parameter type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "parameter type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(619,655): '@Anno("nested parameter type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested parameter type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(661,704): '@Anno("nested nested parameter type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested parameter type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(720,746): '@Anno("return type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "return type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(752,785): '@Anno("nested return type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested return type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(791,831): '@Anno("nested nested return type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested return type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(856,886): '@Anno("constraint type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "constraint type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(898,935): '@Anno("nested constraint type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested constraint type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+

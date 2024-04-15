@@ -1,0 +1,1 @@
+/bar(a: kotlin.Int, b: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit

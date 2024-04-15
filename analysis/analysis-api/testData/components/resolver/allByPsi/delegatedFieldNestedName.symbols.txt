@@ -1,0 +1,33 @@
+KtAnnotationEntry(16,46): '@Target(AnnotationTarget.TYPE)'
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtAnnotationEntry(210,226): '@Anno(0 + outer)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(232,248): '@Anno(1 + outer)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(254,270): '@Anno(2 + outer)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(295,311): '@Anno(4 + outer)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(319,335): '@Anno(5 + outer)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(385,401): '@Anno(6 + inner)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(407,423): '@Anno(7 + inner)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(429,445): '@Anno(8 + inner)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(544,560): '@Anno(9 + inner)'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtAnnotationEntry(568,585): '@Anno(10 + inner)'
+  <constructor>(i: kotlin.Int): second.Anno
+

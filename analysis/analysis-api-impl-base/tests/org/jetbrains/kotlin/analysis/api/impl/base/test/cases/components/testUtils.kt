@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -106,7 +106,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
 
                     @Suppress("UNCHECKED_CAST")
                     val value = (property as KProperty1<Any, *>).get(this@with)?.let {
-                        if (className == "KtErrorCallInfo" && name == "candidateCalls") {
+                        if ((className == "KtErrorCallInfo" || className == "KaCallResolutionError") && name == "candidateCalls") {
                             (it as Collection<KtCall>).sortedWith { call1, call2 -> compareCalls(call1, call2) }
                         } else it
                     }

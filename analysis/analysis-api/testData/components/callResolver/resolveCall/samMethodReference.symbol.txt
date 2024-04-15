@@ -1,0 +1,1 @@
+/Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit

@@ -1,0 +1,20 @@
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: OTHER_ERROR with generic>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /generic(): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = /generic
+    typeArgumentsMapping = {
+      A -> (ERROR_TYPE),
+      B -> (ERROR_TYPE),
+      C -> (ERROR_TYPE)
+    }
+    argumentMapping = {}
+  isInBestCandidates = true

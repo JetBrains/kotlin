@@ -1,0 +1,6 @@
+KtCallExpression(111,129): 'get(implicitIndex)'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+
+KtCallExpression(179,199): 'foo(--list[i], list)'
+  /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+

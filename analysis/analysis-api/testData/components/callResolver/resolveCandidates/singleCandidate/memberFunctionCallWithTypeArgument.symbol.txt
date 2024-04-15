@@ -1,0 +1,1 @@
+/A.foo(<dispatch receiver>: A<T>, r: R): kotlin.Unit

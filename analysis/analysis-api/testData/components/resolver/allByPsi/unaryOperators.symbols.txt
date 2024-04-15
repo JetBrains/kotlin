@@ -1,0 +1,9 @@
+KtCallExpression(88,97): 'MyClass()'
+  <constructor>(): MyClass
+
+KtCallExpression(98,110): 'unaryMinus()'
+  /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+
+KtCallExpression(111,116): 'not()'
+  /MyClass.not(<dispatch receiver>: MyClass): MyClass
+

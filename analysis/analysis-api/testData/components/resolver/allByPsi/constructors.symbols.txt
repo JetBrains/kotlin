@@ -1,0 +1,21 @@
+KtConstructorDelegationCall(61,61): ''
+  <constructor>(): kotlin.Any
+
+KtConstructorDelegationCall(88,88): ''
+  <constructor>(): kotlin.Any
+
+KtConstructorDelegationCall(170,179): 'super(ci)'
+  <constructor>(i: kotlin.Int): r.BaseClass
+
+KtConstructorDelegationCall(210,219): 'super(cs)'
+  <constructor>(s: kotlin.String): r.BaseClass
+
+KtCallExpression(251,257): 'call()'
+  r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+
+KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
+  <constructor>(i: kotlin.Int): r.BaseClass
+
+KtConstructorDelegationCall(339,345): 'this()'
+  <constructor>(): r.ChildWithPrimary
+

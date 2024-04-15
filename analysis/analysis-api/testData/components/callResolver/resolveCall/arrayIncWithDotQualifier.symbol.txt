@@ -1,0 +1,1 @@
+/F.peek(<dispatch receiver>: F): F

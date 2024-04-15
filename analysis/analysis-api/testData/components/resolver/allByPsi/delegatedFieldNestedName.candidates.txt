@@ -1,0 +1,330 @@
+KtAnnotationEntry(16,46): '@Target(AnnotationTarget.TYPE)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.annotation.Target
+          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = allowedTargets
+              receiverType = null
+              returnType = kotlin.annotation.AnnotationTarget
+              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        AnnotationTarget.TYPE -> (KtVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(210,226): '@Anno(0 + outer)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        0 + outer -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(232,248): '@Anno(1 + outer)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 + outer -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(254,270): '@Anno(2 + outer)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 + outer -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(295,311): '@Anno(4 + outer)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        4 + outer -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(319,335): '@Anno(5 + outer)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        5 + outer -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(385,401): '@Anno(6 + inner)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        6 + inner -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(407,423): '@Anno(7 + inner)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        7 + inner -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(429,445): '@Anno(8 + inner)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        8 + inner -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(544,560): '@Anno(9 + inner)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        9 + inner -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(568,585): '@Anno(10 + inner)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = second.Anno
+          symbol = <constructor>(i: kotlin.Int): second.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        10 + inner -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+

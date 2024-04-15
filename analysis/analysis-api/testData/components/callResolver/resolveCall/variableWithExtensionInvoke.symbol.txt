@@ -1,0 +1,1 @@
+/invoke(<extension receiver>: Foo, t: T): kotlin.Unit

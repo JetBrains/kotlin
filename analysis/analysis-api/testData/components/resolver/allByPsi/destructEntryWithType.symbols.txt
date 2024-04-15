@@ -1,0 +1,9 @@
+KtAnnotationEntry(159,178): '@Anno(0 + constant)'
+  null
+
+KtAnnotationEntry(184,203): '@Anno(1 + constant)'
+  null
+
+KtAnnotationEntry(209,228): '@Anno(2 + constant)'
+  null
+

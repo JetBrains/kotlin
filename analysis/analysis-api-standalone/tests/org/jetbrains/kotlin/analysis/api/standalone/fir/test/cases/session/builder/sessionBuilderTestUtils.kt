@@ -26,7 +26,6 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.streams.asSequence
 import org.junit.jupiter.api.Assertions
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 import java.time.LocalDateTime
@@ -38,7 +37,7 @@ internal fun testDataPath(path: String): Path {
 
 fun KtCallExpression.assertIsCallOf(callableId: CallableId) {
     analyze(this) {
-        val ktCallInfo = resolveCall()
+        val ktCallInfo = resolveCallOld()
         Assertions.assertInstanceOf(KtSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KtSuccessCallInfo
         val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
         Assertions.assertInstanceOf(KtFunctionSymbol::class.java, symbol); symbol as KtFunctionSymbol

@@ -1,0 +1,16 @@
+KtAnnotationEntry(36,41): '@Anno'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = one.Anno
+          symbol = <constructor>(): one.Anno
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+

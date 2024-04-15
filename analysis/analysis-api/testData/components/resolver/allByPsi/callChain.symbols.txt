@@ -1,0 +1,18 @@
+KtCallExpression(103,109): 'foo(2)'
+  /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+
+KtCallExpression(110,116): 'bar(3)'
+  /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+
+KtCallExpression(133,139): 'bar(5)'
+  /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+
+KtCallExpression(140,146): 'bar(6)'
+  /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+
+KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
+  /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+
+KtCallExpression(148,154): 'bar(0)'
+  /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+

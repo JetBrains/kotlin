@@ -1,0 +1,456 @@
+KtAnnotationEntry(16,266): '@Target('
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.annotation.Target
+          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = allowedTargets
+              receiverType = null
+              returnType = kotlin.annotation.AnnotationTarget
+              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        AnnotationTarget.PROPERTY -> (KtVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableIdIfNonLocal = null),
+        AnnotationTarget.TYPE_PARAMETER -> (KtVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableIdIfNonLocal = null),
+        AnnotationTarget.FUNCTION -> (KtVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableIdIfNonLocal = null),
+        AnnotationTarget.VALUE_PARAMETER -> (KtVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableIdIfNonLocal = null),
+        AnnotationTarget.PROPERTY_GETTER -> (KtVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableIdIfNonLocal = null),
+        AnnotationTarget.PROPERTY_SETTER -> (KtVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableIdIfNonLocal = null),
+        AnnotationTarget.TYPE -> (KtVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(335,358): '@Anno("property $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "property $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(364,393): '@Anno("type parameter $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "type parameter $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(398,418): '@Anno("bound $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "bound $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(424,451): '@Anno("nested bound $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested bound $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(461,493): '@receiver:Anno("receiver $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "receiver $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(494,522): '@Anno("receiver type $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "receiver type $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(528,563): '@Anno("nested receiver type $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested receiver type $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(586,612): '@Anno("return type $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "return type $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(624,657): '@Anno("nested return type $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested return type $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(663,703): '@Anno("nested nested return type $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested return type $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(714,735): '@Anno("getter $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "getter $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(758,779): '@Anno("setter $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "setter $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(788,819): '@Anno("setter parameter $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.Anno
+          symbol = <constructor>(position: kotlin.String): myPack.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "setter parameter $prop" -> (KtVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+

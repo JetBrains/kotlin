@@ -1,0 +1,42 @@
+KtAnnotationEntry(101,126): '@Anno("a type $constant")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(234,259): '@Anno("b type $constant")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(404,420): '@Anno("a $prop")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(424,440): '@Anno("b $prop")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtCallExpression(446,462): 'Pair(null, null)'
+  <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+
+KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(492,508): '@Anno("c $prop")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtAnnotationEntry(512,528): '@Anno("d $prop")'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtCallExpression(534,550): 'Pair(null, null)'
+  <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+

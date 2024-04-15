@@ -1,0 +1,42 @@
+KtAnnotationEntry(16,266): '@Target('
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtAnnotationEntry(335,358): '@Anno("property $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(364,393): '@Anno("type parameter $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(398,418): '@Anno("bound $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(424,451): '@Anno("nested bound $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(461,493): '@receiver:Anno("receiver $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(494,522): '@Anno("receiver type $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(528,563): '@Anno("nested receiver type $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(586,612): '@Anno("return type $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(624,657): '@Anno("nested return type $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(663,703): '@Anno("nested nested return type $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(714,735): '@Anno("getter $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(758,779): '@Anno("setter $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtAnnotationEntry(788,819): '@Anno("setter parameter $prop")'
+  <constructor>(position: kotlin.String): myPack.Anno
+

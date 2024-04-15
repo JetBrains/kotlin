@@ -1,0 +1,51 @@
+KtCallExpression(88,97): 'MyClass()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(98,110): 'unaryMinus()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
+        callableIdIfNonLocal = /MyClass.unaryMinus
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(111,116): 'not()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = MyClass().unaryMinus()
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
+        callableIdIfNonLocal = /MyClass.not
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+

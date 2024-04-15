@@ -72,7 +72,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         analyze(ktFile) {
             val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
-            val ktCallInfo = ktCallExpression.resolveCall()
+            val ktCallInfo = ktCallExpression.resolveCallOld()
             Assertions.assertInstanceOf(KtSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KtSuccessCallInfo
             val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
             Assertions.assertInstanceOf(KtConstructorSymbol::class.java, symbol); symbol as KtConstructorSymbol
@@ -380,7 +380,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
             assertEquals(fileSymbol.getContainingModule(), dummyModule)
 
             val callExpression = dummyFile.findDescendantOfType<KtCallExpression>()!!
-            val call = callExpression.resolveCall()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")
+            val call = callExpression.resolveCallOld()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")
             assert(call.symbol is KtFunctionSymbol)
         }
     }

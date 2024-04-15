@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 
@@ -93,7 +92,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtMetadataCalculatorMixIn,
     KtSubstitutorProviderMixIn,
     KtDataFlowInfoProviderMixin,
-    KtKlibSourceFileProviderMixIn {
+    KtKlibSourceFileProviderMixIn,
+    KaResolverMixIn {
 
     public abstract val useSiteModule: KtModule
 
@@ -222,6 +222,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
 
     internal val klibSourceFileProvider: KtKlibSourceFileNameProvider get() = klibSourceFileProviderImpl
     protected abstract val klibSourceFileProviderImpl: KtKlibSourceFileNameProvider
+
+    internal val resolver: KaResolver get() = resolverImpl
+    protected abstract val resolverImpl: KaResolver
 }
 
 public fun KtAnalysisSession.getModule(element: PsiElement): KtModule {

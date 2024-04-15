@@ -1,0 +1,1 @@
+/foo(s: kotlin.String): kotlin.Unit

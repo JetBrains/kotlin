@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -66,6 +66,7 @@ class KtFe10AnalysisSession(
     override val compilerFacilityImpl: KtCompilerFacility = KtFe10CompilerFacility(this)
     override val dataFlowInfoProviderImpl: KtDataFlowInfoProvider = KtFe10DataFlowInfoProvider(this)
     override val klibSourceFileProviderImpl: KtKlibSourceFileNameProvider = KtFe10KlibSourceFileNameProvider(this)
+    override val resolverImpl: KaResolver = KaFe10Resolver(this)
 
     override val metadataCalculatorImpl: KtMetadataCalculator
         get() = throw NotSupportedForK1Exception()

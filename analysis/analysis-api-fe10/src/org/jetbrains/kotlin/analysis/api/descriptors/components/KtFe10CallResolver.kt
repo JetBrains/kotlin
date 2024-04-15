@@ -425,12 +425,14 @@ internal class KtFe10CallResolver(
                 is KtConstructorDelegationCall -> return KtDelegatedConstructorCall(
                     partiallyAppliedConstructorSymbol,
                     if (callElement.isCallToThis) KtDelegatedConstructorCall.Kind.THIS_CALL else KtDelegatedConstructorCall.Kind.SUPER_CALL,
-                    argumentMapping
+                    argumentMapping,
+                    toTypeArgumentsMapping(partiallyAppliedSymbol)
                 )
                 is KtSuperTypeCallEntry -> return KtDelegatedConstructorCall(
                     partiallyAppliedConstructorSymbol,
                     KtDelegatedConstructorCall.Kind.SUPER_CALL,
-                    argumentMapping
+                    argumentMapping,
+                    toTypeArgumentsMapping(partiallyAppliedSymbol)
                 )
             }
         }

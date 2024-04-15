@@ -1,0 +1,1 @@
+foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit

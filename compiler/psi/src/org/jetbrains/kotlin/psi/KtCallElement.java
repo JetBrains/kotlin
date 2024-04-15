@@ -18,10 +18,11 @@ package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.resolve.KtResolvableCall;
 
 import java.util.List;
 
-public interface KtCallElement extends KtElement {
+public interface KtCallElement extends KtElement, KtResolvableCall {
     @Nullable
     KtExpression getCalleeExpression();
 

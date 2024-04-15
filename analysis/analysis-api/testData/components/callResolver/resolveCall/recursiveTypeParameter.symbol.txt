@@ -1,0 +1,1 @@
+/AbstractModule.install(<dispatch receiver>: AbstractModule, builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>): kotlin.Unit

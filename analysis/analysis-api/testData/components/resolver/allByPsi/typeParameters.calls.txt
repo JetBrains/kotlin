@@ -1,0 +1,50 @@
+KtSuperTypeCallEntry(186,195): 'Base<C>()'
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = one.two.Base<B>
+        symbol = <constructor>(): one.two.Base<B>
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {
+      B -> (C)
+    }
+    argumentMapping = {}
+
+KtCallExpression(392,405): 'NestedClass()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = one.two.Base.NestedClass
+        symbol = <constructor>(): one.two.Base.NestedClass
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(425,432): 'Inner()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = c1
+        isSafeNavigation = false
+        type = one.two.Child<one.two.Base.NestedClass>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = one.two.Base.Inner<B>
+        symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+

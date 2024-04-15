@@ -1,0 +1,48 @@
+KtAnnotationEntry(43,54): '@Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtAnnotationEntry(106,117): '@Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtAnnotationEntry(169,180): '@Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtAnnotationEntry(407,432): '@AnnoWithArray([1, 2, 3])'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtAnnotationEntry(433,464): '@AnnoWithArray(arr = [4, 5, 6])'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtCallExpression(480,499): 'intArrayOf(7, 8, 9)'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+KtAnnotationEntry(465,500): '@AnnoWithArray(intArrayOf(7, 8, 9))'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtAnnotationEntry(501,539): '@AnnoWithKClass(AnnoWithKClass::class)'
+  <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+
+KtAnnotationEntry(542,583): 'AnnoWithKClass(one.AnnoWithKClass::class)'
+  <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+
+KtAnnotationEntry(585,659): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.AnnoWithKClass::class])'
+  <constructor>(a: kotlin.Array<kotlin.reflect.KClass<*>>): one.AnnoWithArrayOfKClass
+
+KtCallExpression(699,726): 'AnnoWithArray([10, 11, 12])'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtCallExpression(742,764): 'intArrayOf(13, 14, 15)'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+KtCallExpression(728,765): 'AnnoWithArray(intArrayOf(13, 14, 15))'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtCallExpression(687,766): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
+  kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+
+KtAnnotationEntry(660,767): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
+  <constructor>(another: kotlin.Array<one.AnnoWithArray>): one.AnnoWithAnotherAnnotation
+
+KtAnnotationEntry(768,810): '@AnnoWithString(stringConstant + " 1.2.3")'
+  <constructor>(str: kotlin.String): one.AnnoWithString
+

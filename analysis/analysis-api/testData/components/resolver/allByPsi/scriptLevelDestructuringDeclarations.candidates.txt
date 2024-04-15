@@ -1,0 +1,446 @@
+KtAnnotationEntry(101,126): '@Anno("a type $constant")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "a type $constant" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "a nested type $constant" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "a nested nested type $constant" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(234,259): '@Anno("b type $constant")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "b type $constant" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "b nested type $constant" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "b nested nested type $constant" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "destr 1 $prop" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(404,420): '@Anno("a $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "a $prop" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(424,440): '@Anno("b $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "b $prop" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(446,462): 'Pair(null, null)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Pair
+          symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+              symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+              callableIdIfNonLocal = null,
+            KtVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+              symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        null -> (KtVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          callableIdIfNonLocal = null),
+        null -> (KtVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "destr 1 $prop" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(492,508): '@Anno("c $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "c $prop" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtAnnotationEntry(512,528): '@Anno("d $prop")'
+  KtApplicableCallCandidateInfo:
+    candidate = KtAnnotationCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Anno
+          symbol = <constructor>(str: kotlin.String): util.Anno
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "d $prop" -> (KtVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(534,550): 'Pair(null, null)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = util.Pair
+          symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+              symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+              callableIdIfNonLocal = null,
+            KtVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+              symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        null -> (KtVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          callableIdIfNonLocal = null),
+        null -> (KtVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+

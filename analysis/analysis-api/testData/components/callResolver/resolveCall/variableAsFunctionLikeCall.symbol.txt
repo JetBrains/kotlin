@@ -1,0 +1,1 @@
+/invoke(<extension receiver>: kotlin.Int): kotlin.String

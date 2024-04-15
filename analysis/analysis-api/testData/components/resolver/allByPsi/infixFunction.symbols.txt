@@ -1,0 +1,6 @@
+KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
+  /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+
+KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+

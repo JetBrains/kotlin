@@ -1,0 +1,150 @@
+KtConstructorDelegationCall(61,61): ''
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtConstructorDelegationCall(88,88): ''
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtConstructorDelegationCall(170,179): 'super(ci)'
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(i: kotlin.Int): r.BaseClass
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      ci -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtConstructorDelegationCall(210,219): 'super(cs)'
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(s: kotlin.String): r.BaseClass
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      cs -> (KtVariableLikeSignature:
+        name = s
+        receiverType = null
+        returnType = kotlin.String
+        symbol = s: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtCallExpression(251,257): 'call()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = super
+        isSafeNavigation = false
+        type = r.BaseClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = r/BaseClass.call
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(i: kotlin.Int): r.BaseClass
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      42 -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtConstructorDelegationCall(339,345): 'this()'
+  KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.ChildWithPrimary
+        symbol = <constructor>(): r.ChildWithPrimary
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+

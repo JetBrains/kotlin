@@ -1,0 +1,1 @@
+/function(vararg a: kotlin.Int): kotlin.Unit

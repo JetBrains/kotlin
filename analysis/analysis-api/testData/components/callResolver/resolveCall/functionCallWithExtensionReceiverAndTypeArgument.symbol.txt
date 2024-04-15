@@ -1,0 +1,1 @@
+/function(<extension receiver>: A, a: B): kotlin.Unit

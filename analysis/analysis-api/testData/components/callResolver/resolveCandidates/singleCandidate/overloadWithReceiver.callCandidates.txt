@@ -1,0 +1,57 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtImplicitReceiverValue:
+        symbol = KtNamedClassOrObjectSymbol:
+          annotationsList: []
+          classIdIfNonLocal: foo/Foo
+          classKind: CLASS
+          companionObject: null
+          contextReceivers: []
+          isActual: false
+          isData: false
+          isExpect: false
+          isExternal: false
+          isFun: false
+          isInline: false
+          isInner: false
+          modality: FINAL
+          name: Foo
+          origin: SOURCE
+          superTypes: [
+            KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any
+          ]
+          symbolKind: TOP_LEVEL
+          typeParameters: []
+          visibility: Public
+        type = foo.Foo
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Any
+        returnType = kotlin.Unit
+        symbol = foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = foo/myRun
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true
+
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = foo/myRun(): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = foo/myRun
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = false

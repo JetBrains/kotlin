@@ -1,0 +1,18 @@
+KtAnnotationEntry(23,59): '@Target(AnnotationTarget.EXPRESSION)'
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtAnnotationEntry(60,98): '@Retention(AnnotationRetention.SOURCE)'
+  <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+
+KtAnnotationEntry(157,175): '@Anno(0 + integer)'
+  <constructor>(number: kotlin.Int): Anno
+
+KtAnnotationEntry(177,191): '@Anno(integer)'
+  <constructor>(number: kotlin.Int): Anno
+
+KtCallExpression(192,199): 'usage()'
+  /usage(): kotlin.Unit
+
+KtCallExpression(201,211): 'toString()'
+  kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
+

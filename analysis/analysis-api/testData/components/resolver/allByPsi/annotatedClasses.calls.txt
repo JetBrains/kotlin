@@ -1,0 +1,497 @@
+KtAnnotationEntry(0,30): '@Target(AnnotationTarget.TYPE)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      AnnotationTarget.TYPE -> (KtVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(133,162): '@Anno("parameter type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "parameter type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(168,204): '@Anno("nested parameter type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested parameter type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(216,259): '@Anno("nested nested parameter type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested parameter type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(271,298): '@Anno("defaultValue $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "defaultValue $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(306,353): '@Anno("anonymousFunction parameter type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "anonymousFunction parameter type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(360,404): '@Anno("anonymousFunction return type $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "anonymousFunction return type $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtConstructorDelegationCall(412,412): ''
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtAnnotationEntry(465,495): '@Anno("super type call $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "super type call $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(510,546): '@Anno("nested super type ref $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested super type ref $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(552,595): '@Anno("nested nested super type ref $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested super type ref $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtSuperTypeCallEntry(465,603): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = AbstractClass<T>
+        symbol = <constructor>(): AbstractClass<T>
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {
+      T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
+    }
+    argumentMapping = {}
+
+KtAnnotationEntry(638,668): '@Anno("super type call $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "super type call $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(683,719): '@Anno("nested super type ref $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested super type ref $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(725,768): '@Anno("nested nested super type ref $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested super type ref $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtSuperTypeCallEntry(638,776): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  KtDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = AbstractClass<T>
+        symbol = <constructor>(): AbstractClass<T>
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {
+      T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
+    }
+    argumentMapping = {}
+
+KtAnnotationEntry(825,854): '@Anno("super type ref $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "super type ref $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(860,896): '@Anno("nested super type ref $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested super type ref $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(902,945): '@Anno("nested nested super type ref $prop")'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(position: kotlin.String): Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested super type ref $prop" -> (KtVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+

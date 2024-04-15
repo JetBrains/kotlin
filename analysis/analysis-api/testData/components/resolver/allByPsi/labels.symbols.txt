@@ -1,0 +1,6 @@
+KtCallExpression(34,42): 'action()'
+  kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+
+KtCallExpression(64,102): 'foo label@{'
+  /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+

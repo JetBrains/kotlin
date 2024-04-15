@@ -1,0 +1,54 @@
+KtAnnotationEntry(18,161): '@Target('
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtAnnotationEntry(244,267): '@Anno("function $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(273,302): '@Anno("type parameter $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(307,332): '@Anno("bound type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(338,370): '@Anno("nested bound type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(380,412): '@receiver:Anno("receiver $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(413,441): '@Anno("receiver type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(447,482): '@Anno("nested receiver type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(488,530): '@Anno("nested nested receiver type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(546,570): '@Anno("parameter $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(578,607): '@Anno("parameter type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(619,655): '@Anno("nested parameter type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(661,704): '@Anno("nested nested parameter type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(720,746): '@Anno("return type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(752,785): '@Anno("nested return type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(791,831): '@Anno("nested nested return type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(856,886): '@Anno("constraint type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtAnnotationEntry(898,935): '@Anno("nested constraint type $prop")'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+

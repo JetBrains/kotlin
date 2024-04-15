@@ -1,0 +1,3 @@
+KtCallExpression(251,263): 'InnerClass()'
+  <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+

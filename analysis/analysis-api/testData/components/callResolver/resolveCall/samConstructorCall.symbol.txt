@@ -1,0 +1,1 @@
+kotlin/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>

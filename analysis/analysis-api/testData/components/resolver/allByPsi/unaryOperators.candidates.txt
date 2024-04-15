@@ -1,0 +1,57 @@
+KtCallExpression(88,97): 'MyClass()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(98,110): 'unaryMinus()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+          valueParameters = []
+          callableIdIfNonLocal = /MyClass.unaryMinus
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(111,116): 'not()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = MyClass().unaryMinus()
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
+          valueParameters = []
+          callableIdIfNonLocal = /MyClass.not
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+

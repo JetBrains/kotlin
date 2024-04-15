@@ -1,0 +1,64 @@
+KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = parameter
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Int
+        symbol = /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /myMinus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      oneMoreParameter -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = newParameter
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      parameter.myMinus(oneMoreParameter) -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+

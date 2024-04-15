@@ -1,0 +1,1 @@
+/JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit

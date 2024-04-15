@@ -1,0 +1,9 @@
+KtSuperTypeCallEntry(186,195): 'Base<C>()'
+  <constructor>(): one.two.Base<B>
+
+KtCallExpression(392,405): 'NestedClass()'
+  <constructor>(): one.two.Base.NestedClass
+
+KtCallExpression(425,432): 'Inner()'
+  <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+

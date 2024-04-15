@@ -1,0 +1,60 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Sub
+        symbol = <constructor>(p1: kotlin.Int): Sub
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p1: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      s.length -> (KtVariableLikeSignature:
+        name = p1
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = p1: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
+  candidate = KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Sub
+        symbol = <constructor>(s: kotlin.String): Sub
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      s.length -> (KtVariableLikeSignature:
+        name = s
+        receiverType = null
+        returnType = kotlin.String
+        symbol = s: kotlin.String
+        callableIdIfNonLocal = null)
+    }
+  isInBestCandidates = false

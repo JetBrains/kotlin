@@ -1,0 +1,96 @@
+KtAnnotationEntry(159,178): '@Anno(0 + constant)'
+  KaCallResolutionError:
+    candidateCalls = [
+      KtAnnotationCall:
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = util.Anno
+            symbol = <constructor>(str: kotlin.String): util.Anno
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = str
+                receiverType = null
+                returnType = kotlin.String
+                symbol = str: kotlin.String
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = null
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          0 + constant -> (KtVariableLikeSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            callableIdIfNonLocal = null)
+        }
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+
+KtAnnotationEntry(184,203): '@Anno(1 + constant)'
+  KaCallResolutionError:
+    candidateCalls = [
+      KtAnnotationCall:
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = util.Anno
+            symbol = <constructor>(str: kotlin.String): util.Anno
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = str
+                receiverType = null
+                returnType = kotlin.String
+                symbol = str: kotlin.String
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = null
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          1 + constant -> (KtVariableLikeSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            callableIdIfNonLocal = null)
+        }
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+
+KtAnnotationEntry(209,228): '@Anno(2 + constant)'
+  KaCallResolutionError:
+    candidateCalls = [
+      KtAnnotationCall:
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = util.Anno
+            symbol = <constructor>(str: kotlin.String): util.Anno
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = str
+                receiverType = null
+                returnType = kotlin.String
+                symbol = str: kotlin.String
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = null
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          2 + constant -> (KtVariableLikeSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            callableIdIfNonLocal = null)
+        }
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+
