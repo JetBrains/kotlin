@@ -207,14 +207,9 @@ import { argv, env } from 'node:process';
 
 const wasi = new WASI({ version: 'preview1', args: argv, env, });
 
-const module = await import(/* webpackIgnore: true */'node:module');
-const require = module.default.createRequire(import.meta.url);
-const fs = require('fs');
-const path = require('path');
-const url = require('url');
-const filepath = url.fileURLToPath(import.meta.url);
-const dirpath = path.dirname(filepath);
-const wasmBuffer = fs.readFileSync(path.resolve(dirpath, '$wasmFilePath'));
+const fs = await import('node:fs');
+const url = await import('node:url');
+const wasmBuffer = fs.readFileSync(url.fileURLToPath(import.meta.resolve('$wasmFilePath')));
 const wasmModule = new WebAssembly.Module(wasmBuffer);
 const wasmInstance = new WebAssembly.Instance(wasmModule, wasi.getImportObject());
 
@@ -310,22 +305,16 @@ $imports
     
     try {
       if (isNodeJs) {
-        const module = await import(/* webpackIgnore: true */'node:module');
-        require = module.default.createRequire(import.meta.url);
-        const fs = require('fs');
-        const path = require('path');
-        const url = require('url');
-        const filepath = url.fileURLToPath(import.meta.url);
-        const dirpath = path.dirname(filepath);
-        const wasmBuffer = fs.readFileSync(path.resolve(dirpath, wasmFilePath));
+        const fs = await import(/* webpackIgnore: true */'node:fs');
+        const url = await import(/* webpackIgnore: true */'node:url');
+        const wasmBuffer = fs.readFileSync(url.fileURLToPath(import.meta.resolve(wasmFilePath)));
         const wasmModule = new WebAssembly.Module(wasmBuffer);
         wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
       }
       
       if (isDeno) {
         const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
-        const dirpath = path.dirname(path.fromFileUrl(import.meta.url));
-        const binary = Deno.readFileSync(path.resolve(dirpath, wasmFilePath));
+        const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
         const module = await WebAssembly.compile(binary);
         wasmInstance = await WebAssembly.instantiate(module, importObject);
       }
