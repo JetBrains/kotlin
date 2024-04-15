@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -42,6 +43,7 @@ class FirTypeDeserializer(
     private val nameResolver: NameResolver,
     private val typeTable: TypeTable,
     private val annotationDeserializer: AbstractAnnotationDeserializer,
+    private val flexibleTypeFactory: FlexibleTypeFactory,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     private val parent: FirTypeDeserializer?,
     private val containingSymbol: FirBasedSymbol<*>?
@@ -96,6 +98,23 @@ class FirTypeDeserializer(
         }
     }
 
+    fun forChildContext(
+        typeParameterProtos: List<ProtoBuf.TypeParameter>,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        annotationDeserializer: AbstractAnnotationDeserializer,
+    ) = FirTypeDeserializer(
+        moduleData,
+        nameResolver,
+        typeTable,
+        annotationDeserializer,
+        flexibleTypeFactory,
+        typeParameterProtos,
+        this,
+        containingDeclarationSymbol,
+    )
+
     private fun computeClassifier(fqNameIndex: Int): ConeClassLikeLookupTag {
         try {
             // We can't just load local types as is, because later we will get an exception
@@ -136,14 +155,27 @@ class FirTypeDeserializer(
             val isDynamic = lowerBound?.classId == moduleData.session.builtinTypes.nothingType.id &&
                     upperBound?.classId == moduleData.session.builtinTypes.nullableAnyType.id
 
+            // TODO: Consider hiding dynamic type creation under FlexibleTypeFactory for JS only (KT-67452)
             return if (isDynamic) {
                 ConeDynamicType.create(moduleData.session, lowerBound?.attributes ?: ConeAttributes.Empty)
             } else {
-                ConeFlexibleType(lowerBound!!, upperBound!!)
+                flexibleTypeFactory.createFlexibleType(proto, lowerBound!!, upperBound!!)
             }
         }
 
         return simpleType(proto, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+    }
+
+    interface FlexibleTypeFactory {
+        fun createFlexibleType(proto: Type, lowerBound: ConeSimpleKotlinType, upperBound: ConeSimpleKotlinType): ConeFlexibleType
+
+        object Default : FlexibleTypeFactory {
+            override fun createFlexibleType(
+                proto: Type,
+                lowerBound: ConeSimpleKotlinType,
+                upperBound: ConeSimpleKotlinType,
+            ) = ConeFlexibleType(lowerBound, upperBound)
+        }
     }
 
     private fun typeParameterSymbol(typeParameterId: Int): ConeTypeParameterLookupTag? =

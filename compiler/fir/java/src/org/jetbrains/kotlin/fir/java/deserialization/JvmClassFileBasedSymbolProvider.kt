@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
-import org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider
-import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.deserialization.PackagePartsCacheData
+import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -24,6 +21,9 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.ConeRawType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -103,10 +103,22 @@ class JvmClassFileBasedSymbolProvider(
             FirDeserializationContext.createForPackage(
                 packageFqName, packageProto, nameResolver, moduleData,
                 JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, byteContent),
+                JavaAwareFlexibleTypeFactory,
                 FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinClass, BuiltInSerializerProtocol),
                 source
             ),
         )
+    }
+
+    private object JavaAwareFlexibleTypeFactory : FirTypeDeserializer.FlexibleTypeFactory {
+        override fun createFlexibleType(
+            proto: ProtoBuf.Type,
+            lowerBound: ConeSimpleKotlinType,
+            upperBound: ConeSimpleKotlinType,
+        ): ConeFlexibleType = when (proto.hasExtension(JvmProtoBuf.isRaw)) {
+            true -> ConeRawType.create(lowerBound, upperBound)
+            false -> ConeFlexibleType(lowerBound, upperBound)
+        }
     }
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String> = packagePartProvider.computePackageSetWithNonClassDeclarations()
@@ -175,7 +187,8 @@ class JvmClassFileBasedSymbolProvider(
             KotlinJvmBinarySourceElement(
                 kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible, kotlinClass.abiStability,
             ),
-            classPostProcessor = { loadAnnotationsFromClassFile(result, it) }
+            classPostProcessor = { loadAnnotationsFromClassFile(result, it) },
+            JavaAwareFlexibleTypeFactory,
         )
     }
 

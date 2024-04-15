@@ -202,7 +202,8 @@ abstract class AbstractFirDeserializedSymbolProvider(
             val annotationDeserializer: AbstractAnnotationDeserializer?,
             val moduleData: FirModuleData?,
             val sourceElement: DeserializedContainerSource?,
-            val classPostProcessor: DeserializedClassPostProcessor?
+            val classPostProcessor: DeserializedClassPostProcessor?,
+            val flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
         ) : ClassMetadataFindResult()
     }
 
@@ -238,6 +239,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     session,
                     moduleData,
                     annotationDeserializer,
+                    result.flexibleTypeFactory,
                     kotlinScopeProvider,
                     serializerExtensionProtocol,
                     parentContext,
