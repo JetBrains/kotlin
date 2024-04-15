@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
-import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
-import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
-import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -161,6 +158,7 @@ open class FirBuiltinSymbolProvider(
             FirDeserializationContext.createForPackage(
                 fqName, packageProto.`package`, nameResolver, moduleData,
                 FirBuiltinAnnotationDeserializer(moduleData.session),
+                FirTypeDeserializer.FlexibleTypeFactory.Default,
                 FirConstDeserializer(moduleData.session, BuiltInSerializerProtocol),
                 containerSource = null
             ).memberDeserializer
@@ -174,7 +172,8 @@ open class FirBuiltinSymbolProvider(
 
             deserializeClassToSymbol(
                 classId, classProto, symbol, nameResolver, moduleData.session, moduleData,
-                null, kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
+                null, FirTypeDeserializer.FlexibleTypeFactory.Default,
+                kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
                 null,
                 origin = FirDeclarationOrigin.BuiltIns,
                 this::findAndDeserializeClass,
@@ -240,4 +239,3 @@ private data class BinaryVersionAndPackageFragment(
         }
     }
 }
-

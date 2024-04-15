@@ -73,7 +73,8 @@ class OptionalAnnotationClassesProvider(
             annotationDeserializer,
             moduleDataProvider.allModuleData.last(),
             null,
-            classPostProcessor = null
+            classPostProcessor = null,
+            FirTypeDeserializer.FlexibleTypeFactory.Default,
         )
     }
 

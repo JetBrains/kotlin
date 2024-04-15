@@ -58,6 +58,7 @@ class MetadataSymbolProvider(
                 nameResolver,
                 moduleDataProvider.allModuleData.last(),
                 annotationDeserializer = annotationDeserializer,
+                FirTypeDeserializer.FlexibleTypeFactory.Default,
                 constDeserializer = constDeserializer,
                 containerSource = null
             )
@@ -78,7 +79,8 @@ class MetadataSymbolProvider(
             annotationDeserializer = annotationDeserializer,
             moduleDataProvider.allModuleData.last(),
             sourceElement = null,
-            classPostProcessor = null
+            classPostProcessor = null,
+            FirTypeDeserializer.FlexibleTypeFactory.Default,
         )
     }
 

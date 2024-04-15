@@ -77,14 +77,8 @@ class FirDeserializationContext(
         moduleData,
         packageFqName,
         relativeClassName,
-        FirTypeDeserializer(
-            moduleData,
-            nameResolver,
-            typeTable,
-            annotationDeserializer,
-            typeParameterProtos,
-            typeDeserializer,
-            containingDeclarationSymbol
+        typeDeserializer.forChildContext(
+            typeParameterProtos, containingDeclarationSymbol, nameResolver, typeTable, annotationDeserializer
         ),
         annotationDeserializer,
         constDeserializer,
@@ -103,6 +97,7 @@ class FirDeserializationContext(
             nameResolver: NameResolver,
             moduleData: FirModuleData,
             annotationDeserializer: AbstractAnnotationDeserializer,
+            flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
             constDeserializer: FirConstDeserializer,
             containerSource: DeserializedContainerSource?
         ): FirDeserializationContext = createRootContext(
@@ -111,6 +106,7 @@ class FirDeserializationContext(
             moduleData,
             VersionRequirementTable.create(packageProto.versionRequirementTable),
             annotationDeserializer,
+            flexibleTypeFactory,
             constDeserializer,
             fqName,
             relativeClassName = null,
@@ -126,6 +122,7 @@ class FirDeserializationContext(
             nameResolver: NameResolver,
             moduleData: FirModuleData,
             annotationDeserializer: AbstractAnnotationDeserializer,
+            flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
             constDeserializer: FirConstDeserializer,
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol
@@ -135,6 +132,7 @@ class FirDeserializationContext(
             moduleData,
             VersionRequirementTable.create(classProto.versionRequirementTable),
             annotationDeserializer,
+            flexibleTypeFactory,
             constDeserializer,
             classId.packageFqName,
             classId.relativeClassName,
@@ -150,6 +148,7 @@ class FirDeserializationContext(
             moduleData: FirModuleData,
             versionRequirementTable: VersionRequirementTable,
             annotationDeserializer: AbstractAnnotationDeserializer,
+            flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
             constDeserializer: FirConstDeserializer,
             packageFqName: FqName,
             relativeClassName: FqName?,
@@ -169,6 +168,7 @@ class FirDeserializationContext(
                     nameResolver,
                     typeTable,
                     annotationDeserializer,
+                    flexibleTypeFactory,
                     typeParameterProtos,
                     null,
                     containingDeclarationSymbol
