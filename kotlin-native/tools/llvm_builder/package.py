@@ -126,6 +126,12 @@ def construct_cmake_flags(
             cxx_compiler = f'{bootstrap_llvm_path}/bin/clang-cl.exe'.replace('\\', '/')
             linker = f'{bootstrap_llvm_path}/bin/lld-link.exe'.replace('\\', '/')
             ar = f'{bootstrap_llvm_path}/bin/llvm-lib.exe'.replace('\\', '/')
+
+            test_paths = [c_compiler, cxx_compiler, linker, ar]
+            for p in test_paths:
+                is_file = os.path.isfile(p)
+                print(f"{p} is file = {is_file}")
+
         elif host_is_linux():
             c_compiler = f'{bootstrap_llvm_path}/bin/clang'
             cxx_compiler = f'{bootstrap_llvm_path}/bin/clang++'
