@@ -564,13 +564,21 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("mapping", StandardTypes.map.withArgs(nameType, expression))
         }
 
-        augmentedArraySetCall.configure {
+        indexedAccessAugmentedAssignment.configure {
             +field("lhsGetCall", functionCall)
             +field("rhs", expression)
             +field("operation", operationType)
             // Used for resolution errors reporting in case
             +field("calleeReference", reference, withReplace = true)
             +field("arrayAccessSource", sourceElementType, nullable = true)
+
+            element.kDoc = """
+                    Represents an augmented assignment with an indexed access as the receiver (e.g., `arr[i] += 1`)
+                    **before** it gets resolved.
+                    
+                    After resolution, the call will be desugared into regular function calls,
+                    either of the form `arr.set(i, arr.get(i).plus(1))` or `arr.get(i).plusAssign(1)`.
+                """.trimIndent()
         }
 
         classReferenceExpression.configure {

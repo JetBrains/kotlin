@@ -1064,14 +1064,14 @@ class FirRenderer(
             variableAssignment.rValue.accept(visitor)
         }
 
-        override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) {
-            annotationRenderer?.render(augmentedArraySetCall)
+        override fun visitIndexedAccessAugmentedAssignment(indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment) {
+            annotationRenderer?.render(indexedAccessAugmentedAssignment)
             print("ArraySet:[")
-            augmentedArraySetCall.lhsGetCall.accept(this)
+            indexedAccessAugmentedAssignment.lhsGetCall.accept(this)
             print(" ")
-            print(augmentedArraySetCall.operation.operator)
+            print(indexedAccessAugmentedAssignment.operation.operator)
             print(" ")
-            augmentedArraySetCall.rhs.accept(this)
+            indexedAccessAugmentedAssignment.rhs.accept(this)
             print("]")
         }
 

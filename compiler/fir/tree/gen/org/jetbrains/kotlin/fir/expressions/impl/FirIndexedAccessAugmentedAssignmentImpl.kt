@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-internal class FirAugmentedArraySetCallImpl(
+internal class FirIndexedAccessAugmentedAssignmentImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var lhsGetCall: FirFunctionCall,
@@ -27,7 +27,7 @@ internal class FirAugmentedArraySetCallImpl(
     override val operation: FirOperation,
     override var calleeReference: FirReference,
     override val arrayAccessSource: KtSourceElement?,
-) : FirAugmentedArraySetCall() {
+) : FirIndexedAccessAugmentedAssignment() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -36,7 +36,7 @@ internal class FirAugmentedArraySetCallImpl(
         calleeReference.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirIndexedAccessAugmentedAssignmentImpl {
         transformAnnotations(transformer, data)
         lhsGetCall = lhsGetCall.transform(transformer, data)
         rhs = rhs.transform(transformer, data)
@@ -44,7 +44,7 @@ internal class FirAugmentedArraySetCallImpl(
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIndexedAccessAugmentedAssignmentImpl {
         annotations.transformInplace(transformer, data)
         return this
     }

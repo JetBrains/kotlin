@@ -723,12 +723,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(arrayLiteral)
     }
 
-    final override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: Nothing?) {
-        visitAugmentedArraySetCall(augmentedArraySetCall)
+    final override fun visitIndexedAccessAugmentedAssignment(indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment, data: Nothing?) {
+        visitIndexedAccessAugmentedAssignment(indexedAccessAugmentedAssignment)
     }
 
-    open fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) {
-        visitElement(augmentedArraySetCall)
+    open fun visitIndexedAccessAugmentedAssignment(indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment) {
+        visitElement(indexedAccessAugmentedAssignment)
     }
 
     final override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: Nothing?) {

@@ -149,11 +149,11 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             return delegatedConstructorCall
         }
 
-        override fun transformAugmentedArraySetCall(
-            augmentedArraySetCall: FirAugmentedArraySetCall,
+        override fun transformIndexedAccessAugmentedAssignment(
+            indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment,
             data: ResolutionMode,
         ): FirStatement {
-            return augmentedArraySetCall
+            return indexedAccessAugmentedAssignment
         }
 
         override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement {

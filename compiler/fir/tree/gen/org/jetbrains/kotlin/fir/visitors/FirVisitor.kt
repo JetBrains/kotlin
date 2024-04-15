@@ -284,8 +284,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: D): R =
         visitElement(arrayLiteral, data)
 
-    open fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: D): R =
-        visitElement(augmentedArraySetCall, data)
+    open fun visitIndexedAccessAugmentedAssignment(indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment, data: D): R =
+        visitElement(indexedAccessAugmentedAssignment, data)
 
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R =
         visitElement(classReferenceExpression, data)

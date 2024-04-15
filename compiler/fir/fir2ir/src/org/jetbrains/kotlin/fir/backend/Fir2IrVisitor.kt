@@ -1675,14 +1675,14 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun visitAugmentedArraySetCall(
-        augmentedArraySetCall: FirAugmentedArraySetCall,
+    override fun visitIndexedAccessAugmentedAssignment(
+        indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment,
         data: Any?
-    ): IrElement = whileAnalysing(session, augmentedArraySetCall) {
-        return augmentedArraySetCall.convertWithOffsets { startOffset, endOffset ->
+    ): IrElement = whileAnalysing(session, indexedAccessAugmentedAssignment) {
+        return indexedAccessAugmentedAssignment.convertWithOffsets { startOffset, endOffset ->
             IrErrorCallExpressionImpl(
                 startOffset, endOffset, irBuiltIns.unitType,
-                "FirArraySetCall (resolve isn't supported yet)"
+                "FirIndexedAccessAugmentedAssignment (resolve isn't supported yet)"
             )
         }
     }

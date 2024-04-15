@@ -16,9 +16,15 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.augmentedArraySetCall]
+ * Represents an augmented assignment with an indexed access as the receiver (e.g., `arr[i] += 1`)
+ * **before** it gets resolved.
+ *
+ * After resolution, the call will be desugared into regular function calls,
+ * either of the form `arr.set(i, arr.get(i).plus(1))` or `arr.get(i).plusAssign(1)`.
+ *
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.indexedAccessAugmentedAssignment]
  */
-abstract class FirAugmentedArraySetCall : FirPureAbstractElement(), FirStatement {
+abstract class FirIndexedAccessAugmentedAssignment : FirPureAbstractElement(), FirStatement {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract val lhsGetCall: FirFunctionCall
@@ -28,15 +34,15 @@ abstract class FirAugmentedArraySetCall : FirPureAbstractElement(), FirStatement
     abstract val arrayAccessSource: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitAugmentedArraySetCall(this, data)
+        visitor.visitIndexedAccessAugmentedAssignment(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformAugmentedArraySetCall(this, data) as E
+        transformer.transformIndexedAccessAugmentedAssignment(this, data) as E
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirReference)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIndexedAccessAugmentedAssignment
 }

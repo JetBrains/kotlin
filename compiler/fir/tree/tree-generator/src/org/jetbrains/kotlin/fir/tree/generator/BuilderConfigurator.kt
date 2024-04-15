@@ -151,7 +151,7 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             parents += callBuilder
         }
 
-        builder(augmentedArraySetCall) {
+        builder(indexedAccessAugmentedAssignment) {
             default("calleeReference", "FirStubReference")
             additionalImports(stubReferenceType)
         }

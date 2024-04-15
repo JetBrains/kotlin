@@ -360,13 +360,13 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformDelegatedConstructorCall,
     )
 
-    override fun transformAugmentedArraySetCall(
-        augmentedArraySetCall: FirAugmentedArraySetCall,
+    override fun transformIndexedAccessAugmentedAssignment(
+        indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment,
         data: ResolutionMode,
     ): FirStatement = expressionTransformation(
-        augmentedArraySetCall,
+        indexedAccessAugmentedAssignment,
         data,
-        FirExpressionsResolveTransformer::transformAugmentedArraySetCall,
+        FirExpressionsResolveTransformer::transformIndexedAccessAugmentedAssignment,
     )
 
     override fun transformSafeCallExpression(

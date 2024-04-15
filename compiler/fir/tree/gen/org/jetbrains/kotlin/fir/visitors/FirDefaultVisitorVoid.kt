@@ -92,7 +92,7 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression) = visitExpression(incrementDecrementExpression)
 
-    override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) = visitStatement(augmentedArraySetCall)
+    override fun visitIndexedAccessAugmentedAssignment(indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment) = visitStatement(indexedAccessAugmentedAssignment)
 
     override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression) = visitExpression(classReferenceExpression)
 
