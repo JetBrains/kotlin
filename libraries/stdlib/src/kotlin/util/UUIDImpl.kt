@@ -7,9 +7,6 @@
 
 package kotlin
 
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
-
 internal expect fun secureRandomUUID(): UUID
 
 private fun ByteArray.toLong(startIndex: Int): Long {
@@ -23,62 +20,53 @@ private fun ByteArray.toLong(startIndex: Int): Long {
             (this[startIndex + 7].toLong() and 0xFF)
 }
 
-internal inline fun uuidFromBytes(bytes: ByteArray, block: (Long, Long) -> Unit) {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-    }
+internal fun uuidFromBytes(bytes: ByteArray): UUID {
     require(bytes.size == 16) { "Expected exactly 16 bytes" }
-    block(bytes.toLong(startIndex = 0), bytes.toLong(startIndex = 8))
+    return UUID(bytes.toLong(startIndex = 0), bytes.toLong(startIndex = 8))
 }
 
-internal fun uuidToString(uuid: UUID, upperCase: Boolean): String {
-    val format = if (upperCase) HexFormat.UpperCase else HexFormat.Default
+internal fun uuidToString(uuid: UUID): String = with(uuid) {
+    val part1 = (msb shr 32).toInt().toHexString()
+    val part2 = (msb shr 16).toShort().toHexString()
+    val part3 = msb.toShort().toHexString()
+    val part4 = (lsb shr 48).toShort().toHexString()
+    val part5a = (lsb shr 32).toShort().toHexString()
+    val part5b = lsb.toInt().toHexString()
 
-    with(uuid) {
-        val part1 = (msb shr 32).toInt().toHexString(format)
-        val part2 = (msb shr 16).toShort().toHexString(format)
-        val part3 = msb.toShort().toHexString(format)
-        val part4 = (lsb shr 48).toShort().toHexString(format)
-        val part5a = (lsb shr 32).toShort().toHexString(format)
-        val part5b = lsb.toInt().toHexString(format)
-
-        return "$part1-$part2-$part3-$part4-$part5a$part5b"
-    }
+    "$part1-$part2-$part3-$part4-$part5a$part5b"
 }
 
-internal inline fun uuidFromString(uuidString: String, block: (Long, Long) -> Unit) {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-    }
-    val msb: Long
-    val lsb: Long
-    if (!uuidString.contains('-')) {
-        msb = uuidString.hexToLong(startIndex = 0, endIndex = 16)
-        lsb = uuidString.hexToLong(startIndex = 16, endIndex = 32)
-    } else {
-        val part1 = uuidString.hexToLong(startIndex = 0, endIndex = 8)
-        uuidString.checkHyphenAt(8)
-        val part2 = uuidString.hexToLong(startIndex = 9, endIndex = 13)
-        uuidString.checkHyphenAt(13)
-        val part3 = uuidString.hexToLong(startIndex = 14, endIndex = 18)
-        uuidString.checkHyphenAt(18)
-        val part4 = uuidString.hexToLong(startIndex = 19, endIndex = 23)
-        uuidString.checkHyphenAt(23)
-        val part5 = uuidString.hexToLong(startIndex = 24, endIndex = 36)
+internal fun uuidFromString(uuidString: String): UUID {
+    require(uuidString.length == 36) { "Expected a 36-char string in the standard UUID format." }
 
-        msb = (part1 shl 32) or (part2 shl 16) or part3
-        lsb = (part4 shl 48) or part5
-    }
-    return block(msb, lsb)
+    val part1 = uuidString.hexToLong(startIndex = 0, endIndex = 8)
+    uuidString.checkHyphenAt(8)
+    val part2 = uuidString.hexToLong(startIndex = 9, endIndex = 13)
+    uuidString.checkHyphenAt(13)
+    val part3 = uuidString.hexToLong(startIndex = 14, endIndex = 18)
+    uuidString.checkHyphenAt(18)
+    val part4 = uuidString.hexToLong(startIndex = 19, endIndex = 23)
+    uuidString.checkHyphenAt(23)
+    val part5 = uuidString.hexToLong(startIndex = 24, endIndex = 36)
+
+    val msb = (part1 shl 32) or (part2 shl 16) or part3
+    val lsb = (part4 shl 48) or part5
+    return UUID(msb, lsb)
 }
 
 private fun String.checkHyphenAt(index: Int) {
     require(this[8] == '-') { "Expected '-' (hyphen) at index 8, but was ${this[index]}" }
 }
 
-internal fun uuidToHexString(uuid: UUID, upperCase: Boolean): String {
-    val format = if (upperCase) HexFormat.UpperCase else HexFormat.Default
-    with(uuid) { return msb.toHexString(format) + lsb.toHexString(format) }
+internal fun uuidToHexString(uuid: UUID): String = with(uuid) {
+    msb.toHexString() + lsb.toHexString()
+}
+
+internal fun uuidFromHexString(hexString: String): UUID {
+    require(hexString.length == 32) { "Expected a 32-char hexadecimal string." }
+    val msb = hexString.hexToLong(startIndex = 0, endIndex = 16)
+    val lsb = hexString.hexToLong(startIndex = 16, endIndex = 32)
+    return UUID(msb, lsb)
 }
 
 internal fun uuidVersion(uuid: UUID): Int {
@@ -113,4 +101,3 @@ internal val UUID_BITWISE_ORDER = Comparator<UUID> { a, b ->
     else
         a.lsb.toULong().compareTo(b.lsb.toULong())
 }
-
