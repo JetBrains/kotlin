@@ -1580,50 +1580,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testNativeCompilationShouldNotProduceAnyWarningsForAssociatedCompilations() {
-        with(Project("native-common-dependencies-warning", minLogLevel = LogLevel.INFO)) {
-            setupWorkingDir()
-            build("help") {
-                assertSuccessful()
-                assertNotContains("A compileOnly dependency is used in the Kotlin/Native target '${detectNativeEnabledCompilation()}':")
-            }
-        }
-    }
-
-    @Test
-    fun testNativeCompilationShouldProduceWarningOnCompileOnlyCommonDependency() {
-        with(Project("native-common-dependencies-warning", minLogLevel = LogLevel.INFO)) {
-            setupWorkingDir()
-            gradleBuildScript().modify {
-                it.replaceFirst("//compileOnly:", "")
-            }
-            build("help") {
-                assertSuccessful()
-                assertContains("A compileOnly dependency is used in the Kotlin/Native target '${detectNativeEnabledCompilation()}':")
-            }
-        }
-    }
-
-    @Test
-    fun testNativeCompilationCompileOnlyDependencyWarningCouldBeDisabled() {
-        with(Project("native-common-dependencies-warning", minLogLevel = LogLevel.INFO)) {
-            setupWorkingDir()
-            gradleBuildScript().modify {
-                it.replaceFirst("//compileOnly:", "")
-            }
-            projectDir.resolve("gradle.properties").writeText(
-                """
-                kotlin.native.ignoreIncorrectDependencies = true
-                """.trimIndent()
-            )
-            build("help") {
-                assertSuccessful()
-                assertNotContains("A compileOnly dependency is used in the Kotlin/Native target '${detectNativeEnabledCompilation()}':")
-            }
-        }
-    }
-
-    @Test
     fun testErrorInClasspathMode() {
         val classpathModeOptions = defaultBuildOptions().copy(
             freeCommandLineArgs = listOf("-Dorg.gradle.kotlin.dsl.provider.mode=classpath")
@@ -1736,13 +1692,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
         build("publish") {
             assertSuccessful()
         }
-    }
-
-    private fun detectNativeEnabledCompilation(): String = when {
-        HostManager.hostIsLinux -> "linuxX64"
-        HostManager.hostIsMingw -> "mingwX64"
-        HostManager.hostIsMac -> "macosX64"
-        else -> throw AssertionError("Host ${HostManager.host} is not supported for this test")
     }
 
     companion object {

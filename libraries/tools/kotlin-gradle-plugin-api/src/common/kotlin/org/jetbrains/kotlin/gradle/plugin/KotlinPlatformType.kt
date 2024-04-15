@@ -13,7 +13,7 @@ import java.io.Serializable
 /**
  * @suppress TODO: KT-58858 add documentation
  */
-enum class KotlinPlatformType: Named, Serializable {
+enum class KotlinPlatformType : Named, Serializable {
     common, jvm, js, androidJvm, native, wasm;
 
     override fun toString(): String = name

@@ -62,24 +62,6 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Build with ignoreIncorrectDependencies turned on")
-    @GradleTest
-    fun testIncorrectDependenciesWarning(gradleVersion: GradleVersion) {
-        nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion) {
-            buildGradle.replaceText(
-                "api 'org.jetbrains.kotlin:kotlin-stdlib-common'",
-                "compileOnly 'org.jetbrains.kotlin:kotlin-stdlib-common'"
-            )
-
-            build {
-                assertOutputContains("A compileOnly dependency is used in the Kotlin/Native target")
-            }
-            build("-Pkotlin.native.ignoreIncorrectDependencies=true") {
-                assertOutputDoesNotContain("A compileOnly dependency is used in the Kotlin/Native target")
-            }
-        }
-    }
-
     @DisplayName("Can produce native libraries")
     @GradleTest
     fun testCanProduceNativeLibraries(gradleVersion: GradleVersion) {
