@@ -75,9 +75,9 @@ public class SirAsSwiftSourcesPrinter(
         allNonPackageEnums()
             .sortedWithIfNeeded(Comparators.stableNamedComparator)
             .forEach { it.print() }
-        allTypealiases().forEach {
-            it.print()
-        }
+        allTypealiases()
+            .sortedWithIfNeeded(Comparators.stableNamedComparator)
+            .forEach { it.print() }
         allClasses()
             .sortedWithIfNeeded(Comparators.stableNamedComparator)
             .forEach { it.print() }
