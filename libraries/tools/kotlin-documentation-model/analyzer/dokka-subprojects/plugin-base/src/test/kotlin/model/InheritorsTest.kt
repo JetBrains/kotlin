@@ -512,4 +512,58 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
         }
     }
 
+    @Test
+    fun `DRI of generic inherited members (fake override) should lead to super member`() {
+        inlineModelTest(
+            """
+                |interface A<T> { fun x(): T }
+                |interface B : A<Int> { }
+                """
+        ) {
+            with((this / "inheritors" / "A" / "x").cast<DFunction>()) {
+                dri.classNames equals "A"
+                dri.packageName equals "inheritors"
+            }
+            with((this / "inheritors" / "B" / "x").cast<DFunction>()) {
+                dri.classNames equals "A"
+                dri.packageName equals "inheritors"
+            }
+        }
+    }
+    @Test
+    fun `DRI of inherited members should lead to super member`() {
+        inlineModelTest(
+            """
+                |interface A { fun x() = 0 }
+                |interface B : A { }
+                """
+        ) {
+            with((this / "inheritors" / "A" / "x").cast<DFunction>()) {
+                dri.classNames equals "A"
+                dri.packageName equals "inheritors"
+            }
+            with((this / "inheritors" / "B" / "x").cast<DFunction>()) {
+                dri.classNames equals "A"
+                dri.packageName equals "inheritors"
+            }
+        }
+    }
+    @Test
+    fun `DRI of generic override members should lead to themself`() {
+        inlineModelTest(
+            """
+                |open class A<T> { open fun x(p: T):T  { return p } }
+                |class B : A<Int>() { override fun x(p: Int): Int = 0 }
+                """
+        ) {
+            with((this / "inheritors" / "A" / "x").cast<DFunction>()) {
+                dri.classNames equals "A"
+                dri.packageName equals "inheritors"
+            }
+            with((this / "inheritors" / "B" / "x").cast<DFunction>()) {
+                dri.classNames equals "B"
+                dri.packageName equals "inheritors"
+            }
+        }
+    }
 }
