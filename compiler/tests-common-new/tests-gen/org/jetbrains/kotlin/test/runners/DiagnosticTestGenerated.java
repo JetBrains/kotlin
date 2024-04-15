@@ -23656,6 +23656,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("rawTypesFromSelfTypeWithRawBound.kt")
+        public void testRawTypesFromSelfTypeWithRawBound() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/rawTypesFromSelfTypeWithRawBound.kt");
+        }
+
+        @Test
         @TestMetadata("returnCollection.kt")
         public void testReturnCollection() {
           runTest("compiler/testData/diagnostics/tests/j+k/types/returnCollection.kt");
