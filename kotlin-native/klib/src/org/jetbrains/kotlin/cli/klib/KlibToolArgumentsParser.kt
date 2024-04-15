@@ -73,10 +73,6 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
 
                 where the commands are:
                    info                      General information about the library
-                   install                   [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
-                                               Install the library to the local repository.
-                   remove                    [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
-                                               Remove the library from the local repository.
                    dump-abi                  Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
                                                declaration. Whenever an ABI-incompatible change happens to a declaration, this should
                                                be visible in the corresponding line of the snapshot.

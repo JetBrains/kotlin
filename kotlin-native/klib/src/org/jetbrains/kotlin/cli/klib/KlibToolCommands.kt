@@ -18,16 +18,13 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
-import org.jetbrains.kotlin.library.unpackZippedKonanLibraryTo
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal sealed class KlibToolCommand(
@@ -115,41 +112,6 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 
         if (library is KonanLibrary) {
             output.appendLine("Available targets: ${library.targetList.joinToString()}")
-        }
-    }
-}
-
-internal class LegacyInstall(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
-    override fun execute() {
-        klibRepoDeprecationWarning.logOnceIfNecessary()
-
-        if (!repository.exists) {
-            output.logWarning("Repository does not exist: $repository. Creating...")
-            repository.mkdirs()
-        }
-
-        val libraryTrueName = File(args.libraryNameOrPath).name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT)
-        val library = libraryInCurrentDir(args.libraryNameOrPath)
-
-        val installLibDir = File(repository, libraryTrueName)
-
-        if (installLibDir.exists) installLibDir.deleteRecursively()
-
-        library.libraryFile.unpackZippedKonanLibraryTo(installLibDir)
-    }
-}
-
-internal class LegacyRemove(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
-    override fun execute() {
-        klibRepoDeprecationWarning.logOnceIfNecessary()
-
-        if (!repository.exists) {
-            output.logError("Repository does not exist: $repository")
-            return
-        }
-
-        runCatching {
-            libraryInRepo(repository, args.libraryNameOrPath).libraryFile.deleteRecursively()
         }
     }
 }
