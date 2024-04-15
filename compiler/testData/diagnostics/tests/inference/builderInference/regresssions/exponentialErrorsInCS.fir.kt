@@ -10,9 +10,9 @@ fun <V, Y> V.bar(y: Y) {}
 
 
 fun main() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
         // This call contributes an inference error to the shared CS
-        <!UNRESOLVED_REFERENCE!>MyUnresolvedClass<!>().<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(this)
+        <!UNRESOLVED_REFERENCE!>MyUnresolvedClass<!>().<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(this)
 
         // A lot of calls using shared CS
         // Previoisly, for each of them we copied all the previous errors and adding them to the shared CS
