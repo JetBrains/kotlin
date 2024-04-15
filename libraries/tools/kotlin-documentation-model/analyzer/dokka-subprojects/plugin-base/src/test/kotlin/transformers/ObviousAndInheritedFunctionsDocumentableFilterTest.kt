@@ -275,7 +275,8 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyDescriptors("#3196")
+    // when running with K2 - kotlin package is skipped
+    @OnlyDescriptors("#3354")
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration"])
     fun `should not suppress toString, equals and hashcode of kotlin Enum`(suppressingConfiguration: DokkaConfigurationImpl) {

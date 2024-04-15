@@ -834,18 +834,33 @@ internal class DokkaSymbolVisitor(
         callableSymbol: KtCallableSymbol,
         wasOverriddenBy: DRI? = null
     ): DRIWithOverridden {
-        if (callableSymbol is KtPropertySymbol && callableSymbol.isOverride
-            || callableSymbol is KtFunctionSymbol && callableSymbol.isOverride
-        ) {
+        /**
+         * `open class A { fun x() = 0 }` is given
+         *
+         * There are two cases:
+         * 1. The callable `B.x` [DRI] should lead to itself - `B.x`.
+         *    Dokka will create a separate page for the declaration.
+         *    This case should be actual for cases when a callable is explicitly declared in a class.
+         *    E.g. for override - `class B : A() { override fun x() = 1 }`
+         * 2. The `B.x` [DRI] should be lead to the parent `A.x`
+         *    For the case `class B : A() {}` the compiler returns the `A.x` symbol itself.
+         *    But in some cases, it creates and returns the `B.x` symbol:
+         *      - fake overrides
+         *        K2 distinguishes two kinds of fake overrides: [KtSymbolOrigin.INTERSECTION_OVERRIDE] and [KtSymbolOrigin.SUBSTITUTION_OVERRIDE]
+         *      - synthetic members, e.g. `hashCode`/`equals` for data classes
+         *      - delegating members
+         */
+        val isDeclaration = callableSymbol.origin == KtSymbolOrigin.SOURCE || callableSymbol.origin == KtSymbolOrigin.LIBRARY
+        if (isDeclaration) {
             return DRIWithOverridden(getDRIFromSymbol(callableSymbol), wasOverriddenBy)
-        }
 
-        val overriddenSymbols = callableSymbol.getAllOverriddenSymbols()
-        // For already
-        return if (overriddenSymbols.isEmpty()) {
-            DRIWithOverridden(getDRIFromSymbol(callableSymbol), wasOverriddenBy)
-        } else {
-            createDRIWithOverridden(overriddenSymbols.first())
+        } else { // fake, synthetic, delegating
+            val overriddenSymbols = callableSymbol.getAllOverriddenSymbols()
+            return if (overriddenSymbols.isEmpty()) {
+                DRIWithOverridden(getDRIFromSymbol(callableSymbol), wasOverriddenBy)
+            } else {
+                createDRIWithOverridden(overriddenSymbols.first())
+            }
         }
     }
 
@@ -858,7 +873,7 @@ internal class DokkaSymbolVisitor(
 
     private fun KtAnalysisSession.isObvious(functionSymbol: KtFunctionSymbol, inheritedFrom: DRI?): Boolean {
         return functionSymbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED && !hasGeneratedKDocDocumentation(functionSymbol) ||
-                !functionSymbol.isOverride && inheritedFrom?.isObvious() == true
+                inheritedFrom?.isObvious() == true
     }
 
     private fun DRI.isObvious(): Boolean = when (packageName) {

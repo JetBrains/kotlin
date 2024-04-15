@@ -328,7 +328,6 @@ class KotlinEnumsTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlyDescriptors("K2 has `compareTo`, that should be suppressed, due to #3196")
     fun `enum should have functions on page`() {
         val configuration = dokkaConfiguration {
             sourceSets {
