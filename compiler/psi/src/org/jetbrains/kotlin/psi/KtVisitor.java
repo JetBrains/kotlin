@@ -260,6 +260,7 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
+    public R visitCompoundExpression(@NotNull KtCompoundExpression expression, D data) { return visitExpression(expression, data); }
     public R visitCollectionLiteralExpression(@NotNull KtCollectionLiteralExpression expression, D data) {
         return visitExpression(expression, data);
     }

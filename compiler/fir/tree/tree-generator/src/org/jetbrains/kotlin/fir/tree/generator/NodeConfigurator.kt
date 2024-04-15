@@ -831,6 +831,19 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             needTransformOtherChildren()
         }
 
+        compoundExpression.configure{
+            +fieldList("properties", variable)
+            +field("condition", expression).withTransform()
+            +fieldList("branches", compoundExpressionBranch).withTransform()
+            needTransformOtherChildren()
+        }
+
+        compoundExpressionBranch.configure{
+            +field("condition", expression).withTransform()
+            +field("result", block).withTransform()
+            needTransformOtherChildren()
+        }
+
         typeProjectionWithVariance.configure {
             +field(typeRef)
             +field(varianceType)

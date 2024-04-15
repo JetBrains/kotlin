@@ -715,6 +715,22 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElvisExpression(elvisExpression, data)
     }
 
+    open fun transformCompoundExpression(compoundExpression: FirCompoundExpression, data: D): FirStatement {
+        return transformElement(compoundExpression, data)
+    }
+
+    final override fun visitCompoundExpression(compoundExpression: FirCompoundExpression, data: D): FirStatement {
+        return transformCompoundExpression(compoundExpression, data)
+    }
+
+    open fun transformCompoundExpressionBranch(compoundExpressionBranch: FirCompoundExpressionBranch, data: D): FirCompoundExpressionBranch {
+        return transformElement(compoundExpressionBranch, data)
+    }
+
+    final override fun visitCompoundExpressionBranch(compoundExpressionBranch: FirCompoundExpressionBranch, data: D): FirCompoundExpressionBranch {
+        return transformCompoundExpressionBranch(compoundExpressionBranch, data)
+    }
+
     open fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: D): FirStatement {
         return transformElement(arrayLiteral, data)
     }

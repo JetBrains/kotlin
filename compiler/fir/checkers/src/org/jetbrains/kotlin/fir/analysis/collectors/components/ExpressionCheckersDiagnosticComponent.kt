@@ -39,6 +39,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitExpression(expression: FirExpression, data: CheckerContext) {
+        println("checker: $expression")
         checkers.allBasicExpressionCheckers.check(expression, data)
     }
 

@@ -302,6 +302,10 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             default("calleeReference", "FirStubReference")
             additionalImports(stubReferenceType)
         }
+        builder(compoundExpression){
+            default("calleeReference", "FirStubReference")
+            additionalImports(stubReferenceType)
+        }
 
         builder(resolvedTypeRef) {
             defaultNull("delegatedTypeRef")

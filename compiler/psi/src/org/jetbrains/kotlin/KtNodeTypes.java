@@ -118,6 +118,7 @@ public interface KtNodeTypes {
     IElementType DO_WHILE                  = new KtNodeType("DO_WHILE", KtDoWhileExpression.class);
     IElementType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode.class);
     IElementType BODY                      = new KtNodeType("BODY", KtContainerNodeForControlStructureBody.class);
+    IElementType COMPOUND_EXPRESSION       = new KtNodeType("COMPOUND_EXPRESSION", KtCompoundExpression.class);
 
     IElementType BLOCK                     = new BlockExpressionElementType();
 

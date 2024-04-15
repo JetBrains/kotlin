@@ -109,7 +109,8 @@ class LightTreeRawFirDeclarationBuilder(
         modifierList.forEach {
             firDeclarationList += buildErrorTopLevelDeclarationForDanglingModifierList(it)
         }
-
+        println("fir file\n$file")
+        println("firDeclarationList\n$firDeclarationList")
         return buildFile {
             symbol = fileSymbol
             source = file.toFirSourceElement()
@@ -129,6 +130,7 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlockExpression
      */
     fun convertBlockExpression(block: LighterASTNode): FirBlock {
+        println("convertBlockExpression")
         return convertBlockExpressionWithoutBuilding(block).build()
     }
 
@@ -137,12 +139,23 @@ class LightTreeRawFirDeclarationBuilder(
             @Suppress("RemoveRedundantQualifierName")
             when (node.tokenType) {
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
-                FUN -> container += convertFunctionDeclaration(node)
-                KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
+                FUN -> {
+                    println("FUN")
+                    container += convertFunctionDeclaration(node)
+                }
+                KtNodeTypes.PROPERTY -> {
+                    println("PROPERTY")
+                    container += convertPropertyDeclaration(node) as FirStatement
+
+                }
                 DESTRUCTURING_DECLARATION -> container += convertDestructingDeclaration(node).toFirDestructingDeclaration(baseModuleData)
                 TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
                 CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
-                else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
+                else ->{
+                    println(node)
+                    println(node.tokenType)
+                    if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
+                }
             }
         }
         return FirBlockBuilder().apply {

@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.SyntaxTreeBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -1155,7 +1154,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     public void parseFunctionLiteral(boolean preferBlock, boolean collapse) {
         assert _at(LBRACE);
-
+        System.out.println("parseFunctionLiteral");
         PsiBuilder.Marker literalExpression = mark();
 
         PsiBuilder.Marker literal = mark();
@@ -1166,6 +1165,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         boolean paramsFound = false;
 
         IElementType token = tt();
+        System.out.println(token == ARROW);
         if (token == ARROW) {
             //   { -> ...}
             mark().done(VALUE_PARAMETER_LIST);
@@ -1309,12 +1309,14 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
          *   : SEMI* statement{SEMI+} SEMI*
          */
     public void parseStatements(boolean isScriptTopLevel) {
+        System.out.println("parseStatements1");
         while (at(SEMICOLON)) advance(); // SEMICOLON
         while (!eof() && !at(RBRACE)) {
             if (!atSet(STATEMENT_FIRST)) {
                 errorAndAdvance("Expecting an element");
             }
             if (atSet(STATEMENT_FIRST)) {
+                System.out.println("parseIF???");
                 parseStatement(isScriptTopLevel);
             }
             if (at(SEMICOLON)) {
@@ -1334,6 +1336,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 }
             }
         }
+        System.out.println("parseStatements2");
     }
 
     /*
@@ -1624,13 +1627,15 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     private void parseIf() {
+
         assert _at(IF_KEYWORD);
         System.out.println("parse if");
         PsiBuilder.Marker marker = mark();
 
+
         advance(); //IF_KEYWORD
 
-        modifiedParseCondition();
+        parseCompoundExpression();
 
         PsiBuilder.Marker thenBranch = mark();
         if (!at(ELSE_KEYWORD) && !at(SEMICOLON)) {
@@ -1655,17 +1660,25 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         marker.done(IF);
     }
 
-    private void modifiedParseCondition(){
+    private void parseCompoundExpression(){
+        PsiBuilder.Marker compoundExpression = mark();
         myBuilder.disableNewlines();
         System.out.println("modified_parse_condition");
         if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {
-            PsiBuilder.Marker atIfStart = mark();
-            if(at(VAL_KEYWORD)){
-                IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.DeclarationParsingMode.LOCAL);
-                atIfStart.done(declType);
-                atIfStart.setCustomEdgeTokenBinders(PrecedingDocCommentsBinder.INSTANCE, TrailingCommentsBinder.INSTANCE);
-            }else{
-                atIfStart.drop();
+            while(true) {
+                PsiBuilder.Marker atIfStart = mark();
+                if (at(VAL_KEYWORD)) {
+                    IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.DeclarationParsingMode.LOCAL);
+                    atIfStart.done(declType);
+                    atIfStart.setCustomEdgeTokenBinders(PrecedingDocCommentsBinder.INSTANCE, TrailingCommentsBinder.INSTANCE);
+                    if (at(SEMICOLON)) {
+                        advance();
+                    }
+                }
+                else {
+                    atIfStart.drop();
+                    break;
+                }
             }
             if (at(SEMICOLON)) {
                 advance(); // SEMICOLON
@@ -1676,7 +1689,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             condition.done(CONDITION);
             expect(RPAR, "Expecting ')");
         }
-
+        compoundExpression.done(COMPOUND_EXPRESSION);
         myBuilder.restoreNewlinesState();
 
     }

@@ -715,6 +715,22 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(elvisExpression)
     }
 
+    final override fun visitCompoundExpression(compoundExpression: FirCompoundExpression, data: Nothing?) {
+        visitCompoundExpression(compoundExpression)
+    }
+
+    open fun visitCompoundExpression(compoundExpression: FirCompoundExpression) {
+        visitElement(compoundExpression)
+    }
+
+    final override fun visitCompoundExpressionBranch(compoundExpressionBranch: FirCompoundExpressionBranch, data: Nothing?) {
+        visitCompoundExpressionBranch(compoundExpressionBranch)
+    }
+
+    open fun visitCompoundExpressionBranch(compoundExpressionBranch: FirCompoundExpressionBranch) {
+        visitElement(compoundExpressionBranch)
+    }
+
     final override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?) {
         visitArrayLiteral(arrayLiteral)
     }
