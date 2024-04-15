@@ -14,7 +14,6 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import utils.text
 import kotlin.test.*
-import utils.OnlyDescriptors
 
 class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
@@ -984,7 +983,6 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
         }
     }
 
-    @OnlyDescriptors("Fix kdoc link in valueOf https://github.com/Kotlin/dokka/issues/3335") // TODO
     @Test
     fun `should have documentation for synthetic Enum valueOf functions`() {
         testInline(
