@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.name.ClassId
@@ -17,14 +15,14 @@ import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class SymbolLightLazyAnnotation(
     val annotationsProvider: AnnotationsProvider,
-    private val annotationApplication: KtAnnotationApplication,
+    private val annotationApplication: AnnotationApplication,
     owner: PsiElement,
 ) : SymbolLightAbstractAnnotation(owner) {
     init {
-        requireNotNull(annotationApplication.classId)
+        requireNotNull(annotationApplication.annotation.classId)
     }
 
-    private val classId: ClassId get() = annotationApplication.classId!!
+    private val classId: ClassId get() = annotationApplication.annotation.classId!!
 
     private val fqName: FqName = classId.asSingleFqName()
 
@@ -32,20 +30,25 @@ internal class SymbolLightLazyAnnotation(
         referenceName = classId.shortClassName.asString(),
     )
 
-    val annotationApplicationWithArgumentsInfo: Lazy<KtAnnotationApplicationWithArgumentsInfo> =
-        (annotationApplication as? KtAnnotationApplicationWithArgumentsInfo)?.let(::lazyOf) ?: lazyPub {
+    val annotationApplicationWithArgumentsInfo: Lazy<AnnotationApplication> =
+        annotationApplication.takeUnless { it.isDumb }?.let(::lazyOf) ?: lazyPub {
             val applications = annotationsProvider[classId]
             applications.find { it.index == annotationApplication.index }
                 ?: error("expected application: ${annotationApplication}, actual indices: ${applications.map { it.index }}")
         }
 
-    override val kotlinOrigin: KtCallElement? get() = annotationApplicationWithArgumentsInfo.value.psi
+    override val kotlinOrigin: KtCallElement?
+        get() {
+            val annotationApplication = annotationApplicationWithArgumentsInfo.value
+            return annotationApplication.annotation.sourcePsi
+        }
 
     override fun getQualifiedName(): String = fqName.asString()
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
         symbolLightAnnotationParameterList {
-            annotationApplicationWithArgumentsInfo.value.normalizedArguments()
+            val annotationApplication = annotationApplicationWithArgumentsInfo.value
+            annotationApplication.annotation.normalizedArguments()
         }
     }
 
@@ -54,10 +57,10 @@ internal class SymbolLightLazyAnnotation(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightLazyAnnotation &&
             other.fqName == fqName &&
-            other.annotationApplication.classId == annotationApplication.classId &&
+            other.annotationApplication.annotation.classId == annotationApplication.annotation.classId &&
             other.annotationApplication.index == annotationApplication.index &&
             other.annotationApplication.useSiteTarget == annotationApplication.useSiteTarget &&
-            other.annotationApplication.isCallWithArguments == annotationApplication.isCallWithArguments &&
+            other.annotationApplication.hasArguments == annotationApplication.hasArguments &&
             other.annotationsProvider == annotationsProvider &&
             other.parent == parent
 

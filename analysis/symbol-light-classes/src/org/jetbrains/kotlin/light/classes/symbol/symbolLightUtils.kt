@@ -181,22 +181,24 @@ private fun escapeString(s: String): String = buildString {
     }
 }
 
-internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiAnnotationMemberValue? = when (this) {
-    is KtArrayAnnotationValue ->
+internal fun AnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiAnnotationMemberValue? = when (this) {
+    is AnnotationValue.Array -> {
         SymbolPsiArrayInitializerMemberValue(sourcePsi, parent) { arrayLiteralParent ->
             values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
         }
+    }
 
-    is KtAnnotationApplicationValue -> {
+    is AnnotationValue.Annotation -> {
         SymbolLightSimpleAnnotation(
-            fqName = annotationValue.classId?.asFqNameString(),
+            fqName = classId?.asFqNameString(),
             parent = parent,
-            arguments = annotationValue.normalizedArguments(),
-            kotlinOrigin = annotationValue.psi,
+            arguments = normalizedArguments(),
+            kotlinOrigin = sourcePsi,
         )
     }
-    is KtConstantAnnotationValue -> {
-        constantValue.createPsiExpression(parent)?.let {
+
+    is AnnotationValue.Constant -> {
+        constant.createPsiExpression(parent)?.let {
             when (it) {
                 is PsiLiteralExpression -> SymbolPsiLiteral(sourcePsi, parent, it)
                 else -> SymbolPsiExpression(sourcePsi, parent, it)
@@ -204,15 +206,17 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
         }
     }
 
-    is KtEnumEntryAnnotationValue -> asPsiReferenceExpression(parent)
-    is KtKClassAnnotationValue -> toAnnotationMemberValue(parent)
-    KtUnsupportedAnnotationValue -> null
+    is AnnotationValue.EnumValue -> asPsiReferenceExpression(parent)
+
+    is AnnotationValue.KClass -> toAnnotationMemberValue(parent)
+
+    is AnnotationValue.Unsupported -> null
 }
 
-internal fun KtAnnotationApplicationWithArgumentsInfo.normalizedArguments(): List<KtNamedAnnotationValue> {
+internal fun AnnotationValue.Annotation.normalizedArguments(): List<AnnotationArgument> {
     val args = arguments
     val ctorSymbolPointer = constructorSymbolPointer ?: return args
-    val element = psi ?: return args // May work incorrectly. See KT-63568
+    val element = sourcePsi ?: return args // May work incorrectly. See KT-63568
 
     return analyzeForLightClasses(element) {
         val constructorSymbol = ctorSymbolPointer.restoreSymbolOrThrowIfDisposed()
@@ -220,12 +224,12 @@ internal fun KtAnnotationApplicationWithArgumentsInfo.normalizedArguments(): Lis
         val missingVarargParameterName =
             params.singleOrNull { it.isVararg && !it.hasDefaultValue }?.name?.takeIf { name -> args.none { it.name == name } }
         if (missingVarargParameterName == null) args
-        else args + KtNamedAnnotationValue(missingVarargParameterName, KtArrayAnnotationValue(emptyList(), null))
+        else args + AnnotationArgument(missingVarargParameterName, AnnotationValue.Array(emptyList(), null))
     }
 }
 
 
-private fun KtEnumEntryAnnotationValue.asPsiReferenceExpression(parent: PsiElement): SymbolPsiReference? {
+private fun AnnotationValue.EnumValue.asPsiReferenceExpression(parent: PsiElement): SymbolPsiReference? {
     val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
     val psiReference = parent.project.withElementFactorySafe {
         createExpressionFromText(fqName, parent) as? PsiReferenceExpression
@@ -234,12 +238,8 @@ private fun KtEnumEntryAnnotationValue.asPsiReferenceExpression(parent: PsiEleme
     return SymbolPsiReference(sourcePsi, parent, psiReference)
 }
 
-private fun KtKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): SymbolPsiClassObjectAccessExpression? {
-    val typeString = when (this) {
-        is KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue -> classId.asSingleFqName().asString()
-        is KtKClassAnnotationValue.KtLocalKClassAnnotationValue -> null
-        is KtKClassAnnotationValue.KtErrorClassAnnotationValue -> unresolvedQualifierName
-    } ?: return null
+private fun AnnotationValue.KClass.toAnnotationMemberValue(parent: PsiElement): SymbolPsiClassObjectAccessExpression? {
+    val typeString = classId?.asSingleFqName()?.asString() ?: return null
 
     val psiType = psiType(
         kotlinFqName = typeString,

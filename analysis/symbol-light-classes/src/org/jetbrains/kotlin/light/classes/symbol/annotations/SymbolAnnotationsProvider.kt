@@ -22,14 +22,15 @@ internal class SymbolAnnotationsProvider<T : KtAnnotatedSymbol>(
     private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
-    override fun annotationInfos(): List<KtAnnotationApplicationInfo> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotationInfos.filter {
-            annotationUseSiteTargetFilter.isAllowed(it.useSiteTarget)
-        }
+    override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
+        annotatedSymbol.annotationInfos
+            .filter { annotationUseSiteTargetFilter.isAllowed(it.useSiteTarget) }
+            .map { it.toLightClassAnnotationApplication() }
     }
 
-    override fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo> = withAnnotatedSymbol { annotatedSymbol ->
+    override fun get(classId: ClassId): Collection<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
         annotatedSymbol.annotationsByClassId(classId, annotationUseSiteTargetFilter)
+            .map { it.toLightClassAnnotationApplication() }
     }
 
     override fun contains(classId: ClassId): Boolean = withAnnotatedSymbol { annotatedSymbol ->

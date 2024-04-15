@@ -26,7 +26,7 @@ internal class GranularAnnotationsBox(
         cachedAnnotations?.let { return it }
 
         val annotations = annotationsProvider.annotationInfos().mapNotNullTo(SmartList<PsiAnnotation>()) { applicationInfo ->
-            applicationInfo.classId?.let { _ ->
+            applicationInfo.annotation.classId?.let { _ ->
                 SymbolLightLazyAnnotation(annotationsProvider, applicationInfo, owner)
             }
         }
