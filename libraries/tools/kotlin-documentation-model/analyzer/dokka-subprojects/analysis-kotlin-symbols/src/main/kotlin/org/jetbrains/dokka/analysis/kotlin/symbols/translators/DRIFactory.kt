@@ -59,7 +59,7 @@ internal fun KtAnalysisSession.getDRIFromConstructor(symbol: KtConstructorSymbol
     (symbol.containingClassIdIfNonLocal
         ?: throw IllegalStateException("Can not get class Id due to it is local")).createDRI().copy(
         callable = Callable(
-            name = symbol.containingClassIdIfNonLocal?.relativeClassName?.asString() ?: "",
+            name = symbol.containingClassIdIfNonLocal?.shortClassName?.asString() ?: "",
             params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType) })
     )
 
