@@ -367,8 +367,12 @@ internal class SymbolLightAccessorMethod private constructor(
 
         withPropertySymbol { propertySymbol ->
             when (val initializer = propertySymbol.initializer) {
-                is KtConstantInitializerValue -> initializer.constant.createPsiExpression(this@SymbolLightAccessorMethod)
-                is KtConstantValueForAnnotation -> initializer.annotationValue.toAnnotationMemberValue(this@SymbolLightAccessorMethod)
+                is KtConstantInitializerValue -> {
+                    initializer.constant.createPsiExpression(this@SymbolLightAccessorMethod)
+                }
+                is KtConstantValueForAnnotation -> {
+                    initializer.annotationValue.toLightClassAnnotationValue().toAnnotationMemberValue(this@SymbolLightAccessorMethod)
+                }
                 is KtNonConstantInitializerValue -> null
                 null -> null
             }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.name.ClassId
 
@@ -23,8 +22,8 @@ internal sealed interface AnnotationsProvider {
     /**
      * @return a list of [KtAnnotationApplicationInfo] applicable for this provider
      */
-    fun annotationInfos(): List<KtAnnotationApplicationInfo>
-    operator fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo>
+    fun annotationInfos(): List<AnnotationApplication>
+    operator fun get(classId: ClassId): Collection<AnnotationApplication>
     operator fun contains(classId: ClassId): Boolean
 
     /**

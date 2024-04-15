@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class SymbolLightSimpleAnnotation(
     private val fqName: String?,
     parent: PsiElement,
-    private val arguments: List<KtNamedAnnotationValue> = listOf(),
+    private val arguments: List<AnnotationArgument> = listOf(),
     override val kotlinOrigin: KtCallElement? = null,
 ) : SymbolLightAbstractAnnotation(parent) {
     override fun createReferenceInformationProvider(): ReferenceInformationProvider = ReferenceInformationHolder(

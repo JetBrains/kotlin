@@ -180,12 +180,12 @@ fun annotateByKtType(
             else -> type
         }
 
-        val explicitTypeAnnotations = unwrappedType.annotations.map { annoApp ->
+        val explicitTypeAnnotations = unwrappedType.annotations.map { annotationApplication ->
             SymbolLightSimpleAnnotation(
-                annoApp.classId?.asFqNameString(),
+                annotationApplication.classId?.asFqNameString(),
                 annotationParent,
-                annoApp.arguments,
-                annoApp.psi,
+                annotationApplication.arguments.map { it.toLightClassAnnotationArgument() },
+                annotationApplication.psi,
             )
         }
 
