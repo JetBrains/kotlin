@@ -43,4 +43,10 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
   public void testStructuralCast() {
     runTest("testData/diagnostics/structuralCast.kt");
   }
+
+  @Test
+  @TestMetadata("toDataFrame_java.kt")
+  public void testToDataFrame_java() {
+    runTest("testData/diagnostics/toDataFrame_java.kt");
+  }
 }

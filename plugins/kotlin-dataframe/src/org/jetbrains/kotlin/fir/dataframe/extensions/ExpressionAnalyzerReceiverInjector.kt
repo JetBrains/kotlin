@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.fir.dataframe.extensions
 
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
+import org.jetbrains.kotlin.fir.dataframe.api.toDataFrame
 import org.jetbrains.kotlin.fir.dataframe.interpret
-import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
+import org.jetbrains.kotlin.fir.dataframe.interpreterName
+import org.jetbrains.kotlin.fir.dataframe.load
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
@@ -20,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 
 fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: InterpretationErrorReporter): CallResult? {
@@ -41,20 +46,38 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
         return null
     }
 
-    val processor = call.loadInterpreter(session) ?: return null
-
-    val dataFrameSchema = interpret(call, processor, reporter = reporter)
-        .let {
-            val value = it?.value
-            if (value !is PluginDataFrameSchema) {
-                if (!reporter.errorReported) {
-                    reporter.reportInterpretationError(call, "${processor::class} must return ${PluginDataFrameSchema::class}, but was ${value}")
+    val dataFrameSchema: PluginDataFrameSchema = call.interpreterName(session)?.let {
+        when (it) {
+            "toDataFrame" -> {
+                val list = call.argumentList as FirResolvedArgumentList
+                val argument = list.mapping.entries.firstOrNull { it.value.name == Name.identifier("maxDepth") }?.key
+                val maxDepth = when (argument) {
+                    null -> 0
+                    is FirLiteralExpression<*> -> (argument.value as Number).toInt()
+                    else -> TODO(argument::class.toString())
                 }
-                return null
+                toDataFrame(maxDepth, call)
             }
-            value
+            "toDataFrameDefault" -> {
+                val maxDepth = 0
+                toDataFrame(maxDepth, call)
+            }
+            else -> it.load<Interpreter<*>>().let { processor ->
+                val dataFrameSchema = interpret(call, processor, reporter = reporter)
+                    .let {
+                        val value = it?.value
+                        if (value !is PluginDataFrameSchema) {
+                            if (!reporter.errorReported) {
+                                reporter.reportInterpretationError(call, "${processor::class} must return ${PluginDataFrameSchema::class}, but was ${value}")
+                            }
+                            return null
+                        }
+                        value
+                    }
+                dataFrameSchema
+            }
         }
-
+    } ?: return null
 
     return CallResult(rootMarker, dataFrameSchema)
 }

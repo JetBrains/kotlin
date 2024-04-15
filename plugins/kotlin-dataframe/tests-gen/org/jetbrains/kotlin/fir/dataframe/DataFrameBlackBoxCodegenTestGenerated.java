@@ -166,6 +166,24 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("toDataFrame.kt")
+  public void testToDataFrame() {
+    runTest("testData/box/toDataFrame.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrame_superType.kt")
+  public void testToDataFrame_superType() {
+    runTest("testData/box/toDataFrame_superType.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrame_typeParameters.kt")
+  public void testToDataFrame_typeParameters() {
+    runTest("testData/box/toDataFrame_typeParameters.kt");
+  }
+
+  @Test
   @TestMetadata("transformReplaceFunctionCall.kt")
   public void testTransformReplaceFunctionCall() {
     runTest("testData/box/transformReplaceFunctionCall.kt");

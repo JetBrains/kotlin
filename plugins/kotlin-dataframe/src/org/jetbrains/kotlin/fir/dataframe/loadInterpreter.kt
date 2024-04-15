@@ -36,6 +36,18 @@ internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*
         }
 }
 
+internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
+    val symbol =
+        (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
+    val argName = Name.identifier("interpreter")
+    return symbol.annotations
+        .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
+        ?.let { annotation ->
+            val name = (annotation.findArgumentByName(argName) as FirLiteralExpression<*>).value as String
+            name
+        }
+}
+
 internal val KotlinTypeFacade.loadInterpreter: FirFunctionCall.() -> Interpreter<*>? get() = { this.loadInterpreter(session) }
 
 internal val FirGetClassCall.classId: ClassId
