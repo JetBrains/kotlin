@@ -348,4 +348,49 @@ class DRITest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `nested classes constructor should have callable name equal to class name`() = testInline(
+        """
+        |/src/main/kotlin/Test.kt
+        |class Parent { class Nested { class DoubleNested } }
+    """.trimMargin(),
+        dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+    ) {
+        documentablesMergingStage = { module ->
+            fun findConstructorDriOfClass(className: String) =
+                (module.dfs { it.name == className } as? DClass)?.constructors?.singleOrNull()?.dri
+
+            assertEquals(
+                findConstructorDriOfClass("Parent"),
+                DRI(
+                    packageName = "",
+                    classNames = "Parent",
+                    callable = Callable("Parent", null, emptyList())
+                )
+            )
+            assertEquals(
+                findConstructorDriOfClass("Nested"),
+                DRI(
+                    packageName = "",
+                    classNames = "Parent.Nested",
+                    callable = Callable("Nested", null, emptyList())
+                )
+            )
+            assertEquals(
+                findConstructorDriOfClass("DoubleNested"),
+                DRI(
+                    packageName = "",
+                    classNames = "Parent.Nested.DoubleNested",
+                    callable = Callable("DoubleNested", null, emptyList())
+                )
+            )
+        }
+    }
 }
