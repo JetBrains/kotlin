@@ -14097,6 +14097,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("parameterAsReceiverInference.kt")
+      public void testParameterAsReceiverInference() {
+        runTest("compiler/testData/diagnostics/tests/functionAsExpression/parameterAsReceiverInference.kt");
+      }
+
+      @Test
       @TestMetadata("Parameters.kt")
       public void testParameters() {
         runTest("compiler/testData/diagnostics/tests/functionAsExpression/Parameters.kt");
