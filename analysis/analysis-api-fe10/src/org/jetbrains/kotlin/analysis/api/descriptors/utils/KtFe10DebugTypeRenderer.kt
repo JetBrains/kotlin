@@ -100,10 +100,10 @@ internal class KtFe10DebugTypeRenderer {
                 print("<ERROR TYPE REF>")
             }
 
-            printCollection(namedValues, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
-                append(name.render())
+            printCollection(namedValues, separator = ", ", prefix = "(", postfix = ")") { argument ->
+                append(argument.name.render())
                 append(" = ")
-                renderConstantValueDebug(value, printer)
+                renderConstantValueDebug(argument.expression, printer)
             }
         }
     }
