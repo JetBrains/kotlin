@@ -230,6 +230,22 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/name")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Name {
+    @Test
+    public void testAllFilesPresentInName() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/name"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("illegalNameIR.kt")
+    public void testIllegalNameIR() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/name/illegalNameIR.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures")
   @TestDataPath("$PROJECT_ROOT")
   public class UnsupportedFeatures {
