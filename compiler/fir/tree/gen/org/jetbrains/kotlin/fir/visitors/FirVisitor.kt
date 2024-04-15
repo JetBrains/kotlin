@@ -257,8 +257,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: D): R =
         visitElement(typeOperatorCall, data)
 
-    open fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): R =
-        visitElement(assignmentOperatorStatement, data)
+    open fun visitAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment, data: D): R =
+        visitElement(augmentedAssignment, data)
 
     open fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression, data: D): R =
         visitElement(incrementDecrementExpression, data)

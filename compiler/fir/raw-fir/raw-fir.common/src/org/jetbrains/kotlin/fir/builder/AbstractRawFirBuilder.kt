@@ -875,7 +875,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 else
                     lhsReceiver
 
-            val result = buildAssignmentOperatorStatement {
+            val result = buildAugmentedAssignment {
                 source = baseSource
                 this.operation = operation
                 leftArgument = receiverToUse ?: buildErrorExpression {

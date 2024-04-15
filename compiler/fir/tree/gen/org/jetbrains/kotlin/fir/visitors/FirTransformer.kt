@@ -651,12 +651,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformTypeOperatorCall(typeOperatorCall, data)
     }
 
-    open fun transformAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): FirStatement {
-        return transformElement(assignmentOperatorStatement, data)
+    open fun transformAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment, data: D): FirStatement {
+        return transformElement(augmentedAssignment, data)
     }
 
-    final override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): FirStatement {
-        return transformAssignmentOperatorStatement(assignmentOperatorStatement, data)
+    final override fun visitAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment, data: D): FirStatement {
+        return transformAugmentedAssignment(augmentedAssignment, data)
     }
 
     open fun transformIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression, data: D): FirStatement {

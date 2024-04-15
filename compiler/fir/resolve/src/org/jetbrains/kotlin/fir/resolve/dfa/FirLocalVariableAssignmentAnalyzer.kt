@@ -460,9 +460,9 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 variableAssignment.calleeReference?.let { data.recordAssignment(it) }
             }
 
-            override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: MiniCfgData) {
-                visitElement(assignmentOperatorStatement, data)
-                val lhs = assignmentOperatorStatement.leftArgument as? FirQualifiedAccessExpression ?: return
+            override fun visitAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment, data: MiniCfgData) {
+                visitElement(augmentedAssignment, data)
+                val lhs = augmentedAssignment.leftArgument as? FirQualifiedAccessExpression ?: return
                 if (lhs.explicitReceiver != null) return
                 data.recordAssignment(lhs.calleeReference)
             }

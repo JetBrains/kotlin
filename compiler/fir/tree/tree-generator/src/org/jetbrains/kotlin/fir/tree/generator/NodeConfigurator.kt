@@ -255,10 +255,17 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             needTransformOtherChildren()
         }
 
-        assignmentOperatorStatement.configure {
+        augmentedAssignment.configure {
             +field("operation", operationType)
             +field("leftArgument", expression).withTransform()
             +field("rightArgument", expression).withTransform()
+
+            element.kDoc = """
+                Represents an augmented assignment statement (e.g. `x += y`) **before** it gets resolved.
+                After resolution, it will be either represented as an assignment (`x = x.plus(y)`) or a call (`x.plusAssign(y)`). 
+                
+                Augmented assignments with an indexed access as receiver are represented as [FirIndexedAccessAugmentedAssignment]. 
+            """.trimIndent()
         }
 
         incrementDecrementExpression.configure {

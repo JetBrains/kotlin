@@ -16,21 +16,21 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
+import org.jetbrains.kotlin.fir.expressions.FirAugmentedAssignment
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.impl.FirAssignmentOperatorStatementImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirAugmentedAssignmentImpl
 
 @FirBuilderDsl
-class FirAssignmentOperatorStatementBuilder : FirAnnotationContainerBuilder {
+class FirAugmentedAssignmentBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var operation: FirOperation
     lateinit var leftArgument: FirExpression
     lateinit var rightArgument: FirExpression
 
-    override fun build(): FirAssignmentOperatorStatement {
-        return FirAssignmentOperatorStatementImpl(
+    override fun build(): FirAugmentedAssignment {
+        return FirAugmentedAssignmentImpl(
             source,
             annotations.toMutableOrEmpty(),
             operation,
@@ -42,9 +42,9 @@ class FirAssignmentOperatorStatementBuilder : FirAnnotationContainerBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildAssignmentOperatorStatement(init: FirAssignmentOperatorStatementBuilder.() -> Unit): FirAssignmentOperatorStatement {
+inline fun buildAugmentedAssignment(init: FirAugmentedAssignmentBuilder.() -> Unit): FirAugmentedAssignment {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return FirAssignmentOperatorStatementBuilder().apply(init).build()
+    return FirAugmentedAssignmentBuilder().apply(init).build()
 }

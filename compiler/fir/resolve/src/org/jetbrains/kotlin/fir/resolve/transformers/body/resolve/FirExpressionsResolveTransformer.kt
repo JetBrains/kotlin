@@ -633,24 +633,24 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     @OptIn(FirContractViolation::class)
-    override fun transformAssignmentOperatorStatement(
-        assignmentOperatorStatement: FirAssignmentOperatorStatement,
+    override fun transformAugmentedAssignment(
+        augmentedAssignment: FirAugmentedAssignment,
         data: ResolutionMode
-    ): FirStatement = whileAnalysing(session, assignmentOperatorStatement) {
-        val operation = assignmentOperatorStatement.operation
+    ): FirStatement = whileAnalysing(session, augmentedAssignment) {
+        val operation = augmentedAssignment.operation
         val fakeSourceKind = operation.toAugmentedAssignSourceKind()
         require(operation != FirOperation.ASSIGN)
 
-        assignmentOperatorStatement.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
-        dataFlowAnalyzer.enterCallArguments(assignmentOperatorStatement, listOf(assignmentOperatorStatement.rightArgument))
-        val leftArgument = assignmentOperatorStatement.leftArgument
+        augmentedAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+        dataFlowAnalyzer.enterCallArguments(augmentedAssignment, listOf(augmentedAssignment.rightArgument))
+        val leftArgument = augmentedAssignment.leftArgument
             .transformAsExplicitReceiver(ResolutionMode.ReceiverResolution, isUsedAsGetClassReceiver = false)
-        val rightArgument = assignmentOperatorStatement.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
+        val rightArgument = augmentedAssignment.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitCallArguments()
 
         val generator = GeneratorOfPlusAssignCalls(
-            assignmentOperatorStatement,
-            assignmentOperatorStatement.toReference(session)?.source,
+            augmentedAssignment,
+            augmentedAssignment.toReference(session)?.source,
             operation,
             leftArgument,
             rightArgument
@@ -711,18 +711,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             val assignment =
                 buildVariableAssignment {
-                    source = assignmentOperatorStatement.source?.fakeElement(fakeSourceKind)
+                    source = augmentedAssignment.source?.fakeElement(fakeSourceKind)
                     lValue = assignmentLeftArgument
                     rValue = resolvedOperatorCall
-                    annotations += assignmentOperatorStatement.annotations
+                    annotations += augmentedAssignment.annotations
                 }
 
             val receiverTemporaryVariable =
                 generateExplicitReceiverTemporaryVariable(session, unwrappedLeftArgument, leftArgumentDesugaredSource)
             return if (receiverTemporaryVariable != null) {
                 buildBlock {
-                    source = assignmentOperatorStatement.source?.fakeElement(fakeSourceKind)
-                    annotations += assignmentOperatorStatement.annotations
+                    source = augmentedAssignment.source?.fakeElement(fakeSourceKind)
+                    annotations += augmentedAssignment.annotations
 
                     statements += receiverTemporaryVariable
                     statements += assignment
@@ -747,7 +747,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val operatorCallCandidate = requireNotNull(operatorCallReference?.candidate)
             val assignmentCallCandidate = requireNotNull(assignCallReference?.candidate)
             return buildErrorExpression {
-                source = assignmentOperatorStatement.source
+                source = augmentedAssignment.source
                 diagnostic = ConeOperatorAmbiguityError(listOf(operatorCallCandidate, assignmentCallCandidate))
             }
         }

@@ -217,13 +217,13 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformTypeOperatorCall,
     )
 
-    override fun transformAssignmentOperatorStatement(
-        assignmentOperatorStatement: FirAssignmentOperatorStatement,
+    override fun transformAugmentedAssignment(
+        augmentedAssignment: FirAugmentedAssignment,
         data: ResolutionMode,
     ): FirStatement = expressionTransformation(
-        assignmentOperatorStatement,
+        augmentedAssignment,
         data,
-        FirExpressionsResolveTransformer::transformAssignmentOperatorStatement,
+        FirExpressionsResolveTransformer::transformAugmentedAssignment,
     )
 
     override fun transformIncrementDecrementExpression(

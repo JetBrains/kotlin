@@ -1097,13 +1097,13 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement) {
-            annotationRenderer?.render(assignmentOperatorStatement)
-            print(assignmentOperatorStatement.operation.operator)
+        override fun visitAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment) {
+            annotationRenderer?.render(augmentedAssignment)
+            print(augmentedAssignment.operation.operator)
             print("(")
-            assignmentOperatorStatement.leftArgument.accept(visitor)
+            augmentedAssignment.leftArgument.accept(visitor)
             print(", ")
-            assignmentOperatorStatement.rightArgument.accept(visitor)
+            augmentedAssignment.rightArgument.accept(visitor)
             print(")")
         }
 

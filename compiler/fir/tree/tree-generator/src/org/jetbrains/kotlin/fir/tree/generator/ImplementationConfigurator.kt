@@ -337,7 +337,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("argFromStubType")
         }
 
-        impl(assignmentOperatorStatement)
+        impl(augmentedAssignment)
 
         impl(incrementDecrementExpression)
 

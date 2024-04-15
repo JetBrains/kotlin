@@ -651,12 +651,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(typeOperatorCall)
     }
 
-    final override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: Nothing?) {
-        visitAssignmentOperatorStatement(assignmentOperatorStatement)
+    final override fun visitAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment, data: Nothing?) {
+        visitAugmentedAssignment(augmentedAssignment)
     }
 
-    open fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement) {
-        visitElement(assignmentOperatorStatement)
+    open fun visitAugmentedAssignment(augmentedAssignment: FirAugmentedAssignment) {
+        visitElement(augmentedAssignment)
     }
 
     final override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression, data: Nothing?) {
