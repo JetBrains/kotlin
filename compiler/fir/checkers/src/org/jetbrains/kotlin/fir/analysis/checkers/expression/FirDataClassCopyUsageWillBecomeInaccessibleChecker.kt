@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 
 object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val dataClass = expression.resolvedType.toRegularClassSymbol(context.session)?.takeIf { it.isData } ?: return
+        val dataClass = expression.resolvedType.toRegularClassSymbol(context.session) ?: return
         val copyFunction = expression.calleeReference.symbol as? FirCallableSymbol ?: return
         if (copyFunction.isDataClassCopy(dataClass, context.session)) {
             val dataClassConstructor = dataClass.primaryConstructorSymbol(context.session) ?: return
@@ -63,8 +63,8 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallCheck
     }
 }
 
-fun FirCallableSymbol<*>.isDataClassCopy(dataClass: FirRegularClassSymbol, session: FirSession): Boolean {
-    if (DataClassResolver.isCopy(name) && this is FirNamedFunctionSymbol) {
+private fun FirCallableSymbol<*>.isDataClassCopy(dataClass: FirRegularClassSymbol, session: FirSession): Boolean {
+    if (DataClassResolver.isCopy(name) && this is FirNamedFunctionSymbol && dataClass.isData) {
         if (origin == FirDeclarationOrigin.Synthetic.DataClassMember) {
             return true
         }
