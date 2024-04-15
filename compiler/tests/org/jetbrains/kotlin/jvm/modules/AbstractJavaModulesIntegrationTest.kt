@@ -373,6 +373,11 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("main", listOf(lib), listOf("lib"))
     }
 
+    fun testSourcelessSmartcastSourcefullOriginalExpression() {
+        // This is a test on the JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE diagnostic.
+        module("main")
+    }
+
     fun testNoDependencyOnUnnamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE diagnostic.
         // Most of the other tests in this class are compiling modules to jars, however here we need to compile the module to a directory.
