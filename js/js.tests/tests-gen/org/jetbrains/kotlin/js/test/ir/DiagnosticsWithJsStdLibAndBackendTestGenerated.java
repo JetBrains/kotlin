@@ -243,6 +243,12 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
     public void testIllegalNameIR() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/name/illegalNameIR.kt");
     }
+
+    @Test
+    @TestMetadata("legalPackageName.kt")
+    public void testLegalPackageName() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/name/legalPackageName.kt");
+    }
   }
 
   @Nested
