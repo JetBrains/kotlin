@@ -26062,6 +26062,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("lambdaEquality.kt")
+    public void testLambdaEquality() {
+      runTest("compiler/testData/codegen/box/lambda/lambdaEquality.kt");
+    }
+
+    @Test
     @TestMetadata("lambda_kt49360_trivial.kt")
     public void testLambda_kt49360_trivial() {
       runTest("compiler/testData/codegen/box/lambda/lambda_kt49360_trivial.kt");
