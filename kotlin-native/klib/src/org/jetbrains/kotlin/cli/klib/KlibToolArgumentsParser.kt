@@ -90,7 +90,6 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                                                between output of these two commands. However, if IR transforming compiler plugins
                                                (such as Compose) were used during compilation of the library, there would be different
                                                signatures for patched declarations.
-                   signatures                [DEPRECATED] Renamed to "dump-metadata-signatures". Please, use new command name.
                    dump-metadata             Dump the metadata of all declarations in the library. The output of this command is intended
                                                to be used for debugging purposes only.
                    contents                  [DEPRECATED] Reworked and renamed to "dump-metadata". Please, use new command name.

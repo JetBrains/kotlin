@@ -269,13 +269,6 @@ internal class DumpMetadata(output: KlibToolOutput, args: KlibToolArguments) : K
     }
 }
 
-internal class LegacySignatures(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
-    override fun execute() {
-        output.logWarning("\"signatures\" has been renamed to \"dump-metadata-signatures\". Please, use new command name.")
-        DumpMetadataSignatures(output, args).execute()
-    }
-}
-
 internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
         // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
