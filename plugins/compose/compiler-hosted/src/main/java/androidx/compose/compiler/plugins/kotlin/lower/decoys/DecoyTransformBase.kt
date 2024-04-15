@@ -43,16 +43,18 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.module
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.remapTypeParameters
 import org.jetbrains.kotlin.ir.util.toIrConst
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 @JvmDefaultWithCompatibility
 internal interface DecoyTransformBase {
@@ -209,19 +211,28 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
     source: IrFunction,
     target: IrFunction
 ): T {
-    @Suppress("DEPRECATION")
-    return deepCopyWithSymbols(target) { symbolRemapper, typeRemapper ->
-        val typeParamRemapper = object : TypeRemapper by typeRemapper {
-            override fun remapType(type: IrType): IrType {
-                return typeRemapper.remapType(type.remapTypeParameters(source, target))
+    val typeParamsAwareSymbolRemapper = object : DeepCopySymbolRemapper() {
+        init {
+            for ((orig, new) in source.typeParameters.zip(target.typeParameters)) {
+                typeParameters[orig.symbol] = new.symbol
             }
         }
-        val deepCopy = DeepCopyPreservingMetadata(
-            symbolRemapper,
-            typeParamRemapper,
-            SymbolRenamer.DEFAULT
-        )
-        (typeRemapper as? DeepCopyTypeRemapper)?.deepCopy = deepCopy
-        deepCopy
     }
+    val typeRemapper = DeepCopyTypeRemapper(typeParamsAwareSymbolRemapper)
+    val typeParamRemapper = object : TypeRemapper by typeRemapper {
+        override fun remapType(type: IrType): IrType {
+            return typeRemapper.remapType(type.remapTypeParameters(source, target))
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    val deepCopy = DeepCopyPreservingMetadata(
+        typeParamsAwareSymbolRemapper,
+        typeParamRemapper,
+        SymbolRenamer.DEFAULT
+    )
+    typeRemapper.deepCopy = deepCopy
+
+    acceptVoid(typeParamsAwareSymbolRemapper)
+    return transform(deepCopy, null).patchDeclarationParents(target) as T
 }
