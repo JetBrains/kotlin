@@ -204,9 +204,8 @@ internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArgu
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
         val module = ModuleDescriptorLoader(output).load(libraryInDefaultRepoOrCurrentDir(args.libraryNameOrPath))
-        val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer(idSignatureRenderer))
 
-        printer.print(module)
+        DescriptorSignaturesRenderer(output, idSignatureRenderer).render(module)
     }
 }
 

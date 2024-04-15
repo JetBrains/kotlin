@@ -1,20 +1,34 @@
 package org.jetbrains.kotlin.cli.klib
 
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
+import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal class SignaturePrinter(
+internal class DescriptorSignaturesRenderer(
         private val output: Appendable,
-        private val signatureRenderer: KlibSignatureRenderer
+        private val individualSignatureRenderer: IdSignatureRenderer
 ) {
-    fun print(module: ModuleDescriptor) {
+    fun render(module: ModuleDescriptor) {
         val collector = SignatureCollector()
         module.accept(collector, Unit)
 
         for (signature in collector.signatures.sorted()) {
             output.appendLine(signature)
         }
+    }
+
+    private fun renderDescriptor(descriptor: DeclarationDescriptor): String? {
+        val idSignature = if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) {
+            SIGNATURER.composeEnumEntrySignature(descriptor)
+        } else {
+            SIGNATURER.composeSignature(descriptor)
+        } ?: return null
+
+        return idSignature.render(individualSignatureRenderer)
     }
 
     private inner class SignatureCollector : DeclarationDescriptorVisitorEmptyBodies<Unit, Unit>() {
@@ -72,9 +86,12 @@ internal class SignaturePrinter(
             // Skip private declarations.
             if (isPrivate) return
 
-            signatures.addIfNotNull(signatureRenderer.render(descriptor))
+            signatures.addIfNotNull(renderDescriptor(descriptor))
             continuation()
         }
     }
-}
 
+    companion object {
+        private val SIGNATURER = KonanIdSignaturer(KonanManglerDesc)
+    }
+}
