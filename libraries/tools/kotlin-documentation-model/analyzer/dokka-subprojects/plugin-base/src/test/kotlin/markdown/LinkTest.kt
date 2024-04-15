@@ -7,10 +7,9 @@ package markdown
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.*
-import org.jetbrains.dokka.model.DClass
-import org.jetbrains.dokka.model.DFunction
-import org.jetbrains.dokka.model.WithGenerics
-import org.jetbrains.dokka.model.dfs
+import org.jetbrains.dokka.links.Callable
+import org.jetbrains.dokka.links.TypeConstructor
+import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentDRILink
@@ -23,6 +22,14 @@ import kotlin.test.assertNotNull
 
 class LinkTest : BaseAbstractTest() {
 
+    val configuration = dokkaConfiguration {
+        sourceSets {
+            sourceSet {
+                sourceRoots = listOf("src/")
+                classpath = listOfNotNull(jvmStdlibPath)
+            }
+        }
+    }
     @Test
     fun linkToClassLoader() {
         val configuration = dokkaConfiguration {
@@ -94,14 +101,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `link to parameter #238`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -128,14 +127,6 @@ class LinkTest : BaseAbstractTest() {
     @Test
     @OnlySymbols("#3207 - In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
     fun `link to this keyword with receiver to some class`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -161,14 +152,6 @@ class LinkTest : BaseAbstractTest() {
     @Test
     @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
     fun `link to this keyword with receiver to type parameter`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -194,14 +177,6 @@ class LinkTest : BaseAbstractTest() {
     @Test
     @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
     fun `link to this keyword with receiver of dynamic that is prohibited by compiler`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -227,14 +202,6 @@ class LinkTest : BaseAbstractTest() {
     @Test
     @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
     fun `link to this keyword with receiver of DNN-type`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -259,14 +226,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `link with exclamation mark`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Test.kt
@@ -320,14 +279,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `link to property with exclamation mark`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -377,14 +328,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `link should be resolved in @constructor section`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -430,14 +373,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `link should lead to List class rather than function`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -495,14 +430,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `link should lead to a function with a nullable parameter`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -551,14 +478,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `link should lead to function rather than property`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -611,14 +530,6 @@ class LinkTest : BaseAbstractTest() {
     @Test
     fun `fully qualified link should lead to package`() {
         // for the test case, there is the only one link candidate in K1 and K2
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -695,14 +606,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `short link should lead to class rather than package`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -752,14 +655,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `short link should lead to package rather than function`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -809,14 +704,6 @@ class LinkTest : BaseAbstractTest() {
 
     @Test
     fun `link should be stable for overloads`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -891,14 +778,6 @@ class LinkTest : BaseAbstractTest() {
     @Test
     @OnlyDescriptors("due to #3250 a result DRI is unstable")
     fun `K1 - link should be stable for overloads in different files`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/kotlin/Testing.kt
@@ -953,5 +832,225 @@ class LinkTest : BaseAbstractTest() {
                 assertEquals(expected, propDocs.children.first())
             }
         }
+    }
+
+    @Test
+    fun `full link should lead to an extension`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |/**
+            | * [Bar.bar]
+            | */
+            |fun usage() {}
+            |
+            |class Bar
+            |fun Bar.bar() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(DRI("example", null, callable = Callable("bar", receiver = TypeConstructor("example.Bar", params = emptyList()), params = emptyList())), module.getLinkDRIFrom("usage"))
+            }
+        }
+    }
+
+    @Test
+    @OnlyDescriptors("#3555")
+    fun `K1 full link should lead to an extension with type params`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |fun <T : Number> List<T>.foo() {}
+            |
+            |interface MyListWithT<T> : List<T>
+            |
+            |interface MyListWithTNumberBound<T : Number> : List<T>
+            |
+            |interface MyListWithNumber : List<Number>
+            |
+            |/**
+            | * 1 [List.foo] is resolved
+            | * 2 [MutableList.foo] is unresolved
+            | * 3 [MyListWithT.foo] is unresolved
+            | * 4 [MyListWithTNumberBound.foo] is resolved in K1
+            | * 5 [MyListWithNumber.foo] is resolved in K1
+            | */
+            |fun usage() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val fooDRI = DRI(
+                    "example",
+                    null,
+                    callable = Callable(
+                        "foo",
+                        receiver = TypeConstructor("kotlin.collections.List", params = listOf(TypeParam(listOf(TypeConstructor("kotlin.Number", emptyList()))))),
+                        params = emptyList()
+                    )
+                )
+                assertEquals(
+                    listOf(
+                        "List.foo" to fooDRI,
+                        "MyListWithTNumberBound.foo" to fooDRI,
+                        "MyListWithNumber.foo" to DRI(
+                            "example",
+                            null,
+                            callable = Callable(
+                                "foo",
+                                receiver = TypeConstructor(
+                                    "kotlin.collections.List",
+                                    params = listOf((TypeConstructor("kotlin.Number", emptyList())))
+                                ),
+                                params = emptyList()
+                            )
+                        )
+                    ), module.getAllLinkDRIFrom("usage")
+                )
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("#3555")
+    fun `K2 full link should lead to an extension with type params`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |fun <T : Number> List<T>.foo() {}
+            |
+            |interface MyListWithT<T> : List<T>
+            |
+            |interface MyListWithTNumberBound<T : Number> : List<T>
+            |
+            |interface MyListWithNumber : List<Number>
+            |
+            |/**
+            | * 1 [List.foo] is resolved
+            | * 2 [MutableList.foo] is unresolved
+            | * 3 [MyListWithT.foo] is unresolved
+            | * 4 [MyListWithTNumberBound.foo] is unresolved in K2
+            | * 5 [MyListWithNumber.foo] is unresolved in K2
+            | */
+            |fun usage() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val fooDRI = DRI(
+                    "example",
+                    null,
+                    callable = Callable(
+                        "foo",
+                        receiver = TypeConstructor("kotlin.collections.List", params = listOf(TypeParam(listOf(TypeConstructor("kotlin.Number", emptyList()))))),
+                        params = emptyList()
+                    )
+                )
+                assertEquals(
+                    listOf(
+                        "List.foo" to fooDRI
+                    ), module.getAllLinkDRIFrom("usage")
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `full link should not lead to members of typealias #3521`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |typealias F = String
+            |/**
+            | * [example.F.length] is unresolved
+            | * [String.length] is resolved
+            | */
+            |val usage = 0
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "String.length" to DRI(
+                            "kotlin",
+                            "String",
+                            Callable(name = "length", receiver = null, params = emptyList())
+                        )
+                    ),
+                    module.getAllLinkDRIFrom("usage")
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `full link should lead to typealias`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |typealias F = String
+            |/**
+            | * Refs to typealiases [kotlin.collections.ArrayList] and [kotlin.IllegalArgumentException] 
+            | * and [example.F]
+            | */
+            |val usage = 0
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "kotlin.collections.ArrayList" to DRI("kotlin.collections", "ArrayList"),
+                        "kotlin.IllegalArgumentException" to DRI("kotlin", "IllegalArgumentException"),
+                        "example.F" to DRI("example", "F")
+                    ),
+                    module.getAllLinkDRIFrom("usage")
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `full link should lead to typealias from another file`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * refs to typealias [demos.F]
+            | */
+            |val usage = 0            
+            |/src/main/kotlin/demos/F.kt
+            |package demos
+            |typealias F = String
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(DRI("demos", "F"), module.getLinkDRIFrom("usage"))
+            }
+        }
+    }
+
+    private fun DModule.getLinkDRIFrom(name: String): DRI? {
+        val link =  this.dfs { it.name == name }?.documentation?.values?.single()?.firstMemberOfTypeOrNull<DocumentationLink>()
+        return link?.dri
+    }
+
+    private fun DModule.getAllLinkDRIFrom(name: String): List<Pair<String, DRI>> {
+        val result = mutableListOf<Pair<String, DRI>>()
+        this.dfs { it.name == name }?.documentation?.values?.single()?.dfs {
+            if (it is DocumentationLink) result.add(it.firstChildOfType<Text>().body to it.dri)
+            false
+        }
+        return result
     }
 }
