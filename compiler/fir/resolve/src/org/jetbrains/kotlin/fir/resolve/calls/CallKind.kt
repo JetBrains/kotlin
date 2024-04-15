@@ -9,7 +9,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     object VariableAccess : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSynthetics,
+        DiscriminateSyntheticProperties,
         CheckExplicitReceiverConsistency,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
@@ -41,7 +41,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     object Function : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSynthetics,
+        DiscriminateSyntheticProperties,
         MapArguments,
         CheckExplicitReceiverConsistency,
         MapTypeArguments,
@@ -84,7 +84,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     object CallableReference : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
-        DiscriminateSynthetics,
+        DiscriminateSyntheticProperties,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
@@ -135,7 +135,7 @@ class ResolutionSequenceBuilder(
     fun build(): CallKind {
         val stages = mutableListOf<ResolutionStage>().apply {
             if (checkVisibility) add(CheckVisibility)
-            if (discriminateSynthetics) add(DiscriminateSynthetics)
+            if (discriminateSynthetics) add(DiscriminateSyntheticProperties)
             if (checkArguments) add(MapArguments)
             if (checkExplicitReceiverConsistency) add(CheckExplicitReceiverConsistency)
             if (mapTypeArguments) add(MapTypeArguments) else add(NoTypeArguments)
