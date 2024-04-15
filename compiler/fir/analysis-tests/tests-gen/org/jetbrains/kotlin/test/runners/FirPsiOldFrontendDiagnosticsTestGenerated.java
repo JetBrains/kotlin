@@ -31078,6 +31078,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("samConstructorVsFunction.kt")
+        public void testSamConstructorVsFunction() {
+          runTest("compiler/testData/diagnostics/tests/resolve/priority/samConstructorVsFunction.kt");
+        }
+
+        @Test
         @TestMetadata("staticVsImplicitReceiverMember.kt")
         public void testStaticVsImplicitReceiverMember() {
           runTest("compiler/testData/diagnostics/tests/resolve/priority/staticVsImplicitReceiverMember.kt");
