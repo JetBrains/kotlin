@@ -2636,6 +2636,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
       }
 
       @Test
+      @TestMetadata("packages.kt")
+      public void testPackages() {
+        runTest("js/js.translator/testData/box/esModules/jsExport/packages.kt");
+      }
+
+      @Test
       @TestMetadata("perFileExportedApi.kt")
       public void testPerFileExportedApi() {
         runTest("js/js.translator/testData/box/esModules/jsExport/perFileExportedApi.kt");
