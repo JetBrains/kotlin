@@ -92,7 +92,6 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                                                signatures for patched declarations.
                    dump-metadata             Dump the metadata of all declarations in the library. The output of this command is intended
                                                to be used for debugging purposes only.
-                   contents                  [DEPRECATED] Reworked and renamed to "dump-metadata". Please, use new command name.
 
                 and the options are:
                    -repository <path>        [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098

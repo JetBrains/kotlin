@@ -31,7 +31,6 @@ private fun execImpl(output: KlibToolOutput, rawArgs: Array<String>): Int {
             "dump-ir-signatures" -> DumpIrSignatures(output, args)
             "dump-metadata" -> DumpMetadata(output, args)
             "dump-metadata-signatures" -> DumpMetadataSignatures(output, args)
-            "contents" -> LegacyContents(output, args)
             "info" -> Info(output, args)
             "install" -> LegacyInstall(output, args)
             "remove" -> LegacyRemove(output, args)

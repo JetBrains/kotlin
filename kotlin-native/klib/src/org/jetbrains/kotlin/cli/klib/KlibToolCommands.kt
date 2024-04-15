@@ -242,24 +242,6 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
     }
 }
 
-// TODO: This command is deprecated. Drop it after 2.0. KT-65380
-internal class LegacyContents(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
-    override fun execute() {
-        output.logWarning("\"contents\" has been renamed to \"dump-metadata\". Please, use new command name.")
-
-        val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
-
-        val module = ModuleDescriptorLoader(output).load(libraryInRepoOrCurrentDir(repository, args.libraryNameOrPath))
-        val klibSignatureRenderer = if (args.printSignatures)
-            DefaultKlibSignatureRenderer(idSignatureRenderer, "// Signature: ")
-        else
-            KlibSignatureRenderer.NO_SIGNATURE
-        val printer = DeclarationPrinter(output, klibSignatureRenderer)
-
-        printer.print(module)
-    }
-}
-
 internal class DumpMetadata(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
         val idSignatureRenderer: IdSignatureRenderer? = runIf(args.printSignatures) {
