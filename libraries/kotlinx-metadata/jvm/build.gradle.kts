@@ -47,6 +47,12 @@ val runtimeJar = runtimeJarWithRelocation {
     from(mainSourceSet.output)
     exclude("**/*.proto")
     relocate("org.jetbrains.kotlin", "kotlin.metadata.internal")
+}.apply {
+    configure {
+        manifest {
+            attributes("Automatic-Module-Name" to "kotlin.metadata.jvm")
+        }
+    }
 }
 
 tasks.apiBuild {
