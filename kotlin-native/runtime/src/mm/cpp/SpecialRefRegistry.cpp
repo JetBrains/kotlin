@@ -33,9 +33,6 @@ void mm::SpecialRefRegistry::ThreadQueue::deleteNodeIfLocal(Node& node) noexcept
     //   deleting some short-lived nodes without ever publishing them.
     // * But in order to do that we have to be in a runnable state, so
     //   we potentially force a native state thread to go wait for the GC.
-    if (node.owner_ == this) {
-        queue_.erase(node.position_);
-    }
 }
 
 // static
