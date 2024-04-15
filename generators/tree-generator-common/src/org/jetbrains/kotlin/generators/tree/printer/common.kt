@@ -38,10 +38,10 @@ fun printGeneratedType(
         buildString {
             appendLine(COPYRIGHT)
             appendLine()
-            append("// This file was generated automatically. See ")
+            append(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
             append(treeGeneratorReadMe)
             appendLine(".")
-            appendLine("// DO NOT MODIFY IT MANUALLY.")
+            appendLine(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX)
             appendLine()
             if (fileSuppressions.isNotEmpty()) {
                 fileSuppressions.joinTo(this, prefix = "@file:Suppress(", postfix = ")\n\n") { "\"$it\"" }

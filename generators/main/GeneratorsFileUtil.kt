@@ -20,6 +20,9 @@ object GeneratorsFileUtil {
      */
      """.trimIndent()
 
+    const val GENERATED_MESSAGE_PREFIX = "// This file was generated automatically. See "
+    const val GENERATED_MESSAGE_SUFFIX = "// DO NOT MODIFY IT MANUALLY."
+
     @OptIn(ExperimentalPathApi::class)
     @JvmStatic
     @JvmOverloads
@@ -94,7 +97,7 @@ object GeneratorsFileUtil {
 
     fun collectPreviouslyGeneratedFiles(generationPath: File): List<File> {
         return generationPath.walkTopDown().filter {
-            it.isFile && it.readText().contains(GENERATED_MESSAGE)
+            it.isFile && it.readText().let { GENERATED_MESSAGE_PREFIX in it && GENERATED_MESSAGE_SUFFIX in it }
         }.toList()
     }
 
