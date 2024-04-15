@@ -30,6 +30,7 @@ public class SirParentProviderImpl(
             val packageFqName = when (symbol) {
                 is KtNamedClassOrObjectSymbol -> symbol.classIdIfNonLocal?.packageFqName
                 is KtCallableSymbol -> symbol.callableIdIfNonLocal?.packageName
+                is KtTypeAliasSymbol -> symbol.classIdIfNonLocal?.packageFqName
                 else -> null
             } ?: error("encountered unknown origin: $symbol. This exception should be reworked during KT-65980")
 

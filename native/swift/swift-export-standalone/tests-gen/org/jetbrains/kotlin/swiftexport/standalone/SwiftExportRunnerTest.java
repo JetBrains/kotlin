@@ -54,6 +54,12 @@ public class SwiftExportRunnerTest extends AbstractSwiftRunnerTest {
   }
 
   @Test
+  @TestMetadata("typealiases")
+  public void testTypealiases() {
+    runTest("native/swift/swift-export-standalone/testData/typealiases/");
+  }
+
+  @Test
   @TestMetadata("variables")
   public void testVariables() {
     runTest("native/swift/swift-export-standalone/testData/variables/");

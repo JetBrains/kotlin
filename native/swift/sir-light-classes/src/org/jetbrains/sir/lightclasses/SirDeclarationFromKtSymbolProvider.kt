@@ -8,9 +8,12 @@ package org.jetbrains.sir.lightclasses
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
+import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.nodes.*
 import org.jetbrains.sir.lightclasses.nodes.SirClassFromKtSymbol
 import org.jetbrains.sir.lightclasses.nodes.SirFunctionFromKtSymbol
@@ -46,6 +49,13 @@ public class SirDeclarationFromKtSymbolProvider(
             }
             is KtVariableSymbol -> {
                 SirVariableFromKtSymbol(
+                    ktSymbol = ktSymbol,
+                    analysisApiSession = ktAnalysisSession,
+                    sirSession = sirSession,
+                )
+            }
+            is KtTypeAliasSymbol -> {
+                SirTypealiasFromKtSymbol(
                     ktSymbol = ktSymbol,
                     analysisApiSession = ktAnalysisSession,
                     sirSession = sirSession,

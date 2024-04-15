@@ -91,6 +91,13 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declarationContainer)
     }
 
+    val `typealias`: Element by element {
+        customParentInVisitor = namedDeclaration
+        parent(namedDeclaration)
+
+        +field("type", typeType)
+    }
+
     val callable by sealedElement {
         parent(declaration)
 

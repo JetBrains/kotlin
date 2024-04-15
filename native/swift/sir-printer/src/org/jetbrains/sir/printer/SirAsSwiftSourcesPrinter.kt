@@ -44,6 +44,15 @@ public class SirAsSwiftSourcesPrinter(
         }
     }
 
+    private fun SirTypealias.print() {
+        printDocumentation()
+        printVisibility()
+        print("typealias ")
+        printName()
+        print(" = ")
+        println(type.swift)
+    }
+
     private fun SirDeclarationContainer.print() {
         (this as? SirDeclaration)?.let {
             printDocumentation()
@@ -63,6 +72,9 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirDeclarationContainer.printChildren() {
         allNonPackageEnums().forEach {
+            it.print()
+        }
+        allTypealiases().forEach {
             it.print()
         }
         allClasses().forEach {
