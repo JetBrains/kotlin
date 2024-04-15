@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractResolveCallTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
+        val expression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
+            ?: testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {

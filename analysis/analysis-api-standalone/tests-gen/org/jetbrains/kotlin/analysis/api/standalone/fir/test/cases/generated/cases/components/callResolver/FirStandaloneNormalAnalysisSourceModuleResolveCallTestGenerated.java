@@ -527,6 +527,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
+  public void testImplicitTypeSubstituteOverrideFromOtherModule() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/implicitTypeSubstituteOverrideFromOtherModule.kt");
+  }
+
+  @Test
   @TestMetadata("incWithDotQualifier.kt")
   public void testIncWithDotQualifier() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/incWithDotQualifier.kt");
@@ -860,6 +866,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   @TestMetadata("typecheckerRecursiveError.kt")
   public void testTypecheckerRecursiveError() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/typecheckerRecursiveError.kt");
+  }
+
+  @Test
+  @TestMetadata("unitTypeFromOtherModule.kt")
+  public void testUnitTypeFromOtherModule() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unitTypeFromOtherModule.kt");
   }
 
   @Test

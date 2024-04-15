@@ -527,6 +527,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
+  public void testImplicitTypeSubstituteOverrideFromOtherModule() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/implicitTypeSubstituteOverrideFromOtherModule.kt");
+  }
+
+  @Test
   @TestMetadata("incWithDotQualifier.kt")
   public void testIncWithDotQualifier() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/incWithDotQualifier.kt");
@@ -860,6 +866,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("typecheckerRecursiveError.kt")
   public void testTypecheckerRecursiveError() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/typecheckerRecursiveError.kt");
+  }
+
+  @Test
+  @TestMetadata("unitTypeFromOtherModule.kt")
+  public void testUnitTypeFromOtherModule() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unitTypeFromOtherModule.kt");
   }
 
   @Test
@@ -1297,6 +1309,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     @Test
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotationFromOtherModule.kt")
+    public void testAnnotationFromOtherModule() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled/annotationFromOtherModule.kt");
     }
 
     @Test
