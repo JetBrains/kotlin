@@ -24,8 +24,8 @@ fun interface Foo<T> {
 fun <T> Foo(value: () -> T): T = value()
 
 fun test() {
-    consume<Foo<String>>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>Foo<!> { "" })
-    consume<String>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>Foo<!> { "" })
+    consume<Foo<String>>(<!ARGUMENT_TYPE_MISMATCH!>Foo { "" }<!>)
+    consume<String>(Foo { "" })
 }
 
 fun <T> consume(t: T) {}

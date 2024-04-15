@@ -203,7 +203,7 @@ class ConeOverloadConflictResolver(
         if (discriminationFlags.SAMs) {
             filterCandidatesByDiscriminationFlag(
                 candidates,
-                { !it.usesSAM },
+                { !it.usesSamConversionOrSamConstructor },
                 { discriminationFlags.copy(SAMs = false) },
             )?.let { return it }
         }
@@ -259,7 +259,7 @@ class ConeOverloadConflictResolver(
             )?.let { return it }
         }
 
-        val filtered = candidates.filterTo(mutableSetOf()) { it.usesSAM }
+        val filtered = candidates.filterTo(mutableSetOf()) { it.usesSamConversionOrSamConstructor }
         if (filtered.isNotEmpty()) {
             findMaximallySpecificCall(candidates, discriminateGenerics = false, useOriginalSamTypes = true)?.let { return setOf(it) }
         }

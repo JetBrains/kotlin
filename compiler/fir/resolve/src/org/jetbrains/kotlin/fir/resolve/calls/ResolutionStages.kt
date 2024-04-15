@@ -553,7 +553,7 @@ private val Candidate.isInvokeFromExtensionFunctionType: Boolean
             && (symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
 
 internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: BodyResolveComponents): Boolean {
-    if (!usesSAM || isJavaApplicableCandidate()) return false
+    if (!usesSamConversion || isJavaApplicableCandidate()) return false
     return argumentMapping!!.values.any {
         val coneType = it.returnTypeRef.coneType
         bodyResolveComponents.samResolver.isSamType(coneType) &&
