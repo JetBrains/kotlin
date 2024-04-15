@@ -17,7 +17,7 @@ fun Any.case_1() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Inv<*>")!>this<!>.prop_4
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Inv<*>")!>this<!>.prop_4.inv()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Inv<*>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Inv<*>")!>prop_4<!>.inv()
     }
 }
 
@@ -28,7 +28,7 @@ fun Any.case_2() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>this<!>.x
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>this<!>.y
         <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & ClassWithSixTypeParameters<*, *, *, *, *, *>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>y<!>
     }
 }
 
@@ -39,7 +39,7 @@ fun <T> T.case_3() {
         <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>this<!>.prop_4
         <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>this<!>.prop_4.inv()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>prop_4<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_EXPRESSION_TYPE("T & Inv<*> & T!!")!>prop_4<!>.inv()
     }
 }
 
@@ -50,7 +50,7 @@ fun <T> T?.case_4() {
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.x
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>this<!>.y
         <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), DEBUG_INFO_EXPRESSION_TYPE("T? & ClassWithSixTypeParameters<*, *, *, *, *, *> & T?!!")!>y<!>
     }
 }
 
@@ -63,7 +63,7 @@ fun <T> ClassWithSixTypeParameters<out T, *, T, in T?, *, T>.case_5() {
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<out T, *, T, in T?, *, T> & InterfaceWithFiveTypeParameters1<*, *, *, *, *> & ClassWithSixTypeParameters<out T, *, T, in T?, *, T>")!>this<!>.x
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<out T, *, T, in T?, *, T> & InterfaceWithFiveTypeParameters1<*, *, *, *, *> & ClassWithSixTypeParameters<out T, *, T, in T?, *, T>")!>this<!>.y
         <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out T)")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<out T, *, T, in T?, *, T> & InterfaceWithFiveTypeParameters1<*, *, *, *, *> & ClassWithSixTypeParameters<out T, *, T, in T?, *, T>"), DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<out T, *, T, in T?, *, T> & InterfaceWithFiveTypeParameters1<*, *, *, *, *> & ClassWithSixTypeParameters<out T, *, T, in T?, *, T>"), DEBUG_INFO_EXPRESSION_TYPE("T"), DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<out T, *, T, in T?, *, T> & InterfaceWithFiveTypeParameters1<*, *, *, *, *> & ClassWithSixTypeParameters<out T, *, T, in T?, *, T>")!>y<!>
     }
 }
 

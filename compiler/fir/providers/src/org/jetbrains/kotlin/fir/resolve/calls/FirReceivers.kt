@@ -180,13 +180,16 @@ private fun receiverExpression(
         boundSymbol = symbol
         this.contextReceiverNumber = contextReceiverNumber
     }
+    val newSource = symbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitThisReceiverExpression)
     return when (inaccessibleReceiver) {
         false -> buildThisReceiverExpression {
+            source = newSource
             this.calleeReference = calleeReference
             this.coneTypeOrNull = type
             isImplicit = true
         }
         true -> buildInaccessibleReceiverExpression {
+            source = newSource
             this.calleeReference = calleeReference
             this.coneTypeOrNull = type
         }

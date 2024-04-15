@@ -440,6 +440,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
             default("source") {
                 value = "originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)"
+                withGetter = true
             }
             additionalImports(fakeElementImport, fakeSourceElementKindImport)
         }
