@@ -13,10 +13,6 @@ object AsmLikeInstructionListingDirectives : SimpleDirectivesContainer() {
         "Enables ${AsmLikeInstructionListingHandler::class}"
     )
 
-    val IR_DIFFERENCE by directive(
-        "If present then saves dump for IR backend in asm.ir.txt file"
-    )
-
     val INLINE_SCOPES_DIFFERENCE by directive(
         "If present and if inline scopes are enabled then saves dump for IR backend in asm.scopes.txt file"
     )

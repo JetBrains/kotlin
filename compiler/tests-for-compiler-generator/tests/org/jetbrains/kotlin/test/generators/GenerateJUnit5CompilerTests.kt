@@ -193,10 +193,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/bytecodeListing")
             }
 
-            testClass<AbstractAsmLikeInstructionListingTest> {
-                model("codegen/asmLike")
-            }
-
             testClass<AbstractIrAsmLikeInstructionListingTest> {
                 model("codegen/asmLike")
             }

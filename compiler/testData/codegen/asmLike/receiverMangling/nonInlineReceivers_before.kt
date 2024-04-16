@@ -1,5 +1,4 @@
 // !LANGUAGE: -NewCapturedReceiverFieldNamingConvention
-// IR_DIFFERENCE
 // LOCAL_VARIABLE_TABLE
 // LAMBDAS: CLASS
 

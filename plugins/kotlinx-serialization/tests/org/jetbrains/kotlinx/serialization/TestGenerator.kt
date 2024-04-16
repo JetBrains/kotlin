@@ -33,10 +33,6 @@ fun main(args: Array<String>) {
 
             // ------------------------------- asm instructions -------------------------------
 
-            testClass<AbstractSerializationAsmLikeInstructionsListingTest> {
-                model("codegen")
-            }
-
             testClass<AbstractSerializationIrAsmLikeInstructionsListingTest> {
                 model("codegen")
             }
