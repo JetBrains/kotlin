@@ -116,19 +116,19 @@ class Fir2IrTypeConverter(
 
                 if (specialAnnotationsProvider != null) {
                     if (hasEnhancedNullability) {
-                        typeAnnotations += specialAnnotationsProvider.enhancedNullabilityAnnotationCall
+                        typeAnnotations += specialAnnotationsProvider.generateEnhancedNullabilityAnnotationCall()
                     }
                     if (hasFlexibleNullability) {
-                        typeAnnotations += specialAnnotationsProvider.flexibleNullabilityAnnotationCall
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleNullabilityAnnotationCall()
                     }
                     if (hasFlexibleMutability) {
-                        typeAnnotations += specialAnnotationsProvider.flexibleMutabilityAnnotationCall
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleMutabilityAnnotationCall()
                     }
                     if (hasFlexibleArrayElementVariance) {
-                        typeAnnotations += specialAnnotationsProvider.flexibleArrayElementVarianceAnnotationCall
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleArrayElementVarianceAnnotationCall()
                     }
                     if (addRawTypeAnnotation) {
-                        typeAnnotations += specialAnnotationsProvider.rawTypeAnnotationCall
+                        typeAnnotations += specialAnnotationsProvider.generateRawTypeAnnotationCall()
                     }
                 }
 

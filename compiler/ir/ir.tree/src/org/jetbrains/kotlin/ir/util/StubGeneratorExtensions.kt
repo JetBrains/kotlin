@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -66,16 +67,16 @@ open class StubGeneratorExtensions {
 
     open val irDeserializationEnabled: Boolean = false
 
-    open val flexibleNullabilityAnnotationConstructor: IrConstructor?
+    open val flexibleNullabilityAnnotationCall: IrConstructorCall?
         get() = null
 
-    open val flexibleMutabilityAnnotationConstructor: IrConstructor?
+    open val flexibleMutabilityAnnotationCall: IrConstructorCall?
         get() = null
 
-    open val enhancedNullabilityAnnotationConstructor: IrConstructor?
+    open val enhancedNullabilityAnnotationCall: IrConstructorCall?
         get() = null
 
-    open val rawTypeAnnotationConstructor: IrConstructor?
+    open val rawTypeAnnotationCall: IrConstructorCall?
         get() = null
 
     companion object {

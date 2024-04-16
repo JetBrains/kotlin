@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.*
@@ -267,18 +268,18 @@ abstract class TypeTranslator(
         // EnhancedNullability annotation is not present in 'annotations', see 'EnhancedTypeAnnotations::iterator()'.
         // Also, EnhancedTypeAnnotationDescriptor is not a "real" annotation descriptor, there's no corresponding ClassDescriptor, etc.
         if (extensions.enhancedNullability.hasEnhancedNullability(kotlinType)) {
-            irAnnotations.addSpecialAnnotation(extensions.enhancedNullabilityAnnotationConstructor)
+            irAnnotations.addIfNotNull(extensions.enhancedNullabilityAnnotationCall)
         }
 
         if (flexibleType.isNullabilityFlexible()) {
-            irAnnotations.addSpecialAnnotation(extensions.flexibleNullabilityAnnotationConstructor)
+            irAnnotations.addIfNotNull(extensions.flexibleNullabilityAnnotationCall)
         }
         if (flexibleType.isMutabilityFlexible()) {
-            irAnnotations.addSpecialAnnotation(extensions.flexibleMutabilityAnnotationConstructor)
+            irAnnotations.addIfNotNull(extensions.flexibleMutabilityAnnotationCall)
         }
 
         if (flexibleType is RawType) {
-            irAnnotations.addSpecialAnnotation(extensions.rawTypeAnnotationConstructor)
+            irAnnotations.addIfNotNull(extensions.rawTypeAnnotationCall)
         }
 
         return irAnnotations
@@ -289,19 +290,6 @@ abstract class TypeTranslator(
         return flexibility is FlexibleType && flexibility.lowerBound.constructor != flexibility.upperBound.constructor &&
                 FlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(flexibility.lowerBound) ==
                 FlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(flexibility.upperBound)
-    }
-
-    private fun MutableList<IrConstructorCall>.addSpecialAnnotation(irConstructor: IrConstructor?) {
-        if (irConstructor != null) {
-            add(
-                IrConstructorCallImpl.fromSymbolOwner(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    irConstructor.constructedClassType,
-                    irConstructor.symbol
-                )
-            )
-        }
     }
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =

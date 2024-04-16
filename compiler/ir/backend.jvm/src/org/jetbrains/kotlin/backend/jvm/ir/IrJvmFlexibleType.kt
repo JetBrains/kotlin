@@ -9,12 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
@@ -73,7 +68,7 @@ private class IrJvmFlexibleTypeImpl(
                 arguments = listOf(makeTypeProjection(irType.getArrayElementType(), Variance.INVARIANT))
             }
             if (raw) {
-                annotations = listOf(specialAnnotations.rawTypeAnnotation.createAnnotation())
+                annotations = listOf(specialAnnotations.generateRawTypeAnnotationCall())
             }
         }
 
@@ -111,11 +106,6 @@ private class IrJvmFlexibleTypeImpl(
             is IrStarProjection -> error("Star projection is not possible for the argument of Array type: ${irType.render()}")
             null -> error("Flexible variance is only possible for Array types: ${irType.render()}")
         }
-
-    private fun IrClassSymbol.createAnnotation(): IrConstructorCall =
-        IrConstructorCallImpl.fromSymbolOwner(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, owner.thisReceiver!!.type, owner.constructors.single<IrConstructor>().symbol
-        )
 }
 
 fun IrType.isWithFlexibleNullability(): Boolean =

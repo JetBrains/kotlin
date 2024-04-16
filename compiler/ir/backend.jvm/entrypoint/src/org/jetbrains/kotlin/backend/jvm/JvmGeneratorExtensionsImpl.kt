@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -162,17 +163,17 @@ open class JvmGeneratorExtensionsImpl(
 
     private val specialAnnotations = JvmIrSpecialAnnotationSymbolProvider(IrFactoryImpl)
 
-    override val flexibleNullabilityAnnotationConstructor: IrConstructor =
-        specialAnnotations.flexibleNullabilityAnnotation.owner.constructors.single()
+    override val flexibleNullabilityAnnotationCall: IrConstructorCall =
+        specialAnnotations.generateFlexibleNullabilityAnnotationCall()
 
-    override val flexibleMutabilityAnnotationConstructor: IrConstructor =
-        specialAnnotations.flexibleMutabilityAnnotation.owner.constructors.single()
+    override val flexibleMutabilityAnnotationCall: IrConstructorCall =
+        specialAnnotations.generateFlexibleMutabilityAnnotationCall()
 
-    override val enhancedNullabilityAnnotationConstructor: IrConstructor =
-        specialAnnotations.enhancedNullabilityAnnotation.owner.constructors.single()
+    override val enhancedNullabilityAnnotationCall: IrConstructorCall =
+        specialAnnotations.generateEnhancedNullabilityAnnotationCall()
 
-    override val rawTypeAnnotationConstructor: IrConstructor =
-        specialAnnotations.rawTypeAnnotation.owner.constructors.single()
+    override val rawTypeAnnotationCall: IrConstructorCall =
+        specialAnnotations.generateRawTypeAnnotationCall()
 
     override fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? {
         if (descriptor is SyntheticJavaPropertyDescriptor) {

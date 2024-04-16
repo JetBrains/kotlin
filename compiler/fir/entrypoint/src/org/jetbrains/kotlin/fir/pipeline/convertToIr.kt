@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbols
 import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolverVisitor
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
@@ -91,7 +91,7 @@ fun FirResult.convertToIrAndActualize(
     val platformFirOutput = outputs.last()
 
     val specialAnnotationsProvider = runIf(platformFirOutput.session.moduleData.platform.isJvm()) {
-        Fir2IrJvmSpecialAnnotationSymbolProvider(Fir2IrJvmSpecialAnnotationSymbolProvider(IrFactoryImpl))
+        JvmIrSpecialAnnotationSymbolProvider(IrFactoryImpl)
     }
 
     fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(

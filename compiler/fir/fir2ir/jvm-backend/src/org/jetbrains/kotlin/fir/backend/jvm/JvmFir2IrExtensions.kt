@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.fir.backend.InjectedValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -52,11 +55,18 @@ class JvmFir2IrExtensions(
 
     private val specialAnnotationConstructors = mutableListOf<IrConstructor>()
 
-    private val rawTypeAnnotationClass =
-        createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
+    private val rawTypeAnnotationClassConstructor: IrConstructor =
+        createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()
 
-    override val rawTypeAnnotationConstructor: IrConstructor =
-        rawTypeAnnotationClass.constructors.single()
+    override val rawTypeAnnotationCall: IrConstructorCall =
+        rawTypeAnnotationClassConstructor.let {
+            IrConstructorCallImpl.fromSymbolOwner(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                it.constructedClassType,
+                it.symbol
+            )
+        }
 
     init {
         createSpecialAnnotationClass(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION, kotlinJvmInternalPackage)
