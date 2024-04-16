@@ -523,7 +523,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:_id visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract _id: kotlin.Int?
+                      public abstract _id: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                     FUN FAKE_OVERRIDE name:<get-_id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I) returnType:kotlin.Int? [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:_id visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -531,7 +531,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                   PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract achievements: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenAchievements_1132858334>
+                      public abstract achievements: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenAchievements_1132858334> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                     FUN FAKE_OVERRIDE name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenAchievements_1132858334> [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -539,7 +539,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                   PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract id: kotlin.String
+                      public abstract id: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                     FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -547,7 +547,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                   PROPERTY FAKE_OVERRIDE name:name visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract name: kotlin.String
+                      public abstract name: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                     FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -555,7 +555,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                   PROPERTY FAKE_OVERRIDE name:order visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract order: kotlin.Int
+                      public abstract order: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                     FUN FAKE_OVERRIDE name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:order visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -563,7 +563,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                   PROPERTY FAKE_OVERRIDE name:originalId visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract originalId: kotlin.Int?
+                      public abstract originalId: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                     FUN FAKE_OVERRIDE name:<get-originalId> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I) returnType:kotlin.Int? [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:originalId visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1103,7 +1103,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:_id visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract _id: kotlin.Int?
+                      public abstract _id: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                     FUN FAKE_OVERRIDE name:<get-_id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I) returnType:kotlin.Int? [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:_id visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1111,7 +1111,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                   PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract achievements: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenAchievements_1928912065>
+                      public abstract achievements: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenAchievements_1928912065> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                     FUN FAKE_OVERRIDE name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenAchievements_1928912065> [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1119,7 +1119,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                   PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract id: kotlin.String
+                      public abstract id: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                     FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1127,7 +1127,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                   PROPERTY FAKE_OVERRIDE name:name visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract name: kotlin.String
+                      public abstract name: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                     FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1135,7 +1135,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                   PROPERTY FAKE_OVERRIDE name:order visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract order: kotlin.Int
+                      public abstract order: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                     FUN FAKE_OVERRIDE name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:order visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1143,7 +1143,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explodeDataFrame.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                   PROPERTY FAKE_OVERRIDE name:originalId visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract originalId: kotlin.Int?
+                      public abstract originalId: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                     FUN FAKE_OVERRIDE name:<get-originalId> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I) returnType:kotlin.Int? [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:originalId visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:

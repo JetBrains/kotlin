@@ -40,7 +40,7 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
 
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-compiler-internal-test-framework:2.0.0-RC1")
+    testImplementation("org.jetbrains.kotlin:kotlin-compiler-internal-test-framework:$kotlinVersion")
 
     testImplementation(platform("org.junit:junit-bom:5.8.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

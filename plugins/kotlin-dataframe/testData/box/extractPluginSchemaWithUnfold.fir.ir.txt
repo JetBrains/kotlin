@@ -1102,7 +1102,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:approximation visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract approximation: kotlin.String
+                      public abstract approximation: kotlin.String declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                     FUN FAKE_OVERRIDE name:<get-approximation> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:approximation visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1110,7 +1110,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                   PROPERTY FAKE_OVERRIDE name:converter visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract converter: kotlin.String
+                      public abstract converter: kotlin.String declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                     FUN FAKE_OVERRIDE name:<get-converter> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:converter visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1118,7 +1118,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                   PROPERTY FAKE_OVERRIDE name:function visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract function: kotlin.String
+                      public abstract function: kotlin.String declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                     FUN FAKE_OVERRIDE name:<get-function> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:function visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1126,7 +1126,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                   PROPERTY FAKE_OVERRIDE name:functionReturnType visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract functionReturnType: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunctionReturnType_101304342>
+                      public abstract functionReturnType: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunctionReturnType_101304342> declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                     FUN FAKE_OVERRIDE name:<get-functionReturnType> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunctionReturnType_101304342> [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:functionReturnType visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1134,7 +1134,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                   PROPERTY FAKE_OVERRIDE name:lens visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract lens: kotlin.String
+                      public abstract lens: kotlin.String declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                     FUN FAKE_OVERRIDE name:<get-lens> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:lens visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1142,7 +1142,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                   PROPERTY FAKE_OVERRIDE name:parameters visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract parameters: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenParameters_101304342>
+                      public abstract parameters: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenParameters_101304342> declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                     FUN FAKE_OVERRIDE name:<get-parameters> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenParameters_101304342> [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:parameters visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1150,7 +1150,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                   PROPERTY FAKE_OVERRIDE name:receiverType visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract receiverType: kotlin.String
+                      public abstract receiverType: kotlin.String declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                     FUN FAKE_OVERRIDE name:<get-receiverType> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:receiverType visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -1158,7 +1158,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                   PROPERTY FAKE_OVERRIDE name:supported visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract supported: kotlin.Boolean
+                      public abstract supported: kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                     FUN FAKE_OVERRIDE name:<get-supported> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I) returnType:kotlin.Boolean [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:supported visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:

@@ -125,7 +125,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract age: kotlin.Int
+                      public abstract age: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I
                     FUN FAKE_OVERRIDE name:<get-age> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.TokenCars_3085480I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:

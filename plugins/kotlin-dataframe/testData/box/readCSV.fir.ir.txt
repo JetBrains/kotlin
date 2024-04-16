@@ -229,7 +229,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract full_name: kotlin.String
+                      public abstract full_name: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                     FUN FAKE_OVERRIDE name:<get-full_name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:full_name visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -237,7 +237,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                   PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract html_url: java.net.URL
+                      public abstract html_url: java.net.URL declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                     FUN FAKE_OVERRIDE name:<get-html_url> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I) returnType:java.net.URL [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:html_url visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -245,7 +245,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                   PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract stargazers_count: kotlin.Int
+                      public abstract stargazers_count: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                     FUN FAKE_OVERRIDE name:<get-stargazers_count> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:stargazers_count visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -253,7 +253,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                   PROPERTY FAKE_OVERRIDE name:topics visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract topics: kotlin.String
+                      public abstract topics: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                     FUN FAKE_OVERRIDE name:<get-topics> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.String [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:topics visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -261,7 +261,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                   PROPERTY FAKE_OVERRIDE name:watchers visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract watchers: kotlin.Int
+                      public abstract watchers: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                     FUN FAKE_OVERRIDE name:<get-watchers> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:watchers visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
