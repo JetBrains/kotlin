@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-67311
 
 fun interface Callable<in T, out R> {
