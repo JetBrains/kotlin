@@ -1,0 +1,24 @@
+KT element: KtCallExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/foo|( {
+    [ResolvedTo(BODY_RESOLVE)] lval <array>: R|kotlin/collections/MutableList<kotlin/Int>| = R|<local>/list|
+    [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = R|<local>/i|
+    R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Int|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.dec|())
+    R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/Int|>|(R|<local>/<index_0>|)
+}
+, R|<local>/list|)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] functionWithPreDecArrayAccessArgument.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] list: R|kotlin/collections/MutableList<kotlin/Int>|): R|kotlin/Unit| {
+        R|/foo|( {
+            [ResolvedTo(BODY_RESOLVE)] lval <array>: R|kotlin/collections/MutableList<kotlin/Int>| = R|<local>/list|
+            [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = R|<local>/i|
+            R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Int|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.dec|())
+            R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/Int|>|(R|<local>/<index_0>|)
+        }
+        , R|<local>/list|)
+    }

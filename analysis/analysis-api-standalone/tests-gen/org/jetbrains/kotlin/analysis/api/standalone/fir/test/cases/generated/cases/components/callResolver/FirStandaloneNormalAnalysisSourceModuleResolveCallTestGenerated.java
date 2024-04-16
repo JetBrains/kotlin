@@ -485,6 +485,48 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("functionWithPostDecPropertyArgument.kt")
+  public void testFunctionWithPostDecPropertyArgument() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithPostDecPropertyArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithPostIncPropertyArgument.kt")
+  public void testFunctionWithPostIncPropertyArgument() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithPostIncPropertyArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithPreDecArrayAccessArgument.kt")
+  public void testFunctionWithPreDecArrayAccessArgument() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithPreDecArrayAccessArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithPreDecPropertyArgument.kt")
+  public void testFunctionWithPreDecPropertyArgument() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithPreDecPropertyArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithPreIncArrayAccessArgument.kt")
+  public void testFunctionWithPreIncArrayAccessArgument() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithPreIncArrayAccessArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithPreIncPropertyArgument.kt")
+  public void testFunctionWithPreIncPropertyArgument() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithPreIncPropertyArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithPropertyArgument.kt")
+  public void testFunctionWithPropertyArgument() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithPropertyArgument.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithReceiverCall.kt")
   public void testFunctionWithReceiverCall() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithReceiverCall.kt");

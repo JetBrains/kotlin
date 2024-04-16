@@ -772,6 +772,48 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("functionWithPostDecPropertyArgument.kt")
+    public void testFunctionWithPostDecPropertyArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/functionWithPostDecPropertyArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithPostIncPropertyArgument.kt")
+    public void testFunctionWithPostIncPropertyArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/functionWithPostIncPropertyArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithPreDecArrayAccessArgument.kt")
+    public void testFunctionWithPreDecArrayAccessArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/functionWithPreDecArrayAccessArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithPreDecPropertyArgument.kt")
+    public void testFunctionWithPreDecPropertyArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/functionWithPreDecPropertyArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithPreIncArrayAccessArgument.kt")
+    public void testFunctionWithPreIncArrayAccessArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/functionWithPreIncArrayAccessArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithPreIncPropertyArgument.kt")
+    public void testFunctionWithPreIncPropertyArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/functionWithPreIncPropertyArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithPropertyArgument.kt")
+    public void testFunctionWithPropertyArgument() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/functionWithPropertyArgument.kt");
+    }
+
+    @Test
     @TestMetadata("ifExpression.kt")
     public void testIfExpression() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/ifExpression.kt");
