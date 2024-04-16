@@ -163,16 +163,16 @@ open class JvmGeneratorExtensionsImpl(
 
     private val specialAnnotations = JvmIrSpecialAnnotationSymbolProvider(IrFactoryImpl)
 
-    override val flexibleNullabilityAnnotationCall: IrConstructorCall =
+    override fun generateFlexibleNullabilityAnnotationCall(): IrConstructorCall =
         specialAnnotations.generateFlexibleNullabilityAnnotationCall()
 
-    override val flexibleMutabilityAnnotationCall: IrConstructorCall =
+    override fun generateFlexibleMutabilityAnnotationCall(): IrConstructorCall =
         specialAnnotations.generateFlexibleMutabilityAnnotationCall()
 
-    override val enhancedNullabilityAnnotationCall: IrConstructorCall =
+    override fun generateEnhancedNullabilityAnnotationCall(): IrConstructorCall =
         specialAnnotations.generateEnhancedNullabilityAnnotationCall()
 
-    override val rawTypeAnnotationCall: IrConstructorCall =
+    override fun generateRawTypeAnnotationCall(): IrConstructorCall =
         specialAnnotations.generateRawTypeAnnotationCall()
 
     override fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? {

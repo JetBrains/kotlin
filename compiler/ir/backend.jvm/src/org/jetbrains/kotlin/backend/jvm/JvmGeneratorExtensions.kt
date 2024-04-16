@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 interface JvmGeneratorExtensions {
     val classNameOverride: MutableMap<IrClass, JvmClassName>
 
-    val rawTypeAnnotationCall: IrConstructorCall?
+    fun generateRawTypeAnnotationCall(): IrConstructorCall?
 
     val cachedFields: CachedFieldsForObjectInstances
 }

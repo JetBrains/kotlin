@@ -58,7 +58,7 @@ class JvmFir2IrExtensions(
     private val rawTypeAnnotationClassConstructor: IrConstructor =
         createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()
 
-    override val rawTypeAnnotationCall: IrConstructorCall =
+    override fun generateRawTypeAnnotationCall(): IrConstructorCall =
         rawTypeAnnotationClassConstructor.let {
             IrConstructorCallImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET,

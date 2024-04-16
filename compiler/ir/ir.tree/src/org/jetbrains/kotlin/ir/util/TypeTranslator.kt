@@ -10,12 +10,9 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.descriptors.IrBasedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -268,18 +265,18 @@ abstract class TypeTranslator(
         // EnhancedNullability annotation is not present in 'annotations', see 'EnhancedTypeAnnotations::iterator()'.
         // Also, EnhancedTypeAnnotationDescriptor is not a "real" annotation descriptor, there's no corresponding ClassDescriptor, etc.
         if (extensions.enhancedNullability.hasEnhancedNullability(kotlinType)) {
-            irAnnotations.addIfNotNull(extensions.enhancedNullabilityAnnotationCall)
+            irAnnotations.addIfNotNull(extensions.generateEnhancedNullabilityAnnotationCall())
         }
 
         if (flexibleType.isNullabilityFlexible()) {
-            irAnnotations.addIfNotNull(extensions.flexibleNullabilityAnnotationCall)
+            irAnnotations.addIfNotNull(extensions.generateFlexibleNullabilityAnnotationCall())
         }
         if (flexibleType.isMutabilityFlexible()) {
-            irAnnotations.addIfNotNull(extensions.flexibleMutabilityAnnotationCall)
+            irAnnotations.addIfNotNull(extensions.generateFlexibleMutabilityAnnotationCall())
         }
 
         if (flexibleType is RawType) {
-            irAnnotations.addIfNotNull(extensions.rawTypeAnnotationCall)
+            irAnnotations.addIfNotNull(extensions.generateRawTypeAnnotationCall())
         }
 
         return irAnnotations

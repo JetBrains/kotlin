@@ -431,8 +431,7 @@ internal class KtFirCompilerFacility(
     private class CompilerFacilityJvmGeneratorExtensions(
         private val delegate: JvmGeneratorExtensions
     ) : StubGeneratorExtensions(), JvmGeneratorExtensions by delegate {
-        override val rawTypeAnnotationCall: IrConstructorCall?
-            get() = delegate.rawTypeAnnotationCall
+        override fun generateRawTypeAnnotationCall(): IrConstructorCall? = delegate.generateRawTypeAnnotationCall()
 
         /**
          * This method is used from [org.jetbrains.kotlin.backend.jvm.lower.ReflectiveAccessLowering.visitCall]
