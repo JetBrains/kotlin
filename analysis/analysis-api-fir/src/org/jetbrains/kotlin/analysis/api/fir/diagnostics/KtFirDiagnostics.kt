@@ -1863,6 +1863,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val isCastToNotNull: Boolean
     }
 
+    interface SmartcastImpossibleOnImplicitInvokeReceiver : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = SmartcastImpossibleOnImplicitInvokeReceiver::class
+        val desiredType: KtType
+        val subject: KtExpression
+        val description: String
+        val isCastToNotNull: Boolean
+    }
+
     interface RedundantNullable : KtFirDiagnostic<KtTypeReference> {
         override val diagnosticClass get() = RedundantNullable::class
     }

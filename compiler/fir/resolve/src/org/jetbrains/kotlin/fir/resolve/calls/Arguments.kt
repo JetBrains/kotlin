@@ -417,7 +417,8 @@ private fun checkApplicabilityForArgumentType(
                         context.session.typeContext.isTypeMismatchDueToNullability(
                             argumentType,
                             expectedType
-                        )
+                        ),
+                        isImplicitInvokeReceiver = false,
                     )
                 )
                 return

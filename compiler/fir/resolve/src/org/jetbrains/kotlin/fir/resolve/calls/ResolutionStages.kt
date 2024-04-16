@@ -203,10 +203,11 @@ object CheckDispatchReceiver : ResolutionStage() {
                 UnstableSmartCast(
                     smartcastedReceiver,
                     targetType,
-                    context.session.typeContext.isTypeMismatchDueToNullability(
+                    isCastToNotNull = context.session.typeContext.isTypeMismatchDueToNullability(
                         smartcastedReceiver.originalExpression.resolvedType,
                         targetType
-                    )
+                    ),
+                    isImplicitInvokeReceiver = callInfo.isImplicitInvoke,
                 )
             )
         } else if (isReceiverNullable) {

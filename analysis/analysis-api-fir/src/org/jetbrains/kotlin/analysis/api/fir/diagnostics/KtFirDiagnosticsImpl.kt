@@ -2240,6 +2240,15 @@ internal class SmartcastImpossibleImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.SmartcastImpossible
 
+internal class SmartcastImpossibleOnImplicitInvokeReceiverImpl(
+    override val desiredType: KtType,
+    override val subject: KtExpression,
+    override val description: String,
+    override val isCastToNotNull: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.SmartcastImpossibleOnImplicitInvokeReceiver
+
 internal class RedundantNullableImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

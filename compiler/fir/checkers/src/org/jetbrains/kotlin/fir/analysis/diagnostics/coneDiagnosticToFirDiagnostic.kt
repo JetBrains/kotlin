@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import javax.xml.ws.spi.Invoker
 
 private fun ConeDiagnostic.toKtDiagnostic(
     source: KtSourceElement?,
@@ -121,13 +123,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
 
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
             val unstableSmartcast = this.candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnstableSmartCast>() }
-            FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
-                unstableSmartcast.argument.source,
-                unstableSmartcast.targetType,
-                unstableSmartcast.argument,
-                unstableSmartcast.argument.smartcastStability.description,
-                unstableSmartcast.isCastToNotNull
-            )
+            unstableSmartcast.mapUnstableSmartCast()
         }
 
         else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
@@ -366,13 +362,7 @@ private fun mapInapplicableCandidateError(
                 FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, rootCause.function.name.asString())
 
             is OperatorCallOfConstructor -> FirErrors.OPERATOR_CALL_ON_CONSTRUCTOR.createOn(source, rootCause.constructor.name.asString())
-            is UnstableSmartCast -> FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
-                rootCause.argument.source,
-                rootCause.targetType,
-                rootCause.argument,
-                rootCause.argument.smartcastStability.description,
-                rootCause.isCastToNotNull
-            )
+            is UnstableSmartCast -> rootCause.mapUnstableSmartCast()
 
             is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol)
             is InferenceError -> {
@@ -416,6 +406,20 @@ private fun mapInapplicableCandidateError(
     } else {
         diagnostics
     }
+}
+
+private fun UnstableSmartCast.mapUnstableSmartCast(): KtDiagnosticWithParameters4<ConeKotlinType, FirExpression, String, Boolean> {
+    val factory = when {
+        isImplicitInvokeReceiver -> FirErrors.SMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER
+        else -> FirErrors.SMARTCAST_IMPOSSIBLE
+    }
+    return factory.createOn(
+        argument.source,
+        targetType,
+        argument,
+        argument.smartcastStability.description,
+        isCastToNotNull
+    )
 }
 
 private fun mapSystemHasContradictionError(

@@ -8,7 +8,7 @@ class KlassA(arg: (() -> Unit)?) {
     var func: (() -> Unit)? = arg
     init {
         if (func != null) {
-            <!SMARTCAST_IMPOSSIBLE!>func<!>()
+            <!SMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER!>func<!>()
         }
     }
 }
