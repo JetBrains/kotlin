@@ -55,6 +55,16 @@ expect class Int {
 expect class String
 
 @ActualizeByJvmBuiltinProvider
+public expect open class Throwable() {
+    public open val message: String?
+    public open val cause: Throwable?
+
+    public constructor(message: String?)
+
+    public constructor(cause: Throwable?)
+}
+
+@ActualizeByJvmBuiltinProvider
 public expect class IntArray(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Int)
@@ -96,5 +106,7 @@ fun string() = String() + 1
 fun boolean() = true
 fun int() = 42
 fun intArray() = intArrayOf(1, 2, 3)
+
+fun initCauseInPlatform() = Throwable().initCause(Throwable()) // `initCause` is not visible in `common` but visible in `platform`
 
 fun box() = "OK"
