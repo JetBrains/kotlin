@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
-import org.jetbrains.kotlin.utils.getOrPutNullable
 
 data class FirAnonymousFunctionReturnExpressionInfo(val expression: FirExpression, val isExplicit: Boolean)
 
@@ -581,17 +580,22 @@ class ControlFlowGraphBuilder {
         }
 
         // Create secondary constructor edges.
-        val constructorDelegation = mutableMapOf<FirConstructor, FirConstructor?>()
-        fun FirConstructor.delegatedConstructor(): FirConstructor? = constructorDelegation.getOrPutNullable(this) {
+        val constructorDelegation = mutableMapOf<FirConstructor, FirConstructor>()
+        val constructorDelegationLevel = mutableMapOf<FirConstructor, Int>()
+
+        fun FirConstructor.computeDelegationLevel(): Int = constructorDelegationLevel.getOrPut(this) {
             // Break cycles in some way; there will be errors on delegated constructor calls in that case.
-            constructorDelegation[this] = null
-            delegatedConstructor?.takeIf { it.isThis }?.calleeReference
-                ?.toResolvedConstructorSymbol(discardErrorReference = true)?.fir
-                ?.takeIf { parent -> this !in generateSequence(parent) { it.delegatedConstructor() } }
+            constructorDelegationLevel[this] = -1
+            val delegatesTo = delegatedConstructor?.takeIf { it.isThis }?.calleeReference
+                ?.toResolvedConstructorSymbol(discardErrorReference = true)?.fir ?: return@getOrPut 0
+            val delegatedLevel = delegatesTo.computeDelegationLevel()
+            if (delegatedLevel != -1) constructorDelegation[this] = delegatesTo
+            delegatedLevel + 1
         }
 
         for ((ctor, graph) in secondaryConstructors) {
-            val delegatesTo = ctor.delegatedConstructor()
+            ctor.computeDelegationLevel()
+            val delegatesTo = constructorDelegation[ctor]
             val delegatedNodeRange = secondaryConstructors[delegatesTo]?.let {
                 // constructor(A) : this(B) <-- class enter -> [constructor(A) enter -> B -> constructor(B) -> rest of constructor(A)]
                 //                                             v-----------------------------/            \--------------------------\
@@ -602,7 +606,7 @@ class ControlFlowGraphBuilder {
                 // The bracketed part is the `ControlFlowGraph` for the corresponding constructor. As can be seen above,
                 // if the constructor being delegated to delegates to another constructor itself, we can use enter/exit node directly,
                 // but if it doesn't, we also need to include the init blocks.
-                val hasParent = delegatesTo?.delegatedConstructor() != null
+                val hasParent = delegatesTo in constructorDelegation
                 if (hasParent) it.enterNode to it.exitNode else (firstInPlaceEnter ?: it.enterNode) to it.exitNode
             } ?: if (delegatesTo != null && primaryConstructor == delegatesTo) firstInPlaceEnter!! to lastInPlaceExit else null
 
@@ -646,7 +650,8 @@ class ControlFlowGraphBuilder {
             addEdgeToSubGraph(exitNode, graph.enterNode)
         }
 
-        enterNode.subGraphs = calledInPlace + secondaryConstructors.values
+        // Make sure constructor graphs are visited in an order such that delegated constructors go before delegating ones.
+        enterNode.subGraphs = calledInPlace + secondaryConstructors.entries.sortedBy { it.key.computeDelegationLevel() }.map { it.value }
         exitNode.subGraphs = calledLater
         return exitNode.takeIf { it.isUnion } to popGraph()
     }
