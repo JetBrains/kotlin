@@ -91,7 +91,7 @@ fun FirResult.convertToIrAndActualize(
     val platformFirOutput = outputs.last()
 
     val specialAnnotationsProvider = runIf(platformFirOutput.session.moduleData.platform.isJvm()) {
-        JvmIrSpecialAnnotationSymbolProvider(IrFactoryImpl)
+        JvmIrSpecialAnnotationSymbolProvider
     }
 
     fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(

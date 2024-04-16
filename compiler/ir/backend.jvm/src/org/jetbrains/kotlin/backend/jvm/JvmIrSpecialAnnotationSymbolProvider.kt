@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.RawTypeAnnotation
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import kotlin.apply
 
-class JvmIrSpecialAnnotationSymbolProvider(private val irFactory: IrFactory) : IrSpecialAnnotationsProvider() {
+object JvmIrSpecialAnnotationSymbolProvider : IrSpecialAnnotationsProvider() {
     private val kotlinJvmInternalPackage: IrExternalPackageFragmentImpl =
         IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
 
@@ -57,7 +57,7 @@ class JvmIrSpecialAnnotationSymbolProvider(private val irFactory: IrFactory) : I
     private class AnnotationInfo(val defaultType: IrType, val constructorSymbol: IrConstructorSymbol)
 
     private fun ClassId.getAnnotationInfo(irPackage: IrExternalPackageFragmentImpl): AnnotationInfo {
-        val irClassSymbol = irFactory.buildClass {
+        val irClassSymbol = IrFactoryImpl.buildClass {
             kind = ClassKind.ANNOTATION_CLASS
             name = shortClassName
         }.apply {

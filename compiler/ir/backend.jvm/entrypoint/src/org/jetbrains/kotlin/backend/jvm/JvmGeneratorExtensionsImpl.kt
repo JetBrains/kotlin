@@ -161,19 +161,17 @@ open class JvmGeneratorExtensionsImpl(
     override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
         get() = true
 
-    private val specialAnnotations = JvmIrSpecialAnnotationSymbolProvider(IrFactoryImpl)
-
     override fun generateFlexibleNullabilityAnnotationCall(): IrConstructorCall =
-        specialAnnotations.generateFlexibleNullabilityAnnotationCall()
+        JvmIrSpecialAnnotationSymbolProvider.generateFlexibleNullabilityAnnotationCall()
 
     override fun generateFlexibleMutabilityAnnotationCall(): IrConstructorCall =
-        specialAnnotations.generateFlexibleMutabilityAnnotationCall()
+        JvmIrSpecialAnnotationSymbolProvider.generateFlexibleMutabilityAnnotationCall()
 
     override fun generateEnhancedNullabilityAnnotationCall(): IrConstructorCall =
-        specialAnnotations.generateEnhancedNullabilityAnnotationCall()
+        JvmIrSpecialAnnotationSymbolProvider.generateEnhancedNullabilityAnnotationCall()
 
     override fun generateRawTypeAnnotationCall(): IrConstructorCall =
-        specialAnnotations.generateRawTypeAnnotationCall()
+        JvmIrSpecialAnnotationSymbolProvider.generateRawTypeAnnotationCall()
 
     override fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? {
         if (descriptor is SyntheticJavaPropertyDescriptor) {

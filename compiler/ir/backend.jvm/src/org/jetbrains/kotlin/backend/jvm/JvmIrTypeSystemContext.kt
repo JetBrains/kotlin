@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.asJvmFlexibleType
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleMutability
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -20,10 +19,8 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.ir.types.isMarkedNullable as irIsMarkedNullable
 
 class JvmIrTypeSystemContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext {
-    private val specialAnnotations = JvmIrSpecialAnnotationSymbolProvider(IrFactoryImpl)
-
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? =
-        (this as IrType).asJvmFlexibleType(irBuiltIns, specialAnnotations)
+        (this as IrType).asJvmFlexibleType(irBuiltIns, JvmIrSpecialAnnotationSymbolProvider)
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
         return when (this) {
