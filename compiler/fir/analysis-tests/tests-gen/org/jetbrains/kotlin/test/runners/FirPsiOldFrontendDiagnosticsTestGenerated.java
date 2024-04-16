@@ -31485,6 +31485,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("samConversionWithNamedArgumentAndIf.kt")
+      public void testSamConversionWithNamedArgumentAndIf() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithNamedArgumentAndIf.kt");
+      }
+
+      @Test
       @TestMetadata("samConversionWithSafeCallAndInference.kt")
       public void testSamConversionWithSafeCallAndInference() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithSafeCallAndInference.kt");
