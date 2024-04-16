@@ -35,13 +35,13 @@ interface ActivePlayer {
 
 fun main() {
     val df = @DisableInterpretation DataFrame.read("")
-    val df = df.cast<ActivePlayer>()
+    val df1 = df.cast<ActivePlayer>()
 
     val format = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm:ss")
-    val df1 = df
+    val df2 = df1
         .convert { timestamp }.with { LocalDateTime.parse(it, format) }
 
-    val date: LocalDateTime = df1.timestamp[0]
+    val date: LocalDateTime = df2.timestamp[0]
 }
 
 fun box() = "OK"

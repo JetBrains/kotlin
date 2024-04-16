@@ -21,9 +21,9 @@ FILE: flexibleReturnType.kt
         59425,1,Orc,Rogue,Orgrimmar,165,01/01/08 00:02:04
         65494,9,Orc,Hunter,Durotar,-1,01/01/08 00:02:04
     ).R|kotlin/text/trimIndent|())
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ActivePlayer>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>()
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ActivePlayer>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>()
         lval format: R|java/time/format/DateTimeFormatter!| = Q|java/time/format/DateTimeFormatter|.R|java/time/format/DateTimeFormatter.ofPattern*s|(String(MM/dd/yy HH:mm:ss))
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_862661939>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<kotlin/String>| <inline=NoInline>  {
+        lval df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_862661939>| = R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<kotlin/String>| <inline=NoInline>  {
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamp|
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_113141796>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenWith_113141796>| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -126,7 +126,7 @@ FILE: flexibleReturnType.kt
             )
         }
         )
-        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|<local>/TokenWith_862661939|>()
+        R|<local>/df2|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|<local>/TokenWith_862661939|>()
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt

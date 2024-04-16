@@ -276,7 +276,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explode.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:timestamps visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract timestamps: kotlin.Int
+                      public abstract timestamps: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023I
                     FUN FAKE_OVERRIDE name:<get-timestamps> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:timestamps visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:

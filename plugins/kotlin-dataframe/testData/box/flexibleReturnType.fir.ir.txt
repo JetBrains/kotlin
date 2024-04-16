@@ -31,14 +31,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/flexibleReturnType.kt
           $receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion
           text: CALL 'public final fun trimIndent (): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
             $receiver: CONST String type=kotlin.String value="\n        char,level,race,charclass,zone,guild,timestamp\n        59425,1,Orc,Rogue,Orgrimmar,165,01/01/08 00:02:04\n        65494,9,Orc,Hunter,Durotar,-1,01/01/08 00:02:04\n    "
-      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> [val]
+      VAR name:df1 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> [val]
         CALL 'public final fun cast <T> (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.cast> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> origin=null
           <T>: org.jetbrains.kotlinx.dataframe.ActivePlayer
           $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<*> origin=null
       VAR name:format type:@[FlexibleNullability] java.time.format.DateTimeFormatter? [val]
         CALL 'public open fun ofPattern (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.time.format.DateTimeFormatter? declared in java.time.format.DateTimeFormatter' type=@[FlexibleNullability] java.time.format.DateTimeFormatter? origin=null
           p0: CONST String type=kotlin.String value="MM/dd/yy HH:mm:ss"
-      VAR name:df1 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939> [val]
+      VAR name:df2 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939> [val]
         CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939> origin=null
           <T>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_113141796>
           <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939>
@@ -48,7 +48,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/flexibleReturnType.kt
             $receiver: CALL 'public final fun convert <T, C> (columns: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.convert>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.convert>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<C of org.jetbrains.kotlinx.dataframe.api.convert>>): org.jetbrains.kotlinx.dataframe.api.Convert<T of org.jetbrains.kotlinx.dataframe.api.convert, C of org.jetbrains.kotlinx.dataframe.api.convert> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.api.Convert<org.jetbrains.kotlinx.dataframe.ActivePlayer, kotlin.String> origin=null
               <T>: org.jetbrains.kotlinx.dataframe.ActivePlayer
               <C>: kotlin.String
-              $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> origin=null
+              $receiver: GET_VAR 'val df1: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> origin=null
               columns: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<kotlin.String>> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>, it:@[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>) returnType:org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<kotlin.String>
                   $receiver: VALUE_PARAMETER name:$this$convert type:org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.ActivePlayer>
@@ -184,7 +184,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/flexibleReturnType.kt
                       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     PROPERTY FAKE_OVERRIDE name:char visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract char: kotlin.Int
+                        public abstract char: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_113141796I
                       FUN FAKE_OVERRIDE name:<get-char> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_113141796I) returnType:kotlin.Int [fake_override]
                         correspondingProperty: PROPERTY FAKE_OVERRIDE name:char visibility:public modality:ABSTRACT [fake_override,val]
                         overridden:
@@ -192,7 +192,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/flexibleReturnType.kt
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_113141796I
                     PROPERTY FAKE_OVERRIDE name:timestamp visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract timestamp: java.time.LocalDateTime
+                        public abstract timestamp: java.time.LocalDateTime declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_113141796I
                       FUN FAKE_OVERRIDE name:<get-timestamp> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_113141796I) returnType:java.time.LocalDateTime [fake_override]
                         correspondingProperty: PROPERTY FAKE_OVERRIDE name:timestamp visibility:public modality:ABSTRACT [fake_override,val]
                         overridden:
@@ -378,7 +378,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/flexibleReturnType.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:char visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract char: kotlin.Int
+                      public abstract char: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939I
                     FUN FAKE_OVERRIDE name:<get-char> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:char visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -386,7 +386,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/flexibleReturnType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939I
                   PROPERTY FAKE_OVERRIDE name:timestamp visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract timestamp: java.time.LocalDateTime
+                      public abstract timestamp: java.time.LocalDateTime declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939I
                     FUN FAKE_OVERRIDE name:<get-timestamp> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939I) returnType:java.time.LocalDateTime [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:timestamp visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -394,7 +394,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/flexibleReturnType.kt
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939I
                   PROPERTY FAKE_OVERRIDE name:tsDiff visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract tsDiff: kotlin.Boolean
+                      public abstract tsDiff: kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939I
                     FUN FAKE_OVERRIDE name:<get-tsDiff> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939I) returnType:kotlin.Boolean [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:tsDiff visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -466,7 +466,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/flexibleReturnType.kt
                                   then: GET_VAR 'val tmp_0: kotlin.Boolean? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.<anonymous>' type=kotlin.Boolean? origin=null
       CALL 'public final fun print <T> (rowsLimit: kotlin.Int, valueLimit: kotlin.Int, borders: kotlin.Boolean, alignLeft: kotlin.Boolean, columnTypes: kotlin.Boolean, title: kotlin.Boolean): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api' type=kotlin.Unit origin=null
         <T>: org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939
-        $receiver: GET_VAR 'val df1: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939> declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939> origin=null
+        $receiver: GET_VAR 'val df2: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939> declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenWith_862661939> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in org.jetbrains.kotlinx.dataframe'
         CONST String type=kotlin.String value="OK"
   FUN name:diff visibility:public modality:FINAL <T, V> ($receiver:org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.diff>, unit:java.time.temporal.ChronoUnit, expression:@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.diff>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.diff>, V of org.jetbrains.kotlinx.dataframe.diff>) returnType:kotlin.Long?
