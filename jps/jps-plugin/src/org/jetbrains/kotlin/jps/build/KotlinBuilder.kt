@@ -470,6 +470,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
         if (compilationErrors) {
             LOG.info("Compiled with errors")
+            JavaBuilderUtil.registerFilesWithErrors(context, messageCollector.filesWithErrors.map(::File))
             return ABORT
         } else {
             JavaBuilderUtil.registerSuccessfullyCompiled(context, kotlinDirtyFilesHolder.allDirtyFiles)
