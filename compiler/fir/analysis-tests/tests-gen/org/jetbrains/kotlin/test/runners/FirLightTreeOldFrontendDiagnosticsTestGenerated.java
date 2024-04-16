@@ -34005,6 +34005,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("unstableSmartCastOnInvokeReceiver.kt")
+      public void testUnstableSmartCastOnInvokeReceiver() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/unstableSmartCastOnInvokeReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("unstableToStable.kt")
       public void testUnstableToStable() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/unstableToStable.kt");
