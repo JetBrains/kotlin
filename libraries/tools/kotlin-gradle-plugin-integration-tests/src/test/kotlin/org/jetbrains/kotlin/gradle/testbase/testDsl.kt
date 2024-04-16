@@ -791,8 +791,9 @@ private fun BuildResult.printBuildScanUrl() {
     if (buildScanUrl != null) {
         println("Build scan url: $buildScanUrl")
     } else {
+        // It is ok to not fail the build as Develocity server may be down or have temporary issues.
+        // In such a case, we should not fail the whole test suite.
         printBuildOutput()
-        throw IllegalStateException("Build scan was not published")
     }
 }
 
