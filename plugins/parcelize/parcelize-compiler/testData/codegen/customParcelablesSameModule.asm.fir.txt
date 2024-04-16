@@ -112,11 +112,9 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           NEW (test/Foo)
           DUP
+          GETSTATIC (k/KotlinParcelable, CREATOR, Lk/KotlinParcelable$Creator;)
           ALOAD (1)
-          LDC (Ltest/Foo;)
-          INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
-          INVOKEVIRTUAL (android/os/Parcel, readParcelable, (Ljava/lang/ClassLoader;)Landroid/os/Parcelable;)
-          CHECKCAST (k/KotlinParcelable)
+          INVOKEVIRTUAL (k/KotlinParcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Lk/KotlinParcelable;)
           INVOKESPECIAL (test/Foo, <init>, (Lk/KotlinParcelable;)V)
           ARETURN
         LABEL (L1)
@@ -161,12 +159,11 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          ALOAD (1)
           ALOAD (0)
           GETFIELD (test/Foo, kp, Lk/KotlinParcelable;)
-          CHECKCAST (android/os/Parcelable)
+          ALOAD (1)
           ILOAD (2)
-          INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
+          INVOKEVIRTUAL (k/KotlinParcelable, writeToParcel, (Landroid/os/Parcel;I)V)
         LABEL (L1)
         LINENUMBER (40)
           RETURN
