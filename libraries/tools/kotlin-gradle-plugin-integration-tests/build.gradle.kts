@@ -149,7 +149,7 @@ tasks.register<Task>("prepareNativeBundleForGradleIT") {
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
         // Build full Kotlin Native bundle
-        dependsOn(":kotlin-native:bundle")
+        dependsOn(":kotlin-native:install")
     }
 }
 
