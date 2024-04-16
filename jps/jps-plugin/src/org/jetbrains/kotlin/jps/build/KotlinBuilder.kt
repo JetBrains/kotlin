@@ -447,9 +447,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         cleanJsOutputs(context, kotlinChunk, incrementalCaches, kotlinDirtyFilesHolder)
 
-        if (LOG.isDebugEnabled) {
-            LOG.debug("Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
-        }
+
 
         val start = System.nanoTime()
         val outputItemCollector = doCompileModuleChunk(
@@ -474,6 +472,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.info("Compiled with errors")
             return ABORT
         } else {
+            JavaBuilderUtil.registerSuccessfullyCompiled(context, kotlinDirtyFilesHolder.allDirtyFiles)
             LOG.info("Compiled successfully")
         }
 
@@ -618,9 +617,21 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
         }
 
+        registerFilesToCompile(dirtyFilesHolder, context)
         val isDoneSomething = representativeTarget.compileModuleChunk(commonArguments, dirtyFilesHolder, environment)
 
         return if (isDoneSomething) environment.outputItemsCollector else null
+    }
+
+    private fun registerFilesToCompile(
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
+        context: CompileContext,
+    ) {
+        val allDirtyFiles = dirtyFilesHolder.allDirtyFiles
+        if (LOG.isDebugEnabled) {
+            LOG.debug("Compiling files: $allDirtyFiles")
+        }
+        JavaBuilderUtil.registerFilesToCompile(context, allDirtyFiles)
     }
 
     private fun createCompileEnvironment(
