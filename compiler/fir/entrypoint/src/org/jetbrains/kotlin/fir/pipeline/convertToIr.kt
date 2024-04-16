@@ -90,8 +90,8 @@ fun FirResult.convertToIrAndActualize(
 
     val platformFirOutput = outputs.last()
 
-    val fir2IrBuiltIns = runIf(platformFirOutput.session.moduleData.platform.isJvm()) {
-        Fir2IrBuiltIns(Fir2IrJvmSpecialAnnotationSymbolProvider(IrFactoryImpl))
+    val specialAnnotationsProvider = runIf(platformFirOutput.session.moduleData.platform.isJvm()) {
+        Fir2IrJvmSpecialAnnotationSymbolProvider(Fir2IrJvmSpecialAnnotationSymbolProvider(IrFactoryImpl))
     }
 
     fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(
@@ -111,7 +111,7 @@ fun FirResult.convertToIrAndActualize(
             irMangler,
             kotlinBuiltIns,
             irBuiltIns,
-            fir2IrBuiltIns,
+            specialAnnotationsProvider,
             irTypeSystemContext,
             firProvidersWithGeneratedFiles.getValue(session.moduleData),
         )

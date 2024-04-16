@@ -37,7 +37,7 @@ class Fir2IrComponentsStorage(
     irMangler: KotlinMangler.IrMangler,
     kotlinBuiltIns: KotlinBuiltIns,
     initializedIrBuiltIns: IrBuiltInsOverFir?,
-    override val builtIns: Fir2IrBuiltIns?,
+    override val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     initializedIrTypeSystemContext: IrTypeSystemContext?,
     override val firProvider: FirProviderWithGeneratedFiles,
 ) : Fir2IrComponents {

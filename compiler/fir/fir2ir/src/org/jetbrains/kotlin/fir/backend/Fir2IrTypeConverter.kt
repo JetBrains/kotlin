@@ -114,31 +114,21 @@ class Fir2IrTypeConverter(
                         ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifiersGenerator::createIrClassForNotFoundClass)?.symbol
                         ?: return createErrorType()
 
-                if (builtIns != null) {
+                if (specialAnnotationsProvider != null) {
                     if (hasEnhancedNullability) {
-                        builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
-                            typeAnnotations += it
-                        }
+                        typeAnnotations += specialAnnotationsProvider.enhancedNullabilityAnnotationCall
                     }
                     if (hasFlexibleNullability) {
-                        builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
-                            typeAnnotations += it
-                        }
+                        typeAnnotations += specialAnnotationsProvider.flexibleNullabilityAnnotationCall
                     }
                     if (hasFlexibleMutability) {
-                        builtIns.flexibleMutabilityAnnotationConstructorCall()?.let {
-                            typeAnnotations += it
-                        }
+                        typeAnnotations += specialAnnotationsProvider.flexibleMutabilityAnnotationCall
                     }
                     if (hasFlexibleArrayElementVariance) {
-                        builtIns.flexibleArrayElementVarianceAnnotationConstructorCall()?.let {
-                            typeAnnotations += it
-                        }
+                        typeAnnotations += specialAnnotationsProvider.flexibleArrayElementVarianceAnnotationCall
                     }
                     if (addRawTypeAnnotation) {
-                        builtIns.rawTypeAnnotationConstructorCall()?.let {
-                            typeAnnotations += it
-                        }
+                        typeAnnotations += specialAnnotationsProvider.rawTypeAnnotationCall
                     }
                 }
 
