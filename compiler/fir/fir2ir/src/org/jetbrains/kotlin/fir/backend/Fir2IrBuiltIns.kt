@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
-class Fir2IrBuiltIns(
-    private val c: Fir2IrComponents,
-    private val provider: Fir2IrSpecialSymbolProvider?,
-) : Fir2IrComponents by c {
+class Fir2IrBuiltIns(private val provider: Fir2IrSpecialSymbolProvider?) {
     // ---------------------- special annotations ----------------------
 
     private val enhancedNullabilityAnnotationIrSymbol by lazy {

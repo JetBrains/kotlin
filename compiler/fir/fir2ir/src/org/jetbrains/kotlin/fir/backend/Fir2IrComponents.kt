@@ -32,7 +32,7 @@ interface Fir2IrComponents {
 
     val symbolTable: SymbolTable
     val irBuiltIns: IrBuiltInsOverFir
-    val builtIns: Fir2IrBuiltIns
+    val builtIns: Fir2IrBuiltIns?
     val manglers: Manglers
 
     val irFactory: IrFactory
