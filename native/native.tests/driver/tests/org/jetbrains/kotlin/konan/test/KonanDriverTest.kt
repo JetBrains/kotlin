@@ -46,8 +46,14 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     private val testSuiteDir = File("native/native.tests/driver/testData")
     private val source = testSuiteDir.resolve("driver0.kt")
 
+    // Driver tests are flaky on macOS hosts.
+    private fun `check for KT-67454`() {
+        Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily)
+    }
+
     @Test
     fun testLLVMVariantDev() {
+        `check for KT-67454`()
         // On macOS for apple targets, clang++ from Xcode is used, which is not switchable as `dev/user`,
         // so the test cannot detect LLVM variant for apple targets on macOS host.
         Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily && targets.testTarget.family.isAppleFamily)
@@ -116,6 +122,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testDriverVersion() {
+        `check for KT-67454`()
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
                                         testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
@@ -142,6 +149,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testOverrideKonanProperties() {
+        `check for KT-67454`()
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
                                         testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
