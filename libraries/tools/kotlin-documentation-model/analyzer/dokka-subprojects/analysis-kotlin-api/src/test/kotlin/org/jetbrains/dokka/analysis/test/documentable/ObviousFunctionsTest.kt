@@ -5,12 +5,14 @@
 package org.jetbrains.dokka.analysis.test.documentable
 
 import org.jetbrains.dokka.analysis.test.OnlyDescriptors
+import org.jetbrains.dokka.analysis.test.OnlySymbols
 import org.jetbrains.dokka.analysis.test.api.kotlinJvmTestProject
 import org.jetbrains.dokka.analysis.test.api.parse
 import org.jetbrains.dokka.analysis.test.api.useServices
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.ObviousMember
+import org.junit.jupiter.api.Nested
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -103,42 +105,61 @@ class ObviousFunctionsTest {
         )
     }
 
-    @Test
-    fun `kotlin_Enum should not have obvious members via external documentable provider`() {
-        val project = kotlinJvmTestProject {
-            ktFile("SomeClass.kt") {
-                +"class SomeClass"
-            }
+    @Nested
+    inner class KotlinEnumHaveNoObviousMembersViaExternalDocumentableTest {
+        @OnlyDescriptors("In K2 there is finalize method with the Deprecated annotation.  In K1 it is unavailable")
+        @Test
+        fun `K1 - kotlin_Enum should not have obvious members via external documentable provider`() {
+            `kotlin_Enum should not have obvious members via external documentable provider`(false)
         }
 
-        project.useServices {
-            val enum = externalDocumentableProvider.getClasslike(
-                DRI("kotlin", "Enum"),
-                it.context.configuration.sourceSets.single()
-            )
-            assertNotNull(enum)
-            assertEquals("Enum", enum.name)
+        @OnlySymbols("In K2 there is finalize method with the Deprecated annotation.  In K1 it is unavailable")
+        @Test
+        fun `K2 - kotlin_Enum should not have obvious members via external documentable provider`() {
+            `kotlin_Enum should not have obvious members via external documentable provider`(true)
+        }
 
-            val javaVersion = when (val specVersion = System.getProperty("java.specification.version")) {
-                "1.8" -> 8
-                else -> specVersion.toInt()
+        private fun `kotlin_Enum should not have obvious members via external documentable provider`(
+            isFinalizeAvailableJDK18: Boolean
+        ) {
+            val project = kotlinJvmTestProject {
+                ktFile("SomeClass.kt") {
+                    +"class SomeClass"
+                }
             }
 
-            // inherited from java enum
-            val jdkEnumInheritedFunctions = when {
-                // starting from JDK 18, 'finalize' is not available (finalization is deprecated in JDK 18)
-                javaVersion >= 18 -> setOf("clone", "getDeclaringClass", "describeConstable")
-                // starting from JDK 12, there is a new member in enum 'describeConstable'
-                javaVersion >= 12 -> setOf("clone", "getDeclaringClass", "describeConstable", "finalize")
-                else -> setOf("clone", "getDeclaringClass", "finalize")
-            }
+            project.useServices {
+                val enum = externalDocumentableProvider.getClasslike(
+                    DRI("kotlin", "Enum"),
+                    it.context.configuration.sourceSets.single()
+                )
+                assertNotNull(enum)
+                assertEquals("Enum", enum.name)
 
-            assertObviousFunctions(
-                expectedObviousFunctions = emptySet(),
-                expectedNonObviousFunctions = setOf("compareTo", "equals", "hashCode", "toString") +
-                        jdkEnumInheritedFunctions,
-                actualFunctions = enum.functions
-            )
+                val javaVersion = when (val specVersion = System.getProperty("java.specification.version")) {
+                    "1.8" -> 8
+                    else -> specVersion.toInt()
+                }
+
+                // inherited from java enum
+                val jdkEnumInheritedFunctions = when {
+                    // starting from JDK 18,
+                    // In K1 'finalize' is not available, but in K2 it is deprecated (finalization is deprecated in JDK 18)
+                    javaVersion >= 18 -> if (isFinalizeAvailableJDK18) setOf(
+                        "clone", "getDeclaringClass", "describeConstable", "finalize"
+                    ) else setOf("clone", "getDeclaringClass", "describeConstable")
+                    // starting from JDK 12, there is a new member in enum 'describeConstable'
+                    javaVersion >= 12 -> setOf("clone", "getDeclaringClass", "describeConstable", "finalize")
+                    else -> setOf("clone", "getDeclaringClass", "finalize")
+                }
+
+                assertObviousFunctions(
+                    expectedObviousFunctions = emptySet(),
+                    expectedNonObviousFunctions = setOf("compareTo", "equals", "hashCode", "toString") +
+                            jdkEnumInheritedFunctions,
+                    actualFunctions = enum.functions
+                )
+            }
         }
     }
 
