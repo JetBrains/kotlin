@@ -62,7 +62,7 @@ fun box(): String {
 // CHECK-OPT-NOT: {{call|invoke}} double @"kfun:kotlin#<Double-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} float @"kfun:kotlin#<Float-unbox>
 
-// CHECK-OPT-NOT: {{call|invoke}} i8* @"kfun:kotlin.native.internal#<NativePtr-unbox>
+// CHECK-OPT-NOT: {{call|invoke}} ptr @"kfun:kotlin.native.internal#<NativePtr-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} i32 @"kfun:kotlin.native.concurrent#<Future-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} i32 @"kfun:kotlin.native.concurrent#<Worker-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} <4 x float> @"kfun:kotlin.native#<Vector128-unbox>
