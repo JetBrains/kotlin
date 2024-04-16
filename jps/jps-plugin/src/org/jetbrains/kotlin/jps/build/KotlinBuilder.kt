@@ -464,8 +464,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         cleanJsOutputs(context, kotlinChunk, incrementalCaches, kotlinDirtyFilesHolder)
 
+        val allDirtyFiles = kotlinDirtyFilesHolder.allDirtyFiles
+        JavaBuilderUtil.registerFilesToCompile(context, allDirtyFiles)
         if (LOG.isDebugEnabled) {
-            LOG.debug("Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
+            LOG.debug("Compiling files: $allDirtyFiles")
         }
 
         val reportService = JpsStatisticsReportService.getFromContext(context)
