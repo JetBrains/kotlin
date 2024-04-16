@@ -18,4 +18,11 @@ KtSuccessCallInfo:
         ]
         callableIdIfNonLocal = /foo
     typeArgumentsMapping = {}
-    argumentMapping = {}
+    argumentMapping = {
+      localProperty-- -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }

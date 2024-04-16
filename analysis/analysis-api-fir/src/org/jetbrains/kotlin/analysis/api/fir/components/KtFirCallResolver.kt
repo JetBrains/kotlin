@@ -1357,6 +1357,8 @@ internal class KtFirCallResolver(
                 realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
             is FirAnonymousFunctionExpression ->
                 realPsi?.parent as? KtLabeledExpression ?: realPsi as? KtExpression
+            // FirBlock is a fake container for desugared expressions like `++index` or `++list[0]`
+            is FirBlock -> psi as? KtExpression
             else -> realPsi as? KtExpression
         }
     }
