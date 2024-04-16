@@ -200,7 +200,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val kotlinChunk = kotlinContext.getChunk(chunk) ?: return
         kotlinContext.checkChunkCacheVersion(kotlinChunk)
 
-        if (!kotlinContext.rebuildingAllKotlin && kotlinChunk.isEnabled) {
+        if (!isKotlinBuilderInDumbMode && !kotlinContext.rebuildingAllKotlin && kotlinChunk.isEnabled) {
             markAdditionalFilesForInitialRound(kotlinChunk, chunk, kotlinContext)
         }
 
