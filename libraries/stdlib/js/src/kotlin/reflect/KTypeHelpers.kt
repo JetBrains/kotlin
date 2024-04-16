@@ -29,7 +29,8 @@ internal fun markKTypeNullable(kType: KType) = KTypeImpl(kType.classifier!!, kTy
 internal fun createKTypeParameter(
     name: String,
     upperBounds: Array<KType>,
-    variance: String
+    variance: String,
+    isReified: Boolean,
 ): KTypeParameter {
     val kVariance = when (variance) {
         "in" -> KVariance.IN
@@ -37,7 +38,7 @@ internal fun createKTypeParameter(
         else -> KVariance.INVARIANT
     }
 
-    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, false)
+    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified)
 }
 
 @JsName("getStarKTypeProjection")

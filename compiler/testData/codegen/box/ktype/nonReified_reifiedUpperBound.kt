@@ -1,9 +1,3 @@
-/*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
-// KT-66092: Assertion failed for `(t as KTypeParameter).isReified`
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 // WITH_STDLIB
 // WITH_REFLECT
 

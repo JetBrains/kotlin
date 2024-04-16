@@ -246,16 +246,12 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
             Variance.OUT_VARIANCE -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "out")
         }
 
-        // TODO: Check why do we have non-inlined reified parameters
-        // if (typeParameter.isReified) {
-        //     error("Reified parameter")
-        // }
-
         return buildCall(
             reflectionSymbols.createKTypeParameter!!,
             name,
             upperBounds,
-            variance
+            variance,
+            typeParameter.isReified.toIrConst(context.irBuiltIns.booleanType),
         ).also {
             visitedTypeParams.remove(typeParameter)
         }

@@ -27,13 +27,13 @@ internal inline fun <reified T : Any> wasmGetKClass(): KClass<T> =
 internal fun createKType(classifier: KClassifier, arguments: Array<KTypeProjection>, isMarkedNullable: Boolean): KType =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
 
-internal fun createKTypeParameter(name: String, upperBounds: Array<KType>, variance: String): KTypeParameter {
+internal fun createKTypeParameter(name: String, upperBounds: Array<KType>, variance: String, isReified: Boolean): KTypeParameter {
     val kVariance = when (variance) {
         "in" -> KVariance.IN
         "out" -> KVariance.OUT
         else -> KVariance.INVARIANT
     }
-    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, false)
+    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified)
 }
 
 internal fun getStarKTypeProjection(): KTypeProjection =
