@@ -676,17 +676,6 @@ Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfile
         }
 
     @Argument(
-        value = "-Xrepeat",
-        valueDescription = "<number>",
-        description = "Debug option: Repeat module compilation <number> times."
-    )
-    var repeatCompileModules: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xuse-14-inline-classes-mangling-scheme",
         description = "Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30."
     )

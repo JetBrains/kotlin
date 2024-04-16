@@ -53,11 +53,6 @@ class ProfilingCompilerPerformanceManager(
         active = false
     }
 
-    override fun notifyRepeat(total: Int, number: Int) {
-        dumpProfile("repeat$number")
-        restartProfiling()
-    }
-
     override fun notifyCompilationFinished() {
         dumpProfile("final")
         stopProfiling()
