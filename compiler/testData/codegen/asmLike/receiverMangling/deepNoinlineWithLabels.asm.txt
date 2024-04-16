@@ -1,4 +1,4 @@
-final class DeepNoinlineWithLabels_afterKt$foo$1$1$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+final class DeepNoinlineWithLabelsKt$foo$1$1$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
     final int $count
 
     final long $this_b1
@@ -15,7 +15,7 @@ final class DeepNoinlineWithLabels_afterKt$foo$1$1$1 : kotlin/jvm/internal/Lambd
 
     void <init>(java.lang.String $receiver, long $this_b1, long p2, boolean $this_b2, boolean p4, boolean $x, int $y) {
         Local variables:
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1$1$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1$1$1;
             1 $receiver: Ljava/lang/String;
             2 $this_b1: J
             4 $this_b2: J
@@ -27,18 +27,18 @@ final class DeepNoinlineWithLabels_afterKt$foo$1$1$1 : kotlin/jvm/internal/Lambd
 
     public final void invoke(long $this$b3) {
         Local variables:
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1$1$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1$1$1;
             1 $this$b3: J
     }
 
     public java.lang.Object invoke(java.lang.Object p1) {
         Local variables:
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1$1$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1$1$1;
             1 p1: Ljava/lang/Object;
     }
 }
 
-final class DeepNoinlineWithLabels_afterKt$foo$1$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+final class DeepNoinlineWithLabelsKt$foo$1$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
     final int $count
 
     final long $this_b1
@@ -51,7 +51,7 @@ final class DeepNoinlineWithLabels_afterKt$foo$1$1 : kotlin/jvm/internal/Lambda,
 
     void <init>(java.lang.String $receiver, long $this_b1, boolean p2, boolean $x, int $y) {
         Local variables:
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1$1;
             1 $receiver: Ljava/lang/String;
             2 $this_b1: J
             4 $x: Z
@@ -62,18 +62,18 @@ final class DeepNoinlineWithLabels_afterKt$foo$1$1 : kotlin/jvm/internal/Lambda,
     public final void invoke(long $this$b2) {
         Local variables:
             3 z: Z
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1$1;
             1 $this$b2: J
     }
 
     public java.lang.Object invoke(java.lang.Object p1) {
         Local variables:
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1$1;
             1 p1: Ljava/lang/Object;
     }
 }
 
-final class DeepNoinlineWithLabels_afterKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+final class DeepNoinlineWithLabelsKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
     final int $count
 
     final java.lang.String $this_foo
@@ -82,7 +82,7 @@ final class DeepNoinlineWithLabels_afterKt$foo$1 : kotlin/jvm/internal/Lambda, k
 
     void <init>(java.lang.String $receiver, boolean $x, int $count) {
         Local variables:
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1;
             1 $receiver: Ljava/lang/String;
             2 $x: Z
             3 $count: I
@@ -91,18 +91,18 @@ final class DeepNoinlineWithLabels_afterKt$foo$1 : kotlin/jvm/internal/Lambda, k
     public final void invoke(long $this$b1) {
         Local variables:
             3 y: Z
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1;
             1 $this$b1: J
     }
 
     public java.lang.Object invoke(java.lang.Object p1) {
         Local variables:
-            0 this: LDeepNoinlineWithLabels_afterKt$foo$1;
+            0 this: LDeepNoinlineWithLabelsKt$foo$1;
             1 p1: Ljava/lang/Object;
     }
 }
 
-public final class DeepNoinlineWithLabels_afterKt : java/lang/Object {
+public final class DeepNoinlineWithLabelsKt : java/lang/Object {
     public final static void block(kotlin.jvm.functions.Function1 block) {
         Local variables:
             0 block: Lkotlin/jvm/functions/Function1;

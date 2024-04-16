@@ -47,27 +47,15 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
     }
 
     @Test
-    @TestMetadata("deepNoinlineWithLabels_after.kt")
-    public void testDeepNoinlineWithLabels_after() {
-      runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinlineWithLabels_after.kt");
+    @TestMetadata("deepNoinline.kt")
+    public void testDeepNoinline() {
+      runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinline.kt");
     }
 
     @Test
-    @TestMetadata("deepNoinlineWithLabels_before.kt")
-    public void testDeepNoinlineWithLabels_before() {
-      runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinlineWithLabels_before.kt");
-    }
-
-    @Test
-    @TestMetadata("deepNoinline_after.kt")
-    public void testDeepNoinline_after() {
-      runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinline_after.kt");
-    }
-
-    @Test
-    @TestMetadata("deepNoinline_before.kt")
-    public void testDeepNoinline_before() {
-      runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinline_before.kt");
+    @TestMetadata("deepNoinlineWithLabels.kt")
+    public void testDeepNoinlineWithLabels() {
+      runTest("compiler/testData/codegen/asmLike/receiverMangling/deepNoinlineWithLabels.kt");
     }
 
     @Test
@@ -95,15 +83,9 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
     }
 
     @Test
-    @TestMetadata("nonInlineReceivers_after.kt")
-    public void testNonInlineReceivers_after() {
-      runTest("compiler/testData/codegen/asmLike/receiverMangling/nonInlineReceivers_after.kt");
-    }
-
-    @Test
-    @TestMetadata("nonInlineReceivers_before.kt")
-    public void testNonInlineReceivers_before() {
-      runTest("compiler/testData/codegen/asmLike/receiverMangling/nonInlineReceivers_before.kt");
+    @TestMetadata("nonInlineReceivers.kt")
+    public void testNonInlineReceivers() {
+      runTest("compiler/testData/codegen/asmLike/receiverMangling/nonInlineReceivers.kt");
     }
   }
 

@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewCapturedReceiverFieldNamingConvention
 // LOCAL_VARIABLE_TABLE
 // LAMBDAS: CLASS
 
