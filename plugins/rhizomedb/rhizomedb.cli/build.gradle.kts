@@ -12,8 +12,6 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
 
     implementation(project(":rhizomedb-compiler-plugin.k2"))
-    implementation(project(":rhizomedb-compiler-plugin.backend"))
-
     compileOnly(intellijCore())
 }
 

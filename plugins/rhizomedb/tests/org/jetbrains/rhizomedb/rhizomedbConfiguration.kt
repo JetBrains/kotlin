@@ -5,6 +5,9 @@
 
 package org.jetbrains.rhizomedb
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
@@ -15,8 +18,10 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.rhizomedb.fir.RhizomedbFirExtensionRegistrar
+import org.jetbrains.rhizomedb.ir.GeneratedDeclarationsIrBodyFiller
 import java.io.File
 
 class RhizomedbAdditionalSourceFileProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
@@ -30,14 +35,29 @@ class RhizomedbAdditionalSourceFileProvider(testServices: TestServices) : Additi
 }
 
 class RhizomedbEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        configuration.addJvmClasspathRoots(rhizomeClasspath)
+    }
+
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
         FirExtensionRegistrarAdapter.registerExtension(RhizomedbFirExtensionRegistrar())
+        IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller())
     }
 }
+
+class RhizomedbRuntimeClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
+    override fun runtimeClassPaths(module: TestModule): List<File> {
+        return rhizomeClasspath
+    }
+}
+
+private val rhizomeClasspath = System.getProperty("rhizome.classpath")?.split(File.pathSeparator)?.map(::File)
+    ?: error("Unable to get a valid classpath from 'rhizome.classpath' property")
 
 fun TestConfigurationBuilder.configureForRhizomedb(target: TargetBackend = TargetBackend.JVM) {
     useConfigurators(::RhizomedbEnvironmentConfigurator)
     useAdditionalSourceProviders(::RhizomedbAdditionalSourceFileProvider)
+    useCustomRuntimeClasspathProviders(::RhizomedbRuntimeClasspathProvider)
 //    when (target) {
 //        TargetBackend.JVM, TargetBackend.JVM_IR -> useCustomRuntimeClasspathProviders(::SerializationRuntimeClasspathJvmProvider)
 //        TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> useCustomRuntimeClasspathProviders(::SerializationRuntimeClasspathJsProvider)

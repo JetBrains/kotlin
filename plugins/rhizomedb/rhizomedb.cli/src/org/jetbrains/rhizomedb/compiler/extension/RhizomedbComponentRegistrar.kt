@@ -5,18 +5,16 @@
 
 package org.jetbrains.rhizomedb.compiler.extension
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.rhizomedb.fir.RhizomedbFirExtensionRegistrar
+import org.jetbrains.rhizomedb.ir.GeneratedDeclarationsIrBodyFiller
 
 class RhizomedbComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-//        SyntheticResolveExtension.registerExtension(SerializationResolveExtension())
-//        ExpressionCodegenExtension.registerExtension(SerializationCodegenExtension())
-//        JsSyntheticTranslateExtension.registerExtension(SerializationJsExtension())
-//        IrGenerationExtension.registerExtension(SerializationLoweringExtension())
-
+        IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller())
         FirExtensionRegistrarAdapter.registerExtension(RhizomedbFirExtensionRegistrar())
     }
 

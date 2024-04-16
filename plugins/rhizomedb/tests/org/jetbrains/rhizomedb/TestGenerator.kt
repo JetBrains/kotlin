@@ -7,6 +7,7 @@ package org.jetbrains.rhizomedb
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.rhizomedb.runners.AbstractRhizomedbFirLightTreeAsmLikeInstructionsListingTest
 import org.jetbrains.rhizomedb.runners.AbstractRhizomedbFirPsiDiagnosticTest
 
 fun main(args: Array<String>) {
@@ -31,13 +32,9 @@ fun main(args: Array<String>) {
 
             // ------------------------------- asm instructions -------------------------------
 
-//            testClass<AbstractSerializationAsmLikeInstructionsListingTest> {
-//                model("codegen")
-//            }
-//
-//            testClass<AbstractSerializationFirLightTreeAsmLikeInstructionsListingTest> {
-//                model("codegen")
-//            }
+            testClass<AbstractRhizomedbFirLightTreeAsmLikeInstructionsListingTest> {
+                model("codegen")
+            }
         }
     }
 }

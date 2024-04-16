@@ -1,0 +1,181 @@
+final class MyEntity$Companion$1 : kotlin/jvm/internal/FunctionReferenceImpl, kotlin/jvm/functions/Function1 {
+    public final static MyEntity$Companion$1 INSTANCE
+
+    static void <clinit>() {
+          NEW (MyEntity$Companion$1)
+          DUP
+          INVOKESPECIAL (MyEntity$Companion$1, <init>, ()V)
+          PUTSTATIC (MyEntity$Companion$1, INSTANCE, LMyEntity$Companion$1;)
+          RETURN
+    }
+
+    void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          ICONST_1
+          LDC (LMyEntity;)
+          LDC (<init>)
+          LDC (<init>(I)V)
+          ICONST_0
+          INVOKESPECIAL (kotlin/jvm/internal/FunctionReferenceImpl, <init>, (ILjava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final MyEntity invoke(int p0)
+
+    public java.lang.Object invoke(java.lang.Object p1)
+}
+
+public final class MyEntity$Companion : com/jetbrains/rhizomedb/EntityType {
+    private void <init>() {
+        LABEL (L0)
+        LINENUMBER (11)
+          ALOAD (0)
+          LDC (LMyEntity;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          GETSTATIC (MyEntity$Companion$1, INSTANCE, LMyEntity$Companion$1;)
+          CHECKCAST (kotlin/jvm/functions/Function1)
+          ICONST_0
+          ANEWARRAY (com/jetbrains/rhizomedb/Mixin)
+          INVOKESPECIAL (com/jetbrains/rhizomedb/EntityType, <init>, (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;[Lcom/jetbrains/rhizomedb/Mixin;)V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (MyEntity$Companion, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final com.jetbrains.rhizomedb.Attributes$Required getStringAttr() {
+        LABEL (L0)
+          INVOKESTATIC (MyEntity, access$getStringAttr-field$cp, ()Lcom/jetbrains/rhizomedb/Attributes$Required;)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class MyEntity : java/lang/Object, com/jetbrains/rhizomedb/Entity {
+    public final static MyEntity$Companion Companion
+
+    private final int eid
+
+    private final java.lang.String string
+
+    private static com.jetbrains.rhizomedb.Attributes$Required stringAttr-field
+
+    static void <clinit>() {
+          NEW (MyEntity$Companion)
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (MyEntity$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (MyEntity, Companion, LMyEntity$Companion;)
+          GETSTATIC (MyEntity, Companion, LMyEntity$Companion;)
+          CHECKCAST (com/jetbrains/rhizomedb/Attributes)
+          LDC (stringAttr)
+          ACONST_NULL
+          ACONST_NULL
+          BIPUSH (6)
+          ACONST_NULL
+          INVOKESTATIC (com/jetbrains/rhizomedb/Attributes, requiredTransient$default, (Lcom/jetbrains/rhizomedb/Attributes;Ljava/lang/String;Lcom/jetbrains/rhizomedb/Indexing;Lcom/jetbrains/rhizomedb/DefaultValue;ILjava/lang/Object;)Lcom/jetbrains/rhizomedb/Attributes$Required;)
+          PUTSTATIC (MyEntity, stringAttr-field, Lcom/jetbrains/rhizomedb/Attributes$Required;)
+          RETURN
+    }
+
+    public void <init>(int eid) {
+        LABEL (L0)
+        LINENUMBER (7)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          ALOAD (0)
+          ILOAD (1)
+          PUTFIELD (MyEntity, eid, I)
+        LABEL (L1)
+        LINENUMBER (9)
+          ALOAD (0)
+          LDC ()
+          PUTFIELD (MyEntity, string, Ljava/lang/String;)
+        LABEL (L2)
+        LINENUMBER (7)
+          RETURN
+        LABEL (L3)
+    }
+
+    public final static com.jetbrains.rhizomedb.Attributes$Required access$getStringAttr-field$cp() {
+        LABEL (L0)
+        LINENUMBER (6)
+          GETSTATIC (MyEntity, stringAttr-field, Lcom/jetbrains/rhizomedb/Attributes$Required;)
+          ARETURN
+    }
+
+    public final int component1()
+
+    public final MyEntity copy(int eid)
+
+    public static MyEntity copy$default(MyEntity p0, int p1, int p2, java.lang.Object p3)
+
+    public boolean equals(java.lang.Object other)
+
+    public int getEid()
+
+    public kotlin.reflect.KClass getEntityClass()
+
+    public final java.lang.String getString()
+
+    public static void getString$annotations()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+}
+
+public final class RequiredAttributeKt : java/lang/Object {
+    public final static java.lang.String foo() {
+        LABEL (L0)
+        LINENUMBER (17)
+        LINENUMBER (17)
+          GETSTATIC (MyEntity, Companion, LMyEntity$Companion;)
+          INVOKEVIRTUAL (MyEntity$Companion, getStringAttr, ()Lcom/jetbrains/rhizomedb/Attributes$Required;)
+          CHECKCAST (com/jetbrains/rhizomedb/EntityAttribute)
+          LDC (Hello)
+          INVOKESTATIC (com/jetbrains/rhizomedb/EntityAttributeKt, entity, (Lcom/jetbrains/rhizomedb/EntityAttribute;Ljava/lang/Object;)Lcom/jetbrains/rhizomedb/Entity;)
+          CHECKCAST (MyEntity)
+          DUP
+          IFNONNULL (L1)
+          POP
+          NEW (java/lang/IllegalStateException)
+          DUP
+          LDC (No Entity)
+          INVOKEVIRTUAL (java/lang/Object, toString, ()Ljava/lang/String;)
+          INVOKESPECIAL (java/lang/IllegalStateException, <init>, (Ljava/lang/String;)V)
+          ATHROW
+        LABEL (L1)
+          ASTORE (0)
+        LABEL (L2)
+        LINENUMBER (18)
+          ALOAD (0)
+          CHECKCAST (com/jetbrains/rhizomedb/Entity)
+          GETSTATIC (MyEntity, Companion, LMyEntity$Companion;)
+          INVOKEVIRTUAL (MyEntity$Companion, getStringAttr, ()Lcom/jetbrains/rhizomedb/Attributes$Required;)
+          INVOKESTATIC (com/jetbrains/rhizomedb/EntityAttributeKt, getRequired, (Lcom/jetbrains/rhizomedb/Entity;Lcom/jetbrains/rhizomedb/Attributes$Required;)Ljava/lang/Object;)
+          CHECKCAST (java/lang/String)
+          ASTORE (1)
+        LABEL (L3)
+        LINENUMBER (19)
+          ALOAD (1)
+          ARETURN
+        LABEL (L4)
+    }
+}
+
+public abstract interface com/jetbrains/rhizomedb/Attribute : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface com/jetbrains/rhizomedb/GeneratedEntityType : java/lang/Object, java/lang/annotation/Annotation {
+
+}
