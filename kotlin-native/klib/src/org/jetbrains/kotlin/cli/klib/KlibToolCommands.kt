@@ -14,18 +14,24 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.BitcodeLibrary
+import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.library.nativeTargets
+import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment as PackageFragmentProto
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import java.util.*
 
 internal sealed class KlibToolCommand(
         protected val output: KlibToolOutput,
@@ -80,23 +86,65 @@ internal sealed class KlibToolCommand(
 internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
         val library = libraryInDefaultRepoOrCurrentDir(args.libraryNameOrPath)
-        val headerAbiVersion = library.versions.abiVersion
-        val headerCompilerVersion = library.versions.compilerVersion
-        val headerLibraryVersion = library.versions.libraryVersion
-        val headerMetadataVersion = library.versions.metadataVersion
-        val moduleName = parseModuleHeader(library.moduleHeaderData).moduleName
+        val metadataHeader = parseModuleHeader(library.moduleHeaderData)
 
-        output.appendLine()
-        output.appendLine("Resolved to: ${library.libraryFile.canonicalPath}")
-        output.appendLine("Module name: $moduleName")
-        output.appendLine("ABI version: $headerAbiVersion")
-        output.appendLine("Compiler version: $headerCompilerVersion")
-        output.appendLine("Library version: $headerLibraryVersion")
-        output.appendLine("Metadata version: $headerMetadataVersion")
+        val nonEmptyPackageFQNs = buildSet {
+            addAll(metadataHeader.packageFragmentNameList)
+            removeAll(metadataHeader.emptyPackageList)
 
-        if (library is KonanLibrary) {
-            output.appendLine("Available targets: ${library.targetList.joinToString()}")
+            // Sometimes `emptyPackageList` is empty, so it's necessary to explicitly filter out empty packages:
+            val stillRemainingEmptyPackageFQNs = filterTo(hashSetOf()) { packageName ->
+                library.packageMetadataParts(packageName).all { partName ->
+                    parsePackageFragment(library.packageMetadata(packageName, partName)).isEmpty()
+                }
+            }
+
+            removeAll(stillRemainingEmptyPackageFQNs)
+        }.sorted()
+
+        val manifestProperties: SortedMap<String, String> = library.manifestProperties.entries
+                .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
+
+        output.appendLine("Full path: ${library.libraryFile.canonicalPath}")
+        output.appendLine("Module name (metadata): ${metadataHeader.moduleName}")
+        output.appendLine("Non-empty package FQNs (${nonEmptyPackageFQNs.size}):")
+        nonEmptyPackageFQNs.forEach { packageFQN ->
+            output.appendLine("  $packageFQN")
         }
+        output.appendLine("Has IR: ${library.hasIr}")
+        output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
+        output.appendLine("Manifest properties:")
+        manifestProperties.entries.forEach { (key, value) ->
+            output.appendLine("  $key=$value")
+        }
+    }
+
+    companion object {
+        private fun PackageFragmentProto.isEmpty(): Boolean = when {
+            class_List.isNotEmpty() -> false
+            !hasPackage() -> true
+            else -> `package`.functionList.isEmpty() && `package`.propertyList.isEmpty() && `package`.typeAliasList.isEmpty()
+        }
+
+        private val KotlinLibrary.hasBitcode: Boolean
+            get() {
+                if (this is BitcodeLibrary) {
+                    val componentName = componentList.firstOrNull() ?: return false
+
+                    for (nativeTargetName in nativeTargets) {
+                        val nativeTarget = KonanTarget.predefinedTargets[nativeTargetName] ?: continue
+                        val targetedLibrary = createKonanLibrary(
+                                libraryFilePossiblyDenormalized = libraryFile,
+                                component = componentName,
+                                target = nativeTarget,
+                        )
+
+                        return targetedLibrary.bitcodePaths.isNotEmpty()
+                    }
+                }
+
+                return false
+            }
     }
 }
 
