@@ -449,18 +449,23 @@ internal fun List<ConstantValue<*>>.expandArrayAnnotationValue(
 }
 
 internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisContext): KtAnnotationValue {
+    val token = analysisContext.token
+
     return when (this) {
         is ArrayValue -> {
             val arrayType = getType(analysisContext.resolveSession.moduleDescriptor)
-            KtArrayAnnotationValue(value.expandArrayAnnotationValue(arrayType, analysisContext), sourcePsi = null)
+            KtArrayAnnotationValue(value.expandArrayAnnotationValue(arrayType, analysisContext), sourcePsi = null, token)
         }
-        is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi = null)
+        is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi = null, token)
         is KClassValue -> when (val value = value) {
             is KClassValue.Value.LocalClass -> {
                 val descriptor = value.type.constructor.declarationDescriptor as ClassDescriptor
-                KtKClassAnnotationValue.KtLocalKClassAnnotationValue(descriptor.source.getPsi() as KtClassOrObject, sourcePsi = null)
+                val ktClass = descriptor.source.getPsi() as KtClassOrObject
+                KtKClassAnnotationValue.KtLocalKClassAnnotationValue(ktClass, sourcePsi = null, token)
             }
-            is KClassValue.Value.NormalClass -> KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue(value.classId, sourcePsi = null)
+            is KClassValue.Value.NormalClass -> {
+                KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue(value.classId, sourcePsi = null, token)
+            }
         }
 
         is AnnotationValue -> {
@@ -472,11 +477,12 @@ internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisC
                     arguments = value.getKtNamedAnnotationArguments(analysisContext),
                     index = null,
                     constructorSymbolPointer = null,
-                )
+                ),
+                token
             )
         }
         else -> {
-            KtConstantAnnotationValue(toKtConstantValue())
+            KtConstantAnnotationValue(toKtConstantValue(), token)
         }
     }
 }
@@ -645,7 +651,7 @@ internal val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
 
 internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KtNamedAnnotationValue> =
     allValueArguments.map { (name, value) ->
-        KtNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext))
+        KtNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext), analysisContext.token)
     }
 
 internal fun CallableDescriptor.createContextReceivers(

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 import java.util.Objects
 
@@ -12,9 +15,16 @@ import java.util.Objects
  * Name-Value pair which is used as annotation argument.
  */
 public class KtNamedAnnotationValue(
-    public val name: Name,
-    public val expression: KtAnnotationValue
-) {
+    name: Name,
+    expression: KtAnnotationValue,
+    override val token: KtLifetimeToken
+) : KtLifetimeOwner {
+    public val name: Name = name
+        get() = withValidityAssertion { field }
+
+    public val expression: KtAnnotationValue = expression
+        get() = withValidityAssertion { field }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -26,7 +26,7 @@ internal object KtAnnotationValueRenderer {
             is KtConstantAnnotationValue -> {
                 renderConstantAnnotationValue(value)
             }
-            KtUnsupportedAnnotationValue -> {
+            is KtUnsupportedAnnotationValue -> {
                 append("error(\"non-annotation value\")")
             }
             is KtKClassAnnotationValue -> {

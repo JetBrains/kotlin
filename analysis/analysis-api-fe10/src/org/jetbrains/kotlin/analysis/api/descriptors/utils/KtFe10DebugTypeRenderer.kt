@@ -131,7 +131,7 @@ internal class KtFe10DebugTypeRenderer {
                     .append(")")
             }
 
-            KtUnsupportedAnnotationValue -> {
+            is KtUnsupportedAnnotationValue -> {
                 printer.append(KtUnsupportedAnnotationValue::class.java.simpleName)
             }
 

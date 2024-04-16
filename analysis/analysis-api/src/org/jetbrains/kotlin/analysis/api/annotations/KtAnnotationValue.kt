@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -26,50 +30,70 @@ import org.jetbrains.kotlin.psi.KtElement
  *  [KtAnnotationApplicationValue] represents annotation types (with annotation fq name and arguments); and
  *  [KtArrayAnnotationValue] abstracts an array of [KtAnnotationValue]s.
  */
-public sealed class KtAnnotationValue {
+public sealed class KtAnnotationValue(override val token: KtLifetimeToken) : KtLifetimeOwner {
     public abstract val sourcePsi: KtElement?
 }
-
 
 /**
  * This represents an unsupported expression used as an annotation value.
  */
-public object KtUnsupportedAnnotationValue : KtAnnotationValue() {
-    override val sourcePsi: KtElement? get() = null
+public class KtUnsupportedAnnotationValue @KtAnalysisApiInternals constructor(
+    token: KtLifetimeToken
+) : KtAnnotationValue(token) {
+    override val sourcePsi: KtElement?
+        get() = withValidityAssertion { null }
 }
 
 /**
  * Array of annotation values. E.g: `@A([1, 2])`
  */
-public class KtArrayAnnotationValue(
-    public val values: Collection<KtAnnotationValue>,
-    override val sourcePsi: KtElement?,
-) : KtAnnotationValue()
+public class KtArrayAnnotationValue @KtAnalysisApiInternals constructor(
+    values: Collection<KtAnnotationValue>,
+    sourcePsi: KtElement?,
+    token: KtLifetimeToken
+) : KtAnnotationValue(token) {
+    public val values: Collection<KtAnnotationValue> = values
+        get() = withValidityAssertion { field }
+
+    override val sourcePsi: KtElement? = sourcePsi
+        get() = withValidityAssertion { field }
+}
 
 /**
  * Other annotation used as argument. E.g: `@A(B)` where `B` is annotation too
  */
-public class KtAnnotationApplicationValue(
-    public val annotationValue: KtAnnotationApplicationWithArgumentsInfo,
-) : KtAnnotationValue() {
-    override val sourcePsi: KtElement? get() = annotationValue.psi
-}
+public class KtAnnotationApplicationValue @KtAnalysisApiInternals constructor(
+    annotationValue: KtAnnotationApplicationWithArgumentsInfo,
+    token: KtLifetimeToken
+) : KtAnnotationValue(token) {
+    public val annotationValue: KtAnnotationApplicationWithArgumentsInfo = annotationValue
+        get() = withValidityAssertion { field }
 
+    override val sourcePsi: KtElement?
+        get() = withValidityAssertion { annotationValue.psi }
+}
 
 /**
  * Class reference used as annotation argument. E.g: `@A(String::class)`
  */
-public sealed class KtKClassAnnotationValue : KtAnnotationValue() {
+public sealed class KtKClassAnnotationValue(token: KtLifetimeToken) : KtAnnotationValue(token) {
     /**
      * Non-local Class reference used as annotation value. E.g: `@A(String::class)`
      */
-    public class KtNonLocalKClassAnnotationValue(
+    public class KtNonLocalKClassAnnotationValue @KtAnalysisApiInternals constructor(
         /**
          * Fully qualified name of the class used
          */
-        public val classId: ClassId,
-        override val sourcePsi: KtElement?,
-    ) : KtKClassAnnotationValue()
+        classId: ClassId,
+        sourcePsi: KtElement?,
+        token: KtLifetimeToken
+    ) : KtKClassAnnotationValue(token) {
+        public val classId: ClassId = classId
+            get() = withValidityAssertion { field }
+
+        override val sourcePsi: KtElement? = sourcePsi
+            get() = withValidityAssertion { field }
+    }
 
     /**
      * Non-local class reference used as annotation argument.
@@ -84,45 +108,70 @@ public sealed class KtKClassAnnotationValue : KtAnnotationValue() {
      * }
      * ```
      */
-    public class KtLocalKClassAnnotationValue(
+    public class KtLocalKClassAnnotationValue @KtAnalysisApiInternals constructor(
         /**
          * [PsiElement] of the class used. As we can get non-local class only for sources, it is always present.
          */
-        public val ktClass: KtClassOrObject,
-        override val sourcePsi: KtElement?,
-    ) : KtKClassAnnotationValue()
+        ktClass: KtClassOrObject,
+        sourcePsi: KtElement?,
+        token: KtLifetimeToken
+    ) : KtKClassAnnotationValue(token) {
+        public val ktClass: KtClassOrObject = ktClass
+            get() = withValidityAssertion { field }
+
+        override val sourcePsi: KtElement? = sourcePsi
+            get() = withValidityAssertion { field }
+    }
 
     /**
      * Non-existing class reference used as annotation argument. E.g: `@A(NON_EXISTING_CLASS::class)`
      */
-    public class KtErrorClassAnnotationValue(
-        override val sourcePsi: KtElement?,
-        public val unresolvedQualifierName: String?,
-    ) : KtKClassAnnotationValue()
+    public class KtErrorClassAnnotationValue @KtAnalysisApiInternals constructor(
+        unresolvedQualifierName: String?,
+        sourcePsi: KtElement?,
+        token: KtLifetimeToken
+    ) : KtKClassAnnotationValue(token) {
+        public val unresolvedQualifierName: String? = unresolvedQualifierName
+            get() = withValidityAssertion { field }
+
+        override val sourcePsi: KtElement? = sourcePsi
+            get() = withValidityAssertion { field }
+    }
 }
 
 /**
  * Some enum entry (enum constant) used as annotation argument. E.g: `@A(Color.RED)`
  */
-public class KtEnumEntryAnnotationValue(
+public class KtEnumEntryAnnotationValue @KtAnalysisApiInternals constructor(
     /**
      * Fully qualified name of used enum entry.
      */
-    public val callableId: CallableId?,
-    override val sourcePsi: KtElement?,
-) : KtAnnotationValue()
+    callableId: CallableId?,
+    sourcePsi: KtElement?,
+    token: KtLifetimeToken
+) : KtAnnotationValue(token) {
+    public val callableId: CallableId? = callableId
+        get() = withValidityAssertion { field }
+
+    override val sourcePsi: KtElement? = sourcePsi
+        get() = withValidityAssertion { field }
+}
 
 /**
  * Some constant value (which may be used as initializer of `const val`) used as annotation argument. It may be String literal, number literal or some simple expression.
  * E.g: `@A(1 +2, "a" + "b")` -- both arguments here are [KtConstantAnnotationValue]
  * @see [KtConstantValue]
  */
-public class KtConstantAnnotationValue(
-    public val constantValue: KtConstantValue,
-) : KtAnnotationValue() {
-    override val sourcePsi: KtElement? get() = constantValue.sourcePsi
-}
+public class KtConstantAnnotationValue @KtAnalysisApiInternals constructor(
+    constantValue: KtConstantValue,
+    token: KtLifetimeToken
+) : KtAnnotationValue(token) {
+    public val constantValue: KtConstantValue = constantValue
+        get() = withValidityAssertion { field }
 
+    override val sourcePsi: KtElement?
+        get() = withValidityAssertion { constantValue.sourcePsi }
+}
 
 /**
  * Render annotation value, resulted string is a valid Kotlin source code.

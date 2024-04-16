@@ -90,6 +90,8 @@ private fun FirAnnotation.asKtAnnotationApplicationForAnnotationWithEnumArgument
         expectedEnumClass = expectedEnumClassId,
         nameMapper,
     ).ifNotEmpty {
+        val token = builder.token
+
         listOf(
             KtNamedAnnotationValue(
                 name = annotationParameterName,
@@ -101,10 +103,13 @@ private fun FirAnnotation.asKtAnnotationApplicationForAnnotationWithEnumArgument
                                 callableName = Name.identifier(it),
                             ),
                             sourcePsi = null,
+                            token
                         )
                     },
                     sourcePsi = null,
-                )
+                    token
+                ),
+                token
             )
         )
     }.orEmpty()

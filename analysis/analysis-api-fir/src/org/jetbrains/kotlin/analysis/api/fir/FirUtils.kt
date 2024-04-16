@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
@@ -77,6 +78,7 @@ internal fun FirAnnotation.toKtAnnotationApplication(
     builder: KtSymbolByFirBuilder,
     index: Int,
     arguments: List<KtNamedAnnotationValue> = FirAnnotationValueConverter.toNamedConstantValue(
+        builder.analysisSession,
         mapAnnotationParameters(this),
         builder,
     )
