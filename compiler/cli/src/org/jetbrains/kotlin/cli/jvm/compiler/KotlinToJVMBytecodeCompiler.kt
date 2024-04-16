@@ -58,21 +58,11 @@ object KotlinToJVMBytecodeCompiler {
     internal fun compileModules(
         environment: KotlinCoreEnvironment,
         buildFile: File?,
-        chunk: List<Module>,
-        repeat: Boolean = false
+        chunk: List<Module>
     ): Boolean {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val compilerConfiguration = environment.configuration
-        val repeats = compilerConfiguration[CLIConfigurationKeys.REPEAT_COMPILE_MODULES]
-        if (repeats != null && !repeat) {
-            val performanceManager = compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
-            return (0 until repeats).map {
-                val result = compileModules(environment, buildFile, chunk, repeat = true)
-                performanceManager?.notifyRepeat(repeats, it)
-                result
-            }.last()
-        }
 
         val project = environment.project
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(project)

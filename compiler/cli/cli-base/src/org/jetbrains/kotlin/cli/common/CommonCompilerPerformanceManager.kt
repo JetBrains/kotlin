@@ -161,8 +161,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         measurements.map { it.render() }.sorted().forEach { append("$it\n") }
     }.toByteArray()
 
-    open fun notifyRepeat(total: Int, number: Int) {}
-
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
     }
