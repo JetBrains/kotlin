@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeSimpleTestSupport
@@ -48,6 +49,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testLLVMVariantDev() {
+        Assumptions.assumeFalse(targets.hostTarget.family == Family.MINGW) // It currently uses dev artifact instead of essentials.
         // On macOS for apple targets, clang++ from Xcode is used, which is not switchable as `dev/user`,
         // so the test cannot detect LLVM variant for apple targets on macOS host.
         Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily && targets.testTarget.family.isAppleFamily)
