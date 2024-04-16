@@ -131,7 +131,6 @@ open class FirFrontendFacade(
         val mainModule = modules.last()
 
         val targetPlatform = mainModule.targetPlatform
-        val analyzerServices = targetPlatform.getAnalyzerServices()
 
         // the special name is required for `KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns`
         // it doesn't seem convincingly legitimate, probably should be refactored
