@@ -405,6 +405,14 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/bytecodeListing")
             }
 
+            testClass<AbstractFirPsiAsmLikeInstructionListingTest> {
+                model("codegen/asmLike")
+            }
+
+            testClass<AbstractFirLightTreeAsmLikeInstructionListingTest> {
+                model("codegen/asmLike")
+            }
+
             testClass<AbstractFirScriptCodegenTest> {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
