@@ -14,22 +14,24 @@ import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.getTargetType
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
@@ -186,43 +188,51 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirGetClassCall -> {
-                var symbol = (argument as? FirResolvedQualifier)?.symbol
-                if (symbol is FirTypeAliasSymbol) {
-                    symbol = symbol.fullyExpandedClass(builder.rootSession) ?: symbol
-                }
-                when {
-                    symbol == null -> {
-                        val qualifierParts = mutableListOf<String?>()
+                val coneType = getTargetType()?.fullyExpandedType(builder.rootSession)
 
-                        fun process(expression: FirExpression) {
-                            val errorType = expression.resolvedType as? ConeErrorType
-                            val unresolvedName = when (val diagnostic = errorType?.diagnostic) {
-                                is ConeUnresolvedTypeQualifierError -> diagnostic.qualifier
-                                is ConeUnresolvedNameError -> diagnostic.qualifier
-                                else -> null
-                            }
-                            qualifierParts += unresolvedName
-                            if (errorType != null && expression is FirPropertyAccessExpression) {
-                                expression.explicitReceiver?.let { process(it) }
-                            }
-                        }
-
-                        process(argument)
-
-                        val unresolvedName = qualifierParts.asReversed().filterNotNull().takeIf { it.isNotEmpty() }?.joinToString(".")
-                        KtKClassAnnotationValue.KtErrorClassAnnotationValue(unresolvedName, sourcePsi, token)
-                    }
-
-                    symbol.isLocal -> {
-                        KtKClassAnnotationValue.KtLocalKClassAnnotationValue(symbol.fir.psi as KtClassOrObject, sourcePsi, token)
-                    }
-
-                    else -> KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue(symbol.classId, sourcePsi, token)
+                if (coneType is ConeClassLikeType && coneType !is ConeErrorType) {
+                    val classId = coneType.lookupTag.classId
+                    val type = builder.typeBuilder.buildKtType(coneType)
+                    KtKClassAnnotationValue(type, classId, sourcePsi, token)
+                } else {
+                    val classId = computeErrorCallClassId(this)
+                    val diagnostic = classId?.let(::ConeUnresolvedSymbolError) ?: ConeSimpleDiagnostic("Unresolved class reference")
+                    val errorType = builder.typeBuilder.buildKtType(ConeErrorType(diagnostic))
+                    KtKClassAnnotationValue(errorType, classId, sourcePsi, token)
                 }
             }
 
             else -> null
         } ?: FirCompileTimeConstantEvaluator.evaluate(this, KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
             ?.convertConstantExpression(builder.analysisSession)
+    }
+
+    private fun computeErrorCallClassId(call: FirGetClassCall): ClassId? {
+        val qualifierParts = mutableListOf<String?>()
+
+        fun process(expression: FirExpression) {
+            val errorType = expression.resolvedType as? ConeErrorType
+            val unresolvedName = when (val diagnostic = errorType?.diagnostic) {
+                is ConeUnresolvedTypeQualifierError -> diagnostic.qualifier
+                is ConeUnresolvedNameError -> diagnostic.qualifier
+                else -> null
+            }
+            qualifierParts += unresolvedName
+            if (errorType != null && expression is FirPropertyAccessExpression) {
+                expression.explicitReceiver?.let { process(it) }
+            }
+        }
+
+        process(call.argument)
+
+        val fqNameString = qualifierParts.asReversed().filterNotNull().takeIf { it.isNotEmpty() }?.joinToString(".")
+        if (fqNameString != null) {
+            val fqNameUnsafe = FqNameUnsafe(fqNameString)
+            if (fqNameUnsafe.isSafe) {
+                return ClassId.topLevel(fqNameUnsafe.toSafe())
+            }
+        }
+
+        return null
     }
 }

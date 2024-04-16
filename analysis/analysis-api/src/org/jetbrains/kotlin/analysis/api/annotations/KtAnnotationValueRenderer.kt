@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
+import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.renderer.render
 
 internal object KtAnnotationValueRenderer {
@@ -36,12 +39,46 @@ internal object KtAnnotationValueRenderer {
     }
 
     private fun StringBuilder.renderKClassAnnotationValue(value: KtKClassAnnotationValue) {
-        when (value) {
-            is KtKClassAnnotationValue.KtErrorClassAnnotationValue -> append("UNRESOLVED_CLASS")
-            is KtKClassAnnotationValue.KtLocalKClassAnnotationValue -> append(value.ktClass.nameAsName?.render())
-            is KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue -> append(value.classId.asSingleFqName().render())
-        }
+        renderType(value.type)
         append("::class")
+    }
+
+    private fun StringBuilder.renderType(type: KtType) {
+        if (type.annotations.isNotEmpty()) {
+            for (annotation in type.annotations) {
+                append('@')
+                renderAnnotationApplication(annotation)
+                append(' ')
+            }
+        }
+
+        when (type) {
+            is KtUsualClassType -> {
+                val classId = type.classId
+                if (classId.isLocal) {
+                    append(classId.shortClassName.render())
+                } else {
+                    append(classId.asSingleFqName().render())
+                }
+
+                if (type.ownTypeArguments.isNotEmpty()) {
+                    append('<')
+                    renderWithSeparator(type.ownTypeArguments, ", ") { typeProjection ->
+                        when (typeProjection) {
+                            is KtStarTypeProjection -> append('*')
+                            is KtTypeArgumentWithVariance -> renderType(typeProjection.type)
+                        }
+                    }
+                    append('>')
+                }
+            }
+            is KtClassErrorType -> {
+                append("UNRESOLVED_CLASS")
+            }
+            else -> {
+                append(type.asStringForDebugging())
+            }
+        }
     }
 
     private fun StringBuilder.renderConstantAnnotationValue(value: KtConstantAnnotationValue) {

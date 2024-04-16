@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
@@ -76,67 +77,27 @@ public class KtAnnotationApplicationValue @KtAnalysisApiInternals constructor(
 /**
  * Class reference used as annotation argument. E.g: `@A(String::class)`
  */
-public sealed class KtKClassAnnotationValue(token: KtLifetimeToken) : KtAnnotationValue(token) {
+public open class KtKClassAnnotationValue(
+    type: KtType,
+    classId: ClassId?,
+    sourcePsi: KtElement?,
+    token: KtLifetimeToken
+) : KtAnnotationValue(token) {
     /**
-     * Non-local Class reference used as annotation value. E.g: `@A(String::class)`
+     * The referenced [ClassId], if available.
+     * The property is useful for error handling, as [KtClassErrorType] currently does not provide a [ClassId].
      */
-    public class KtNonLocalKClassAnnotationValue @KtAnalysisApiInternals constructor(
-        /**
-         * Fully qualified name of the class used
-         */
-        classId: ClassId,
-        sourcePsi: KtElement?,
-        token: KtLifetimeToken
-    ) : KtKClassAnnotationValue(token) {
-        public val classId: ClassId = classId
-            get() = withValidityAssertion { field }
-
-        override val sourcePsi: KtElement? = sourcePsi
-            get() = withValidityAssertion { field }
-    }
+    public val classId: ClassId? = classId
+        get() = withValidityAssertion { field }
 
     /**
-     * Non-local class reference used as annotation argument.
-     *
-     * E.g:
-     * ```
-     * fun x() {
-     *    class Y
-     *
-     *    @A(B::class)
-     *    fun foo() {}
-     * }
-     * ```
+     * The class reference type, e.g. `Array<String>` for the `Array<String>::class` literal.
      */
-    public class KtLocalKClassAnnotationValue @KtAnalysisApiInternals constructor(
-        /**
-         * [PsiElement] of the class used. As we can get non-local class only for sources, it is always present.
-         */
-        ktClass: KtClassOrObject,
-        sourcePsi: KtElement?,
-        token: KtLifetimeToken
-    ) : KtKClassAnnotationValue(token) {
-        public val ktClass: KtClassOrObject = ktClass
-            get() = withValidityAssertion { field }
+    public val type: KtType = type
+        get() = withValidityAssertion { field }
 
-        override val sourcePsi: KtElement? = sourcePsi
-            get() = withValidityAssertion { field }
-    }
-
-    /**
-     * Non-existing class reference used as annotation argument. E.g: `@A(NON_EXISTING_CLASS::class)`
-     */
-    public class KtErrorClassAnnotationValue @KtAnalysisApiInternals constructor(
-        unresolvedQualifierName: String?,
-        sourcePsi: KtElement?,
-        token: KtLifetimeToken
-    ) : KtKClassAnnotationValue(token) {
-        public val unresolvedQualifierName: String? = unresolvedQualifierName
-            get() = withValidityAssertion { field }
-
-        override val sourcePsi: KtElement? = sourcePsi
-            get() = withValidityAssertion { field }
-    }
+    override val sourcePsi: KtElement? = sourcePsi
+        get() = withValidityAssertion { field }
 }
 
 /**

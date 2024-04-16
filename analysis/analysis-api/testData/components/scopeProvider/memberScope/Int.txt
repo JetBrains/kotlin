@@ -2187,7 +2187,7 @@ KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.9")
       psi: null
-    kotlin/WasExperimental(markerClass = [UNRESOLVED_CLASS::class])
+    kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
@@ -2256,7 +2256,7 @@ KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.9")
       psi: null
-    kotlin/WasExperimental(markerClass = [UNRESOLVED_CLASS::class])
+    kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
@@ -2325,7 +2325,7 @@ KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.9")
       psi: null
-    kotlin/WasExperimental(markerClass = [UNRESOLVED_CLASS::class])
+    kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
@@ -2394,7 +2394,7 @@ KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.9")
       psi: null
-    kotlin/WasExperimental(markerClass = [UNRESOLVED_CLASS::class])
+    kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil

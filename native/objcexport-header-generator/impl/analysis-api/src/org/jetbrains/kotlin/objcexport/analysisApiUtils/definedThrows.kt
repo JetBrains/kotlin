@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtArrayAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.name.ClassId
 
@@ -28,7 +29,8 @@ internal val KtFunctionLikeSymbol.definedThrows: List<ClassId>
             .map { argument -> argument.expression }
             .filterIsInstance<KtArrayAnnotationValue>()
             .flatMap { arrayAnnotationValue -> arrayAnnotationValue.values }
-            .filterIsInstance<KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue>()
-            .map { it.classId }
+            .filterIsInstance<KtKClassAnnotationValue>()
+            .mapNotNull { it.type as? KtNonErrorClassType }
+            .mapNotNull { it.classId }
             .toList()
     }

@@ -10,8 +10,6 @@ import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -143,23 +141,28 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
 
     val annoApp = findAnnotation(JvmStandardClassIds.Annotations.Throws, useSiteTargetFilter) ?: return
 
-    fun handleAnnotationValue(annotationValue: KtAnnotationValue) = when (annotationValue) {
-        is KtArrayAnnotationValue -> {
-            annotationValue.values.forEach(::handleAnnotationValue)
-        }
-
-        is KtNonLocalKClassAnnotationValue -> {
-            val psiType = buildClassType(annotationValue.classId).asPsiType(
-                useSitePosition,
-                allowErrorTypes = true,
-                KtTypeMappingMode.DEFAULT,
-                containingClass.isAnnotationType,
-            )
-            (psiType as? PsiClassType)?.let {
-                builder.addReference(it)
+    fun handleAnnotationValue(annotationValue: KtAnnotationValue) {
+        when (annotationValue) {
+            is KtArrayAnnotationValue -> {
+                annotationValue.values.forEach(::handleAnnotationValue)
             }
+
+            is KtKClassAnnotationValue -> {
+                if (annotationValue.type is KtNonErrorClassType) {
+                    val psiType = annotationValue.type.asPsiType(
+                        useSitePosition,
+                        allowErrorTypes = true,
+                        KtTypeMappingMode.DEFAULT,
+                        containingClass.isAnnotationType,
+                    )
+                    (psiType as? PsiClassType)?.let {
+                        builder.addReference(it)
+                    }
+                }
+            }
+
+            else -> {}
         }
-        else -> {}
     }
 
     annoApp.arguments.forEach { handleAnnotationValue(it.expression) }

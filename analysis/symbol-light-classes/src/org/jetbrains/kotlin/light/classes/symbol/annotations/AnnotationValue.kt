@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
@@ -142,14 +141,23 @@ internal fun KtAnnotationValue.toLightClassAnnotationValue(): AnnotationValue {
         is KtUnsupportedAnnotationValue -> AnnotationValue.Unsupported(sourcePsi)
         is KtArrayAnnotationValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue() }, sourcePsi)
         is KtAnnotationApplicationValue -> annotationValue.toLightClassAnnotationValue()
-        is KtLocalKClassAnnotationValue -> AnnotationValue.KClass(classId = null, isError = false, sourcePsi)
-        is KtNonLocalKClassAnnotationValue -> AnnotationValue.KClass(classId, isError = false, sourcePsi)
-        is KtErrorClassAnnotationValue -> {
-            val classId = unresolvedQualifierName?.let(::FqNameUnsafe)?.takeIf { it.isSafe }?.toSafe()?.let(ClassId::topLevel)
-            AnnotationValue.KClass(classId, isError = true, sourcePsi)
-        }
+        is KtKClassAnnotationValue -> toLightClassAnnotationValue()
         is KtEnumEntryAnnotationValue -> AnnotationValue.EnumValue(callableId, sourcePsi)
         is KtConstantAnnotationValue -> AnnotationValue.Constant(constantValue, sourcePsi)
+    }
+}
+
+internal fun KtKClassAnnotationValue.toLightClassAnnotationValue(): AnnotationValue.KClass {
+    when (val type = type) {
+        is KtNonErrorClassType -> {
+            val classId = type.classId.takeUnless { it.isLocal }
+            return AnnotationValue.KClass(classId, isError = false, sourcePsi)
+        }
+
+        else -> {
+            val classId = classId?.takeUnless { it.isLocal }
+            return AnnotationValue.KClass(classId, isError = true, sourcePsi)
+        }
     }
 }
 
