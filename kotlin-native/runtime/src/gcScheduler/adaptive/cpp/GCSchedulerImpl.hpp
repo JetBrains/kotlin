@@ -55,8 +55,7 @@ public:
                 return;
             }
             if (regularIntervalPacer_.NeedsGC()) {
-                RuntimeLogDebug({kTagGC}, "Scheduling GC by timer");
-                scheduleGC_.scheduleNextEpochIfNotInProgress();
+                scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byTimer());
             }
         }) {
         RuntimeLogInfo({kTagGC}, "Adaptive GC scheduler initialized");
@@ -73,13 +72,11 @@ public:
             case HeapGrowthController::MemoryBoundary::kNone:
                 return;
             case HeapGrowthController::MemoryBoundary::kTrigger:
-                RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-                scheduleGC_.scheduleNextEpochIfNotInProgress();
+                scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
                 return;
             case HeapGrowthController::MemoryBoundary::kTarget:
-                RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-                auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress();
-                RuntimeLogWarning({kTagGC}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
+                auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
+                RuntimeLogWarning({kTagGC, logging::Tag::kGCScheduler}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
                 mutatorAssists_.requestAssists(epoch);
                 return;
         }
@@ -97,7 +94,7 @@ public:
         });
     }
 
-    int64_t schedule() noexcept { return scheduleGC_.scheduleNextEpoch(); }
+    int64_t scheduleManually() noexcept { return scheduleGC_.scheduleNextEpoch(ScheduleReason::manually()); }
 
     MutatorAssists& mutatorAssists() noexcept { return mutatorAssists_; }
 
