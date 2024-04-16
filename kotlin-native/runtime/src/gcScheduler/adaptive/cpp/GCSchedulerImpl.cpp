@@ -34,20 +34,17 @@ ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint() noexcept {
 }
 
 void gcScheduler::GCScheduler::schedule() noexcept {
-    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
-    impl().impl().schedule();
+    impl().impl().scheduleManually();
 }
 
 void gcScheduler::GCScheduler::scheduleAndWaitFinished() noexcept {
-    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
-    auto epoch = impl().impl().schedule();
+    auto epoch = impl().impl().scheduleManually();
     NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
     mm::GlobalData::Instance().gc().WaitFinished(epoch);
 }
 
 void gcScheduler::GCScheduler::scheduleAndWaitFinalized() noexcept {
-    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
-    auto epoch = impl().impl().schedule();
+    auto epoch = impl().impl().scheduleManually();
     NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
     mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
 }
