@@ -68,6 +68,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
             source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
             this is FirValueParameter && this.containingFunctionSymbol.origin is FirDeclarationOrigin.Synthetic -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
             this is FirSyntheticProperty || this is FirSyntheticPropertyAccessor -> KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
+            origin is FirDeclarationOrigin.Synthetic.ForwardDeclaration -> KtSymbolOrigin.KONAN_FORWARD_DECLARATION
 
             else -> errorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
                 withFirEntry("firToGetOrigin", this@ktSymbolOrigin)

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 @ThreadSafeMutableState
 internal class LLFirProvider(
     val session: LLFirSession,
-    private val moduleComponents: LLFirModuleResolveComponents,
+    val moduleComponents: LLFirModuleResolveComponents,
     canContainKotlinPackage: Boolean,
     disregardSelfDeclarations: Boolean = false,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,

@@ -162,4 +162,9 @@ public enum class KtSymbolOrigin {
      * See: [Dynamic type Kotlin documentation](https://kotlinlang.org/docs/dynamic-type.html)
      */
     JS_DYNAMIC,
+
+    /**
+     * K/N forward declarations.
+     */
+    KONAN_FORWARD_DECLARATION,
 }
