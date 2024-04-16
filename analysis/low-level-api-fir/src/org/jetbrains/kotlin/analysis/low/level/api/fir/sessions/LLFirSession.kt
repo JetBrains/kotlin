@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import java.lang.ref.WeakReference
-import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicLongFieldUpdater
 
 /**
  * An [LLFirSession] stores all symbols, components, and configuration needed for the resolution of Kotlin code/binaries from a [KtModule].
@@ -107,7 +107,9 @@ abstract class LLFirSession(
  * reference cycles (from the developer's perspective).
  */
 private class LLFirSessionValidityModificationTracker(private val sessionRef: WeakReference<LLFirSession>) : ModificationTracker {
-    private val count = AtomicLong()
+    @Suppress("Unused")
+    @Volatile
+    private var count = 0L
 
     override fun getModificationCount(): Long {
         if (sessionRef.get()?.isValid == true) return 0
@@ -116,7 +118,11 @@ private class LLFirSessionValidityModificationTracker(private val sessionRef: We
         // a cached value was created with an already invalid session (so it remembers the modification count of 1). Then, if we return
         // a static modification count of 1, the modification count never changes and the cached value misses that the session has been
         // invalidated. Hence, `count` is incremented on each modification count access.
-        return count.incrementAndGet()
+        return COUNT_UPDATER.incrementAndGet(this)
+    }
+
+    companion object {
+        private val COUNT_UPDATER = AtomicLongFieldUpdater.newUpdater(LLFirSessionValidityModificationTracker::class.java, "count")
     }
 }
 
