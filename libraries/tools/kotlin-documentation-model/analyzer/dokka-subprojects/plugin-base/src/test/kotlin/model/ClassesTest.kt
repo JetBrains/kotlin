@@ -4,6 +4,7 @@
 
 package model
 
+import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.links.sureClassNames
@@ -589,6 +590,116 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             classlike.properties.first().name equals "example"
             classlike.extra[AdditionalModifiers]?.content?.values?.firstOrNull()
                 ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Value
+        }
+    }
+
+    @Test
+    fun `members implemented by delegation should have the override keyword`() {
+        inlineModelTest(
+            """
+               |interface CookieJar {
+               |    /**
+               |    * Saves cookies
+               |     */
+               |    fun saveFromResponse(url: String)
+               |    val prop: String 
+               |}
+               |
+               |class CookieJarImpl() : CookieJar {
+               |    override fun saveFromResponse(url: String) {}
+               |    override val prop: String = ""
+               |}
+               |
+               |class JavaNetCookieJar private constructor(
+               |    delegate: CookieJarImpl,
+               |) : CookieJar by delegate
+            """.trimMargin()
+        ) {
+            with((this / "classes" / "CookieJarImpl"/ "saveFromResponse").cast<DFunction>()) {
+                name equals "saveFromResponse"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Override
+            }
+            with((this / "classes" / "JavaNetCookieJar"/ "saveFromResponse").cast<DFunction>()) {
+                name equals "saveFromResponse"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Override
+            }
+            with((this / "classes" / "CookieJarImpl"/ "prop").cast<DProperty>()) {
+                name equals "prop"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Override
+            }
+            with((this / "classes" / "JavaNetCookieJar"/ "prop").cast<DProperty>()) {
+                name equals "prop"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Override
+            }
+        }
+    }
+
+    @Test
+    fun `members implemented by delegation should have the correct DRI`() {
+        inlineModelTest(
+            """
+               |interface CookieJar {
+               |    /**
+               |    * Saves cookies
+               |     */
+               |    fun saveFromResponse(url: String)
+               |    val prop: String 
+               |}
+               |
+               |class CookieJarImpl() : CookieJar {
+               |    override fun saveFromResponse(url: String) {}
+               |    override val prop: String = ""
+               |}
+               |
+               |class JavaNetCookieJar private constructor(
+               |    delegate: CookieJarImpl,
+               |) : CookieJar by delegate
+            """.trimMargin()
+        ) {
+            with((this / "classes" / "CookieJar"/ "saveFromResponse").cast<DFunction>()) {
+                name equals "saveFromResponse"
+                dri equals DRI(
+                    "classes",
+                    "CookieJar",
+                    Callable("saveFromResponse", params = listOf(TypeConstructor("kotlin.String", emptyList())))
+                )
+            }
+            with((this / "classes" / "CookieJarImpl"/ "saveFromResponse").cast<DFunction>()) {
+                name equals "saveFromResponse"
+                dri equals DRI(
+                    "classes",
+                    "CookieJarImpl",
+                    Callable("saveFromResponse", params = listOf(TypeConstructor("kotlin.String", emptyList())))
+                )
+            }
+            with((this / "classes" / "JavaNetCookieJar"/ "saveFromResponse").cast<DFunction>()) {
+                name equals "saveFromResponse"
+                dri equals DRI(
+                    "classes",
+                    "CookieJar",
+                    Callable("saveFromResponse", params = listOf(TypeConstructor("kotlin.String", emptyList())))
+                )
+            }
+            with((this / "classes" / "CookieJarImpl"/ "prop").cast<DProperty>()) {
+                name equals "prop"
+                dri equals DRI(
+                    "classes",
+                    "CookieJarImpl",
+                    Callable("prop", params =  emptyList())
+                )
+            }
+            with((this / "classes" / "JavaNetCookieJar"/ "prop").cast<DProperty>()) {
+                name equals "prop"
+                dri equals DRI(
+                    "classes",
+                    "CookieJar",
+                    Callable("prop", params =  emptyList())
+                )
+            }
         }
     }
 }
