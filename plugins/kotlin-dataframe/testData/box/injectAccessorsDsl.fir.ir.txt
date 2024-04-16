@@ -134,7 +134,7 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:col1 visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract col1: kotlin.Int
+                      public abstract col1: kotlin.Int declared in <root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969I
                     FUN FAKE_OVERRIDE name:<get-col1> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:col1 visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -142,7 +142,7 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969I
                   PROPERTY FAKE_OVERRIDE name:col2 visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract col2: kotlin.Int
+                      public abstract col2: kotlin.Int declared in <root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969I
                     FUN FAKE_OVERRIDE name:<get-col2> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:col2 visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:

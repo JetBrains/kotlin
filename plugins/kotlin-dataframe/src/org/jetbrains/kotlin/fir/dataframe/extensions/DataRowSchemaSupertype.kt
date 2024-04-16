@@ -36,10 +36,11 @@ class DataRowSchemaSupertype(session: FirSession) : FirSupertypeGenerationExtens
             && session.predicateBasedProvider.matches(PREDICATE, declaration)
     }
 
-    context(TypeResolveServiceContainer)
+
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
-        resolvedSupertypes: List<FirResolvedTypeRef>
+        resolvedSupertypes: List<FirResolvedTypeRef>,
+        typeResolver: TypeResolveService
     ): List<FirResolvedTypeRef> {
         if (resolvedSupertypes.any { it.toClassLikeSymbol(session)?.classId == dataRowSchema }) return emptyList()
         return listOf(

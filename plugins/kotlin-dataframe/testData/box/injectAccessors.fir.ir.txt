@@ -155,7 +155,7 @@ FILE fqName:<root> fileName:/injectAccessors.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract age: kotlin.Int
+                      public abstract age: kotlin.Int declared in <root>.Name is evaluated to age.<anonymous>.TokenCars_3085480I
                     FUN FAKE_OVERRIDE name:<get-age> visibility:public modality:ABSTRACT <> ($this:<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -163,7 +163,7 @@ FILE fqName:<root> fileName:/injectAccessors.kt
                       $this: VALUE_PARAMETER name:<this> type:<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480I
                   PROPERTY FAKE_OVERRIDE name:year visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract year: kotlin.Int
+                      public abstract year: kotlin.Int declared in <root>.Name is evaluated to age.<anonymous>.TokenCars_3085480I
                     FUN FAKE_OVERRIDE name:<get-year> visibility:public modality:ABSTRACT <> ($this:<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:year visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -328,7 +328,7 @@ FILE fqName:<root> fileName:/injectAccessors.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract age: kotlin.Int
+                      public abstract age: kotlin.Int declared in <root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480I
                     FUN FAKE_OVERRIDE name:<get-age> visibility:public modality:ABSTRACT <> ($this:<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
@@ -336,7 +336,7 @@ FILE fqName:<root> fileName:/injectAccessors.kt
                       $this: VALUE_PARAMETER name:<this> type:<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480I
                   PROPERTY FAKE_OVERRIDE name:year visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract year: kotlin.Int
+                      public abstract year: kotlin.Int declared in <root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480I
                     FUN FAKE_OVERRIDE name:<get-year> visibility:public modality:ABSTRACT <> ($this:<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480I) returnType:kotlin.Int [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:year visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
