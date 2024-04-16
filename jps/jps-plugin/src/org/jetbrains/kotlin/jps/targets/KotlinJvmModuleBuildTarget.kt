@@ -422,10 +422,6 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             }
         }
         // important: in jps-dependency-graph you can't register additional dependencies after [callback.associate].
-
-        val allCompiled = dirtyFilesHolder.allDirtyFiles
-        JavaBuilderUtil.registerFilesToCompile(localContext, allCompiled)
-        JavaBuilderUtil.registerSuccessfullyCompiled(localContext, allCompiled)
     }
 
     private fun processInlineConstTracker(inlineConstTracker: InlineConstTrackerImpl, sourceFile: File, output: GeneratedJvmClass, callback: Backend) {
