@@ -48,6 +48,18 @@ public class NoCommentsSwiftExportRunnerTest extends AbstractNoCommentsBasedSwif
   }
 
   @Test
+  @TestMetadata("type_reference")
+  public void testType_reference() {
+    runTest("native/swift/swift-export-standalone/testData/type_reference/");
+  }
+
+  @Test
+  @TestMetadata("typealiases")
+  public void testTypealiases() {
+    runTest("native/swift/swift-export-standalone/testData/typealiases/");
+  }
+
+  @Test
   @TestMetadata("variables")
   public void testVariables() {
     runTest("native/swift/swift-export-standalone/testData/variables/");

@@ -1,6 +1,14 @@
 import KotlinBridges
 import KotlinRuntime
 
+public class CLASS_WITH_SAME_NAME {
+    public init() {
+        fatalError()
+    }
+    public func foo() -> Swift.Int32 {
+        fatalError()
+    }
+}
 public class ClassWithNonPublicConstructor {
     public var a: Swift.Int32 {
         get {
@@ -349,7 +357,25 @@ public extension main.namespace {
         }
     }
 }
+public extension main.why_we_need_module_names {
+    public class CLASS_WITH_SAME_NAME {
+        public init() {
+            fatalError()
+        }
+        public func foo() -> Swift.Void {
+            fatalError()
+        }
+    }
+    public static func bar() -> Swift.Int32 {
+        return why_we_need_module_names_bar()
+    }
+    public static func foo() -> main.CLASS_WITH_SAME_NAME {
+        fatalError()
+    }
+}
 public enum namespace {
     public enum deeper {
     }
+}
+public enum why_we_need_module_names {
 }

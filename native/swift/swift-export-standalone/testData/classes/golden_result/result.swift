@@ -1,6 +1,14 @@
 import KotlinBridges
 import KotlinRuntime
 
+public class CLASS_WITH_SAME_NAME {
+    public init() {
+        fatalError()
+    }
+    public func foo() -> Swift.Int32 {
+        fatalError()
+    }
+}
 /**
 * this is a sample comment for class without public constructor
 */
@@ -115,14 +123,6 @@ public class Foo {
     * this is a sample comment for func on class without package
     */
     public func foo() -> Swift.Bool {
-        fatalError()
-    }
-}
-public class CLASS_WITH_SAME_NAME {
-    public func foo() -> Swift.Int32 {
-        fatalError()
-    }
-    public init() {
         fatalError()
     }
 }
@@ -426,15 +426,12 @@ public extension main.namespace {
 }
 public extension main.why_we_need_module_names {
     public class CLASS_WITH_SAME_NAME {
-        public func foo() -> Swift.Void {
-            fatalError()
-        }
         public init() {
             fatalError()
         }
-    }
-    public static func foo() -> main.CLASS_WITH_SAME_NAME {
-        fatalError()
+        public func foo() -> Swift.Void {
+            fatalError()
+        }
     }
     /**
     * this will calculate the return type of `foo` on `CLASS_WITH_SAME_NAME`.
@@ -443,6 +440,9 @@ public extension main.why_we_need_module_names {
     */
     public static func bar() -> Swift.Int32 {
         return why_we_need_module_names_bar()
+    }
+    public static func foo() -> main.CLASS_WITH_SAME_NAME {
+        fatalError()
     }
 }
 public enum namespace {
