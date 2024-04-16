@@ -494,6 +494,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.info("Compiled with errors")
             return ABORT
         } else {
+            JavaBuilderUtil.registerSuccessfullyCompiled(context, kotlinDirtyFilesHolder.allDirtyFiles)
             LOG.info("Compiled successfully")
         }
 
