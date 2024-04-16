@@ -7907,6 +7907,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("delegatedConstructorOrder.kt")
+      public void testDelegatedConstructorOrder() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/delegatedConstructorOrder.kt");
+      }
+
+      @Test
       @TestMetadata("delegatedMemberProperyWriteInInit.kt")
       public void testDelegatedMemberProperyWriteInInit() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/delegatedMemberProperyWriteInInit.kt");
