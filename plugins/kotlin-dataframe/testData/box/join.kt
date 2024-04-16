@@ -6,7 +6,7 @@ import org.jetbrains.kotlinx.dataframe.api.count
 import org.jetbrains.kotlinx.dataframe.api.explode
 import org.jetbrains.kotlinx.dataframe.api.filter
 import org.jetbrains.kotlinx.dataframe.api.first
-import org.jetbrains.kotlinx.dataframe.api.joinDefault
+import org.jetbrains.kotlinx.dataframe.api.join
 import org.jetbrains.kotlinx.dataframe.api.print
 import org.jetbrains.kotlinx.dataframe.io.*
 import org.jetbrains.kotlinx.dataframe.api.select
@@ -23,6 +23,6 @@ fun box(): String {
 
     df2
         .filter { achievements.preStage != null }
-//        .joinDefault(df2) { achievements.preStage.match(right.achievements.id) }
+        .join(df2) { achievements.preStage.match(right.achievements.id) }
     return "OK"
 }
