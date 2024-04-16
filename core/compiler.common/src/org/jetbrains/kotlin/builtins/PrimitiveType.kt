@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 enum class PrimitiveType(typeName: String) {
     BOOLEAN("Boolean"),
@@ -26,6 +28,13 @@ enum class PrimitiveType(typeName: String) {
     val typeFqName: FqName by lazy(LazyThreadSafetyMode.PUBLICATION) { StandardNames.BUILT_INS_PACKAGE_FQ_NAME.child(this.typeName) }
 
     val arrayTypeFqName: FqName by lazy(LazyThreadSafetyMode.PUBLICATION) { StandardNames.BUILT_INS_PACKAGE_FQ_NAME.child(arrayTypeName) }
+
+    val arrayClassId by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        ClassId(
+            StandardClassIds.BASE_KOTLIN_PACKAGE,
+            Name.identifier("${typeName}Array")
+        )
+    }
 
     companion object {
         @JvmField

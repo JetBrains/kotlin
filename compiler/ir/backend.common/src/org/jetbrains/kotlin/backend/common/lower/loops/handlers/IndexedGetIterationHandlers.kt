@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for iteration over iterables using the `get / []` operator and an index. */
@@ -50,7 +49,9 @@ abstract class IndexedGetIterationHandler(
                 expression, nameHint = "indexedObject"
             )
 
-            val last = irCall(expression.type.sizePropertyGetter).apply {
+            val sizePropertyGetter = expression.type.sizePropertyGetter ?: return null
+
+            val last = irCall(sizePropertyGetter).apply {
                 dispatchReceiver = irGet(objectVariable)
             }
 
@@ -65,7 +66,7 @@ abstract class IndexedGetIterationHandler(
             )
         }
 
-    abstract val IrType.sizePropertyGetter: IrSimpleFunction
+    abstract val IrType.sizePropertyGetter: IrSimpleFunction?
 
     abstract val IrType.getFunction: IrSimpleFunction
 }
@@ -83,27 +84,14 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
                 callee.kotlinFqName == FqName("kotlin.collections.reversed")
     }
 
-    override val IrType.sizePropertyGetter
-        get() = getClass()!!.getPropertyGetter("size")!!.owner
+    override val IrType.sizePropertyGetter: IrSimpleFunction?
+        get() = context.ir.symbols.arraySizeGetters[getClass()!!.classId!!]?.owner
 
     private fun IrType.isArrayType() =
         isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray())
 
-    private val IrType.getFunctionName: Name
-        get() = context.ir.symbols.getWithoutBoundCheckName.let {
-            if (isArrayType() && it != null) {
-                it
-            } else {
-                OperatorNameConventions.GET
-            }
-        }
 
-    override val IrType.getFunction
-        get() = getClass()!!.functions.single {
-            it.name == getFunctionName &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isInt()
-        }
+    override val IrType.getFunction get() = context.ir.symbols.arrayGetFunction[getClass()!!.classId!!]?.owner!!
 }
 
 /**

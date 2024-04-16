@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
+import org.jetbrains.kotlin.builtins.UnsignedArrayType
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 // This is what Context collects about IR.
 abstract class Ir<out T : CommonBackendContext>(val context: T) {
@@ -237,6 +240,35 @@ abstract class Symbols(
     open val setWithoutBoundCheckName: Name? = null
 
     open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>? = null
+
+    val arrayGetFunction: Map<ClassId, IrSimpleFunctionSymbol> =
+        buildMap {
+            fun putGetFunctionFor(classId: ClassId, name: String) {
+                val arrayClass = irBuiltIns.findClass(classId.shortClassName, classId.packageFqName) ?: return
+                val getFunction = arrayClass.getSimpleFunction(name) ?: return
+                put(classId, getFunction)
+            }
+
+            val defaultGetName = getWithoutBoundCheckName?.asString() ?: "get"
+            putGetFunctionFor(StandardClassIds.Array, defaultGetName)
+            PrimitiveType.entries.forEach { putGetFunctionFor(it.arrayClassId, defaultGetName) }
+            UnsignedArrayType.entries.forEach { putGetFunctionFor(it.classId, defaultGetName) }
+            putGetFunctionFor(StandardClassIds.List, "get")
+        }
+
+    val arraySizeGetters: Map<ClassId, IrSimpleFunctionSymbol> =
+        buildMap {
+            fun putSizeGetterFor(classId: ClassId) {
+                val arrayClass = irBuiltIns.findClass(classId.shortClassName, classId.packageFqName) ?: return
+                val sizeGetter = arrayClass.getPropertyGetter("size") ?: return
+                put(classId, sizeGetter)
+            }
+
+            putSizeGetterFor(StandardClassIds.Array)
+            PrimitiveType.entries.forEach { putSizeGetterFor(it.arrayClassId) }
+            UnsignedArrayType.entries.forEach { putSizeGetterFor(it.classId) }
+            putSizeGetterFor(StandardClassIds.List)
+        }
 
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =

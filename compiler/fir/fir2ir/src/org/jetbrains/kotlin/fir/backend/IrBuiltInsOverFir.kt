@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
@@ -270,9 +272,8 @@ class IrBuiltInsOverFir(
     override val floatIterator by lazy { primitiveIterator(PrimitiveType.FLOAT) }
     override val doubleIterator by lazy { primitiveIterator(PrimitiveType.DOUBLE) }
 
-    private fun loadPrimitiveArray(primitiveType: PrimitiveType): IrClassSymbol {
-        return loadClass(ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("${primitiveType.typeName}Array")))
-    }
+    private fun loadPrimitiveArray(primitiveType: PrimitiveType): IrClassSymbol = loadClass(primitiveType.arrayClassId)
+
 
     override val booleanArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.BOOLEAN) }
     override val charArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.CHAR) }
