@@ -41,6 +41,67 @@ class MetadataCompatibilityForK2Test {
     }
 }
 
+class MetadataCompatibilityDebugForK2Test {
+    @Test
+    fun testK2diffSingleFile() {
+        assertLibrariesAreEqual(
+            k1LibraryFiles = listOf(File("/Users/Andrei.Tyrin/IdeaProjects/samples/klibs/k1/samples.klib")),
+            k2LibraryFiles = listOf(File("/Users/Andrei.Tyrin/IdeaProjects/samples/klibs/k2/samples.klib"))
+        )
+    }
+
+    @Test
+    fun testK2diffSingleJSFile() {
+        assertLibrariesAreEqual(
+            k1LibraryFiles = listOf(File("/Users/Andrei.Tyrin/IdeaProjects/_jb/ktor/ktor-utils/build19/libs/ktor-utils-js-3.0.0-beta-1.klib")),
+            k2LibraryFiles = listOf(File("/Users/Andrei.Tyrin/IdeaProjects/_jb/ktor/ktor-utils/build20/libs/ktor-utils-js-3.0.0-beta-1.klib"))
+        )
+    }
+
+
+    val location = "/Users/Andrei.Tyrin/IdeaProjects/_jb/kotlinx-datetime/core"
+
+    @Test
+    fun testK2diffClassFolder() {
+        fun path(ver: String) = "$location/build$ver/classes/kotlin"
+        assertClassesFoldersEqual(
+            k1ClassedFolderPath = path("19"),
+            k2ClassedFolderPath = path("20"),
+        )
+        fun jsPath(ver: String) = File("$location/build$ver/libs/").listFiles()?.filter { it.extension == "klib" }
+        val klibs19 = jsPath("19")
+        val klibs20 = jsPath("20")
+        if(!klibs19.isNullOrEmpty() && !klibs20.isNullOrEmpty()) {
+            assertLibrariesAreEqual(
+                k1LibraryFiles = klibs19,
+                k2LibraryFiles = klibs20
+            )
+        }
+    }
+}
+
+private fun assertClassesFoldersEqual(
+    k1ClassedFolderPath: String,
+    k2ClassedFolderPath: String,
+) {
+    val k1klibs = k1ClassedFolderPath.toKlibMap()
+    val k2klibs = k2ClassedFolderPath.toKlibMap()
+
+    assert(k1klibs.size == k2klibs.size)
+    k1klibs.forEach {
+        println(it.key)
+        println("Compare: ${it.value} and ${k2klibs[it.key]}")
+        assertLibrariesAreEqual(
+            k1LibraryFiles = listOf(it.value),
+            k2LibraryFiles = listOf(k2klibs[it.key]!!)
+        )
+    }
+}
+
+private fun String.toKlibMap() = File(this).listFiles()!!
+    .filter { it.name !in setOf("jvm", "commonizer", "wasmJs","wasmWasi", "native", "metadata", "js", "jsIr") }
+    .associate { Pair(it.name, File(it.absolutePath + "/main/klib").listFiles()!!.first()) }
+
 private fun findLibraries(baseDir: File): Pair<List<File>, List<File>> {
     val libraryFiles = baseDir.walkTopDown()
         .filter { it.isFile && it.extension == "klib" }
@@ -596,6 +657,7 @@ private class MismatchesFilter(
             val (annotationsInK1, annotationsInK2) = when (val lastPathElement = path.last()) {
                 is PathElement.Property -> lastPathElement.propertyA.annotations to lastPathElement.propertyB.annotations
                 is PathElement.Class -> lastPathElement.clazzA.annotations to lastPathElement.clazzB.annotations
+                is PathElement.Type -> lastPathElement.typeA.annotations to lastPathElement.typeB.annotations
                 else -> error("Not yet supported: ${lastPathElement::class.java}")
             }
 
