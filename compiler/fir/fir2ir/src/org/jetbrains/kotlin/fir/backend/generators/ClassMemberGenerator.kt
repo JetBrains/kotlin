@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -37,9 +40,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 
 internal class ClassMemberGenerator(
@@ -436,6 +441,13 @@ internal class ClassMemberGenerator(
     }
 
     private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter) {
+        if (session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) &&
+            session.moduleData.isCommon &&
+            ((conversionScope.parent() as? IrConstructor)?.parent as? IrClass)?.classId == StandardClassIds.Enum
+        ) {
+            return // TODO: Remove when KT-67381 is implemented
+        }
+
         val firDefaultValue = firValueParameter.defaultValue
         if (firDefaultValue != null) {
             this.defaultValue = factory.createExpressionBody(visitor.convertToIrExpression(firDefaultValue))

@@ -10,16 +10,16 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.copyWithNewSourceKind
-import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstit
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.fir.whileAnalysing
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -159,9 +159,15 @@ open class FirTypeResolveTransformer(
             val result = transformDeclaration(constructor, data) as FirConstructor
 
             if (result.isPrimary) {
+                val shouldAddDefaultStubs = session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) &&
+                        session.moduleData.isCommon &&
+                        constructor.returnTypeRef.coneType.classId == StandardClassIds.Enum
                 for (valueParameter in result.valueParameters) {
                     if (valueParameter.correspondingProperty != null) {
                         valueParameter.moveOrDeleteIrrelevantAnnotations()
+                    }
+                    if (shouldAddDefaultStubs) {
+                        valueParameter.replaceDefaultValue(buildExpressionStub()) // TODO: Remove when KT-67381 is implemented
                     }
                 }
             }

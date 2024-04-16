@@ -55,6 +55,15 @@ expect class Int {
 expect class String
 
 @ActualizeByJvmBuiltinProvider
+public expect abstract class Enum<E : Enum<E>>(name: String, ordinal: Int) : Comparable<E> {
+    override final fun compareTo(other: E): Int
+
+    override final fun equals(other: Any?): Boolean
+
+    override final fun hashCode(): Int
+}
+
+@ActualizeByJvmBuiltinProvider
 public expect open class Throwable() {
     public open val message: String?
     public open val cause: Throwable?
@@ -85,6 +94,10 @@ public expect inline fun <reified T : Enum<T>> enumValues(): Array<T>
 
 // FILE: testCommon.kt
 
+enum class TestEnumInCommon {
+    A, B, C
+}
+
 annotation class AnnotationWithInt(val value: Int)
 
 @AnnotationWithInt(Int.MAX_VALUE)
@@ -97,6 +110,10 @@ fun testIntArrayOf() = intArrayOf(1, 2, 3)
 
 // MODULE: platform()()(common)
 // FILE: testPlatform.kt
+
+enum class TestEnumInPlatform {
+    D, E, F
+}
 
 @AnnotationWithInt(Int.MAX_VALUE)
 class TestClassInPlatform
