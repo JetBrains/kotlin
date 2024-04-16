@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import java.io.File
 
 internal sealed class KlibToolCommand(
         protected val output: KlibToolOutput,
@@ -87,7 +87,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         val moduleName = parseModuleHeader(library.moduleHeaderData).moduleName
 
         output.appendLine()
-        output.appendLine("Resolved to: ${File(library.libraryName).absolutePath}")
+        output.appendLine("Resolved to: ${library.libraryFile.canonicalPath}")
         output.appendLine("Module name: $moduleName")
         output.appendLine("ABI version: $headerAbiVersion")
         output.appendLine("Compiler version: $headerCompilerVersion")
@@ -175,7 +175,7 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
         }
 
         LibraryAbiRenderer.render(
-                libraryAbi = LibraryAbiReader.readAbiInfo(java.io.File(library.libraryFile.absolutePath)),
+                libraryAbi = LibraryAbiReader.readAbiInfo(File(library.libraryFile.absolutePath)),
                 output = output,
                 settings = AbiRenderingSettings(
                         renderedSignatureVersion = abiSignatureVersion,
