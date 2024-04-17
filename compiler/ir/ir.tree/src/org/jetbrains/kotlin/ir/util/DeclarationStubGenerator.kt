@@ -148,7 +148,7 @@ abstract class DeclarationStubGenerator(
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE)
                         || descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                 stubGenerator = this, typeTranslator,
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -169,7 +169,7 @@ abstract class DeclarationStubGenerator(
                 isExternal = descriptor.isEffectivelyExternal(),
                 isStatic = (descriptor.dispatchReceiverParameter == null),
                 stubGenerator = this, typeTranslator = typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -201,7 +201,7 @@ abstract class DeclarationStubGenerator(
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -221,7 +221,7 @@ abstract class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility,
                 descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -237,7 +237,7 @@ abstract class DeclarationStubGenerator(
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue = irValueParameter.createStubDefaultValue()
             }
-        }
+        }.generateParentDeclaration()
     }
 
     // in IR Generator enums also have special handling, but here we have not enough data for it
@@ -279,7 +279,7 @@ abstract class DeclarationStubGenerator(
                     hasEnumEntries = descriptor is DeserializedClassDescriptor && descriptor.hasEnumEntriesMetadataFlag,
                     stubGenerator = this@DeclarationStubGenerator,
                     typeTranslator = typeTranslator
-                )
+                ).generateParentDeclaration()
             }
         }
     }
@@ -295,7 +295,7 @@ abstract class DeclarationStubGenerator(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -314,7 +314,7 @@ abstract class DeclarationStubGenerator(
                 descriptor.isReified,
                 descriptor.variance,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -333,7 +333,7 @@ abstract class DeclarationStubGenerator(
                 descriptor.isReified,
                 descriptor.variance,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
     }
 
@@ -349,7 +349,32 @@ abstract class DeclarationStubGenerator(
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.isActual,
                 this, typeTranslator
-            )
+            ).generateParentDeclaration()
         }
+    }
+
+    private fun <E : IrLazyDeclarationBase> E.generateParentDeclaration(): E {
+        val currentDescriptor = descriptor
+
+        val containingDeclaration =
+            ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration
+
+        parent = when (containingDeclaration) {
+            is PackageFragmentDescriptor -> run {
+                val parent = this.takeUnless { it is IrClass }?.let {
+                    generateOrGetFacadeClass(descriptor)
+                } ?: generateOrGetEmptyExternalPackageFragmentStub(containingDeclaration)
+                assert(this !in parent.declarations)
+                parent.declarations.add(this)
+                parent
+            }
+            is ClassDescriptor -> generateClassStub(containingDeclaration)
+            is FunctionDescriptor -> generateFunctionStub(containingDeclaration)
+            is PropertyDescriptor -> generateFunctionStub(containingDeclaration.run { getter ?: setter!! })
+            is TypeAliasDescriptor -> generateTypeAliasStub(containingDeclaration)
+            else -> throw AssertionError("Package or class expected: $containingDeclaration; for $currentDescriptor")
+        }
+
+        return this
     }
 }

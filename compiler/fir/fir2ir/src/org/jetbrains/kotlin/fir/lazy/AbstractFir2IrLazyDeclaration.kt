@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
@@ -30,10 +29,6 @@ interface AbstractFir2IrLazyDeclaration<F> :
         fir.annotations.mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }
-    }
-
-    override fun lazyParent(): IrDeclarationParent {
-        return parent
     }
 
     override val stubGenerator: DeclarationStubGenerator

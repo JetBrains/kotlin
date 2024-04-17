@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
@@ -102,9 +103,36 @@ fun deserializeFromByteArray(
             ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
         }
     }
+
+    toplevelParent.safelyInitializeAllLazyDescendants()
     toplevelParent.patchDeclarationParents()
     buildFakeOverridesForLocalClasses(symbolTable, typeSystemContext, symbolDeserializer, toplevelParent)
 }
+
+private fun IrElement.safelyInitializeAllLazyDescendants() {
+    // Traversal may trigger initialization of some child declaration,
+    // which may trigger initialization of some other IR element (e.g., IrProperty -> its getter/setter IrFunctions).,
+    // which may trigger adding it to its parent element (e.g. JvmFileFacadeClass),
+    // which may happen to be some element we are currently traversing,
+    // which would throw ConcurrentModificationException.
+    // The workaround is to traverse the subtree over snapshots first.
+
+    acceptVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            val directChildrenSnapshot = mutableListOf<IrElement>()
+            element.acceptChildrenVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    directChildrenSnapshot += element
+                }
+            })
+
+            for (child in directChildrenSnapshot) {
+                child.acceptChildrenVoid(this)
+            }
+        }
+    })
+}
+
 
 private class IrLibraryFileFromAnnotation(
     private val types: List<ProtoType>,

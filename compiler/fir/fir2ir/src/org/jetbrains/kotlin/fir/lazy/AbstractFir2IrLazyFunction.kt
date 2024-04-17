@@ -114,8 +114,4 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override val isDeserializationEnabled: Boolean
         get() = extensions.irNeedsDeserialization
-
-    override fun lazyParent(): IrDeclarationParent {
-        return super<AbstractFir2IrLazyDeclaration>.lazyParent()
-    }
 }
