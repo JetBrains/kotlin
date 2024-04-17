@@ -74,10 +74,9 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
         moduleName: String,
         testPathFull: File
     ): SwiftExportOutput {
-        val swiftExportInput = SwiftExportInput(
-            moduleName = moduleName,
-            sourceRoot = testPathFull.toPath(),
-            libraries = emptyList()
+        val swiftExportInput = InputModule.Source(
+            name = moduleName,
+            path = testPathFull.toPath(),
         )
         val exportResultsPath = buildDir.toPath().resolve("swift_export_results")
         val swiftExportOutput = SwiftExportOutput(

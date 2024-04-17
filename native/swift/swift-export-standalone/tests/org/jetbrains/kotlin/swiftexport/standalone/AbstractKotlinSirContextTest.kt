@@ -44,8 +44,9 @@ abstract class AbstractSwiftRunnerTestBase(private val renderDocComments: Boolea
         )
 
         runSwiftExport(
-            input = SwiftExportInput(
-                sourceRoot = moduleRoot,
+            input = InputModule.Source(
+                path = moduleRoot,
+                name = "main"
             ),
             output = output,
             config = SwiftExportConfig(

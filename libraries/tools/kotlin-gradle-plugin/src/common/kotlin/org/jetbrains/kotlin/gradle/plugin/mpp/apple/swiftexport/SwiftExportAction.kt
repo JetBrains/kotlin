@@ -30,9 +30,9 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
 
     override fun execute() {
         runSwiftExport(
-            input = SwiftExportInput(
-                moduleName = parameters.swiftApiModuleName.get(),
-                sourceRoot = parameters.sourceRoot.getFile().toPath()
+            input = InputModule.Source(
+                name = parameters.swiftApiModuleName.get(),
+                path = parameters.sourceRoot.getFile().toPath()
             ),
             config = SwiftExportConfig(
                 settings = mapOf(

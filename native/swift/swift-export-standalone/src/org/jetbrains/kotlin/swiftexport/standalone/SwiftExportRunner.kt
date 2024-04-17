@@ -39,11 +39,15 @@ public data class SwiftExportConfig(
     }
 }
 
-public data class SwiftExportInput(
-    val moduleName: String = "main",
-    val sourceRoot: Path, // todo: we do not support multi-modules currently. see KT-65220
-    val libraries: List<Path> = emptyList(), // todo: not supported currently. see KT-65221
-)
+public sealed interface InputModule {
+    public val name: String
+    public val path: Path
+
+    public class Source(
+        override val name: String,
+        override val path: Path,
+    ): InputModule
+}
 
 public data class SwiftExportOutput(
     val swiftApi: Path,
@@ -78,7 +82,7 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
  * A root function for running Swift Export from build tool
  */
 public fun runSwiftExport(
-    input: SwiftExportInput,
+    input: InputModule.Source,
     config: SwiftExportConfig = SwiftExportConfig(),
     output: SwiftExportOutput,
 ) {

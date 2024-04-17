@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
 import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportInput
+import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
 
 internal fun buildSwiftModule(
-    input: SwiftExportInput,
+    input: InputModule,
     kotlinDistribution: Distribution,
     bridgeModuleName: String,
 ): SirModule {
@@ -33,7 +33,7 @@ internal fun buildSwiftModule(
 
     return analyze(module) {
         val sirSession = StandaloneSirSession(this) { _, _ ->
-            SirSingleModuleProvider(swiftModuleName = input.moduleName, bridgeModuleName = bridgeModuleName)
+            SirSingleModuleProvider(swiftModuleName = input.name, bridgeModuleName = bridgeModuleName)
         }
         with(sirSession) {
             module.sirModule().also {
@@ -55,7 +55,7 @@ internal fun buildSwiftModule(
 @OptIn(KtAnalysisApiInternals::class)
 private fun extractModuleWithFiles(
     kotlinDistribution: Distribution,
-    input: SwiftExportInput,
+    input: InputModule,
 ): Pair<KtSourceModule, List<KtFile>> {
     val analysisAPISession = buildStandaloneAnalysisAPISession {
         registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
@@ -73,9 +73,9 @@ private fun extractModuleWithFiles(
 
             addModule(
                 buildKtSourceModule {
-                    addSourceRoot(input.sourceRoot)
+                    addSourceRoot(input.path)
                     platform = NativePlatforms.unspecifiedNativePlatform
-                    moduleName = input.moduleName
+                    moduleName = input.name
                     addRegularDependency(stdlib)
                 }
             )
