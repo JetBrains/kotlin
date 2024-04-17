@@ -54,6 +54,18 @@ abstract class ReceiverConstraintPosition<T>(val argument: T) : ConstraintPositi
     override fun toString(): String = "Receiver $argument"
 }
 
+/**
+ * The idea of this position is that sometimes we want to reserve the variable type, but it's not yet the moment when we call
+ * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext.fixVariable], for example, we need to take
+ * a look into a member scope of a type variable, but it's too early for fixation time because current result type may still contain
+ * some other not fixed type variables, like `List<OtherTv>`.
+ *
+ * Currently, only used inside PCLA
+ */
+abstract class SemiFixVariableConstraintPosition(val variable: TypeVariableMarker) : ConstraintPosition() {
+    override fun toString(): String = "Preliminary variable $variable fixation"
+}
+
 abstract class FixVariableConstraintPosition<T>(val variable: TypeVariableMarker, val resolvedAtom: T) : ConstraintPosition() {
     override fun toString(): String = "Fix variable $variable"
 }
