@@ -638,7 +638,8 @@ class CallAndReferenceGenerator(
     ): IrExpression = convertCatching(variableAssignment, conversionScope) {
         val type = irBuiltIns.unitType
         val calleeReference = variableAssignment.calleeReference ?: error("Reference not resolvable")
-        val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
+        // TODO(KT-63348): An expected type should be passed to the IrExpression conversion.
+        val assignedValue = wrapWithImplicitCastForAssignment(variableAssignment, visitor.convertToIrExpression(variableAssignment.rValue))
 
         injectSetValueCall(variableAssignment, calleeReference, assignedValue)?.let { return it }
 
@@ -737,6 +738,21 @@ class CallAndReferenceGenerator(
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
         }.applyTypeArguments(lValue).applyReceivers(lValue, explicitReceiverExpression)
+    }
+
+    /** Wrap an assignment - as needed - with an implicit cast to the left-hard side type. */
+    private fun wrapWithImplicitCastForAssignment(assignment: FirVariableAssignment, value: IrExpression): IrExpression {
+        if (value is IrTypeOperatorCall) return value // Value is already cast.
+
+        val rValue = assignment.rValue
+        if (rValue !is FirSmartCastExpression) return value // Value was not smartcast.
+
+        // Convert the original type to not-null, as an implicit cast is not needed in this case.
+        val originalType = rValue.originalExpression.resolvedType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+        val assignmentType = assignment.lValue.resolvedType
+        if (originalType.isSubtypeOf(assignmentType, session)) return value // Cast is not needed.
+
+        return implicitCast(value, assignmentType.toIrType(), IrTypeOperator.IMPLICIT_CAST)
     }
 
 

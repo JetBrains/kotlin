@@ -54486,6 +54486,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("implicitCastOnAssignment.kt")
+    public void testImplicitCastOnAssignment() {
+      runTest("compiler/testData/codegen/box/smartCasts/implicitCastOnAssignment.kt");
+    }
+
+    @Test
     @TestMetadata("implicitExtensionReceiver.kt")
     public void testImplicitExtensionReceiver() {
       runTest("compiler/testData/codegen/box/smartCasts/implicitExtensionReceiver.kt");
