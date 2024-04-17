@@ -37,33 +37,33 @@ internal class KtFe10DebugTypeRenderer {
     }
 
     context(Fe10AnalysisContext)
-    fun render(type: KotlinType, printer: PrettyPrinter) {
-        renderType(type, printer)
+    fun render(type: KotlinType, consumer: PrettyPrinter) {
+        consumer.renderType(type)
     }
 
     context(Fe10AnalysisContext)
-    private fun renderType(type: KotlinType, printer: PrettyPrinter) {
-        renderTypeAnnotationsDebug(type, printer)
+    private fun PrettyPrinter.renderType(type: KotlinType) {
+        renderTypeAnnotationsDebug(type)
         when (val unwrappedType = type.unwrap()) {
-            is DynamicType -> printer.append("dynamic")
-            is FlexibleType -> renderFlexibleType(unwrappedType, printer)
-            is DefinitelyNotNullType -> renderDefinitelyNotNullType(unwrappedType, printer)
-            is ErrorType -> renderErrorType(printer)
-            is CapturedType -> renderCapturedType(unwrappedType, printer)
-            is NewCapturedType -> renderCapturedType(unwrappedType, printer)
-            is AbbreviatedType -> renderType(unwrappedType.abbreviation, printer)
+            is DynamicType -> append("dynamic")
+            is FlexibleType -> renderFlexibleType(unwrappedType)
+            is DefinitelyNotNullType -> renderDefinitelyNotNullType(unwrappedType)
+            is ErrorType -> renderErrorType()
+            is CapturedType -> renderCapturedType(unwrappedType)
+            is NewCapturedType -> renderCapturedType(unwrappedType)
+            is AbbreviatedType -> renderType(unwrappedType.abbreviation)
             is SimpleType -> {
                 when (val typeConstructor = unwrappedType.constructor) {
-                    is NewTypeVariableConstructor -> renderTypeVariableType(typeConstructor, printer)
-                    is IntersectionTypeConstructor -> renderIntersectionType(typeConstructor, printer)
+                    is NewTypeVariableConstructor -> renderTypeVariableType(typeConstructor)
+                    is IntersectionTypeConstructor -> renderIntersectionType(typeConstructor)
                     else -> {
                         val descriptor = unwrappedType.constructor.declarationDescriptor
                         if (descriptor is TypeParameterDescriptor) {
-                            renderTypeParameterType(descriptor, printer)
+                            renderTypeParameterType(descriptor)
                         } else if (descriptor is ClassifierDescriptorWithTypeParameters) {
-                            renderOrdinaryType(unwrappedType, printer)
+                            renderOrdinaryType(unwrappedType)
                         } else {
-                            printer.append("ERROR CLASS")
+                            append("ERROR CLASS")
                         }
                     }
                 }
@@ -71,212 +71,162 @@ internal class KtFe10DebugTypeRenderer {
         }
 
         if (type.isMarkedNullable) {
-            printer.append("?")
+            append("?")
         }
     }
 
     context(Fe10AnalysisContext)
-    private fun renderTypeAnnotationsDebug(type: KotlinType, printer: PrettyPrinter) {
+    private fun PrettyPrinter.renderTypeAnnotationsDebug(type: KotlinType) {
         val annotations = type.annotations
             .filter { it.annotationClass?.classId != StandardClassIds.Annotations.ExtensionFunctionType }
 
-        printer.printCollectionIfNotEmpty(annotations, separator = " ", postfix = "  ") {
-            renderTypeAnnotationDebug(it, printer)
-        }
+        printCollectionIfNotEmpty(annotations, separator = " ", postfix = "  ") { renderTypeAnnotationDebug(it) }
     }
 
     context(Fe10AnalysisContext)
-    private fun renderTypeAnnotationDebug(annotation: AnnotationDescriptor, printer: PrettyPrinter) {
+    private fun PrettyPrinter.renderTypeAnnotationDebug(annotation: AnnotationDescriptor) {
         val namedValues = annotation.getKtNamedAnnotationArguments(this@Fe10AnalysisContext)
-        renderAnnotationDebug(annotation.annotationClass?.classId, namedValues, printer)
+        renderAnnotationDebug(annotation.annotationClass?.classId, namedValues)
     }
 
-    private fun renderAnnotationDebug(classId: ClassId?, namedValues: List<KtNamedAnnotationValue>, printer: PrettyPrinter) {
-        with(printer) {
-            append("@")
+    private fun PrettyPrinter.renderAnnotationDebug(classId: ClassId?, namedValues: List<KtNamedAnnotationValue>) {
+        append("@")
 
-            if (classId != null) {
-                append("R|")
-                renderFqName(classId.asSingleFqName(), printer)
-                append("|")
-            } else {
-                print("<ERROR TYPE REF>")
-            }
+        if (classId != null) {
+            append("R|")
+            renderFqName(classId.asSingleFqName())
+            append("|")
+        } else {
+            print("<ERROR TYPE REF>")
+        }
 
-            printCollection(namedValues, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
-                append(name.render())
-                append(" = ")
-                renderConstantValueDebug(value, printer)
-            }
+        printCollection(namedValues, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
+            append(name.render())
+            append(" = ")
+            renderConstantValueDebug(value)
         }
     }
 
-    private fun renderConstantValueDebug(value: KtAnnotationValue, printer: PrettyPrinter) {
+    private fun PrettyPrinter.renderConstantValueDebug(value: KtAnnotationValue) {
         when (value) {
-            is KtAnnotationApplicationValue -> {
-                renderAnnotationDebug(value.annotationValue.classId, value.annotationValue.arguments, printer)
-            }
-
-            is KtArrayAnnotationValue -> {
-                printer.printCollection(value.values, separator = ", ", prefix = "[", postfix = "]") {
-                    renderConstantValueDebug(it, printer)
-                }
-            }
-
-            is KtEnumEntryAnnotationValue -> {
-                printer.append(value.callableId?.asSingleFqName()?.render())
-            }
-
-            is KtConstantAnnotationValue -> {
-                printer.append(value.constantValue.constantValueKind.asString)
-                    .append("(")
-                    .append(value.constantValue.value.toString())
-                    .append(")")
-            }
-
-            KtUnsupportedAnnotationValue -> {
-                printer.append(KtUnsupportedAnnotationValue::class.java.simpleName)
-            }
-
-            is KtKClassAnnotationValue -> {
-                printer.append(value.renderAsSourceCode())
-            }
+            is KtAnnotationApplicationValue -> renderAnnotationDebug(value.annotationValue.classId, value.annotationValue.arguments)
+            is KtArrayAnnotationValue ->
+                printCollection(value.values, separator = ", ", prefix = "[", postfix = "]") { renderConstantValueDebug(it) }
+            is KtEnumEntryAnnotationValue -> append(value.callableId?.asSingleFqName()?.render())
+            is KtConstantAnnotationValue -> append(value.constantValue.constantValueKind.asString).append("(").append(value.constantValue.value.toString()).append(")")
+            KtUnsupportedAnnotationValue -> append(KtUnsupportedAnnotationValue::class.java.simpleName)
+            is KtKClassAnnotationValue -> append(value.renderAsSourceCode())
         }
     }
 
     context(Fe10AnalysisContext)
-    private fun renderFlexibleType(type: FlexibleType, printer: PrettyPrinter) {
-        val lowerBoundText = prettyPrint { renderType(type.lowerBound, this@prettyPrint) }
-        val upperBoundText = prettyPrint { renderType(type.upperBound, this@prettyPrint) }
-        printer.append(DescriptorRenderer.COMPACT.renderFlexibleType(lowerBoundText, upperBoundText, type.builtIns))
+    private fun PrettyPrinter.renderFlexibleType(type: FlexibleType) {
+        val lowerBoundText = prettyPrint { renderType(type.lowerBound) }
+        val upperBoundText = prettyPrint { renderType(type.upperBound) }
+        append(DescriptorRenderer.COMPACT.renderFlexibleType(lowerBoundText, upperBoundText, type.builtIns))
     }
 
     context(Fe10AnalysisContext)
-    private fun renderDefinitelyNotNullType(type: DefinitelyNotNullType, printer: PrettyPrinter) {
-        renderType(type.original, printer)
-        printer.append(" & Any")
+    private fun PrettyPrinter.renderDefinitelyNotNullType(type: DefinitelyNotNullType) {
+        renderType(type.original)
+        append(" & Any")
     }
 
-    private fun renderErrorType(printer: PrettyPrinter) {
-        printer.append(ERROR_TYPE_TEXT)
-    }
-
-    context(Fe10AnalysisContext)
-    private fun renderCapturedType(type: CapturedType, printer: PrettyPrinter) {
-        with(printer) {
-            append("CapturedType(")
-            renderTypeProjection(type.typeProjection, printer)
-            append(")")
-        }
+    private fun PrettyPrinter.renderErrorType() {
+        append(ERROR_TYPE_TEXT)
     }
 
     context(Fe10AnalysisContext)
-    private fun renderCapturedType(type: NewCapturedType, printer: PrettyPrinter) {
-        with(printer) {
-            append("CapturedType(")
-            renderTypeProjection(type.constructor.projection, printer)
-            append(")")
-        }
+    private fun PrettyPrinter.renderCapturedType(type: CapturedType) {
+        append("CapturedType(")
+        renderTypeProjection(type.typeProjection)
+        append(")")
     }
 
-    private fun renderTypeVariableType(typeConstructor: NewTypeVariableConstructor, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun PrettyPrinter.renderCapturedType(type: NewCapturedType) {
+        append("CapturedType(")
+        renderTypeProjection(type.constructor.projection)
+        append(")")
+    }
+
+    private fun PrettyPrinter.renderTypeVariableType(typeConstructor: NewTypeVariableConstructor) {
         val name = typeConstructor.originalTypeParameter?.name ?: SpecialNames.NO_NAME_PROVIDED
-        printer.append("TypeVariable(").append(name.asString()).append(")")
+        append("TypeVariable(").append(name.asString()).append(")")
     }
 
     context(Fe10AnalysisContext)
-    private fun renderIntersectionType(typeConstructor: IntersectionTypeConstructor, printer: PrettyPrinter) {
-        with(printer) {
-            append("it")
-            printCollection(typeConstructor.supertypes, separator = " & ", prefix = "(", postfix = ")") {
-                renderType(it, printer)
-            }
+    private fun PrettyPrinter.renderIntersectionType(typeConstructor: IntersectionTypeConstructor) {
+        append("it")
+        printCollection(typeConstructor.supertypes, separator = " & ", prefix = "(", postfix = ")") { renderType(it) }
+    }
+
+    context(Fe10AnalysisContext)
+    private fun PrettyPrinter.renderFunctionType(type: SimpleType) {
+        if (type.isSuspendFunctionType || type.isKSuspendFunctionType) {
+            append("suspend ")
         }
-    }
-
-    context(Fe10AnalysisContext)
-    private fun renderFunctionType(type: SimpleType, printer: PrettyPrinter) {
-        with(printer) {
-            if (type.isSuspendFunctionType || type.isKSuspendFunctionType) {
-                append("suspend ")
-            }
-
-            val (receiverType, valueParameters, returnType) = when {
-                type.isKFunctionType || type.isKSuspendFunctionType -> Triple(
-                    null,
-                    type.arguments.dropLast(1),
-                    type.arguments.last().type,
-                )
-                else -> Triple(
-                    type.getReceiverTypeFromFunctionType(),
-                    type.getValueParameterTypesFromFunctionType(),
-                    type.getReturnTypeFromFunctionType()
-                )
-            }
-
-            if (receiverType != null) {
-                renderType(receiverType, printer)
-                append(".")
-            }
-
-            printCollection(valueParameters, separator = ", ", prefix = "(", postfix = ")") {
-                renderTypeProjection(it, printer)
-            }
-
-            append(" -> ")
-            renderType(returnType, printer)
+        val (receiverType, valueParameters, returnType) = when {
+            type.isKFunctionType || type.isKSuspendFunctionType -> Triple(
+                null,
+                type.arguments.dropLast(1),
+                type.arguments.last().type,
+            )
+            else -> Triple(
+                type.getReceiverTypeFromFunctionType(),
+                type.getValueParameterTypesFromFunctionType(),
+                type.getReturnTypeFromFunctionType()
+            )
         }
+
+        if (receiverType != null) {
+            renderType(receiverType)
+            append(".")
+        }
+        printCollection(valueParameters, separator = ", ", prefix = "(", postfix = ")") { renderTypeProjection(it) }
+        append(" -> ")
+        renderType(returnType)
     }
 
-    private fun renderTypeParameterType(descriptor: TypeParameterDescriptor, printer: PrettyPrinter) {
-        printer.append(descriptor.name.render())
+    private fun PrettyPrinter.renderTypeParameterType(descriptor: TypeParameterDescriptor) {
+        append(descriptor.name.render())
     }
 
     context(Fe10AnalysisContext)
-    private fun renderOrdinaryType(type: SimpleType, printer: PrettyPrinter) {
+    private fun PrettyPrinter.renderOrdinaryType(type: SimpleType) {
         val nestedType = KtFe10JvmTypeMapperContext.getNestedType(type)
-        renderTypeSegment(nestedType.root, printer)
-        printer.printCollectionIfNotEmpty(nestedType.nested, separator = ".", prefix = ".", postfix = "") {
-            renderTypeSegment(it, printer)
-        }
+        renderTypeSegment(nestedType.root)
+        printCollectionIfNotEmpty(nestedType.nested, separator = ".", prefix = ".", postfix = "") { renderTypeSegment(it) }
     }
 
     context(Fe10AnalysisContext)
-    private fun renderTypeSegment(typeSegment: PossiblyInnerType, printer: PrettyPrinter) {
-        with(printer) {
-            val classifier = typeSegment.classifierDescriptor
+    private fun PrettyPrinter.renderTypeSegment(typeSegment: PossiblyInnerType) {
+        val classifier = typeSegment.classifierDescriptor
 
-            append(classifier.maybeLocalClassId.asString())
+        append(classifier.maybeLocalClassId.asString())
 
-            val arguments = typeSegment.arguments
-            printCollectionIfNotEmpty(arguments, separator = ", ", prefix = "<", postfix = ">") {
-                renderTypeProjection(it, printer)
-            }
-        }
+        val arguments = typeSegment.arguments
+        printCollectionIfNotEmpty(arguments, separator = ", ", prefix = "<", postfix = ">") { renderTypeProjection(it) }
     }
 
-    private fun renderFqName(fqName: FqName, printer: PrettyPrinter) {
-        printer.printCollection(fqName.pathSegments(), separator = ".") {
-            append(it.render())
-        }
+    private fun PrettyPrinter.renderFqName(fqName: FqName) {
+        printCollection(fqName.pathSegments(), separator = ".") { append(it.render()) }
     }
 
     context(Fe10AnalysisContext)
-    private fun renderTypeProjection(projection: TypeProjection, printer: PrettyPrinter) {
-        with(printer) {
-            if (projection.isStarProjection) {
-                append("*")
-            } else {
-                when (projection.projectionKind) {
-                    Variance.INVARIANT -> renderType(projection.type, printer)
-                    Variance.IN_VARIANCE -> {
-                        append("in ")
-                        renderType(projection.type, printer)
-                    }
-                    Variance.OUT_VARIANCE -> {
-                        append("out ")
-                        renderType(projection.type, printer)
-                    }
+    private fun PrettyPrinter.renderTypeProjection(projection: TypeProjection) {
+        if (projection.isStarProjection) {
+            append("*")
+        } else {
+            when (projection.projectionKind) {
+                Variance.INVARIANT -> renderType(projection.type)
+                Variance.IN_VARIANCE -> {
+                    append("in ")
+                    renderType(projection.type)
+                }
+                Variance.OUT_VARIANCE -> {
+                    append("out ")
+                    renderType(projection.type)
                 }
             }
         }
