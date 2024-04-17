@@ -323,6 +323,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("nativeThrows.kt")
+    public void testNativeThrows() {
+      runTest("compiler/testData/codegen/box/annotations/nativeThrows.kt");
+    }
+
+    @Test
     @TestMetadata("nestedAnnotation.kt")
     public void testNestedAnnotation() {
       runTest("compiler/testData/codegen/box/annotations/nestedAnnotation.kt");
