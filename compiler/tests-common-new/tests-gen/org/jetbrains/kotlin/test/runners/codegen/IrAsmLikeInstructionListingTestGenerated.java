@@ -235,5 +235,11 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
     public void testTypeParameter() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/typeParameter.kt");
     }
+
+    @Test
+    @TestMetadata("withVariance.kt")
+    public void testWithVariance() {
+      runTest("compiler/testData/codegen/asmLike/typeAnnotations/withVariance.kt");
+    }
   }
 }

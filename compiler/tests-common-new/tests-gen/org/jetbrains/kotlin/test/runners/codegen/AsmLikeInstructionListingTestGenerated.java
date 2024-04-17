@@ -211,5 +211,11 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
     public void testSyntheticAccessors() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/syntheticAccessors.kt");
     }
+
+    @Test
+    @TestMetadata("withVariance.kt")
+    public void testWithVariance() {
+      runTest("compiler/testData/codegen/asmLike/typeAnnotations/withVariance.kt");
+    }
   }
 }

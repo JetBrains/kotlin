@@ -1,0 +1,77 @@
+public abstract interface foo/Ann : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/Ann2 : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/Ann3 : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public final class foo/In : java/lang/Object {
+    public void <init>()
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public final class foo/Inv : java/lang/Object {
+    public void <init>()
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    <T:Ljava/lang/Object;>(Lfoo/In<-Lfoo/Inv<TT;>;>;)V
+    public final void inDeclaration(foo.In x)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, *0;
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, *0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    <T:Ljava/lang/Object;>(Lfoo/Inv<-Lfoo/Inv<TT;>;>;)V
+    public final void inUse(foo.Inv x)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, *0;
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, *0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    <T:Ljava/lang/Object;>(Lfoo/Inv<Lfoo/Inv<TT;>;>;)V
+    public final void invUse(foo.Inv x)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    <T:Ljava/lang/Object;>(Ljava/util/List<Lfoo/Inv<TT;>;>;)V
+    public final void mappedCollection(java.util.List x)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, *0;
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, *0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    <T:Ljava/lang/Object;>(Lfoo/Out<Lfoo/Inv<TT;>;>;)V
+    public final void outDeclaration(foo.Out x)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, *0;
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, *0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    <T:Ljava/lang/Object;>(Lfoo/Inv<+Lfoo/Inv<TT;>;>;)V
+    public final void outUse(foo.Inv x)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, *0;
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, *0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    <T:Ljava/lang/Object;>(Lfoo/Inv<*>;)V
+    public final void star(foo.Inv x)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public final class foo/Out : java/lang/Object {
+    public void <init>()
+}
