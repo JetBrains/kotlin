@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -55,13 +56,20 @@ abstract class AbstractAsmLikeInstructionListingTestBase<R : ResultingArtifact.F
             )
         }
 
+        commonHandlersForCodegenTest()
+
         configureJvmArtifactsHandlersStep {
             useHandlers(
                 ::AsmLikeInstructionListingHandler
             )
         }
 
+        defaultDirectives {
+            DIAGNOSTICS with "-warnings"
+        }
+
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        enableMetaInfoHandler()
     }
 }
 

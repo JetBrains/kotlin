@@ -1,6 +1,9 @@
 // CURIOUS_ABOUT: writeToParcel, createFromParcel, <clinit>
 // WITH_STDLIB
 
+// IGNORE_BACKEND_K2: JVM_IR
+// ^ KT-67605 K2 parcelize: false positive NOTHING_TO_OVERRIDE in one test
+
 //FILE: test/JavaClass.java
 package test;
 
