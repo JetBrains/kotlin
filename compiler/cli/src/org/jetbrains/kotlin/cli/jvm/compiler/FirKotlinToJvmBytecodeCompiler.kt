@@ -31,22 +31,13 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isArrayType
-import org.jetbrains.kotlin.fir.types.isString
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
@@ -317,38 +308,4 @@ object FirKotlinToJvmBytecodeCompiler {
         val configuration: CompilerConfiguration
         val targetIds: List<TargetId>?
     }
-}
-
-fun findMainClass(fir: List<FirFile>): FqName? {
-    // TODO: replace with proper main function detector, KT-44557
-    val compatibleClasses = mutableListOf<FqName>()
-    val visitor = object : FirVisitorVoid() {
-        lateinit var file: FirFile
-
-        override fun visitElement(element: FirElement) {}
-
-        override fun visitFile(file: FirFile) {
-            this.file = file
-            file.acceptChildren(this)
-        }
-
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
-            if (simpleFunction.name.asString() != "main") return
-            if (simpleFunction.typeParameters.isNotEmpty()) return
-            when (simpleFunction.valueParameters.size) {
-                0 -> {}
-                1 -> {
-                    val parameterType = simpleFunction.valueParameters.single().returnTypeRef.coneType
-                    if (!parameterType.isArrayType || parameterType.arrayElementType()?.isString != true) return
-                }
-                else -> return
-            }
-
-            compatibleClasses += FqName.fromSegments(
-                file.packageFqName.pathSegments().map { it.asString() } + "${file.name.removeSuffix(".kt").capitalize()}Kt"
-            )
-        }
-    }
-    fir.forEach { it.accept(visitor) }
-    return compatibleClasses.singleOrNull()
 }

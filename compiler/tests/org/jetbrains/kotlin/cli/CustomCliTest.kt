@@ -42,6 +42,18 @@ class CustomCliTest : TestCaseWithTmpdir() {
         compileAndCheckMainClass(listOf(main1Kt, main2Kt), expectedMainClass = null)
     }
 
+    fun testExtensionFunctionMainClass() {
+        val mainKt = tmpdir.resolve("main.kt").apply {
+            writeText(
+                """
+                    fun Array<String>.main() = println("hello")
+                """
+            )
+        }
+        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "MainKt")
+    }
+
+
     fun testObjectJvmStaticFunctionMainClass() {
         val mainKt = tmpdir.resolve("main.kt").apply {
             writeText(
@@ -108,8 +120,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
     }
 
     private fun makeCompilerArgs(sourceFiles: List<File>, jarFile: File): List<String> {
-        // TODO: remove explicit version after implementing main fun detector (KT-44557)
-        return listOf("-language-version", "1.9", "-include-runtime", "-d", jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
+        return listOf("-include-runtime", "-d", jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
     }
 
     private fun compileAndCheckMainClass(sourceFiles: List<File>, expectedMainClass: String?, messageRenderer: MessageRenderer? = null) {

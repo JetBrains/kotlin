@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -142,11 +146,23 @@ fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean =
 fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
     toAnnotationClassId(session) == JvmStandardClassIds.Annotations.JvmField
 
-fun FirDeclaration.findJvmNameAnnotation(): FirAnnotation? {
+// The implementation is different from `FirAnnotationContainer.getAnnotationsByClassId` because it doesn't expand typealiases
+// The reason is that some usesites do not have access to the session. For the intended use for main function detection it seems fine
+// for now, but we may need to reimplement it in the future. See KT-67634
+// See also the comment in the body, relevant for the use in the const evaluator.
+private fun FirDeclaration.findAnnotationByClassId(classId: ClassId): FirAnnotation? {
     return annotations.firstOrNull {
         // Access to type must be through `coneTypeOrNull`.
         // Even if `JvmName` is in the list of annotations that must be resoled for compilation, we still could try to access some user
         // annotations that could be not resolved.
-        it.annotationTypeRef.coneTypeOrNull?.classId == JvmStandardClassIds.Annotations.JvmName
+        it.annotationTypeRef.coneTypeOrNull?.classId == classId
     }
 }
+
+fun FirDeclaration.findJvmNameAnnotation(): FirAnnotation? = findAnnotationByClassId(JvmStandardClassIds.Annotations.JvmName)
+fun FirDeclaration.findJvmStaticAnnotation(): FirAnnotation? = findAnnotationByClassId(JvmStandardClassIds.Annotations.JvmStatic)
+
+fun FirDeclaration.findJvmNameValue(): String? =
+    findJvmNameAnnotation()?.findArgumentByName(StandardNames.NAME)?.let {
+        (it as? FirLiteralExpression<*>)?.value as? String
+    }
