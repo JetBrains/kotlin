@@ -8,9 +8,10 @@ class Derived : Base {
   fun setValue(v: Any) {
     when {
       v is String -> { // BLOCK
-        <this>.#value = v /*as String */
+        <this>(super<Derived>).#value = v /*as String */
       }
     }
   }
 
 }
+

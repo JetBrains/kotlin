@@ -402,7 +402,7 @@ FILE fqName:<root> fileName:/1.kt
     VALUE_PARAMETER name:h index:7 type:<root>.H
     BLOCK_BODY
       VAR name:k type:kotlin.String? [val]
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.A origin=null
           receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       VAR name:k2 type:kotlin.String [val]
         CALL 'public open fun bar (): kotlin.String declared in <root>.A' type=kotlin.String origin=null
@@ -412,7 +412,7 @@ FILE fqName:<root> fileName:/1.kt
         s: CONST String type=kotlin.String value=""
       VAR name:k3 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.B origin=null
             receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k4 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
@@ -426,7 +426,7 @@ FILE fqName:<root> fileName:/1.kt
         s: CONST Null type=kotlin.Nothing? value=null
       VAR name:k5 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.C origin=null
             receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       VAR name:k6 type:kotlin.String? [val]
         CALL 'public open fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.C' type=@[EnhancedNullability] kotlin.String? origin=null
@@ -439,7 +439,7 @@ FILE fqName:<root> fileName:/1.kt
         s: CONST Null type=kotlin.Nothing? value=null
       VAR name:k7 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.D origin=null
             receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       VAR name:k8 type:kotlin.String [val]
         CALL 'public open fun bar (): kotlin.String declared in <root>.D' type=kotlin.String origin=null
@@ -471,7 +471,7 @@ FILE fqName:<root> fileName:/1.kt
         s: CONST String type=kotlin.String value=""
       VAR name:k13 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.G origin=null
             receiver: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
       VAR name:k14 type:kotlin.String [val]
         CALL 'public open fun bar (): kotlin.String declared in <root>.G' type=kotlin.String origin=null
@@ -484,7 +484,7 @@ FILE fqName:<root> fileName:/1.kt
         s: CONST Null type=kotlin.Nothing? value=null
       VAR name:k15 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.H origin=null
             receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       VAR name:k16 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String

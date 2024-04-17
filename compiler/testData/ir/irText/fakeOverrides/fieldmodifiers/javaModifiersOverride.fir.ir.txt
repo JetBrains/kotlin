@@ -277,64 +277,64 @@ FILE fqName:<root> fileName:/1.kt
     VALUE_PARAMETER name:f index:5 type:<root>.F
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.A origin=null
           receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.A origin=null
           receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.A origin=null
           receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.A origin=null
           receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.B origin=null
           receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.B origin=null
           receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.B origin=null
           receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.B origin=null
           receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java3' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java3' type=kotlin.Int superQualifierSymbol=<root>.C origin=null
           receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java3' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java3' type=kotlin.Int superQualifierSymbol=<root>.C origin=null
           receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public declared in <root>.Java3' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public declared in <root>.Java3' type=kotlin.Int superQualifierSymbol=<root>.C origin=null
           receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public declared in <root>.Java3' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public declared in <root>.Java3' type=kotlin.Int superQualifierSymbol=<root>.C origin=null
           receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.D origin=null
           receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.D origin=null
           receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.D origin=null
           receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.D origin=null
           receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.E origin=null
           receiver: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Int visibility:public declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.E origin=null
           receiver: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.E origin=null
           receiver: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:kotlin.Int visibility:public [final] declared in <root>.Java1' type=kotlin.Int superQualifierSymbol=<root>.E origin=null
           receiver: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.F' type=kotlin.Int origin=GET_PROPERTY

@@ -40,11 +40,11 @@ FILE fqName:<root> fileName:/kt44855.kt
               CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=null
           VAR name:q type:@[FlexibleNullability] kotlin.String? [val]
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Parent' type=@[FlexibleNullability] kotlin.String? origin=null
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Parent' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.Child origin=null
               receiver: TYPE_OP type=<root>.Child origin=IMPLICIT_CAST typeOperand=<root>.Child
                 CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
                   $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=null
-          SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Parent' type=kotlin.Unit origin=EQ
+          SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Parent' type=kotlin.Unit superQualifierSymbol=<root>.Child origin=EQ
             receiver: TYPE_OP type=<root>.Child origin=IMPLICIT_CAST typeOperand=<root>.Child
               CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=null

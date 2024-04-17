@@ -28,7 +28,7 @@ FILE fqName:test fileName:/test.kt
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:@[FlexibleNullability] kotlin.String?
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): @[FlexibleNullability] kotlin.String? declared in test.C.f'
-                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:x type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.A' type=@[FlexibleNullability] kotlin.String? origin=null
+                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:x type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.A' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=test.C origin=null
                       receiver: GET_VAR '<this>: test.C declared in test.C.f' type=test.C origin=null
     FUN name:g visibility:public modality:FINAL <> ($this:test.C) returnType:@[FlexibleNullability] kotlin.String?
       $this: VALUE_PARAMETER name:<this> type:test.C
@@ -40,7 +40,7 @@ FILE fqName:test fileName:/test.kt
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:@[FlexibleNullability] kotlin.String?
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): @[FlexibleNullability] kotlin.String? declared in test.C.g'
-                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:y type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.A.B' type=@[FlexibleNullability] kotlin.String? origin=null
+                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:y type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.A.B' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=test.C origin=null
                       receiver: GET_VAR '<this>: test.C declared in test.C.g' type=test.C origin=null
   FUN name:eval visibility:public modality:FINAL <T> (f:kotlin.Function0<T of test.eval>) returnType:T of test.eval
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

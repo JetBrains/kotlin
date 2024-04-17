@@ -126,7 +126,7 @@ FILE fqName:<root> fileName:/kt16904.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.Test2 origin=EQ
           receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
           value: CONST Int type=kotlin.Int value=42
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test2 [primary]

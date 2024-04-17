@@ -8,18 +8,21 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.backend.utils.convertCatching
 import org.jetbrains.kotlin.fir.backend.utils.implicitCast
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -41,11 +44,13 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -274,7 +279,7 @@ class CallAndReferenceGenerator(
         return null
     }
 
-    private fun FirExpression.superQualifierSymbol(): IrClassSymbol? {
+    private fun FirExpression.superQualifierSymbolForFunctionAndPropertyAccess(): IrClassSymbol? {
         if (this !is FirQualifiedAccessExpression) {
             return null
         }
@@ -289,6 +294,75 @@ class CallAndReferenceGenerator(
             return classifierStorage.getIrClassSymbol(firClassSymbol)
         }
         return null
+    }
+
+    /**
+     * Should be called on dispatch receiver of corresponding field access
+     *
+     * This method attempts to replicate the behavior of K1 in generation of `superQualifiedSymbol` for IrFieldAccessExpression
+     */
+    private fun FirExpression.superQualifierSymbolForFieldAccess(firResolvedSymbol: FirBasedSymbol<*>?): IrClassSymbol? {
+        if (firResolvedSymbol is FirBackingFieldSymbol || firResolvedSymbol is FirDelegateFieldSymbol) return null
+        val classSymbol = when (this) {
+            is FirResolvedQualifier -> {
+                if (resolvedToCompanionObject) return null
+                this.symbol as? FirClassSymbol<*>
+            }
+            else -> this.resolvedType.fullyExpandedType(session).toClassSymbol(session)
+        } ?: return null
+
+        /**
+         * class Some {
+         *     companion object {
+         *         val x: Int = 1
+         *     }
+         * }
+         *
+         * Some.x // <--- no superQualifiedSymbol
+         */
+        if (classSymbol.isCompanion) return null
+
+        val irClassSymbol = classifierStorage.getIrClassSymbol(classSymbol)
+
+        /**
+         * enum class Some {
+         *     A, B;
+         *
+         *     val x: Int = 1
+         *
+         *     fun foo() {
+         *         this.x // <--- no superQualifiedSymbol
+         *     }
+         * }
+         */
+        if (classSymbol.classKind == ClassKind.ENUM_CLASS && conversionScope.parentStack.any { (it as? IrClass)?.symbol == irClassSymbol }) {
+            return null
+        }
+
+
+        /**
+         * // FILE: Base.java
+         * public class Base {
+         *     int fromJava = 0;
+         * }
+         *
+         * // FILE: Derived.kt
+         * class Derived : Base() {
+         *     val fromKotlin = 1
+         *
+         *     init {
+         *         this.fromJava // <--- no superQualifiedSymbol
+         *         this.fromKotlin // <--- superQualifiedSymbol is set
+         *     }
+         *  }
+         */
+        if (
+            conversionScope.initBlocksStack.any { it.parentAsClass.symbol == irClassSymbol } &&
+            !(this is FirThisReceiverExpression && firResolvedSymbol?.fir is FirJavaField)
+        ) {
+            return null
+        }
+        return irClassSymbol
     }
 
     private val Name.dynamicOperator
@@ -507,7 +581,7 @@ class CallAndReferenceGenerator(
                         typeArgumentsCount = firSymbol.typeParameterSymbols.size,
                         valueArgumentsCount = firSymbol.valueParametersSize(),
                         origin = callOrigin,
-                        superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
+                        superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                     )
                 }
 
@@ -518,7 +592,7 @@ class CallAndReferenceGenerator(
                         typeArgumentsCount = calleeReference.toResolvedCallableSymbol()!!.fir.typeParameters.size,
                         valueArgumentsCount = 0,
                         origin = IrStatementOrigin.GET_LOCAL_PROPERTY,
-                        superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
+                        superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                     )
                 }
 
@@ -536,13 +610,13 @@ class CallAndReferenceGenerator(
                                 origin = incOrDeclSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
                                     ?: augmentedAssignSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
                                     ?: IrStatementOrigin.GET_PROPERTY,
-                                superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
+                                superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                             )
                         }
 
                         backingFieldSymbol != null -> IrGetFieldImpl(
                             startOffset, endOffset, backingFieldSymbol, irType,
-                            superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
+                            superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
                         )
 
                         else -> IrErrorCallExpressionImpl(
@@ -554,7 +628,7 @@ class CallAndReferenceGenerator(
 
                 is IrFieldSymbol -> IrGetFieldImpl(
                     startOffset, endOffset, symbol, irType,
-                    superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
+                    superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
                 )
 
                 is IrValueSymbol -> {
@@ -676,7 +750,10 @@ class CallAndReferenceGenerator(
         val lValue = variableAssignment.unwrapLValue() ?: error("Assignment lValue unwrapped to null")
         return variableAssignment.convertWithOffsets(calleeReference) { startOffset, endOffset ->
             when (symbol) {
-                is IrFieldSymbol -> IrSetFieldImpl(startOffset, endOffset, symbol, type, origin).apply {
+                is IrFieldSymbol -> IrSetFieldImpl(
+                    startOffset, endOffset, symbol, type, origin,
+                    superQualifierSymbol = lValue.dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
+                ).apply {
                     value = assignedValue
                 }
 
@@ -689,7 +766,7 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = firProperty.typeParameters.size,
                             valueArgumentsCount = 1 + firProperty.contextReceivers.size,
                             origin = origin,
-                            superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbol()
+                            superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
                             putContextReceiverArguments(lValue)
                             putValueArgument(0, assignedValue)
@@ -710,7 +787,7 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = firProperty.typeParameters.size,
                             valueArgumentsCount = 1 + firProperty.contextReceivers.size,
                             origin = origin,
-                            superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbol()
+                            superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
                             putValueArgument(putContextReceiverArguments(lValue), assignedValue)
                         }
@@ -718,7 +795,7 @@ class CallAndReferenceGenerator(
                         backingFieldSymbol != null -> IrSetFieldImpl(
                             startOffset, endOffset, backingFieldSymbol, type,
                             origin = null, // NB: to be consistent with PSI2IR, origin should be null here
-                            superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbol()
+                            superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
                         ).apply {
                             value = assignedValue
                         }

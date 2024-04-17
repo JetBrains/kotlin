@@ -601,7 +601,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.M
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int superQualifierSymbol=<root>.M origin=null
             receiver: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=null
         CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=null
@@ -1091,7 +1091,7 @@ FILE fqName:<root> fileName:/test.kt
       CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
         $this: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int superQualifierSymbol=<root>.M origin=null
           receiver: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null
       CALL 'public final fun test (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
         $this: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null

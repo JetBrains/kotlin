@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       VALUE_PARAMETER name:t index:0 type:kotlin.Boolean
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Boolean visibility:protected/*protected and package*/ declared in <root>.Java2' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Boolean visibility:protected/*protected and package*/ declared in <root>.Java2' type=kotlin.Unit superQualifierSymbol=<root>.B origin=EQ
           receiver: GET_VAR '<this>: <root>.B declared in <root>.B.setB' type=<root>.B origin=null
           value: GET_VAR 't: kotlin.Boolean declared in <root>.B.setB' type=kotlin.Boolean origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java3]

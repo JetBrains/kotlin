@@ -639,6 +639,10 @@ fun ConeKotlinType.toRegularClassSymbol(session: FirSession): FirRegularClassSym
     return (this as? ConeClassLikeType)?.toRegularClassSymbol(session)
 }
 
+fun ConeKotlinType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
+    return (this as? ConeClassLikeType)?.toClassSymbol(session)
+}
+
 fun ConeClassLikeType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
     return fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
 }

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in p.Base' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in p.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
           value: CONST String type=kotlin.String value=""
     PROPERTY name:ref visibility:public modality:FINAL [val]
@@ -38,6 +38,6 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
     FUN name:set visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in p.Base' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in p.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.set' type=<root>.Derived origin=null
           value: CONST String type=kotlin.String value="OK"

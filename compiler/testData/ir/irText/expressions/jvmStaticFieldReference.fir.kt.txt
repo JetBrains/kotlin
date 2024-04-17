@@ -2,14 +2,14 @@ class TestClass {
   val test: Int
     field = when {
       else -> { // BLOCK
-        #out.println(p0 = "TestClass/test")
+        super<System>.#out.println(p0 = "TestClass/test")
         42
       }
     }
     get
 
   init {
-    #out.println(p0 = "TestClass/init")
+    super<System>.#out.println(p0 = "TestClass/init")
   }
 
   constructor() /* primary */ {
@@ -21,15 +21,15 @@ class TestClass {
 }
 
 fun testFun() {
-  #out.println(p0 = "testFun")
+  super<System>.#out.println(p0 = "testFun")
 }
 
 var testProp: Any
   get(): Any {
-    #out.println(p0 = "testProp/get")
+    super<System>.#out.println(p0 = "testProp/get")
     return 42
   }
   set(value: Any) {
-    #out.println(p0 = "testProp/set")
+    super<System>.#out.println(p0 = "testProp/set")
   }
 

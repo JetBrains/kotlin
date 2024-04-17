@@ -770,7 +770,7 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public open fun getA (): kotlin.Int declared in <root>.D' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Boolean visibility:protected/*protected and package*/ declared in <root>.Java2' type=kotlin.Boolean origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Boolean visibility:protected/*protected and package*/ declared in <root>.Java2' type=kotlin.Boolean superQualifierSymbol=<root>.D origin=null
           receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun isB (): kotlin.Boolean declared in <root>.D' type=kotlin.Boolean origin=GET_PROPERTY
@@ -779,7 +779,7 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public open fun getA (): kotlin.Int declared in <root>.E' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Boolean visibility:protected/*protected and package*/ declared in <root>.Java2' type=kotlin.Boolean origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:kotlin.Boolean visibility:protected/*protected and package*/ declared in <root>.Java2' type=kotlin.Boolean superQualifierSymbol=<root>.E origin=null
           receiver: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun isB (): kotlin.Boolean declared in <root>.E' type=kotlin.Boolean origin=GET_PROPERTY

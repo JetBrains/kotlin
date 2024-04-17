@@ -9,14 +9,14 @@ class C : B {
 
   fun f(): @FlexibleNullability String? {
     return eval<@FlexibleNullability String?>(f = local fun <anonymous>(): @FlexibleNullability String? {
-      return <this>.#x
+      return <this>(super<C>).#x
     }
 )
   }
 
   fun g(): @FlexibleNullability String? {
     return eval<@FlexibleNullability String?>(f = local fun <anonymous>(): @FlexibleNullability String? {
-      return <this>.#y
+      return <this>(super<C>).#y
     }
 )
   }

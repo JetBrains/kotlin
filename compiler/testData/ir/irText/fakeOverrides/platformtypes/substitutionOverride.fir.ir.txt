@@ -129,7 +129,7 @@ FILE fqName:<root> fileName:/1.kt
     BLOCK_BODY
       VAR name:k1 type:kotlin.Int [val]
         TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.J1? visibility:public declared in <root>.J1' type=@[FlexibleNullability] kotlin.Int? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.J1? visibility:public declared in <root>.J1' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.A origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
       VAR name:k2 type:kotlin.Unit [val]
         CALL 'public open fun foo (t: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
@@ -141,7 +141,7 @@ FILE fqName:<root> fileName:/1.kt
             $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
       VAR name:k4 type:kotlin.Int [val]
         TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.J2? visibility:public declared in <root>.J2' type=@[FlexibleNullability] kotlin.Int? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.J2? visibility:public declared in <root>.J2' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.B origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.B' type=<root>.B origin=null
       VAR name:k5 type:kotlin.Unit [val]
         CALL 'public open fun foo (t: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
@@ -153,7 +153,7 @@ FILE fqName:<root> fileName:/1.kt
             $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.B' type=<root>.B origin=null
       VAR name:k7 type:kotlin.Int [val]
         TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.J1? visibility:public declared in <root>.J1' type=@[FlexibleNullability] kotlin.Int? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.J1? visibility:public declared in <root>.J1' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.C origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
       VAR name:k8 type:kotlin.Unit [val]
         CALL 'public open fun foo (t: kotlin.Int?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
@@ -164,7 +164,7 @@ FILE fqName:<root> fileName:/1.kt
           $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
       VAR name:k10 type:kotlin.Int [val]
         TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.J2? visibility:public declared in <root>.J2' type=@[FlexibleNullability] kotlin.Int? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.J2? visibility:public declared in <root>.J2' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.D origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.D' type=<root>.D origin=null
       VAR name:k11 type:kotlin.Unit [val]
         CALL 'public open fun foo (t: kotlin.Int?): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null

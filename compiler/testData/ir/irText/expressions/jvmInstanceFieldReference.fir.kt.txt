@@ -1,6 +1,6 @@
 class Derived : Base {
   init {
-    <this>.#value = 0
+    <this>(super<Derived>).#value = 0
   }
 
   constructor() /* primary */ {
@@ -10,11 +10,11 @@ class Derived : Base {
   }
 
   fun getValue(): Int {
-    return <this>.#value
+    return <this>(super<Derived>).#value
   }
 
   fun setValue(value: Int) {
-    <this>.#value = value
+    <this>(super<Derived>).#value = value
   }
 
 }

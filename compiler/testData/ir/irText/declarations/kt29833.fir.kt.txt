@@ -2,7 +2,7 @@ package interop
 
 object Definitions {
   val ktValue: String
-    field = #CONSTANT
+    field = super<Interface>.#CONSTANT
     get
 
   private constructor() /* primary */ {

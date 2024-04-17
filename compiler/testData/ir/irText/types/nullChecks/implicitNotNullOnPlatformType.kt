@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // FILE: implicitNotNullOnPlatformType.kt
 fun f(s: String) {}

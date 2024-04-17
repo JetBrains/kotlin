@@ -1,6 +1,6 @@
 fun foo(movedPaths: MutableList<Couple<FilePath>>) {
   movedPaths.forEach<Couple<FilePath>>(action = local fun <anonymous>(it: Couple<FilePath>) {
-    it.#second.getName() /*~> Unit */
+    it(super<Couple>).#second.getName() /*~> Unit */
   }
 )
 }
