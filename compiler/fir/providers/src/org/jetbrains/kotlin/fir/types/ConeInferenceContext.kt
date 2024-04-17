@@ -569,7 +569,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind? {
         require(this is ConeKotlinType)
-        return this.functionTypeKind(session)
+        return (this.lowerBoundIfFlexible() as ConeClassLikeType).functionTypeKind(session)
     }
 
     override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
