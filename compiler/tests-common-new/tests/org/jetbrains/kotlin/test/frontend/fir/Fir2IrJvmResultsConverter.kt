@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -90,7 +91,8 @@ class Fir2IrJvmResultsConverter(
             FirJvmKotlinMangler(),
             FirJvmVisibilityConverter,
             DefaultBuiltIns.Instance,
-            ::JvmIrTypeSystemContext
+            ::JvmIrTypeSystemContext,
+            JvmIrSpecialAnnotationSymbolProvider,
         )
 
         val backendInput = JvmIrCodegenFactory.JvmIrBackendInput(

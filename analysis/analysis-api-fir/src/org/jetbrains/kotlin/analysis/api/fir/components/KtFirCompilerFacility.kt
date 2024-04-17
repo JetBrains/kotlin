@@ -281,6 +281,7 @@ internal class KtFirCompilerFacility(
             FirJvmVisibilityConverter,
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,
+            JvmIrSpecialAnnotationSymbolProvider,
         )
     }
 
