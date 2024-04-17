@@ -81,7 +81,7 @@ internal abstract class SymbolLightParameterCommon(
                 ktType.asPsiType(
                     this@SymbolLightParameterCommon,
                     allowErrorTypes = true,
-                    getTypeMappingMode(ktType),
+                    ktType.typeMappingMode(),
                     suppressWildcards = parameterSymbol.suppressWildcardMode(),
                 )
             } ?: nonExistentType()

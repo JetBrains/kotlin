@@ -91,7 +91,7 @@ internal class SymbolLightParameterForReceiver private constructor(
             val psiType = ktType.asPsiType(
                 this,
                 allowErrorTypes = true,
-                getTypeMappingMode(ktType),
+                ktType.typeMappingMode(),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
             )
 
