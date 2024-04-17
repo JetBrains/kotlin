@@ -313,7 +313,6 @@ class ResultTypeResolver(
 
         if (lowerConstraintTypes.isNotEmpty()) {
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
-            // TODO Improve handling of flexible types with recursive captured type arguments to not produce giant multi-level-deep types KT-65704
             var commonSuperType = computeCommonSuperType(types)
 
             if (commonSuperType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }) {
