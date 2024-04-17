@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirValueParameterSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.renderWithType
@@ -72,19 +71,20 @@ internal class KtFirValueParameterSymbol(
         ktPropertySymbol
     }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtValueParameterSymbol>(this)?.let { return it }
 
-        val ownerSymbol = with(analysisSession) { getContainingSymbol() }
-            ?: error("Containing function is expected for a value parameter symbol")
+        when (val owner = getContainingSymbol()) {
+            is KtFunctionLikeSymbol ->
+                KtFirValueParameterSymbolPointer(
+                    owner.createPointer(),
+                    name,
+                    (owner.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
+                )
 
-        requireIsInstance<KtFunctionLikeSymbol>(ownerSymbol)
-
-        return KtFirValueParameterSymbolPointer(
-            ownerPointer = analysisSession.createOwnerPointer(this),
-            name = name,
-            index = (ownerSymbol.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
-        )
+            else -> error("${requireNotNull(owner)::class}")
+        }
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

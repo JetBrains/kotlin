@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
@@ -46,6 +47,7 @@ internal class KtFe10PsiDestructuringDeclarationSymbol(
             }
         }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtDestructuringDeclarationSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtDestructuringDeclarationSymbol>(this)?.let { return it }
         throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(SpecialNames.DESTRUCT.asString())

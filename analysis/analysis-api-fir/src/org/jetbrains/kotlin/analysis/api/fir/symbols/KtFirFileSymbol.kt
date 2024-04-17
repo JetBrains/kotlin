@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
@@ -23,6 +24,7 @@ internal class KtFirFileSymbol(
 ) : KtFileSymbol(), KtSymbolWithDeclarations, KtFirSymbol<FirFileSymbol> {
     override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.psi }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtFileSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFileSymbol>(this)?.let { return it }
         TODO("Creating pointers for files from library is not supported yet")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
@@ -55,6 +56,7 @@ internal class KtFirDestructuringDeclarationSymbol(
             }
         }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtDestructuringDeclarationSymbol> {
         return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtDestructuringDeclarationSymbol>(this)
             ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(SpecialNames.DESTRUCT.asString())

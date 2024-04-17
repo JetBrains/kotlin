@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import com.intellij.extapi.psi.StubBasedPsiElementBase
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -51,6 +53,7 @@ internal class KtFe10PsiLocalVariableSymbol(
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion { KtSymbolKind.LOCAL }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtLocalVariableSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }

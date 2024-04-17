@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
@@ -33,6 +34,7 @@ class KtFe10ReceiverParameterSymbol(
     override val owningCallableSymbol: KtCallableSymbol
         get() = withValidityAssertion { _descriptor.containingDeclaration.toKtSymbol(analysisContext) as KtCallableSymbol }
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtReceiverParameterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtReceiverParameterSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }

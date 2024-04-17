@@ -58,12 +58,12 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         other.isStatic == isStatic && other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }
 
-internal inline fun <reified T : KtSymbol> KtAnalysisSession.createOwnerPointer(symbol: KtSymbol): KtSymbolPointer<T> {
-    val containingSymbol = symbol.getContainingSymbol()
-        ?: error("Non-null symbol is expected for a member declaration")
-
-    requireIsInstance<T>(containingSymbol)
+context(KtAnalysisSession)
+internal inline fun <reified T : KtSymbol> KtSymbol.requireOwnerPointer(): KtSymbolPointer<T> {
+    val symbolWithMembers = getContainingSymbol()
+    requireNotNull(symbolWithMembers) { "should present for member declaration" }
+    requireIsInstance<T>(symbolWithMembers)
 
     @Suppress("UNCHECKED_CAST")
-    return containingSymbol.createPointer() as KtSymbolPointer<T>
+    return symbolWithMembers.createPointer() as KtSymbolPointer<T>
 }
