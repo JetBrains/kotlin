@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.components.KtCompilationResult
 import org.jetbrains.kotlin.analysis.api.components.KtCompilerFacility
 import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KtCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -106,8 +104,7 @@ internal class KtFirCompilerFacility(
             is KtCompilerTarget.Jvm -> target.classBuilderFactory
         }
 
-        val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.useSiteSession) { it.asKtDiagnostic() }
-            .also(file::accept).diagnostics
+        val syntaxErrors = SyntaxErrorReportingVisitor().also(file::accept).diagnostics
 
         if (syntaxErrors.isNotEmpty()) {
             return KtCompilationResult.Failure(syntaxErrors)
@@ -707,10 +704,8 @@ private class DeclarationRegistrarVisitor(private val consumer: SymbolTable) : I
     }
 }
 
-private class SyntaxErrorReportingVisitor(
-    private val useSiteSession: FirSession,
-    private val diagnosticConverter: (KtPsiDiagnostic) -> KtDiagnosticWithPsi<*>
-) : KtTreeVisitorVoid() {
+context(KtFirAnalysisSessionComponent)
+private class SyntaxErrorReportingVisitor : KtTreeVisitorVoid() {
     private val collectedDiagnostics = mutableListOf<KtDiagnostic>()
 
     val diagnostics: List<KtDiagnostic>
@@ -718,8 +713,8 @@ private class SyntaxErrorReportingVisitor(
 
     override fun visitErrorElement(element: PsiErrorElement) {
         collectedDiagnostics += ConeSyntaxDiagnostic(element.errorDescription)
-            .toFirDiagnostics(useSiteSession, KtRealPsiSourceElement(element), callOrAssignmentSource = null)
-            .map { diagnosticConverter(it as KtPsiDiagnostic) }
+            .toFirDiagnostics(analysisSession.useSiteSession, KtRealPsiSourceElement(element), callOrAssignmentSource = null)
+            .map { (it as KtPsiDiagnostic).asKtDiagnostic() }
 
         super.visitErrorElement(element)
     }
