@@ -169,7 +169,7 @@ internal class SymbolLightSimpleMethod(
                                     }
                                     else -> {
                                         val returnType = functionSymbol.returnType
-                                        if (isVoidType(returnType)) KtTypeNullability.UNKNOWN else getTypeNullability(returnType)
+                                        if (returnType.isVoidType) KtTypeNullability.UNKNOWN else getTypeNullability(returnType)
                                     }
                                 }
                             }
@@ -192,11 +192,12 @@ internal class SymbolLightSimpleMethod(
     }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
-    private fun KtAnalysisSession.forceBoxedReturnType(functionSymbol: KtFunctionSymbol): Boolean {
+    context(KtAnalysisSession)
+    private fun forceBoxedReturnType(functionSymbol: KtFunctionSymbol): Boolean {
         val returnType = functionSymbol.returnType
         // 'invoke' methods for lambdas, function literals, and callable references
         // implicitly override generic 'invoke' from a corresponding base class.
-        if (functionSymbol.isBuiltinFunctionInvoke && isInlineClassType(returnType))
+        if (functionSymbol.isBuiltinFunctionInvoke && returnType.isInlineClassType)
             return true
 
         return returnType.isPrimitive &&
@@ -205,22 +206,23 @@ internal class SymbolLightSimpleMethod(
                 }
     }
 
-    @Suppress("UnusedReceiverParameter")
-    private fun KtAnalysisSession.isInlineClassType(type: KtType): Boolean {
-        return ((type as? KtNonErrorClassType)?.classSymbol as? KtNamedClassOrObjectSymbol)?.isInline == true
-    }
+    context(KtAnalysisSession)
+    private val KtType.isInlineClassType: Boolean
+        get() = ((this as? KtNonErrorClassType)?.classSymbol as? KtNamedClassOrObjectSymbol)?.isInline == true
 
-    private fun KtAnalysisSession.isVoidType(type: KtType): Boolean {
-        val expandedType = type.fullyExpandedType
-        return expandedType.isUnit && expandedType.nullability != KtTypeNullability.NULLABLE
-    }
+    context(KtAnalysisSession)
+    private val KtType.isVoidType: Boolean
+        get() {
+            val expandedType = fullyExpandedType
+            return expandedType.isUnit && expandedType.nullability != KtTypeNullability.NULLABLE
+        }
 
     private val _returnedType: PsiType by lazyPub {
         withFunctionSymbol { functionSymbol ->
             val ktType = if (functionSymbol.isSuspend) {
                 analysisSession.builtinTypes.NULLABLE_ANY // Any?
             } else {
-                functionSymbol.returnType.takeUnless { isVoidType(it) } ?: return@withFunctionSymbol PsiType.VOID
+                functionSymbol.returnType.takeUnless { it.isVoidType } ?: return@withFunctionSymbol PsiType.VOID
             }
 
             val typeMappingMode = if (forceBoxedReturnType(functionSymbol))
