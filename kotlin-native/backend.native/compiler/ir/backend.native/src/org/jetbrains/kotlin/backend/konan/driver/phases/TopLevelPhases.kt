@@ -402,6 +402,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
  */
 private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment) {
     val optimize = context.shouldOptimize()
+    val enableBackendInliner = context.config.enableBackendInliner
     module.files.forEach {
         runPhase(ReturnsInsertionPhase, it)
     }
@@ -416,15 +417,17 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         //runPhase(CoroutinesVarSpillingPhase, it)
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
         // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
-        //runPhase(PropertyAccessorInlinePhase, it, disable = !optimize)
+        runPhase(PropertyAccessorInlinePhase, it, disable = !optimize || enableBackendInliner)
         runPhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
         runPhase(RedundantCoercionsCleaningPhase, it)
         // depends on redundantCoercionsCleaningPhase
-        //runPhase(UnboxInlinePhase, it, disable = !optimize)
+        runPhase(UnboxInlinePhase, it, disable = !optimize || enableBackendInliner)
     }
-    val backendInlinerOutput = runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize) // TODO: Can inline box/unbox.
+    val backendInlinerOutput = runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, devirtualizationAnalysisResults),
+            disable = !optimize || !enableBackendInliner) // TODO: Can inline box/unbox.
     val rebuiltDevirtualizationAnalysisResults = DevirtualizationAnalysis.AnalysisResult(
-            backendInlinerOutput.devirtualizedCallSites,
+            devirtualizedCallSites = backendInlinerOutput.devirtualizedCallSites.takeIf { it.isNotEmpty() }
+                    ?: devirtualizationAnalysisResults.devirtualizedCallSites,
             devirtualizationAnalysisResults.typeHierarchy,
     )
     val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, rebuiltDevirtualizationAnalysisResults), disable = true)//!optimize) TODO

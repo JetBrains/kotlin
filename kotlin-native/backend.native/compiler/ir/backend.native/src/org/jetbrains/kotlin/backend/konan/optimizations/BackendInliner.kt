@@ -127,7 +127,7 @@ internal class BackendInliner(
                         }
 //                        //if (irFunction.name.asString() == "foo")
 //                        println("        $isALoop $calleeSize")
-                        if (!isALoop && calleeSize <= 100 // TODO: To a function. Also use relative criterion along with the absolute one.
+                        if (!isALoop && calleeSize <= 25 // TODO: To a function. Also use relative criterion along with the absolute one.
                                 && calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
                                 && !calleeIrFunction.overrides(invokeSuspendFunction.owner) // TODO: Is it worth trying to support?
                                 /*&& irFunction.fileOrNull?.path?.endsWith("z.kt") == true*/) {
