@@ -452,7 +452,7 @@ object FirErrors {
     val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val TYPE_ARGUMENTS_NOT_ALLOWED: KtDiagnosticFactory1<String> by error1<PsiElement, String>()
     val TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED: KtDiagnosticFactory0 by error0<PsiElement>()
-    val WRONG_NUMBER_OF_TYPE_ARGUMENTS: KtDiagnosticFactory2<Int, FirClassLikeSymbol<*>> by error2<PsiElement, Int, FirClassLikeSymbol<*>>()
+    val WRONG_NUMBER_OF_TYPE_ARGUMENTS: KtDiagnosticFactory2<Int, FirClassLikeSymbol<*>> by error2<PsiElement, Int, FirClassLikeSymbol<*>>(SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF)
     val NO_TYPE_ARGUMENTS_ON_RHS: KtDiagnosticFactory2<Int, FirClassLikeSymbol<*>> by error2<PsiElement, Int, FirClassLikeSymbol<*>>()
     val OUTER_CLASS_ARGUMENTS_REQUIRED: KtDiagnosticFactory1<FirClassLikeSymbol<*>> by error1<PsiElement, FirClassLikeSymbol<*>>()
     val TYPE_PARAMETERS_IN_OBJECT: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)

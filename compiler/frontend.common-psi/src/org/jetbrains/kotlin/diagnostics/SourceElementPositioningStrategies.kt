@@ -407,4 +407,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
         PositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
     )
+
+    val TYPE_ARGUMENT_LIST_OR_SELF = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
+        PositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
+    )
 }

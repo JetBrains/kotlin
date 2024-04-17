@@ -121,6 +121,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     EXPECT_ACTUAL_MODIFIER,
     TYPEALIAS_TYPE_REFERENCE,
     SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
+    TYPE_ARGUMENT_LIST_OR_SELF,
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"
