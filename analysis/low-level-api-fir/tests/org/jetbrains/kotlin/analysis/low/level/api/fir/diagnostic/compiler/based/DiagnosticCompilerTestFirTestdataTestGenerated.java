@@ -1522,6 +1522,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("dnnTypeWithAdditionalNullableBound.kt")
+      public void testDnnTypeWithAdditionalNullableBound() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/checkers/dnnTypeWithAdditionalNullableBound.kt");
+      }
+
+      @Test
       @TestMetadata("importAnnotationWithRequiresOptIn.kt")
       public void testImportAnnotationWithRequiresOptIn() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/importAnnotationWithRequiresOptIn.kt");
