@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -51,9 +52,13 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily)
     }
 
+    @BeforeEach
+    fun checkAssumptions() {
+        `check for KT-67454`()
+    }
+
     @Test
     fun testLLVMVariantDev() {
-        `check for KT-67454`()
         // On macOS for apple targets, clang++ from Xcode is used, which is not switchable as `dev/user`,
         // so the test cannot detect LLVM variant for apple targets on macOS host.
         Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily && targets.testTarget.family.isAppleFamily)
@@ -122,7 +127,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testDriverVersion() {
-        `check for KT-67454`()
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
                                         testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
@@ -149,7 +153,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testOverrideKonanProperties() {
-        `check for KT-67454`()
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
                                         testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
