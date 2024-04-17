@@ -227,19 +227,19 @@ internal class KtFirSymbolContainingDeclarationProvider(
     private fun getContainingPsi(symbol: KtSymbol): KtDeclaration? {
         val source = symbol.firSymbol.source
             ?: errorWithAttachment("PSI should present for declaration built by Kotlin code") {
-                withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+                withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }
 
         getContainingPsiForFakeSource(source)?.let { return it }
 
         val psi = source.psi
             ?: errorWithAttachment("PSI not found for source kind '${source.kind}'") {
-                withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+                withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }
 
         if (source.kind != KtRealSourceElementKind) {
             errorWithAttachment("Cannot compute containing PSI for unknown source kind '${source.kind}' (${psi::class.simpleName})") {
-                withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+                withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }
         }
 
@@ -258,7 +258,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 }
 
                 errorWithAttachment("Containing declaration should present for nested declaration ${psi::class}") {
-                    withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+                    withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
                 }
             }
 
@@ -266,7 +266,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
 
         errorWithAttachment("Unsupported declaration origin ${symbol.origin} ${psi::class}") {
-            withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+            withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
         }
     }
 
