@@ -47,6 +47,11 @@ public sealed interface InputModule {
         override val name: String,
         override val path: Path,
     ): InputModule
+
+    public class Binary(
+        override val name: String,
+        override val path: Path,
+    ) : InputModule
 }
 
 public data class SwiftExportOutput(

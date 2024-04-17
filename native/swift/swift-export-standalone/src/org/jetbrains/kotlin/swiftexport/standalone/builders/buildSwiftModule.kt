@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
 import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
+import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
 
@@ -33,6 +36,7 @@ internal fun buildSwiftModule(
 ): SirModule {
     val (module, scopeProvider) = when (input) {
         is InputModule.Source -> createModuleWithScopeProviderFromSources(kotlinDistribution, input)
+        is InputModule.Binary -> createModuleWithScopeProviderFromBinary(kotlinDistribution, input)
     }
 
     return analyze(module) {
@@ -93,5 +97,49 @@ private fun createModuleWithScopeProviderFromSources(
         with(analysisSession) {
             rawFiles.filterIsInstance<KtFile>().map { it.getFileSymbol().getFileScope() }
         }
+    }
+}
+
+@OptIn(KtAnalysisApiInternals::class)
+private fun createModuleWithScopeProviderFromBinary(
+    kotlinDistribution: Distribution,
+    input: InputModule.Binary,
+): ModuleWithScopeProvider {
+    lateinit var binaryModule: KtLibraryModule
+    lateinit var fakeSourceModule: KtSourceModule
+    buildStandaloneAnalysisAPISession {
+        registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+        buildKtModuleProvider {
+            platform = NativePlatforms.unspecifiedNativePlatform
+
+            val stdlib = addModule(
+                buildKtLibraryModule {
+                    addBinaryRoot(Path(kotlinDistribution.stdlib))
+                    platform = NativePlatforms.unspecifiedNativePlatform
+                    libraryName = "stdlib"
+                }
+            )
+            binaryModule = addModule(
+                buildKtLibraryModule {
+                    addBinaryRoot(input.path)
+                    platform = NativePlatforms.unspecifiedNativePlatform
+                    libraryName = input.name
+                    addRegularDependency(stdlib)
+                }
+            )
+            // It's a pure hack: Analysis API does not properly work without root source modules.
+            fakeSourceModule = addModule(
+                buildKtSourceModule {
+                    platform = NativePlatforms.unspecifiedNativePlatform
+                    moduleName = "fakeSourceModule"
+                    addRegularDependency(binaryModule)
+                    addRegularDependency(stdlib)
+                }
+            )
+        }
+    }
+    return ModuleWithScopeProvider(fakeSourceModule) { analysisSession ->
+        listOf(KlibScope(binaryModule, analysisSession))
     }
 }
