@@ -194,6 +194,40 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
+    context(Fe10AnalysisContext)
+    private fun renderFunctionType(type: SimpleType, printer: PrettyPrinter) {
+        with(printer) {
+            if (type.isSuspendFunctionType || type.isKSuspendFunctionType) {
+                append("suspend ")
+            }
+
+            val (receiverType, valueParameters, returnType) = when {
+                type.isKFunctionType || type.isKSuspendFunctionType -> Triple(
+                    null,
+                    type.arguments.dropLast(1),
+                    type.arguments.last().type,
+                )
+                else -> Triple(
+                    type.getReceiverTypeFromFunctionType(),
+                    type.getValueParameterTypesFromFunctionType(),
+                    type.getReturnTypeFromFunctionType()
+                )
+            }
+
+            if (receiverType != null) {
+                renderType(receiverType, printer)
+                append(".")
+            }
+
+            printCollection(valueParameters, separator = ", ", prefix = "(", postfix = ")") {
+                renderTypeProjection(it, printer)
+            }
+
+            append(" -> ")
+            renderType(returnType, printer)
+        }
+    }
+
     private fun renderTypeParameterType(descriptor: TypeParameterDescriptor, printer: PrettyPrinter) {
         printer.append(descriptor.name.render())
     }
