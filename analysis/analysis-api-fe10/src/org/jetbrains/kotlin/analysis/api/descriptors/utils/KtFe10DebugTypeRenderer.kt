@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PossiblyInnerType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -35,13 +36,13 @@ internal class KtFe10DebugTypeRenderer {
         const val ERROR_TYPE_TEXT = "ERROR_TYPE"
     }
 
-    fun render(analysisContext: Fe10AnalysisContext, type: KotlinType, printer: PrettyPrinter) {
-        with(analysisContext) {
-            renderType(type, printer)
-        }
+    context(Fe10AnalysisContext)
+    fun render(type: KotlinType, printer: PrettyPrinter) {
+        renderType(type, printer)
     }
 
-    private fun Fe10AnalysisContext.renderType(type: KotlinType, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderType(type: KotlinType, printer: PrettyPrinter) {
         renderTypeAnnotationsDebug(type, printer)
         when (val unwrappedType = type.unwrap()) {
             is DynamicType -> printer.append("dynamic")
@@ -74,7 +75,8 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
-    private fun Fe10AnalysisContext.renderTypeAnnotationsDebug(type: KotlinType, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderTypeAnnotationsDebug(type: KotlinType, printer: PrettyPrinter) {
         val annotations = type.annotations
             .filter { it.annotationClass?.classId != StandardClassIds.Annotations.ExtensionFunctionType }
 
@@ -83,7 +85,8 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
-    private fun Fe10AnalysisContext.renderTypeAnnotationDebug(annotation: AnnotationDescriptor, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderTypeAnnotationDebug(annotation: AnnotationDescriptor, printer: PrettyPrinter) {
         val namedValues = annotation.getKtNamedAnnotationArguments(this@Fe10AnalysisContext)
         renderAnnotationDebug(annotation.annotationClass?.classId, namedValues, printer)
     }
@@ -141,13 +144,15 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
-    private fun Fe10AnalysisContext.renderFlexibleType(type: FlexibleType, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderFlexibleType(type: FlexibleType, printer: PrettyPrinter) {
         val lowerBoundText = prettyPrint { renderType(type.lowerBound, this@prettyPrint) }
         val upperBoundText = prettyPrint { renderType(type.upperBound, this@prettyPrint) }
         printer.append(DescriptorRenderer.COMPACT.renderFlexibleType(lowerBoundText, upperBoundText, type.builtIns))
     }
 
-    private fun Fe10AnalysisContext.renderDefinitelyNotNullType(type: DefinitelyNotNullType, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderDefinitelyNotNullType(type: DefinitelyNotNullType, printer: PrettyPrinter) {
         renderType(type.original, printer)
         printer.append(" & Any")
     }
@@ -156,7 +161,8 @@ internal class KtFe10DebugTypeRenderer {
         printer.append(ERROR_TYPE_TEXT)
     }
 
-    private fun Fe10AnalysisContext.renderCapturedType(type: CapturedType, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderCapturedType(type: CapturedType, printer: PrettyPrinter) {
         with(printer) {
             append("CapturedType(")
             renderTypeProjection(type.typeProjection, printer)
@@ -164,7 +170,8 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
-    private fun Fe10AnalysisContext.renderCapturedType(type: NewCapturedType, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderCapturedType(type: NewCapturedType, printer: PrettyPrinter) {
         with(printer) {
             append("CapturedType(")
             renderTypeProjection(type.constructor.projection, printer)
@@ -177,7 +184,8 @@ internal class KtFe10DebugTypeRenderer {
         printer.append("TypeVariable(").append(name.asString()).append(")")
     }
 
-    private fun Fe10AnalysisContext.renderIntersectionType(typeConstructor: IntersectionTypeConstructor, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderIntersectionType(typeConstructor: IntersectionTypeConstructor, printer: PrettyPrinter) {
         with(printer) {
             append("it")
             printCollection(typeConstructor.supertypes, separator = " & ", prefix = "(", postfix = ")") {
@@ -190,7 +198,8 @@ internal class KtFe10DebugTypeRenderer {
         printer.append(descriptor.name.render())
     }
 
-    private fun Fe10AnalysisContext.renderOrdinaryType(type: SimpleType, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderOrdinaryType(type: SimpleType, printer: PrettyPrinter) {
         val nestedType = KtFe10JvmTypeMapperContext.getNestedType(type)
         renderTypeSegment(nestedType.root, printer)
         printer.printCollectionIfNotEmpty(nestedType.nested, separator = ".", prefix = ".", postfix = "") {
@@ -198,7 +207,8 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
-    private fun Fe10AnalysisContext.renderTypeSegment(typeSegment: PossiblyInnerType, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderTypeSegment(typeSegment: PossiblyInnerType, printer: PrettyPrinter) {
         with(printer) {
             val classifier = typeSegment.classifierDescriptor
 
@@ -217,7 +227,8 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
-    private fun Fe10AnalysisContext.renderTypeProjection(projection: TypeProjection, printer: PrettyPrinter) {
+    context(Fe10AnalysisContext)
+    private fun renderTypeProjection(projection: TypeProjection, printer: PrettyPrinter) {
         with(printer) {
             if (projection.isStarProjection) {
                 append("*")
