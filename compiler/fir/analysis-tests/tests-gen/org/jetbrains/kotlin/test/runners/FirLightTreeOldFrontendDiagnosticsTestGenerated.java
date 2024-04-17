@@ -36371,6 +36371,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("suspendConversionForLambdaList.kt")
+      public void testSuspendConversionForLambdaList() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionForLambdaList.kt");
+      }
+
+      @Test
       @TestMetadata("suspendConversionOnVarargElements.kt")
       public void testSuspendConversionOnVarargElements() {
         runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionOnVarargElements.kt");
