@@ -12,16 +12,18 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.indented
 import org.jetbrains.kotlin.name.ClassId
 
 object TestAnnotationRenderer {
-    fun renderAnnotations(analysisSession: KtAnalysisSession, annotations: KtAnnotationsList) = buildString {
-        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = null, indent = 0)
+    context (KtAnalysisSession)
+    fun renderAnnotations(annotations: KtAnnotationsList) = buildString {
+        renderAnnotationsRecursive(annotations, currentMetaAnnotations = null, indent = 0)
     }
 
-    fun renderAnnotationsWithMeta(analysisSession: KtAnalysisSession, annotations: KtAnnotationsList) = buildString {
-        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = setOf(), indent = 0)
+    context(KtAnalysisSession)
+    fun renderAnnotationsWithMeta(annotations: KtAnnotationsList) = buildString {
+        renderAnnotationsRecursive(annotations, currentMetaAnnotations = setOf(), indent = 0)
     }
 
+    context(KtAnalysisSession)
     private fun StringBuilder.renderAnnotationsRecursive(
-        analysisSession: KtAnalysisSession,
         annotations: KtAnnotationsList,
         currentMetaAnnotations: Set<ClassId>?,
         indent: Int
@@ -36,9 +38,9 @@ object TestAnnotationRenderer {
                     continue
                 }
 
-                val metaAnnotations = with(analysisSession) { getClassOrObjectSymbolByClassId(classId)?.annotationsList }
+                val metaAnnotations = getClassOrObjectSymbolByClassId(classId)?.annotationsList
                 if (metaAnnotations != null) {
-                    renderAnnotationsRecursive(analysisSession, metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
+                    renderAnnotationsRecursive(metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
                 } else {
                     appendLine("<unknown meta-annotation ${classId}>".indented(indent + 4))
                 }
