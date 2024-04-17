@@ -940,7 +940,6 @@ abstract class AbstractComposeLowering(
             endOffset = SYNTHETIC_OFFSET
             name = this@makeStabilityProp.uniqueStabilityPropertyName()
             visibility = DescriptorVisibilities.PUBLIC
-            isConst = true
         }.also { property ->
             property.parent = fieldParent
             stabilityField.correspondingPropertySymbol = property.symbol
