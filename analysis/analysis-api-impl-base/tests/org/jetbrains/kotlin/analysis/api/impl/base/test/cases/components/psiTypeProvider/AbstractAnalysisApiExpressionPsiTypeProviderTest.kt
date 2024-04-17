@@ -40,7 +40,7 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
             val returnType = declarationAtCaret.getKtType()
             if (returnType != null) {
                 prettyPrint {
-                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, returnType)}")
+                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(returnType)}")
                     for (allowErrorTypes in listOf(false, true)) {
                         for (typeMappingMode in KtTypeMappingMode.entries) {
                             for (isAnnotationMethod in listOf(false, true)) {

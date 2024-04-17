@@ -24,15 +24,14 @@ abstract class AbstractBuiltInTypeTest : AbstractTypeTest() {
         }
     }
 
-    override fun getType(analysisSession: KtAnalysisSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KtType {
-        with(analysisSession) {
-            val builtInTypeName = module.testModule.directives.singleValue(Directives.BUILTIN_TYPE_NAME)
-            val typeMethod = builtinTypes::class.java.methods.singleOrNull {
-                it.name == "get${builtInTypeName.uppercase(Locale.US)}"
-            }!!
-            typeMethod.isAccessible = true
-            return typeMethod.invoke(builtinTypes) as KtType
-        }
+    context(KtAnalysisSession)
+    override fun getType(ktFile: KtFile, module: KtTestModule, testServices: TestServices): KtType {
+        val builtInTypeName = module.testModule.directives.singleValue(Directives.BUILTIN_TYPE_NAME)
+        val typeMethod = builtinTypes::class.java.methods.singleOrNull {
+            it.name == "get${builtInTypeName.uppercase(Locale.US)}"
+        }!!
+        typeMethod.isAccessible = true
+        return typeMethod.invoke(builtinTypes) as KtType
     }
 
     object Directives : SimpleDirectivesContainer() {

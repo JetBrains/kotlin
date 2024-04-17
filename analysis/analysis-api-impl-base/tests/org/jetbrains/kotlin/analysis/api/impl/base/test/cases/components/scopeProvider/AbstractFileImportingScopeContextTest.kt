@@ -32,12 +32,13 @@ abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedT
         }
     }
 
-    private fun KtAnalysisSession.render(
+    context(KtAnalysisSession)
+    private fun render(
         importingScope: KtScopeContext,
         renderDefaultImportingScope: Boolean,
         printPretty: Boolean = false,
     ): String = prettyPrint {
-        renderForTests(analysisSession, importingScope, this@prettyPrint, printPretty) { ktScopeKind ->
+        renderForTests(importingScope, printPretty) { ktScopeKind ->
             when (ktScopeKind) {
                 is KtScopeKind.PackageMemberScope -> false
                 is KtScopeKind.DefaultSimpleImportingScope -> renderDefaultImportingScope

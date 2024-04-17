@@ -93,7 +93,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
         is Enum<*> -> name
         is Name -> asString()
         is CallableId -> toString()
-        is KtCallableSignature<*> -> stringRepresentation(this)
+        is KtCallableSignature<*> -> this.stringRepresentation()
         else -> buildString {
             val clazz = this@with::class
             val className = clazz.simpleName!!
@@ -117,23 +117,24 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
     }
 }
 
-private fun KtAnalysisSession.stringRepresentation(signature: KtCallableSignature<*>): String = buildString {
-    when (signature) {
+context(KtAnalysisSession)
+private fun KtCallableSignature<*>.stringRepresentation(): String = buildString {
+    when (this@stringRepresentation) {
         is KtFunctionLikeSignature<*> -> append(KtFunctionLikeSignature::class.simpleName)
         is KtVariableLikeSignature<*> -> append(KtVariableLikeSignature::class.simpleName)
     }
     appendLine(":")
     val memberProperties = listOfNotNull(
-        KtVariableLikeSignature<*>::name.takeIf { signature is KtVariableLikeSignature<*> },
+        KtVariableLikeSignature<*>::name.takeIf { this@stringRepresentation is KtVariableLikeSignature<*> },
         KtCallableSignature<*>::receiverType,
         KtCallableSignature<*>::returnType,
         KtCallableSignature<*>::symbol,
-        KtFunctionLikeSignature<*>::valueParameters.takeIf { signature is KtFunctionLikeSignature<*> },
+        KtFunctionLikeSignature<*>::valueParameters.takeIf { this@stringRepresentation is KtFunctionLikeSignature<*> },
         KtCallableSignature<*>::callableIdIfNonLocal
     )
     memberProperties.joinTo(this, separator = "\n  ", prefix = "  ") { property ->
         @Suppress("UNCHECKED_CAST")
-        val value = (property as KProperty1<Any, *>).get(signature)
+        val value = (property as KProperty1<Any, *>).get(this@stringRepresentation)
         val valueAsString = value?.let { stringRepresentation(it).indented() }
         "${property.name} = $valueAsString"
     }
@@ -176,7 +177,8 @@ internal fun KtAnalysisSession.compareCalls(call1: KtCall, call2: KtCall): Int {
     return stringRepresentation(call1.partiallyAppliedSymbol).compareTo(stringRepresentation(call2.partiallyAppliedSymbol))
 }
 
-internal fun KtAnalysisSession.renderScopeWithParentDeclarations(scope: KtScope): String = prettyPrint {
+context(KtAnalysisSession)
+internal fun renderScopeWithParentDeclarations(scope: KtScope): String = prettyPrint {
     fun KtSymbol.qualifiedNameString() = when (this) {
         is KtConstructorSymbol -> "<constructor> ${containingClassIdIfNonLocal?.asString()}"
         is KtClassLikeSymbol -> classIdIfNonLocal!!.asString()

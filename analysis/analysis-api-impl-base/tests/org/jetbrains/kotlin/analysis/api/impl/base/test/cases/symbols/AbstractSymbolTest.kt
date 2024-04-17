@@ -158,6 +158,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
+    context(KtAnalysisSession)
     private fun KtSymbol.createPointerForTest(disablePsiBasedSymbols: Boolean): KtSymbolPointer<*> =
         KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = disablePsiBasedSymbols) { createPointer() }
 

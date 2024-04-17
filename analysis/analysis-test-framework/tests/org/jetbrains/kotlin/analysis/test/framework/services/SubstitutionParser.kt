@@ -15,30 +15,31 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 object SubstitutionParser {
-    fun parseSubstitutor(analysisSession: KtAnalysisSession, declaration: KtCallableDeclaration): KtSubstitutor {
+    context(KtAnalysisSession)
+    fun parseSubstitutor(declaration: KtCallableDeclaration): KtSubstitutor {
         val comment = declaration.firstChild as PsiComment
-        return parseSubstitutor(analysisSession, comment, declaration)
+        return parseSubstitutor(comment, declaration)
     }
 
-    fun parseSubstitutor(analysisSession: KtAnalysisSession, ktFile: KtFile, declaration: KtCallableDeclaration): KtSubstitutor {
+    context(KtAnalysisSession)
+    fun parseSubstitutor(ktFile: KtFile, declaration: KtCallableDeclaration): KtSubstitutor {
         val comment = ktFile.children.filterIsInstance<PsiComment>().single { it.text.startsWith(SUBSTITUTOR_PREFIX) }
-        return parseSubstitutor(analysisSession, comment, declaration)
+        return parseSubstitutor(comment, declaration)
     }
 
 
-    fun parseSubstitutor(analysisSession: KtAnalysisSession, comment: PsiComment, scopeForTypeParameters: KtElement): KtSubstitutor {
+    context(KtAnalysisSession)
+    fun parseSubstitutor(comment: PsiComment, scopeForTypeParameters: KtElement): KtSubstitutor {
         val directivesAsString = comment.text.trim()
         check(directivesAsString.startsWith(SUBSTITUTOR_PREFIX))
         val substitutorAsMap = parseSubstitutions(directivesAsString.removePrefix(SUBSTITUTOR_PREFIX))
 
-        with(analysisSession) {
-            return buildSubstitutor {
-                substitutorAsMap.forEach { (typeParameterName, typeString) ->
-                    val typeParameterSymbol = getSymbolByNameSafe<KtTypeParameterSymbol>(scopeForTypeParameters, typeParameterName)
-                        ?: error("Type parameter with name $typeParameterName was not found")
-                    val type = TypeParser.parseTypeFromString(typeString, scopeForTypeParameters, scopeForTypeParameters)
-                    substitution(typeParameterSymbol, type)
-                }
+        return buildSubstitutor {
+            substitutorAsMap.forEach { (typeParameterName, typeString) ->
+                val typeParameterSymbol = getSymbolByNameSafe<KtTypeParameterSymbol>(scopeForTypeParameters, typeParameterName)
+                    ?: error("Type parameter with name $typeParameterName was not found")
+                val type = TypeParser.parseTypeFromString(typeString, scopeForTypeParameters, scopeForTypeParameters)
+                substitution(typeParameterSymbol, type)
             }
         }
     }

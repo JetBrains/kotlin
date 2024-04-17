@@ -30,26 +30,24 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
         analyseForTest(mainFile) {
             val resolveExtensionScope = getResolveExtensionScopeWithTopLevelDeclarations()
 
-            val actual = renderSymbolsWithExtendedPsiInfo(resolveExtensionScope, printPretty = false)
-            val actualPretty = renderSymbolsWithExtendedPsiInfo(resolveExtensionScope, printPretty = true)
+            val actual = resolveExtensionScope.renderSymbolsWithExtendedPsiInfo(pretty = false)
+            val actualPretty = resolveExtensionScope.renderSymbolsWithExtendedPsiInfo(pretty = true)
 
             testServices.assertions.assertEqualsToTestDataFileSibling(actual)
             testServices.assertions.assertEqualsToTestDataFileSibling(actualPretty, extension = ".pretty.txt")
         }
     }
 
-    private fun KtAnalysisSession.renderSymbolsWithExtendedPsiInfo(scope: KtScope, printPretty: Boolean) = prettyPrint {
-        renderForTests(scope, this@prettyPrint, printPretty) { symbol ->
-            if (symbol is KtDeclarationSymbol) {
-                getPsiDeclarationInfo(symbol)
-            } else {
-                null
-            }
+    context(KtAnalysisSession)
+    private fun KtScope.renderSymbolsWithExtendedPsiInfo(pretty: Boolean) = prettyPrint {
+        renderForTests(this@renderSymbolsWithExtendedPsiInfo, pretty) { symbol ->
+            (symbol as? KtDeclarationSymbol)?.getPsiDeclarationInfo()
         }
     }
 
-    private fun KtAnalysisSession.getPsiDeclarationInfo(symbol: KtDeclarationSymbol): String = prettyPrint {
-        val ktElement = symbol.psi as? KtElement
+    context(KtAnalysisSession)
+    private fun KtDeclarationSymbol.getPsiDeclarationInfo(): String = prettyPrint {
+        val ktElement = psi as? KtElement
         val containingVirtualFile = ktElement?.containingFile?.virtualFile
         appendLine("PSI: ${ktElement?.getDescription()} [from ${containingVirtualFile?.name}]")
         if (ktElement == null || containingVirtualFile == null) {

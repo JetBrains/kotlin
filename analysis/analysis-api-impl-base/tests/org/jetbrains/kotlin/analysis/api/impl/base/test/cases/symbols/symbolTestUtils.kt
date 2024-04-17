@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-internal fun KtAnalysisSession.checkContainingFileSymbol(
+context(KtAnalysisSession)
+internal fun checkContainingFileSymbol(
     ktFileSymbol: KtFileSymbol,
     symbol: KtSymbol,
     testServices: TestServices
@@ -29,7 +32,8 @@ internal fun KtAnalysisSession.checkContainingFileSymbol(
     }
 }
 
-internal fun KtAnalysisSession.checkContainingJvmClassName(
+context(KtAnalysisSession)
+internal fun checkContainingJvmClassName(
     ktFile: KtFile,
     ktClass: KtClassOrObject?,
     symbol: KtCallableSymbol,

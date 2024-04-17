@@ -32,7 +32,7 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiBased
             executeOnPooledThreadInReadAction {
                 analyze(declaration) {
                     val ktType = declaration.getReturnKtType()
-                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, ktType)}")
+                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(ktType)}")
                     val psiType = ktType.asPsiType(psiContext, allowErrorTypes = false)
                     appendLine("PsiType: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")
                 }

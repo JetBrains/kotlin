@@ -86,7 +86,8 @@ sealed class SymbolData {
             return symbols
         }
 
-        private fun KtAnalysisSession.findMatchingCallableSymbols(classSymbol: KtClassOrObjectSymbol): List<KtCallableSymbol> {
+        context(KtAnalysisSession)
+        private fun findMatchingCallableSymbols(classSymbol: KtClassOrObjectSymbol): List<KtCallableSymbol> {
             val declaredSymbols = classSymbol.getCombinedDeclaredMemberScope()
                 .getCallableSymbols(callableId.callableName).toList()
 

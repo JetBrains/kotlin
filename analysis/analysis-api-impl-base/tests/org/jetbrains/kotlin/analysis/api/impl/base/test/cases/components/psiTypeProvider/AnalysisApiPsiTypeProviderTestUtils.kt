@@ -24,15 +24,8 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 object AnalysisApiPsiTypeProviderTestUtils {
-    fun render(
-        analysisSession: KtAnalysisSession,
-        type: KtType?,
-        variance: Variance = Variance.INVARIANT,
-    ): String? {
-        with(analysisSession) {
-            return type?.render(position = variance)
-        }
-    }
+    context(KtAnalysisSession)
+    fun render(type: KtType?, variance: Variance = Variance.INVARIANT): String? = type?.render(position = variance)
 
     fun render(type: PsiType?): String? = type?.let(PsiClassRenderer::renderType)
 

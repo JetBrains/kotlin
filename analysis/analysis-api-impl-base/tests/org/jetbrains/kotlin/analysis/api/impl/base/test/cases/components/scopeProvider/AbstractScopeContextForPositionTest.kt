@@ -39,7 +39,7 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
         printPretty: Boolean = false,
     ): String = prettyPrint {
         appendLine("element: ${element.text}")
-        renderForTests(analysisSession, scopeContext, this@prettyPrint, printPretty) { scopeKind ->
+        renderForTests(scopeContext, printPretty) { scopeKind ->
             scopeKind !is KtScopeKind.DefaultSimpleImportingScope && scopeKind !is KtScopeKind.DefaultStarImportingScope
         }
     }
