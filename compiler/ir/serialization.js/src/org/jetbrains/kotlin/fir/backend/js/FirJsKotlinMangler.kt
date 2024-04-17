@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.fir.backend.FirMangleComputer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 @NoMutableState
-class FirJsKotlinMangler : FirMangler() {
-
+object FirJsKotlinMangler : FirMangler() {
     private class JsFirExportChecker : FirExportCheckerVisitor() {
         override fun FirDeclaration.isPlatformSpecificExported() = false
     }

@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 @NoMutableState
-class FirJvmKotlinMangler : FirMangler() {
-
+object FirJvmKotlinMangler : FirMangler() {
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
         return FirJvmMangleComputer(StringBuilder(256), mode)
     }

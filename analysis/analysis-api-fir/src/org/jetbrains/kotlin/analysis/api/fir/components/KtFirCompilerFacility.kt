@@ -277,7 +277,7 @@ internal class KtFirCompilerFacility(
             fir2IrConfiguration,
             irGeneratorExtensions,
             JvmIrMangler,
-            FirJvmKotlinMangler(),
+            FirJvmKotlinMangler,
             FirJvmVisibilityConverter,
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,

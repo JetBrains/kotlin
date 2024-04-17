@@ -45,7 +45,7 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
     }
 
     override fun createFirMangler(): FirMangler {
-        return FirJsKotlinMangler()
+        return FirJsKotlinMangler
     }
 
     override val klibFactories: KlibMetadataFactories

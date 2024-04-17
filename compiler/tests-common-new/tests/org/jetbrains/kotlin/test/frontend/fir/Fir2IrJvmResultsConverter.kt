@@ -88,7 +88,7 @@ class Fir2IrJvmResultsConverter(
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
             irMangler,
-            FirJvmKotlinMangler(),
+            FirJvmKotlinMangler,
             FirJvmVisibilityConverter,
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,
