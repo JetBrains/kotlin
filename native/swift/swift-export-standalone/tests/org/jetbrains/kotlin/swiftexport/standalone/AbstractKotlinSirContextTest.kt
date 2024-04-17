@@ -6,20 +6,34 @@
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.streams.asSequence
 
-abstract class AbstractSwiftRunnerTest : AbstractSwiftRunnerTestBase(
-    renderDocComments = true
+enum class InputModuleKind {
+    Source, Binary
+}
+
+abstract class AbstractSourceBasedSwiftRunnerTest : AbstractSwiftRunnerTestBase(
+    renderDocComments = true,
+    inputModuleKind = InputModuleKind.Source,
 )
 
-// Going to be replaced by klib-based tests in the subsequent MRs.
-abstract class AbstractNoCommentsBasedSwiftRunnerTest : AbstractSwiftRunnerTestBase(
-    renderDocComments = false
+abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftRunnerTestBase(
+    renderDocComments = false,
+    inputModuleKind = InputModuleKind.Binary,
 )
 
-abstract class AbstractSwiftRunnerTestBase(private val renderDocComments: Boolean) {
+abstract class AbstractSwiftRunnerTestBase(
+    private val renderDocComments: Boolean,
+    private val inputModuleKind: InputModuleKind,
+) {
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
@@ -43,11 +57,23 @@ abstract class AbstractSwiftRunnerTestBase(private val renderDocComments: Boolea
             cHeaderBridges = tmpdir.resolve("result.c").toPath()
         )
 
+        val inputModule = when (inputModuleKind) {
+            InputModuleKind.Source -> {
+                InputModule.Source(
+                    path = moduleRoot,
+                    name = "main"
+                )
+            }
+            InputModuleKind.Binary -> {
+                InputModule.Binary(
+                    path = compileToNativeKLib(moduleRoot),
+                    name = "main"
+                )
+            }
+        }
+
         runSwiftExport(
-            input = InputModule.Source(
-                path = moduleRoot,
-                name = "main"
-            ),
+            input = inputModule,
             output = output,
             config = SwiftExportConfig(
                 settings = mapOf(
@@ -64,6 +90,25 @@ abstract class AbstractSwiftRunnerTestBase(private val renderDocComments: Boolea
         KotlinTestUtils.assertEqualsToFile(expectedCHeader, output.cHeaderBridges.readText())
         KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, output.kotlinBridges.readText())
     }
+}
+
+private fun compileToNativeKLib(kLibSourcesRoot: Path): Path {
+    val ktFiles = Files.walk(kLibSourcesRoot).asSequence().filter { it.extension == "kt" }.toList()
+    val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib").toPath()
+
+    val arguments = buildList {
+        ktFiles.mapTo(this) { it.absolutePathString() }
+        addAll(listOf("-produce", "library"))
+        addAll(listOf("-output", testKlib.absolutePathString()))
+    }
+
+    val compileResult = callCompilerWithoutOutputInterceptor(arguments.toTypedArray())
+
+    check(compileResult.exitCode == ExitCode.OK) {
+        "Compilation error: $compileResult"
+    }
+
+    return testKlib
 }
 
 private object KonanHome {

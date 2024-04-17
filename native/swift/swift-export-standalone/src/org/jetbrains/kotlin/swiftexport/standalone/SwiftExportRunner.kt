@@ -87,7 +87,7 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
  * A root function for running Swift Export from build tool
  */
 public fun runSwiftExport(
-    input: InputModule.Source,
+    input: InputModule,
     config: SwiftExportConfig = SwiftExportConfig(),
     output: SwiftExportOutput,
 ) {
