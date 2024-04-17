@@ -95,7 +95,16 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                 model(
                     "referenceResolve",
                     pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
-                    excludeDirsRecursively = listOf("withErrors")
+                    excludeDirsRecursively = listOf(
+                        // Sources with errors cannot be compiled to a library.
+                        "withErrors",
+
+                        // Tests which rely on missing dependencies (e.g. the main module missing a dependency to a library module) will not
+                        // work as expected with library source modules, because they use "rest symbol providers" which provide symbols from
+                        // all other libraries (as dependencies between libraries are not usually known). So the "missing" dependencies
+                        // would effectively not be missing.
+                        "missingDependency",
+                    )
                 )
             }
 
