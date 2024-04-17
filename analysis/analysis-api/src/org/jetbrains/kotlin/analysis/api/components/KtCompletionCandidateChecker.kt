@@ -32,6 +32,7 @@ public abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent(
 }
 
 public interface KtCompletionExtensionCandidateChecker {
+    context(KtAnalysisSession)
     public fun computeApplicability(candidate: KtCallableSymbol): KtExtensionApplicabilityResult
 }
 

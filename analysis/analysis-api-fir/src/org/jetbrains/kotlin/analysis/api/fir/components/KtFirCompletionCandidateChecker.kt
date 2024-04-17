@@ -95,6 +95,7 @@ private class KtFirCompletionExtensionCandidateChecker(
         firExplicitReceiver = explicitReceiver?.let(::findReceiverFirExpression)
     }
 
+    context(KtAnalysisSession)
     override fun computeApplicability(candidate: KtCallableSymbol): KtExtensionApplicabilityResult {
         require(candidate is KtFirSymbol<*>)
 
@@ -185,6 +186,7 @@ private class LazyKtCompletionExtensionCandidateChecker(
 ) : KtCompletionExtensionCandidateChecker {
     private val delegate: KtCompletionExtensionCandidateChecker by lazy(delegateFactory)
 
+    context(KtAnalysisSession)
     override fun computeApplicability(candidate: KtCallableSymbol): KtExtensionApplicabilityResult {
         return delegate.computeApplicability(candidate)
     }
