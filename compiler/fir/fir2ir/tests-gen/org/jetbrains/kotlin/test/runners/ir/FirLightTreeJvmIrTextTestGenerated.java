@@ -1587,6 +1587,24 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
     }
 
     @Test
+    @TestMetadata("fieldAccess_generic.kt")
+    public void testFieldAccess_generic() {
+      runTest("compiler/testData/ir/irText/expressions/fieldAccess_generic.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAccess_invisible.kt")
+    public void testFieldAccess_invisible() {
+      runTest("compiler/testData/ir/irText/expressions/fieldAccess_invisible.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldAccess_regular.kt")
+    public void testFieldAccess_regular() {
+      runTest("compiler/testData/ir/irText/expressions/fieldAccess_regular.kt");
+    }
+
+    @Test
     @TestMetadata("for.kt")
     public void testFor() {
       runTest("compiler/testData/ir/irText/expressions/for.kt");
