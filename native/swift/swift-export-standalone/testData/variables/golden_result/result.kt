@@ -1,7 +1,7 @@
 import kotlin.native.internal.ExportedBridge
 
-@ExportedBridge("__root___baz")
-public fun __root___baz(): Int {
+@ExportedBridge("__root___baz_get")
+public fun __root___baz_get(): Int {
     val _result = baz()
     return _result
 }

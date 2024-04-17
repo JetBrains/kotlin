@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-int32_t __root___baz();
+int32_t __root___baz_get();
 
 int32_t namespace_main_bar_get();
 

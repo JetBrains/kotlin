@@ -1,8 +1,10 @@
 import KotlinBridges
 import KotlinRuntime
 
-public func baz() -> Swift.Int32 {
-    return __root___baz()
+public var baz: Swift.Int32 {
+    get {
+        return __root___baz_get()
+    }
 }
 public extension main.namespace.main {
     public static var bar: Swift.Int32 {

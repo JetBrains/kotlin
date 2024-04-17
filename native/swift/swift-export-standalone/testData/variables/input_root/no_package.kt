@@ -1,1 +1,1 @@
-fun baz: Int = 30
+val baz: Int = 30
