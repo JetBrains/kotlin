@@ -22,6 +22,7 @@ fun assertExists(file: File) {
     if (!file.exists()) error("Output dir does not exist: ${file.absolutePath}")
 }
 
+val BUILT_INS_COMMON_DIR = File("libraries/stdlib/src/kotlin")
 val BUILT_INS_NATIVE_DIR_JVM = File("libraries/stdlib/jvm/builtins/")
 val BUILT_INS_NATIVE_DIR_JS = File("libraries/stdlib/js/builtins/")
 val BUILT_INS_NATIVE_DIR_WASM = File("libraries/stdlib/wasm/builtins/")
@@ -62,6 +63,7 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) : BuiltInsGenerator
 }
 
 fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Unit) {
+    assertExists(BUILT_INS_COMMON_DIR)
     assertExists(BUILT_INS_NATIVE_DIR_JVM)
     assertExists(BUILT_INS_NATIVE_DIR_JS)
     assertExists(BUILT_INS_NATIVE_DIR_WASM)
@@ -69,16 +71,19 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Uni
     assertExists(RUNTIME_JVM_DIR)
     assertExists(UNSIGNED_TYPES_DIR)
 
+    generate(File(BUILT_INS_COMMON_DIR, "Primitives.kt")) { CommonPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JVM, "Primitives.kt")) { JvmPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Primitives.kt")) { JsPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Primitives.kt")) { WasmPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Primitives.kt")) { NativePrimitivesGenerator(it) }
 
+    generate(File(BUILT_INS_COMMON_DIR, "Boolean.kt")) { CommonBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JVM, "Boolean.kt")) { JvmBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Boolean.kt")) { JsBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Boolean.kt")) { WasmBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Boolean.kt")) { NativeBooleanGenerator(it) }
 
+    generate(File(BUILT_INS_COMMON_DIR, "Char.kt")) { CommonCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JVM, "Char.kt")) { JvmCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Char.kt")) { JsCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Char.kt")) { WasmCharGenerator(it) }

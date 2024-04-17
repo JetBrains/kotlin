@@ -334,6 +334,21 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
     internal open fun ClassBuilder.generateAdditionalMethods() {}
 }
 
+class CommonCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
+    override fun FileBuilder.modifyGeneratedFile() {
+        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
+    }
+
+    override fun ClassBuilder.modifyGeneratedClass() {
+        expectActual = ExpectActualModifier.Expect
+        annotations += "ActualizeByJvmBuiltinProvider"
+    }
+
+    override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
+        annotations += """Suppress("EXPECTED_PROPERTY_INITIALIZER")"""
+    }
+}
+
 class JvmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.")

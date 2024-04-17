@@ -134,6 +134,7 @@ internal class FileBuilder(private val builtBy: String) : PrimitiveBuilder {
 
 internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var name: String = ""
+    var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
     private var primaryConstructor: PrimaryConstructorBuilder = PrimaryConstructorBuilder()
     private var secondaryConstructor: SecondaryConstructorBuilder? = null
     private var superTypes: List<String> = emptyList()
@@ -170,11 +171,20 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     }
 
     override fun build(): String {
+        fun filterSupertypeConstructors(): List<String> =
+            if (expectActual.isExpect) superTypes.map { it.substringBefore('(') } else superTypes
+
         return buildString {
             this.printDocumentationAndAnnotations()
 
             append("public ")
-            appendLine("class $name ${primaryConstructor.build()}: ${superTypes.joinToString()} {")
+            expectActual.modifier?.let { append(it).append(' ') }
+            append("class $name")
+            append(' ')
+            if (primaryConstructor.visibility != MethodVisibility.PRIVATE || !expectActual.isExpect) {
+                append(primaryConstructor.build()).append(' ')
+            }
+            appendLine(": ${filterSupertypeConstructors().joinToString()} {")
 
             secondaryConstructor?.let {
                 appendLine(it.build().shift())
@@ -228,7 +238,7 @@ internal class PrimaryConstructorBuilder : AnnotatedAndDocumented(), PrimitiveBu
 
             visibility?.let { append("${it.name.lowercase()} ") }
             append("constructor")
-            append(parameters.joinToString(prefix = "(", postfix = ") ") { it.build() })
+            append(parameters.joinToString(prefix = "(", postfix = ")") { it.build() })
         }
     }
 }
@@ -382,4 +392,31 @@ internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
             append("const val $name: $type = $value")
         }
     }
+}
+
+sealed class ExpectActualModifier {
+    object Unspecified : ExpectActualModifier()
+    object Expect : ExpectActualModifier()
+    object Actual : ExpectActualModifier()
+    class Inherited(val from: () -> ExpectActualModifier) : ExpectActualModifier()
+
+    private val nested: ExpectActualModifier
+        get() = when (this) {
+            Expect, Unspecified -> Unspecified
+            Actual -> Actual
+            is Inherited -> from().nested
+        }
+
+    val effective: ExpectActualModifier get() = if (this is Inherited) from().nested else this
+
+    val modifier: String?
+        get() = when (effective) {
+            Expect -> "expect"
+            Actual -> "actual"
+            Unspecified -> null
+            is Inherited -> error("Effective modifier should be expect/actual/unspecified")
+        }
+
+    val isExpect get() = effective == Expect
+    val isActual get() = effective == Actual
 }
