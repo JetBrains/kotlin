@@ -73,6 +73,15 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         when (declaration) {
             is FirFunction -> {
+                if (declaration.isExternal) {
+                    val wrongDeclaration = when (declaration) {
+                        is FirConstructor -> "external constructor"
+                        is FirPropertyAccessor -> if (declaration.isGetter) "external property getter" else "external property setter"
+                        else -> "external function"
+                    }
+                    reportWrongExportedDeclaration(wrongDeclaration)
+                    return
+                }
                 for (typeParameter in declaration.typeParameters) {
                     checkTypeParameter(typeParameter)
                 }
@@ -112,6 +121,11 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
+                if (declaration.isExternal) {
+                    reportWrongExportedDeclaration("external property")
+                    return
+                }
+
                 if (declaration.isExtension) {
                     reportWrongExportedDeclaration("extension property")
                     return
@@ -126,6 +140,21 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             }
 
             is FirClass -> {
+                if (declaration.isExternal) {
+                    val wrongDeclaration = when (declaration.classKind) {
+                        ClassKind.CLASS -> "external class"
+                        ClassKind.INTERFACE -> null // Exporting external interfaces is allowed. They are used to generate TypeScript definitions.
+                        ClassKind.ENUM_CLASS -> "external enum class"
+                        ClassKind.ENUM_ENTRY -> "external enum entry"
+                        ClassKind.ANNOTATION_CLASS -> "external annotation class"
+                        ClassKind.OBJECT -> "external object"
+                    }
+                    if (wrongDeclaration != null) {
+                        reportWrongExportedDeclaration(wrongDeclaration)
+                        return
+                    }
+                }
+
                 for (typeParameter in declaration.typeParameters) {
                     checkTypeParameter(typeParameter)
                 }
@@ -151,7 +180,11 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 }
             }
 
-            else -> {}
+            else -> {
+                if (declaration.isExternal) {
+                    reportWrongExportedDeclaration("external declaration")
+                }
+            }
         }
     }
 

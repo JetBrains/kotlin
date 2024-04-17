@@ -1,7 +1,11 @@
 package
 
 package foo {
+    @get:kotlin.js.JsExport @set:kotlin.js.JsExport public external var quuux: kotlin.String
+    @get:kotlin.js.JsExport @set:kotlin.js.JsExport public external var quux: kotlin.String
+    @kotlin.js.JsExport public external var qux: kotlin.String
     @kotlin.js.JsExport public val kotlin.String.extensionProperty: kotlin.Int
+    @kotlin.js.JsExport public external fun baz(): kotlin.String
     @kotlin.js.JsExport public inline fun </*0*/ reified T> inlineReifiedFun(/*0*/ x: kotlin.Any): kotlin.Boolean
     @kotlin.js.JsExport public suspend fun suspendFun(): kotlin.Unit
 
@@ -42,6 +46,57 @@ package foo {
         public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsExport public final external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class NestedClass {
+            public constructor NestedClass()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    @kotlin.js.JsExport public final external enum class ExternalEnum : kotlin.Enum<foo.ExternalEnum> {
+        enum entry A
+
+        private constructor ExternalEnum()
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.ExternalEnum): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<foo.ExternalEnum>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): foo.ExternalEnum
+        public final /*synthesized*/ fun values(): kotlin.Array<foo.ExternalEnum>
+    }
+
+    @kotlin.js.JsExport public external interface ExternalInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsExport public external object ExternalObject {
+        private constructor ExternalObject()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public object NestedObject {
+            private constructor NestedObject()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
     }
 
     @kotlin.js.JsExport public external interface GoodInterface {
@@ -96,4 +151,5 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
+    @kotlin.js.JsExport public typealias ExternalTypeAlias = kotlin.String
 }

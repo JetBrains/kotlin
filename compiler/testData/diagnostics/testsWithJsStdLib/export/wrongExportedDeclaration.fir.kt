@@ -53,3 +53,40 @@ inline value class <!WRONG_EXPORTED_DECLARATION("value class")!>C(val c: Int)<!>
 
 @JsExport
 value inline class <!WRONG_EXPORTED_DECLARATION("value class")!>D(val d: Int)<!>
+
+@JsExport
+external interface ExternalInterface
+
+@JsExport
+external enum class <!ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING, WRONG_EXPORTED_DECLARATION("external enum class")!>ExternalEnum<!> {
+    A
+}
+
+@JsExport
+external <!WRONG_EXPORTED_DECLARATION("external object")!>object ExternalObject<!> {
+    object NestedObject
+}
+
+@JsExport
+external class <!WRONG_EXPORTED_DECLARATION("external class")!>ExternalClass<!> {
+    class NestedClass
+}
+
+<!WRONG_EXPORTED_DECLARATION("external function")!>@JsExport
+external fun baz(): String<!>
+
+<!WRONG_EXPORTED_DECLARATION("external property")!>@JsExport
+external var qux: String<!>
+
+external var quux: String
+    <!WRONG_EXPORTED_DECLARATION("external property getter")!><!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET("getter")!>@JsExport<!>
+    get()<!> = definedExternally
+    <!WRONG_EXPORTED_DECLARATION("external property setter")!><!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET("setter")!>@JsExport<!>
+    set(v)<!> = definedExternally
+
+<!WRONG_EXPORTED_DECLARATION("external property getter"), WRONG_EXPORTED_DECLARATION("external property setter")!><!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET("getter; get")!>@get:JsExport<!>
+<!NESTED_JS_EXPORT, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET("setter; set")!>@set:JsExport<!>
+external var quuux: String<!>
+
+<!WRONG_ANNOTATION_TARGET("typealias")!>@JsExport<!>
+<!WRONG_MODIFIER_TARGET("external; typealias")!>external<!> typealias ExternalTypeAlias = String
