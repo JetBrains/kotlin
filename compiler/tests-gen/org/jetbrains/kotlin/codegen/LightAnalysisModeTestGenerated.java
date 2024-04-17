@@ -44113,6 +44113,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/smartCasts/genericSet.kt");
     }
 
+    @TestMetadata("implicitCastOnAssignment.kt")
+    public void testImplicitCastOnAssignment() {
+      runTest("compiler/testData/codegen/box/smartCasts/implicitCastOnAssignment.kt");
+    }
+
     @TestMetadata("implicitExtensionReceiver.kt")
     public void testImplicitExtensionReceiver() {
       runTest("compiler/testData/codegen/box/smartCasts/implicitExtensionReceiver.kt");
