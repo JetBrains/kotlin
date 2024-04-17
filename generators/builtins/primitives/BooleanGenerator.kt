@@ -162,6 +162,21 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
     internal open fun ClassBuilder.generateAdditionalMethods() {}
 }
 
+class CommonBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
+    override fun FileBuilder.modifyGeneratedFile() {
+        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
+    }
+
+    override fun ClassBuilder.modifyGeneratedClass() {
+        annotations += "ActualizeByJvmBuiltinProvider"
+        expectActual = ExpectActualModifier.Expect
+    }
+
+    override fun MethodBuilder.modifyGeneratedHashCode() {
+        noBody()
+    }
+}
+
 class JvmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `boolean`.")
