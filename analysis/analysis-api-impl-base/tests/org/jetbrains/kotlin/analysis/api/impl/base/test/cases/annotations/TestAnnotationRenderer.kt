@@ -30,7 +30,7 @@ object TestAnnotationRenderer {
     ) {
         appendLine("annotations: [".indented(indent))
         for (annotation in annotations.annotations) {
-            appendLine(DebugSymbolRenderer().renderAnnotationApplication(analysisSession, annotation).indented(indent = indent + 2))
+            appendLine(DebugSymbolRenderer().renderAnnotationApplication(annotation).indented(indent = indent + 2))
             if (currentMetaAnnotations != null) {
                 val classId = annotation.classId ?: continue
                 if (classId in currentMetaAnnotations) {

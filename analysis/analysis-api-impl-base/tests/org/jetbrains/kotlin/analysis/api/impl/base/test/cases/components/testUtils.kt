@@ -65,7 +65,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
         is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         is KtTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
-        is KtSymbol -> DebugSymbolRenderer().render(analysisSession, this)
+        is KtSymbol -> DebugSymbolRenderer().render(this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
             separator = ",\n  ",

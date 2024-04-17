@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 
 
 fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, symbol: KtSymbol, analysisSession: KtAnalysisSession) {
-    withEntry(name, symbol) { DebugSymbolRenderer(renderExtra = true).render(analysisSession, it) }
+    with(analysisSession) {
+        withEntry(name, symbol) { DebugSymbolRenderer(renderExtra = true).render(it) }
+    }
 
     val psi = symbol.psi
     val psiModule = psi?.let(analysisSession::getModule)

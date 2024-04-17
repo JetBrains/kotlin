@@ -20,11 +20,11 @@ abstract class AbstractFileScopeTest : AbstractAnalysisApiBasedTest() {
                 val symbol = mainFile.getFileSymbol()
                 val scope = symbol.getFileScope()
                 with(DebugSymbolRenderer(renderExtra = true)) {
-                    val renderedSymbol = render(analysisSession, symbol)
+                    val renderedSymbol = render(symbol)
                     val callableNames = scope.getPossibleCallableNames()
-                    val renderedCallables = scope.getCallableSymbols().map { render(analysisSession, it) }
+                    val renderedCallables = scope.getCallableSymbols().map { render(it) }
                     val classifierNames = scope.getPossibleClassifierNames()
-                    val renderedClassifiers = scope.getClassifierSymbols().map { render(analysisSession, it) }
+                    val renderedClassifiers = scope.getClassifierSymbols().map { render(it) }
 
                     "FILE SYMBOL:\n" + renderedSymbol + "\n" +
                             "\nCALLABLE NAMES:\n" + callableNames.joinToString(prefix = "[", postfix = "]\n", separator = ", ") +

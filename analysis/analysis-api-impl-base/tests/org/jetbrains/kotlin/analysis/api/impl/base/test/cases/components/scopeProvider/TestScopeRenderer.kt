@@ -63,7 +63,7 @@ internal object TestScopeRenderer {
         if (printPretty) {
             prettyPrintTypeRenderer.renderType(analysisSession, type, this)
         } else {
-            append(debugRenderer.renderType(analysisSession, type))
+            append(debugRenderer.renderType(type))
         }
     }
 
@@ -114,7 +114,7 @@ internal object TestScopeRenderer {
                         if (printPretty) {
                             this@KtAnalysisSession.renderPrettySymbol(it)
                         } else {
-                            debugRenderer.render(analysisSession, it)
+                            debugRenderer.render(it)
                         }
                     )
                     this@KtAnalysisSession.additionalSymbolInfo(it)?.let {
