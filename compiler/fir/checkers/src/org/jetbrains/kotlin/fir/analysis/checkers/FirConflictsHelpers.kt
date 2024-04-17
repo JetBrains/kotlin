@@ -166,8 +166,8 @@ class FirDeclarationCollector<D : FirBasedSymbol<*>>(
 }
 
 fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirRegularClassSymbol) {
-    val otherDeclarations = mutableMapOf<String, MutableList<FirBasedSymbol<*>>>()
-    val functionDeclarations = mutableMapOf<String, MutableList<FirFunctionSymbol<*>>>()
+    val otherDeclarations = mutableMapOf<String, MutableSet<FirBasedSymbol<*>>>()
+    val functionDeclarations = mutableMapOf<String, MutableSet<FirFunctionSymbol<*>>>()
     val declaredMemberScope = klass.declaredMemberScope(context)
     val unsubstitutedScope = klass.unsubstitutedScope(context)
 
@@ -272,7 +272,7 @@ fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContex
     if (collectables.isEmpty()) return emptyMap()
 
     val inspector = FirDeclarationCollector<FirFunctionSymbol<*>>(context)
-    val functionDeclarations = mutableMapOf<String, MutableList<FirFunctionSymbol<*>>>()
+    val functionDeclarations = mutableMapOf<String, MutableSet<FirFunctionSymbol<*>>>()
 
     for (collectable in collectables) {
         when (collectable) {
@@ -295,10 +295,12 @@ fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContex
 private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
     declaration: S,
     representation: String,
-    map: MutableMap<String, MutableList<S>>,
+    map: MutableMap<String, MutableSet<S>>,
 ) {
-    map.getOrPut(representation, ::mutableListOf).also {
-        it.add(declaration)
+    map.getOrPut(representation, ::mutableSetOf).also {
+        if (!it.add(declaration)) {
+            return@also
+        }
 
         val conflicts = SmartSet.create<FirBasedSymbol<*>>()
         for (otherDeclaration in it) {
