@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,9 @@ package androidx.compose.compiler.plugins.kotlin
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.ParameterizedRobolectricTestRunner
-import org.robolectric.annotation.Config
 
 /* ktlint-disable max-line-length */
-@RunWith(ParameterizedRobolectricTestRunner::class)
-@Config(
-    manifest = Config.NONE,
-    minSdk = 23,
-    maxSdk = 23
-)
 class DurableFunctionKeyCodegenTests(useFir: Boolean) : AbstractCodegenSignatureTest(useFir) {
-    companion object {
-        @JvmStatic
-        @ParameterizedRobolectricTestRunner.Parameters(name = "useFir = {0}")
-        fun data() = arrayOf<Any>(false, true)
-    }
 
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY, true)

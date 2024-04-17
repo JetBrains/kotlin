@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.compose.compiler.plugins.kotlin
+package androidx.compose.compiler.plugins.kotlin.analysis
 
+import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 
@@ -105,7 +106,6 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
     fun testUsedParameters() = check(
         """
             import androidx.compose.runtime.*
-            import android.widget.LinearLayout
 
             @Composable fun Foo(x: Int, composeItem: @Composable () -> Unit = {}) {
                 println(x)
@@ -271,8 +271,9 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
     fun testAbstractClassTags() = check(
         """
             import androidx.compose.runtime.*
-            import android.content.Context
-            import android.widget.LinearLayout
+
+            class Context
+            open class LinearLayout(val context: Context)
 
             abstract class Foo {}
 
@@ -515,8 +516,6 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
     fun testChildren() {
         val declarations = """
                 import androidx.compose.runtime.*
-                import android.widget.Button
-                import android.widget.LinearLayout
 
                 @Composable fun ChildrenRequired2(content: @Composable () -> Unit) { content() }
 

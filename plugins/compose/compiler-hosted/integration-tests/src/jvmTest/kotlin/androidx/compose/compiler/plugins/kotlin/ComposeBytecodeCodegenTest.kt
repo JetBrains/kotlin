@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,30 +21,6 @@ import org.junit.Assume.assumeFalse
 import org.junit.Test
 
 class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
-//    b/179279455
-//    @Test
-//    fun testObserveLowering() {
-//        testCompileWithViewStubs(
-//            """
-//            import androidx.compose.runtime.MutableState
-//            import androidx.compose.runtime.mutableStateOf
-//
-//            @Composable
-//            fun SimpleComposable() {
-//                FancyButton(state=mutableStateOf(0))
-//            }
-//
-//            @Composable
-//            fun FancyButton(state: MutableState<Int>) {
-//               Button(
-//                 text=("Clicked "+state.value+" times"),
-//                 onClick={state.value++},
-//                 id=42
-//               )
-//            }
-//        """
-//        )
-//    }
 
     @Test
     fun testEmptyComposeFunction() {
@@ -59,59 +35,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         """
         )
     }
-
-//    "b/179279455"
-//    @Test
-//    fun testSingleViewCompose() {
-//        testCompileWithViewStubs(
-//            """
-//        class Foo {
-//            @Composable
-//            operator fun invoke() {
-//                TextView()
-//            }
-//        }
-//        """
-//        )
-//    }
-
-//    "b/179279455"
-//    @Test
-//    fun testMultipleRootViewCompose() {
-//        testCompileWithViewStubs(
-//            """
-//        class Foo {
-//            @Composable
-//            operator fun invoke() {
-//                TextView()
-//                TextView()
-//                TextView()
-//            }
-//        }
-//        """
-//        )
-//    }
-
-//    "b/179279455"
-//    @Test
-//    fun testNestedViewCompose() {
-//        testCompileWithViewStubs(
-//            """
-//        class Foo {
-//            @Composable
-//            operator fun invoke() {
-//                LinearLayout {
-//                    TextView()
-//                    LinearLayout {
-//                        TextView()
-//                        TextView()
-//                    }
-//                }
-//            }
-//        }
-//        """
-//        )
-//    }
 
     @Test
     fun testSingleComposite() {
@@ -152,26 +75,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         """
         )
     }
-
-//    "b/179279455"
-//    @Test
-//    fun testViewAndComposites() {
-//        testCompileWithViewStubs(
-//            """
-//        @Composable
-//        fun Bar() {}
-//
-//        class Foo {
-//            @Composable
-//            operator fun invoke() {
-//                LinearLayout {
-//                    Bar()
-//                }
-//            }
-//        }
-//        """
-//        )
-//    }
 
     @Test
     fun testForEach() {
@@ -264,59 +167,10 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         )
     }
 
-//    "b/179279455"
-//    @Test
-//    fun testChildrenWithTypedParameters() {
-//        testCompileWithViewStubs(
-//            """
-//        @Composable fun HelperComponent(
-//            content: @Composable (title: String, rating: Int) -> Unit
-//        ) {
-//            content("Hello World!", 5)
-//            content("Kompose is awesome!", 5)
-//            content("Bitcoin!", 4)
-//        }
-//
-//        class MainComponent {
-//            var name = "World"
-//            @Composable
-//            operator fun invoke() {
-//                HelperComponent { title: String, rating: Int ->
-//                    TextView(text=(title+" ("+rating+" stars)"))
-//                }
-//            }
-//        }
-//        """
-//        )
-//    }
-
-//    "b/179279455"
-//    @Test
-//    fun testChildrenCaptureVariables() {
-//        testCompileWithViewStubs(
-//            """
-//        @Composable fun HelperComponent(content: @Composable () -> Unit) {
-//        }
-//
-//        class MainComponent {
-//            var name = "World"
-//            @Composable
-//            operator fun invoke() {
-//                val childText = "Hello World!"
-//                HelperComponent {
-//                    TextView(text=childText + name)
-//                }
-//            }
-//        }
-//        """
-//        )
-//    }
-
     @Test
     fun testChildrenDeepCaptureVariables() {
         testCompile(
             """
-        import android.widget.*
         import androidx.compose.runtime.*
 
         @Composable fun A(content: @Composable () -> Unit) {
@@ -347,7 +201,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
     fun testChildrenDeepCaptureVariablesWithParameters() {
         testCompile(
             """
-        import android.widget.*
         import androidx.compose.runtime.*
 
         @Composable fun A(content: @Composable (x: String) -> Unit) {
@@ -373,47 +226,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         """
         )
     }
-
-//    "b/179279455"
-//    @Test
-//    fun testChildrenOfNativeView() {
-//        testCompileWithViewStubs(
-//            """
-//        class MainComponent {
-//            @Composable
-//            operator fun invoke() {
-//                LinearLayout {
-//                    TextView(text="some child content2!")
-//                    TextView(text="some child content!3")
-//                }
-//            }
-//        }
-//        """
-//        )
-//    }
-
-//    "b/179279455"
-//    @Test
-//    fun testIrSpecial() {
-//        testCompileWithViewStubs(
-//            """
-//        @Composable fun HelperComponent(content: @Composable () -> Unit) {}
-//
-//        class MainComponent {
-//            @Composable
-//            operator fun invoke() {
-//                val x = "Hello"
-//                val y = "World"
-//                HelperComponent {
-//                    for(i in 1..100) {
-//                        TextView(text=x+y+i)
-//                    }
-//                }
-//            }
-//        }
-//        """
-//        )
-//    }
 
     @Test
     fun testGenericsInnerClass() {
@@ -579,8 +391,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         testCompile(
             """
         import androidx.compose.runtime.*
-        import android.widget.*
-        import android.content.*
 
         @Composable fun Example(content: @Composable () -> Unit) {
 
@@ -639,7 +449,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         testCompile(
             """
         import androidx.compose.runtime.*
-        import android.widget.TextView
 
         @Composable
         fun foo() {
@@ -652,26 +461,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         """
         )
     }
-
-//    "b/179279455"
-//    @Test
-//    fun testKtxLambdaInIfElse() {
-//        testCompileWithViewStubs(
-//            """
-//        @Composable
-//        fun foo(x: Boolean) {
-//            val lambda = @Composable { TextView(text="Hello World") }
-//            if(true) {
-//                lambda()
-//                lambda()
-//                lambda()
-//            } else {
-//                lambda()
-//            }
-//        }
-//        """
-//        )
-//    }
 
     @Test
     fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() {

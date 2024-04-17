@@ -20,6 +20,7 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import java.io.File
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+var uniqueNumber = 0
 
 abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
     private fun dumpClasses(loader: GeneratedClassLoader) {
@@ -120,77 +121,4 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
     protected fun testCompile(@Language("kotlin") source: String, dumpClasses: Boolean = false) {
         classLoader(source, "Test.kt", dumpClasses)
     }
-
-    protected val COMPOSE_VIEW_STUBS_IMPORTS = """
-        import android.view.View
-        import android.widget.TextView
-        import android.widget.Button
-        import android.view.Gravity
-        import android.widget.LinearLayout
-        import androidx.compose.runtime.Composable
-    """.trimIndent()
-
-    protected val COMPOSE_VIEW_STUBS = """
-        @Composable
-        fun TextView(
-            id: Int = 0,
-            gravity: Int = Gravity.TOP or Gravity.START,
-            text: String = "",
-            onClick: (() -> Unit)? = null,
-            onClickListener: View.OnClickListener? = null
-        ) {
-            emitView(::TextView) {
-                if (id != 0) it.id = id
-                it.text = text
-                it.gravity = gravity
-                if (onClickListener != null) it.setOnClickListener(onClickListener)
-                if (onClick != null) it.setOnClickListener(View.OnClickListener { onClick() })
-            }
-        }
-
-        @Composable
-        fun Button(
-            id: Int = 0,
-            text: String = "",
-            onClick: (() -> Unit)? = null,
-            onClickListener: View.OnClickListener? = null
-        ) {
-            emitView(::Button) {
-                if (id != 0) it.id = id
-                it.text = text
-                if (onClickListener != null) it.setOnClickListener(onClickListener)
-                if (onClick != null) it.setOnClickListener(View.OnClickListener { onClick() })
-            }
-        }
-
-        @Composable
-        fun LinearLayout(
-            id: Int = 0,
-            orientation: Int = LinearLayout.VERTICAL,
-            onClickListener: View.OnClickListener? = null,
-            content: @Composable () -> Unit
-        ) {
-            emitView(
-                ::LinearLayout,
-                {
-                    if (id != 0) it.id = id
-                    if (onClickListener != null) it.setOnClickListener(onClickListener)
-                    it.orientation = orientation
-                },
-                content
-            )
-        }
-    """.trimIndent()
-
-    protected fun testCompileWithViewStubs(source: String, dumpClasses: Boolean = false) =
-        testCompile(
-            """
-            $COMPOSE_VIEW_STUBS_IMPORTS
-
-            $source
-
-            $COMPOSE_VIEW_STUBS
-        """,
-            dumpClasses
-        )
 }

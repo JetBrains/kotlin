@@ -178,7 +178,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
             (additionalPaths + defaultClassPath).map {
                 it.toURI().toURL()
             }.toTypedArray(),
-            null
+            this.javaClass.classLoader
         )
         return GeneratedClassLoader(
             createCompilerFacade(additionalPaths, forcedFirSetting)

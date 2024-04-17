@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,10 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.ParameterizedRobolectricTestRunner
-import org.robolectric.annotation.Config
 
 /* ktlint-disable max-line-length */
-@RunWith(ParameterizedRobolectricTestRunner::class)
-@Config(
-    manifest = Config.NONE,
-    minSdk = 23,
-    maxSdk = 23
-)
 class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTest(useFir) {
-    companion object {
-        @JvmStatic
-        @ParameterizedRobolectricTestRunner.Parameters(name = "useFir = {0}")
-        fun data() = arrayOf<Any>(false, true)
-    }
-
     @Test
     fun testParameterlessChildrenLambdasReused() = checkApi(
         """
@@ -587,114 +571,6 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
     ) {
         assert(!it.contains("CHECKCAST kotlin/jvm/functions/Function0"))
     }
-
-    @Test
-    @Ignore("b/179279455")
-    fun testCorrectComposerPassed1() = checkComposerParam(
-        """
-            var a: Composer? = null
-            fun run() {
-                a = makeComposer()
-                invokeComposable(a) {
-                    assertComposer(a)
-                }
-            }
-        """
-    )
-
-    @Test
-    @Ignore("b/179279455")
-    fun testCorrectComposerPassed2() = checkComposerParam(
-        """
-            var a: Composer? = null
-            @Composable fun Foo() {
-                assertComposer(a)
-            }
-            fun run() {
-                a = makeComposer()
-                invokeComposable(a) {
-                    Foo()
-                }
-            }
-        """
-    )
-
-    @Test
-    @Ignore("b/179279455")
-    fun testCorrectComposerPassed3() = checkComposerParam(
-        """
-            var a: Composer? = null
-            var b: Composer? = null
-            @Composable fun Callback(fn: () -> Unit) {
-                fn()
-            }
-            fun run() {
-                a = makeComposer()
-                b = makeComposer()
-                invokeComposable(a) {
-                    assertComposer(a)
-                    Callback {
-                        invokeComposable(b) {
-                            assertComposer(b)
-                        }
-                    }
-                }
-            }
-        """
-    )
-
-    @Test
-    @Ignore("b/179279455")
-    fun testCorrectComposerPassed4() = checkComposerParam(
-        """
-            var a: Composer? = null
-            var b: Composer? = null
-            @Composable fun makeInt(): Int {
-                assertComposer(a)
-                return 10
-            }
-            @Composable fun WithDefault(x: Int = makeInt()) {}
-            fun run() {
-                a = makeComposer()
-                b = makeComposer()
-                invokeComposable(a) {
-                    assertComposer(a)
-                    WithDefault()
-                    WithDefault(10)
-                }
-                invokeComposable(b) {
-                    assertComposer(b)
-                    WithDefault(10)
-                }
-            }
-        """
-    )
-
-    @Test
-    @Ignore("b/179279455")
-    fun testCorrectComposerPassed5() = checkComposerParam(
-        """
-            var a: Composer? = null
-            @Composable fun Wrap(content: @Composable () -> Unit) {
-                content()
-            }
-            fun run() {
-                a = makeComposer()
-                invokeComposable(a) {
-                    assertComposer(a)
-                    Wrap {
-                        assertComposer(a)
-                        Wrap {
-                            assertComposer(a)
-                            Wrap {
-                                assertComposer(a)
-                            }
-                        }
-                    }
-                }
-            }
-        """
-    )
 
     @Test
     fun testDefaultParameters() = checkApi(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.MonotonicFrameClock
 import androidx.compose.runtime.Recomposer
-import java.net.URLClassLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Assert.assertEquals
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 
 class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -46,8 +44,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test // Bug report: https://github.com/JetBrains/compose-jb/issues/1407
     fun testSimpleDefaultInComposable() {
-        // TODO: Enable once https://youtrack.jetbrains.com/issue/KT-56173 is fixed.
-        assumeFalse(useFir)
         runCompose(
             testFunBody = """
                 results["defaultValue"] = ExpectComposable()
@@ -99,9 +95,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test // Bug report: https://github.com/JetBrains/compose-jb/issues/1407
     fun testDefaultValuesFromExpectComposableFunctions() {
-        // TODO: Enable once https://youtrack.jetbrains.com/issue/KT-56173 and
-        //       https://youtrack.jetbrains.com/issue/KT-58539 are fixed.
-        assumeFalse(useFir)
         runCompose(
             testFunBody = """
                 ExpectComposable { value ->
@@ -154,9 +147,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
     fun testExpectWithGetExpectedPropertyInDefaultValueExpression() {
-        // TODO: Enable once https://youtrack.jetbrains.com/issue/KT-56173 and
-        //       https://youtrack.jetbrains.com/issue/KT-58539 are fixed.
-        assumeFalse(useFir)
         runCompose(
             testFunBody = """
                 ExpectComposable { value ->
@@ -204,9 +194,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
     fun testExpectWithComposableExpressionInDefaultValue() {
-        // TODO: Enable once https://youtrack.jetbrains.com/issue/KT-56173 and
-        //       https://youtrack.jetbrains.com/issue/KT-58539 are fixed.
-        assumeFalse(useFir)
         runCompose(
             testFunBody = """
                 ExpectComposable { value ->
@@ -252,9 +239,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
     fun testExpectWithTypedParameter() {
-        // TODO: Enable once https://youtrack.jetbrains.com/issue/KT-56173 and
-        //       https://youtrack.jetbrains.com/issue/KT-58539 are fixed.
-        assumeFalse(useFir)
         runCompose(
             testFunBody = """
                 ExpectComposable<String>("aeiouy") { value ->
@@ -297,9 +281,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
     fun testExpectWithRememberInDefaultValueExpression() {
-        // TODO: Enable once https://youtrack.jetbrains.com/issue/KT-56173 and
-        //       https://youtrack.jetbrains.com/issue/KT-58539 are fixed.
-        assumeFalse(useFir)
         runCompose(
             testFunBody = """
                 ExpectComposable { value ->
@@ -340,9 +321,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
     fun testExpectWithDefaultValueUsingAnotherArgument() {
-        // TODO: Enable once https://youtrack.jetbrains.com/issue/KT-56173 and
-        //       https://youtrack.jetbrains.com/issue/KT-58539 are fixed.
-        assumeFalse(useFir)
         runCompose(
             testFunBody = """
                 ExpectComposable("AbccbA") { value ->
@@ -385,9 +363,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
     fun testNonComposableFunWithComposableParam() {
-        // TODO: Enable once https://youtrack.jetbrains.com/issue/KT-56173 and
-        //       https://youtrack.jetbrains.com/issue/KT-58539 are fixed.
-        assumeFalse(useFir)
         runCompose(
             testFunBody = """
                 savedContentLambda = null
@@ -461,30 +436,13 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
         """.trimIndent())
 
-        val compiledClasses = classLoader(platformFiles, allCommonSources)
-        val allClassFiles = compiledClasses.allGeneratedFiles.filter {
-            it.relativePath.endsWith(".class")
-        }
-
-        val loader = URLClassLoader(emptyArray(), this.javaClass.classLoader)
-
-        val instanceClass = run {
-            var instanceClass: Class<*>? = null
-            var loadedOne = false
-            for (outFile in allClassFiles) {
-                val bytes = outFile.asByteArray()
-                val loadedClass = loadClass(loader, null, bytes)
-                if (loadedClass.name == className) instanceClass = loadedClass
-                loadedOne = true
-            }
-            if (!loadedOne) error("No classes loaded")
-            instanceClass ?: error("Could not find class $className in loaded classes")
-        }
+        val compiledClassesLoader = classLoader(platformFiles, allCommonSources)
+        val instanceClass = compiledClassesLoader.loadClass(className)
 
         val instanceOfClass = instanceClass.getDeclaredConstructor().newInstance()
+        println(instanceClass.methods.joinToString())
         val testMethod = instanceClass.getMethod(
             "test",
-            *emptyArray(),
             Composer::class.java,
             Int::class.java
         )
