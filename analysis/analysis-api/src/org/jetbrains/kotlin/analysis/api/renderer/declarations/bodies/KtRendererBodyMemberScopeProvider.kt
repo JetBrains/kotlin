@@ -10,38 +10,38 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 
 public interface KtRendererBodyMemberScopeProvider {
-    public fun getMemberScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): List<KtDeclarationSymbol>
+    context(KtAnalysisSession)
+    public fun getMemberScope(symbol: KtSymbolWithMembers): List<KtDeclarationSymbol>
 
     public object ALL : KtRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
-            with(analysisSession) {
-                return symbol.getCombinedDeclaredMemberScope().getAllSymbols().toList()
-            }
+        context(KtAnalysisSession)
+        override fun getMemberScope(symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
+            return symbol.getCombinedDeclaredMemberScope().getAllSymbols().toList()
         }
     }
 
     public object ALL_DECLARED : KtRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
-            with(analysisSession) {
-                return symbol.getCombinedDeclaredMemberScope().getAllSymbols()
-                    .filter { member ->
-                        val origin = member.origin
-                        origin != KtSymbolOrigin.DELEGATED &&
-                                origin != KtSymbolOrigin.SOURCE_MEMBER_GENERATED &&
-                                origin != KtSymbolOrigin.SUBSTITUTION_OVERRIDE &&
-                                origin != KtSymbolOrigin.INTERSECTION_OVERRIDE
-                    }.filter { member ->
-                        member !is KtConstructorSymbol || symbol !is KtClassOrObjectSymbol || !symbol.classKind.isObject
-                    }.filterNot { member ->
-                        member is KtConstructorSymbol && symbol is KtEnumEntrySymbol
-                    }
-                    .toList()
-            }
+        context(KtAnalysisSession)
+        override fun getMemberScope(symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
+            return symbol.getCombinedDeclaredMemberScope().getAllSymbols()
+                .filter { member ->
+                    val origin = member.origin
+                    origin != KtSymbolOrigin.DELEGATED &&
+                            origin != KtSymbolOrigin.SOURCE_MEMBER_GENERATED &&
+                            origin != KtSymbolOrigin.SUBSTITUTION_OVERRIDE &&
+                            origin != KtSymbolOrigin.INTERSECTION_OVERRIDE
+                }.filter { member ->
+                    member !is KtConstructorSymbol || symbol !is KtClassOrObjectSymbol || !symbol.classKind.isObject
+                }.filterNot { member ->
+                    member is KtConstructorSymbol && symbol is KtEnumEntrySymbol
+                }
+                .toList()
         }
     }
 
     public object NONE : KtRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
+        context(KtAnalysisSession)
+        override fun getMemberScope(symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
             return emptyList()
         }
     }

@@ -13,45 +13,31 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtTypeProjectionRenderer {
-    public fun renderTypeProjection(
-        analysisSession: KtAnalysisSession,
-        projection: KtTypeProjection,
-        typeRenderer: KtTypeRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtTypeRenderer)
+    public fun renderTypeProjection(projection: KtTypeProjection, printer: PrettyPrinter)
 
     public object WITH_VARIANCE : KtTypeProjectionRenderer {
-        override fun renderTypeProjection(
-            analysisSession: KtAnalysisSession,
-            projection: KtTypeProjection,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                when (projection) {
-                    is KtStarTypeProjection -> printer.append('*')
-                    is KtTypeArgumentWithVariance -> {
-                        " ".separated(
-                            { printer.append(projection.variance.label) },
-                            { typeRenderer.renderType(analysisSession, projection.type, printer) },
-                        )
-                    }
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderTypeProjection(projection: KtTypeProjection, printer: PrettyPrinter): Unit = printer {
+            when (projection) {
+                is KtStarTypeProjection -> printer.append('*')
+                is KtTypeArgumentWithVariance -> {
+                    " ".separated(
+                        { printer.append(projection.variance.label) },
+                        { renderType(projection.type, printer) },
+                    )
                 }
             }
         }
     }
 
     public object WITHOUT_VARIANCE : KtTypeProjectionRenderer {
-        override fun renderTypeProjection(
-            analysisSession: KtAnalysisSession,
-            projection: KtTypeProjection,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderTypeProjection(projection: KtTypeProjection, printer: PrettyPrinter) {
             when (projection) {
                 is KtStarTypeProjection -> printer.append('*')
                 is KtTypeArgumentWithVariance -> {
-                    typeRenderer.renderType(analysisSession, projection.type, printer)
+                    renderType(projection.type, printer)
                 }
             }
         }

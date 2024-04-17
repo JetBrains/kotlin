@@ -11,18 +11,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 
 public interface KtRendererBodyMemberScopeSorter {
-    public fun sortMembers(
-        analysisSession: KtAnalysisSession,
-        members: List<KtDeclarationSymbol>,
-        owner: KtSymbolWithMembers,
-    ): List<KtDeclarationSymbol>
+    context(KtAnalysisSession)
+    public fun sortMembers(members: List<KtDeclarationSymbol>, owner: KtSymbolWithMembers): List<KtDeclarationSymbol>
 
     public object ENUM_ENTRIES_AT_BEGINING : KtRendererBodyMemberScopeSorter {
-        override fun sortMembers(
-            analysisSession: KtAnalysisSession,
-            members: List<KtDeclarationSymbol>,
-            owner: KtSymbolWithMembers,
-        ): List<KtDeclarationSymbol> {
+        context(KtAnalysisSession)
+        override fun sortMembers(members: List<KtDeclarationSymbol>, owner: KtSymbolWithMembers): List<KtDeclarationSymbol> {
             return members.sortedBy { it !is KtEnumEntrySymbol }
         }
     }

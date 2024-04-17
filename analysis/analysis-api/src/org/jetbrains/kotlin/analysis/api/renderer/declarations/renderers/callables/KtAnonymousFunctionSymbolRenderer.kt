@@ -12,24 +12,13 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtAnonymousFunctionSymbolRenderer {
-    public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtAnonymousFunctionSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderSymbol(symbol: KtAnonymousFunctionSymbol, printer: PrettyPrinter)
 
     public object AS_SOURCE : KtAnonymousFunctionSymbolRenderer {
-        override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtAnonymousFunctionSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                declarationRenderer.callableSignatureRenderer
-                    .renderCallableSignature(analysisSession, symbol, KtTokens.FUN_KEYWORD, declarationRenderer, printer)
-            }
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSymbol(symbol: KtAnonymousFunctionSymbol, printer: PrettyPrinter): Unit = printer {
+            callableSignatureRenderer.renderCallableSignature(symbol, KtTokens.FUN_KEYWORD, printer)
         }
     }
 }

@@ -12,26 +12,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtCallableParameterRenderer {
-    public fun renderValueParameters(
-        analysisSession: KtAnalysisSession,
-        symbol: KtCallableSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderValueParameters(symbol: KtCallableSymbol, printer: PrettyPrinter)
 
     public object PARAMETERS_IN_PARENS : KtCallableParameterRenderer {
-        override fun renderValueParameters(
-            analysisSession: KtAnalysisSession,
-            symbol: KtCallableSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderValueParameters(symbol: KtCallableSymbol, printer: PrettyPrinter) {
             val valueParameters = when (symbol) {
                 is KtFunctionLikeSymbol -> symbol.valueParameters
                 else -> return
             }
             printer.printCollection(valueParameters, prefix = "(", postfix = ")") {
-                declarationRenderer.renderDeclaration(analysisSession, it, printer)
+                renderDeclaration(it, printer)
             }
         }
     }

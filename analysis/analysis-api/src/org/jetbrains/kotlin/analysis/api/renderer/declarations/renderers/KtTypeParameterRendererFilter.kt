@@ -11,33 +11,22 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 
 public interface KtTypeParameterRendererFilter {
-    public fun filter(
-        analysisSession: KtAnalysisSession,
-        typeParameter: KtTypeParameterSymbol,
-        owner: KtSymbolWithTypeParameters,
-    ): Boolean
+    context(KtAnalysisSession)
+    public fun filter(typeParameter: KtTypeParameterSymbol, owner: KtSymbolWithTypeParameters): Boolean
 
     public object NO_FOR_CONSTURCTORS : KtTypeParameterRendererFilter {
-        override fun filter(
-            analysisSession: KtAnalysisSession,
-            typeParameter: KtTypeParameterSymbol,
-            owner: KtSymbolWithTypeParameters,
-        ): Boolean {
+        context(KtAnalysisSession)
+        override fun filter(typeParameter: KtTypeParameterSymbol, owner: KtSymbolWithTypeParameters): Boolean {
             return owner !is KtConstructorSymbol
         }
     }
 
     public companion object {
-        public operator fun invoke(
-            predicate: KtAnalysisSession.(typeParameter: KtTypeParameterSymbol, owner: KtSymbolWithTypeParameters) -> Boolean
-        ): KtTypeParameterRendererFilter {
+        public operator fun invoke(predicate: context(KtAnalysisSession)(typeParameter: KtTypeParameterSymbol, owner: KtSymbolWithTypeParameters) -> Boolean): KtTypeParameterRendererFilter {
             return object : KtTypeParameterRendererFilter {
-                override fun filter(
-                    analysisSession: KtAnalysisSession,
-                    typeParameter: KtTypeParameterSymbol,
-                    owner: KtSymbolWithTypeParameters,
-                ): Boolean {
-                    return predicate(analysisSession, typeParameter, owner)
+                context(KtAnalysisSession)
+                override fun filter(typeParameter: KtTypeParameterSymbol, owner: KtSymbolWithTypeParameters): Boolean {
+                    return predicate(this@KtAnalysisSession, typeParameter, owner)
                 }
             }
         }

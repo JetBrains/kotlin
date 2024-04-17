@@ -15,63 +15,47 @@ import kotlin.contracts.contract
 
 
 public interface KtFlexibleTypeRenderer {
-    public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtFlexibleType,
-        typeRenderer: KtTypeRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtTypeRenderer)
+    public fun renderType(type: KtFlexibleType, printer: PrettyPrinter)
 
     public object AS_RANGE : KtFlexibleTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtFlexibleType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                append('(')
-                typeRenderer.renderType(analysisSession, type.lowerBound, printer)
-                append("..")
-                typeRenderer.renderType(analysisSession, type.upperBound, printer)
-                append(')')
-            }
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtFlexibleType, printer: PrettyPrinter): Unit = printer {
+            append('(')
+            renderType(type.lowerBound, printer)
+            append("..")
+            renderType(type.upperBound, printer)
+            append(')')
         }
     }
 
     public object AS_SHORT : KtFlexibleTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtFlexibleType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                val lower = type.lowerBound
-                val upper = type.upperBound
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtFlexibleType, printer: PrettyPrinter): Unit = printer {
+            val lower = type.lowerBound
+            val upper = type.upperBound
 
-                when {
-                    isNullabilityFlexibleType(lower, upper) -> {
-                        typeRenderer.renderType(analysisSession, lower, printer)
-                        append("!")
-                    }
+            when {
+                isNullabilityFlexibleType(lower, upper) -> {
+                    renderType(lower, printer)
+                    append("!")
+                }
 
-                    isMutabilityFlexibleType(lower, upper) -> {
-                        " ".separated(
-                            { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
-                            { append(lower.classId.asFqNameString().replace("Mutable", "(Mutable)")) },
-                        )
-                        printCollectionIfNotEmpty(lower.ownTypeArguments, prefix = "<", postfix = ">") { typeArgument ->
-                            typeRenderer.typeProjectionRenderer.renderTypeProjection(analysisSession, typeArgument, typeRenderer, this)
-                        }
-                        if (lower.nullability != type.upperBound.nullability) {
-                            append('!')
-                        }
+                isMutabilityFlexibleType(lower, upper) -> {
+                    " ".separated(
+                        { annotationsRenderer.renderAnnotations(type, printer) },
+                        { append(lower.classId.asFqNameString().replace("Mutable", "(Mutable)")) },
+                    )
+                    printCollectionIfNotEmpty(lower.ownTypeArguments, prefix = "<", postfix = ">") { typeArgument ->
+                        typeProjectionRenderer.renderTypeProjection(typeArgument, this)
                     }
+                    if (lower.nullability != type.upperBound.nullability) {
+                        append('!')
+                    }
+                }
 
-                    else -> {
-                        AS_RANGE.renderType(analysisSession, type, typeRenderer, printer)
-                    }
+                else -> {
+                    AS_RANGE.renderType(type, printer)
                 }
             }
         }

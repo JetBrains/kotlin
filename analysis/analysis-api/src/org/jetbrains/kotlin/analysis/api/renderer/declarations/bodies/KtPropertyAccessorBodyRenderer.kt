@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtPropertyAccessorBodyRenderer {
-    public fun renderBody(analysisSession: KtAnalysisSession, symbol: KtPropertyAccessorSymbol, printer: PrettyPrinter)
+    context(KtAnalysisSession)
+    public fun renderBody(symbol: KtPropertyAccessorSymbol, printer: PrettyPrinter)
 
     public object NO_BODY : KtPropertyAccessorBodyRenderer {
-        override fun renderBody(analysisSession: KtAnalysisSession, symbol: KtPropertyAccessorSymbol, printer: PrettyPrinter) {}
+        context(KtAnalysisSession)
+        override fun renderBody(symbol: KtPropertyAccessorSymbol, printer: PrettyPrinter) {
+        }
     }
 }
 

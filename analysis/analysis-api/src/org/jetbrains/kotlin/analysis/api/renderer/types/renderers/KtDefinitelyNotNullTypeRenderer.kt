@@ -12,27 +12,15 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 
 public interface KtDefinitelyNotNullTypeRenderer {
-    public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtDefinitelyNotNullType,
-        typeRenderer: KtTypeRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtTypeRenderer)
+    public fun renderType(type: KtDefinitelyNotNullType, printer: PrettyPrinter)
 
     public object AS_TYPE_INTERSECTION : KtDefinitelyNotNullTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtDefinitelyNotNullType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                printer {
-                    typeRenderer.renderType(analysisSession, type.original, printer)
-                    printer.append(" & ")
-                    typeRenderer.renderType(analysisSession, builtinTypes.ANY, printer)
-                }
-            }
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtDefinitelyNotNullType, printer: PrettyPrinter): Unit = printer {
+            renderType(type.original, printer)
+            printer.append(" & ")
+            renderType(builtinTypes.ANY, printer)
         }
     }
 

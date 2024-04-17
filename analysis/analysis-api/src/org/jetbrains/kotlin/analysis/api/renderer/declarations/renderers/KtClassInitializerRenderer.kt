@@ -12,26 +12,18 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtClassInitializerRenderer {
-    public fun renderClassInitializer(
-        analysisSession: KtAnalysisSession,
-        symbol: KtClassInitializerSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderClassInitializer(symbol: KtClassInitializerSymbol, printer: PrettyPrinter)
 
     public object INIT_BLOCK_WITH_BRACES : KtClassInitializerRenderer {
-        override fun renderClassInitializer(
-            analysisSession: KtAnalysisSession,
-            symbol: KtClassInitializerSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                " ".separated(
-                    { declarationRenderer.keywordsRenderer.renderKeyword(analysisSession, KtTokens.INIT_KEYWORD, symbol, this) },
-                    { printer.withIndentInBraces {} },
-                )
-            }
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderClassInitializer(symbol: KtClassInitializerSymbol, printer: PrettyPrinter): Unit = printer {
+            " ".separated(
+                {
+                    keywordsRenderer.renderKeyword(KtTokens.INIT_KEYWORD, symbol, this)
+                },
+                { printer.withIndentInBraces {} },
+            )
         }
     }
 }

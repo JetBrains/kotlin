@@ -14,49 +14,32 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.renderer.render
 
 public interface KtConstructorSymbolRenderer {
-    public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtConstructorSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderSymbol(symbol: KtConstructorSymbol, printer: PrettyPrinter)
 
     public object AS_SOURCE : KtConstructorSymbolRenderer {
-        override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtConstructorSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
-            declarationRenderer.callableSignatureRenderer
-                .renderCallableSignature(analysisSession, symbol, KtTokens.CONSTRUCTOR_KEYWORD, declarationRenderer, printer)
-
-            declarationRenderer.functionLikeBodyRenderer.renderBody(analysisSession, symbol, printer)
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSymbol(symbol: KtConstructorSymbol, printer: PrettyPrinter) {
+            callableSignatureRenderer.renderCallableSignature(symbol, KtTokens.CONSTRUCTOR_KEYWORD, printer)
+            functionLikeBodyRenderer.renderBody(symbol, printer)
         }
     }
 
     public object AS_RAW_SIGNATURE : KtConstructorSymbolRenderer {
-        override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtConstructorSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                printer {
-                    " ".separated(
-                        {
-                            declarationRenderer.keywordsRenderer
-                                .renderKeyword(analysisSession, KtTokens.CONSTRUCTOR_KEYWORD, symbol, printer)
-                        },
-                        {
-                            (symbol.getContainingSymbol() as? KtNamedSymbol)?.name?.let { printer.append(it.render()) }
-                            printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
-                                declarationRenderer.typeRenderer.renderType(analysisSession, it.returnType, printer)
-                            }
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSymbol(symbol: KtConstructorSymbol, printer: PrettyPrinter) {
+            printer {
+                " ".separated(
+                    {
+                        keywordsRenderer.renderKeyword(KtTokens.CONSTRUCTOR_KEYWORD, symbol, printer)
+                    },
+                    {
+                        (symbol.getContainingSymbol() as? KtNamedSymbol)?.name?.let { printer.append(it.render()) }
+                        printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
+                            typeRenderer.renderType(it.returnType, printer)
                         }
-                    )
-                }
+                    }
+                )
             }
         }
     }

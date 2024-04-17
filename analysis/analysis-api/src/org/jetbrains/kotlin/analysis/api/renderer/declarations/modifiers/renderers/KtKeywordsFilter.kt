@@ -11,43 +11,45 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
 public interface KtRendererKeywordFilter {
-    public fun filter(analysisSession: KtAnalysisSession, modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean
+    context(KtAnalysisSession)
+    public fun filter(modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean
 
     public infix fun and(other: KtRendererKeywordFilter): KtRendererKeywordFilter {
         val self = this
-        return KtRendererKeywordFilter filter@{ modifier, ktAnnotated ->
-            val analysisSession = this@filter
-            self.filter(analysisSession, modifier, ktAnnotated) && other.filter(analysisSession, modifier, ktAnnotated)
+        return KtRendererKeywordFilter { modifier, ktAnnotated ->
+            self.filter(modifier, ktAnnotated) && other.filter(modifier, ktAnnotated)
         }
     }
 
     public infix fun or(other: KtRendererKeywordFilter): KtRendererKeywordFilter {
         val self = this
-        return KtRendererKeywordFilter filter@{ modifier, symbol ->
-            val analysisSession = this@filter
-            self.filter(analysisSession, modifier, symbol) || other.filter(analysisSession, modifier, symbol)
+        return KtRendererKeywordFilter { modifier, symbol ->
+            self.filter(modifier, symbol) || other.filter(modifier, symbol)
         }
     }
 
     public object ALL : KtRendererKeywordFilter {
-        override fun filter(analysisSession: KtAnalysisSession, modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
+        context(KtAnalysisSession)
+        override fun filter(modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
             return true
         }
     }
 
     public object NONE : KtRendererKeywordFilter {
-        override fun filter(analysisSession: KtAnalysisSession, modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
+        context(KtAnalysisSession)
+        override fun filter(modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
             return false
         }
     }
 
     public companion object {
         public operator fun invoke(
-            predicate: KtAnalysisSession.(modifier: KtKeywordToken, ktAnnotated: KtAnnotated) -> Boolean
+            predicate: context(KtAnalysisSession)(modifier: KtKeywordToken, ktAnnotated: KtAnnotated) -> Boolean
         ): KtRendererKeywordFilter =
             object : KtRendererKeywordFilter {
-                override fun filter(analysisSession: KtAnalysisSession, modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
-                    return predicate(analysisSession, modifier, ktAnnotated)
+                context(KtAnalysisSession)
+                override fun filter(modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
+                    return predicate(this@KtAnalysisSession, modifier, ktAnnotated)
                 }
             }
 

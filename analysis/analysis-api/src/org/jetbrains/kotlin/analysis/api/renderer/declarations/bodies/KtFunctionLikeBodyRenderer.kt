@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtFunctionLikeBodyRenderer {
-    public fun renderBody(analysisSession: KtAnalysisSession, symbol: KtFunctionLikeSymbol, printer: PrettyPrinter)
+    context(KtAnalysisSession)
+    public fun renderBody(symbol: KtFunctionLikeSymbol, printer: PrettyPrinter)
 
     public object NO_BODY : KtFunctionLikeBodyRenderer {
-        override fun renderBody(analysisSession: KtAnalysisSession, symbol: KtFunctionLikeSymbol, printer: PrettyPrinter) {}
+        context(KtAnalysisSession)
+        override fun renderBody(symbol: KtFunctionLikeSymbol, printer: PrettyPrinter) {
+        }
     }
 }
 

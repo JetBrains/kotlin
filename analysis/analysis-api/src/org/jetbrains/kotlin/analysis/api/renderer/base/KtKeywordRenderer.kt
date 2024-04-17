@@ -11,49 +11,29 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
 public interface KtKeywordRenderer {
-    public fun renderKeyword(
-        analysisSession: KtAnalysisSession,
-        keyword: KtKeywordToken,
-        owner: KtAnnotated,
-        keywordsRenderer: KtKeywordsRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtKeywordsRenderer)
+    public fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter)
 
-    public fun renderKeywords(
-        analysisSession: KtAnalysisSession,
-        keywords: List<KtKeywordToken>,
-        owner: KtAnnotated,
-        keywordsRenderer: KtKeywordsRenderer,
-        printer: PrettyPrinter,
-    ) {
-        val applicableKeywords = keywords.filter { keywordsRenderer.keywordFilter.filter(analysisSession, it, owner) }
-        printer.printCollection(applicableKeywords, separator = " ") {
-            renderKeyword(analysisSession, it, owner, keywordsRenderer, this)
+    context(KtAnalysisSession, KtKeywordsRenderer)
+    public fun renderKeywords(keywords: List<KtKeywordToken>, owner: KtAnnotated, printer: PrettyPrinter) {
+        printer.printCollection(keywords.filter { keywordFilter.filter(it, owner) }, separator = " ") {
+            renderKeyword(it, owner, this)
         }
     }
 
     public object AS_WORD : KtKeywordRenderer {
-        override fun renderKeyword(
-            analysisSession: KtAnalysisSession,
-            keyword: KtKeywordToken,
-            owner: KtAnnotated,
-            keywordsRenderer: KtKeywordsRenderer,
-            printer: PrettyPrinter,
-        ) {
-            if (keywordsRenderer.keywordFilter.filter(analysisSession, keyword, owner)) {
+        context(KtAnalysisSession, KtKeywordsRenderer)
+        override fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
+            if (keywordFilter.filter(keyword, owner)) {
                 printer.append(keyword.value)
             }
         }
     }
 
     public object NONE : KtKeywordRenderer {
-        override fun renderKeyword(
-            analysisSession: KtAnalysisSession,
-            keyword: KtKeywordToken,
-            owner: KtAnnotated,
-            keywordsRenderer: KtKeywordsRenderer,
-            printer: PrettyPrinter,
-        ) {}
+        context(KtAnalysisSession, KtKeywordsRenderer)
+        override fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
+        }
     }
 }
 

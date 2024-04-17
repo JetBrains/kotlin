@@ -13,40 +13,29 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtDestructuringDeclarationRenderer {
-    public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtDestructuringDeclarationSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderSymbol(symbol: KtDestructuringDeclarationSymbol, printer: PrettyPrinter)
 
     public object WITH_ENTRIES : KtDestructuringDeclarationRenderer {
-        override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDestructuringDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                declarationRenderer.codeStyle.getSeparatorBetweenAnnotationAndOwner(analysisSession, symbol).separated(
-                    { declarationRenderer.annotationRenderer.renderAnnotations(analysisSession, symbol, printer) },
-                    {
-                        // do not render (val a: Int, val b: Int), render `(a: Int, b: Int)` instead
-                        val rendererWithoutValVar = declarationRenderer.with {
-                            keywordsRenderer = keywordsRenderer.with {
-                                keywordFilter =
-                                    keywordFilter and KtRendererKeywordFilter.without(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
-                            }
-                        }
-                        printCollection(symbol.entries, prefix = "(", postfix = ")") {
-                            with(rendererWithoutValVar) {
-                                localVariableRenderer.renderSymbol(analysisSession, it, rendererWithoutValVar, this@printCollection)
-                            }
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSymbol(symbol: KtDestructuringDeclarationSymbol, printer: PrettyPrinter): Unit = printer {
+            codeStyle.getSeparatorBetweenAnnotationAndOwner(symbol).separated(
+                { annotationRenderer.renderAnnotations(symbol, printer) },
+                {
+                    // do not render (val a: Int, val b: Int), render `(a: Int, b: Int)` instead
+                    val rendererWithoutValVar = with {
+                        keywordsRenderer = keywordsRenderer.with {
+                            keywordFilter = keywordFilter and KtRendererKeywordFilter.without(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
                         }
                     }
-                )
+                    printCollection(symbol.entries, prefix = "(", postfix = ")") {
+                        with(rendererWithoutValVar) {
+                            localVariableRenderer.renderSymbol(it, this@printCollection)
+                        }
+                    }
+                }
+            )
 
-            }
         }
     }
 }

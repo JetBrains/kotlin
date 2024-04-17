@@ -23,16 +23,11 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
         val renderer = KtDeclarationRendererForSource.WITH_SHORT_NAMES.with {
             classifierBodyRenderer = KtClassifierBodyRenderer.BODY_WITH_MEMBERS
             bodyMemberScopeSorter = object : KtRendererBodyMemberScopeSorter {
-                override fun sortMembers(
-                    analysisSession: KtAnalysisSession,
-                    members: List<KtDeclarationSymbol>,
-                    owner: KtSymbolWithMembers,
-                ): List<KtDeclarationSymbol> {
-                    with(analysisSession) {
-                        return KtRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
-                            .sortMembers(analysisSession, members, owner)
-                            .sortedBy { it.render() }
-                    }
+                context(KtAnalysisSession)
+                override fun sortMembers(members: List<KtDeclarationSymbol>, owner: KtSymbolWithMembers): List<KtDeclarationSymbol> {
+                    return KtRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
+                        .sortMembers(members, owner)
+                        .sortedBy { it.render() }
                 }
             }
         }

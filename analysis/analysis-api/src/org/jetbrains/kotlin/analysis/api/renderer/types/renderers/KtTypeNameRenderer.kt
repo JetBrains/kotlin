@@ -13,34 +13,19 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.render
 
 public interface KtTypeNameRenderer {
-    public fun renderName(
-        analysisSession: KtAnalysisSession,
-        name: Name,
-        owner: KtType,
-        typeRenderer: KtTypeRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtTypeRenderer)
+    public fun renderName(name: Name, owner: KtType, printer: PrettyPrinter)
 
     public object QUOTED : KtTypeNameRenderer {
-        override fun renderName(
-            analysisSession: KtAnalysisSession,
-            name: Name,
-            owner: KtType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderName(name: Name, owner: KtType, printer: PrettyPrinter) {
             printer.append(name.render())
         }
     }
 
     public object UNQUOTED : KtTypeNameRenderer {
-        override fun renderName(
-            analysisSession: KtAnalysisSession,
-            name: Name,
-            owner: KtType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderName(name: Name, owner: KtType, printer: PrettyPrinter) {
             printer.append(name.asString())
         }
     }

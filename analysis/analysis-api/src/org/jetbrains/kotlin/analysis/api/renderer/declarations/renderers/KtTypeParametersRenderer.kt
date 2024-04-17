@@ -13,125 +13,88 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
 public interface KtTypeParametersRenderer {
-    public fun renderTypeParameters(
-        analysisSession: KtAnalysisSession,
-        symbol: KtDeclarationSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderTypeParameters(symbol: KtDeclarationSymbol, printer: PrettyPrinter)
 
-    public fun renderWhereClause(
-        analysisSession: KtAnalysisSession,
-        symbol: KtDeclarationSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderWhereClause(symbol: KtDeclarationSymbol, printer: PrettyPrinter)
 
     public object NO_TYPE_PARAMETERS : KtTypeParametersRenderer {
-        override fun renderTypeParameters(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {}
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderTypeParameters(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
+        }
 
-        override fun renderWhereClause(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {}
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderWhereClause(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
+        }
     }
 
     public object WIHTOUT_BOUNDS : KtTypeParametersRenderer {
-        override fun renderTypeParameters(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderTypeParameters(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
             val typeParameters = symbol.typeParameters
-                .filter { declarationRenderer.typeParametersFilter.filter(analysisSession, it, symbol) }
+                .filter { typeParametersFilter.filter(it, symbol) }
                 .ifEmpty { return }
             printer.printCollection(typeParameters, prefix = "<", postfix = ">") { typeParameter ->
-                declarationRenderer.codeStyle.getSeparatorBetweenAnnotationAndOwner(analysisSession, typeParameter).separated(
-                    { declarationRenderer.annotationRenderer.renderAnnotations(analysisSession, typeParameter, printer) },
-                    { declarationRenderer.modifiersRenderer.renderDeclarationModifiers(analysisSession, typeParameter, printer) },
-                    { declarationRenderer.nameRenderer.renderName(analysisSession, typeParameter, declarationRenderer, printer) },
+                codeStyle.getSeparatorBetweenAnnotationAndOwner(typeParameter).separated(
+                    { annotationRenderer.renderAnnotations(typeParameter, printer) },
+                    { modifiersRenderer.renderDeclarationModifiers(typeParameter, printer) },
+                    { nameRenderer.renderName(typeParameter, printer) },
                 )
             }
         }
 
-        override fun renderWhereClause(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderWhereClause(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
         }
     }
 
     public object WITH_BOUNDS_IN_WHERE_CLAUSE : KtTypeParametersRenderer {
-        override fun renderTypeParameters(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderTypeParameters(symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
             val typeParameters = symbol.typeParameters
-                .filter { declarationRenderer.typeParametersFilter.filter(analysisSession, it, symbol) }
+                .filter { typeParametersFilter.filter(it, symbol) }
                 .ifEmpty { return }
             printer.printCollection(typeParameters, prefix = "<", postfix = ">") { typeParameter ->
-                declarationRenderer.codeStyle.getSeparatorBetweenAnnotationAndOwner(analysisSession, typeParameter).separated(
-                    { declarationRenderer.annotationRenderer.renderAnnotations(analysisSession, typeParameter, printer) },
-                    { declarationRenderer.modifiersRenderer.renderDeclarationModifiers(analysisSession, typeParameter, printer) },
-                    { declarationRenderer.nameRenderer.renderName(analysisSession, typeParameter, declarationRenderer, printer) },
+                codeStyle.getSeparatorBetweenAnnotationAndOwner(typeParameter).separated(
+                    { annotationRenderer.renderAnnotations(typeParameter, printer) },
+                    { modifiersRenderer.renderDeclarationModifiers(typeParameter, printer) },
+                    { nameRenderer.renderName(typeParameter, printer) },
                 )
                 if (typeParameter.upperBounds.size == 1) {
                     append(" : ")
                     val ktType = typeParameter.upperBounds.single()
-                    val type = declarationRenderer.declarationTypeApproximator.approximateType(analysisSession, ktType, Variance.OUT_VARIANCE)
-                    declarationRenderer.typeRenderer.renderType(analysisSession, type, printer)
+                    val type = declarationTypeApproximator.approximateType(ktType, Variance.OUT_VARIANCE)
+                    typeRenderer.renderType(type, printer)
                 }
             }
         }
 
-        override fun renderWhereClause(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                val allBounds = symbol.typeParameters
-                    .filter { declarationRenderer.typeParametersFilter.filter(analysisSession, it, symbol) }
-                    .flatMap { typeParam ->
-                        if (typeParam.upperBounds.size > 1) {
-                            typeParam.upperBounds.map { bound -> typeParam to bound }
-                        } else {
-                            emptyList()
-                        }
-                    }.ifEmpty { return }
-                " ".separated(
-                    {
-                        declarationRenderer.keywordsRenderer.renderKeyword(analysisSession, KtTokens.WHERE_KEYWORD, symbol, printer)
-                    },
-                    {
-                        printer.printCollection(allBounds) { (typeParameter, bound) ->
-                            " : ".separated(
-                                { declarationRenderer.nameRenderer.renderName(analysisSession, typeParameter, declarationRenderer, printer) },
-                                {
-                                    val approximatedType = declarationRenderer.declarationTypeApproximator
-                                        .approximateType(analysisSession, bound, Variance.OUT_VARIANCE)
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderWhereClause(symbol: KtDeclarationSymbol, printer: PrettyPrinter): Unit = printer {
+            val allBounds = symbol.typeParameters
+                .filter { typeParametersFilter.filter(it, symbol) }
+                .flatMap { typeParam ->
+                    if (typeParam.upperBounds.size > 1) {
+                        typeParam.upperBounds.map { bound -> typeParam to bound }
+                    } else {
+                        emptyList()
+                    }
+                }.ifEmpty { return }
+            " ".separated(
+                {
+                    keywordsRenderer.renderKeyword(KtTokens.WHERE_KEYWORD, symbol, printer)
+                },
+                {
+                    printer.printCollection(allBounds) { (typeParameter, bound) ->
+                        " : ".separated(
+                            { nameRenderer.renderName(typeParameter, printer) },
+                            { typeRenderer.renderType(declarationTypeApproximator.approximateType(bound, Variance.OUT_VARIANCE), printer) },
+                        )
+                    }
+                },
+            )
 
-                                    declarationRenderer.typeRenderer.renderType(analysisSession, approximatedType, printer) }
-                                ,
-                            )
-                        }
-                    },
-                )
-
-            }
         }
     }
 }

@@ -35,19 +35,20 @@ public class KtTypeRenderer private constructor(
     public val contextReceiversRenderer: KtContextReceiversRenderer,
     public val keywordsRenderer: KtKeywordsRenderer,
 ) {
-    public fun renderType(analysisSession: KtAnalysisSession, type: KtType, printer: PrettyPrinter) {
+    context(KtAnalysisSession)
+    public fun renderType(type: KtType, printer: PrettyPrinter) {
         when (type) {
-            is KtCapturedType -> capturedTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtFunctionalType -> functionalTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtUsualClassType -> usualClassTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtDefinitelyNotNullType -> definitelyNotNullTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtDynamicType -> dynamicTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtFlexibleType -> flexibleTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtIntegerLiteralType -> integerLiteralTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtIntersectionType -> intersectionTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtTypeParameterType -> typeParameterTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtClassErrorType -> unresolvedClassErrorTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtTypeErrorType -> typeErrorTypeRenderer.renderType(analysisSession, type, this, printer)
+            is KtCapturedType -> capturedTypeRenderer.renderType(type, printer)
+            is KtFunctionalType -> functionalTypeRenderer.renderType(type, printer)
+            is KtUsualClassType -> usualClassTypeRenderer.renderType(type, printer)
+            is KtDefinitelyNotNullType -> definitelyNotNullTypeRenderer.renderType(type, printer)
+            is KtDynamicType -> dynamicTypeRenderer.renderType(type, printer)
+            is KtFlexibleType -> flexibleTypeRenderer.renderType(type, printer)
+            is KtIntegerLiteralType -> integerLiteralTypeRenderer.renderType(type, printer)
+            is KtIntersectionType -> intersectionTypeRenderer.renderType(type, printer)
+            is KtTypeParameterType -> typeParameterTypeRenderer.renderType(type, printer)
+            is KtClassErrorType -> unresolvedClassErrorTypeRenderer.renderType(type, printer)
+            is KtTypeErrorType -> typeErrorTypeRenderer.renderType(type, printer)
         }
     }
 

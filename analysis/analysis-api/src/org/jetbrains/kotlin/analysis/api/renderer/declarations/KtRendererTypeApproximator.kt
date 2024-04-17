@@ -10,24 +10,25 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.types.Variance
 
 public interface KtRendererTypeApproximator {
-    public fun approximateType(analysisSession: KtAnalysisSession, type: KtType, position: Variance): KtType
+    context(KtAnalysisSession)
+    public fun approximateType(type: KtType, position: Variance): KtType
 
     public object TO_DENOTABLE : KtRendererTypeApproximator {
-        override fun approximateType(analysisSession: KtAnalysisSession, type: KtType, position: Variance): KtType {
-            with(analysisSession) {
-                type.getEnhancedType()?.let { return it }
+        context(KtAnalysisSession)
+        override fun approximateType(type: KtType, position: Variance): KtType {
+            type.getEnhancedType()?.let { return it }
 
-                return when (position) {
-                    Variance.INVARIANT -> type
-                    Variance.IN_VARIANCE -> type.approximateToSubPublicDenotableOrSelf(approximateLocalTypes = false)
-                    Variance.OUT_VARIANCE -> type.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes = false)
-                }
+            return when (position) {
+                Variance.INVARIANT -> type
+                Variance.IN_VARIANCE -> type.approximateToSubPublicDenotableOrSelf(approximateLocalTypes = false)
+                Variance.OUT_VARIANCE -> type.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes = false)
             }
         }
     }
 
     public object NO_APPROXIMATION : KtRendererTypeApproximator {
-        override fun approximateType(analysisSession: KtAnalysisSession, type: KtType, position: Variance): KtType {
+        context(KtAnalysisSession)
+        override fun approximateType(type: KtType, position: Variance): KtType {
             return type
         }
     }

@@ -12,25 +12,15 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.renderer.render
 
 public interface KtContextReceiverLabelRenderer {
-    public fun renderLabel(
-        analysisSession: KtAnalysisSession,
-        contextReceiver: KtContextReceiver,
-        contextReceiversRenderer: KtContextReceiversRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtContextReceiversRenderer)
+    public fun renderLabel(contextReceiver: KtContextReceiver, printer: PrettyPrinter)
 
     public object WITH_LABEL : KtContextReceiverLabelRenderer {
-        override fun renderLabel(
-            analysisSession: KtAnalysisSession,
-            contextReceiver: KtContextReceiver,
-            contextReceiversRenderer: KtContextReceiversRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                val label = contextReceiver.label ?: return@printer
-                append(label.render())
-                append('@')
-            }
+        context(KtAnalysisSession, KtContextReceiversRenderer)
+        override fun renderLabel(contextReceiver: KtContextReceiver, printer: PrettyPrinter): Unit = printer {
+            val label = contextReceiver.label ?: return@printer
+            append(label.render())
+            append('@')
         }
     }
 }

@@ -12,51 +12,55 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 
 public interface KtRendererAnnotationsFilter {
-    public fun filter(analysisSession: KtAnalysisSession, annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean
+    context(KtAnalysisSession)
+    public fun filter(annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean
 
     public infix fun and(other: KtRendererAnnotationsFilter): KtRendererAnnotationsFilter =
-        KtRendererAnnotationsFilter filter@{ annotation, owner ->
-            val analysisSession = this@filter
-            filter(analysisSession, annotation, owner) && other.filter(analysisSession, annotation, owner)
+        KtRendererAnnotationsFilter { annotation, owner ->
+            filter(annotation, owner) && other.filter(annotation, owner)
         }
 
     public infix fun or(other: KtRendererAnnotationsFilter): KtRendererAnnotationsFilter =
-        KtRendererAnnotationsFilter filter@{ annotation, owner ->
-            val analysisSession = this@filter
-            filter(analysisSession, annotation, owner) || other.filter(analysisSession, annotation, owner)
+        KtRendererAnnotationsFilter { annotation, owner ->
+            filter(annotation, owner) || other.filter(annotation, owner)
         }
 
     public object ALL : KtRendererAnnotationsFilter {
-        override fun filter(analysisSession: KtAnalysisSession, annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
+        context(KtAnalysisSession)
+        override fun filter(annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
             return true
         }
     }
 
     public object NO_NULLABILITY : KtRendererAnnotationsFilter {
-        override fun filter(analysisSession: KtAnalysisSession, annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
+        context(KtAnalysisSession)
+        override fun filter(annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
             return annotation.classId?.asSingleFqName() !in NULLABILITY_ANNOTATIONS
         }
     }
 
     public object NO_PARAMETER_NAME : KtRendererAnnotationsFilter {
-        override fun filter(analysisSession: KtAnalysisSession, annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
+        context(KtAnalysisSession)
+        override fun filter(annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
             return annotation.classId?.asSingleFqName() != StandardNames.FqNames.parameterName
         }
     }
 
 
     public object NONE : KtRendererAnnotationsFilter {
-        override fun filter(analysisSession: KtAnalysisSession, annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
+        context(KtAnalysisSession)
+        override fun filter(annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
             return false
         }
     }
 
     public companion object {
         public operator fun invoke(
-            predicate: KtAnalysisSession.(annotation: KtAnnotationApplication, owner: KtAnnotated) -> Boolean
+            predicate: context(KtAnalysisSession) (annotation: KtAnnotationApplication, owner: KtAnnotated) -> Boolean
         ): KtRendererAnnotationsFilter = object : KtRendererAnnotationsFilter {
-            override fun filter(analysisSession: KtAnalysisSession, annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
-                return predicate(analysisSession, annotation, owner)
+            context(KtAnalysisSession)
+            override fun filter(annotation: KtAnnotationApplication, owner: KtAnnotated): Boolean {
+                return predicate(this@KtAnalysisSession, annotation, owner)
             }
         }
     }

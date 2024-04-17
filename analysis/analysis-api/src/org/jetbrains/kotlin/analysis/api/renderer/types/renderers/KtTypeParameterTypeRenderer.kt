@@ -13,32 +13,22 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 
 public interface KtTypeParameterTypeRenderer {
-    public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtTypeParameterType,
-        typeRenderer: KtTypeRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtTypeRenderer)
+    public fun renderType(type: KtTypeParameterType, printer: PrettyPrinter)
 
     public object AS_SOURCE : KtTypeParameterTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtTypeParameterType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                " ".separated(
-                    { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
-                    {
-                        typeRenderer.typeNameRenderer.renderName(analysisSession, type.name, type, typeRenderer, printer)
-                        if (type.nullability == KtTypeNullability.NULLABLE) {
-                            printer.append('?')
-                        }
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtTypeParameterType, printer: PrettyPrinter): Unit = printer {
+            " ".separated(
+                { annotationsRenderer.renderAnnotations(type, printer) },
+                {
+                    typeNameRenderer.renderName(type.name, type, printer)
+                    if (type.nullability == KtTypeNullability.NULLABLE) {
+                        printer.append('?')
                     }
-                )
+                }
+            )
 
-            }
         }
     }
 }

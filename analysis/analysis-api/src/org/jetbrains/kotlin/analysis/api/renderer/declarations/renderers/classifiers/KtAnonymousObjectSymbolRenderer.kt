@@ -13,28 +13,20 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public interface KtAnonymousObjectSymbolRenderer {
-    public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtAnonymousObjectSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderSymbol(symbol: KtAnonymousObjectSymbol, printer: PrettyPrinter)
 
     public object AS_SOURCE : KtAnonymousObjectSymbolRenderer {
-        override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtAnonymousObjectSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ): Unit = printer {
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSymbol(symbol: KtAnonymousObjectSymbol, printer: PrettyPrinter): Unit = printer {
             " ".separated(
                 {
                     " : ".separated(
-                        { renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer, KtTokens.OBJECT_KEYWORD) },
-                        { declarationRenderer.superTypeListRenderer.renderSuperTypes(analysisSession, symbol, declarationRenderer, printer) }
+                        { renderAnnotationsModifiersAndContextReceivers(symbol, printer, KtTokens.OBJECT_KEYWORD) },
+                        { superTypeListRenderer.renderSuperTypes(symbol, printer) }
                     )
                 },
-                { declarationRenderer.classifierBodyRenderer.renderBody(analysisSession, symbol, declarationRenderer, printer) },
+                { classifierBodyRenderer.renderBody(symbol, printer) },
             )
         }
     }

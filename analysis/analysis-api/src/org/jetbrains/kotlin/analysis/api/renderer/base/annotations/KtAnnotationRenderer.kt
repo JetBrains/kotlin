@@ -20,8 +20,9 @@ public class KtAnnotationRenderer internal constructor(
     public val annotationUseSiteTargetRenderer: KtAnnotationUseSiteTargetRenderer,
     public val annotationArgumentsRenderer: KtAnnotationArgumentsRenderer,
 ) {
-    public fun renderAnnotations(analysisSession: KtAnalysisSession, owner: KtAnnotated, printer: PrettyPrinter) {
-        annotationListRenderer.renderAnnotations(analysisSession, owner, this, printer)
+    context(KtAnalysisSession)
+    public fun renderAnnotations(owner: KtAnnotated, printer: PrettyPrinter) {
+        annotationListRenderer.renderAnnotations(owner, printer)
     }
 
     public inline fun with(action: Builder.() -> Unit): KtAnnotationRenderer {

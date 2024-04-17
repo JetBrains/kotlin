@@ -12,33 +12,21 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
 public interface KtCallableReceiverRenderer {
-    public fun renderReceiver(
-        analysisSession: KtAnalysisSession,
-        symbol: KtReceiverParameterSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderReceiver(symbol: KtReceiverParameterSymbol, printer: PrettyPrinter)
 
     public object AS_TYPE_WITH_IN_APPROXIMATION : KtCallableReceiverRenderer {
-        override fun renderReceiver(
-            analysisSession: KtAnalysisSession,
-            symbol: KtReceiverParameterSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                " ".separated(
-                    {
-                        declarationRenderer.annotationRenderer.renderAnnotations(analysisSession, symbol, printer)
-                    },
-                    {
-                        val receiverType = declarationRenderer.declarationTypeApproximator
-                            .approximateType(analysisSession, symbol.type, Variance.IN_VARIANCE)
-
-                        declarationRenderer.typeRenderer.renderType(analysisSession, receiverType, printer)
-                    },
-                )
-            }
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderReceiver(symbol: KtReceiverParameterSymbol, printer: PrettyPrinter): Unit = printer {
+            " ".separated(
+                {
+                    annotationRenderer.renderAnnotations(symbol, printer)
+                },
+                {
+                    val receiverType = declarationTypeApproximator.approximateType(symbol.type, Variance.IN_VARIANCE)
+                    typeRenderer.renderType(receiverType, printer)
+                },
+            )
         }
     }
 }

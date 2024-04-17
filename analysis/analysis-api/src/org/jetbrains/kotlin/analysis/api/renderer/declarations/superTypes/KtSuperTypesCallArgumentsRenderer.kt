@@ -13,39 +13,22 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtSuperTypesCallArgumentsRenderer {
-    public fun renderSuperTypeArguments(
-        analysisSession: KtAnalysisSession,
-        type: KtType,
-        symbol: KtClassOrObjectSymbol,
-        declarationRenderer: KtDeclarationRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtDeclarationRenderer)
+    public fun renderSuperTypeArguments(type: KtType, symbol: KtClassOrObjectSymbol, printer: PrettyPrinter)
 
     public object NO_ARGS : KtSuperTypesCallArgumentsRenderer {
-        override fun renderSuperTypeArguments(
-            analysisSession: KtAnalysisSession,
-            type: KtType,
-            symbol: KtClassOrObjectSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSuperTypeArguments(type: KtType, symbol: KtClassOrObjectSymbol, printer: PrettyPrinter) {
         }
     }
 
     public object EMPTY_PARENS : KtSuperTypesCallArgumentsRenderer {
-        override fun renderSuperTypeArguments(
-            analysisSession: KtAnalysisSession,
-            type: KtType,
-            symbol: KtClassOrObjectSymbol,
-            declarationRenderer: KtDeclarationRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                if ((type as? KtClassType)?.expandedClassSymbol?.classKind?.isClass != true) {
-                    return
-                }
-                printer.append("()")
+        context(KtAnalysisSession, KtDeclarationRenderer)
+        override fun renderSuperTypeArguments(type: KtType, symbol: KtClassOrObjectSymbol, printer: PrettyPrinter) {
+            if ((type as? KtClassType)?.expandedClassSymbol?.classKind?.isClass != true) {
+                return
             }
+            printer.append("()")
         }
     }
 

@@ -10,15 +10,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 public interface KtParameterDefaultValueRenderer {
-    public fun renderDefaultValue(analysisSession: KtAnalysisSession, symbol: KtValueParameterSymbol, printer: PrettyPrinter)
+    context(KtAnalysisSession)
+    public fun renderDefaultValue(symbol: KtValueParameterSymbol, printer: PrettyPrinter)
 
     public object NO_DEFAULT_VALUE : KtParameterDefaultValueRenderer {
-        override fun renderDefaultValue(analysisSession: KtAnalysisSession, symbol: KtValueParameterSymbol, printer: PrettyPrinter) {
+        context(KtAnalysisSession)
+        override fun renderDefaultValue(symbol: KtValueParameterSymbol, printer: PrettyPrinter) {
         }
     }
 
     public object THREE_DOTS : KtParameterDefaultValueRenderer {
-        override fun renderDefaultValue(analysisSession: KtAnalysisSession, symbol: KtValueParameterSymbol, printer: PrettyPrinter) {
+        context(KtAnalysisSession)
+        override fun renderDefaultValue(symbol: KtValueParameterSymbol, printer: PrettyPrinter) {
             if (symbol.hasDefaultValue) {
                 printer.append("...")
             }

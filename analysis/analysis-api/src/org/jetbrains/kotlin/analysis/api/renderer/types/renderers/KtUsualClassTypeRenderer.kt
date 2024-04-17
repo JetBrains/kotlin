@@ -14,31 +14,21 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 
 public interface KtUsualClassTypeRenderer {
-    public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtUsualClassType,
-        typeRenderer: KtTypeRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtTypeRenderer)
+    public fun renderType(type: KtUsualClassType, printer: PrettyPrinter)
 
     public object AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS : KtUsualClassTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtUsualClassType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                " ".separated(
-                    { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
-                    {
-                        typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, typeRenderer, printer)
-                        if (type.nullability == KtTypeNullability.NULLABLE) {
-                            append('?')
-                        }
-                    },
-                )
-            }
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtUsualClassType, printer: PrettyPrinter): Unit = printer {
+            " ".separated(
+                { annotationsRenderer.renderAnnotations(type, printer) },
+                {
+                    classIdRenderer.renderClassTypeQualifier(type, printer)
+                    if (type.nullability == KtTypeNullability.NULLABLE) {
+                        append('?')
+                    }
+                },
+            )
         }
     }
 
@@ -50,39 +40,25 @@ public interface KtUsualClassTypeRenderer {
      * `MyInt` is rendered as `MyInt /* = Int */`
      */
     public object AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS_VERBOSE : KtUsualClassTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtUsualClassType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                printer {
-                    AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(analysisSession, type, typeRenderer, printer)
-                    if (type.classSymbol is KtTypeAliasSymbol) {
-                        append(" /* = ")
-                        typeRenderer.renderType(analysisSession, type.fullyExpandedType, printer)
-                        append(" */")
-                    }
-                }
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtUsualClassType, printer: PrettyPrinter): Unit = printer {
+            AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(type, printer)
+            if (type.classSymbol is KtTypeAliasSymbol) {
+                append(" /* = ")
+                renderType(type.fullyExpandedType, printer)
+                append(" */")
             }
         }
     }
 
     public object AS_FULLY_EXPANDED_CLASS_TYPE_WITH_TYPE_ARGUMENTS : KtUsualClassTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtUsualClassType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                val fullyExpandedType = type.fullyExpandedType
-                if (fullyExpandedType is KtUsualClassType) {
-                    AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(analysisSession, fullyExpandedType, typeRenderer, printer)
-                } else {
-                    typeRenderer.renderType(analysisSession, fullyExpandedType, printer)
-                }
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtUsualClassType, printer: PrettyPrinter) {
+            val fullyExpandedType = type.fullyExpandedType
+            if (fullyExpandedType is KtUsualClassType) {
+                AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(fullyExpandedType, printer)
+            } else {
+                renderType(fullyExpandedType, printer)
             }
         }
     }

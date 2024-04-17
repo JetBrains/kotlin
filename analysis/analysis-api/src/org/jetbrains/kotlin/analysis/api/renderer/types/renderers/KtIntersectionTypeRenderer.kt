@@ -12,24 +12,14 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 
 public interface KtIntersectionTypeRenderer {
-    public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtIntersectionType,
-        typeRenderer: KtTypeRenderer,
-        printer: PrettyPrinter,
-    )
+    context(KtAnalysisSession, KtTypeRenderer)
+    public fun renderType(type: KtIntersectionType, printer: PrettyPrinter)
 
     public object AS_INTERSECTION : KtIntersectionTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtIntersectionType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            printer {
-                printCollection(type.conjuncts, separator = " & ") {
-                    typeRenderer.renderType(analysisSession, it, printer)
-                }
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtIntersectionType, printer: PrettyPrinter): Unit = printer {
+            printCollection(type.conjuncts, separator = " & ") {
+                renderType(it, printer)
             }
         }
     }
