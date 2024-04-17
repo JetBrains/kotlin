@@ -68,6 +68,7 @@ interface IrLazyDeclarationBase : IrDeclaration {
             is ClassDescriptor -> stubGenerator.generateClassStub(containingDeclaration)
             is FunctionDescriptor -> stubGenerator.generateFunctionStub(containingDeclaration)
             is PropertyDescriptor -> stubGenerator.generateFunctionStub(containingDeclaration.run { getter ?: setter!! })
+            is TypeAliasDescriptor -> stubGenerator.generateTypeAliasStub(containingDeclaration)
             else -> throw AssertionError("Package or class expected: $containingDeclaration; for $currentDescriptor")
         }
     }
