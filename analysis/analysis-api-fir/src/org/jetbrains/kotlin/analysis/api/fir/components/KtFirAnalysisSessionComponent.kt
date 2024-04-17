@@ -69,8 +69,8 @@ internal interface KtFirAnalysisSessionComponent {
     fun createTypeCheckerContext(): TypeCheckerState {
         // TODO use correct session here,
         return analysisSession.firResolveSession.useSiteFirSession.typeContext.newTypeCheckerState(
-            errorTypesEqualToAnything = true,
-            stubTypesEqualToAnything = true
+            errorTypesEqualToAnything = false,
+            stubTypesEqualToAnything = true,
         )
     }
 
