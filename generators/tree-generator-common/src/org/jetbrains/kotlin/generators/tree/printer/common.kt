@@ -105,7 +105,7 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
     builderConfigurator?.configureBuilders()
     val generatedFiles = mutableListOf<GeneratedFile>()
 
-    model.elements.mapTo(generatedFiles) { element ->
+    model.elements.filter { it.doPrint }.mapTo(generatedFiles) { element ->
         printGeneratedType(
             generationPath,
             treeGeneratorReadme,

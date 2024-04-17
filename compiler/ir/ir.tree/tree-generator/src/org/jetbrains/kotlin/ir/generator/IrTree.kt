@@ -111,6 +111,9 @@ object IrTree : AbstractTreeBuilder() {
         +factory
     }
     val declarationBase: Element by element(Declaration) {
+        // This class is defined manually, but the entry here needs to be kept actual as well,
+        // to correctly generate related code.
+        doPrint = false
         typeKind = TypeKind.Class
         transformByChildren = true
         transformerReturnType = statement

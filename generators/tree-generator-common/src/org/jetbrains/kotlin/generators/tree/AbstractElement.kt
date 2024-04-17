@@ -172,6 +172,8 @@ abstract class AbstractElement<Element, Field, Implementation>(
      */
     val additionalImports = mutableListOf<Importable>()
 
+    var doPrint = true
+
     @Suppress("UNCHECKED_CAST")
     final override fun copy(nullable: Boolean) =
         ElementRef(this as Element, args, nullable)
