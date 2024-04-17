@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeSemiFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -189,8 +189,7 @@ class FirPCLAInferenceSession(
             }
         } ?: return null
         val variable = variableWithConstraints.typeVariable
-        // TODO: Consider using different position (KT-64860)
-        c.addEqualityConstraint(variable.defaultType(c), resultType, ConeFixVariableConstraintPosition(variable))
+        c.addEqualityConstraint(variable.defaultType(c), resultType, ConeSemiFixVariableConstraintPosition(variable))
 
         return Pair(coneTypeVariableTypeConstructor, resultType)
     }
