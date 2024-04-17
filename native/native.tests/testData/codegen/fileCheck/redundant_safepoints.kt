@@ -36,7 +36,7 @@ fun h(cond: Boolean): Any {
 // CHECK-LABEL: ret
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define {{(nonnull )?}}ptr @"kfun:#box(){}kotlin.String"
 @Retain
 fun box(): String {
     // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue}}

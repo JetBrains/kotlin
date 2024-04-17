@@ -137,7 +137,7 @@ fun box(): String {
 // CHECK-DEFAULTABI: call zeroext i16 [[UNSIGNED_SHORT_ID_PTR]](i16 noundef zeroext %0)
 
 // CHECK-AAPCS: i16 [[UNSIGNED_SHORT_ID_BRIDGE]](i16 noundef %0)
-// CHECK-AAPCS: [[UNSIGNED_SHORT_ID_PTR:%[0-9]+]] = load ptr @{{.*unsigned_short_id}}
+// CHECK-AAPCS: [[UNSIGNED_SHORT_ID_PTR:%[0-9]+]] = load ptr, ptr @{{.*unsigned_short_id}}
 // CHECK-AAPCS: call i16 [[UNSIGNED_SHORT_ID_PTR]](i16 noundef %0)
 
 // CHECK-WINDOWSX64: i16 [[UNSIGNED_SHORT_ID_BRIDGE]](i16 noundef %0)
