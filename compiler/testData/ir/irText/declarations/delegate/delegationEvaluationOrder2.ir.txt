@@ -129,7 +129,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (x: kotlin.String): kotlin.String declared in foo.Derived'
           CALL 'public abstract fun bar (x: kotlin.String): kotlin.String declared in foo.Base2' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:foo.Base2 visibility:private [final]' type=foo.Base2 origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:foo.Base2 visibility:private [final] declared in foo.Derived' type=foo.Base2 origin=null
               receiver: GET_VAR '<this>: foo.Derived declared in foo.Derived.bar' type=foo.Derived origin=null
             x: GET_VAR 'x: kotlin.String declared in foo.Derived.bar' type=kotlin.String origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:foo.Derived, x:kotlin.String) returnType:kotlin.String
@@ -140,7 +140,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (x: kotlin.String): kotlin.String declared in foo.Derived'
           CALL 'public abstract fun foo (x: kotlin.String): kotlin.String declared in foo.Base' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]' type=foo.Base origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final] declared in foo.Derived' type=foo.Base origin=null
               receiver: GET_VAR '<this>: foo.Derived declared in foo.Derived.foo' type=foo.Derived origin=null
             x: GET_VAR 'x: kotlin.String declared in foo.Derived.foo' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -189,7 +189,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (x: kotlin.String): kotlin.String declared in foo.Derived1'
           CALL 'public abstract fun bar (x: kotlin.String): kotlin.String declared in foo.Base2' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:foo.Base2 visibility:private [final]' type=foo.Base2 origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:foo.Base2 visibility:private [final] declared in foo.Derived1' type=foo.Base2 origin=null
               receiver: GET_VAR '<this>: foo.Derived1 declared in foo.Derived1.bar' type=foo.Derived1 origin=null
             x: GET_VAR 'x: kotlin.String declared in foo.Derived1.bar' type=kotlin.String origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:foo.Derived1, x:kotlin.String) returnType:kotlin.String
@@ -200,7 +200,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (x: kotlin.String): kotlin.String declared in foo.Derived1'
           CALL 'public abstract fun foo (x: kotlin.String): kotlin.String declared in foo.Base' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]' type=foo.Base origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final] declared in foo.Derived1' type=foo.Base origin=null
               receiver: GET_VAR '<this>: foo.Derived1 declared in foo.Derived1.foo' type=foo.Derived1 origin=null
             x: GET_VAR 'x: kotlin.String declared in foo.Derived1.foo' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -249,7 +249,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (x: kotlin.String): kotlin.String declared in foo.Derived2'
           CALL 'public abstract fun bar (x: kotlin.String): kotlin.String declared in foo.Base2' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:foo.Base2 visibility:private [final]' type=foo.Base2 origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:foo.Base2 visibility:private [final] declared in foo.Derived2' type=foo.Base2 origin=null
               receiver: GET_VAR '<this>: foo.Derived2 declared in foo.Derived2.bar' type=foo.Derived2 origin=null
             x: GET_VAR 'x: kotlin.String declared in foo.Derived2.bar' type=kotlin.String origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:foo.Derived2, x:kotlin.String) returnType:kotlin.String
@@ -260,7 +260,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (x: kotlin.String): kotlin.String declared in foo.Derived2'
           CALL 'public abstract fun foo (x: kotlin.String): kotlin.String declared in foo.Base' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]' type=foo.Base origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final] declared in foo.Derived2' type=foo.Base origin=null
               receiver: GET_VAR '<this>: foo.Derived2 declared in foo.Derived2.foo' type=foo.Derived2 origin=null
             x: GET_VAR 'x: kotlin.String declared in foo.Derived2.foo' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

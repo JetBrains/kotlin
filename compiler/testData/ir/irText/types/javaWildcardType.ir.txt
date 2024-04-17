@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun jf1 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>? declared in <root>.C'
           CALL 'public abstract fun jf1 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>? declared in <root>.J' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>? origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]' type=<root>.J origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final] declared in <root>.C' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.jf1' type=<root>.C origin=null
     FUN DELEGATED_MEMBER name:jf2 visibility:public modality:OPEN <> ($this:<root>.C) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>?
       overridden:
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun jf2 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>? declared in <root>.C'
           CALL 'public abstract fun jf2 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>? declared in <root>.J' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>? origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]' type=<root>.J origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final] declared in <root>.C' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.jf2' type=<root>.C origin=null
     FUN DELEGATED_MEMBER name:jg1 visibility:public modality:OPEN <> ($this:<root>.C, c:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>?) returnType:kotlin.Unit
       overridden:
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       VALUE_PARAMETER name:c index:0 type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>?
       BLOCK_BODY
         CALL 'public abstract fun jg1 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]' type=<root>.J origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final] declared in <root>.C' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.jg1' type=<root>.C origin=null
           c: GET_VAR 'c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>? declared in <root>.C.jg1' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>? origin=null
     FUN DELEGATED_MEMBER name:jg2 visibility:public modality:OPEN <> ($this:<root>.C, c:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>?) returnType:kotlin.Unit
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       VALUE_PARAMETER name:c index:0 type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>?
       BLOCK_BODY
         CALL 'public abstract fun jg2 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]' type=<root>.J origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final] declared in <root>.C' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.jg2' type=<root>.C origin=null
           c: GET_VAR 'c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>? declared in <root>.C.jg2' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.CharSequence?>? origin=null
     FUN DELEGATED_MEMBER name:kf1 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.Collection<out kotlin.CharSequence>
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun kf1 (): kotlin.collections.Collection<out kotlin.CharSequence> declared in <root>.C'
           CALL 'public abstract fun kf1 (): kotlin.collections.Collection<out kotlin.CharSequence> declared in <root>.K' type=kotlin.collections.Collection<out kotlin.CharSequence> origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final]' type=<root>.K origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final] declared in <root>.C' type=<root>.K origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.kf1' type=<root>.C origin=null
     FUN DELEGATED_MEMBER name:kf2 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.Collection<kotlin.CharSequence>
       overridden:
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun kf2 (): kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.C'
           CALL 'public abstract fun kf2 (): kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.K' type=kotlin.collections.Collection<kotlin.CharSequence> origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final]' type=<root>.K origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final] declared in <root>.C' type=<root>.K origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.kf2' type=<root>.C origin=null
     FUN DELEGATED_MEMBER name:kg1 visibility:public modality:OPEN <> ($this:<root>.C, c:kotlin.collections.Collection<out kotlin.CharSequence>) returnType:kotlin.Unit
       overridden:
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<out kotlin.CharSequence>
       BLOCK_BODY
         CALL 'public abstract fun kg1 (c: kotlin.collections.Collection<out kotlin.CharSequence>): kotlin.Unit declared in <root>.K' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final]' type=<root>.K origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final] declared in <root>.C' type=<root>.K origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.kg1' type=<root>.C origin=null
           c: GET_VAR 'c: kotlin.collections.Collection<out kotlin.CharSequence> declared in <root>.C.kg1' type=kotlin.collections.Collection<out kotlin.CharSequence> origin=null
     FUN DELEGATED_MEMBER name:kg2 visibility:public modality:OPEN <> ($this:<root>.C, c:kotlin.collections.Collection<kotlin.CharSequence>) returnType:kotlin.Unit
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       VALUE_PARAMETER name:c index:0 type:kotlin.collections.Collection<kotlin.CharSequence>
       BLOCK_BODY
         CALL 'public abstract fun kg2 (c: kotlin.collections.Collection<kotlin.CharSequence>): kotlin.Unit declared in <root>.K' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final]' type=<root>.K origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_1 type:<root>.K visibility:private [final] declared in <root>.C' type=<root>.K origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.kg2' type=<root>.C origin=null
           c: GET_VAR 'c: kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.C.kg2' type=kotlin.collections.Collection<kotlin.CharSequence> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

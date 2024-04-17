@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/genericOuterClass.kt
       VALUE_PARAMETER name:$context_receiver_0 index:0 type:T of <root>.A
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:T of <root>.A visibility:private [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:T of <root>.A visibility:private [final] declared in <root>.A' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A' type=<root>.A<T of <root>.A> origin=null
           value: GET_VAR '$context_receiver_0: T of <root>.A declared in <root>.A.<init>' type=T of <root>.A origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/genericOuterClass.kt
       VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.collections.Collection<P of <root>.B>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.collections.Collection<P of <root>.B> visibility:private [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.collections.Collection<P of <root>.B> visibility:private [final] declared in <root>.B' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.B<P of <root>.B> declared in <root>.B' type=<root>.B<P of <root>.B> origin=null
           value: GET_VAR '$context_receiver_0: kotlin.collections.Collection<P of <root>.B> declared in <root>.B.<init>' type=kotlin.collections.Collection<P of <root>.B> origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'

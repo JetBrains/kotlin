@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/member.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMember> (): kotlin.String declared in <root>.Host'
             CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
-              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final] declared in <root>.Host' type=<root>.Delegate origin=null
                 receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=null
               thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=null
               property: PROPERTY_REFERENCE 'public final testMember: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE

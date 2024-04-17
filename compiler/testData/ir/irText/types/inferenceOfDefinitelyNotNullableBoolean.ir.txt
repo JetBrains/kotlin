@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/test.kt
         RETURN type=kotlin.Nothing from='public final fun <get-x> (): @[EnhancedNullability] kotlin.Boolean declared in <root>'
           CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=@[EnhancedNullability] kotlin.Boolean origin=null
             <T>: @[EnhancedNullability] kotlin.Boolean
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:x$delegate type:kotlin.Lazy<@[EnhancedNullability] kotlin.Boolean> visibility:private [final,static]' type=kotlin.Lazy<@[EnhancedNullability] kotlin.Boolean> origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:x$delegate type:kotlin.Lazy<@[EnhancedNullability] kotlin.Boolean> visibility:private [final,static] declared in <root>' type=kotlin.Lazy<@[EnhancedNullability] kotlin.Boolean> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final x: @[EnhancedNullability] kotlin.Boolean declared in <root>' field=null getter='public final fun <get-x> (): @[EnhancedNullability] kotlin.Boolean declared in <root>' setter=null type=kotlin.reflect.KProperty0<@[EnhancedNullability] kotlin.Boolean> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit

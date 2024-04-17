@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/1.kt
     BLOCK_BODY
       VAR name:k type:kotlin.Nothing [val]
         TYPE_OP type=kotlin.Nothing origin=IMPLICIT_NOTNULL typeOperand=kotlin.Nothing
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java1? visibility:public' type=@[FlexibleNullability] kotlin.Nothing? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java1? visibility:public declared in <root>.Java1' type=@[FlexibleNullability] kotlin.Nothing? origin=null
             receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       VAR name:k2 type:kotlin.Nothing [val]
         TYPE_OP type=kotlin.Nothing origin=IMPLICIT_NOTNULL typeOperand=kotlin.Nothing
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/1.kt
           $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
           t: GET_VAR 'val k: kotlin.Nothing declared in <root>.test' type=kotlin.Nothing origin=null
       VAR name:k4 type:kotlin.Nothing? [val]
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java1? visibility:public' type=kotlin.Nothing? origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java1? visibility:public declared in <root>.Java1' type=kotlin.Nothing? origin=null
           receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k5 type:kotlin.Nothing? [val]
         CALL 'public open fun bar (): @[FlexibleNullability] kotlin.Nothing? declared in <root>.B' type=kotlin.Nothing? origin=null

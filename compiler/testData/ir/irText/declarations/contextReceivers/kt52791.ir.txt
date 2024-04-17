@@ -8,10 +8,10 @@ FILE fqName:<root> fileName:/kt52791.kt
       VALUE_PARAMETER name:$context_receiver_1 index:1 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Unit visibility:private [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Unit visibility:private [final] declared in <root>.MyClass' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass' type=<root>.MyClass origin=null
           value: GET_VAR '$context_receiver_0: kotlin.Unit declared in <root>.MyClass.<init>' type=kotlin.Unit origin=null
-        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField1 type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField1 type:kotlin.Int visibility:private [final] declared in <root>.MyClass' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass' type=<root>.MyClass origin=null
           value: GET_VAR '$context_receiver_1: kotlin.Int declared in <root>.MyClass.<init>' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]'

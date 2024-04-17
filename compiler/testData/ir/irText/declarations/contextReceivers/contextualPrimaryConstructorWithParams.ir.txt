@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
         EXPRESSION_BODY
           CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
             $this: CALL 'public final fun <get-o> (): kotlin.String declared in <root>.O' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]' type=<root>.O origin=null
+              $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final] declared in <root>.OK' type=<root>.O origin=null
                 receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
             other: CALL 'public final fun <get-k> (): kotlin.String declared in <root>.OK' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
       VALUE_PARAMETER name:k index:1 type:kotlin.String
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final] declared in <root>.OK' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
           value: GET_VAR '$context_receiver_0: <root>.O declared in <root>.OK.<init>' type=<root>.O origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OK modality:FINAL visibility:public superTypes:[kotlin.Any]'

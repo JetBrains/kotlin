@@ -127,10 +127,10 @@ FILE fqName:<root> fileName:/1.kt
         CONST String type=kotlin.String value="1"
       VAR name:k1 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.J1' type=@[FlexibleNullability] kotlin.String? origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
       VAR name:k2 type:kotlin.String? [val]
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.J1' type=@[FlexibleNullability] kotlin.String? origin=null
           receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
       VAR name:k3 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
@@ -142,10 +142,10 @@ FILE fqName:<root> fileName:/1.kt
           s: GET_VAR 'val param: kotlin.String? declared in <root>.test' type=kotlin.String? origin=null
       VAR name:k5 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.J2' type=@[FlexibleNullability] kotlin.String? origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.B' type=<root>.B origin=null
       VAR name:k6 type:kotlin.String? [val]
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.J2' type=@[FlexibleNullability] kotlin.String? origin=null
           receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.B' type=<root>.B origin=null
       VAR name:k7 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
@@ -157,10 +157,10 @@ FILE fqName:<root> fileName:/1.kt
           s: GET_VAR 'val param: kotlin.String? declared in <root>.test' type=kotlin.String? origin=null
       VAR name:k9 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.J1' type=@[FlexibleNullability] kotlin.String? origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
       VAR name:k10 type:kotlin.String? [val]
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.J1' type=@[FlexibleNullability] kotlin.String? origin=null
           receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
       VAR name:k11 type:kotlin.String [val]
         CALL 'public open fun getNullableString (): kotlin.String declared in <root>.C' type=kotlin.String origin=null
@@ -171,11 +171,11 @@ FILE fqName:<root> fileName:/1.kt
           s: GET_VAR 'val param: kotlin.String? declared in <root>.test' type=kotlin.String? origin=null
       VAR name:k13 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.J2' type=@[FlexibleNullability] kotlin.String? origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.D' type=<root>.D origin=null
       VAR name:k14 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.J2' type=@[FlexibleNullability] kotlin.String? origin=null
             receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.D' type=<root>.D origin=null
       VAR name:k15 type:kotlin.String [val]
         CALL 'public open fun getNullableString (): kotlin.String declared in <root>.D' type=kotlin.String origin=null

@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Impl'
           CALL 'public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.add' type=<root>.Impl origin=null
             element: GET_VAR 'element: @[FlexibleNullability] kotlin.String? declared in <root>.Impl.add' type=@[FlexibleNullability] kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:addAll visibility:public modality:OPEN <> ($this:<root>.Impl, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Impl'
           CALL 'public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.addAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.addAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     FUN DELEGATED_MEMBER name:clear visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Unit
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       BLOCK_BODY
         CALL 'public abstract fun clear (): kotlin.Unit declared in <root>.Foo.B' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
             receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.clear' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:contains visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean [operator]
       overridden:
@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Impl'
           CALL 'public abstract fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.contains' type=<root>.Impl origin=null
             element: GET_VAR 'element: @[FlexibleNullability] kotlin.String? declared in <root>.Impl.contains' type=@[FlexibleNullability] kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:containsAll visibility:public modality:OPEN <> ($this:<root>.Impl, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Impl'
           CALL 'public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.containsAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.containsAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     FUN DELEGATED_MEMBER name:isEmpty visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Boolean
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.Impl'
           CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.isEmpty' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:iterator visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> [operator]
       overridden:
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl'
           CALL 'public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> declared in <root>.Foo.B' type=kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.iterator' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:remove visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean
       overridden:
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Impl'
           CALL 'public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.remove' type=<root>.Impl origin=null
             element: GET_VAR 'element: @[FlexibleNullability] kotlin.String? declared in <root>.Impl.remove' type=@[FlexibleNullability] kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:removeAll visibility:public modality:OPEN <> ($this:<root>.Impl, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean
@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Impl'
           CALL 'public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.removeAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.removeAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     FUN DELEGATED_MEMBER name:retainAll visibility:public modality:OPEN <> ($this:<root>.Impl, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>) returnType:kotlin.Boolean
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Impl'
           CALL 'public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.retainAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.retainAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.Impl'
             CALL 'public abstract fun <get-size> (): kotlin.Int declared in <root>.Foo.B' type=kotlin.Int origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final] declared in <root>.Impl' type=<root>.Foo.B origin=null
                 receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.<get-size>' type=<root>.Impl origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY

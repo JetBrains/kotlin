@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/Derived.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
           value: CONST Int type=kotlin.Int value=0
     CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
@@ -27,12 +27,12 @@ FILE fqName:<root> fileName:/Derived.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getValue (): kotlin.Int declared in <root>.Derived'
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.getValue' type=<root>.Derived origin=null
     FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Derived, value:kotlin.Int) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
           value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null

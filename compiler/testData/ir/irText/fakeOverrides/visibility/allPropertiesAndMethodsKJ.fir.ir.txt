@@ -533,13 +533,13 @@ FILE fqName:<root> fileName:/test.kt
     VALUE_PARAMETER name:h index:7 type:<root>.H
     VALUE_PARAMETER name:i index:8 type:<root>.I
     BLOCK_BODY
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         value: CONST Int type=kotlin.Int value=1
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         value: CONST Int type=kotlin.Int value=2
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         value: CONST Int type=kotlin.Int value=3
       CALL 'public open fun funJ1 (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
@@ -548,18 +548,18 @@ FILE fqName:<root> fileName:/test.kt
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public/*package*/ open fun funJ4 (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         value: CONST Int type=kotlin.Int value=1
       CALL 'public open fun funJ1 (): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         value: CONST Int type=kotlin.Int value=1
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         value: CONST Int type=kotlin.Int value=2
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         value: CONST Int type=kotlin.Int value=3
       CALL 'public open fun funJ1 (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
@@ -568,7 +568,7 @@ FILE fqName:<root> fileName:/test.kt
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       CALL 'internal open fun funJ4 (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
         value: CONST Int type=kotlin.Int value=1
       CALL 'public open fun funJ1 (): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
@@ -588,13 +588,13 @@ FILE fqName:<root> fileName:/test.kt
         CALL 'public final fun <get-j4> (): kotlin.Int declared in <root>.E' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Int origin=null
           receiver: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Int origin=null
           receiver: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Int origin=null
           receiver: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'internal final fun <get-j1> (): kotlin.Int declared in <root>.G' type=kotlin.Int origin=GET_PROPERTY
@@ -609,20 +609,20 @@ FILE fqName:<root> fileName:/test.kt
         CALL 'internal final fun <get-j4> (): kotlin.Int declared in <root>.G' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Int origin=null
           receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Int origin=null
           receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Int origin=null
           receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Int origin=null
           receiver: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J2' type=kotlin.Int origin=null
           receiver: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J2' type=kotlin.Int origin=null
           receiver: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null

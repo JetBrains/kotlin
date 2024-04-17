@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-extProp> (): kotlin.String declared in <root>.Delegated'
             CALL 'public open fun <get-extProp> (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final] declared in <root>.Delegated' type=<root>.IFoo origin=null
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.<get-extProp>' type=<root>.Delegated origin=null
               $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Delegated.<get-extProp>' type=kotlin.String origin=null
     PROPERTY DELEGATED_MEMBER name:prop visibility:public modality:OPEN [val]
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-prop> (): kotlin.String declared in <root>.Delegated'
             CALL 'public open fun <get-prop> (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final] declared in <root>.Delegated' type=<root>.IFoo origin=null
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.<get-prop>' type=<root>.Delegated origin=null
   CLASS CLASS name:ExplicitOverride modality:FINAL visibility:public superTypes:[<root>.IFoo]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExplicitOverride

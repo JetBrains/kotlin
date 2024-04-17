@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/class.kt
       VALUE_PARAMETER name:arg index:1 type:kotlin.Any
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final] declared in <root>.Inner' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Inner declared in <root>.Inner' type=<root>.Inner origin=null
           value: GET_VAR '$context_receiver_0: <root>.Outer declared in <root>.Inner.<init>' type=<root>.Outer origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public superTypes:[kotlin.Any]'
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/class.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Int declared in <root>.Inner'
           CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Outer' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final]' type=<root>.Outer origin=null
+            $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final] declared in <root>.Inner' type=<root>.Outer origin=null
               receiver: GET_VAR '<this>: <root>.Inner declared in <root>.Inner.bar' type=<root>.Inner origin=null
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer

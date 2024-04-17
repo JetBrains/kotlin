@@ -10,7 +10,7 @@ FILE fqName:k fileName:/box.kt
         RETURN type=kotlin.Nothing from='public final fun <get-p1> (): @[FlexibleNullability] kotlin.String? declared in k'
           CALL 'public final fun getValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V of kotlin.getValue declared in kotlin' type=@[FlexibleNullability] kotlin.String? origin=null
             <V>: @[FlexibleNullability] kotlin.String?
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p1$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p1$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static] declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final p1: @[FlexibleNullability] kotlin.String? declared in k' field=null getter='public final fun <get-p1> (): @[FlexibleNullability] kotlin.String? declared in k' setter='public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-p1> visibility:public modality:FINAL <> (<set-?>:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit
@@ -20,7 +20,7 @@ FILE fqName:k fileName:/box.kt
         RETURN type=kotlin.Nothing from='public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k'
           CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.setValue): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
             <V>: @[FlexibleNullability] kotlin.String?
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p1$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p1$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static] declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final p1: @[FlexibleNullability] kotlin.String? declared in k' field=null getter='public final fun <get-p1> (): @[FlexibleNullability] kotlin.String? declared in k' setter='public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR '<set-?>: @[FlexibleNullability] kotlin.String? declared in k.<set-p1>' type=@[FlexibleNullability] kotlin.String? origin=null
@@ -35,7 +35,7 @@ FILE fqName:k fileName:/box.kt
         RETURN type=kotlin.Nothing from='public final fun <get-p2> (): @[FlexibleNullability] kotlin.String? declared in k'
           CALL 'public final fun getValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V of kotlin.getValue declared in kotlin' type=@[FlexibleNullability] kotlin.String? origin=null
             <V>: @[FlexibleNullability] kotlin.String?
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static] declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final p2: @[FlexibleNullability] kotlin.String? declared in k' field=null getter='public final fun <get-p2> (): @[FlexibleNullability] kotlin.String? declared in k' setter='public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-p2> visibility:public modality:FINAL <> (<set-?>:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit
@@ -45,7 +45,7 @@ FILE fqName:k fileName:/box.kt
         RETURN type=kotlin.Nothing from='public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k'
           CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.setValue): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
             <V>: @[FlexibleNullability] kotlin.String?
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static] declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final p2: @[FlexibleNullability] kotlin.String? declared in k' field=null getter='public final fun <get-p2> (): @[FlexibleNullability] kotlin.String? declared in k' setter='public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR '<set-?>: @[FlexibleNullability] kotlin.String? declared in k.<set-p2>' type=@[FlexibleNullability] kotlin.String? origin=null

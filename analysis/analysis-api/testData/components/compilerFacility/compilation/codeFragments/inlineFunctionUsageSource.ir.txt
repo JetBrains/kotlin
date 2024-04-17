@@ -4,7 +4,7 @@ MODULE_FRAGMENT
       VALUE_PARAMETER name:block index:0 type:kotlin.Function1<kotlin.Int, kotlin.Int>
       BLOCK_BODY
         CALL 'public open fun println (p0: kotlin.Int): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
+          $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static] declared in java.lang.System' type=@[FlexibleNullability] java.io.PrintStream? origin=null
           p0: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Int origin=INVOKE
             $this: GET_VAR 'block: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.call' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=VARIABLE_AS_FUNCTION
             p1: CONST Int type=kotlin.Int value=5

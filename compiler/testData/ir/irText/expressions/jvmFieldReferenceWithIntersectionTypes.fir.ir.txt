@@ -136,12 +136,12 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'val d2: <root>.Derived2 declared in <root>.test' type=<root>.Derived2 origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.JFieldOwner' type=kotlin.Unit origin=EQ
         receiver: TYPE_OP type=<root>.JFieldOwner origin=IMPLICIT_CAST typeOperand=<root>.JFieldOwner
           GET_VAR 'val k: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
         value: CONST Int type=kotlin.Int value=42
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.JFieldOwner' type=kotlin.Int origin=null
           receiver: TYPE_OP type=<root>.JFieldOwner origin=IMPLICIT_CAST typeOperand=<root>.JFieldOwner
             GET_VAR 'val k: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
       VAR name:md1 type:<root>.DerivedThroughMid1 [val]
@@ -156,11 +156,11 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'val md2: <root>.DerivedThroughMid2 declared in <root>.test' type=<root>.DerivedThroughMid2 origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.JFieldOwner' type=kotlin.Unit origin=EQ
         receiver: TYPE_OP type=<root>.Mid origin=IMPLICIT_CAST typeOperand=<root>.Mid
           GET_VAR 'val mk: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
         value: CONST Int type=kotlin.Int value=44
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.JFieldOwner' type=kotlin.Int origin=null
           receiver: TYPE_OP type=<root>.Mid origin=IMPLICIT_CAST typeOperand=<root>.Mid
             GET_VAR 'val mk: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null

@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/Box.kt
               then: BLOCK type=kotlin.Unit origin=null
                 RETURN type=kotlin.Nothing from='public final fun <get-str> (): kotlin.String declared in <root>.Box'
                   TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:str type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:str type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Foo.Buz' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.Foo.Buz origin=null
                       receiver: TYPE_OP type=<root>.Foo.Buz origin=IMPLICIT_CAST typeOperand=<root>.Foo.Buz
                         GET_VAR 'var foo: <root>.Foo declared in <root>.Box.<get-str>' type=<root>.Foo origin=null
           RETURN type=kotlin.Nothing from='public final fun <get-str> (): kotlin.String declared in <root>.Box'

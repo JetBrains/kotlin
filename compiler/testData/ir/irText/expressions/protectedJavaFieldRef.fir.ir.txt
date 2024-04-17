@@ -3,13 +3,13 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in p.Base' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
           value: CONST String type=kotlin.String value=""
     PROPERTY name:ref visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:ref type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final]
         EXPRESSION_BODY
-          PROPERTY_REFERENCE 'protected/*protected and package*/ open j: @[FlexibleNullability] kotlin.String? declared in p.Base' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' getter=null setter=null type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+          PROPERTY_REFERENCE 'protected/*protected and package*/ open j: @[FlexibleNullability] kotlin.String? declared in p.Base' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in p.Base' getter=null setter=null type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ref> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?>
         correspondingProperty: PROPERTY name:ref visibility:public modality:FINAL [val]
@@ -38,6 +38,6 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
     FUN name:set visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in p.Base' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.set' type=<root>.Derived origin=null
           value: CONST String type=kotlin.String value="OK"

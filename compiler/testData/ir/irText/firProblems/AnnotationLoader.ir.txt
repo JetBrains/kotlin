@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                           BLOCK_BODY
                             RETURN type=kotlin.Nothing from='public open fun visitAnnotation (): <root>.Visitor? declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>'
                               CALL 'public open fun visitAnnotation (): <root>.Visitor? declared in <root>.Visitor' type=<root>.Visitor? origin=null
-                                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Visitor visibility:private [final]' type=<root>.Visitor origin=null
+                                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Visitor visibility:private [final] declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>' type=<root>.Visitor origin=null
                                   receiver: GET_VAR '<this>: <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>.visitAnnotation' type=<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> origin=null
                         FUN DELEGATED_MEMBER name:visitArray visibility:public modality:OPEN <> ($this:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>) returnType:<root>.Visitor?
                           overridden:
@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                           BLOCK_BODY
                             RETURN type=kotlin.Nothing from='public open fun visitArray (): <root>.Visitor? declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>'
                               CALL 'public open fun visitArray (): <root>.Visitor? declared in <root>.Visitor' type=<root>.Visitor? origin=null
-                                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Visitor visibility:private [final]' type=<root>.Visitor origin=null
+                                $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Visitor visibility:private [final] declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>' type=<root>.Visitor origin=null
                                   receiver: GET_VAR '<this>: <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>.visitArray' type=<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> origin=null
                         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                           overridden:

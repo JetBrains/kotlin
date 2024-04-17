@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
               then: BLOCK type=kotlin.Int origin=null
                 CALL 'public open fun println (p0: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
                   $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
+                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static] declared in java.lang.System' type=@[FlexibleNullability] java.io.PrintStream? superQualifierSymbol=java.lang.System origin=null
                   p0: CONST String type=kotlin.String value="TestClass/test"
                 CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:<root>.TestClass) returnType:kotlin.Int
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'public open fun println (p0: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static] declared in java.lang.System' type=@[FlexibleNullability] java.io.PrintStream? superQualifierSymbol=java.lang.System origin=null
           p0: CONST String type=kotlin.String value="TestClass/init"
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestClass [primary]
       BLOCK_BODY
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
     BLOCK_BODY
       CALL 'public open fun println (p0: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
         $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static] declared in java.lang.System' type=@[FlexibleNullability] java.io.PrintStream? superQualifierSymbol=java.lang.System origin=null
         p0: CONST String type=kotlin.String value="testFun"
   PROPERTY name:testProp visibility:public modality:FINAL [var]
     FUN name:<get-testProp> visibility:public modality:FINAL <> () returnType:kotlin.Any
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'public open fun println (p0: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static] declared in java.lang.System' type=@[FlexibleNullability] java.io.PrintStream? superQualifierSymbol=java.lang.System origin=null
           p0: CONST String type=kotlin.String value="testProp/get"
         RETURN type=kotlin.Nothing from='public final fun <get-testProp> (): kotlin.Any declared in <root>'
           CONST Int type=kotlin.Int value=42
@@ -65,5 +65,5 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'public open fun println (p0: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static] declared in java.lang.System' type=@[FlexibleNullability] java.io.PrintStream? superQualifierSymbol=java.lang.System origin=null
           p0: CONST String type=kotlin.String value="testProp/set"

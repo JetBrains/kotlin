@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.MC'
           CALL 'public open fun foo (): kotlin.String declared in <root>.MyArrayList' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.MyArrayList visibility:private [final]' type=<root>.MyArrayList origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.MyArrayList visibility:private [final] declared in <root>.MC' type=<root>.MyArrayList origin=null
               receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.foo' type=<root>.MC origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_noGenerics
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.String declared in <root>.MC'
             CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.MyArrayList' type=kotlin.String origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.MyArrayList visibility:private [final]' type=<root>.MyArrayList origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.MyArrayList visibility:private [final] declared in <root>.MC' type=<root>.MyArrayList origin=null
                 receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.<get-bar>' type=<root>.MC origin=null
   CLASS CLASS name:MyAbstractCollection modality:ABSTRACT visibility:public superTypes:[<root>.MyCollection]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyAbstractCollection

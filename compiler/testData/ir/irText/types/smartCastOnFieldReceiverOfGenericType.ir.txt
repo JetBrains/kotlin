@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/smartCastOnFieldReceiverOfGenericType.kt
           GET_VAR 'a: kotlin.Any declared in <root>.testGetField' type=kotlin.Any origin=null
       RETURN type=kotlin.Nothing from='public final fun testGetField (a: kotlin.Any): kotlin.String declared in <root>'
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:@[FlexibleNullability] T of <root>.JCell? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:@[FlexibleNullability] T of <root>.JCell? visibility:public declared in <root>.JCell' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.JCell origin=null
             receiver: TYPE_OP type=<root>.JCell<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.JCell<kotlin.String>
               GET_VAR 'a: kotlin.Any declared in <root>.testGetField' type=kotlin.Any origin=null
   FUN name:testSetField visibility:public modality:FINAL <> (a:kotlin.Any, b:kotlin.Any) returnType:kotlin.Unit
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/smartCastOnFieldReceiverOfGenericType.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
           GET_VAR 'b: kotlin.Any declared in <root>.testSetField' type=kotlin.Any origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:@[FlexibleNullability] T of <root>.JCell? visibility:public' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:@[FlexibleNullability] T of <root>.JCell? visibility:public declared in <root>.JCell' type=kotlin.Unit superQualifierSymbol=<root>.JCell origin=EQ
         receiver: TYPE_OP type=<root>.JCell<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.JCell<kotlin.String>
           GET_VAR 'a: kotlin.Any declared in <root>.testSetField' type=kotlin.Any origin=null
         value: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String

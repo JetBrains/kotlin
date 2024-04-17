@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/FakeOverrideInAnonymousWithDelegation.kt
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='public open fun <get-foo> (): kotlin.String declared in <root>.Wrapper.bar.<no name provided>'
                       CALL 'public open fun <get-foo> (): kotlin.String declared in <root>.Bar' type=kotlin.String origin=null
-                        $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Wrapper.dummy.<no name provided> visibility:private [final]' type=<root>.Wrapper.dummy.<no name provided> origin=null
+                        $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Wrapper.dummy.<no name provided> visibility:private [final] declared in <root>.Wrapper.bar.<no name provided>' type=<root>.Wrapper.dummy.<no name provided> origin=null
                           receiver: GET_VAR '<this>: <root>.Wrapper.bar.<no name provided> declared in <root>.Wrapper.bar.<no name provided>.<get-foo>' type=<root>.Wrapper.bar.<no name provided> origin=null
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Wrapper.bar.<no name provided>' type=<root>.Wrapper.bar.<no name provided> origin=OBJECT_LITERAL
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:private modality:FINAL <> ($this:<root>.Wrapper) returnType:<root>.Wrapper.bar.<no name provided>

@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/substitutionOverrideWithDelegate.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.DelegatedB
       BLOCK_BODY
         CALL 'public open fun invoke (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.C<kotlin.String> visibility:private [final]' type=<root>.C<kotlin.String> origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.C<kotlin.String> visibility:private [final] declared in <root>.DelegatedB' type=<root>.C<kotlin.String> origin=null
             receiver: GET_VAR '<this>: <root>.DelegatedB declared in <root>.DelegatedB.invoke' type=<root>.DelegatedB origin=null
     FUN DELEGATED_MEMBER name:invoke visibility:public modality:OPEN <> ($this:<root>.DelegatedB, value:kotlin.String) returnType:kotlin.Unit [operator]
       overridden:
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/substitutionOverrideWithDelegate.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
         CALL 'public open fun invoke (value: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.C<kotlin.String> visibility:private [final]' type=<root>.C<kotlin.String> origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.C<kotlin.String> visibility:private [final] declared in <root>.DelegatedB' type=<root>.C<kotlin.String> origin=null
             receiver: GET_VAR '<this>: <root>.DelegatedB declared in <root>.DelegatedB.invoke' type=<root>.DelegatedB origin=null
           value: GET_VAR 'value: kotlin.String declared in <root>.DelegatedB.invoke' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

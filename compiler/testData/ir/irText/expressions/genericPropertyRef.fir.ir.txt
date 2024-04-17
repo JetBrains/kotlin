@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalText> <T> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static] declared in <root>' type=<root>.DVal origin=null
             t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.<get-additionalText>' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
             p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int declared in <root>' field=null getter='public final fun <get-additionalText> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: T of <root>.<get-additionalText>
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalValue> <T> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]' type=<root>.DVal origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static] declared in <root>' type=<root>.DVal origin=null
             t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.<get-additionalValue>' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
             p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int declared in <root>' field=null getter='public final fun <get-additionalValue> <T> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalValue>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               <1>: T of <root>.<get-additionalValue>

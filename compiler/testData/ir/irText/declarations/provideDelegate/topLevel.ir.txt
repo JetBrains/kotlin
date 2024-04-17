@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/topLevel.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testTopLevel> (): kotlin.String declared in <root>'
           CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testTopLevel$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testTopLevel$delegate type:<root>.Delegate visibility:private [final,static] declared in <root>' type=<root>.Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'public final testTopLevel: kotlin.String declared in <root>' field=null getter='public final fun <get-testTopLevel> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]

@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-plusK> (): kotlin.String declared in <root>.Host'
             CALL 'public final fun getValue (receiver: kotlin.String, p: kotlin.Any): kotlin.String declared in <root>.Host.StringDelegate' type=kotlin.String origin=null
-              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final]' type=<root>.Host.StringDelegate origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final] declared in <root>.Host' type=<root>.Host.StringDelegate origin=null
                 receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-plusK>' type=<root>.Host origin=null
               receiver: GET_VAR '<this>: kotlin.String declared in <root>.Host.<get-plusK>' type=kotlin.String origin=null
               p: PROPERTY_REFERENCE 'public final plusK: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE

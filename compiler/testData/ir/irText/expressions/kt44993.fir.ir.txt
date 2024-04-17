@@ -62,5 +62,5 @@ FILE fqName:<root> fileName:/kt44993.kt
                 then: CONST Null type=kotlin.Nothing? value=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
-                then: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:element type:@[FlexibleNullability] kotlin.String? visibility:public [final] declared in <root>.JavaBox' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.JavaBox origin=null
+                then: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:element type:@[FlexibleNullability] kotlin.String? visibility:public [final] declared in <root>.JavaBox' type=@[FlexibleNullability] kotlin.String? origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.JavaBox? declared in <root>.f' type=<root>.JavaBox? origin=null

@@ -345,72 +345,72 @@ FILE fqName:<root> fileName:/test.kt
     VALUE_PARAMETER name:n index:13 type:<root>.N
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java5' type=kotlin.Int origin=null
           receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java6' type=kotlin.Int origin=null
           receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java7' type=kotlin.Int origin=null
           receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java8' type=kotlin.Int origin=null
           receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
         $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java9' type=kotlin.Int origin=null
           receiver: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.E' type=kotlin.Unit origin=null
         $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java10' type=kotlin.Int origin=null
           receiver: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=null
         $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/ declared in <root>.Java11' type=kotlin.Int origin=null
           receiver: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
       CALL 'public/*package*/ open fun foo (): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=null
         $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java5' type=kotlin.Int origin=null
           receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java6' type=kotlin.Int origin=null
           receiver: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
         $this: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java7' type=kotlin.Int origin=null
           receiver: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
         $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java8' type=kotlin.Int origin=null
           receiver: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.K' type=kotlin.Unit origin=null
         $this: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java9' type=kotlin.Int origin=null
           receiver: GET_VAR 'l: <root>.L declared in <root>.test' type=<root>.L origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.L' type=kotlin.Unit origin=null
         $this: GET_VAR 'l: <root>.L declared in <root>.test' type=<root>.L origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java10' type=kotlin.Int origin=null
           receiver: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
         $this: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/ declared in <root>.Java11' type=kotlin.Int origin=null
           receiver: GET_VAR 'n: <root>.N declared in <root>.test' type=<root>.N origin=null
       CALL 'internal open fun foo (): kotlin.Unit declared in <root>.N' type=kotlin.Unit origin=null
         $this: GET_VAR 'n: <root>.N declared in <root>.test' type=<root>.N origin=null

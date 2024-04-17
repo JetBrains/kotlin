@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/Derived.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
               GET_VAR 'v: kotlin.Any declared in <root>.Derived.setValue' type=kotlin.Any origin=null
             then: BLOCK type=kotlin.Unit origin=null
-              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:@[FlexibleNullability] kotlin.String? visibility:public' type=kotlin.Unit origin=EQ
+              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Base' type=kotlin.Unit origin=EQ
                 receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
                 value: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                   GET_VAR 'v: kotlin.Any declared in <root>.Derived.setValue' type=kotlin.Any origin=null

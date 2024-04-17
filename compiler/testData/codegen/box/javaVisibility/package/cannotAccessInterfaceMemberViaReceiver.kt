@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
 // DUMP_IR
 // FILE: javapackage/PackagePrivateGrandparentInterface.java

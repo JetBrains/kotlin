@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testO> (): kotlin.String declared in <root>'
           CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static] declared in <root>' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'public final testO: kotlin.String declared in <root>' field=null getter='public final fun <get-testO> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testK visibility:public modality:FINAL [delegated,val]
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testK> (): kotlin.String declared in <root>'
           CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
-            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static] declared in <root>' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'public final testK: kotlin.String declared in <root>' field=null getter='public final fun <get-testK> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testOK visibility:public modality:FINAL [val]
