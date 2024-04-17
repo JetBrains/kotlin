@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.getSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.SubstitutionParser
@@ -22,7 +23,7 @@ abstract class AbstractAnalysisApiSubstitutorsTest : AbstractAnalysisApiBasedTes
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtCallableDeclaration>(mainFile)
         val actual = analyseForTest(declaration) {
             val substitutor = SubstitutionParser.parseSubstitutor(mainFile, declaration)
-            val symbol = declaration.getSymbol() as KtCallableSymbol
+            val symbol = declaration.getSymbolOfType<KtCallableSymbol>()
             val type = symbol.returnType
             val substituted = substitutor.substitute(type)
             val substitutedOrNull = substitutor.substituteOrNull(type)

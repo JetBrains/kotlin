@@ -41,7 +41,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
                 add(buildClassType(StandardClassIds.List) { argument(builtinTypes.LONG) })
             }
 
-            val symbol = callableDeclaration.getSymbol() as KtCallableSymbol
+            val symbol = callableDeclaration.getSymbolOfType<KtCallableSymbol>()
             val typeParameters = buildList {
                 addAll(symbol.typeParameters)
                 (symbol.getContainingSymbol() as? KtClassOrObjectSymbol)?.let { addAll(it.typeParameters) }
