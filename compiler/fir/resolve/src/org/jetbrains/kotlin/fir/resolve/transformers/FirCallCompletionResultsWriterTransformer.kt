@@ -804,7 +804,7 @@ class FirCallCompletionResultsWriterTransformer(
             // From the argument mapping, the expected type of this anonymous function would be:
             when {
                 // a built-in functional type, no-brainer
-                expectedArgumentType.isSomeFunctionType(session) -> expectedArgumentType
+                expectedArgumentType.isSomeFunctionType(session) -> expectedArgumentType.lowerBoundIfFlexible()
                 // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
                 else -> {
                     val samInfo = (data as? ExpectedArgumentType.ArgumentsMap)?.samConversions?.get(anonymousFunction)
