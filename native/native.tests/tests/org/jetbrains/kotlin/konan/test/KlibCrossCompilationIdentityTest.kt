@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
+import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
@@ -60,6 +62,7 @@ abstract class KlibCrossCompilationIdentityTest : AbstractNativeSimpleTest() {
     }
 
     private fun doCrossCompilationIdentityTest(testInfo: TestInfo) {
+        Assumptions.assumeTrue(isCrossDistAvailable())
         val testName = testInfo.testMethod.get().name.toString()
             .let { if (it.startsWith("test")) it.removePrefix("test") else it }
             .decapitalizeAsciiOnly()
