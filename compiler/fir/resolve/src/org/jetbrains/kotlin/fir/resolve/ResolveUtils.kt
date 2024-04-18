@@ -449,13 +449,10 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): Fir
     }
 }
 
-fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
-    qualifiedAccessExpression: FirQualifiedAccessExpression,
-): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
-        ?: return qualifiedAccessExpression
+fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
 
-    return transformExpressionUsingSmartcastInfo(qualifiedAccessExpression, stability, typesFromSmartCast) ?: qualifiedAccessExpression
+    return transformExpressionUsingSmartcastInfo(expression, stability, typesFromSmartCast) ?: expression
 }
 
 fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
@@ -464,7 +461,8 @@ fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
     val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression)
         ?: return whenSubjectExpression
 
-    return transformExpressionUsingSmartcastInfo(whenSubjectExpression, stability, typesFromSmartCast) ?: whenSubjectExpression
+    return transformExpressionUsingSmartcastInfo(whenSubjectExpression, stability, typesFromSmartCast)
+        ?: whenSubjectExpression
 }
 
 fun BodyResolveComponents.transformDesugaredAssignmentValueUsingSmartcastInfo(
@@ -474,7 +472,8 @@ fun BodyResolveComponents.transformDesugaredAssignmentValueUsingSmartcastInfo(
         dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value)
             ?: return expression
 
-    return transformExpressionUsingSmartcastInfo(expression, stability, typesFromSmartCast) ?: expression
+    return transformExpressionUsingSmartcastInfo(expression, stability, typesFromSmartCast)
+        ?: expression
 }
 
 private val ConeKotlinType.isKindOfNothing
