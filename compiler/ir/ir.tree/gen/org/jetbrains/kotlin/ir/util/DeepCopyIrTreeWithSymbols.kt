@@ -294,6 +294,13 @@ open class DeepCopyIrTreeWithSymbols(
             expression = body.expression.transform(),
         )
 
+    override fun visitBlockBody(body: IrBlockBody): IrBlockBody =
+        IrFactoryImpl.createBlockBody(
+            startOffset = body.startOffset,
+            endOffset = body.endOffset,
+            statements = body.statements.memoryOptimizedMap { it.transform() },
+        )
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -401,12 +408,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitBody(body: IrBody): IrBody =
         throw IllegalArgumentException("Unsupported body type: $body")
-
-    override fun visitBlockBody(body: IrBlockBody): IrBlockBody =
-        IrFactoryImpl.createBlockBody(
-            body.startOffset, body.endOffset,
-            body.statements.memoryOptimizedMap { it.transform() }
-        )
 
     override fun visitSyntheticBody(body: IrSyntheticBody): IrSyntheticBody =
         IrSyntheticBodyImpl(body.startOffset, body.endOffset, body.kind)
