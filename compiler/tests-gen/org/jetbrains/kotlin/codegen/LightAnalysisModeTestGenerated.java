@@ -3122,6 +3122,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Issues extends AbstractLightAnalysisModeTest {
+      @TestMetadata("kt64069.kt")
+      public void ignoreKt64069() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt64069.kt");
+      }
+
       @TestMetadata("kt66272.kt")
       public void ignoreKt66272() {
         runTest("compiler/testData/codegen/box/builderInference/issues/kt66272.kt");

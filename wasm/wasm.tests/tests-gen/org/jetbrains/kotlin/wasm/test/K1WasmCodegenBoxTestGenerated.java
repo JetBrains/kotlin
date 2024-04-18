@@ -2953,6 +2953,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("kt64069.kt")
+      public void testKt64069() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt64069.kt");
+      }
+
+      @Test
       @TestMetadata("kt65300a.kt")
       public void testKt65300a() {
         runTest("compiler/testData/codegen/box/builderInference/issues/kt65300a.kt");
