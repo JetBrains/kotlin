@@ -4577,6 +4577,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noReflectionForAdaptedCallableReferencesWithSuspendConversion.kt");
       }
 
+      @TestMetadata("referenceToFakeOverrideWithTypeParameter.kt")
+      public void testReferenceToFakeOverrideWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/referenceToFakeOverrideWithTypeParameter.kt");
+      }
+
       @TestMetadata("referenceToVarargWithDefaults.kt")
       public void testReferenceToVarargWithDefaults() {
         runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/referenceToVarargWithDefaults.kt");
