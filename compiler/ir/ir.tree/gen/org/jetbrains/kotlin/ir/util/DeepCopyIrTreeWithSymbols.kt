@@ -176,6 +176,13 @@ open class DeepCopyIrTreeWithSymbols(
             initializerExpression = declaration.initializerExpression?.transform()
         }
 
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrErrorDeclaration =
+        declaration.factory.createErrorDeclaration(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            descriptor = declaration.descriptor,
+        )
+
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
@@ -823,9 +830,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.memberName,
             expression.receiver.transform()
         ).processAttributes(expression)
-
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration): IrErrorDeclaration =
-        declaration.factory.createErrorDeclaration(declaration.startOffset, declaration.endOffset, declaration.descriptor)
 
     override fun visitErrorExpression(expression: IrErrorExpression): IrErrorExpression =
         IrErrorExpressionImpl(
