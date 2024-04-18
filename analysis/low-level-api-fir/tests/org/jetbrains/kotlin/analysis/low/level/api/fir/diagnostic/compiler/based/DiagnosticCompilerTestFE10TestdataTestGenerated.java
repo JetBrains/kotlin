@@ -36189,6 +36189,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("smartCastOnObject.kt")
+      public void testSmartCastOnObject() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnObject.kt");
+      }
+
+      @Test
       @TestMetadata("smartCastOnWhen.kt")
       public void testSmartCastOnWhen() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnWhen.kt");
