@@ -289,6 +289,11 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.transformDeclarationsTo(this)
         }
 
+    override fun visitExpressionBody(body: IrExpressionBody): IrExpressionBody =
+        IrFactoryImpl.createExpressionBody(
+            expression = body.expression.transform(),
+        )
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -396,9 +401,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitBody(body: IrBody): IrBody =
         throw IllegalArgumentException("Unsupported body type: $body")
-
-    override fun visitExpressionBody(body: IrExpressionBody): IrExpressionBody =
-        IrFactoryImpl.createExpressionBody(body.expression.transform())
 
     override fun visitBlockBody(body: IrBlockBody): IrBlockBody =
         IrFactoryImpl.createBlockBody(
