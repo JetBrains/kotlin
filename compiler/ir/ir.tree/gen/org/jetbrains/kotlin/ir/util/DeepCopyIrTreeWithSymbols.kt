@@ -764,6 +764,33 @@ open class DeepCopyIrTreeWithSymbols(
             expression = spread.expression.transform(),
         )
 
+    override fun visitWhen(expression: IrWhen): IrWhen =
+        IrWhenImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            origin = mapStatementOrigin(expression.origin),
+            branches = expression.branches.memoryOptimizedMap { it.transform() },
+        ).apply {
+            processAttributes(expression)
+        }
+
+    override fun visitBranch(branch: IrBranch): IrBranch =
+        IrBranchImpl(
+            startOffset = branch.startOffset,
+            endOffset = branch.endOffset,
+            condition = branch.condition.transform(),
+            result = branch.result.transform(),
+        )
+
+    override fun visitElseBranch(branch: IrElseBranch): IrElseBranch =
+        IrElseBranchImpl(
+            startOffset = branch.startOffset,
+            endOffset = branch.endOffset,
+            condition = branch.condition.transform(),
+            result = branch.result.transform(),
+        )
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -920,28 +947,6 @@ open class DeepCopyIrTreeWithSymbols(
             putValueArgument(i, original.getValueArgument(i)?.transform())
         }
     }
-
-    override fun visitWhen(expression: IrWhen): IrWhen =
-        IrWhenImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            mapStatementOrigin(expression.origin),
-            expression.branches.memoryOptimizedMap { it.transform() }
-        ).processAttributes(expression)
-
-    override fun visitBranch(branch: IrBranch): IrBranch =
-        IrBranchImpl(
-            branch.startOffset, branch.endOffset,
-            branch.condition.transform(),
-            branch.result.transform()
-        )
-
-    override fun visitElseBranch(branch: IrElseBranch): IrElseBranch =
-        IrElseBranchImpl(
-            branch.startOffset, branch.endOffset,
-            branch.condition.transform(),
-            branch.result.transform()
-        )
 
     private val transformedLoops = HashMap<IrLoop, IrLoop>()
 
