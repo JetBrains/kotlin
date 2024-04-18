@@ -132,17 +132,16 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
         }
     }
 
-    override fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {
-        method {
-            signature {
-                isOverride = true
-                methodName = "hashCode"
-                returnType = PrimitiveType.INT.capitalized
-            }
-            if (thisKind == PrimitiveType.LONG) {
-                "hashCode(this)".setAsExpressionBody()
-            }
+    override fun MethodBuilder.modifyGeneratedHashCode(thisKind: PrimitiveType) {
+        if (thisKind == PrimitiveType.LONG) {
+            "hashCode(this)".setAsExpressionBody()
+        } else {
+            noBody()
         }
+    }
+
+    override fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {
+        generateHashCode(thisKind)
 
         if (thisKind == PrimitiveType.LONG) {
             method {
@@ -155,6 +154,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                     See KT-50202
                 """.trimIndent()
                 annotations += "JsName(\"valueOf\")"
+                expectActual = ExpectActualModifier.Unspecified
                 signature {
                     visibility = MethodVisibility.INTERNAL
                     methodName = "valueOf"

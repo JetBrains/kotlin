@@ -377,6 +377,8 @@ public expect class Byte : Number, Comparable<Byte> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean
+
+    public override fun hashCode(): Int
 }
 
 /** Represents a 16-bit signed integer. */
@@ -744,6 +746,8 @@ public expect class Short : Number, Comparable<Short> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean
+
+    public override fun hashCode(): Int
 }
 
 /** Represents a 32-bit signed integer. */
@@ -1157,6 +1161,8 @@ public expect class Int : Number, Comparable<Int> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean
+
+    public override fun hashCode(): Int
 }
 
 /** Represents a 64-bit signed integer. */
@@ -1573,6 +1579,8 @@ public expect class Long : Number, Comparable<Long> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean
+
+    public override fun hashCode(): Int
 }
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
@@ -1905,6 +1913,8 @@ public expect class Float : Number, Comparable<Float> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean
+
+    public override fun hashCode(): Int
 }
 
 /** Represents a double-precision 64-bit IEEE 754 floating point number. */
@@ -2239,4 +2249,6 @@ public expect class Double : Number, Comparable<Double> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean
+
+    public override fun hashCode(): Int
 }
