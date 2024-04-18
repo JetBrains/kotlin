@@ -23,6 +23,9 @@ fun foo(list: MutableList<Int>, arr: Array<String>) {
     while (true) { break }
 
     @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    for (i in list) {}
+
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     if (true) {}
 
     var x = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>1<!>
