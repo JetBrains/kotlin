@@ -76,37 +76,37 @@ abstract class IrBindablePublicSymbolBase<out Descriptor, Owner>(
     override var privateSignature: IdSignature? = null
 }
 
-class IrClassPublicSymbolImpl(sig: IdSignature, descriptor: ClassDescriptor? = null) :
-    IrBindablePublicSymbolBase<ClassDescriptor, IrClass>(sig, descriptor),
+class IrClassPublicSymbolImpl(descriptor: ClassDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<ClassDescriptor, IrClass>(signature, descriptor),
     IrClassSymbol
 
-class IrEnumEntryPublicSymbolImpl(sig: IdSignature, descriptor: ClassDescriptor? = null) :
-    IrBindablePublicSymbolBase<ClassDescriptor, IrEnumEntry>(sig, descriptor),
+class IrEnumEntryPublicSymbolImpl(descriptor: ClassDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<ClassDescriptor, IrEnumEntry>(signature, descriptor),
     IrEnumEntrySymbol
 
-class IrSimpleFunctionPublicSymbolImpl(sig: IdSignature, descriptor: FunctionDescriptor? = null) :
-    IrBindablePublicSymbolBase<FunctionDescriptor, IrSimpleFunction>(sig, descriptor),
+class IrSimpleFunctionPublicSymbolImpl(descriptor: FunctionDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<FunctionDescriptor, IrSimpleFunction>(signature, descriptor),
     IrSimpleFunctionSymbol
 
-class IrConstructorPublicSymbolImpl(sig: IdSignature, descriptor: ClassConstructorDescriptor? = null) :
-    IrBindablePublicSymbolBase<ClassConstructorDescriptor, IrConstructor>(sig, descriptor),
+class IrConstructorPublicSymbolImpl(descriptor: ClassConstructorDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<ClassConstructorDescriptor, IrConstructor>(signature, descriptor),
     IrConstructorSymbol
 
-class IrPropertyPublicSymbolImpl(sig: IdSignature, descriptor: PropertyDescriptor? = null) :
-    IrBindablePublicSymbolBase<PropertyDescriptor, IrProperty>(sig, descriptor),
+class IrPropertyPublicSymbolImpl(descriptor: PropertyDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<PropertyDescriptor, IrProperty>(signature, descriptor),
     IrPropertySymbol
 
-class IrTypeAliasPublicSymbolImpl(sig: IdSignature, descriptor: TypeAliasDescriptor? = null) :
-    IrBindablePublicSymbolBase<TypeAliasDescriptor, IrTypeAlias>(sig, descriptor),
+class IrTypeAliasPublicSymbolImpl(descriptor: TypeAliasDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<TypeAliasDescriptor, IrTypeAlias>(signature, descriptor),
     IrTypeAliasSymbol
 
-class IrFieldPublicSymbolImpl(sig: IdSignature, descriptor: PropertyDescriptor? = null) :
-    IrBindablePublicSymbolBase<PropertyDescriptor, IrField>(sig, descriptor),
+class IrFieldPublicSymbolImpl(descriptor: PropertyDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<PropertyDescriptor, IrField>(signature, descriptor),
     IrFieldSymbol
 
-class IrTypeParameterPublicSymbolImpl(sig: IdSignature, descriptor: TypeParameterDescriptor? = null) :
-    IrBindablePublicSymbolBase<TypeParameterDescriptor, IrTypeParameter>(sig, descriptor),
+class IrTypeParameterPublicSymbolImpl(descriptor: TypeParameterDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<TypeParameterDescriptor, IrTypeParameter>(signature, descriptor),
     IrTypeParameterSymbol
 
-class IrScriptPublicSymbolImpl(sig: IdSignature, descriptor: ScriptDescriptor? = null) :
-    IrBindablePublicSymbolBase<ScriptDescriptor, IrScript>(sig, descriptor), IrScriptSymbol
+class IrScriptPublicSymbolImpl(descriptor: ScriptDescriptor? = null, signature: IdSignature) :
+    IrBindablePublicSymbolBase<ScriptDescriptor, IrScript>(signature, descriptor), IrScriptSymbol

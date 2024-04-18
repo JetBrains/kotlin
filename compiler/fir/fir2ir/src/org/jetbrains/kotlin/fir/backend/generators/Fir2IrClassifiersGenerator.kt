@@ -416,7 +416,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             classId.packageFqName, session.moduleData.dependencies.first()
         )
 
-        return symbolTable.declareClassIfNotExists(signature, { IrClassPublicSymbolImpl(signature) }) {
+        return symbolTable.declareClassIfNotExists(signature, { IrClassPublicSymbolImpl(signature = signature) }) {
             irFactory.createClass(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,

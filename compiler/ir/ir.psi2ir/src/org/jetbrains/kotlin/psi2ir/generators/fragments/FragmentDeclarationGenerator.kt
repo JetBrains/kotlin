@@ -68,7 +68,7 @@ open class FragmentDeclarationGenerator(
             isInline = false,
             isExpect = false,
             returnType = irClass.defaultType,
-            symbol = IrConstructorPublicSymbolImpl(context.symbolTable.signaturer!!.composeSignature(irClass.descriptor)!!),
+            symbol = IrConstructorPublicSymbolImpl(signature = context.symbolTable.signaturer!!.composeSignature(irClass.descriptor)!!),
             isPrimary = true,
             isExternal = false
         )

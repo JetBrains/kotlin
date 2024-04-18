@@ -106,7 +106,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicClassSymbol(declaration: ClassDescriptor, signature: IdSignature): IrClassSymbol {
-        return IrClassPublicSymbolImpl(signature, declaration)
+        return IrClassPublicSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateClassSymbol(descriptor: ClassDescriptor): IrClassSymbol {
@@ -131,7 +131,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicConstructorSymbol(declaration: ClassConstructorDescriptor, signature: IdSignature): IrConstructorSymbol {
-        return IrConstructorPublicSymbolImpl(signature, declaration)
+        return IrConstructorPublicSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateConstructorSymbol(declaration: ClassConstructorDescriptor): IrConstructorSymbol {
@@ -156,7 +156,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicEnumEntrySymbol(declaration: ClassDescriptor, signature: IdSignature): IrEnumEntrySymbol {
-        return IrEnumEntryPublicSymbolImpl(signature, declaration)
+        return IrEnumEntryPublicSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateEnumEntrySymbol(declaration: ClassDescriptor): IrEnumEntrySymbol {
@@ -176,7 +176,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     // ------------------------------------ field ------------------------------------
 
     override fun createPublicFieldSymbol(declaration: PropertyDescriptor, signature: IdSignature): IrFieldSymbol {
-        return IrFieldPublicSymbolImpl(signature, declaration)
+        return IrFieldPublicSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateFieldSymbol(declaration: PropertyDescriptor): IrFieldSymbol {
@@ -226,7 +226,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicPropertySymbol(declaration: PropertyDescriptor, signature: IdSignature): IrPropertySymbol {
-        return IrPropertyPublicSymbolImpl(signature, declaration)
+        return IrPropertyPublicSymbolImpl(declaration, signature)
     }
 
     override fun createPrivatePropertySymbol(declaration: PropertyDescriptor): IrPropertySymbol {
@@ -264,7 +264,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     // ------------------------------------ typealias ------------------------------------
 
     override fun createPublicTypeAliasSymbol(declaration: TypeAliasDescriptor, signature: IdSignature): IrTypeAliasSymbol {
-        return IrTypeAliasPublicSymbolImpl(signature, declaration)
+        return IrTypeAliasPublicSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateTypeAliasSymbol(declaration: TypeAliasDescriptor): IrTypeAliasSymbol {
@@ -289,7 +289,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicFunctionSymbol(declaration: FunctionDescriptor, signature: IdSignature): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionPublicSymbolImpl(signature, declaration)
+        return IrSimpleFunctionPublicSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateFunctionSymbol(declaration: FunctionDescriptor): IrSimpleFunctionSymbol {
@@ -299,7 +299,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     // ------------------------------------ type parameter ------------------------------------
 
     override fun createPublicTypeParameterSymbol(declaration: TypeParameterDescriptor, signature: IdSignature): IrTypeParameterSymbol {
-        return IrTypeParameterPublicSymbolImpl(signature, declaration)
+        return IrTypeParameterPublicSymbolImpl(declaration, signature)
     }
 
     override fun createPrivateTypeParameterSymbol(declaration: TypeParameterDescriptor): IrTypeParameterSymbol {

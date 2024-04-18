@@ -713,7 +713,7 @@ class IrBuiltInsOverFir(
         val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
         return c.symbolTable.declareSimpleFunction(
             signature,
-            { IrSimpleFunctionPublicSymbolImpl(signature, null) },
+            { IrSimpleFunctionPublicSymbolImpl(null, signature) },
             ::makeWithSymbol
         )
     }
