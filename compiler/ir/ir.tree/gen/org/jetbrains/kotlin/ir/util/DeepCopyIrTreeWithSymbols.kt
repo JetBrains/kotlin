@@ -360,6 +360,34 @@ open class DeepCopyIrTreeWithSymbols(
         }
     }
 
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
+        declaration.factory.createSimpleFunction(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            visibility = declaration.visibility,
+            isInline = declaration.isInline,
+            isExpect = declaration.isExpect,
+            returnType = declaration.returnType,
+            modality = declaration.modality,
+            symbol = symbolRemapper.getDeclaredFunction(declaration.symbol),
+            isTailrec = declaration.isTailrec,
+            isSuspend = declaration.isSuspend,
+            isOperator = declaration.isOperator,
+            isInfix = declaration.isInfix,
+            isExternal = declaration.isExternal,
+            containerSource = declaration.containerSource,
+            isFakeOverride = declaration.isFakeOverride,
+        ).apply {
+            overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
+                symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
+            }
+            contextReceiverParametersCount = declaration.contextReceiverParametersCount
+            processAttributes(declaration)
+            transformFunctionChildren(declaration)
+        }
+
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
         declaration.factory.createTypeAlias(
             startOffset = declaration.startOffset,
@@ -914,34 +942,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
-        declaration.factory.createSimpleFunction(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            visibility = declaration.visibility,
-            isInline = declaration.isInline,
-            isExpect = declaration.isExpect,
-            returnType = declaration.returnType,
-            modality = declaration.modality,
-            symbol = symbolRemapper.getDeclaredFunction(declaration.symbol),
-            isTailrec = declaration.isTailrec,
-            isSuspend = declaration.isSuspend,
-            isOperator = declaration.isOperator,
-            isInfix = declaration.isInfix,
-            isExternal = declaration.isExternal,
-            containerSource = declaration.containerSource,
-            isFakeOverride = declaration.isFakeOverride,
-        ).apply {
-            overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
-                symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
-            }
-            contextReceiverParametersCount = declaration.contextReceiverParametersCount
-            processAttributes(declaration)
-            transformFunctionChildren(declaration)
-        }
 
     override fun visitBody(body: IrBody): IrBody =
         throw IllegalArgumentException("Unsupported body type: $body")
