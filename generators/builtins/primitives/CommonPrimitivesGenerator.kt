@@ -29,4 +29,12 @@ class CommonPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
     override fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {
         noBody()
     }
+
+    override fun MethodBuilder.modifyGeneratedHashCode(thisKind: PrimitiveType) {
+        noBody()
+    }
+
+    override fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {
+        generateHashCode(thisKind)
+    }
 }
