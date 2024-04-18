@@ -3043,6 +3043,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("internalOpenLateinit.kt")
+    public void testInternalOpenLateinit() {
+      runTest("compiler/testData/codegen/box/bridges/internalOpenLateinit.kt");
+    }
+
+    @Test
     @TestMetadata("jsName.kt")
     public void testJsName() {
       runTest("compiler/testData/codegen/box/bridges/jsName.kt");

@@ -3032,6 +3032,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("internalOpenLateinit.kt")
+    public void testInternalOpenLateinit() {
+      runTest("compiler/testData/codegen/box/bridges/internalOpenLateinit.kt");
+    }
+
+    @Test
     @TestMetadata("kt12416.kt")
     public void testKt12416() {
       runTest("compiler/testData/codegen/box/bridges/kt12416.kt");

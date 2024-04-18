@@ -2647,6 +2647,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/bridges/internalMethodOverridePublishedApi.kt");
     }
 
+    @TestMetadata("internalOpenLateinit.kt")
+    public void testInternalOpenLateinit() {
+      runTest("compiler/testData/codegen/box/bridges/internalOpenLateinit.kt");
+    }
+
     @TestMetadata("kt12416.kt")
     public void testKt12416() {
       runTest("compiler/testData/codegen/box/bridges/kt12416.kt");
