@@ -475,6 +475,11 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitConst(expression: IrConst<*>): IrConst<*> =
+        expression.shallowCopy().apply {
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -585,9 +590,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitExpression(expression: IrExpression): IrExpression =
         throw IllegalArgumentException("Unsupported expression type: $expression")
-
-    override fun visitConst(expression: IrConst<*>): IrConst<*> =
-        expression.shallowCopy().processAttributes(expression)
 
     override fun visitConstantObject(expression: IrConstantObject): IrConstantValue =
         IrConstantObjectImpl(
