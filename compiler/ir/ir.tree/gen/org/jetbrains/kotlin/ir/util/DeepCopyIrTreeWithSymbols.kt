@@ -61,6 +61,10 @@ open class DeepCopyIrTreeWithSymbols(
 
     protected fun IrType.remapType() = typeRemapper.remapType(this)
 
+    protected fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
+        annotations = declaration.annotations.transform()
+    }
+
     override fun visitElement(element: IrElement): IrElement =
         throw IllegalArgumentException("Unsupported element type: $element")
 
@@ -297,10 +301,6 @@ open class DeepCopyIrTreeWithSymbols(
                 body = declaration.body?.transform()
             }
         }
-
-    protected fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
-        annotations = declaration.annotations.transform()
-    }
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
         declaration.factory.createProperty(
