@@ -962,8 +962,11 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitErrorExpression(expression: IrErrorExpression): IrErrorExpression =
         IrErrorExpressionImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.description
-        ).processAttributes(expression)
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            description = expression.description,
+        ).apply {
+            processAttributes(expression)
+        }
 }
