@@ -137,12 +137,12 @@ internal class BackendInliner(
                         }
 //                        //if (irFunction.name.asString() == "foo")
 //                        println("        $isALoop $calleeSize")
-                        val threshold = if (calleeIrFunction is IrSimpleFunction) 25 else 25
+                        val threshold = if (calleeIrFunction is IrSimpleFunction) 33 else 33
                         if (!isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
                                 //&& calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
                                 && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
                                 && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
-                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.superClasses.contains(throwable) } != true
+                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
                                 /*&& irFunction.fileOrNull?.path?.endsWith("tt.kt") == true*/) {
                             if (functionsToInline.add(calleeIrFunction)) {
                                 callee.body.forEachVirtualCall { node ->
