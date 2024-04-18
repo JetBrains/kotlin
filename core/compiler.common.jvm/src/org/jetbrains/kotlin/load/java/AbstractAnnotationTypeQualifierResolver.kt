@@ -31,6 +31,8 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
 
     private val resolvedNicknames = ConcurrentHashMap<Any, TAnnotation>()
 
+    abstract val isK2: Boolean
+
     fun resolveTypeQualifierAnnotation(annotation: TAnnotation): TAnnotation? {
         if (javaTypeEnhancementState.jsr305.isDisabled) return null
         if (annotation.fqName in BUILT_IN_TYPE_QUALIFIER_ANNOTATIONS || annotation.hasAnnotation(JAVAX_TYPE_QUALIFIER_ANNOTATION_FQ_NAME))
@@ -159,19 +161,43 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     ): JavaTypeQualifiersByElementType? {
         if (javaTypeEnhancementState.disabledDefaultAnnotations) return oldQualifiers
 
-        val defaultQualifiers = annotations.mapNotNull { extractDefaultQualifiers(it) }
-        if (defaultQualifiers.isEmpty()) return oldQualifiers
+        val extractedQualifiers = annotations.mapNotNull { extractDefaultQualifiers(it) }
+        if (extractedQualifiers.isEmpty()) return oldQualifiers
+
+        val newQualifiers = QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
+
+        // filter out inconsistencies in extracted qualifiers per applicability type
+        for (extractedQualifier in extractedQualifiers) {
+            for (applicabilityType in extractedQualifier.qualifierApplicabilityTypes) {
+                if (applicabilityType !in newQualifiers || !isK2) {
+                    // no qualifiers for applicabilityType were previously considered
+                    // Or, in K1 mode, we just use the last qualifier
+                    newQualifiers[applicabilityType] = extractedQualifier
+                } else {
+                    // one+ qualifiers for applicabilityType were already considered
+                    val preexistingQualifier = newQualifiers[applicabilityType]
+                        ?: continue // an inconsistency was already found when considering previous qualifiers
+                    val preexistingNullability = preexistingQualifier.nullabilityQualifier
+                    val extractedNullability = extractedQualifier.nullabilityQualifier
+                    newQualifiers[applicabilityType] = when {
+                        extractedNullability == preexistingNullability -> preexistingQualifier
+                        extractedNullability.isForWarningOnly && !preexistingNullability.isForWarningOnly -> preexistingQualifier
+                        !extractedNullability.isForWarningOnly && preexistingNullability.isForWarningOnly -> extractedQualifier
+                        else -> null // qualifiers are inconsistent
+                    }
+                }
+            }
+        }
 
         val defaultQualifiersByType =
             oldQualifiers?.defaultQualifiers?.let(::QualifierByApplicabilityType)
                 ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
 
         var wasUpdate = false
-        for (qualifier in defaultQualifiers) {
-            for (applicabilityType in qualifier.qualifierApplicabilityTypes) {
-                defaultQualifiersByType[applicabilityType] = qualifier
-                wasUpdate = true
-            }
+        for ((applicabilityType, newQualifier) in newQualifiers) {
+            if (newQualifier == null) continue // ignore inconsistent qualifiers
+            defaultQualifiersByType[applicabilityType] = newQualifier
+            wasUpdate = true
         }
 
         return if (!wasUpdate) oldQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)

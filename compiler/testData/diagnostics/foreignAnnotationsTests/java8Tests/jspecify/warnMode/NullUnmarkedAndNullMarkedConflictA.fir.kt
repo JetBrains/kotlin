@@ -1,27 +1,15 @@
-// ALLOW_KOTLIN_PACKAGE
-// JSPECIFY_STATE: strict
+// JSPECIFY_STATE: warn
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
-// FILE: null_marked_module/module-info.java
+// FILE: conflictinglyannotatedpackage/package-info.java
 
-import org.jspecify.annotations.*;
-
-@NullMarked
-module null_marked_module {
-    requires java9_annotations;
-    exports conflictinglyannotatedpackage;
-    exports unannotatedpackage;
-}
-
-// FILE: null_marked_module/conflictinglyannotatedpackage/package-info.java
-
-@NullMarked
 @NullUnmarked
+@NullMarked
 package conflictinglyannotatedpackage;
 
 import org.jspecify.annotations.*;
 
-// FILE: null_marked_module/conflictinglyannotatedpackage/UnannotatedType.java
+// FILE: conflictinglyannotatedpackage/UnannotatedType.java
 
 package conflictinglyannotatedpackage;
 
@@ -30,43 +18,43 @@ public interface UnannotatedType {
     public void unannotatedConsume(String arg);
 }
 
-// FILE: null_marked_module/unannotatedpackage/ConflictinglyAnnotatedType.java
+// FILE: unannotatedpackage/ConflictinglyAnnotatedType.java
 
 package unannotatedpackage;
 
 import org.jspecify.annotations.*;
 
-@NullMarked
 @NullUnmarked
+@NullMarked
 public interface ConflictinglyAnnotatedType {
     public String unannotatedProduce();
     public void unannotatedConsume(String arg);
 }
 
-// FILE: null_marked_module/unannotatedpackage/UnannotatedType.java
+// FILE: unannotatedpackage/UnannotatedType.java
 
 package unannotatedpackage;
 
 import org.jspecify.annotations.*;
 
 public interface UnannotatedType {
-    @NullMarked
     @NullUnmarked
+    @NullMarked
     public String conflictinglyAnnotatedProduce();
-    @NullMarked
     @NullUnmarked
+    @NullMarked
     public void conflictinglyAnnotatedConsume(String arg);
 }
 
-// FILE: null_marked_module/unannotatedpackage/UnannotatedTypeWithConflictinglyAnnotatedConstructor.java
+// FILE: unannotatedpackage/UnannotatedTypeWithConflictinglyAnnotatedConstructor.java
 
 package unannotatedpackage;
 
 import org.jspecify.annotations.*;
 
 public class UnannotatedTypeWithConflictinglyAnnotatedConstructor {
-    @NullMarked
     @NullUnmarked
+    @NullMarked
     public UnannotatedTypeWithConflictinglyAnnotatedConstructor(String arg) {}
 }
 

@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 class AnnotationTypeQualifierResolver(javaTypeEnhancementState: JavaTypeEnhancementState) :
     AbstractAnnotationTypeQualifierResolver<AnnotationDescriptor>(javaTypeEnhancementState) {
 
+    override val isK2: Boolean
+        get() = false
+
     override val AnnotationDescriptor.metaAnnotations: Iterable<AnnotationDescriptor>
         get() = annotationClass?.annotations ?: emptyList()
 

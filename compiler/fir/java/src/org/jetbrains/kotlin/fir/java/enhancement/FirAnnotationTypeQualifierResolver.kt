@@ -29,6 +29,9 @@ class FirAnnotationTypeQualifierResolver(
     private val javaModuleAnnotationsProvider: JavaModuleAnnotationsProvider,
 ) : AbstractAnnotationTypeQualifierResolver<FirAnnotation>(javaTypeEnhancementState), FirSessionComponent {
 
+    override val isK2: Boolean
+        get() = true
+
     override val FirAnnotation.metaAnnotations: Iterable<FirAnnotation>
         get() = unexpandedConeClassLikeType?.lookupTag?.toSymbol(session)?.fir?.annotations.orEmpty()
 
