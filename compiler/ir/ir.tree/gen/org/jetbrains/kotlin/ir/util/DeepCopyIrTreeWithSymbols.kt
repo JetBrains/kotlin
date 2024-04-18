@@ -337,6 +337,16 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrRawFunctionReference =
+        IrRawFunctionReferenceImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedFunction(expression.symbol),
+        ).apply {
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -660,15 +670,6 @@ open class DeepCopyIrTreeWithSymbols(
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
         }.processAttributes(expression)
-    }
-
-    override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrRawFunctionReference {
-        val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
-        return IrRawFunctionReferenceImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbol
-        ).processAttributes(expression)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
