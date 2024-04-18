@@ -90,7 +90,7 @@ fun callCompilerWithoutOutputInterceptor(compilerArgs: Array<String>): Compilati
     return callCompilerWithoutOutputInterceptor(compilerArgs, compilerClassLoader)
 }
 
-internal fun callCompilerWithoutOutputInterceptor(
+fun callCompilerWithoutOutputInterceptor(
     compilerArgs: Array<String>,
     kotlinNativeClassLoader: ClassLoader
 ): CompilationToolCallResult {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.nio.file.Files
@@ -93,7 +94,7 @@ abstract class AbstractSwiftRunnerTestBase(
     }
 }
 
-private fun compileToNativeKLib(kLibSourcesRoot: Path): Path {
+internal fun AbstractNativeSimpleTest.compileToNativeKLib(kLibSourcesRoot: Path): Path {
     val ktFiles = Files.walk(kLibSourcesRoot).asSequence().filter { it.extension == "kt" }.toList()
     val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib").toPath()
 
@@ -103,7 +104,9 @@ private fun compileToNativeKLib(kLibSourcesRoot: Path): Path {
         addAll(listOf("-output", testKlib.absolutePathString()))
     }
 
-    val compileResult = callCompilerWithoutOutputInterceptor(arguments.toTypedArray())
+    // Avoid creating excessive number of classloaders
+    val classLoader = testRunSettings.get<KotlinNativeClassLoader>().classLoader
+    val compileResult = callCompilerWithoutOutputInterceptor(arguments.toTypedArray(), classLoader)
 
     check(compileResult.exitCode == ExitCode.OK) {
         "Compilation error: $compileResult"

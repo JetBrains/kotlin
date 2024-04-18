@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.analysis.api.*
@@ -39,19 +39,15 @@ public class KlibScope(
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = with(analysisSession) {
         addresses.asSequence()
             .filterIsInstance<KlibCallableAddress>()
-            // TODO: Check if it works
             .filter { nameFilter(it.callableName) }
             .flatMap { it.getCallableSymbols() }
-            .filter { it is KtSymbolWithVisibility && it.visibility.isPublicAPI }
     }
 
     override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> =
         getCallableSymbols { it in names }
 
-
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = with(analysisSession) {
         addresses.asSequence()
-            // TODO: Name filter
             .filterIsInstance<KlibClassifierAddress>()
             .mapNotNull {
                 when (it) {
@@ -59,7 +55,8 @@ public class KlibScope(
                     is KlibTypeAliasAddress -> it.getTypeAliasSymbol()
                 }
             }
-            .filter { it is KtSymbolWithVisibility && it.visibility.isPublicAPI }
+            // We don't care about unnamed symbols from the klib.
+            .filter { it is KtNamedSymbol && nameFilter(it.name) }
     }
 
     override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> =
@@ -68,13 +65,12 @@ public class KlibScope(
     // There are no constructors at the top-level scope.
     override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
 
-    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = emptySequence()
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> =
+        throw NotImplementedError("Reading package symbols from ${libraryModule.libraryName} is unsupported. Please report an issue: https://kotl.in/issue")
 
-    override fun getPossibleCallableNames(): Set<Name> {
-        TODO("Not yet implemented")
-    }
+    override fun getPossibleCallableNames(): Set<Name> =
+        addresses.filterIsInstance<KlibCallableAddress>().map { it.callableName }.toSet()
 
-    override fun getPossibleClassifierNames(): Set<Name> {
-        TODO("Not yet implemented")
-    }
+    override fun getPossibleClassifierNames(): Set<Name> =
+        addresses.filterIsInstance<KlibClassifierAddress>().map { it.classId.shortClassName }.toSet()
 }
