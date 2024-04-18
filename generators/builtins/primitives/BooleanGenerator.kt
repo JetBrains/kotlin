@@ -24,6 +24,7 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
     private fun FileBuilder.generateClass() {
         klass {
             appendDoc("Represents a value which is either `true` or `false`.")
+            expectActual = ExpectActualModifier.Actual
             name = PrimitiveType.BOOLEAN.capitalized
             superType("Comparable<$name>")
 
@@ -180,6 +181,7 @@ class CommonBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 class JvmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `boolean`.")
+        expectActual = ExpectActualModifier.Unspecified
     }
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
@@ -250,6 +252,7 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 
     override fun ClassBuilder.generateAdditionalMethods() {
         method {
+            expectActual = ExpectActualModifier.Unspecified
             annotations += "WasmNoOpCast"
             signature {
                 visibility = MethodVisibility.INTERNAL
@@ -297,6 +300,7 @@ class NativeBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 
     private fun ClassBuilder.generateCustomEquals() {
         method {
+            expectActual = ExpectActualModifier.Unspecified
             annotations += "Deprecated(\"Provided for binary compatibility\", level = DeprecationLevel.HIDDEN)"
             annotations += intrinsicConstEvaluationAnnotation
             signature {
