@@ -383,6 +383,13 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(inlinedBlock)
         }
 
+    override fun visitSyntheticBody(body: IrSyntheticBody): IrSyntheticBody =
+        IrSyntheticBodyImpl(
+            startOffset = body.startOffset,
+            endOffset = body.endOffset,
+            kind = body.kind,
+        )
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -490,9 +497,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitBody(body: IrBody): IrBody =
         throw IllegalArgumentException("Unsupported body type: $body")
-
-    override fun visitSyntheticBody(body: IrSyntheticBody): IrSyntheticBody =
-        IrSyntheticBodyImpl(body.startOffset, body.endOffset, body.kind)
 
     override fun visitExpression(expression: IrExpression): IrExpression =
         throw IllegalArgumentException("Unsupported expression type: $expression")
