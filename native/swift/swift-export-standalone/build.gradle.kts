@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.kotlinNativeDist
 
 plugins {
     kotlin("jvm")
@@ -35,7 +34,7 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":native:native.tests"))
+    testApi(projectTests(":native:native.tests"))
 }
 
 sourceSets {
@@ -49,7 +48,6 @@ sourceSets {
 val testDataDir = projectDir.resolve("testData")
 
 val test by nativeTest("test", null) {
-    systemProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
     inputs.dir(testDataDir)
     workingDir = rootDir
     useJUnitPlatform { }

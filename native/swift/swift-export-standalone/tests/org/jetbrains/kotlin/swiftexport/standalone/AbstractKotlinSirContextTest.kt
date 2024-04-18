@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.swiftexport.standalone
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -33,7 +34,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftRunnerTestBase(
 abstract class AbstractSwiftRunnerTestBase(
     private val renderDocComments: Boolean,
     private val inputModuleKind: InputModuleKind,
-) {
+) : AbstractNativeSimpleTest() {
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
