@@ -132,17 +132,6 @@ open class DeepCopyIrTreeWithSymbols(
             body = declaration.body.transform()
         }
 
-    override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
-        val result = IrModuleFragmentImpl(
-            declaration.descriptor,
-            declaration.irBuiltins,
-        )
-        transformedModule = result
-        result.files += declaration.files.transform()
-        transformedModule = null
-        return result
-    }
-
     override fun visitTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
         copyTypeParameter(declaration).apply {
             // TODO type parameter scopes?
@@ -219,6 +208,17 @@ open class DeepCopyIrTreeWithSymbols(
             getter = declaration.getter.transform()
             setter = declaration.setter?.transform()
         }
+
+    override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
+        val result = IrModuleFragmentImpl(
+            declaration.descriptor,
+            declaration.irBuiltins,
+        )
+        transformedModule = result
+        result.files += declaration.files.transform()
+        transformedModule = null
+        return result
+    }
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
