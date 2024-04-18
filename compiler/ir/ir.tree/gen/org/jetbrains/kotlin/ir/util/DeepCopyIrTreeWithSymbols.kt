@@ -951,12 +951,14 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitBlock(expression: IrBlock): IrBlock =
         IrBlockImpl(
-            expression.startOffset,
-            expression.endOffset,
-            expression.type.remapType(),
-            mapStatementOrigin(expression.origin),
-            expression.statements.memoryOptimizedMap { it.transform() },
-        ).processAttributes(expression)
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            origin = mapStatementOrigin(expression.origin),
+            statements = expression.statements.memoryOptimizedMap { it.transform() },
+        ).apply {
+            processAttributes(expression)
+        }
 
     override fun visitErrorExpression(expression: IrErrorExpression): IrErrorExpression =
         IrErrorExpressionImpl(
