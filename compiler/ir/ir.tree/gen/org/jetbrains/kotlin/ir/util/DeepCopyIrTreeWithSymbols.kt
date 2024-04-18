@@ -412,6 +412,12 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(jump)
         }
 
+    override fun visitCall(expression: IrCall): IrCall =
+        shallowCopyCall(expression).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -614,12 +620,6 @@ open class DeepCopyIrTreeWithSymbols(
             mapStatementOrigin(expression.origin),
             symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)
         ).processAttributes(expression)
-
-    override fun visitCall(expression: IrCall): IrCall =
-        shallowCopyCall(expression).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
-        }
 
     private fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
         assert(typeArgumentsCount == other.typeArgumentsCount) {
