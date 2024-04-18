@@ -31,6 +31,7 @@ open class DeepCopyIrTreeWithSymbols(
 ) : IrElementTransformerVoid() {
     private var transformedModule: IrModuleFragment? = null
     private val typeRemapper: TypeRemapper = typeRemapper ?: DeepCopyTypeRemapper(symbolRemapper)
+    private val transformedLoops = HashMap<IrLoop, IrLoop>()
 
     init {
         // TODO refactor
@@ -64,6 +65,93 @@ open class DeepCopyIrTreeWithSymbols(
     protected fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
         annotations = declaration.annotations.transform()
     }
+
+    private fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
+        assert(typeArgumentsCount == other.typeArgumentsCount) {
+            "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
+        }
+        for (i in 0 until typeArgumentsCount) {
+            putTypeArgument(i, other.getTypeArgument(i)?.remapType())
+        }
+    }
+
+    private fun shallowCopyCall(expression: IrCall): IrCall {
+        val newCallee = symbolRemapper.getReferencedSimpleFunction(expression.symbol)
+        return IrCallImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            newCallee,
+            expression.typeArgumentsCount,
+            expression.valueArgumentsCount,
+            mapStatementOrigin(expression.origin),
+            symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)
+        ).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+        }.processAttributes(expression)
+    }
+
+    private fun <T : IrMemberAccessExpression<*>> T.transformReceiverArguments(original: T): T =
+        apply {
+            dispatchReceiver = original.dispatchReceiver?.transform()
+            extensionReceiver = original.extensionReceiver?.transform()
+        }
+
+    private fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
+        transformReceiverArguments(original)
+        for (i in 0 until original.valueArgumentsCount) {
+            putValueArgument(i, original.getValueArgument(i)?.transform())
+        }
+    }
+
+    private fun getTransformedLoop(irLoop: IrLoop): IrLoop =
+        transformedLoops.getOrDefault(irLoop, irLoop)
+
+    private fun SymbolRemapper.getReferencedReturnTarget(returnTarget: IrReturnTargetSymbol): IrReturnTargetSymbol =
+        when (returnTarget) {
+            is IrFunctionSymbol -> getReferencedFunction(returnTarget)
+            is IrReturnableBlockSymbol -> getReferencedReturnableBlock(returnTarget)
+        }
+
+    private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
+        declaration.factory.createTypeParameter(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            symbol = symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
+            variance = declaration.variance,
+            index = declaration.index,
+            isReified = declaration.isReified,
+        ).apply {
+            transformAnnotations(declaration)
+        }
+
+    protected fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
+        this.typeParameters = other.typeParameters.memoryOptimizedMap {
+            copyTypeParameter(it)
+        }
+
+        typeRemapper.withinScope(this) {
+            for ((thisTypeParameter, otherTypeParameter) in this.typeParameters.zip(other.typeParameters)) {
+                thisTypeParameter.superTypes = otherTypeParameter.superTypes.memoryOptimizedMap {
+                    typeRemapper.remapType(it)
+                }
+            }
+        }
+    }
+
+    private fun <T : IrFunction> T.transformFunctionChildren(declaration: T): T =
+        apply {
+            transformAnnotations(declaration)
+            copyTypeParametersFrom(declaration)
+            typeRemapper.withinScope(this) {
+                dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
+                extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
+                returnType = typeRemapper.remapType(declaration.returnType)
+                valueParameters = declaration.valueParameters.transform()
+                body = declaration.body?.transform()
+            }
+        }
 
     override fun visitElement(element: IrElement): IrElement =
         throw IllegalArgumentException("Unsupported element type: $element")
@@ -822,19 +910,6 @@ open class DeepCopyIrTreeWithSymbols(
             transformFunctionChildren(declaration)
         }
 
-    private fun <T : IrFunction> T.transformFunctionChildren(declaration: T): T =
-        apply {
-            transformAnnotations(declaration)
-            copyTypeParametersFrom(declaration)
-            typeRemapper.withinScope(this) {
-                dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-                extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
-                returnType = typeRemapper.remapType(declaration.returnType)
-                valueParameters = declaration.valueParameters.transform()
-                body = declaration.body?.transform()
-            }
-        }
-
     override fun visitProperty(declaration: IrProperty): IrProperty =
         declaration.factory.createProperty(
             startOffset = declaration.startOffset,
@@ -868,34 +943,6 @@ open class DeepCopyIrTreeWithSymbols(
             }
         }
 
-    private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
-        declaration.factory.createTypeParameter(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            symbol = symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
-            variance = declaration.variance,
-            index = declaration.index,
-            isReified = declaration.isReified,
-        ).apply {
-            transformAnnotations(declaration)
-        }
-
-    protected fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
-        this.typeParameters = other.typeParameters.memoryOptimizedMap {
-            copyTypeParameter(it)
-        }
-
-        typeRemapper.withinScope(this) {
-            for ((thisTypeParameter, otherTypeParameter) in this.typeParameters.zip(other.typeParameters)) {
-                thisTypeParameter.superTypes = otherTypeParameter.superTypes.memoryOptimizedMap {
-                    typeRemapper.remapType(it)
-                }
-            }
-        }
-    }
-
     override fun visitBody(body: IrBody): IrBody =
         throw IllegalArgumentException("Unsupported body type: $body")
 
@@ -910,54 +957,6 @@ open class DeepCopyIrTreeWithSymbols(
             mapStatementOrigin(expression.origin),
             expression.statements.memoryOptimizedMap { it.transform() },
         ).processAttributes(expression)
-
-    private fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
-        assert(typeArgumentsCount == other.typeArgumentsCount) {
-            "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
-        }
-        for (i in 0 until typeArgumentsCount) {
-            putTypeArgument(i, other.getTypeArgument(i)?.remapType())
-        }
-    }
-
-    private fun shallowCopyCall(expression: IrCall): IrCall {
-        val newCallee = symbolRemapper.getReferencedSimpleFunction(expression.symbol)
-        return IrCallImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            newCallee,
-            expression.typeArgumentsCount,
-            expression.valueArgumentsCount,
-            mapStatementOrigin(expression.origin),
-            symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)
-        ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-        }.processAttributes(expression)
-    }
-
-    private fun <T : IrMemberAccessExpression<*>> T.transformReceiverArguments(original: T): T =
-        apply {
-            dispatchReceiver = original.dispatchReceiver?.transform()
-            extensionReceiver = original.extensionReceiver?.transform()
-        }
-
-    private fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
-        transformReceiverArguments(original)
-        for (i in 0 until original.valueArgumentsCount) {
-            putValueArgument(i, original.getValueArgument(i)?.transform())
-        }
-    }
-
-    private val transformedLoops = HashMap<IrLoop, IrLoop>()
-
-    private fun getTransformedLoop(irLoop: IrLoop): IrLoop =
-        transformedLoops.getOrDefault(irLoop, irLoop)
-
-    private fun SymbolRemapper.getReferencedReturnTarget(returnTarget: IrReturnTargetSymbol): IrReturnTargetSymbol =
-        when (returnTarget) {
-            is IrFunctionSymbol -> getReferencedFunction(returnTarget)
-            is IrReturnableBlockSymbol -> getReferencedReturnableBlock(returnTarget)
-        }
 
     override fun visitErrorExpression(expression: IrErrorExpression): IrErrorExpression =
         IrErrorExpressionImpl(
