@@ -632,6 +632,34 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitWhileLoop(loop: IrWhileLoop): IrWhileLoop =
+        IrWhileLoopImpl(
+            startOffset = loop.startOffset,
+            endOffset = loop.endOffset,
+            type = loop.type.remapType(),
+            origin = mapStatementOrigin(loop.origin),
+        ).apply {
+            transformedLoops[loop] = this
+            label = loop.label
+            condition = loop.condition.transform()
+            body = loop.body?.transform()
+            processAttributes(loop)
+        }
+
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrDoWhileLoop =
+        IrDoWhileLoopImpl(
+            startOffset = loop.startOffset,
+            endOffset = loop.endOffset,
+            type = loop.type.remapType(),
+            origin = mapStatementOrigin(loop.origin),
+        ).apply {
+            transformedLoops[loop] = this
+            label = loop.label
+            condition = loop.condition.transform()
+            body = loop.body?.transform()
+            processAttributes(loop)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -861,22 +889,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     private fun getTransformedLoop(irLoop: IrLoop): IrLoop =
         transformedLoops.getOrDefault(irLoop, irLoop)
-
-    override fun visitWhileLoop(loop: IrWhileLoop): IrWhileLoop =
-        IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), mapStatementOrigin(loop.origin)).also { newLoop ->
-            transformedLoops[loop] = newLoop
-            newLoop.label = loop.label
-            newLoop.condition = loop.condition.transform()
-            newLoop.body = loop.body?.transform()
-        }.processAttributes(loop)
-
-    override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrDoWhileLoop =
-        IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), mapStatementOrigin(loop.origin)).also { newLoop ->
-            transformedLoops[loop] = newLoop
-            newLoop.label = loop.label
-            newLoop.condition = loop.condition.transform()
-            newLoop.body = loop.body?.transform()
-        }.processAttributes(loop)
 
     override fun visitTry(aTry: IrTry): IrTry =
         IrTryImpl(
