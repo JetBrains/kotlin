@@ -500,7 +500,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                         ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 }
                 is IrMaybeDeserializedClass ->
-                    return current.moduleName
+                    return current.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 is IrExternalPackageFragment -> {
                     val source = current.containerSource ?: return null
                     return (source as? JvmPackagePartSource)?.moduleName
