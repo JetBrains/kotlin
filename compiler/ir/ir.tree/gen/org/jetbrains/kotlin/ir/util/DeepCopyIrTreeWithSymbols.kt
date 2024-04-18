@@ -525,6 +525,18 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression): IrDynamicOperatorExpression =
+        IrDynamicOperatorExpressionImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            operator = expression.operator,
+        ).apply {
+            receiver = expression.receiver.transform()
+            expression.arguments.mapTo(arguments) { it.transform() }
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -864,16 +876,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             expression.value.transform()
         ).processAttributes(expression)
-
-    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression): IrDynamicOperatorExpression =
-        IrDynamicOperatorExpressionImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.operator
-        ).apply {
-            receiver = expression.receiver.transform()
-            expression.arguments.mapTo(arguments) { it.transform() }
-        }.processAttributes(expression)
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression): IrDynamicMemberExpression =
         IrDynamicMemberExpressionImpl(
