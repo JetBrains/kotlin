@@ -3986,6 +3986,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("referenceToFakeOverrideWithTypeParameter.kt")
+        public void testReferenceToFakeOverrideWithTypeParameter() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/referenceToFakeOverrideWithTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("referenceToVarargWithDefaults.kt")
         public void testReferenceToVarargWithDefaults() {
           runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/referenceToVarargWithDefaults.kt");
