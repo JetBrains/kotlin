@@ -243,6 +243,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
             klass {
                 appendDoc("Represents a ${typeDescriptions[thisKind]}.")
+                expectActual = ExpectActualModifier.Actual
                 name = className
                 superType("Number()")
                 superType("Comparable<$name>")
@@ -619,6 +620,23 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
         }.modifyGeneratedToString(thisKind)
     }
 
+    internal fun ClassBuilder.generateHashCode(thisKind: PrimitiveType) {
+        method {
+            signature {
+                isOverride = true
+                methodName = "hashCode"
+                returnType = PrimitiveType.INT.capitalized
+            }
+
+            when (thisKind) {
+                PrimitiveType.LONG -> "((this ushr 32) xor this).toInt()"
+                PrimitiveType.FLOAT -> "toBits()"
+                PrimitiveType.DOUBLE -> "toBits().hashCode()"
+                else -> "this${thisKind.castToIfNecessary(PrimitiveType.INT)}"
+            }.setAsExpressionBody()
+        }.modifyGeneratedHashCode(thisKind)
+    }
+
     internal open fun FileBuilder.modifyGeneratedFile() {}
     internal open fun ClassBuilder.modifyGeneratedClass(thisKind: PrimitiveType) {}
     internal open fun CompanionObjectBuilder.modifyGeneratedCompanionObject(thisKind: PrimitiveType) {}
@@ -633,5 +651,6 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     internal open fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType, otherKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {}
+    internal open fun MethodBuilder.modifyGeneratedHashCode(thisKind: PrimitiveType) {}
     internal open fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {}
 }
