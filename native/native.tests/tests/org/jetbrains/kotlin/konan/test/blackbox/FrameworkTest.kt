@@ -127,12 +127,18 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testMultipleFrameworksStatic() {
+        // https://youtrack.jetbrains.com/issue/KT-67572
+        Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
+
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
         testMultipleFrameworksImpl("multiple", listOf("-Xstatic-framework", "-Xpre-link-caches=enable"), checks)
     }
 
     @Test
     fun testMultipleFrameworksStaticFailsWithStaticCaches() {
+        // https://youtrack.jetbrains.com/issue/KT-67572
+        Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
+
         val defaultChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
         val checks = if (testRunSettings.get<CacheMode>() != CacheMode.WithoutCache) {
             // KT-34261: two asserts in testIsolation4() fail with static caches.
