@@ -511,6 +511,20 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall =
+        IrDelegatingConstructorCallImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
+            typeArgumentsCount = expression.typeArgumentsCount,
+            valueArgumentsCount = expression.valueArgumentsCount,
+        ).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -724,20 +738,6 @@ open class DeepCopyIrTreeWithSymbols(
         for (i in 0 until original.valueArgumentsCount) {
             putValueArgument(i, original.getValueArgument(i)?.transform())
         }
-    }
-
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall {
-        val newConstructor = symbolRemapper.getReferencedConstructor(expression.symbol)
-        return IrDelegatingConstructorCallImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            newConstructor,
-            expression.typeArgumentsCount,
-            expression.valueArgumentsCount
-        ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
-        }.processAttributes(expression)
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall {
