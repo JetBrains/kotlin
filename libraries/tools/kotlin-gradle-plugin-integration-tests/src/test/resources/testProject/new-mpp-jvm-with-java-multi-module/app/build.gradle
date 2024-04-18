@@ -1,4 +1,6 @@
-apply plugin: 'kotlin-multiplatform'
+plugins {
+	id("org.jetbrains.kotlin.multiplatform")
+}
 
 kotlin {
 	sourceSets {
@@ -7,7 +9,8 @@ kotlin {
 			api kotlin('stdlib-common')
 		}
 	}
-	targetFromPreset(presets.jvmWithJava, 'jvm') {
+	jvm {
+		withJava()
 		compilations.main.defaultSourceSet.dependencies {
 			api kotlin('stdlib')
 		}
