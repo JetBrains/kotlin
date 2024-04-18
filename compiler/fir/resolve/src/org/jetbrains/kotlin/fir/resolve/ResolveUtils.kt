@@ -607,25 +607,39 @@ fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularCl
         session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
     }
 
-internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(
-    session: FirSession,
-    // NB: with originScope given this function will try to find overridden declaration with allowed parameter names
-    // for intersection/substitution overrides, delegated declarations, and Java declarations.
-    originScope: FirTypeScope? = null,
-): ForbiddenNamedArgumentsTarget? {
+internal fun FirFunction.areNamedArgumentsForbiddenIgnoringOverridden(): Boolean =
+    forbiddenNamedArgumentsTargetOrNullIgnoringOverridden() != null
+
+private fun FirFunction.forbiddenNamedArgumentsTargetOrNullIgnoringOverridden(): ForbiddenNamedArgumentsTarget? =
+    forbiddenNamedArgumentsTargetOrNull(originScope = null)
+
+/**
+ * Returns a non-null value when named arguments are forbidden for calls to this function.
+ *
+ * When [originScope] is provided, overrides of the function will be checked.
+ * If one of the overridden functions allows named arguments, `null` will be returned.
+ *
+ * One example of this behavior is a Java function that overrides a Kotlin function.
+ * In this case, `null` will be returned, if [originScope] is provided.
+ * Otherwise, [ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION] will be returned.
+ *
+ * To check if a function allows named arguments regardless of its overrides, it is recommended to use
+ * [FirFunction.areNamedArgumentsForbiddenIgnoringOverridden].
+ */
+internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(originScope: FirTypeScope?): ForbiddenNamedArgumentsTarget? {
     if (hasStableParameterNames) return null
 
     return when (origin) {
         FirDeclarationOrigin.ImportedFromObjectOrStatic ->
-            importedFromObjectOrStaticData?.original?.forbiddenNamedArgumentsTargetOrNull(session)
+            importedFromObjectOrStaticData?.original?.forbiddenNamedArgumentsTargetOrNullIgnoringOverridden()
 
         FirDeclarationOrigin.IntersectionOverride, is FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.Delegated -> {
-            val initial = unwrapFakeOverridesOrDelegated().forbiddenNamedArgumentsTargetOrNull(session) ?: return null
-            initial.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(session, originScope) }
+            val initial = unwrapFakeOverridesOrDelegated().forbiddenNamedArgumentsTargetOrNullIgnoringOverridden() ?: return null
+            initial.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(originScope) }
         }
 
         FirDeclarationOrigin.Enhancement -> {
-            ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(session, originScope) }
+            ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(originScope) }
         }
 
         FirDeclarationOrigin.BuiltIns -> ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
@@ -634,15 +648,12 @@ internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(
     }
 }
 
-private fun FirFunctionSymbol<*>.hasOverrideThatAllowsNamedArguments(
-    session: FirSession,
-    originScope: FirTypeScope?,
-): Boolean {
+private fun FirFunctionSymbol<*>.hasOverrideThatAllowsNamedArguments(originScope: FirTypeScope?): Boolean {
     var result = false
     if (this is FirNamedFunctionSymbol) {
         originScope?.processOverriddenFunctions(this) {
             // If an override allows named arguments, it overrides the initial result.
-            if (it.fir.forbiddenNamedArgumentsTargetOrNull(session) == null) {
+            if (!it.fir.areNamedArgumentsForbiddenIgnoringOverridden()) {
                 result = true
                 ProcessorAction.STOP
             } else {

@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.areNamedArgumentsForbiddenIgnoringOverridden
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
 import org.jetbrains.kotlin.fir.resolve.forbiddenNamedArgumentsTargetOrNull
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -124,7 +126,7 @@ private class FirCallArgumentsProcessor(
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
-        function.forbiddenNamedArgumentsTargetOrNull(useSiteSession, originScope as? FirTypeScope)
+        function.forbiddenNamedArgumentsTargetOrNull(originScope as? FirTypeScope)
     }
 
     private enum class State {
@@ -318,7 +320,30 @@ private class FirCallArgumentsProcessor(
 
     private fun getParameterByName(name: Name): FirValueParameter? {
         if (nameToParameter == null) {
-            nameToParameter = parameters.associateBy { it.name }
+            // Situation where the immediate function doesn't allow named arguments, but overrides a function that allows them,
+            // e.g., Java function override of Kotlin function.
+            if (function.areNamedArgumentsForbiddenIgnoringOverridden() && forbiddenNamedArgumentsTarget == null) {
+                val symbol = function.symbol as? FirNamedFunctionSymbol
+                if (symbol != null) {
+                    (originScope as? FirTypeScope)?.processOverriddenFunctions(symbol) { overrideSymbol ->
+                        if (overrideSymbol.fir.areNamedArgumentsForbiddenIgnoringOverridden()) {
+                            return@processOverriddenFunctions ProcessorAction.NEXT
+                        }
+                        // Get the parameter names from the first applicable override and associate original parameters with them.
+                        // If there are multiple overrides with ambiguous parameter names,
+                        // a diagnostic will be reported in findParameterByName.
+                        nameToParameter = parameters.withIndex().associateTo(LinkedHashMap()) { (i, p) ->
+                            overrideSymbol.fir.valueParameters[i].name to p
+                        }
+                        ProcessorAction.STOP
+                    }
+                }
+                if (nameToParameter == null) {
+                    nameToParameter = emptyMap()
+                }
+            } else {
+                nameToParameter = parameters.associateTo(LinkedHashMap()) { it.name to it }
+            }
         }
         return nameToParameter!![name]
     }
@@ -343,10 +368,10 @@ private class FirCallArgumentsProcessor(
         }
 
         if (parameter == null) {
-            if (symbol != null && function.isSubstitutionOrIntersectionOverride) {
+            if (symbol != null && (function.isSubstitutionOrIntersectionOverride || function.isJavaOrEnhancement)) {
                 var allowedParameters: List<FirValueParameterSymbol>? = null
                 (originScope as? FirTypeScope)?.processOverriddenFunctions(symbol) {
-                    if (it.fir.forbiddenNamedArgumentsTargetOrNull(useSiteSession) != null) {
+                    if (it.fir.areNamedArgumentsForbiddenIgnoringOverridden()) {
                         return@processOverriddenFunctions ProcessorAction.NEXT
                     }
                     val someParameterSymbols = it.valueParameterSymbols
@@ -378,13 +403,12 @@ private class FirCallArgumentsProcessor(
                 addDiagnostic(NameNotFound(argument, function))
             }
         } else {
-            if (symbol != null && function.isSubstitutionOrIntersectionOverride) {
-                matchedIndex = parameters.indexOfFirst { originalParameter ->
-                    originalParameter.name == argument.name
-                }
+            if (symbol != null && (function.isSubstitutionOrIntersectionOverride || function.isJavaOrEnhancement)) {
+                // We know the map is initialized, and it preserves insertion order.
+                matchedIndex = nameToParameter!!.entries.indexOfFirst { it.key == argument.name }
                 if (matchedIndex != -1) {
                     (originScope as? FirTypeScope)?.processOverriddenFunctions(symbol) {
-                        if (it.fir.forbiddenNamedArgumentsTargetOrNull(useSiteSession) != null) {
+                        if (it.fir.areNamedArgumentsForbiddenIgnoringOverridden()) {
                             return@processOverriddenFunctions ProcessorAction.NEXT
                         }
                         it.valueParameterSymbols.findAndReportValueParameterWithDifferentName()
