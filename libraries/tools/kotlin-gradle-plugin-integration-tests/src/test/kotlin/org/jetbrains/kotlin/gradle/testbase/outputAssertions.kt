@@ -254,10 +254,7 @@ fun BuildResult.assertCompilerArgument(
     expectedArgument: String,
     logLevel: LogLevel = LogLevel.DEBUG
 ) {
-    val taskOutput = getOutputForTask(taskPath, logLevel)
-    val compilerArguments = taskOutput.lines().first {
-        it.contains("Kotlin compiler args:")
-    }.substringAfter("Kotlin compiler args:")
+    val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
     assert(compilerArguments.contains(expectedArgument)) {
         printBuildOutput()
@@ -286,10 +283,7 @@ fun BuildResult.assertCompilerArguments(
     vararg expectedArguments: String,
     logLevel: LogLevel = LogLevel.DEBUG,
 ) {
-    val taskOutput = getOutputForTask(taskPath, logLevel)
-    val compilerArguments = taskOutput.lines().first {
-        it.contains("Kotlin compiler args:")
-    }.substringAfter("Kotlin compiler args:")
+    val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
     val nonExistingArguments = expectedArguments
         .filter {
@@ -303,15 +297,27 @@ fun BuildResult.assertCompilerArguments(
     }
 }
 
+/**
+ * Extracts compiler arguments used in compilation for a given Kotlin task under [taskPath] path.
+ *
+ * @param logLevel [LogLevel] with which build was running, default to [LogLevel.INFO].
+ */
+fun BuildResult.extractTaskCompilerArguments(
+    taskPath: String,
+    logLevel: LogLevel = LogLevel.INFO
+): String {
+    val taskOutput = getOutputForTask(taskPath, logLevel)
+    return taskOutput.lines().first {
+        it.contains("Kotlin compiler args:")
+    }.substringAfter("Kotlin compiler args:")
+}
+
 fun BuildResult.assertNoCompilerArgument(
     taskPath: String,
     notExpectedArgument: String,
     logLevel: LogLevel = LogLevel.DEBUG,
 ) {
-    val taskOutput = getOutputForTask(taskPath, logLevel)
-    val compilerArguments = taskOutput.lines().first {
-        it.contains("Kotlin compiler args:")
-    }.substringAfter("Kotlin compiler args:")
+    val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
     assert(!compilerArguments.contains(notExpectedArgument)) {
         printBuildOutput()
