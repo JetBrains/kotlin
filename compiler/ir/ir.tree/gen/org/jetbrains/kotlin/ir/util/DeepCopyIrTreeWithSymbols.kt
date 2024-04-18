@@ -671,6 +671,16 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitStringConcatenation(expression: IrStringConcatenation): IrStringConcatenation =
+        IrStringConcatenationImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            arguments = expression.arguments.memoryOptimizedMap { it.transform() },
+        ).apply {
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -802,13 +812,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             mapStatementOrigin(expression.origin),
             expression.statements.memoryOptimizedMap { it.transform() },
-        ).processAttributes(expression)
-
-    override fun visitStringConcatenation(expression: IrStringConcatenation): IrStringConcatenation =
-        IrStringConcatenationImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.arguments.memoryOptimizedMap { it.transform() }
         ).processAttributes(expression)
 
     override fun visitGetValue(expression: IrGetValue): IrGetValue =
