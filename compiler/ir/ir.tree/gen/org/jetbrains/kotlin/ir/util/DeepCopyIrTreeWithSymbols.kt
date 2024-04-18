@@ -433,6 +433,23 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
+        IrPropertyReferenceImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedProperty(expression.symbol),
+            typeArgumentsCount = expression.typeArgumentsCount,
+            field = expression.field?.let { symbolRemapper.getReferencedField(it) },
+            getter = expression.getter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
+            setter = expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
+            origin = mapStatementOrigin(expression.origin),
+        ).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+            transformReceiverArguments(expression)
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -707,21 +724,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             expression.argument.transform()
         ).processAttributes(expression)
-
-    override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
-        IrPropertyReferenceImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedProperty(expression.symbol),
-            expression.typeArgumentsCount,
-            expression.field?.let { symbolRemapper.getReferencedField(it) },
-            expression.getter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
-            expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
-            mapStatementOrigin(expression.origin)
-        ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformReceiverArguments(expression)
-        }.processAttributes(expression)
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrLocalDelegatedPropertyReference =
         IrLocalDelegatedPropertyReferenceImpl(
