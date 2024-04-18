@@ -139,6 +139,12 @@ open class DeepCopyIrTreeWithSymbols(
         return result
     }
 
+    override fun visitTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
+        copyTypeParameter(declaration).apply {
+            // TODO type parameter scopes?
+            superTypes = declaration.superTypes.memoryOptimizedMap { it.remapType() }
+        }
+
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
@@ -335,12 +341,6 @@ open class DeepCopyIrTreeWithSymbols(
         ).apply {
             transformAnnotations(declaration)
             initializer = declaration.initializer?.transform()
-        }
-
-    override fun visitTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
-        copyTypeParameter(declaration).apply {
-            // TODO type parameter scopes?
-            superTypes = declaration.superTypes.memoryOptimizedMap { it.remapType() }
         }
 
     private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
