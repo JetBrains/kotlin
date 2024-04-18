@@ -681,6 +681,16 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitThrow(expression: IrThrow): IrThrow =
+        IrThrowImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            value = expression.value.transform(),
+        ).apply {
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -925,13 +935,6 @@ open class DeepCopyIrTreeWithSymbols(
             is IrFunctionSymbol -> getReferencedFunction(returnTarget)
             is IrReturnableBlockSymbol -> getReferencedReturnableBlock(returnTarget)
         }
-
-    override fun visitThrow(expression: IrThrow): IrThrow =
-        IrThrowImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.value.transform()
-        ).processAttributes(expression)
 
     override fun visitErrorExpression(expression: IrErrorExpression): IrErrorExpression =
         IrErrorExpressionImpl(
