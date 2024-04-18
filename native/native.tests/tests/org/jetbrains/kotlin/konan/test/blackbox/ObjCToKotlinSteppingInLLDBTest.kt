@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.LLDB
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
@@ -130,6 +131,9 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
 
     @Test
     fun stepOverFromKotlinToObjC___WithStopHook___StepsOverToObjCCode() {
+        // https://youtrack.jetbrains.com/issue/KT-67567/Native-after-updating-to-LLVM-16-lldb-hangs-when-smooth-stepping
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+
         testSteppingFromObjcToKotlin(
             """
             > b ${KOTLIN_FILE_NAME}:3
