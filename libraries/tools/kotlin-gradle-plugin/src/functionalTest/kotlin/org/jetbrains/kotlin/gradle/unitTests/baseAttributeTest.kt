@@ -52,7 +52,7 @@ abstract class BaseAttributeTest<T>(private val attribute: Attribute<T>) {
 }
 
 abstract class BaseNamedAttributeTest<T : Named>(
-    private val attribute: Attribute<T>,
+    attribute: Attribute<T>,
     private val clazz: Class<T>,
 ) : BaseAttributeTest<T>(attribute) {
     protected fun assertAttributeEquals(
