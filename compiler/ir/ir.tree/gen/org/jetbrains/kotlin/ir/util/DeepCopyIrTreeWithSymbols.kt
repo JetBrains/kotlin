@@ -301,6 +301,22 @@ open class DeepCopyIrTreeWithSymbols(
             statements = body.statements.memoryOptimizedMap { it.transform() },
         )
 
+    override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall =
+        IrConstructorCallImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
+            typeArgumentsCount = expression.typeArgumentsCount,
+            constructorTypeArgumentsCount = expression.constructorTypeArgumentsCount,
+            valueArgumentsCount = expression.valueArgumentsCount,
+            origin = mapStatementOrigin(expression.origin),
+        ).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -550,22 +566,6 @@ open class DeepCopyIrTreeWithSymbols(
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
         }
-
-    override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
-        val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
-        return IrConstructorCallImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            constructorSymbol,
-            expression.typeArgumentsCount,
-            expression.constructorTypeArgumentsCount,
-            expression.valueArgumentsCount,
-            mapStatementOrigin(expression.origin)
-        ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
-        }.processAttributes(expression)
-    }
 
     private fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
         assert(typeArgumentsCount == other.typeArgumentsCount) {
