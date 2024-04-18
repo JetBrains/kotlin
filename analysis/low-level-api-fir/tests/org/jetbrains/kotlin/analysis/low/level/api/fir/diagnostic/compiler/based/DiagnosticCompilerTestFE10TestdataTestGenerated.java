@@ -13189,6 +13189,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("dnnAgainstSam.kt")
+      public void testDnnAgainstSam() {
+        runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/dnnAgainstSam.kt");
+      }
+
+      @Test
       @TestMetadata("dnnTypeProjectionInParameter.kt")
       public void testDnnTypeProjectionInParameter() {
         runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/dnnTypeProjectionInParameter.kt");

@@ -13183,6 +13183,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("dnnAgainstSam.kt")
+      public void testDnnAgainstSam() {
+        runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/dnnAgainstSam.kt");
+      }
+
+      @Test
       @TestMetadata("dnnTypeProjectionInParameter.kt")
       public void testDnnTypeProjectionInParameter() {
         runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/dnnTypeProjectionInParameter.kt");
