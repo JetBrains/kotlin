@@ -16,12 +16,11 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.jvmTargetProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
-import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -97,10 +96,14 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         artifactsTaskLocator = artifactsTaskLocator
     )
 
-    target.setupApiElements(apiElementsConfiguration)
-    target.setupApiElements(apiElementsPublishedConfiguration)
-    target.setupRuntimeElements(runtimeElementsConfiguration)
-    target.setupRuntimeElements(runtimeElementsPublishedConfiguration)
+    val jvmTargetProvider = {
+        target.getConventionalMainCompilation().jvmTargetProvider()
+    }
+
+    target.setupApiElements(apiElementsConfiguration, jvmTargetProvider)
+    target.setupApiElements(apiElementsPublishedConfiguration, jvmTargetProvider)
+    target.setupRuntimeElements(runtimeElementsConfiguration, jvmTargetProvider)
+    target.setupRuntimeElements(runtimeElementsPublishedConfiguration, jvmTargetProvider)
     target.setupSourcesElements(sourcesElementsConfiguration)
     target.setupSourcesElements(sourcesElementsPublishedConfiguration)
 
@@ -131,14 +134,14 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
     return createExternalKotlinTarget(ExternalKotlinTargetDescriptor(descriptor))
 }
 
-private fun ExternalKotlinTargetImpl.setupApiElements(configuration: Configuration) {
-    configuration.usesPlatformOf(this)
+private fun ExternalKotlinTargetImpl.setupApiElements(configuration: Configuration, jvmTargetProvider: (() -> JvmTarget)) {
+    configuration.usesPlatformOf(this, jvmTargetProvider)
     configuration.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(this))
     configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
 }
 
-private fun ExternalKotlinTargetImpl.setupRuntimeElements(configuration: Configuration) {
-    configuration.usesPlatformOf(this)
+private fun ExternalKotlinTargetImpl.setupRuntimeElements(configuration: Configuration, jvmTargetProvider: (() -> JvmTarget)) {
+    configuration.usesPlatformOf(this, jvmTargetProvider)
     configuration.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(this))
     configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
 }

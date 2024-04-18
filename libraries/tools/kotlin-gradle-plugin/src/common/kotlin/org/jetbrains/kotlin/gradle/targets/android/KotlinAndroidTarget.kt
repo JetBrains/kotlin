@@ -10,6 +10,8 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.HasAttributes
+import org.gradle.api.attributes.java.TargetJvmVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
@@ -147,7 +149,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     }
 
     private fun isVariantPublished(
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant,
     ): Boolean = publishLibraryVariants?.contains(getVariantName(variant)) ?: true
 
     private fun AndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
@@ -299,10 +301,13 @@ abstract class KotlinAndroidTarget @Inject constructor(
             description = "Source files of Android ${variantName}."
             isVisible = false
 
-            apiElementsConfiguration.copyAttributesTo(project, dest = this)
+            apiElementsConfiguration.copyAttributesTo(project, dest = this, apiElementsConfiguration.filterSourceRelatedAttributes())
             configureSourcesPublicationAttributes(this@KotlinAndroidTarget)
         }
     }
+
+    private fun HasAttributes.filterSourceRelatedAttributes() =
+        attributes.keySet().filter { it != TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE }
 
     /** We filter this variant out as it is never requested on the consumer side, while keeping it leads to ambiguity between Android and
      * JVM variants due to non-nesting sets of unmatched attributes. */

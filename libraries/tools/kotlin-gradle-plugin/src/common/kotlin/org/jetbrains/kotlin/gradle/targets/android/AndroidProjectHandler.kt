@@ -357,7 +357,7 @@ internal class AndroidProjectHandler(
 
         listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).forEach { outputConfigurationName ->
             project.configurations.findByName(outputConfigurationName)?.let { configuration ->
-                configuration.usesPlatformOf(compilation.target)
+                configuration.usesPlatformOf(compilation.target, compilation.jvmTargetProvider)
                 configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
         }

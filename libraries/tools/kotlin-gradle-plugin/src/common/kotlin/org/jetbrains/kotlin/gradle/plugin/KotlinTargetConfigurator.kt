@@ -10,8 +10,12 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.java.TargetJvmEnvironment
+import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.attributesConfigurationHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.runKotlinCompilationSideEffects
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -55,14 +59,20 @@ internal fun Project.categoryByName(categoryName: String): Category =
 internal inline fun <reified T : Named> Project.attributeValueByName(attributeValueName: String): T =
     objects.named(T::class.java, attributeValueName)
 
-fun Configuration.usesPlatformOf(target: KotlinTarget) = setUsesPlatformOf(target)
+fun Configuration.usesPlatformOf(
+    target: KotlinTarget,
+    jvmTargetProvider: (() -> JvmTarget)? = null,
+) = setUsesPlatformOf(target, jvmTargetProvider)
 
-internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
+internal fun <T : HasAttributes> T.setUsesPlatformOf(
+    target: KotlinTarget,
+    jvmTargetProvider: (() -> JvmTarget)? = null,
+): T {
     attributes.setAttribute(KotlinPlatformType.attribute, target.platformType)
 
     when (target.platformType) {
-        KotlinPlatformType.jvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "standard-jvm")
-        KotlinPlatformType.androidJvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "android")
+        KotlinPlatformType.jvm -> setJvmSpecificAttributes(target, "standard-jvm", jvmTargetProvider)
+        KotlinPlatformType.androidJvm -> setJvmSpecificAttributes(target, "android", jvmTargetProvider)
         /**
          *  We set this attribute even for non-JVM-like targets (JS, Native) to avoid issues with Gradle variant-aware dependency resolution
          *  treating variants which don't have a particular attribute more preferable than those having it in those cases when Gradle failed
@@ -93,7 +103,17 @@ internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
     if (target is KotlinNativeTarget) {
         attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
     }
+
     return this
+}
+
+private fun HasAttributes.setJvmSpecificAttributes(
+    target: KotlinTarget,
+    targetJvmEnvironment: String,
+    jvmTargetProvider: (() -> JvmTarget)?,
+) {
+    setJavaTargetEnvironmentAttributeIfSupported(target.project, targetJvmEnvironment)
+    setTargetJvmAttribute(target.project, jvmTargetProvider)
 }
 
 private fun HasAttributes.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {
@@ -102,6 +122,36 @@ private fun HasAttributes.setJavaTargetEnvironmentAttributeIfSupported(project: 
             TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
             project.objects.named(value)
         )
+    }
+}
+
+internal val KotlinCompilation<*>.jvmTargetProvider: () -> JvmTarget
+    get() = {
+        compileTaskProvider.flatMap {
+            (it.compilerOptions as? KotlinJvmCompilerOptions)?.jvmTarget ?: error("JVM target is not applicable to this target")
+        }.get()
+    }
+
+private fun HasAttributes.setTargetJvmAttribute(
+    project: Project,
+    jvmTargetProvider: (() -> JvmTarget)?,
+) {
+    /**
+     * While this function is certainly used for configuring JVM targets,
+     * it's important to note that in certain scenarios, such as publishing sources,
+     * specifying a JVM target version might not be applicable or meaningful.
+     * That's why we allow just skipping this attribute by null value
+     */
+    if (jvmTargetProvider == null) return
+
+    project.attributesConfigurationHelper.setAttribute(
+        attributes,
+        TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE,
+    ) {
+        when (val jvmTarget = jvmTargetProvider()) {
+            JvmTarget.JVM_1_8 -> 8
+            else -> jvmTarget.target.toInt()
+        }
     }
 }
 

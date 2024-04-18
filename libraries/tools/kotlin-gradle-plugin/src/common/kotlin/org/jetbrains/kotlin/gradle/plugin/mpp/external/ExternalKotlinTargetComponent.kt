@@ -63,8 +63,7 @@ internal class ExternalKotlinTargetComponent(
         getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, null)
 
     private val _usages: Set<DefaultKotlinUsageContext> by lazy {
-        val compilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-            ?: error("Missing conventional '${KotlinCompilation.MAIN_COMPILATION_NAME}' compilation in '$target'")
+        val compilation = target.getConventionalMainCompilation()
 
         setOf(
             DefaultKotlinUsageContext(compilation, COMPILE, target.apiElementsPublishedConfiguration.name),

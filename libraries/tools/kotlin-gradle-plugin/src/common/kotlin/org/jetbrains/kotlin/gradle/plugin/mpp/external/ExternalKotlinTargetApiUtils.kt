@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 
 @ExternalKotlinTargetApi
 interface ExternalKotlinTargetApiUtils {
@@ -29,3 +31,7 @@ val Project.externalKotlinTargetApiUtils: ExternalKotlinTargetApiUtils
             project.extraProperties.set(KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE, publish.toString())
         }
     }
+
+internal fun InternalKotlinTarget.getConventionalMainCompilation() =
+    compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        ?: error("Missing conventional '${KotlinCompilation.MAIN_COMPILATION_NAME}' compilation in '$this'")

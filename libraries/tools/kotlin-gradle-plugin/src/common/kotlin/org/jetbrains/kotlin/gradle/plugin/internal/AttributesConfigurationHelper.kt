@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 /**
  * Gradle 7.4 introduced a way of configuring attribute values using a [org.gradle.api.provider.Provider].
  * In Gradle 8.3+ using a non-Provider value caused eager task realization (see KT-60664).
+ *
+ * Note: it computes the value eagerly on the versions that do not provide the required lazy API.
  */
 internal interface AttributesConfigurationHelper {
     fun <T : Any> setAttribute(
         attributesContainer: HasAttributes,
         key: Attribute<T>,
-        value: () -> T
+        value: () -> T,
     )
 
     interface AttributeConfigurationHelperVariantFactory : VariantImplementationFactories.VariantImplementationFactory {
@@ -29,12 +31,12 @@ internal interface AttributesConfigurationHelper {
 }
 
 internal class DefaultAttributesConfigurationHelper(
-    private val providerFactory: ProviderFactory
+    private val providerFactory: ProviderFactory,
 ) : AttributesConfigurationHelper {
     override fun <T : Any> setAttribute(
         attributesContainer: HasAttributes,
         key: Attribute<T>,
-        value: () -> T
+        value: () -> T,
     ) {
         attributesContainer.attributes.attributeProvider(
             key,
@@ -46,7 +48,7 @@ internal class DefaultAttributesConfigurationHelper(
 internal class DefaultAttributeConfigurationHelperVariantFactory :
     AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory {
     override fun getInstance(
-        providerFactory: ProviderFactory
+        providerFactory: ProviderFactory,
     ): AttributesConfigurationHelper = DefaultAttributesConfigurationHelper(providerFactory)
 }
 
