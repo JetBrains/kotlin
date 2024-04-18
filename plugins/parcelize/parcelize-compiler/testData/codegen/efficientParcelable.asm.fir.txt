@@ -6,16 +6,23 @@ public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Cr
           ALOAD (1)
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
           NEW (test/Bar)
           DUP
           ALOAD (1)
-          LDC (Ltest/Bar;)
-          INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
-          INVOKEVIRTUAL (android/os/Parcel, readParcelable, (Ljava/lang/ClassLoader;)Landroid/os/Parcelable;)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFNE (L2)
+          ACONST_NULL
+          GOTO (L3)
+        LABEL (L2)
+          GETSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)
+          ALOAD (1)
+          INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
+        LABEL (L3)
           CHECKCAST (test/Foo)
           INVOKESPECIAL (test/Bar, <init>, (Ltest/Foo;)V)
           ARETURN
-        LABEL (L1)
+        LABEL (L4)
     }
 
     public java.lang.Object createFromParcel(android.os.Parcel source) {
@@ -57,16 +64,27 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          ALOAD (1)
           ALOAD (0)
           GETFIELD (test/Bar, foo, Ltest/Foo;)
-          CHECKCAST (android/os/Parcelable)
-          ILOAD (2)
-          INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
+          ASTORE (3)
+          ALOAD (3)
+          IFNONNULL (L1)
+          ALOAD (1)
+          ICONST_0
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          GOTO (L2)
         LABEL (L1)
+          ALOAD (1)
+          ICONST_1
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ALOAD (3)
+          ALOAD (1)
+          ILOAD (2)
+          INVOKEVIRTUAL (test/Foo, writeToParcel, (Landroid/os/Parcel;I)V)
+        LABEL (L2)
         LINENUMBER (13)
           RETURN
-        LABEL (L2)
+        LABEL (L3)
     }
 }
 
@@ -80,10 +98,9 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           NEW (test/Foo)
           DUP
+          GETSTATIC (test/Bar, CREATOR, Landroid/os/Parcelable$Creator;)
           ALOAD (1)
-          LDC (Ltest/Foo;)
-          INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
-          INVOKEVIRTUAL (android/os/Parcel, readParcelable, (Ljava/lang/ClassLoader;)Landroid/os/Parcelable;)
+          INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
           CHECKCAST (test/Bar)
           INVOKESPECIAL (test/Foo, <init>, (Ltest/Bar;)V)
           ARETURN
@@ -129,12 +146,11 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          ALOAD (1)
           ALOAD (0)
           GETFIELD (test/Foo, bar, Ltest/Bar;)
-          CHECKCAST (android/os/Parcelable)
+          ALOAD (1)
           ILOAD (2)
-          INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
+          INVOKEVIRTUAL (test/Bar, writeToParcel, (Landroid/os/Parcel;I)V)
         LABEL (L1)
         LINENUMBER (10)
           RETURN
