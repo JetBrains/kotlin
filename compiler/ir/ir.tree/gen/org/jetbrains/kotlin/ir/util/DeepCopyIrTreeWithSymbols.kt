@@ -117,6 +117,17 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(declaration)
         }
 
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrAnonymousInitializer =
+        declaration.factory.createAnonymousInitializer(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            symbol = IrAnonymousInitializerSymbolImpl(declaration.descriptor),
+        ).apply {
+            transformAnnotations(declaration)
+            body = declaration.body.transform()
+        }
+
     override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
         val result = IrModuleFragmentImpl(
             declaration.descriptor,
@@ -309,16 +320,6 @@ open class DeepCopyIrTreeWithSymbols(
             transformAnnotations(declaration)
             correspondingClass = declaration.correspondingClass?.transform()
             initializerExpression = declaration.initializerExpression?.transform()
-        }
-
-    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrAnonymousInitializer =
-        declaration.factory.createAnonymousInitializer(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            IrAnonymousInitializerSymbolImpl(declaration.descriptor)
-        ).apply {
-            transformAnnotations(declaration)
-            body = declaration.body.transform()
         }
 
     override fun visitVariable(declaration: IrVariable): IrVariable =
