@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -276,6 +277,17 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         is FirSafeCallExpression -> selector.extractSymbol()
         is FirSmartCastExpression -> originalExpression.extractSymbol()
         is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.extractSymbol()
+        is FirResolvedQualifier -> {
+            fun symbolIfObject(symbol: FirClassifierSymbol<*>?): FirClassifierSymbol<*>? {
+                return when (symbol) {
+                    is FirRegularClassSymbol -> symbol.takeIf { it.classKind == ClassKind.OBJECT }
+                    is FirTypeAliasSymbol -> symbolIfObject(symbol.fullyExpandedClass(session))
+                    else -> null
+                }
+            }
+
+            symbolIfObject(symbol)
+        }
         else -> null
     }?.takeIf {
         (this as? FirExpression)?.unwrapSmartcastExpression() is FirThisReceiverExpression ||

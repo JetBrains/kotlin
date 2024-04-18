@@ -198,16 +198,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // smart-casts being applied.
         if (data !is ResolutionMode.AssignmentLValue) {
             when (result) {
-                is FirQualifiedAccessExpression -> {
-                    dataFlowAnalyzer.exitQualifiedAccessExpression(result)
-                    result = components.transformQualifiedAccessUsingSmartcastInfo(result)
-                    if (result is FirSmartCastExpression) {
-                        dataFlowAnalyzer.exitSmartCastExpression(result)
-                    }
-                }
-                is FirResolvedQualifier -> {
-                    dataFlowAnalyzer.exitResolvedQualifierNode(result)
-                }
+                is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(result)
+                is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(result)
+                else -> return result
+            }
+            result = components.transformExpressionUsingSmartcastInfo(result)
+            if (result is FirSmartCastExpression) {
+                dataFlowAnalyzer.exitSmartCastExpression(result)
             }
         }
         return result
