@@ -39,6 +39,12 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
                 from = jvmCompilerOptions,
                 into = kaptGenerateStubsTask.compilerOptions
             )
+
+            // This task should not sync any freeCompilerArgs from relevant KotlinCompile task
+            // when someone explicitly configures any value for this task as well.
+            // Here we reset any configured value and say that use KotlinCompile freeCompilerArgs as convention
+            kaptGenerateStubsTask.compilerOptions.freeCompilerArgs.value(null as Iterable<String>?)
+            kaptGenerateStubsTask.compilerOptions.freeCompilerArgs.convention(jvmCompilerOptions.freeCompilerArgs)
         }
     }
 
