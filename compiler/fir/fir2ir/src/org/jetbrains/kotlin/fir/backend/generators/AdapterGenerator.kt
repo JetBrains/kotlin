@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirFakeArgumentForCallableReferenc
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -274,7 +275,8 @@ internal class AdapterGenerator(
         boundDispatchReceiver: IrExpression?,
         boundExtensionReceiver: IrExpression?
     ): IrExpression = callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
-        val type = firAdaptee.returnTypeRef.toIrType(typeConverter)
+        val substitutor = callableReferenceAccess.createConeSubstitutorFromTypeArguments(session) ?: ConeSubstitutor.Empty
+        val type = substitutor.substituteOrSelf(firAdaptee.returnTypeRef.coneType).toIrType(typeConverter)
         val irCall = when (adapteeSymbol) {
             is IrConstructorSymbol ->
                 IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, adapteeSymbol)
@@ -328,7 +330,7 @@ internal class AdapterGenerator(
 
         firAdaptee.valueParameters.forEachIndexed { index, valueParameter ->
             val varargElementType = valueParameter.varargElementType?.toIrType(c)
-            val parameterType = valueParameter.returnTypeRef.toIrType(typeConverter)
+            val parameterType = substitutor.substituteOrSelf(valueParameter.returnTypeRef.coneType).toIrType(typeConverter)
             when (val mappedArgument = mappedArguments?.get(valueParameter)) {
                 is ResolvedCallArgument.VarargArgument -> {
                     val valueArgument = if (mappedArgument.arguments.isEmpty()) {

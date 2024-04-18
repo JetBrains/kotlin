@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-67307
 
 interface Base<T, ID> {
