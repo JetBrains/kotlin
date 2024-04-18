@@ -390,6 +390,17 @@ open class DeepCopyIrTreeWithSymbols(
             kind = body.kind,
         )
 
+    override fun visitBreak(jump: IrBreak): IrBreak =
+        IrBreakImpl(
+            startOffset = jump.startOffset,
+            endOffset = jump.endOffset,
+            type = jump.type.remapType(),
+            loop = getTransformedLoop(jump.loop),
+        ).apply {
+            label = jump.label
+            processAttributes(jump)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -788,13 +799,6 @@ open class DeepCopyIrTreeWithSymbols(
             newLoop.condition = loop.condition.transform()
             newLoop.body = loop.body?.transform()
         }.processAttributes(loop)
-
-    override fun visitBreak(jump: IrBreak): IrBreak =
-        IrBreakImpl(
-            jump.startOffset, jump.endOffset,
-            jump.type.remapType(),
-            getTransformedLoop(jump.loop)
-        ).apply { label = jump.label }.processAttributes(jump)
 
     override fun visitContinue(jump: IrContinue): IrContinue =
         IrContinueImpl(
