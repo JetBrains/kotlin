@@ -327,6 +327,16 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitGetEnumValue(expression: IrGetEnumValue): IrGetEnumValue =
+        IrGetEnumValueImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedEnumEntry(expression.symbol),
+        ).apply {
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -517,13 +527,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             expression.arguments.memoryOptimizedMap { it.transform() }
-        ).processAttributes(expression)
-
-    override fun visitGetEnumValue(expression: IrGetEnumValue): IrGetEnumValue =
-        IrGetEnumValueImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedEnumEntry(expression.symbol)
         ).processAttributes(expression)
 
     override fun visitGetValue(expression: IrGetValue): IrGetValue =
