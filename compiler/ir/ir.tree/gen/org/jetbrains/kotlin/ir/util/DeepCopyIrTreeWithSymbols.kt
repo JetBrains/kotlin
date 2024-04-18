@@ -429,10 +429,10 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitFile(declaration: IrFile): IrFile =
         IrFileImpl(
-            declaration.fileEntry,
-            symbolRemapper.getDeclaredFile(declaration.symbol),
-            declaration.packageFqName,
-            transformedModule ?: declaration.module
+            fileEntry = declaration.fileEntry,
+            symbol = symbolRemapper.getDeclaredFile(declaration.symbol),
+            fqName = declaration.packageFqName,
+            module = transformedModule ?: declaration.module,
         ).apply {
             transformAnnotations(declaration)
             declaration.transformDeclarationsTo(this)
