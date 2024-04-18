@@ -421,8 +421,8 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
-            symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
-            declaration.packageFqName
+            symbol = symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
+            packageFqName = declaration.packageFqName,
         ).apply {
             declaration.transformDeclarationsTo(this)
         }
