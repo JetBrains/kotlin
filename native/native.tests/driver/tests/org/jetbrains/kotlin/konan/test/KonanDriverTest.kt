@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -43,6 +44,16 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     private val testSuiteDir = File("native/native.tests/driver/testData")
     private val source = testSuiteDir.resolve("driver0.kt")
+
+    // Driver tests are flaky on macOS hosts.
+    private fun `check for KT-67454`() {
+        Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily)
+    }
+
+    @BeforeEach
+    fun checkAssumptions() {
+        `check for KT-67454`()
+    }
 
     @Test
     fun testLLVMVariantDev() {
