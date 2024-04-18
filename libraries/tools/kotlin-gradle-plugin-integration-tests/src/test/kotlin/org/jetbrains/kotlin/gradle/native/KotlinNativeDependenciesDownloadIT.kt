@@ -54,7 +54,8 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                     freeArgs = listOf("-Pkotlin.native.toolchain.enabled=false"),
                 )
             ) {
-                assertOutputContains("(KonanProperties) Downloading dependency")
+                // Only klib-compilation tasks are launched, so no dependencies should be downloaded
+                assertOutputDoesNotContain("(KonanProperties) Downloading dependency")
                 assertOutputDoesNotContain("Downloading dependency for Kotlin Native")
             }
         }

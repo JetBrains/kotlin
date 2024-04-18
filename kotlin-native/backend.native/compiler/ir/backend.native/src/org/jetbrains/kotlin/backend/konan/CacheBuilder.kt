@@ -264,6 +264,9 @@ class CacheBuilder(
 
                 setupCommonOptionsForCaches(konanConfig)
                 put(KonanConfigKeys.PRODUCE, CompilerOutputKind.STATIC_CACHE)
+                // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
+                // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
+                put(KonanConfigKeys.CHECK_DEPENDENCIES, true)
                 put(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE, libraryPath)
                 put(KonanConfigKeys.NODEFAULTLIBS, true)
                 put(KonanConfigKeys.NOENDORSEDLIBS, true)
