@@ -450,6 +450,20 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrLocalDelegatedPropertyReference =
+        IrLocalDelegatedPropertyReferenceImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedLocalDelegatedProperty(expression.symbol),
+            delegate = symbolRemapper.getReferencedVariable(expression.delegate),
+            getter = symbolRemapper.getReferencedSimpleFunction(expression.getter),
+            setter = expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
+            origin = mapStatementOrigin(expression.origin),
+        ).apply {
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -723,17 +737,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             expression.argument.transform()
-        ).processAttributes(expression)
-
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrLocalDelegatedPropertyReference =
-        IrLocalDelegatedPropertyReferenceImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedLocalDelegatedProperty(expression.symbol),
-            symbolRemapper.getReferencedVariable(expression.delegate),
-            symbolRemapper.getReferencedSimpleFunction(expression.getter),
-            expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
-            mapStatementOrigin(expression.origin)
         ).processAttributes(expression)
 
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrFunctionExpression =
