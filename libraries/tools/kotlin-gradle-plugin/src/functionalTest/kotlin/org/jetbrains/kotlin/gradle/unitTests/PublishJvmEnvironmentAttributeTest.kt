@@ -10,28 +10,23 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmEnvironment.STANDARD_JVM
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinVariantWithMetadataVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.containsMultiplatformAttributes
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
-import org.jetbrains.kotlin.gradle.utils.named
 import kotlin.test.*
 
-class PublishJvmEnvironmentAttributeTest {
+class PublishJvmEnvironmentAttributeTest :
+    BaseNamedAttributeTest<TargetJvmEnvironment>(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, TargetJvmEnvironment::class.java) {
     @Test
     fun `test - default value`() = buildProjectWithMPP().runLifecycleAwareTest {
         val kotlin = multiplatformExtension
         kotlin.jvm()
         configurationResult.await()
         assertTrue(kotlinPropertiesProvider.publishJvmEnvironmentAttribute)
-        assertJvmEnvironmentAttributeEquals(kotlin.jvm(), STANDARD_JVM)
+        assertAttributeEquals(kotlin.jvm(), STANDARD_JVM)
     }
 
     @Test
@@ -43,7 +38,7 @@ class PublishJvmEnvironmentAttributeTest {
 
         configurationResult.await()
         assertFalse(kotlinPropertiesProvider.publishJvmEnvironmentAttribute)
-        assertNoJvmEnvironmentAttribute(kotlin.jvm())
+        assertNoAttribute(kotlin.jvm())
     }
 
     @Test
@@ -55,39 +50,6 @@ class PublishJvmEnvironmentAttributeTest {
 
         configurationResult.await()
         assertTrue(kotlinPropertiesProvider.publishJvmEnvironmentAttribute)
-        assertJvmEnvironmentAttributeEquals(kotlin.jvm(), STANDARD_JVM)
-    }
-
-    private fun assertNoJvmEnvironmentAttribute(target: KotlinTarget) {
-        target.forEachUsage { usage ->
-            usage.attributes.containsMultiplatformAttributes
-            assertNull(
-                usage.attributes.getAttribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE),
-                "Expected no jvm environment attribute to be set on usage '$usage"
-            )
-        }
-    }
-
-    private fun assertJvmEnvironmentAttributeEquals(target: KotlinTarget, value: TargetJvmEnvironment) {
-        target.forEachUsage { usage ->
-            usage.attributes.containsMultiplatformAttributes
-            assertEquals(
-                value, usage.attributes.getAttribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE),
-            )
-        }
-    }
-
-    private fun assertJvmEnvironmentAttributeEquals(target: KotlinTarget, value: String) {
-        assertJvmEnvironmentAttributeEquals(
-            target,
-            target.project.objects.named<TargetJvmEnvironment>(value)
-        )
-    }
-
-    private fun KotlinTarget.forEachUsage(action: (usage: KotlinUsageContext) -> Unit) {
-        val component = internal.kotlinComponents.singleOrNull() ?: fail("Expected a single component. Found: ${components}")
-        component as KotlinVariantWithMetadataVariant
-        component.usages.ifEmpty { fail("Expected at least one 'usage'") }
-        component.usages.forEach(action)
+        assertAttributeEquals(kotlin.jvm(), STANDARD_JVM)
     }
 }
