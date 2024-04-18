@@ -157,6 +157,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   }
 
   @Test
+  @TestMetadata("expectClassWithJavaMethod.kt")
+  public void testExpectClassWithJavaMethod() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/expectClassWithJavaMethod.kt");
+  }
+
+  @Test
   @TestMetadata("functions.kt")
   public void testFunctions() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/functions.kt");
