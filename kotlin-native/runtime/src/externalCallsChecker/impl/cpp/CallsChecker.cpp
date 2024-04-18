@@ -221,6 +221,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "os_signpost_id_make_with_pointer",
         "protocol_getName",
 
+        "llvm.abs.*",
         "llvm.assume",
         "llvm.ceil.*",
         "llvm.copysign.*",
@@ -235,6 +236,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.fabs.*",
         "llvm.fabs.*",
         "llvm.floor.*",
+        "llvm.fmuladd.*",
         "llvm.instrprof.*",
         "llvm.lifetime.*",
         "llvm.log.*",
