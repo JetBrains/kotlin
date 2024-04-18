@@ -83,6 +83,40 @@ open class DeepCopyIrTreeWithSymbols(
             defaultValue = declaration.defaultValue?.transform()
         }
 
+    override fun visitClass(declaration: IrClass): IrClass =
+        declaration.factory.createClass(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            visibility = declaration.visibility,
+            symbol = symbolRemapper.getDeclaredClass(declaration.symbol),
+            kind = declaration.kind,
+            modality = declaration.modality,
+            isExternal = declaration.isExternal,
+            isCompanion = declaration.isCompanion,
+            isInner = declaration.isInner,
+            isData = declaration.isData,
+            isValue = declaration.isValue,
+            isExpect = declaration.isExpect,
+            isFun = declaration.isFun,
+            hasEnumEntries = declaration.hasEnumEntries,
+            source = declaration.source,
+        ).apply {
+            transformAnnotations(declaration)
+            copyTypeParametersFrom(declaration)
+            superTypes = declaration.superTypes.memoryOptimizedMap {
+                it.remapType()
+            }
+            sealedSubclasses = declaration.sealedSubclasses.memoryOptimizedMap {
+                symbolRemapper.getReferencedClass(it)
+            }
+            thisReceiver = declaration.thisReceiver?.transform()
+            valueClassRepresentation = declaration.valueClassRepresentation?.mapUnderlyingType { it.remapType() as IrSimpleType }
+            declaration.transformDeclarationsTo(this)
+            processAttributes(declaration)
+        }
+
     override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
         val result = IrModuleFragmentImpl(
             declaration.descriptor,
@@ -134,39 +168,6 @@ open class DeepCopyIrTreeWithSymbols(
             scriptCopy.providedPropertiesParameters = declaration.providedPropertiesParameters.memoryOptimizedMap { it.transform() }
         }
     }
-
-    override fun visitClass(declaration: IrClass): IrClass =
-        declaration.factory.createClass(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            visibility = declaration.visibility,
-            symbol = symbolRemapper.getDeclaredClass(declaration.symbol),
-            kind = declaration.kind,
-            modality = declaration.modality,
-            isExternal = declaration.isExternal,
-            isCompanion = declaration.isCompanion,
-            isInner = declaration.isInner,
-            isData = declaration.isData,
-            isValue = declaration.isValue,
-            isExpect = declaration.isExpect,
-            isFun = declaration.isFun,
-            hasEnumEntries = declaration.hasEnumEntries,
-            source = declaration.source,
-        ).apply {
-            transformAnnotations(declaration)
-            copyTypeParametersFrom(declaration)
-            superTypes = declaration.superTypes.memoryOptimizedMap {
-                it.remapType()
-            }
-            sealedSubclasses = declaration.sealedSubclasses.memoryOptimizedMap {
-                symbolRemapper.getReferencedClass(it)
-            }
-            thisReceiver = declaration.thisReceiver?.transform()
-            valueClassRepresentation = declaration.valueClassRepresentation?.mapUnderlyingType { it.remapType() as IrSimpleType }
-            declaration.transformDeclarationsTo(this)
-        }.processAttributes(declaration)
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
         declaration.factory.createSimpleFunction(
