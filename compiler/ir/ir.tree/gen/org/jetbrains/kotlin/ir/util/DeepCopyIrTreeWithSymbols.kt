@@ -183,6 +183,23 @@ open class DeepCopyIrTreeWithSymbols(
             descriptor = declaration.descriptor,
         )
 
+    override fun visitField(declaration: IrField): IrField =
+        declaration.factory.createField(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            visibility = declaration.visibility,
+            symbol = symbolRemapper.getDeclaredField(declaration.symbol),
+            type = declaration.type.remapType(),
+            isFinal = declaration.isFinal,
+            isStatic = declaration.isStatic,
+            isExternal = declaration.isExternal,
+        ).apply {
+            transformAnnotations(declaration)
+            initializer = declaration.initializer?.transform()
+        }
+
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
@@ -300,23 +317,6 @@ open class DeepCopyIrTreeWithSymbols(
             this.overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
                 symbolRemapper.getReferencedProperty(it)
             }
-        }
-
-    override fun visitField(declaration: IrField): IrField =
-        declaration.factory.createField(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            visibility = declaration.visibility,
-            symbol = symbolRemapper.getDeclaredField(declaration.symbol),
-            type = declaration.type.remapType(),
-            isFinal = declaration.isFinal,
-            isStatic = declaration.isStatic,
-            isExternal = declaration.isExternal,
-        ).apply {
-            transformAnnotations(declaration)
-            initializer = declaration.initializer?.transform()
         }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =
