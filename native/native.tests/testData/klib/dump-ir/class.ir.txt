@@ -1,8 +1,8 @@
 MODULE_FRAGMENT name:<class.kt>
   FILE fqName:test fileName:class.kt
-    CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
+    CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
       CONSTRUCTOR visibility:public <> () returnType:test.A [primary]
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]'
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'

@@ -14,13 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
-/**
- * The base class for all non-public (wrt linkage) symbols.
- *
- * Its [signature] is always `null`.
- *
- * TODO: Merge with [IrPublicSymbolBase] ([KT-44721](https://youtrack.jetbrains.com/issue/KT-44721))
- */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor>(
     private val _descriptor: Descriptor?,
@@ -88,16 +81,16 @@ abstract class IrBindableSymbolBase<out Descriptor, Owner>(
 }
 
 class IrFileSymbolImpl(descriptor: PackageFragmentDescriptor? = null) :
-    IrBindableSymbolBase<PackageFragmentDescriptor, IrFile>(descriptor, null),
+    IrBindableSymbolBase<PackageFragmentDescriptor, IrFile>(descriptor, signature = null),
     IrFileSymbol
 
 class IrExternalPackageFragmentSymbolImpl(descriptor: PackageFragmentDescriptor? = null) :
-    IrBindableSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor, null),
+    IrBindableSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor, signature = null),
     IrExternalPackageFragmentSymbol
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrAnonymousInitializerSymbolImpl(descriptor: ClassDescriptor? = null) :
-    IrBindableSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor, null),
+    IrBindableSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor, signature = null),
     IrAnonymousInitializerSymbol {
     constructor(irClassSymbol: IrClassSymbol) : this(irClassSymbol.descriptor)
 }
@@ -123,7 +116,7 @@ class IrValueParameterSymbolImpl(descriptor: ParameterDescriptor? = null, signat
     IrValueParameterSymbol
 
 class IrVariableSymbolImpl(descriptor: VariableDescriptor? = null) :
-    IrBindableSymbolBase<VariableDescriptor, IrVariable>(descriptor, null),
+    IrBindableSymbolBase<VariableDescriptor, IrVariable>(descriptor, signature = null),
     IrVariableSymbol
 
 class IrSimpleFunctionSymbolImpl(descriptor: FunctionDescriptor? = null, signature: IdSignature? = null) :
@@ -135,7 +128,7 @@ class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor? = null, si
     IrConstructorSymbol
 
 class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor? = null) :
-    IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor, null),
+    IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor, signature = null),
     IrReturnableBlockSymbol
 
 class IrPropertySymbolImpl(descriptor: PropertyDescriptor? = null, signature: IdSignature? = null) :
@@ -143,7 +136,7 @@ class IrPropertySymbolImpl(descriptor: PropertyDescriptor? = null, signature: Id
     IrPropertySymbol
 
 class IrLocalDelegatedPropertySymbolImpl(descriptor: VariableDescriptorWithAccessors? = null) :
-    IrBindableSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor, null),
+    IrBindableSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor, signature = null),
     IrLocalDelegatedPropertySymbol
 
 class IrTypeAliasSymbolImpl(descriptor: TypeAliasDescriptor? = null, signature: IdSignature? = null) :

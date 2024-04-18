@@ -1,22 +1,22 @@
 MODULE_FRAGMENT name:<fun.kt>
   FILE fqName:test fileName:fun.kt
-    CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
+    CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.A
       CONSTRUCTOR visibility:public <> () returnType:test.A [primary]
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]'
-      FUN name:foo visibility:private modality:FINAL <> ($this:test.A) returnType:<unbound IrClassPublicSymbolImpl>
+          DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+      FUN name:foo visibility:private modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
         $this: VALUE_PARAMETER name:<this> type:test.A
         BLOCK_BODY
-          RETURN type=<unbound IrClassPublicSymbolImpl> from='private final fun foo (): <unbound IrClassPublicSymbolImpl> declared in test.A'
-            CONST Int type=<unbound IrClassPublicSymbolImpl> value=42
-      FUN name:bar visibility:public modality:FINAL <> ($this:test.A, z:<unbound IrClassPublicSymbolImpl>) returnType:<unbound IrClassPublicSymbolImpl>
+          RETURN type=<unbound IrClassSymbolImpl> from='private final fun foo (): <unbound IrClassSymbolImpl> declared in test.A'
+            CONST Int type=<unbound IrClassSymbolImpl> value=42
+      FUN name:bar visibility:public modality:FINAL <> ($this:test.A, z:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
         $this: VALUE_PARAMETER name:<this> type:test.A
-        VALUE_PARAMETER name:z index:0 type:<unbound IrClassPublicSymbolImpl>
+        VALUE_PARAMETER name:z index:0 type:<unbound IrClassSymbolImpl>
         BLOCK_BODY
-          RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun bar (z: <unbound IrClassPublicSymbolImpl>): <unbound IrClassPublicSymbolImpl> declared in test.A'
-            CALL 'UNBOUND IrSimpleFunctionPublicSymbolImpl' type=<unbound IrClassPublicSymbolImpl> origin=PLUS
-              $this: CALL 'private final fun foo (): <unbound IrClassPublicSymbolImpl> declared in test.A' type=<unbound IrClassPublicSymbolImpl> origin=null
+          RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (z: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test.A'
+            CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
+              $this: CALL 'private final fun foo (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
                 $this: GET_VAR '<this>: test.A declared in test.A.bar' type=test.A origin=null
-              1: GET_VAR 'z: <unbound IrClassPublicSymbolImpl> declared in test.A.bar' type=<unbound IrClassPublicSymbolImpl> origin=null
+              1: GET_VAR 'z: <unbound IrClassSymbolImpl> declared in test.A.bar' type=<unbound IrClassSymbolImpl> origin=null

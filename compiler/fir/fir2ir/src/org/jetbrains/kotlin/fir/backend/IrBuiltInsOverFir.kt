@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -713,7 +712,7 @@ class IrBuiltInsOverFir(
         val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
         return c.symbolTable.declareSimpleFunction(
             signature,
-            { IrSimpleFunctionPublicSymbolImpl(null, signature) },
+            { IrSimpleFunctionSymbolImpl(null, signature) },
             ::makeWithSymbol
         )
     }

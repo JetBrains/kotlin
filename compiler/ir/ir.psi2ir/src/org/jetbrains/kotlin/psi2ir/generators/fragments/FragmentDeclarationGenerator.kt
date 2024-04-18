@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
@@ -68,7 +69,7 @@ open class FragmentDeclarationGenerator(
             isInline = false,
             isExpect = false,
             returnType = irClass.defaultType,
-            symbol = IrConstructorPublicSymbolImpl(signature = context.symbolTable.signaturer!!.composeSignature(irClass.descriptor)!!),
+            symbol = IrConstructorSymbolImpl(signature = context.symbolTable.signaturer!!.composeSignature(irClass.descriptor)!!),
             isPrimary = true,
             isExternal = false
         )

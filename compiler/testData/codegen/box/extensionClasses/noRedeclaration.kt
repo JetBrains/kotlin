@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // Does not pass on other backends for various reasons, e.g.
 // - FIR/WASM: IR declaration with signature "/x|{}x[0]" found in SymbolTable and not found in declaration storage
-// - IR/JS: IrPropertyPublicSymbolImpl for /x|{}x[0] is already bound: PROPERTY name:x visibility:public modality:FINAL [val]
+// - IR/JS: IrPropertySymbolImpl for /x|{}x[0] is already bound: PROPERTY name:x visibility:public modality:FINAL [val]
 // - Old BE: Couldn't inline method call: with(A()) { ... }
 // - See also: KT-57584, KT-58110
 // LANGUAGE: +ContextReceivers

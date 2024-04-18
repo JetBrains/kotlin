@@ -60,7 +60,7 @@ open class SymbolTable(
     }
 
     fun referenceScript(signature: IdSignature): IrScriptSymbol {
-        return scriptSlice.referenced(signature) { IrScriptPublicSymbolImpl(signature = signature) }
+        return scriptSlice.referenced(signature) { IrScriptSymbolImpl(signature = signature) }
     }
 
     // ------------------------------------ class ------------------------------------
@@ -100,7 +100,7 @@ open class SymbolTable(
     override fun referenceClass(signature: IdSignature): IrClassSymbol {
         return referenceClassImpl(
             signature,
-            { IrClassPublicSymbolImpl(signature = signature) },
+            { IrClassSymbolImpl(signature = signature) },
             { IrClassSymbolImpl().also { it.privateSignature = signature } }
         )
     }
@@ -150,7 +150,7 @@ open class SymbolTable(
     override fun referenceConstructor(signature: IdSignature): IrConstructorSymbol {
         return referenceConstructorImpl(
             signature,
-            { IrConstructorPublicSymbolImpl(signature = signature) },
+            { IrConstructorSymbolImpl(signature = signature) },
             { IrConstructorSymbolImpl() }
         )
     }
@@ -190,7 +190,7 @@ open class SymbolTable(
     override fun referenceEnumEntry(signature: IdSignature): IrEnumEntrySymbol {
         return referenceEnumEntryImpl(
             signature,
-            { IrEnumEntryPublicSymbolImpl(signature = signature) },
+            { IrEnumEntrySymbolImpl(signature = signature) },
             { IrEnumEntrySymbolImpl() }
         )
     }
@@ -230,7 +230,7 @@ open class SymbolTable(
     override fun referenceField(signature: IdSignature): IrFieldSymbol {
         return referenceFieldImpl(
             signature,
-            { IrFieldPublicSymbolImpl(signature = signature) },
+            { IrFieldSymbolImpl(signature = signature) },
             { IrFieldSymbolImpl() }
         )
     }
@@ -282,7 +282,7 @@ open class SymbolTable(
     override fun referenceProperty(signature: IdSignature): IrPropertySymbol {
         return referencePropertyImpl(
             signature,
-            { IrPropertyPublicSymbolImpl(signature = signature) },
+            { IrPropertySymbolImpl(signature = signature) },
             { IrPropertySymbolImpl() }
         )
     }
@@ -327,7 +327,7 @@ open class SymbolTable(
     override fun referenceTypeAlias(signature: IdSignature): IrTypeAliasSymbol {
         return referenceTypeAliasImpl(
             signature,
-            { IrTypeAliasPublicSymbolImpl(signature = signature) },
+            { IrTypeAliasSymbolImpl(signature = signature) },
             { IrTypeAliasSymbolImpl() }
         )
     }
@@ -378,7 +378,7 @@ open class SymbolTable(
     override fun referenceSimpleFunction(signature: IdSignature): IrSimpleFunctionSymbol {
         return referenceSimpleFunctionImpl(
             signature,
-            { IrSimpleFunctionPublicSymbolImpl(signature = signature) },
+            { IrSimpleFunctionSymbolImpl(signature = signature) },
             { IrSimpleFunctionSymbolImpl().also { it.privateSignature = signature } }
         )
     }
@@ -424,7 +424,7 @@ open class SymbolTable(
     override fun referenceTypeParameter(signature: IdSignature): IrTypeParameterSymbol {
         return referenceTypeParameterImpl(
             signature,
-            { IrTypeParameterPublicSymbolImpl(signature = signature) },
+            { IrTypeParameterSymbolImpl(signature = signature) },
             { IrTypeParameterSymbolImpl() }
         )
     }

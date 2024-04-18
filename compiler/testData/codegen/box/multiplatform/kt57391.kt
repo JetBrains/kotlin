@@ -4,7 +4,7 @@
 
 // KT-57391: CONFLICTING_OVERLOADS
 // IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
-// KT-57391: java.lang.IllegalStateException: IrSimpleFunctionPublicSymbolImpl for /main|main(){}[0] is already bound
+// KT-57391: java.lang.IllegalStateException: IrSimpleFunctionSymbolImpl for /main|main(){}[0] is already bound
 // IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM
 
 // KT-57391: Backend Internal error: Exception during psi2ir
