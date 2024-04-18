@@ -691,6 +691,26 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitTry(aTry: IrTry): IrTry =
+        IrTryImpl(
+            startOffset = aTry.startOffset,
+            endOffset = aTry.endOffset,
+            type = aTry.type.remapType(),
+            tryResult = aTry.tryResult.transform(),
+            catches = aTry.catches.memoryOptimizedMap { it.transform() },
+            finallyExpression = aTry.finallyExpression?.transform(),
+        ).apply {
+            processAttributes(aTry)
+        }
+
+    override fun visitCatch(aCatch: IrCatch): IrCatch =
+        IrCatchImpl(
+            startOffset = aCatch.startOffset,
+            endOffset = aCatch.endOffset,
+            catchParameter = aCatch.catchParameter.transform(),
+            result = aCatch.result.transform(),
+        )
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -913,22 +933,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     private fun getTransformedLoop(irLoop: IrLoop): IrLoop =
         transformedLoops.getOrDefault(irLoop, irLoop)
-
-    override fun visitTry(aTry: IrTry): IrTry =
-        IrTryImpl(
-            aTry.startOffset, aTry.endOffset,
-            aTry.type.remapType(),
-            aTry.tryResult.transform(),
-            aTry.catches.memoryOptimizedMap { it.transform() },
-            aTry.finallyExpression?.transform()
-        ).processAttributes(aTry)
-
-    override fun visitCatch(aCatch: IrCatch): IrCatch =
-        IrCatchImpl(
-            aCatch.startOffset, aCatch.endOffset,
-            aCatch.catchParameter.transform(),
-            aCatch.result.transform()
-        )
 
     private fun SymbolRemapper.getReferencedReturnTarget(returnTarget: IrReturnTargetSymbol): IrReturnTargetSymbol =
         when (returnTarget) {
