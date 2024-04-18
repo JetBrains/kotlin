@@ -209,6 +209,17 @@ open class DeepCopyIrTreeWithSymbols(
             setter = declaration.setter?.transform()
         }
 
+    override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
+        val result = IrModuleFragmentImpl(
+            declaration.descriptor,
+            declaration.irBuiltins,
+        )
+        transformedModule = result
+        result.files += declaration.files.transform()
+        transformedModule = null
+        return result
+    }
+
     override fun visitScript(declaration: IrScript): IrStatement {
         return IrScriptImpl(
             symbol = symbolRemapper.getDeclaredScript(declaration.symbol),
@@ -243,16 +254,21 @@ open class DeepCopyIrTreeWithSymbols(
             copyTypeParametersFrom(declaration)
         }
 
-    override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
-        val result = IrModuleFragmentImpl(
-            declaration.descriptor,
-            declaration.irBuiltins,
-        )
-        transformedModule = result
-        result.files += declaration.files.transform()
-        transformedModule = null
-        return result
-    }
+    override fun visitVariable(declaration: IrVariable): IrVariable =
+        IrVariableImpl(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            symbol = symbolRemapper.getDeclaredVariable(declaration.symbol),
+            name = declaration.name,
+            type = declaration.type.remapType(),
+            isVar = declaration.isVar,
+            isConst = declaration.isConst,
+            isLateinit = declaration.isLateinit,
+        ).apply {
+            transformAnnotations(declaration)
+            initializer = declaration.initializer?.transform()
+        }
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
@@ -348,21 +364,6 @@ open class DeepCopyIrTreeWithSymbols(
             this.overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
                 symbolRemapper.getReferencedProperty(it)
             }
-        }
-
-    override fun visitVariable(declaration: IrVariable): IrVariable =
-        IrVariableImpl(
-            declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredVariable(declaration.symbol),
-            declaration.name,
-            declaration.type.remapType(),
-            declaration.isVar,
-            declaration.isConst,
-            declaration.isLateinit
-        ).apply {
-            transformAnnotations(declaration)
-            initializer = declaration.initializer?.transform()
         }
 
     private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
