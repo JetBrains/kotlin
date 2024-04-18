@@ -15,16 +15,12 @@ val gsonVersion = rootProject.extra["versions.gson"] as String
 dependencies {
     constraints {
         configurations.all {
-            if (isCanBeResolved && !isCanBeConsumed) {
-                allDependencies.configureEach {
-                    if (group == "com.google.code.gson" && name == "gson" && this@all.isCanBeDeclared) {
-                        this@constraints.add(this@all.name, "com.google.code.gson:gson") {
-                            version {
-                                require(gsonVersion)
-                            }
-                            because("Force using same gson version because of https://github.com/google/gson/pull/1991")
-                        }
+            if (isCanBeDeclared) {
+                this@constraints.add(this@all.name, "com.google.code.gson:gson") {
+                    version {
+                        require(gsonVersion)
                     }
+                    because("Force using same gson version because of https://github.com/google/gson/pull/1991")
                 }
             }
         }
