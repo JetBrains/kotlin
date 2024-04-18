@@ -10,7 +10,7 @@ import java.security.SecureRandom
 private val secureRandom by lazy { SecureRandom() }
 
 public actual fun secureRandomUUID(): UUID {
-    val randomBytes = ByteArray(16)
+    val randomBytes = ByteArray(UUID.SIZE_BYTES)
     secureRandom.nextBytes(randomBytes)
     randomBytes[6] = (randomBytes[6].toInt() and 0x0f).toByte() /* clear version        */
     randomBytes[6] = (randomBytes[6].toInt() or 0x40).toByte()  /* set to version 4     */

@@ -21,7 +21,7 @@ private fun ByteArray.toLong(startIndex: Int): Long {
 }
 
 internal fun uuidFromBytes(bytes: ByteArray): UUID {
-    require(bytes.size == 16) { "Expected exactly 16 bytes" }
+    require(bytes.size == UUID.SIZE_BYTES) { "Expected exactly ${UUID.SIZE_BYTES} bytes" }
     return UUID(bytes.toLong(startIndex = 0), bytes.toLong(startIndex = 8))
 }
 
@@ -82,7 +82,7 @@ private fun Long.toByteArray(bytes: ByteArray, startIndex: Int) {
 
 internal fun uuidToByteArray(uuid: UUID): ByteArray {
     with(uuid) {
-        val bytes = ByteArray(16)
+        val bytes = ByteArray(UUID.SIZE_BYTES)
         msb.toByteArray(bytes, 0)
         lsb.toByteArray(bytes, 8)
         return bytes

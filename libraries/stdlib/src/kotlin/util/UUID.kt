@@ -95,6 +95,12 @@ public class UUID internal constructor(internal val msb: Long, internal val lsb:
         /** The maximum possible UUID (all bits set to one). */
         public val MAX_VALUE: UUID = UUID(-1, -1)
 
+        /** The number of bytes used to represent an instance of UUID in a binary form. */
+        public const val SIZE_BYTES: Int = 16
+
+        /** The number of bits used to represent an instance of UUID in a binary form. */
+        public const val SIZE_BITS: Int = 128
+
         /**
          * Creates a UUID from specified 128 bits split into two 64-bit Longs.
          *
