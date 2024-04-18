@@ -18,4 +18,4 @@ class SomeClass : SomeInterface {
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var fau: Double
 }
 
-<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>inline<!> class InlineClass
+<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, INLINE_CLASS_DEPRECATED!>inline<!> class InlineClass

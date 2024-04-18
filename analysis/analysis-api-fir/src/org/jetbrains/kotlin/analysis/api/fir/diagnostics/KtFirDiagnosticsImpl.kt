@@ -4209,6 +4209,11 @@ internal class InefficientEqualsOverridingInValueClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KtFirDiagnostic.InefficientEqualsOverridingInValueClass
 
+internal class InlineClassDeprecatedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.InlineClassDeprecated
+
 internal class InlineFromHigherPlatformImpl(
     override val inlinedBytecodeVersion: String,
     override val currentModuleBytecodeVersion: String,

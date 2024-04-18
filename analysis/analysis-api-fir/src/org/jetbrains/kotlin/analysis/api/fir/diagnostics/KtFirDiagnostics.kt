@@ -3492,6 +3492,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val type: KtType
     }
 
+    interface InlineClassDeprecated : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InlineClassDeprecated::class
+    }
+
     interface InlineFromHigherPlatform : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InlineFromHigherPlatform::class
         val inlinedBytecodeVersion: String

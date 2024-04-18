@@ -875,6 +875,7 @@ object FirErrors {
     val ILLEGAL_INLINE_PARAMETER_MODIFIER: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.INLINE_PARAMETER_MODIFIER)
     val INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED: KtDiagnosticFactory0 by error0<KtParameter>()
     val INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS: KtDiagnosticFactory1<ConeKotlinType> by warning1<KtNamedFunction, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val INLINE_CLASS_DEPRECATED: KtDiagnosticFactory0 by warning0<KtElement>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
 
     // Imports
     val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON: KtDiagnosticFactory1<Name> by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)

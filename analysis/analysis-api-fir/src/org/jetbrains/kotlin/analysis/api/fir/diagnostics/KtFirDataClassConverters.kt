@@ -5005,6 +5005,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INLINE_CLASS_DEPRECATED) { firDiagnostic ->
+        InlineClassDeprecatedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM) { firDiagnostic ->
         InlineFromHigherPlatformImpl(
             firDiagnostic.a,

@@ -349,6 +349,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZATION_BE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_DEPRECATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED
@@ -1920,6 +1921,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "''{0}'' inherits conflicting members: {1}.",
             DECLARATION_NAME,
             commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION)
+        )
+        map.put(
+            INLINE_CLASS_DEPRECATED,
+            "'inline' modifier is deprecated. Use 'value' instead."
         )
 
         // Redeclarations

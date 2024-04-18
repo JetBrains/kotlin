@@ -7,9 +7,15 @@ compiler/testData/multiplatform/inlineClasses/common.kt:1:16: warning: this code
 compiler/testData/multiplatform/inlineClasses/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect inline class Foo1(val x: Int)
 ^^^^^^
+compiler/testData/multiplatform/inlineClasses/common.kt:3:8: warning: 'inline' modifier is deprecated. Use 'value' instead.
+expect inline class Foo1(val x: Int)
+       ^^^^^^
 compiler/testData/multiplatform/inlineClasses/common.kt:4:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect inline class Foo2(val y: String)
 ^^^^^^
+compiler/testData/multiplatform/inlineClasses/common.kt:4:8: warning: 'inline' modifier is deprecated. Use 'value' instead.
+expect inline class Foo2(val y: String)
+       ^^^^^^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

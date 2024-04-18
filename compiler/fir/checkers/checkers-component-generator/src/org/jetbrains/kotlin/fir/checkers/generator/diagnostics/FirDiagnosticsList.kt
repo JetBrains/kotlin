@@ -1777,6 +1777,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
             parameter<ConeKotlinType>("type")
         }
+
+        val INLINE_CLASS_DEPRECATED by warning<KtElement>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {
