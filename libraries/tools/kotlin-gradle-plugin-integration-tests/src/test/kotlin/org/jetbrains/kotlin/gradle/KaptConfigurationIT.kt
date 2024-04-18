@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -23,7 +22,6 @@ class KaptConfigurationIT : KGPBaseTest() {
         project(
             "kapt2/simple",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 """
@@ -44,11 +42,8 @@ class KaptConfigurationIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build(":kaptGenerateStubsKotlin") {
-                val compilerArguments = output
-                    .lineSequence()
-                    .first { it.contains("Kotlin compiler args:") }
-                    .substringAfter("Kotlin compiler args:")
+            build(":compileKotlin") {
+                val compilerArguments = extractTaskCompilerArguments(":kaptGenerateStubsKotlin")
                     .split(" ")
 
                 val pOption = compilerArguments.filter { it == "-P" }.size
