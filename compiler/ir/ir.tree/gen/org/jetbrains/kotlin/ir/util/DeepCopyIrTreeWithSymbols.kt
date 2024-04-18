@@ -64,6 +64,25 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitElement(element: IrElement): IrElement =
         throw IllegalArgumentException("Unsupported element type: $element")
 
+    override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
+        declaration.factory.createValueParameter(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            type = declaration.type.remapType(),
+            isAssignable = declaration.isAssignable,
+            symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
+            index = declaration.index,
+            varargElementType = declaration.varargElementType?.remapType(),
+            isCrossinline = declaration.isCrossinline,
+            isNoinline = declaration.isNoinline,
+            isHidden = declaration.isHidden,
+        ).apply {
+            transformAnnotations(declaration)
+            defaultValue = declaration.defaultValue?.transform()
+        }
+
     override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
         val result = IrModuleFragmentImpl(
             declaration.descriptor,
@@ -349,25 +368,6 @@ open class DeepCopyIrTreeWithSymbols(
             }
         }
     }
-
-    override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
-        declaration.factory.createValueParameter(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            type = declaration.type.remapType(),
-            isAssignable = declaration.isAssignable,
-            symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
-            index = declaration.index,
-            varargElementType = declaration.varargElementType?.remapType(),
-            isCrossinline = declaration.isCrossinline,
-            isNoinline = declaration.isNoinline,
-            isHidden = declaration.isHidden,
-        ).apply {
-            transformAnnotations(declaration)
-            defaultValue = declaration.defaultValue?.transform()
-        }
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
         declaration.factory.createTypeAlias(
