@@ -299,7 +299,11 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.ReturnType
         }
 
-        if (actualDeclaration.hasStableParameterNames && !equalsBy(expectedValueParameters, actualValueParameters) { nameOf(it) }) {
+        if (
+            actualDeclaration.hasStableParameterNames &&
+            expectDeclaration.hasStableParameterNames &&
+            !equalsBy(expectedValueParameters, actualValueParameters) { nameOf(it) }
+        ) {
             return ExpectActualCheckingCompatibility.ParameterNames
         }
 
