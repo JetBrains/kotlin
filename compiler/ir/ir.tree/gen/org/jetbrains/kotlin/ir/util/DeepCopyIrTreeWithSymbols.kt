@@ -145,6 +145,24 @@ open class DeepCopyIrTreeWithSymbols(
             superTypes = declaration.superTypes.memoryOptimizedMap { it.remapType() }
         }
 
+    override fun visitConstructor(declaration: IrConstructor): IrConstructor =
+        declaration.factory.createConstructor(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            visibility = declaration.visibility,
+            isInline = declaration.isInline,
+            isExpect = declaration.isExpect,
+            returnType = declaration.returnType,
+            symbol = symbolRemapper.getDeclaredConstructor(declaration.symbol),
+            isPrimary = declaration.isPrimary,
+            isExternal = declaration.isExternal,
+            containerSource = declaration.containerSource,
+        ).apply {
+            transformFunctionChildren(declaration)
+        }
+
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
@@ -211,24 +229,6 @@ open class DeepCopyIrTreeWithSymbols(
             }
             contextReceiverParametersCount = declaration.contextReceiverParametersCount
             processAttributes(declaration)
-            transformFunctionChildren(declaration)
-        }
-
-    override fun visitConstructor(declaration: IrConstructor): IrConstructor =
-        declaration.factory.createConstructor(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            visibility = declaration.visibility,
-            isInline = declaration.isInline,
-            isExpect = declaration.isExpect,
-            returnType = declaration.returnType,
-            symbol = symbolRemapper.getDeclaredConstructor(declaration.symbol),
-            isPrimary = declaration.isPrimary,
-            isExternal = declaration.isExternal,
-            containerSource = declaration.containerSource,
-        ).apply {
             transformFunctionChildren(declaration)
         }
 
