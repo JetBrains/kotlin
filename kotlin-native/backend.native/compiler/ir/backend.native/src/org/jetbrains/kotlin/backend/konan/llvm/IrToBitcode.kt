@@ -1688,7 +1688,7 @@ internal class CodeGeneratorVisitor(
 
         return if (dstClass.isCompanion) {
             call(
-                    llvm.Kotlin_Interop_IsSameClass,
+                    llvm.Kotlin_Interop_IsObjectSameClass,
                     listOf(objCObject, genGetObjCClass(dstClass))
             )
         } else if (dstClass.isObjCClass()) {

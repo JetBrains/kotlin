@@ -114,8 +114,8 @@ KBoolean Kotlin_Interop_IsObjectKindOfClass(id obj, void* cls) {
   return [((id<NSObject>)obj) isKindOfClass:(Class)cls];
 }
 
-KBoolean Kotlin_Interop_IsSameClass(id obj, void* cls) {
-  return object_getClass(obj) == (Class)cls;
+KBoolean Kotlin_Interop_IsObjectSameClass(id obj, void* cls) {
+  return obj == cls;
 }
 
 OBJ_GETTER((*Konan_ObjCInterop_getWeakReference_ptr), KRef ref) = nullptr;

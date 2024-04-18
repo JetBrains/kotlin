@@ -15,7 +15,7 @@ extern "C" {
 id MissingInitImp(id self, SEL _cmd);
 KBoolean Kotlin_Interop_DoesObjectConformToProtocol(id obj, void* prot, KBoolean isMeta);
 KBoolean Kotlin_Interop_IsObjectKindOfClass(id obj, void* cls);
-KBoolean Kotlin_Interop_IsSameClass(id obj, void* cls);
+KBoolean Kotlin_Interop_IsObjectSameClass(id obj, void* cls);
 }
 
 #endif // KONAN_OBJC_INTEROP

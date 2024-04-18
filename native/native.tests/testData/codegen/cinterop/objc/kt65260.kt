@@ -76,8 +76,10 @@ fun testExternalObjCMetaClassCast() {
 // MODULE: main(cinterop, lib)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+import kotlinx.cinterop.*
 import platform.Foundation.*
 import platform.darwin.*
+import platform.objc.*
 import kotlin.test.*
 
 open class FooK {
@@ -128,11 +130,21 @@ fun testNonObjCObjectTypeCast() {
     }
 }
 
+@OptIn(kotlinx.cinterop.BetaInteropApi::class)
+fun testObjCMetaClassTypeChecking() {
+    val nsObjectClass: ObjCClass = NSObject
+    val nsObjectMetaClass: ObjCClass = object_getClass(nsObjectClass)!!
+    assertFalse(nsObjectClass is NSObject.Companion)
+    assertTrue(nsObjectMetaClass is NSObject.Companion)
+    assertFalse(nsObjectClass == nsObjectMetaClass)
+}
+
 fun box(): String {
     testAnyCast()
     testMetaClassCast()
     testExternalObjCMetaClassCast()
     testNonObjCObjectTypeCast()
+    testObjCMetaClassTypeChecking()
 
     return "OK"
 }
