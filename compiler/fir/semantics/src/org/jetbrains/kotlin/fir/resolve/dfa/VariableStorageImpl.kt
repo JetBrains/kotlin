@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -61,7 +59,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         unwrapAlias: (RealVariable, FirElement) -> RealVariable?,
     ): RealVariable? {
         val realFir = fir.unwrapElement()
-        val symbol = realFir.symbol ?: return null
+        val symbol = realFir.extractSymbol() ?: return null
         if (symbol.getStability(realFir) == null) return null
         val identifier = getIdentifierBySymbol(symbol, realFir, unwrapAlias) ?: return null
         return _realVariables[identifier]
@@ -120,7 +118,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         createSynthetic: Boolean,
         unwrapAlias: (RealVariable, FirElement) -> RealVariable?,
     ): DataFlowVariable? {
-        val symbol = realFir.symbol
+        val symbol = realFir.extractSymbol()
 
         val stability = symbol?.getStability(realFir)
         if (stability == null) {
@@ -268,5 +266,29 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             -> PropertyStability.STABLE_VALUE
             else -> PropertyStability.ALIEN_PUBLIC_PROPERTY
         }
+    }
+
+    private fun FirElement.extractSymbol(): FirBasedSymbol<*>? = when (this) {
+        is FirResolvable -> calleeReference.symbol.unwrapFakeOverridesIfNecessary()
+        is FirVariableAssignment -> unwrapLValue()?.calleeReference?.symbol
+        is FirDeclaration -> symbol.unwrapFakeOverridesIfNecessary()
+        is FirWhenSubjectExpression -> whenRef.value.subject?.extractSymbol()
+        is FirSafeCallExpression -> selector.extractSymbol()
+        is FirSmartCastExpression -> originalExpression.extractSymbol()
+        is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.extractSymbol()
+        else -> null
+    }?.takeIf {
+        (this as? FirExpression)?.unwrapSmartcastExpression() is FirThisReceiverExpression ||
+                (it !is FirFunctionSymbol<*> && it !is FirSyntheticPropertySymbol)
+    }
+
+    private fun FirBasedSymbol<*>?.unwrapFakeOverridesIfNecessary(): FirBasedSymbol<*>? {
+        if (this !is FirCallableSymbol) return this
+        // This is necessary only for sake of optimizations necessary because this is a really hot place.
+        // Not having `dispatchReceiverType` means that this is a local/top-level property that can't be a fake override.
+        // And at the same time, checking a field is much faster than a couple of attributes (0.3 secs at MT Full Kotlin)
+        if (this.dispatchReceiverType == null) return this
+
+        return this.unwrapFakeOverrides()
     }
 }
