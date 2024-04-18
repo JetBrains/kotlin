@@ -13,7 +13,7 @@ import kotlin.wasm.internal.*
 /** Represents a 16-bit Unicode character. */
 @WasmAutoboxed
 @Suppress("NOTHING_TO_INLINE")
-public class Char private constructor(private val value: Char) : Comparable<Char> {
+public actual class Char private constructor(private val value: Char) : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.
      *
@@ -21,22 +21,22 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun compareTo(other: Char): Int =
+    public actual override fun compareTo(other: Char): Int =
         wasm_i32_compareTo(this.code, other.code)
 
     /** Adds the other Int value to this value resulting a Char. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun plus(other: Int): Char =
+    public actual inline operator fun plus(other: Int): Char =
         (this.code + other).toChar()
 
     /** Subtracts the other Char value from this value resulting an Int. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun minus(other: Char): Int =
+    public actual inline operator fun minus(other: Char): Int =
         (this.code - other.code)
 
     /** Subtracts the other Int value from this value resulting a Char. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline operator fun minus(other: Int): Char =
+    public actual inline operator fun minus(other: Int): Char =
         (this.code - other).toChar()
 
     /**
@@ -44,7 +44,7 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      *
      * @sample samples.misc.Builtins.inc
      */
-    public inline operator fun inc(): Char =
+    public actual inline operator fun inc(): Char =
         (this.code + 1).toChar()
 
     /**
@@ -52,11 +52,11 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      *
      * @sample samples.misc.Builtins.dec
      */
-    public inline operator fun dec(): Char =
+    public actual inline operator fun dec(): Char =
         (this.code - 1).toChar()
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Char): CharRange =
+    public actual operator fun rangeTo(other: Char): CharRange =
         CharRange(this, other)
 
     /**
@@ -66,26 +66,26 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Char): CharRange =
+    public actual operator fun rangeUntil(other: Char): CharRange =
         this until other
 
     /** Returns the value of this character as a `Byte`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun toByte(): Byte =
+    public actual inline fun toByte(): Byte =
         this.code.toByte()
 
     /** Returns the value of this character as a `Char`. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun toChar(): Char =
+    public actual inline fun toChar(): Char =
         this
 
     /** Returns the value of this character as a `Short`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun toShort(): Short =
+    public actual inline fun toShort(): Short =
         this.code.toShort()
 
     /** Returns the value of this character as a `Int`. */
@@ -93,101 +93,101 @@ public class Char private constructor(private val value: Char) : Comparable<Char
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmNoOpCast
-    public fun toInt(): Int =
+    public actual fun toInt(): Int =
         implementedAsIntrinsic
 
     /** Returns the value of this character as a `Long`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun toLong(): Long =
+    public actual inline fun toLong(): Long =
         this.code.toLong()
 
     /** Returns the value of this character as a `Float`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun toFloat(): Float =
+    public actual inline fun toFloat(): Float =
         this.code.toFloat()
 
     /** Returns the value of this character as a `Double`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun toDouble(): Double =
+    public actual inline fun toDouble(): Double =
         this.code.toDouble()
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String {
+    public actual override fun toString(): String {
         val array = WasmCharArray(1)
         array.set(0, this)
         return array.createString()
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean {
+    public actual override fun equals(other: Any?): Boolean {
         if (other is Char)
             return wasm_i32_eq(this.code, other.code)
         return false
     }
 
-    public override fun hashCode(): Int =
+    public actual override fun hashCode(): Int =
         this.code.hashCode()
 
-    public companion object {
+    public actual companion object {
         /**
          * The minimum value of a character code unit.
          */
         @SinceKotlin("1.3")
-        public const val MIN_VALUE: Char = '\u0000'
+        public actual const val MIN_VALUE: Char = '\u0000'
 
         /**
          * The maximum value of a character code unit.
          */
         @SinceKotlin("1.3")
-        public const val MAX_VALUE: Char = '\uFFFF'
+        public actual const val MAX_VALUE: Char = '\uFFFF'
 
         /**
          * The minimum value of a Unicode high-surrogate code unit.
          */
-        public const val MIN_HIGH_SURROGATE: Char = '\uD800'
+        public actual const val MIN_HIGH_SURROGATE: Char = '\uD800'
 
         /**
          * The maximum value of a Unicode high-surrogate code unit.
          */
-        public const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
+        public actual const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
 
         /**
          * The minimum value of a Unicode low-surrogate code unit.
          */
-        public const val MIN_LOW_SURROGATE: Char = '\uDC00'
+        public actual const val MIN_LOW_SURROGATE: Char = '\uDC00'
 
         /**
          * The maximum value of a Unicode low-surrogate code unit.
          */
-        public const val MAX_LOW_SURROGATE: Char = '\uDFFF'
+        public actual const val MAX_LOW_SURROGATE: Char = '\uDFFF'
 
         /**
          * The minimum value of a Unicode surrogate code unit.
          */
-        public const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
+        public actual const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
 
         /**
          * The maximum value of a Unicode surrogate code unit.
          */
-        public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+        public actual const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
 
         /**
          * The number of bytes used to represent a Char in a binary form.
          */
         @SinceKotlin("1.3")
-        public const val SIZE_BYTES: Int = 2
+        public actual const val SIZE_BYTES: Int = 2
 
         /**
          * The number of bits used to represent a Char in a binary form.
          */
         @SinceKotlin("1.3")
-        public const val SIZE_BITS: Int = 16
+        public actual const val SIZE_BITS: Int = 16
 
         /**
          * The minimum value of a supplementary code point, `\u0x10000`.
