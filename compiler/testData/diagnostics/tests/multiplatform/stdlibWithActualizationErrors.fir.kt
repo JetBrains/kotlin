@@ -13,9 +13,12 @@ internal annotation class ActualizeByJvmBuiltinProvider()
 
 // FILE: builtins.kt
 
+@file:Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
+
 package kotlin
 
 import kotlin.internal.ActualizeByJvmBuiltinProvider
+import kotlin.internal.PureReifiable
 
 <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>@ActualizeByJvmBuiltinProvider
 expect open class Any() {
@@ -26,6 +29,11 @@ expect open class Any() {
 
 @ActualizeByJvmBuiltinProvider
 expect class Boolean
+
+// Check that `ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT` (missing `@PureReifiable`) warning doesn't cause crash
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT{JVM}!>@Suppress(<!ERROR_SUPPRESSION!>"REIFIED_TYPE_PARAMETER_NO_INLINE"<!>)
+@ActualizeByJvmBuiltinProvider
+public expect fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?><!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
