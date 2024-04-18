@@ -940,15 +940,6 @@ open class DeepCopyIrTreeWithSymbols(
             result = branch.result.transform(),
         )
 
-    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
-        throw IllegalArgumentException("Unsupported declaration type: $declaration")
-
-    override fun visitBody(body: IrBody): IrBody =
-        throw IllegalArgumentException("Unsupported body type: $body")
-
-    override fun visitExpression(expression: IrExpression): IrExpression =
-        throw IllegalArgumentException("Unsupported expression type: $expression")
-
     override fun visitBlock(expression: IrBlock): IrBlock =
         IrBlockImpl(
             startOffset = expression.startOffset,
