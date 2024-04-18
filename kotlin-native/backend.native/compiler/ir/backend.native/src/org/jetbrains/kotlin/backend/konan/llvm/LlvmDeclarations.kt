@@ -56,15 +56,16 @@ internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDe
 
 }
 
+internal class ObjectBodyType(val llvmBodyType: LLVMTypeRef, val objectFieldIndices: List<Int>)
+
 internal class ClassLlvmDeclarations(
-        val bodyType: LLVMTypeRef,
+        val bodyType: ObjectBodyType,
         val typeInfoGlobal: StaticData.Global,
         val writableTypeInfoGlobal: StaticData.Global?,
         val typeInfo: ConstPointer,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?,
         val alignment: Int,
         val fieldIndices: Map<IrFieldSymbol, Int>,
-        val objectFieldIndices: List<Int>,
 )
 
 internal class KotlinObjCClassLlvmDeclarations(
@@ -344,7 +345,15 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             it.setZeroInitializer()
         }
 
-        return ClassLlvmDeclarations(bodyType, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr, objCDeclarations, alignment, fieldIndices, objectFieldIndices)
+        return ClassLlvmDeclarations(
+                ObjectBodyType(bodyType, objectFieldIndices),
+                typeInfoGlobal,
+                writableTypeInfoGlobal,
+                typeInfoPtr,
+                objCDeclarations,
+                alignment,
+                fieldIndices
+        )
     }
 
     private fun createUniqueDeclarations(
@@ -401,12 +410,13 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
                     ?: error(containingClass.render())
             val index = classDeclarations.fieldIndices[declaration.symbol]!!
+            val bodyType = classDeclarations.bodyType.llvmBodyType
             declaration.metadata = KonanMetadata.InstanceField(
                     declaration,
                     FieldLlvmDeclarations(
                             index,
-                            classDeclarations.bodyType,
-                            gcd(LLVMOffsetOfElement(llvm.runtime.targetData, classDeclarations.bodyType, index), llvm.runtime.objectAlignment.toLong()).toInt()
+                            bodyType,
+                            gcd(LLVMOffsetOfElement(llvm.runtime.targetData, bodyType, index), llvm.runtime.objectAlignment.toLong()).toInt()
                     )
             )
         } else {

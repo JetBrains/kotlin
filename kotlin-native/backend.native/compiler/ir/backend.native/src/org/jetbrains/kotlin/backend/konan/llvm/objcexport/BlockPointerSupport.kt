@@ -25,11 +25,18 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     // but only if it is equivalent to its dynamic translation result. If block returns void, then it's not like that:
     val useSeparateHolder = bridge.returnsVoid
 
-    val bodyType = if (useSeparateHolder) {
-        llvm.structType(codegen.kObjHeader, codegen.kObjHeaderPtr)
+    val objectBodyType = if (useSeparateHolder) {
+        ObjectBodyType(
+                llvm.structType(codegen.kObjHeader, codegen.kObjHeaderPtr),
+                objectFieldIndices = listOf(1)
+        )
     } else {
-        llvm.structType(codegen.kObjHeader)
+        ObjectBodyType(
+                llvm.structType(codegen.kObjHeader),
+                objectFieldIndices = emptyList()
+        )
     }
+    val bodyType = objectBodyType.llvmBodyType
 
     val invokeImpl = functionGenerator(
             LlvmFunctionSignature(invokeMethod, codegen).toProto(
@@ -87,7 +94,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     val typeInfo = rttiGenerator.generateSyntheticInterfaceImpl(
             irInterface,
             mapOf(invokeMethod to invokeImpl.toConstPointer()),
-            bodyType,
+            objectBodyType,
             immutable = true
     )
     val functionSig = LlvmFunctionSignature(LlvmRetType(codegen.kObjHeaderPtr), true, listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(codegen.kObjHeaderPtrPtr)))

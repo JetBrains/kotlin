@@ -208,7 +208,7 @@ internal class RTTIGenerator(
 
         val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
 
-        val bodyType = llvmDeclarations.bodyType
+        val bodyType = llvmDeclarations.bodyType.llvmBodyType
 
         val instanceSize = getInstanceSize(bodyType, irClass)
 
@@ -227,7 +227,7 @@ internal class RTTIGenerator(
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
                 pointerType(runtime.typeInfoType), interfaces)
 
-        val objOffsets = getObjOffsets(llvmDeclarations)
+        val objOffsets = getObjOffsets(llvmDeclarations.bodyType)
 
         val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", llvm.int32Type, objOffsets)
 
@@ -264,7 +264,7 @@ internal class RTTIGenerator(
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
                     irClass.symbol == context.ir.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
-                    else -> genProcessObjectInMark(llvmDeclarations)
+                    else -> genProcessObjectInMark(llvmDeclarations.bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
         )
@@ -282,13 +282,13 @@ internal class RTTIGenerator(
         exportTypeInfoIfRequired(irClass, irClass.llvmTypeInfoPtr)
     }
 
-    private fun getIndicesOfObjectFields(classDecl: ClassLlvmDeclarations) : List<Int> =
-            classDecl.objectFieldIndices
+    private fun getIndicesOfObjectFields(bodyType: ObjectBodyType): List<Int> =
+            bodyType.objectFieldIndices
                     .sorted()
 
-    private fun getObjOffsets(classDecl: ClassLlvmDeclarations): List<ConstInt32> =
-            getIndicesOfObjectFields(classDecl).map { index ->
-                llvm.constInt32(LLVMOffsetOfElement(llvmTargetData, classDecl.bodyType, index).toInt())
+    private fun getObjOffsets(bodyType: ObjectBodyType): List<ConstInt32> =
+            bodyType.objectFieldIndices.map { index ->
+                llvm.constInt32(LLVMOffsetOfElement(llvmTargetData, bodyType.llvmBodyType, index).toInt())
             }
 
     fun vtable(irClass: IrClass): ConstArray {
@@ -423,7 +423,7 @@ internal class RTTIGenerator(
 
         val className = irClass.fqNameForIrSerialization.toString()
         val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
-        val bodyType = llvmDeclarations.bodyType
+        val bodyType = llvmDeclarations.bodyType.llvmBodyType
         val elementType = getElementType(irClass)
 
         val value = if (elementType != null) {
@@ -479,10 +479,8 @@ internal class RTTIGenerator(
         )
     }
 
-    private fun genProcessObjectInMark(classDecl: ClassLlvmDeclarations): ConstPointer =
-            genProcessObjectInMark(getIndicesOfObjectFields(classDecl))
-
-    private fun <T> genProcessObjectInMark(indicesOfObjectFields: List<T>): ConstPointer {
+    private fun genProcessObjectInMark(classType: ObjectBodyType): ConstPointer {
+        val indicesOfObjectFields = getIndicesOfObjectFields(classType)
         return when {
             indicesOfObjectFields.isEmpty() -> {
                 // TODO: Try to generate it here instead of importing from the runtime.
@@ -499,12 +497,12 @@ internal class RTTIGenerator(
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
             methodImpls: Map<IrFunction, ConstPointer>,
-            bodyType: LLVMTypeRef,
+            bodyType: ObjectBodyType,
             immutable: Boolean = false
     ): ConstPointer {
         assert(irClass.isInterface)
 
-        val size = LLVMStoreSizeOfType(llvmTargetData, bodyType).toInt()
+        val size = LLVMStoreSizeOfType(llvmTargetData, bodyType.llvmBodyType).toInt()
 
         val superClass = context.ir.symbols.any.owner
 
@@ -515,7 +513,7 @@ internal class RTTIGenerator(
 
         assert(superClass.declarations.all { it !is IrProperty && it !is IrField })
 
-        val objOffsets = if (LLVMCountStructElementTypes(bodyType) > 1) listOf(llvm.constInt32(1)) else emptyList()
+        val objOffsets = getObjOffsets(bodyType)
         val objOffsetsPtr = staticData.placeGlobalConstArray("", llvm.int32Type, objOffsets)
         val objOffsetsCount = objOffsets.size
 
@@ -569,7 +567,7 @@ internal class RTTIGenerator(
                 classId = typeHierarchyInfo.classIdLo,
                 writableTypeInfo = writableTypeInfo,
                 associatedObjects = null,
-                processObjectInMark = genProcessObjectInMark(objOffsets),
+                processObjectInMark = genProcessObjectInMark(bodyType),
                 requiredAlignment = runtime.objectAlignment
         ), vtable)
 
