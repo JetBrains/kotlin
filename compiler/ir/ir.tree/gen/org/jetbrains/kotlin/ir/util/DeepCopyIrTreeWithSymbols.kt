@@ -358,6 +358,31 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitReturnableBlock(expression: IrReturnableBlock): IrReturnableBlock =
+        IrReturnableBlockImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedReturnableBlock(expression.symbol),
+            origin = mapStatementOrigin(expression.origin),
+            statements = expression.statements.memoryOptimizedMap { it.transform() },
+        ).apply {
+            processAttributes(expression)
+        }
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrInlinedFunctionBlock =
+        IrInlinedFunctionBlockImpl(
+            startOffset = inlinedBlock.startOffset,
+            endOffset = inlinedBlock.endOffset,
+            type = inlinedBlock.type.remapType(),
+            inlineCall = inlinedBlock.inlineCall,
+            inlinedElement = inlinedBlock.inlinedElement,
+            origin = mapStatementOrigin(inlinedBlock.origin),
+            statements = inlinedBlock.statements.memoryOptimizedMap { it.transform() },
+        ).apply {
+            processAttributes(inlinedBlock)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -511,29 +536,13 @@ open class DeepCopyIrTreeWithSymbols(
         )
 
     override fun visitBlock(expression: IrBlock): IrBlock =
-        if (expression is IrReturnableBlock)
-            IrReturnableBlockImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type.remapType(),
-                symbolRemapper.getReferencedReturnableBlock(expression.symbol),
-                mapStatementOrigin(expression.origin),
-                expression.statements.memoryOptimizedMap { it.transform() }
-            ).processAttributes(expression)
-        else if (expression is IrInlinedFunctionBlock)
-            IrInlinedFunctionBlockImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type.remapType(),
-                expression.inlineCall, expression.inlinedElement,
-                mapStatementOrigin(expression.origin),
-                statements = expression.statements.memoryOptimizedMap { it.transform() },
-            ).processAttributes(expression)
-        else
-            IrBlockImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type.remapType(),
-                mapStatementOrigin(expression.origin),
-                expression.statements.memoryOptimizedMap { it.transform() }
-            ).processAttributes(expression)
+        IrBlockImpl(
+            expression.startOffset,
+            expression.endOffset,
+            expression.type.remapType(),
+            mapStatementOrigin(expression.origin),
+            expression.statements.memoryOptimizedMap { it.transform() },
+        ).processAttributes(expression)
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrStringConcatenation =
         IrStringConcatenationImpl(
