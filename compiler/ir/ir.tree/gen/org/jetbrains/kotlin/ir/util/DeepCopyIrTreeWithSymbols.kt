@@ -200,6 +200,22 @@ open class DeepCopyIrTreeWithSymbols(
             initializer = declaration.initializer?.transform()
         }
 
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =
+        declaration.factory.createLocalDelegatedProperty(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            symbol = symbolRemapper.getDeclaredLocalDelegatedProperty(declaration.symbol),
+            type = declaration.type.remapType(),
+            isVar = declaration.isVar,
+        ).apply {
+            transformAnnotations(declaration)
+            delegate = declaration.delegate.transform()
+            getter = declaration.getter.transform()
+            setter = declaration.setter?.transform()
+        }
+
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
@@ -317,22 +333,6 @@ open class DeepCopyIrTreeWithSymbols(
             this.overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
                 symbolRemapper.getReferencedProperty(it)
             }
-        }
-
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =
-        declaration.factory.createLocalDelegatedProperty(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            symbol = symbolRemapper.getDeclaredLocalDelegatedProperty(declaration.symbol),
-            type = declaration.type.remapType(),
-            isVar = declaration.isVar,
-        ).apply {
-            transformAnnotations(declaration)
-            delegate = declaration.delegate.transform()
-            getter = declaration.getter.transform()
-            setter = declaration.setter?.transform()
         }
 
     override fun visitVariable(declaration: IrVariable): IrVariable =
