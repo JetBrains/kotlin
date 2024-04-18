@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
@@ -20,8 +21,8 @@ internal class UntilHandler(private val context: CommonBackendContext) : HeaderI
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
-                callee.extensionReceiverParameter?.type in progressionElementTypes &&
+        return callee.valueParameters.singleOrNull()?.type?.classFqName in progressionElementTypes &&
+                callee.extensionReceiverParameter?.type?.classFqName in progressionElementTypes &&
                 callee.kotlinFqName == FqName("kotlin.ranges.until")
     }
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for iteration over iterables using the `get / []` operator and an index. */
 abstract class IndexedGetIterationHandler(
-    protected val context: CommonBackendContext,
+    protected open val context: CommonBackendContext,
     private val canCacheLast: Boolean
 ) : HeaderInfoHandler<IrExpression, Nothing?> {
     override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? =
@@ -71,7 +71,7 @@ abstract class IndexedGetIterationHandler(
 }
 
 /** Builds a [HeaderInfo] for arrays. */
-internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
+open class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
     private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
 
     override fun matchIterable(expression: IrExpression): Boolean {

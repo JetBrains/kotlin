@@ -10,6 +10,8 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.UnsignedArrayType
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -36,9 +38,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.lang.invoke.MethodType
 
 class JvmSymbols(
@@ -1085,6 +1089,63 @@ class JvmSymbols(
         }
 
     val javaAnnotations = JavaAnnotations()
+
+    private fun createUnsignedNumericClass(unsignedType: UnsignedType, underlyingType: IrType): IrClassSymbol {
+        lateinit var inlineOnlyConstructor: IrConstructor
+
+        val inlineOnlyClass = createClass(INLINE_ONLY_ANNOTATION_FQ_NAME, classKind = ClassKind.ANNOTATION_CLASS).apply {
+            inlineOnlyConstructor = owner.addConstructor { isPrimary = true }
+        }
+
+        return createClass(unsignedType.classId.asSingleFqName(), classIsValue = true).apply {
+            owner.addFunction(OperatorNameConventions.COMPARE_TO.asString(), int.defaultType, isInline = true, modality = Modality.OPEN)
+                .apply {
+                    annotations = listOf(
+                        IrConstructorCallImpl(
+                            startOffset = UNDEFINED_OFFSET,
+                            endOffset = UNDEFINED_OFFSET,
+                            type = inlineOnlyClass.defaultType,
+                            inlineOnlyConstructor.symbol,
+                            typeArgumentsCount = 0,
+                            constructorTypeArgumentsCount = 0,
+                            valueArgumentsCount = 0,
+                        )
+                    )
+                    addValueParameter("other", defaultType)
+                    isOperator = true
+                }
+            owner.valueClassRepresentation = InlineClassRepresentation(Name.identifier("data"), underlyingType as IrSimpleType)
+        }
+    }
+
+    override val uByte = createUnsignedNumericClass(UnsignedType.UBYTE, byte.defaultType)
+    override val uShort = createUnsignedNumericClass(UnsignedType.USHORT, short.defaultType)
+    override val uInt = createUnsignedNumericClass(UnsignedType.UINT, int.defaultType)
+    override val uLong = createUnsignedNumericClass(UnsignedType.ULONG, long.defaultType)
+
+    val arrayGet = buildMap {
+
+        fun putUnsignedArrayGet(arrayType: UnsignedArrayType, elementClass: IrClassSymbol, underlyingArrayType: IrType) {
+            lateinit var getFunction: IrSimpleFunction
+            val arrayClass = createClass(arrayType.classId.asSingleFqName(), classIsValue = true).apply {
+                getFunction = owner.addFunction("get", elementClass.defaultType).apply {
+                    addValueParameter("index", int.defaultType)
+                }
+            }.also {
+                it.owner.valueClassRepresentation =
+                    InlineClassRepresentation(Name.identifier("storage"), underlyingArrayType as IrSimpleType)
+            }
+            put(arrayClass.owner.name, getFunction)
+        }
+
+        putUnsignedArrayGet(UnsignedArrayType.UBYTEARRAY, uByte, byteArrayType)
+        putUnsignedArrayGet(UnsignedArrayType.USHORTARRAY, uShort, shortArrayType)
+        putUnsignedArrayGet(UnsignedArrayType.UINTARRAY, uInt, intArrayType)
+        putUnsignedArrayGet(UnsignedArrayType.ULONGARRAY, uLong, longArrayType)
+
+        primitiveTypesToPrimitiveArrays.values.forEach { put(it.owner.name, it.getSimpleFunction("get")!!.owner) }
+        put(array.owner.name, array.getSimpleFunction("get")!!.owner)
+    }
 
     inner class JavaAnnotations {
         private val javaLangAnnotation: FqName = FqName("java.lang.annotation")

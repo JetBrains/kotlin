@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
     // Collection stubs may require mangling by value class rules.
     // SAM wrappers may require mangling for fun interfaces with value class parameters
     prerequisite = [
-        ForLoopsLowering::class, JvmBuiltInsLowering::class, CollectionStubMethodLowering::class, JvmSingleAbstractMethodLowering::class
+        JvmForLoopsLowering::class, JvmBuiltInsLowering::class, CollectionStubMethodLowering::class, JvmSingleAbstractMethodLowering::class
     ]
 )
 internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {

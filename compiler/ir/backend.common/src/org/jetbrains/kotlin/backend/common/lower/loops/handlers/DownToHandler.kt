@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
@@ -25,8 +26,8 @@ internal class DownToHandler(private val context: CommonBackendContext) : Header
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
-                callee.extensionReceiverParameter?.type in progressionElementTypes &&
+        return callee.valueParameters.singleOrNull()?.type?.classFqName in progressionElementTypes &&
+                callee.extensionReceiverParameter?.type?.classFqName in progressionElementTypes &&
                 callee.kotlinFqName == FqName("kotlin.ranges.downTo")
     }
 

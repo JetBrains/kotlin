@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -47,7 +46,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::JvmBuiltInsLowering,
 
     ::RangeContainsLowering,
-    ::ForLoopsLowering,
+    ::JvmForLoopsLowering,
     ::CollectionStubMethodLowering,
     ::JvmSingleAbstractMethodLowering,
     ::JvmMultiFieldValueClassLowering,

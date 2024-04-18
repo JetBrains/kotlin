@@ -305,7 +305,7 @@ fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
 @UnsafeDuringIrConstructionAPI
 fun IrClass.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.getter?.symbol
-        ?: getSimpleFunction("<get-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
+        ?: getSimpleFunction("<get-$name>")?.also { assert(it.owner.correspondingPropertySymbol?.owner?.name?.asString() == name) }
 
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
 @UnsafeDuringIrConstructionAPI

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.loops.handlers.ArrayIterationHandler
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -102,13 +103,16 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
     name = "ForLoopsLowering",
     description = "For loops lowering"
 )
-open class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
-    open val loopBodyTransformer: ForLoopBodyTransformer?
-        get() = null
+open class ForLoopsLowering(
+    val context: CommonBackendContext,
+    private val arrayIterationHandler: ArrayIterationHandler = ArrayIterationHandler(context),
+) : BodyLoweringPass {
+    open val loopBodyTransformer: ForLoopBodyTransformer? get() = null
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()
-        val transformer = RangeLoopTransformer(context, container as IrSymbolOwner, oldLoopToNewLoop, loopBodyTransformer)
+        val transformer =
+            RangeLoopTransformer(context, container as IrSymbolOwner, oldLoopToNewLoop, arrayIterationHandler, loopBodyTransformer)
         irBody.transformChildrenVoid(transformer)
 
         // Update references in break/continue.
@@ -139,10 +143,11 @@ private class RangeLoopTransformer(
     val context: CommonBackendContext,
     val container: IrSymbolOwner,
     val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>,
+    arrayIterationHandler: ArrayIterationHandler,
     val loopBodyTransformer: ForLoopBodyTransformer? = null
 ) : IrElementTransformerVoidWithContext() {
 
-    private val headerInfoBuilder = DefaultHeaderInfoBuilder(context, this::getScopeOwnerSymbol)
+    private val headerInfoBuilder = DefaultHeaderInfoBuilder(context, arrayIterationHandler, this::getScopeOwnerSymbol)
     private val headerProcessor = HeaderProcessor(context, headerInfoBuilder, this::getScopeOwnerSymbol)
 
     fun getScopeOwnerSymbol() = currentScope?.scope?.scopeOwnerSymbol ?: container.symbol

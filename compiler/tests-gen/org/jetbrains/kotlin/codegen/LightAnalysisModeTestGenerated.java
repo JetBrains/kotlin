@@ -32602,6 +32602,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/multiplatform/starImportOfExpectEnumWithActualTypeAlias.kt");
     }
 
+    @TestMetadata("unsignedArrayForLoop.kt")
+    public void testUnsignedArrayForLoop() {
+      runTest("compiler/testData/codegen/box/multiplatform/unsignedArrayForLoop.kt");
+    }
+
     @TestMetadata("compiler/testData/codegen/box/multiplatform/complexMatchings")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

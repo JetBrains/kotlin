@@ -15,8 +15,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isNullableString
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 // This is what Context collects about IR.
@@ -59,10 +63,10 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     // The "...OrNull" variants are used for the classes below because the minimal stdlib used in tests do not include those classes.
     // It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
     // added, which would include a lot of the full stdlib.
-    val uByte = irBuiltIns.findClass(Name.identifier("UByte"), "kotlin")
-    val uShort = irBuiltIns.findClass(Name.identifier("UShort"), "kotlin")
-    val uInt = irBuiltIns.findClass(Name.identifier("UInt"), "kotlin")
-    val uLong = irBuiltIns.findClass(Name.identifier("ULong"), "kotlin")
+    open val uByte = irBuiltIns.findClass(Name.identifier("UByte"), "kotlin")
+    open val uShort = irBuiltIns.findClass(Name.identifier("UShort"), "kotlin")
+    open val uInt = irBuiltIns.findClass(Name.identifier("UInt"), "kotlin")
+    open val uLong = irBuiltIns.findClass(Name.identifier("ULong"), "kotlin")
     val uIntProgression = progressionOrNull("UIntProgression")
     val uLongProgression = progressionOrNull("ULongProgression")
     val uIntRange = progressionOrNull("UIntRange")
@@ -104,8 +108,8 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
 
     val integerClasses = listOf(byte, short, int, long)
 
-    val progressionElementTypes: Collection<IrType> by lazy {
-        listOfNotNull(byte, short, int, long, char, uByte, uShort, uInt, uLong).map { it.defaultType }
+    val progressionElementTypes: Collection<FqName> by lazy {
+        listOfNotNull(byte, short, int, long, char, uByte, uShort, uInt, uLong).map { it.owner.fqNameWhenAvailable!! }
     }
 
     val arrayOf: IrSimpleFunctionSymbol get() = irBuiltIns.arrayOf

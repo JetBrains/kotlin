@@ -124,7 +124,7 @@ private const val MAX_STRING_CONCAT_DEPTH = 23
     description = "Replace IrStringConcatenation with string builders",
     // FlattenStringConcatenationLowering consolidates string concatenation expressions.
     // ForLoopsLowering may produce IrStringConcatenations.
-    prerequisite = [FlattenStringConcatenationLowering::class, ForLoopsLowering::class]
+    prerequisite = [FlattenStringConcatenationLowering::class, JvmForLoopsLowering::class]
 )
 internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()

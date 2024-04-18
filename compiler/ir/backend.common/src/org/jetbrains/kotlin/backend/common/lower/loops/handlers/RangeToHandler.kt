@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -22,8 +23,8 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
-                callee.dispatchReceiverParameter?.type in progressionElementTypes &&
+        return callee.valueParameters.singleOrNull()?.type?.classFqName in progressionElementTypes &&
+                callee.dispatchReceiverParameter?.type?.classFqName in progressionElementTypes &&
                 callee.name == OperatorNameConventions.RANGE_TO
     }
 
