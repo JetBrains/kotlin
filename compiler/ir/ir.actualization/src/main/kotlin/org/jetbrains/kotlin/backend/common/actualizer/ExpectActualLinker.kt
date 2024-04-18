@@ -77,7 +77,7 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol) = symbol.actualizeSymbol()
 
-    private inline fun <reified S : IrSymbol> S.actualizeSymbol(): S = (expectActualMap[this] as? S) ?: this
+    private inline fun <reified S : IrSymbol> S.actualizeSymbol(): S = (expectActualMap[this] ?: this) as S
 }
 
 internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper) : DeepCopyIrTreeWithSymbols(symbolRemapper) {
