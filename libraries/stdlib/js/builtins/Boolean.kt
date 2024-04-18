@@ -11,40 +11,40 @@
 package kotlin
 
 /** Represents a value which is either `true` or `false`. */
-public class Boolean private constructor() : Comparable<Boolean> {
+public actual class Boolean private constructor() : Comparable<Boolean> {
     @SinceKotlin("1.3")
-    public companion object {}
+    public actual companion object {}
 
     /** Returns the inverse of this boolean. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public operator fun not(): Boolean
+    public actual operator fun not(): Boolean
 
     /**
      * Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun and(other: Boolean): Boolean
+    public actual infix fun and(other: Boolean): Boolean
 
     /**
      * Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun or(other: Boolean): Boolean
+    public actual infix fun or(other: Boolean): Boolean
 
     /** Performs a logical `xor` operation between this Boolean and the [other] one. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public infix fun xor(other: Boolean): Boolean
+    public actual infix fun xor(other: Boolean): Boolean
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun compareTo(other: Boolean): Int
+    public actual override fun compareTo(other: Boolean): Int
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String
+    public actual override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean
+    public actual override fun equals(other: Any?): Boolean
 
-    public override fun hashCode(): Int
+    public actual override fun hashCode(): Int
 }
