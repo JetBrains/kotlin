@@ -33,17 +33,7 @@ internal fun KtModule.getObjCKotlinModuleName(): String? {
     }
 }
 
-private class GetObjCKotlinModuleNameCacheKey(private val module: KtModule) {
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other !is GetObjCKotlinModuleNameCacheKey) return false
-        return this.module == other.module
-    }
-
-    override fun hashCode(): Int {
-        return module.hashCode()
-    }
-}
+private data class GetObjCKotlinModuleNameCacheKey(private val module: KtModule)
 
 /**
  * Combines several [implementations] to a single [KtObjCExportModuleNaming].

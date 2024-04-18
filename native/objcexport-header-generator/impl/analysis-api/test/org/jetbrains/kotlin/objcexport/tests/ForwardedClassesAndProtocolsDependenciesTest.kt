@@ -4,9 +4,9 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
-import org.jetbrains.kotlin.objcexport.KtObjCExportSession
+import org.jetbrains.kotlin.objcexport.KtObjCExportFile
+import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.objcexport.testUtils.defaultKotlinSourceModuleName
 import org.jetbrains.kotlin.objcexport.translateToObjCHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.Test
@@ -82,8 +82,8 @@ class ForwardedClassesAndProtocolsDependenciesTest(
 
     private fun translateClassesAndProtocols(file: KtFile): ObjCHeader {
         return analyze(file) {
-            KtObjCExportSession(KtObjCExportConfiguration(exportedModuleNames = setOf(defaultKotlinSourceModuleName))) {
-                translateToObjCHeader(listOf(file))
+            withKtObjCExportSession(KtObjCExportConfiguration()) {
+                translateToObjCHeader(listOf(KtObjCExportFile(file)))
             }
         }
     }

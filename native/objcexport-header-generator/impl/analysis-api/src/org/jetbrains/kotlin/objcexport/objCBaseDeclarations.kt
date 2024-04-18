@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.objCBaseDeclarations
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
 
-context(KtObjCExportSession)
-internal fun objCBaseDeclarations(): List<ObjCTopLevel> {
+fun KtObjCExportSession.objCBaseDeclarations(): List<ObjCTopLevel> {
     return objCBaseDeclarations(
         topLevelNamePrefix = configuration.frameworkName.orEmpty(),
         objCNameOfAny = getDefaultSuperClassOrProtocolName(),

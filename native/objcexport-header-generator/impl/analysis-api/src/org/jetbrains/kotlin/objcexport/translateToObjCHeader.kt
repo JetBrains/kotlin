@@ -7,32 +7,21 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.native.analysis.api.readKlibDeclarationAddresses
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.tooling.core.closure
 
 
 context(KtAnalysisSession, KtObjCExportSession)
-fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
-    val generator = KtObjCExportHeaderGenerator()
-
-    val klibDeclarationAddresses = useSiteModule.closure { module -> module.allDirectDependencies().asIterable() }
-        .filterIsInstance<KtLibraryModule>()
-        .filter { it.getObjCKotlinModuleName() in configuration.exportedModuleNames }
-        .flatMap { it.readKlibDeclarationAddresses().orEmpty() }
-
-    val unresolvedFiles = files.map { ktFile -> KtObjCExportFile(ktFile) } +
-        createKtObjCExportFiles(klibDeclarationAddresses)
-
-    generator.translateAll(unresolvedFiles.sortedWith(StableFileOrder))
+fun translateToObjCHeader(
+    files: List<KtObjCExportFile>,
+    withObjCBaseDeclarations: Boolean = true,
+): ObjCHeader {
+    val generator = KtObjCExportHeaderGenerator(withObjCBaseDeclarations)
+    generator.translateAll(files.sortedWith(StableFileOrder))
     return generator.buildObjCHeader()
 }
 
@@ -45,7 +34,9 @@ fun translateToObjCHeader(files: List<KtFile>): ObjCHeader {
  *
  * Functions inside this class will have side effects such as mutating the [classDeque] or adding results to the [objCStubs]
  */
-private class KtObjCExportHeaderGenerator {
+private class KtObjCExportHeaderGenerator(
+    private val withObjCBaseDeclarations: Boolean,
+) {
     /**
      * Represents a queue containing pointers to all classes that are 'to be translated later'.
      * This happens, e.g., when a class is referenced inside a callable signature. Such 'dependency types' are to be
@@ -242,7 +233,7 @@ private class KtObjCExportHeaderGenerator {
             .map { className -> resolveObjCClassForwardDeclaration(className) }
             .toSet()
 
-        val stubs = (if (configuration.generateBaseDeclarationStubs) objCBaseDeclarations() else emptyList()).plus(objCStubs)
+        val stubs = (if (withObjCBaseDeclarations) objCBaseDeclarations() else emptyList()).plus(objCStubs)
             .plus(listOfNotNull(errorInterface.takeIf { hasErrorTypes }))
 
         return ObjCHeader(

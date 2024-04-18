@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
-import org.jetbrains.kotlin.objcexport.KtObjCExportSession
+import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.jetbrains.kotlin.objcexport.cached
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -19,8 +19,7 @@ class KtObjCExportSessionCacheTest {
 
     @Test
     fun `test - cache with string key`() {
-
-        KtObjCExportSession(KtObjCExportConfiguration()) {
+        withKtObjCExportSession(KtObjCExportConfiguration()) {
             val cachedInstance1 = cached("instance1") { Payload("1") }
             val cachedInstance2 = cached("instance2") { Payload("2") }
 

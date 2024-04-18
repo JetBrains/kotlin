@@ -12,7 +12,7 @@ data class ObjCHeader(
     @property:InternalKotlinNativeApi val classForwardDeclarations: Set<ObjCClassForwardDeclaration>,
     @property:InternalKotlinNativeApi val protocolForwardDeclarations: Set<String>,
     @property:InternalKotlinNativeApi val additionalImports: List<String>,
-) {
+) : List<ObjCExportStub> by stubs {
 
     fun renderClassForwardDeclarations(): List<String> = buildList {
         if (classForwardDeclarations.isNotEmpty()) {

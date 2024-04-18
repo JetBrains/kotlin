@@ -13,20 +13,23 @@ sealed interface KtObjCExportSession {
 }
 
 /**
- * Internal representation of [KtObjCExportSession].
+ * Internal representation of [withKtObjCExportSession].
  * All *internal* accessible services shall be added here.
  */
+@PublishedApi
 internal sealed interface KtObjCExportSessionInternal : KtObjCExportSession {
     val moduleNaming: KtObjCExportModuleNaming
+    val moduleClassifier: KtObjCExportModuleClassifier
 }
 
+@PublishedApi
 internal val KtObjCExportSession.internal: KtObjCExportSessionInternal
     get() = when (this) {
         is KtObjCExportSessionInternal -> this
     }
 
 /**
- * Private representation of [KtObjCExportSession].
+ * Private representation of [withKtObjCExportSession].
  * All *private* accessible data shall only be added here and potentially
  * exposed as functions within this source file
  */
@@ -39,25 +42,31 @@ private val KtObjCExportSession.private: KtObjCExportSessionPrivate
         is KtObjCExportSessionPrivate -> this
     }
 
-
-inline fun <T> KtObjCExportSession(
+inline fun <T> withKtObjCExportSession(
     configuration: KtObjCExportConfiguration,
     moduleNaming: KtObjCExportModuleNaming = KtObjCExportModuleNaming.default,
+    moduleClassifier: KtObjCExportModuleClassifier = KtObjCExportModuleClassifier.default,
     block: KtObjCExportSession.() -> T,
 ): T {
-    return KtObjCExportSessionImpl(configuration, moduleNaming, hashMapOf()).block()
+    return KtObjCExportSessionImpl(
+        configuration = configuration,
+        moduleNaming = moduleNaming,
+        moduleClassifier = moduleClassifier,
+        cache = hashMapOf()
+    ).block()
 }
 
 @PublishedApi
 internal class KtObjCExportSessionImpl(
     override val configuration: KtObjCExportConfiguration,
     override val moduleNaming: KtObjCExportModuleNaming,
+    override val moduleClassifier: KtObjCExportModuleClassifier,
     override val cache: MutableMap<Any, Any?>,
 ) : KtObjCExportSessionPrivate
 
 
 /**
- * Will cache the given [computation] in the current [KtObjCExportSession].
+ * Will cache the given [computation] in the current [withKtObjCExportSession].
  * Example Usage: Caching the ObjC name of 'MutableSet'
  *
  * ```kotlin

@@ -58,7 +58,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("notExportedDependency"), configuration = HeaderGenerator.Configuration(
                 frameworkName = "MyApp",
-                generateBaseDeclarationStubs = true,
+                withObjCBaseDeclarationStubs = true,
                 dependencies = listOf(testLibraryAKlibFile, testLibraryBKlibFile),
             )
         )
@@ -73,11 +73,9 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("exportedAndNotExportedDependency"), configuration = HeaderGenerator.Configuration(
                 frameworkName = "MyApp",
-                generateBaseDeclarationStubs = true,
+                withObjCBaseDeclarationStubs = true,
                 dependencies = listOf(testLibraryAKlibFile, testLibraryBKlibFile),
-                exportedDependencyModuleNames = setOf(
-                    "org.jetbrains.kotlin:testLibraryA", "testLibraryA"
-                )
+                exportedDependencies = setOf(testLibraryAKlibFile)
             )
         )
     }

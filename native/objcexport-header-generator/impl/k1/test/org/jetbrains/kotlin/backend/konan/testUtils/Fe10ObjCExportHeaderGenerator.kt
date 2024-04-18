@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.tooling.core.closure
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -47,7 +50,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
     override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
         val headerGenerator = createObjCExportHeaderGenerator(disposable, root, configuration)
 
-        if (configuration.generateBaseDeclarationStubs) {
+        if (configuration.withObjCBaseDeclarationStubs) {
             headerGenerator.translateBaseDeclarations()
         }
 
@@ -69,7 +72,11 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
 
         val exportedModuleDescriptors = moduleDescriptors + moduleDescriptors
             .closure<ModuleDescriptor> { it.allDependencyModules }
-            .filter { it.name.asStringStripSpecialMarkers() in configuration.exportedDependencyModuleNames }
+            .filter { descriptor ->
+                val origin = descriptor.getCapability(KlibModuleOrigin.CAPABILITY) ?: return@filter true
+                origin is DeserializedKlibModuleOrigin &&
+                    origin.library.libraryFile.javaFile().toPath() in configuration.exportedDependencies
+            }
 
         val namer = ObjCExportNamerImpl(
             moduleDescriptors = exportedModuleDescriptors,

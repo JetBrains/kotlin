@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.objcexport.testUtils
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.tests.ObjCExportBaseDeclarationsTest
 import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
-import org.jetbrains.kotlin.objcexport.KtObjCExportSession
+import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.jetbrains.kotlin.objcexport.objCBaseDeclarations
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
@@ -26,7 +26,7 @@ class AnalysisApiBaseDeclarationsGeneratorExtension : ParameterResolver {
 
 object AnalysisApiBaseDeclarationsGenerator : ObjCExportBaseDeclarationsTest.BaseDeclarationsGenerator {
     override fun invoke(topLevelPrefix: String): List<ObjCTopLevel> {
-        return KtObjCExportSession(KtObjCExportConfiguration(topLevelPrefix)) {
+        return withKtObjCExportSession(KtObjCExportConfiguration(topLevelPrefix)) {
             objCBaseDeclarations()
         }
     }

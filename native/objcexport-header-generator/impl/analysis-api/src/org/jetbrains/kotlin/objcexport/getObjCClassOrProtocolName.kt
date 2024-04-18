@@ -138,7 +138,7 @@ private fun KtSymbol.getObjCModuleNamePrefix(): String? {
     val module = getContainingModule()
     val moduleName = module.getObjCKotlinModuleName() ?: return null
     if (moduleName == "stdlib" || moduleName == "kotlin-stdlib-common") return "Kotlin"
-    if (moduleName in configuration.exportedModuleNames) return null
+    if (isExported(module)) return null
     return abbreviateModuleName(moduleName)
 }
 

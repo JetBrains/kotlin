@@ -343,11 +343,12 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":jps:jps-common",
             ) +
             arrayOf(
+                ":compiler:ir.serialization.native",
+                ":native:analysis-api-klib-reader",
                 ":native:base",
                 ":native:objcexport-header-generator",
-                ":native:objcexport-header-generator-k1",
                 ":native:objcexport-header-generator-analysis-api",
-                ":compiler:ir.serialization.native"
+                ":native:objcexport-header-generator-k1",
             )
 
 extra["projectsUsedInIntelliJKotlinPlugin"] = projectsUsedInIntelliJKotlinPlugin

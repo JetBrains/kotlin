@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.native.analysis.api.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllClassOrObjectSymbols
@@ -39,6 +40,15 @@ data class KtResolvedObjCExportFile(
 
 fun KtObjCExportFile(file: KtFile): KtObjCExportFile {
     return KtPsiObjCExportFile(file)
+}
+
+/**
+ * Will read the klib (if any) and returns the list of [KtObjCExportFile] that were found.
+ * Returns an empty list if this [KtLibraryModule] is not a klib
+ */
+fun KtLibraryModule.readKtObjCExportFiles(): List<KtObjCExportFile> {
+    val klibAddresses = readKlibDeclarationAddresses() ?: return emptyList()
+    return createKtObjCExportFiles(klibAddresses)
 }
 
 internal fun createKtObjCExportFiles(addresses: Iterable<KlibDeclarationAddress>): List<KtObjCExportFile> {

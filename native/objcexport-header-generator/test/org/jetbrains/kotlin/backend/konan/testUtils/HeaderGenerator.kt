@@ -18,7 +18,7 @@ interface HeaderGenerator {
          * Base declaration stubs do not change and have dedicated tests.
          * We do not generate them by default to keep test data easier to read.
          */
-        val generateBaseDeclarationStubs: Boolean = false,
+        val withObjCBaseDeclarationStubs: Boolean = false,
 
         /**
          * List of paths pointing to .klib files that can be used as dependency for the compiler when generating
@@ -32,7 +32,7 @@ interface HeaderGenerator {
          * Any dependency listed in [dependencies] which module name is present in this set is considered 'exported' and
          * will result in the entire public API surface of the said library to be translated in the header
          */
-        val exportedDependencyModuleNames: Set<String> = emptySet(),
+        val exportedDependencies: Set<Path> = emptySet(),
     )
 
 
