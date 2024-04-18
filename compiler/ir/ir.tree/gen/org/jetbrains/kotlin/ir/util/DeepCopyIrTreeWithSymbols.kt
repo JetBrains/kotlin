@@ -308,6 +308,39 @@ open class DeepCopyIrTreeWithSymbols(
         return result
     }
 
+    override fun visitProperty(declaration: IrProperty): IrProperty =
+        declaration.factory.createProperty(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            visibility = declaration.visibility,
+            modality = declaration.modality,
+            symbol = symbolRemapper.getDeclaredProperty(declaration.symbol),
+            isVar = declaration.isVar,
+            isConst = declaration.isConst,
+            isLateinit = declaration.isLateinit,
+            isDelegated = declaration.isDelegated,
+            isExternal = declaration.isExternal,
+            containerSource = declaration.containerSource,
+            isExpect = declaration.isExpect,
+        ).apply {
+            transformAnnotations(declaration)
+            processAttributes(declaration)
+            backingField = declaration.backingField?.transform()?.also {
+                it.correspondingPropertySymbol = symbol
+            }
+            getter = declaration.getter?.transform()?.also {
+                it.correspondingPropertySymbol = symbol
+            }
+            setter = declaration.setter?.transform()?.also {
+                it.correspondingPropertySymbol = symbol
+            }
+            overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
+                symbolRemapper.getReferencedProperty(it)
+            }
+        }
+
     override fun visitScript(declaration: IrScript): IrStatement {
         return IrScriptImpl(
             symbol = symbolRemapper.getDeclaredScript(declaration.symbol),
@@ -908,39 +941,6 @@ open class DeepCopyIrTreeWithSymbols(
             contextReceiverParametersCount = declaration.contextReceiverParametersCount
             processAttributes(declaration)
             transformFunctionChildren(declaration)
-        }
-
-    override fun visitProperty(declaration: IrProperty): IrProperty =
-        declaration.factory.createProperty(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            visibility = declaration.visibility,
-            modality = declaration.modality,
-            symbol = symbolRemapper.getDeclaredProperty(declaration.symbol),
-            isVar = declaration.isVar,
-            isConst = declaration.isConst,
-            isLateinit = declaration.isLateinit,
-            isDelegated = declaration.isDelegated,
-            isExternal = declaration.isExternal,
-            containerSource = declaration.containerSource,
-            isExpect = declaration.isExpect,
-        ).apply {
-            transformAnnotations(declaration)
-            processAttributes(declaration)
-            this.backingField = declaration.backingField?.transform()?.also {
-                it.correspondingPropertySymbol = symbol
-            }
-            this.getter = declaration.getter?.transform()?.also {
-                it.correspondingPropertySymbol = symbol
-            }
-            this.setter = declaration.setter?.transform()?.also {
-                it.correspondingPropertySymbol = symbol
-            }
-            this.overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap {
-                symbolRemapper.getReferencedProperty(it)
-            }
         }
 
     override fun visitBody(body: IrBody): IrBody =
