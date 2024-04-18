@@ -757,6 +757,13 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitSpreadElement(spread: IrSpreadElement): IrSpreadElement =
+        IrSpreadElementImpl(
+            startOffset = spread.startOffset,
+            endOffset = spread.endOffset,
+            expression = spread.expression.transform(),
+        )
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -867,12 +874,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitExpression(expression: IrExpression): IrExpression =
         throw IllegalArgumentException("Unsupported expression type: $expression")
-
-    override fun visitSpreadElement(spread: IrSpreadElement): IrSpreadElement =
-        IrSpreadElementImpl(
-            spread.startOffset, spread.endOffset,
-            spread.expression.transform()
-        )
 
     override fun visitBlock(expression: IrBlock): IrBlock =
         IrBlockImpl(
