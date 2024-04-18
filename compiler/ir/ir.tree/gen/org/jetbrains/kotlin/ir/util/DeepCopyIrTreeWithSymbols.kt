@@ -209,6 +209,25 @@ open class DeepCopyIrTreeWithSymbols(
             setter = declaration.setter?.transform()
         }
 
+    override fun visitScript(declaration: IrScript): IrStatement {
+        return IrScriptImpl(
+            symbol = symbolRemapper.getDeclaredScript(declaration.symbol),
+            name = declaration.name,
+            factory = declaration.factory,
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+        ).apply {
+            thisReceiver = declaration.thisReceiver?.transform()
+            declaration.statements.mapTo(statements) { it.transform() }
+            importedScripts = declaration.importedScripts
+            earlierScripts = declaration.earlierScripts
+            earlierScriptsParameter = declaration.earlierScriptsParameter
+            explicitCallParameters = declaration.explicitCallParameters.memoryOptimizedMap { it.transform() }
+            implicitReceiversParameters = declaration.implicitReceiversParameters.memoryOptimizedMap { it.transform() }
+            providedPropertiesParameters = declaration.providedPropertiesParameters.memoryOptimizedMap { it.transform() }
+        }
+    }
+
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
         declaration.factory.createTypeAlias(
             startOffset = declaration.startOffset,
@@ -256,25 +275,6 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
-
-    override fun visitScript(declaration: IrScript): IrStatement {
-        return IrScriptImpl(
-            symbolRemapper.getDeclaredScript(declaration.symbol),
-            declaration.name,
-            declaration.factory,
-            declaration.startOffset,
-            declaration.endOffset
-        ).also { scriptCopy ->
-            scriptCopy.thisReceiver = declaration.thisReceiver?.transform()
-            declaration.statements.mapTo(scriptCopy.statements) { it.transform() }
-            scriptCopy.importedScripts = declaration.importedScripts
-            scriptCopy.earlierScripts = declaration.earlierScripts
-            scriptCopy.earlierScriptsParameter = declaration.earlierScriptsParameter
-            scriptCopy.explicitCallParameters = declaration.explicitCallParameters.memoryOptimizedMap { it.transform() }
-            scriptCopy.implicitReceiversParameters = declaration.implicitReceiversParameters.memoryOptimizedMap { it.transform() }
-            scriptCopy.providedPropertiesParameters = declaration.providedPropertiesParameters.memoryOptimizedMap { it.transform() }
-        }
-    }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
         declaration.factory.createSimpleFunction(
