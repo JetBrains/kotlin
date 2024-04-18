@@ -601,6 +601,17 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitFunctionExpression(expression: IrFunctionExpression): IrFunctionExpression =
+        IrFunctionExpressionImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            function = expression.function.transform(),
+            origin = mapStatementOrigin(expression.origin)!!,
+        ).apply {
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -800,14 +811,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             expression.argument.transform()
-        ).processAttributes(expression)
-
-    override fun visitFunctionExpression(expression: IrFunctionExpression): IrFunctionExpression =
-        IrFunctionExpressionImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            expression.function.transform(),
-            mapStatementOrigin(expression.origin)!!
         ).processAttributes(expression)
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrInstanceInitializerCall =
