@@ -15,7 +15,7 @@
 # OWNER_LIST: "Kotlin Language Evolution"
 # OWNER_LIST: "Kotlin in Fleet"
 # OWNER_LIST: Compose
-# OWNER_LIST: Mikhail.Glukhikh
+# OWNER_LIST: Mikhail.Glukhikh Dmitriy.Novozhilov Kirill.Rakhman
 # OWNER_LIST: Yan.Zhulanow
 # OWNER_LIST: Dmitry.Gridin
 # OWNER_LIST: Alexander.Udalov
@@ -24,6 +24,7 @@
 # OWNER_LIST: Simon.Ogorodnik Stanislav.Erokhin
 # OWNER_LIST: Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 # OWNER_LIST: Brian.Norman
+# OWNER_LIST: Sergej.Jaskiewicz
 # Kotlin Libraries
 # OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev Filipp.Zhinkin
 
@@ -31,6 +32,7 @@
 * Kotlin
 
 /.idea/ "Kotlin Build Infrastructure"
+/.idea/kotlinTestDataPluginTestDataPaths.xml Dmitriy.Novozhilov Kirill.Rakhman Sergej.Jaskiewicz
 
 /.fleet/ "Kotlin Build Infrastructure"
 
