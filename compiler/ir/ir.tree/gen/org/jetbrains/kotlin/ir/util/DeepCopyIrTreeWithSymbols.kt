@@ -418,6 +418,21 @@ open class DeepCopyIrTreeWithSymbols(
             transformValueArguments(expression)
         }
 
+    override fun visitFunctionReference(expression: IrFunctionReference): IrFunctionReference =
+        IrFunctionReferenceImpl(
+            startOffset = expression.startOffset, endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedFunction(expression.symbol),
+            typeArgumentsCount = expression.typeArgumentsCount,
+            valueArgumentsCount = expression.valueArgumentsCount,
+            reflectionTarget = expression.reflectionTarget?.let { symbolRemapper.getReferencedFunction(it) },
+            origin = mapStatementOrigin(expression.origin),
+        ).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -692,23 +707,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             expression.argument.transform()
         ).processAttributes(expression)
-
-    override fun visitFunctionReference(expression: IrFunctionReference): IrFunctionReference {
-        val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
-        val reflectionTarget = expression.reflectionTarget?.let { symbolRemapper.getReferencedFunction(it) }
-        return IrFunctionReferenceImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbol,
-            expression.typeArgumentsCount,
-            expression.valueArgumentsCount,
-            reflectionTarget,
-            mapStatementOrigin(expression.origin)
-        ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
-        }.processAttributes(expression)
-    }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
         IrPropertyReferenceImpl(
