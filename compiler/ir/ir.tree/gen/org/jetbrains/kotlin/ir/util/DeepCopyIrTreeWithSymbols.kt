@@ -209,6 +209,21 @@ open class DeepCopyIrTreeWithSymbols(
             setter = declaration.setter?.transform()
         }
 
+    override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
+        declaration.factory.createTypeAlias(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            visibility = declaration.visibility,
+            symbol = symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
+            isActual = declaration.isActual,
+            expandedType = declaration.expandedType.remapType(),
+        ).apply {
+            transformAnnotations(declaration)
+            copyTypeParametersFrom(declaration)
+        }
+
     override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
         val result = IrModuleFragmentImpl(
             declaration.descriptor,
@@ -377,21 +392,6 @@ open class DeepCopyIrTreeWithSymbols(
             }
         }
     }
-
-    override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
-        declaration.factory.createTypeAlias(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            visibility = declaration.visibility,
-            symbol = symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
-            isActual = declaration.isActual,
-            expandedType = declaration.expandedType.remapType(),
-        ).apply {
-            transformAnnotations(declaration)
-            copyTypeParametersFrom(declaration)
-        }
 
     override fun visitBody(body: IrBody): IrBody =
         throw IllegalArgumentException("Unsupported body type: $body")
