@@ -301,8 +301,8 @@ fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Bo
     return isVisibleInClass(parentClassSymbol, status)
 }
 
-fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>, status: FirDeclarationStatus): Boolean {
-    val classPackage = parentClassSymbol.classId.packageFqName
+fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: FirDeclarationStatus): Boolean {
+    val classPackage = classSymbol.classId.packageFqName
     val packageName = when (this) {
         is FirCallableSymbol<*> -> callableId.packageName
         is FirClassLikeSymbol<*> -> classId.packageFqName
@@ -310,10 +310,15 @@ fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>, sta
     }
     val visibility = status.visibility
     if (visibility == Visibilities.Private || !visibility.visibleFromPackage(classPackage, packageName)) return false
-    if (
-        visibility == Visibilities.Internal &&
-        (moduleData != parentClassSymbol.moduleData || parentClassSymbol.moduleData in moduleData.friendDependencies)
-    ) return false
+    if (visibility == Visibilities.Internal) {
+        val containingClassModuleData = classSymbol.moduleData
+        return when (moduleData) {
+            containingClassModuleData -> true
+            in containingClassModuleData.friendDependencies -> true
+            in containingClassModuleData.dependsOnDependencies -> true
+            else -> false
+        }
+    }
     return true
 }
 
