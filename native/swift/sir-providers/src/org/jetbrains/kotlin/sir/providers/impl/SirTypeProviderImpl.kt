@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.sir.SirErrorType
 import org.jetbrains.kotlin.sir.SirNamedDeclaration
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
@@ -18,46 +19,50 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 public class SirTypeProviderImpl(
     private val ktAnalysisSession: KtAnalysisSession,
     private val sirSession: SirSession,
+    private val unresolvedTypeBehaviour: UnresolvedTypeBehavior,
 ) : SirTypeProvider {
+    public enum class UnresolvedTypeBehavior {
+        Fail,
+        CreateErrorType,
+    }
+
     override fun KtType.translateType(): SirType = withSirAnalyse(sirSession, ktAnalysisSession) {
         buildSirNominalType(this@translateType)
     }
 
     context(KtAnalysisSession, SirSession)
-    private fun buildSirNominalType(it: KtType): SirType = SirNominalType(
+    private fun buildSirNominalType(ktType: KtType): SirType {
         when {
-            it.isUnit -> SirSwiftModule.void
+            ktType.isUnit -> SirSwiftModule.void
 
-            it.isByte -> SirSwiftModule.int8
-            it.isShort -> SirSwiftModule.int16
-            it.isInt -> SirSwiftModule.int32
-            it.isLong -> SirSwiftModule.int64
+            ktType.isByte -> SirSwiftModule.int8
+            ktType.isShort -> SirSwiftModule.int16
+            ktType.isInt -> SirSwiftModule.int32
+            ktType.isLong -> SirSwiftModule.int64
 
-            it.isUByte -> SirSwiftModule.uint8
-            it.isUShort -> SirSwiftModule.uint16
-            it.isUInt -> SirSwiftModule.uint32
-            it.isULong -> SirSwiftModule.uint64
+            ktType.isUByte -> SirSwiftModule.uint8
+            ktType.isUShort -> SirSwiftModule.uint16
+            ktType.isUInt -> SirSwiftModule.uint32
+            ktType.isULong -> SirSwiftModule.uint64
 
-            it.isBoolean -> SirSwiftModule.bool
+            ktType.isBoolean -> SirSwiftModule.bool
 
-            it.isDouble -> SirSwiftModule.double
-            it.isFloat -> SirSwiftModule.float
+            ktType.isDouble -> SirSwiftModule.double
+            ktType.isFloat -> SirSwiftModule.float
+            else -> null
+        }?.let {
+            return SirNominalType(it)
+        }
 
-            else -> when (it) {
-                is KtUsualClassType -> {
-                    it.classSymbol.sirDeclaration() as SirNamedDeclaration
-                }
-                is KtCapturedType,
-                is KtClassErrorType,
-                is KtFunctionalType,
-                is KtDefinitelyNotNullType,
-                is KtDynamicType,
-                is KtTypeErrorType,
-                is KtFlexibleType,
-                is KtIntegerLiteralType,
-                is KtIntersectionType,
-                is KtTypeParameterType -> error("Swift Export does not support argument type: $it")
+        if (ktType is KtUsualClassType) {
+            return SirNominalType(ktType.classSymbol.sirDeclaration() as SirNamedDeclaration)
+        }
+        if (ktType is KtClassErrorType) {
+            when (unresolvedTypeBehaviour) {
+                UnresolvedTypeBehavior.Fail -> error("Unresolved class reference: ${ktType.errorMessage}")
+                UnresolvedTypeBehavior.CreateErrorType -> return SirErrorType
             }
         }
-    )
+        error("Swift Export does not support argument type: $ktType")
+    }
 }

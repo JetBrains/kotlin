@@ -43,3 +43,8 @@ class SirExistentialType(
         return this::class.hashCode()
     }
 }
+
+/**
+ * Represents an invalid type reference.
+ */
+object SirErrorType : SirType

@@ -263,6 +263,7 @@ private val SirParameter.swift get(): String = (argumentName ?: "_") + (paramete
 private val SirType.swift
     get(): String = when (this) {
         is SirExistentialType -> "Any"
+        is SirErrorType -> "Swift.Never"
         is SirNominalType -> type.swiftFqName
     }
 

@@ -39,6 +39,7 @@ object Comparators {
     private val SirType.swift
         get(): String = when (this) {
             is SirExistentialType -> error("Existential types are not supported yet")
+            is SirErrorType -> "Swift.Never"
             is SirNominalType -> type.name
         }
 

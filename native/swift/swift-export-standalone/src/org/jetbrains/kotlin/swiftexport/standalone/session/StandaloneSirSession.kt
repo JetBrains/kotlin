@@ -31,6 +31,7 @@ internal class StandaloneSirSession(
     override val typeProvider = SirTypeProviderImpl(
         ktAnalysisSession = ktAnalysisSession,
         sirSession = sirSession,
+        unresolvedTypeBehaviour = SirTypeProviderImpl.UnresolvedTypeBehavior.CreateErrorType,
     )
     override val visibilityChecker = SirVisibilityCheckerImpl(
         ktAnalysisSession = ktAnalysisSession,

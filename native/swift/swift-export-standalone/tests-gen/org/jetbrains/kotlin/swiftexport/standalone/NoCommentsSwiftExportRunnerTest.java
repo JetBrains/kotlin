@@ -60,6 +60,12 @@ public class NoCommentsSwiftExportRunnerTest extends AbstractNoCommentsBasedSwif
   }
 
   @Test
+  @TestMetadata("unresolved_types")
+  public void testUnresolved_types() {
+    runTest("native/swift/swift-export-standalone/testData/unresolved_types/");
+  }
+
+  @Test
   @TestMetadata("variables")
   public void testVariables() {
     runTest("native/swift/swift-export-standalone/testData/variables/");
