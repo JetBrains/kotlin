@@ -29,11 +29,10 @@ import org.jetbrains.kotlin.fir.types.coneType
 object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         // Declarations are checked separately
-        // See KT-33658 about annotations on non-expression statements
+        // See KT-58723 about annotations on non-expression statements
         if (expression is FirDeclaration ||
             expression is FirErrorExpression ||
-            expression is FirBlock && (expression.source?.kind == KtRealSourceElementKind ||
-                    expression.source?.kind == KtFakeSourceElementKind.DesugaredForLoop)
+            expression is FirBlock && expression.source?.kind == KtRealSourceElementKind
         ) return
 
         // To prevent double-reporting (we have also a call in this case)
