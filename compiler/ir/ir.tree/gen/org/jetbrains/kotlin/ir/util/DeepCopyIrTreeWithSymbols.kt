@@ -163,6 +163,19 @@ open class DeepCopyIrTreeWithSymbols(
             transformFunctionChildren(declaration)
         }
 
+    override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
+        declaration.factory.createEnumEntry(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            origin = mapDeclarationOrigin(declaration.origin),
+            name = declaration.name,
+            symbol = symbolRemapper.getDeclaredEnumEntry(declaration.symbol),
+        ).apply {
+            transformAnnotations(declaration)
+            correspondingClass = declaration.correspondingClass?.transform()
+            initializerExpression = declaration.initializerExpression?.transform()
+        }
+
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
@@ -313,19 +326,6 @@ open class DeepCopyIrTreeWithSymbols(
             delegate = declaration.delegate.transform()
             getter = declaration.getter.transform()
             setter = declaration.setter?.transform()
-        }
-
-    override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
-        declaration.factory.createEnumEntry(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
-            origin = mapDeclarationOrigin(declaration.origin),
-            name = declaration.name,
-            symbol = symbolRemapper.getDeclaredEnumEntry(declaration.symbol),
-        ).apply {
-            transformAnnotations(declaration)
-            correspondingClass = declaration.correspondingClass?.transform()
-            initializerExpression = declaration.initializerExpression?.transform()
         }
 
     override fun visitVariable(declaration: IrVariable): IrVariable =
