@@ -734,6 +734,18 @@ open class DeepCopyIrTreeWithSymbols(
             processAttributes(expression)
         }
 
+    override fun visitSetValue(expression: IrSetValue): IrSetValue =
+        IrSetValueImpl(
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = expression.type.remapType(),
+            symbol = symbolRemapper.getReferencedValue(expression.symbol),
+            value = expression.value.transform(),
+            origin = mapStatementOrigin(expression.origin),
+        ).apply {
+            processAttributes(expression)
+        }
+
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
@@ -865,15 +877,6 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             mapStatementOrigin(expression.origin),
             expression.statements.memoryOptimizedMap { it.transform() },
-        ).processAttributes(expression)
-
-    override fun visitSetValue(expression: IrSetValue): IrSetValue =
-        IrSetValueImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbolRemapper.getReferencedValue(expression.symbol),
-            expression.value.transform(),
-            mapStatementOrigin(expression.origin)
         ).processAttributes(expression)
 
     private fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
