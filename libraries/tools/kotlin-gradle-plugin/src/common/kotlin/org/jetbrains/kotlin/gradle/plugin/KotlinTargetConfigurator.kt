@@ -113,7 +113,16 @@ private fun HasAttributes.setJvmSpecificAttributes(
     jvmTargetProvider: (() -> JvmTarget)?,
 ) {
     setJavaTargetEnvironmentAttributeIfSupported(target.project, targetJvmEnvironment)
-    setTargetJvmAttribute(target.project, jvmTargetProvider)
+    if (GradleVersion.current() >= GradleVersion.version("7.5")) {
+        setTargetJvmAttribute(target.project, jvmTargetProvider)
+    } else {
+        // Postpone setting the attribute as the old Gradle releases do not support lazy value for attributes.
+        // We do not do this unconditionally as such logic is actually more confusing in terms of visible side effects.
+        // Once the minimal Gradle version becomes >= 7.5, this branch can be deleted.
+        target.project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseCompilations) {
+            setTargetJvmAttribute(target.project, jvmTargetProvider)
+        }
+    }
 }
 
 private fun HasAttributes.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {

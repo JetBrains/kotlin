@@ -165,10 +165,14 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         description = "Runtime only dependencies for $compilationCoordinates."
     }
 
+    val jvmTargetProvider = {
+        target.compilations.getByName(compilationName).jvmTargetProvider()
+    }
+
     val compileDependencyConfiguration = target.project.configurations
         .maybeCreateResolvable(compileClasspathConfigurationName).apply {
             extendsFrom(compileOnlyConfiguration, implementationConfiguration)
-            usesPlatformOf(target)
+            usesPlatformOf(target, jvmTargetProvider)
             isVisible = false
             attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
@@ -181,7 +185,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         if (withRuntime) target.project.configurations.maybeCreateResolvable(runtimeClasspathConfigurationName).apply {
             extendsFrom(runtimeOnlyConfiguration, implementationConfiguration)
             deprecatedRuntimeConfiguration?.let { extendsFrom(it) }
-            usesPlatformOf(target)
+            usesPlatformOf(target, jvmTargetProvider)
             isVisible = false
             attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
