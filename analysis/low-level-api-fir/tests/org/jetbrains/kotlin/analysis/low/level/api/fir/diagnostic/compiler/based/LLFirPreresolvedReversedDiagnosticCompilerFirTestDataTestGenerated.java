@@ -5643,6 +5643,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     }
 
     @Test
+    @TestMetadata("incorrectDeprecation.kt")
+    public void testIncorrectDeprecation() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/incorrectDeprecation.kt");
+    }
+
+    @Test
     @TestMetadata("intersectDynamicAndString.kt")
     public void testIntersectDynamicAndString() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intersectDynamicAndString.kt");
