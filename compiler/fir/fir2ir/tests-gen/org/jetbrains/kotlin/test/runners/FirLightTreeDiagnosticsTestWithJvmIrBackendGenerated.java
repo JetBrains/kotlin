@@ -61,6 +61,12 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("nothingToOverrideWithRawParameter.kt")
+  public void testNothingToOverrideWithRawParameter() {
+    runTest("compiler/testData/diagnostics/testsWithJvmBackend/nothingToOverrideWithRawParameter.kt");
+  }
+
+  @Test
   @TestMetadata("propertyInlineCycle.kt")
   public void testPropertyInlineCycle() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/propertyInlineCycle.kt");
