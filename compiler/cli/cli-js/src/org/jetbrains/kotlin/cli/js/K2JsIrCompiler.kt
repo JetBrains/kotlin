@@ -395,6 +395,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 generateTypeScriptFragment = generateDts,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
             )
+
+            performanceManager?.notifyIRGenerationStarted()
             val dceDumpNameCache = DceDumpNameCache()
             if (arguments.irDce) {
                 eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
@@ -412,6 +414,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
                 generateSourceMaps = generateSourceMaps,
             )
+            performanceManager?.notifyIRGenerationFinished()
+            performanceManager?.notifyGenerationFinished()
 
             writeCompilationResult(
                 result = res,

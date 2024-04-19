@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToTsDeclarations
@@ -65,6 +66,9 @@ fun compileToLoweredIr(
 ): LoweredIrWithExtraArtifacts {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
+    val performanceManager = depsDescriptors.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyIRTranslationStarted()
+
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = loadIr(
         depsDescriptors,
         irFactory,
@@ -103,13 +107,17 @@ fun compileToLoweredIr(
         val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(ModuleKind.ES, exportModel.declarations)
         TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", ModuleKind.ES, listOf(fragment)))
     }
+    performanceManager?.notifyIRTranslationFinished()
 
+    performanceManager?.notifyGenerationStarted()
+    performanceManager?.notifyIRLoweringStarted()
     val phaserState = PhaserState<IrModuleFragment>()
     loweringList.forEachIndexed { _, lowering ->
         allModules.forEach { module ->
             lowering.invoke(phaseConfig, phaserState, context, module)
         }
     }
+    performanceManager?.notifyIRLoweringFinished()
 
     return LoweredIrWithExtraArtifacts(allModules, context, typeScriptFragment)
 }
