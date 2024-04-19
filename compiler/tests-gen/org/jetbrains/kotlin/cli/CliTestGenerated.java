@@ -1721,5 +1721,10 @@ public class CliTestGenerated extends AbstractCliTest {
     public void testOptionalExpectationUsage() {
       runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
     }
+
+    @TestMetadata("unsignedDeclarationsFromStdlib.args")
+    public void testUnsignedDeclarationsFromStdlib() {
+      runTest("compiler/testData/cli/metadata/unsignedDeclarationsFromStdlib.args");
+    }
   }
 }
