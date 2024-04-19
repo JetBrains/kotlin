@@ -21,8 +21,9 @@ repositories {
 def shouldBeJs = true
 
 kotlin {
+    jvmToolchain(8)
 	// Check the new preset functions:
-	jvm('jvm6') { }
+	jvm()
     if (shouldBeJs) {
         js('nodeJs') {
             nodejs {
@@ -31,7 +32,7 @@ kotlin {
         }
         wasmJs()
     }
-    targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
+    targetFromPreset(presets.jvm, 'jvm') { println targetName } // access existing target
 
     targets {
     	// Also check that the old DSL (fromPreset) works:
@@ -41,7 +42,7 @@ kotlin {
         fromPreset(presets.macosArm64, 'macosArm64')
 
         // Check the DSL constructs in the Groovy DSL:
-        fromPreset(presets.jvm, 'jvm6') {
+        fromPreset(presets.jvm, 'jvm') {
         	println "Configuring $targetName"
             compilations.main {
                 kotlinOptions {
@@ -74,13 +75,13 @@ kotlin {
                 implementation kotlin("test-annotations-common")
             }
         }
-        jvm6Main {
+        jvmMain {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
             }
         }
-        jvm6Test {
+        jvmTest {
             dependencies {
                 implementation kotlin("test-junit")
             }
@@ -113,7 +114,7 @@ publishing {
 // Check that a compilation may be created after project evaluation, KT-28896:
 afterEvaluate {
     kotlin {
-        jvm('jvm6').compilations.create('benchmark') {
+        jvm().compilations.create('benchmark') {
             assemble.dependsOn compileKotlinTask
         }
     }

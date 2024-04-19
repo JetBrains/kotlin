@@ -124,9 +124,9 @@ class ExplicitApiIT : KGPBaseTest() {
                 assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=warning")
             }
 
-            build(":compileKotlinJvm6") {
-                assertTasksExecuted(":compileKotlinJvm6")
-                assertCompilerArgument(":compileKotlinJvm6", "-Xexplicit-api=warning")
+            build(":compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompilerArgument(":compileKotlinJvm", "-Xexplicit-api=warning")
             }
 
             build(":compileKotlinNodeJs") {

@@ -89,7 +89,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
         val buildOptions = hmppFlags.buildOptions
         val compileTasksNames =
-            listOf("Jvm6", "NodeJs", "Linux64").map { ":compileKotlin$it" }
+            listOf("Jvm", "NodeJs", "Linux64").map { ":compileKotlin$it" }
 
         with(libProject) {
             build(
@@ -97,10 +97,10 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 options = buildOptions
             ) {
                 assertSuccessful()
-                assertTasksExecuted(*compileTasksNames.toTypedArray(), ":jvm6Jar", ":nodeJsJar", ":compileCommonMainKotlinMetadata")
+                assertTasksExecuted(*compileTasksNames.toTypedArray(), ":jvmJar", ":nodeJsJar", ":compileCommonMainKotlinMetadata")
 
                 val groupDir = projectDir.resolve("repo/com/example")
-                val jvmJarName = "sample-lib-jvm6/1.0/sample-lib-jvm6-1.0.jar"
+                val jvmJarName = "sample-lib-jvm/1.0/sample-lib-jvm-1.0.jar"
                 val jsExtension = "klib"
                 val jsKlibName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
                 val metadataJarName = "sample-lib/1.0/sample-lib-1.0.jar"
@@ -147,15 +147,9 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertTasksExecuted(*compileTasksNames.toTypedArray())
 
-                projectDir.resolve(targetClassesDir("jvm6")).run {
+                projectDir.resolve(targetClassesDir("jvm")).run {
                     Assert.assertTrue(resolve("com/example/app/AKt.class").exists())
                     Assert.assertTrue(resolve("com/example/app/UseBothIdsKt.class").exists())
-                }
-
-                projectDir.resolve(targetClassesDir("jvm8")).run {
-                    Assert.assertTrue(resolve("com/example/app/AKt.class").exists())
-                    Assert.assertTrue(resolve("com/example/app/UseBothIdsKt.class").exists())
-                    Assert.assertTrue(resolve("com/example/app/Jdk8ApiUsageKt.class").exists())
                 }
 
                 val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
@@ -325,7 +319,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testResourceProcessing() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-        val targetsWithResources = listOf("jvm6", "nodeJs", "linux64")
+        val targetsWithResources = listOf("jvm", "nodeJs", "linux64")
         val processResourcesTasks =
             targetsWithResources.map { ":${it}ProcessResources" }
 
@@ -404,7 +398,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     apply plugin: 'application'
                     apply plugin: 'kotlin-kapt' // Check that Kapts works, generates and compiles sources
                 """.trimIndent() + if (testJavaSupportInJvmTargets) {
-                    it + "\nkotlin.jvm(\"jvm6\") { " +
+                    it + "\nkotlin.jvm(\"jvm\") { " +
                             "${
                                 KotlinJvmTarget::withJava.name.plus("();").repeat(2)
                             } " + // also check that the function is idempotent
@@ -427,12 +421,12 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     }
                     
                     dependencies {
-                        jvm6MainImplementation("com.google.dagger:dagger:2.24")
+                        jvmMainImplementation("com.google.dagger:dagger:2.24")
                         kapt("com.google.dagger:dagger-compiler:2.24")
                         kapt(project(":sample-lib-gradle-kotlin-dsl"))
                         
                         // also check incremental Kapt class structure configurations, KT-33105
-                        jvm6MainImplementation(project(":sample-lib-gradle-kotlin-dsl")) 
+                        jvmMainImplementation(project(":sample-lib-gradle-kotlin-dsl")) 
                     }
                     """.trimIndent()
                 )
@@ -441,7 +435,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=true")
 
             // Check Kapt:
-            projectDir.resolve("src/jvm6Main/kotlin/Main.kt").appendText(
+            projectDir.resolve("src/jvmMain/kotlin/Main.kt").appendText(
                 "\n" + """
                 interface Iface
                 
@@ -454,7 +448,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             )
 
             fun javaSourceRootForCompilation(compilationName: String) =
-                if (testJavaSupportInJvmTargets) "src/jvm6${compilationName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}/java" else "src/$compilationName/java"
+                if (testJavaSupportInJvmTargets) "src/jvm${compilationName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}/java" else "src/$compilationName/java"
 
             val javaMainSrcDir = javaSourceRootForCompilation("main")
             val javaTestSrcDir = javaSourceRootForCompilation("test")
@@ -511,18 +505,18 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     classesWithoutJava + setOf(
                         // classes for Kapt test:
                         "java/main/com/example/lib/Module_ProvideHeaterFactory.class",
-                        "kotlin/jvm6/main/com/example/lib/Module\$provideHeater\$1.class",
-                        "kotlin/jvm6/main/com/example/lib/Iface.class",
-                        "kotlin/jvm6/main/com/example/lib/Module.class",
+                        "kotlin/jvm/main/com/example/lib/Module\$provideHeater\$1.class",
+                        "kotlin/jvm/main/com/example/lib/Iface.class",
+                        "kotlin/jvm/main/com/example/lib/Module.class",
                         // other added classes:
-                        "kotlin/jvm6/main/com/example/lib/KotlinClassInJava.class",
+                        "kotlin/jvm/main/com/example/lib/KotlinClassInJava.class",
                         "java/main/com/example/lib/JavaClassInJava.class",
                         "java/test/com/example/lib/JavaTest.class"
                     )
                 val actualClasses = getFilePathsSet("build/classes")
                 Assert.assertEquals(expectedMainClasses, actualClasses)
 
-                val jvmTestTaskName = if (testJavaSupportInJvmTargets) "jvm6Test" else "test"
+                val jvmTestTaskName = if (testJavaSupportInJvmTargets) "jvmTest" else "test"
                 assertTasksExecuted(":$jvmTestTaskName")
 
                 if (testJavaSupportInJvmTargets) {
@@ -627,7 +621,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
         """.trimIndent()
             )
 
-            listOf("compileCommonMainKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs").forEach {
+            listOf("compileCommonMainKotlinMetadata", "compileKotlinJvm", "compileKotlinNodeJs").forEach {
                 build(it) {
                     assertSuccessful()
                     assertTasksExecuted(":$it")
@@ -655,7 +649,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
         )
 
         listOf(
-            "compileCommonMainKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs"
+            "compileCommonMainKotlinMetadata", "compileKotlinJvm", "compileKotlinNodeJs"
         ).forEach {
             build(it) {
                 assertSuccessful()
@@ -699,7 +693,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
         """.trimIndent()
         )
 
-        listOf("compileCommonMainKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs").forEach {
+        listOf("compileCommonMainKotlinMetadata", "compileKotlinJvm", "compileKotlinNodeJs").forEach {
             build(it) {
                 assertSuccessful()
                 assertTasksExecuted(":$it")
@@ -728,7 +722,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     |kotlin.sourceSets.linux64Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.macos64Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.macosArm64Main.${initialSetupForSourceSets}
-                    |kotlin.sourceSets.jvm6Main.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.jvmMain.${initialSetupForSourceSets}
                     |kotlin.sourceSets.mingw64Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.nodeJsMain.${initialSetupForSourceSets}
                     |kotlin.sourceSets.wasmJsMain.${initialSetupForSourceSets}
@@ -747,7 +741,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 |kotlin.sourceSets.linux64Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.macos64Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.macosArm64Main.${sourceSetConfigurationChange}
-                |kotlin.sourceSets.jvm6Main.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.jvmMain.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.mingw64Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.nodeJsMain.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.wasmJsMain.${sourceSetConfigurationChange}
@@ -1032,7 +1026,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
 
             val groupDir = projectDir.resolve("repo/com/example/")
-            val targetArtifactIdAppendices = listOf(null, "jvm6", "nodejs", "linux64")
+            val targetArtifactIdAppendices = listOf(null, "jvm", "nodejs", "linux64")
 
             val sourceJarSourceRoots = targetArtifactIdAppendices.associateWith { artifact ->
                 val sourcesJarPath = if (artifact != null) "sample-lib-$artifact/1.0/sample-lib-$artifact-1.0-sources.jar"
@@ -1046,7 +1040,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 setOf("commonMain", "nativeMain"),
                 sourceJarSourceRoots[null]
             )
-            assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
+            assertEquals(setOf("commonMain", "jvmMain"), sourceJarSourceRoots["jvm"])
             assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["nodejs"])
             assertEquals(setOf("commonMain", "nativeMain", "linux64Main"), sourceJarSourceRoots["linux64"])
         }
@@ -1130,7 +1124,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 "\n" + """
                 publishing {
                     publications {
-                        jvm6 {
+                        jvm {
                             groupId = "foo"
                             artifactId = "bar"
                             version = "42"
@@ -1162,20 +1156,20 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     "<version>1.0</version>"
                 )
                 assertFileContains(
-                    "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
+                    "repo/com/exampleapp/sample-app-jvm/1.0/sample-app-jvm-1.0.pom",
                     "<groupId>foo</groupId>",
                     "<artifactId>bar</artifactId>",
                     "<version>42</version>"
                 )
                 assertFileContains(
-                    "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
+                    "repo/com/exampleapp/sample-app-jvm/1.0/sample-app-jvm-1.0.pom",
                     "<groupId>com.external.dependency</groupId>",
-                    "<artifactId>external-jvm6</artifactId>",
+                    "<artifactId>external-jvm</artifactId>",
                     "<version>1.2.3</version>"
                 )
 
                 // Check that, despite the rewritten POM, the module metadata contains the original dependency:
-                val moduleMetadata = projectDir.resolve("repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.module").readText()
+                val moduleMetadata = projectDir.resolve("repo/com/exampleapp/sample-app-jvm/1.0/sample-app-jvm-1.0.module").readText()
                     .replace("\\s+".toRegex(), "").replace("\n", "")
                 assertTrue { "\"group\":\"com.example\",\"module\":\"sample-lib-multiplatform\"" in moduleMetadata }
                 assertTrue { "\"group\":\"com.external.dependency\",\"module\":\"external\"" in moduleMetadata }
@@ -1191,13 +1185,13 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     "<version>1.0</version>"
                 )
                 assertFileContains(
-                    "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
+                    "repo/com/exampleapp/sample-app-jvm/1.0/sample-app-jvm-1.0.pom",
                     "<groupId>com.example</groupId>",
                     "<artifactId>sample-lib-multiplatform</artifactId>",
                     "<version>1.0</version>"
                 )
                 assertFileContains(
-                    "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
+                    "repo/com/exampleapp/sample-app-jvm/1.0/sample-app-jvm-1.0.pom",
                     "<groupId>com.external.dependency</groupId>",
                     "<artifactId>external</artifactId>",
                     "<version>1.2.3</version>"
@@ -1258,7 +1252,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             """.trimIndent()
         )
         // TODO once Kotlin/Native properly supports compiler plugins, move this class to the common sources
-        listOf("jvm6", "nodeJs").forEach {
+        listOf("jvm", "nodeJs").forEach {
             projectDir.resolve("src/${it}Main/kotlin/Override.kt").writeText(
                 """
                 package com.example
@@ -1275,9 +1269,9 @@ open class NewMultiplatformIT : BaseGradleIT() {
         // build.gradle.kts), which is generally not guaranteed.
         build("assemble", "-Pkotlin.native.useEmbeddableCompilerJar=false", printOptionsTaskName) {
             assertSuccessful()
-            assertTasksExecuted(*listOf("Jvm6", "NodeJs", "Linux64").map { ":compileKotlin$it" }.toTypedArray())
-            assertFileExists("build/classes/kotlin/jvm6/main/com/example/Annotated.class")
-            assertFileExists("build/classes/kotlin/jvm6/main/com/example/Override.class")
+            assertTasksExecuted(*listOf("Jvm", "NodeJs", "Linux64").map { ":compileKotlin$it" }.toTypedArray())
+            assertFileExists("build/classes/kotlin/jvm/main/com/example/Annotated.class")
+            assertFileExists("build/classes/kotlin/jvm/main/com/example/Override.class")
 
             val (compilerPluginArgsBySourceSet, compilerPluginClasspathBySourceSet) =
                 listOf(compilerPluginArgsRegex, compilerPluginClasspathRegex)
@@ -1286,7 +1280,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     }
 
             // TODO once Kotlin/Native properly supports compiler plugins, expand this to all source sets:
-            listOf("commonMain", "commonTest", "jvm6Main", "jvm6Test", "nodeJsMain", "nodeJsTest").forEach {
+            listOf("commonMain", "commonTest", "jvmMain", "jvmTest", "nodeJsMain", "nodeJsTest").forEach {
                 val expectedArgs = "[plugin:org.jetbrains.kotlin.allopen:annotation=com.example.Annotation, " +
                         "plugin:org.jetbrains.kotlin.noarg:annotation=com.example.Annotation]"
 
@@ -1322,7 +1316,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "macosArm64", "wasmJs"
+                "jvm", "nodeJs", "mingw64", "linux64", "macos64", "macosArm64", "wasmJs"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(
@@ -1371,7 +1365,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             assertHasDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
         }
 
-        gradleBuildScript().appendText("\nkotlin { sourceSets { jvm6Main { dependsOn bar } } }")
+        gradleBuildScript().appendText("\nkotlin { sourceSets { jvmMain { dependsOn bar } } }")
 
         build {
             assertSuccessful()

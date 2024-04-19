@@ -182,7 +182,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 |
                 |kotlin {
                 |    sourceSets {
-                |        jvm6Main {
+                |        jvmMain {
                 |            languageSettings.optIn("my.custom.OptInAnnotation")
                 |        }
                 |    }
@@ -194,10 +194,10 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinJvm6") {
-                assertTasksExecuted(":compileKotlinJvm6")
+            build("compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
                 assertCompilerArgument(
-                    ":compileKotlinJvm6",
+                    ":compileKotlinJvm",
                     "-opt-in my.custom.OptInAnnotation,another.custom.UnderOptIn",
                     logLevel = LogLevel.INFO
                 )

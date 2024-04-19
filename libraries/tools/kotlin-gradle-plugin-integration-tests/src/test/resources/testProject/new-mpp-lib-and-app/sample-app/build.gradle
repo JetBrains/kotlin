@@ -30,14 +30,8 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
             }
         }
-        jvm6Main {
+        jvmMain {
             dependsOn allJvm
-        }
-        jvm8Main {
-            dependsOn allJvm
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-            }
         }
         nodeJsMain {
             dependencies {
@@ -55,12 +49,7 @@ kotlin {
     wasmJs()
 
     targets {
-        fromPreset(presets.jvm, 'jvm6') {
-        	attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
-        }
-        fromPreset(presets.jvm, 'jvm8') {
-        	attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
-
+        fromPreset(presets.jvm, 'jvm') {
              compilations.main {
                 tasks.getByName(compileKotlinTaskName) {
                     kotlinOptions {
@@ -88,7 +77,7 @@ kotlin {
 tasks.register("resolveRuntimeDependencies", DefaultTask) {
     doFirst { 
         // KT-26301
-        def configName = kotlin.targets.jvm6.compilations.main.runtimeDependencyConfigurationName
+        def configName = kotlin.targets.jvm.compilations.main.runtimeDependencyConfigurationName
         configurations[configName].resolve()
     }
 }

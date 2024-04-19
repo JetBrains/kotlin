@@ -19,18 +19,19 @@ repositories {
 }
 
 kotlin {
+    jvmToolchain(8)
 	// Check the new preset functions:
-	jvm('jvm6') { }
+	jvm()
     js('nodeJs')
     wasmJs()
-    targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
+    targetFromPreset(presets.jvm, 'jvm') { println targetName } // access existing target
     
     targets {
     	// Also check that the old DSL (fromPreset) works:
         fromPreset(presets.linuxX64, 'linux64')
 
         // Check the DSL constructs in the Groovy DSL:
-        fromPreset(presets.jvm, 'jvm6') {
+        fromPreset(presets.jvm, 'jvm') {
         	println "Configuring $targetName"
             compilations.main {
                 kotlinOptions {
@@ -57,7 +58,7 @@ kotlin {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-common'
             }
         }
-        jvm6Main {
+        jvmMain {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
@@ -78,7 +79,7 @@ apply plugin: 'maven-publish'
 // Check that a compilation may be created after project evaluation, KT-28896:
 afterEvaluate {
     kotlin {
-        jvm('jvm6').compilations.create('benchmark') {
+        jvm('jvm').compilations.create('benchmark') {
             assemble.dependsOn compileKotlinTask
         }
     }

@@ -12,8 +12,9 @@ repositories {
 }
 
 kotlin {
+    jvmToolchain(8)
     val shouldBeJs = true
-    val jvm = jvm("jvm6")
+    val jvm = jvm()
     val js = if (shouldBeJs) {
         js("nodeJs") {
             nodejs()
@@ -60,7 +61,7 @@ publishing {
 // Check that a compilation may be created after project evaluation, KT-28896:
 afterEvaluate {
     kotlin {
-        jvm("jvm6").compilations.create("benchmark") {
+        jvm().compilations.create("benchmark") {
             tasks["assemble"].dependsOn(compileKotlinTask)
         }
     }

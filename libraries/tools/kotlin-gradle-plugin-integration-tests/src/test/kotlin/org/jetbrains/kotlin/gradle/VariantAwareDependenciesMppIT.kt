@@ -40,7 +40,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 )
 
             testResolveAllConfigurations("simpleProject") { _, buildResult ->
-                buildResult.assertOutputContains(">> :simpleProject:runtimeClasspath --> sample-lib-jvm6-1.0.jar")
+                buildResult.assertOutputContains(">> :simpleProject:runtimeClasspath --> sample-lib-jvm-1.0.jar")
             }
         }
     }
@@ -75,7 +75,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                     |
-                    |dependencies { jvm6MainImplementation project(':simpleProject') }
+                    |dependencies { jvmMainImplementation project(':simpleProject') }
                     |
                     """.trimMargin()
             )
@@ -158,7 +158,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 """
                 |
                 |dependencies {
-                |   def jvmCompilations = kotlin.getTargets().getByName("jvm6").getCompilations()
+                |   def jvmCompilations = kotlin.getTargets().getByName("jvm").getCompilations()
                 |   def jsCompilations = kotlin.getTargets().getByName("nodeJs").getCompilations()
                 |
                 |   def jvmMainImplConfigName = jvmCompilations.getByName("main").getImplementationConfigurationName()
@@ -187,14 +187,14 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
             subProject("simpleProject").buildGradle.appendText(
                 """
                 |
-                |dependencies { testImplementation project(path: ':', configuration: 'jvm6RuntimeElements') }
+                |dependencies { testImplementation project(path: ':', configuration: 'jvmRuntimeElements') }
                 |
                 """.trimMargin()
             )
 
             testResolveAllConfigurations("simpleProject") { _, buildResult ->
-                buildResult.assertOutputContains(">> :simpleProject:testCompileClasspath --> sample-lib-jvm6-1.0.jar")
-                buildResult.assertOutputContains(">> :simpleProject:testRuntimeClasspath --> sample-lib-jvm6-1.0.jar")
+                buildResult.assertOutputContains(">> :simpleProject:testCompileClasspath --> sample-lib-jvm-1.0.jar")
+                buildResult.assertOutputContains(">> :simpleProject:testRuntimeClasspath --> sample-lib-jvm-1.0.jar")
             }
         }
     }
@@ -252,7 +252,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
             val isAtLeastGradle75 = gradleVersion >= GradleVersion.version("7.5")
 
-            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
+            listOf("jvm" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
                 build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
                     if (isAtLeastGradle75) {
                         assertOutputContains("Variant ${target}ApiElements")
