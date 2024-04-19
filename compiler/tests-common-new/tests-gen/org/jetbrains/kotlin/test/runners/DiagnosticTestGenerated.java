@@ -12754,6 +12754,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("referenceFalsePositiveWarnings.kt")
+        public void testReferenceFalsePositiveWarnings() {
+          runTest("compiler/testData/diagnostics/tests/enum/entries/referenceFalsePositiveWarnings.kt");
+        }
+
+        @Test
         @TestMetadata("toBeShadowed.kt")
         public void testToBeShadowed() {
           runTest("compiler/testData/diagnostics/tests/enum/entries/toBeShadowed.kt");
