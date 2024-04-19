@@ -31,26 +31,27 @@ object Kapt {
             return false
         }
 
-        val kaptContext = KaptContext(options, false, logger)
+        KaptContext(options, false, logger).use { kaptContext ->
 
-        logger.info { options.logString("stand-alone mode") }
+            logger.info { options.logString("stand-alone mode") }
 
-        val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
+            val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
 
-        val processorLoader = ProcessorLoader(options, logger)
+            val processorLoader = ProcessorLoader(options, logger)
 
-        processorLoader.use {
-            val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())
+            processorLoader.use {
+                val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())
 
-            val annotationProcessingTime = measureTimeMillis {
-                kaptContext.doAnnotationProcessing(
-                    javaSourceFiles,
-                    processors.processors,
-                    binaryTypesToReprocess = collectAggregatedTypes(kaptContext.sourcesToReprocess)
-                )
+                val annotationProcessingTime = measureTimeMillis {
+                    kaptContext.doAnnotationProcessing(
+                        javaSourceFiles,
+                        processors.processors,
+                        binaryTypesToReprocess = collectAggregatedTypes(kaptContext.sourcesToReprocess)
+                    )
+                }
+
+                logger.info { "Annotation processing took $annotationProcessingTime ms" }
             }
-
-            logger.info { "Annotation processing took $annotationProcessingTime ms" }
         }
 
         return true
