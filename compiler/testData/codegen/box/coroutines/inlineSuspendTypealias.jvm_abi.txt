@@ -6,4 +6,4 @@ MODULE main
 					K1
 						(handler: suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
 					K2
-						(handler: suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> */)
+						(handler: suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = Handler^ */)

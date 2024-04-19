@@ -879,11 +879,25 @@ class FirElementSerializer private constructor(
         correspondingTypeRef: FirTypeRef? = null,
         isDefinitelyNotNullType: Boolean = false,
     ): ProtoBuf.Type.Builder {
-        val expandedTypeProto = typeOrTypealiasProto(type, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
+        // `type` we'll see here will be fully expanded with the declaration
+        // site session, but [FirElementSerializer] will be run with a use site one,
+        // so it must be expanded twice.
+        val useSiteSessionExpandedType = type.fullyExpandedType(session)
+        val expandedTypeProto = typeOrTypealiasProto(useSiteSessionExpandedType, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
         val typealiasType = type.abbreviatedType
 
-        if (typealiasType != null) {
-            val typealiasProto = typeOrTypealiasProto(typealiasType, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
+        // `typeOrTypealiasProto()` calls may in turn call `typeProto()`
+        // for some other types in such a way that those types share the same
+        // AbbreviatedType attribute (this happens, for example, with suspend
+        // function types).
+        // So, the abbreviated type may have been set already by an inner call.
+        // Note that in case of `expect typealias`, the second expansion will
+        // erase `AbbreviatedTypeAttribute` of `type`.
+        if (typealiasType != null && !expandedTypeProto.hasAbbreviatedType()) {
+            val typealiasProto = typeOrTypealiasProto(
+                typealiasType, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
+                preserveOriginalType = true,
+            )
 
             if (useTypeTable()) {
                 expandedTypeProto.abbreviatedTypeId = typeTable[typealiasProto]
@@ -900,6 +914,7 @@ class FirElementSerializer private constructor(
         toSuper: Boolean,
         correspondingTypeRef: FirTypeRef?,
         isDefinitelyNotNullType: Boolean,
+        preserveOriginalType: Boolean = false,
     ): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
         val typeAnnotations = mutableListOf<FirAnnotation>()
@@ -922,7 +937,7 @@ class FirElementSerializer private constructor(
             }
             is ConeClassLikeType -> {
                 val functionTypeKind = type.functionTypeKind(session)
-                if (functionTypeKind == FunctionTypeKind.SuspendFunction) {
+                if (!preserveOriginalType && functionTypeKind == FunctionTypeKind.SuspendFunction) {
                     val runtimeFunctionType = type.suspendFunctionTypeToFunctionTypeWithContinuation(
                         session, StandardClassIds.Continuation
                     )
@@ -930,7 +945,7 @@ class FirElementSerializer private constructor(
                     functionType.flags = Flags.getTypeFlags(true, false)
                     return functionType
                 }
-                if (functionTypeKind?.isBuiltin == false) {
+                if (!preserveOriginalType && functionTypeKind?.isBuiltin == false) {
                     val legacySerializationUntil =
                         LanguageVersion.fromVersionString(functionTypeKind.serializeAsFunctionWithAnnotationUntil)
                     if (legacySerializationUntil != null && languageVersionSettings.languageVersion < legacySerializationUntil) {
