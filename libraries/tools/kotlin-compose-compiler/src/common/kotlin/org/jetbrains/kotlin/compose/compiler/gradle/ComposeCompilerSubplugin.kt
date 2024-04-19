@@ -19,27 +19,26 @@ class ComposeCompilerGradleSubplugin
 ) : KotlinCompilerPluginSupportPlugin {
 
     companion object {
-        fun getComposeCompilerGradlePluginExtension(project: Project): ComposeCompilerGradlePluginExtension {
-            return project.extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
-        }
-
         private const val COMPOSE_COMPILER_ARTIFACT_NAME = "kotlin-compose-compiler-plugin-embeddable"
 
         private val EMPTY_OPTION = SubpluginOption("", "")
     }
 
+    private lateinit var composeExtension: ComposeCompilerGradlePluginExtension
+
     override fun apply(target: Project) {
-        target.extensions.create("composeCompiler", ComposeCompilerGradlePluginExtension::class.java)
+        composeExtension = target.extensions.create("composeCompiler", ComposeCompilerGradlePluginExtension::class.java)
         registry.register(ComposeCompilerModelBuilder())
     }
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
+        return composeExtension.targetKotlinPlatforms.get().contains(kotlinCompilation.platformType)
+    }
 
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>,
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
-        val composeCompilerExtension = getComposeCompilerGradlePluginExtension(project)
 
         // It is ok to check AGP existence without using `plugins.withId` wrapper as `applyToCompilation` will be called in `afterEvaluate`
         if (project.isAgpComposeEnabled) {
@@ -59,34 +58,34 @@ class ComposeCompilerGradleSubplugin
         val allPluginProperties = project.objects
             .listProperty(SubpluginOption::class.java)
             .apply {
-                add(composeCompilerExtension.generateFunctionKeyMetaClasses.map {
+                add(composeExtension.generateFunctionKeyMetaClasses.map {
                     SubpluginOption("generateFunctionKeyMetaClasses", it.toString())
                 })
                 if (!project.isAgpComposeEnabled) {
-                    add(composeCompilerExtension.includeSourceInformation.map {
+                    add(composeExtension.includeSourceInformation.map {
                         SubpluginOption("sourceInformation", it.toString())
                     })
                 }
-                add(composeCompilerExtension.metricsDestination.map<SubpluginOption> {
+                add(composeExtension.metricsDestination.map<SubpluginOption> {
                     FilesSubpluginOption("metricsDestination", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
-                add(composeCompilerExtension.reportsDestination.map<SubpluginOption> {
+                add(composeExtension.reportsDestination.map<SubpluginOption> {
                     FilesSubpluginOption("reportsDestination", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
-                add(composeCompilerExtension.enableIntrinsicRemember.map {
+                add(composeExtension.enableIntrinsicRemember.map {
                     SubpluginOption("intrinsicRemember", it.toString())
                 })
-                add(composeCompilerExtension.enableNonSkippingGroupOptimization.map {
+                add(composeExtension.enableNonSkippingGroupOptimization.map {
                     SubpluginOption("nonSkippingGroupOptimization", it.toString())
                 })
-                add(composeCompilerExtension.enableStrongSkippingMode.map {
+                add(composeExtension.enableStrongSkippingMode.map {
                     // Rename once the option in Compose compiler is also renamed
                     SubpluginOption("experimentalStrongSkipping", it.toString())
                 })
-                add(composeCompilerExtension.stabilityConfigurationFile.map<SubpluginOption> {
+                add(composeExtension.stabilityConfigurationFile.map<SubpluginOption> {
                     FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
-                add(composeCompilerExtension.includeTraceMarkers.map {
+                add(composeExtension.includeTraceMarkers.map {
                     SubpluginOption("traceMarkersEnabled", it.toString())
                 })
             }

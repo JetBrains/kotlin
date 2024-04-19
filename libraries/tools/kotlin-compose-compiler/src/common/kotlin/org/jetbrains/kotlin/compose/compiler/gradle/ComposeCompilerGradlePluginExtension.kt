@@ -20,6 +20,8 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import javax.inject.Inject
 
 abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFactory: ObjectFactory) {
@@ -114,4 +116,31 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      *  - [composition tracing blog post](https://medium.com/androiddevelopers/jetpack-compose-composition-tracing-9ec2b3aea535)
      */
     val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+
+    /**
+     * A set of Kotlin platforms to which the Compose plugin will be applied.
+     *
+     * By default, all Kotlin platforms are enabled.
+     *
+     * To enable only one specific Kotlin platform:
+     * ```
+     * composeCompiler {
+     *     targetKotlinPlatforms.set(setOf(KotlinPlatformType.jvm))
+     * }
+     * ```
+     *
+     * To disable the Compose plugin for one or more Kotlin platforms:
+     * ```
+     * composeCompiler {
+     *     targetKotlinPlatforms.set(
+     *         KotlinPlatformType.values()
+     *             .filterNot { it == KotlinPlatformType.native || it == KotlinPlatformType.js }
+     *             .asIterable()
+     *     )
+     * }
+     * ```
+     */
+    val targetKotlinPlatforms: SetProperty<KotlinPlatformType> = objectFactory
+        .setProperty(KotlinPlatformType::class.java)
+        .convention(KotlinPlatformType.values().asIterable())
 }
