@@ -10,20 +10,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.sir.SirVisibility
-import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
-import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
 
-public class SirVisibilityCheckerImpl(
-    private val ktAnalysisSession: KtAnalysisSession,
-    private val sirSession: SirSession,
-) : SirVisibilityChecker {
+public class SirVisibilityCheckerImpl : SirVisibilityChecker {
 
-    override fun KtSymbolWithVisibility.sirVisibility(): SirVisibility = withSirAnalyse(sirSession, ktAnalysisSession) {
+    override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility {
         val ktSymbol = this@sirVisibility
         val isConsumable = isPublic() && when (ktSymbol) {
             is KtNamedClassOrObjectSymbol -> {
-                ktSymbol.isConsumableBySirBuilder()
+                ktSymbol.isConsumableBySirBuilder(ktAnalysisSession)
             }
             is KtConstructorSymbol -> {
                 true
@@ -46,13 +41,14 @@ public class SirVisibilityCheckerImpl(
         return if (isConsumable) SirVisibility.PUBLIC else SirVisibility.PRIVATE
     }
 
-    context(KtAnalysisSession)
-    private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(): Boolean =
-        ((classKind == KtClassKind.CLASS) || classKind == KtClassKind.OBJECT)
-                && !isData // KT-67362
-                && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
-                && !isInline
-                && modality == Modality.FINAL
+    private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(ktAnalysisSession: KtAnalysisSession): Boolean =
+        with(ktAnalysisSession) {
+            ((classKind == KtClassKind.CLASS) || classKind == KtClassKind.OBJECT)
+                    && !isData // KT-67362
+                    && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
+                    && !isInline
+                    && modality == Modality.FINAL
+        }
 
     private fun KtSymbolWithVisibility.isPublic(): Boolean = visibility.isPublicAPI
 }

@@ -40,13 +40,13 @@ internal fun buildSwiftModule(
     }
 
     return analyze(module) {
-        val sirSession = StandaloneSirSession(this) { _, _ ->
+        val sirSession = StandaloneSirSession(module) {
             SirSingleModuleProvider(swiftModuleName = input.name, bridgeModuleName = bridgeModuleName)
         }
         with(sirSession) {
             module.sirModule().also {
                 scopeProvider(this@analyze).flatMap { scope ->
-                    scope.extractDeclarations()
+                    scope.extractDeclarations(this@analyze)
                 }.forEach { topLevelDeclaration ->
                     val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
                         ?: error("top level declaration can contain only module or extension to package as a parent")

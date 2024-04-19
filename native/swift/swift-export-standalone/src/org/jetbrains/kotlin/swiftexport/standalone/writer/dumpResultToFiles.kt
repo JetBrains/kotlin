@@ -26,15 +26,11 @@ internal fun SirModule.dumpResultToFiles(
     val swiftFile = output.swiftApi.toFile()
 
     val bridges = generateBridgeSources(requests, stableDeclarationsOrder)
-    val swiftSrc = generateSwiftSrc(stableDeclarationsOrder, renderDocComments)
+    val swiftSrc = SirAsSwiftSourcesPrinter.print(this, stableDeclarationsOrder, renderDocComments)
 
     dumpTextAtFile(bridges.ktSrc, ktBridgeFile)
     dumpTextAtFile(bridges.cSrc, cHeaderFile)
     dumpTextAtFile(sequenceOf(swiftSrc), swiftFile)
-}
-
-private fun SirModule.generateSwiftSrc(stableDeclarationsOrder: Boolean, renderDocComments: Boolean): String {
-    return SirAsSwiftSourcesPrinter.print(this, stableDeclarationsOrder, renderDocComments)
 }
 
 private fun generateBridgeSources(requests: List<BridgeRequest>, stableDeclarationsOrder: Boolean): BridgeSources {

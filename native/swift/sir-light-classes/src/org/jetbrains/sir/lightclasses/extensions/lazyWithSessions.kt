@@ -6,11 +6,22 @@
 package org.jetbrains.sir.lightclasses.extensions
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 
 internal inline fun <reified R> SirFromKtSymbol.lazyWithSessions(
     crossinline block: context(SirSession, KtAnalysisSession) () -> R
 ): Lazy<R> {
-    return lazy { block(sirSession, analysisApiSession) }
+    return lazy {
+        withSessions(block)
+    }
+}
+
+internal inline fun <reified R> SirFromKtSymbol.withSessions(
+    crossinline block: context(SirSession, KtAnalysisSession) () -> R,
+): R {
+    return analyze(ktModule) {
+        block(sirSession, analysisSession)
+    }
 }

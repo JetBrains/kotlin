@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -50,15 +51,19 @@ public interface SirSession :
 
     override fun KtDeclarationSymbol.sirDeclaration(): SirDeclaration = with(declarationProvider) { this@sirDeclaration.sirDeclaration() }
 
-    override fun KtDeclarationSymbol.getSirParent(): SirDeclarationParent = with(parentProvider) { this@getSirParent.getSirParent() }
+    override fun KtDeclarationSymbol.getSirParent(ktAnalysisSession: KtAnalysisSession): SirDeclarationParent =
+        with(parentProvider) { this@getSirParent.getSirParent(ktAnalysisSession) }
 
     override fun KtModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
 
-    override fun KtType.translateType(): SirType = with(typeProvider) { this@translateType.translateType() }
+    override fun KtType.translateType(ktAnalysisSession: KtAnalysisSession): SirType =
+        with(typeProvider) { this@translateType.translateType(ktAnalysisSession) }
 
-    override fun KtSymbolWithVisibility.sirVisibility(): SirVisibility? = with(visibilityChecker) { this@sirVisibility.sirVisibility() }
+    override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility? =
+        with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
 
-    override fun KtScope.extractDeclarations(): Sequence<SirDeclaration> = with(childrenProvider) { this@extractDeclarations.extractDeclarations() }
+    override fun KtScope.extractDeclarations(ktAnalysisSession: KtAnalysisSession): Sequence<SirDeclaration> =
+        with(childrenProvider) { this@extractDeclarations.extractDeclarations(ktAnalysisSession) }
 }
 
 /**
@@ -91,7 +96,7 @@ public interface SirDeclarationProvider {
  *
  */
 public interface SirParentProvider {
-    public fun KtDeclarationSymbol.getSirParent(): SirDeclarationParent
+    public fun KtDeclarationSymbol.getSirParent(ktAnalysisSession: KtAnalysisSession): SirDeclarationParent
 }
 
 /**
@@ -104,7 +109,7 @@ public interface SirModuleProvider {
 }
 
 public interface SirChildrenProvider {
-    public fun KtScope.extractDeclarations(): Sequence<SirDeclaration>
+    public fun KtScope.extractDeclarations(ktAnalysisSession: KtAnalysisSession): Sequence<SirDeclaration>
 }
 
 public interface SirTypeProvider {
@@ -112,7 +117,7 @@ public interface SirTypeProvider {
     /**
      * Translates the given [KtType] to [SirType].
      */
-    public fun KtType.translateType(): SirType
+    public fun KtType.translateType(ktAnalysisSession: KtAnalysisSession): SirType
 }
 
 public interface SirVisibilityChecker {
@@ -120,5 +125,5 @@ public interface SirVisibilityChecker {
      * Determines visibility of the given [KtSymbolWithVisibility].
      * @return null if symbol should not be exposed to SIR completely.
      */
-    public fun KtSymbolWithVisibility.sirVisibility(): SirVisibility?
+    public fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility?
 }

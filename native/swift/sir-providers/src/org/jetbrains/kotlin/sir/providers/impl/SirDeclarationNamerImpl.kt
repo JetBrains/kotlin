@@ -18,15 +18,6 @@ public class SirDeclarationNamerImpl : SirDeclarationNamer {
         return getName() ?: error("could not retrieve a name for $this")
     }
 
-    private fun KtDeclarationSymbol.getDeclarationPackage(): FqName? {
-        return when (this) {
-            is KtNamedClassOrObjectSymbol -> this.classIdIfNonLocal?.packageFqName
-            is KtFunctionLikeSymbol -> this.callableIdIfNonLocal?.packageName
-            is KtVariableSymbol -> this.callableIdIfNonLocal?.packageName
-            else -> error(this)
-        }
-    }
-
     private fun KtDeclarationSymbol.getName(): String? {
         return when (this) {
             is KtNamedClassOrObjectSymbol -> this.classIdIfNonLocal?.shortClassName

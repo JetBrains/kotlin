@@ -5,21 +5,20 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
-import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
-import org.jetbrains.sir.lightclasses.extensions.sirCallableKind
+import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal class SirInitFromKtSymbol(
     override val ktSymbol: KtConstructorSymbol,
-    override val analysisApiSession: KtAnalysisSession,
+    override val ktModule: KtModule,
     override val sirSession: SirSession,
 ) : SirInit(), SirFromKtSymbol {
 
@@ -27,16 +26,16 @@ internal class SirInitFromKtSymbol(
     override val isFailable: Boolean = false
     override val initKind: SirInitializerKind = SirInitializerKind.ORDINARY
 
-    override val origin: SirOrigin by lazyWithSessions {
+    override val origin: SirOrigin by lazy {
         KotlinSource(ktSymbol)
     }
-    override val kind: SirCallableKind by lazyWithSessions {
+    override val kind: SirCallableKind by lazy {
         SirCallableKind.CLASS_METHOD
     }
     override val parameters: MutableList<SirParameter> by lazyWithSessions {
         mutableListOf<SirParameter>().apply {
             ktSymbol.valueParameters.mapTo(this) {
-                SirParameter(argumentName = it.name.asString(), type = it.returnType.translateType())
+                SirParameter(argumentName = it.name.asString(), type = it.returnType.translateType(analysisSession))
             }
         }
     }
@@ -49,8 +48,8 @@ internal class SirInitFromKtSymbol(
     }
 
     override var parent: SirDeclarationParent
-        get() = withSirAnalyse(sirSession, analysisApiSession) {
-            ktSymbol.getSirParent()
+        get() = withSessions {
+            ktSymbol.getSirParent(analysisSession)
         }
         set(_) = Unit
 

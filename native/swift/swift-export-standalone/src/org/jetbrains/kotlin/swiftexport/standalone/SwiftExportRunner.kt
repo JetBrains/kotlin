@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.B
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.STABLE_DECLARATIONS_ORDER
-import org.jetbrains.kotlin.swiftexport.standalone.builders.buildFunctionBridges
+import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -102,14 +102,9 @@ public fun runSwiftExport(
         )
         DEFAULT_BRIDGE_MODULE_NAME
     }
-
-    val module = buildSwiftModule(
-        input,
-        config.distribution,
-        bridgeModuleName = bridgeModuleName
-    )
-    val bridgeRequests = module.buildFunctionBridges()
-    module.dumpResultToFiles(
+    val swiftModule = buildSwiftModule(input, config.distribution, bridgeModuleName)
+    val bridgeRequests = buildBridgeRequests(swiftModule)
+    swiftModule.dumpResultToFiles(
         bridgeRequests, output,
         stableDeclarationsOrder = stableDeclarationsOrder,
         renderDocComments = renderDocComments

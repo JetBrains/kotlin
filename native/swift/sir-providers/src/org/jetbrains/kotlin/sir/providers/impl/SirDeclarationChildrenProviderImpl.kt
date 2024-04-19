@@ -12,16 +12,14 @@ import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
 
-public class SirDeclarationChildrenProviderImpl(
-    private val ktAnalysisSession: KtAnalysisSession,
-    private val sirSession: SirSession,
-) : SirChildrenProvider {
-    override fun KtScope.extractDeclarations(): Sequence<SirDeclaration> = withSirAnalyse(sirSession, ktAnalysisSession) {
+public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSession) : SirChildrenProvider {
+
+    override fun KtScope.extractDeclarations(ktAnalysisSession: KtAnalysisSession): Sequence<SirDeclaration> =
         getAllSymbols()
-            .filter { (it as? KtSymbolWithVisibility)?.sirVisibility() == SirVisibility.PUBLIC }
-            .map { it.sirDeclaration() }
-    }
+            .filter {
+                with(sirSession) { (it as? KtSymbolWithVisibility)?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC }
+            }
+            .map { with(sirSession) { it.sirDeclaration() } }
 
 }

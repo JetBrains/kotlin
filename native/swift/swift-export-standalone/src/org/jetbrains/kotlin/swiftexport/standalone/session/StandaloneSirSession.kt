@@ -5,39 +5,27 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.session
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 internal class StandaloneSirSession(
-    ktAnalysisSession: KtAnalysisSession,
-    moduleProviderBuilder: (KtAnalysisSession, SirSession) -> SirModuleProvider
+    useSiteModule: KtModule,
+    moduleProviderBuilder: () -> SirModuleProvider
 ) : SirSession {
 
     override val declarationNamer = SirDeclarationNamerImpl()
     override val enumGenerator = SirEnumGeneratorImpl()
-    override val moduleProvider = moduleProviderBuilder(ktAnalysisSession, sirSession)
+    override val moduleProvider = moduleProviderBuilder()
     override val declarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = SirDeclarationFromKtSymbolProvider(
-            ktAnalysisSession = ktAnalysisSession,
+            ktModule = useSiteModule,
             sirSession = sirSession,
         )
     )
-    override val parentProvider = SirParentProviderImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
-    override val typeProvider = SirTypeProviderImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
-    override val visibilityChecker = SirVisibilityCheckerImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
-    override val childrenProvider = SirDeclarationChildrenProviderImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
+    override val parentProvider = SirParentProviderImpl(sirSession)
+    override val typeProvider = SirTypeProviderImpl(sirSession)
+    override val visibilityChecker = SirVisibilityCheckerImpl()
+    override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
 }
