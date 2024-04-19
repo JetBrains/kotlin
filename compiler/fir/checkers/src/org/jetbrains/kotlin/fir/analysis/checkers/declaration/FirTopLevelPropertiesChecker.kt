@@ -158,13 +158,12 @@ internal fun checkPropertyInitializer(
                 !inInterface &&
                 !property.isLateInit &&
                 !isExpect &&
-                !isCorrectlyInitialized &&
                 !isExternal &&
                 !property.hasExplicitBackingField
             ) {
                 if (property.receiverParameter != null && !property.hasAllAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
-                } else if (reachable) {
+                } else if (!isCorrectlyInitialized && reachable) {
                     val isOpenValDeferredInitDeprecationWarning =
                         !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
                                 property.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN && property.isVal &&

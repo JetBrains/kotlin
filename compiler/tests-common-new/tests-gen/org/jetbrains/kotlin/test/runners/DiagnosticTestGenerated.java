@@ -31015,6 +31015,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("extensionPropertyMustHaveAccessorsOrBeAbstract2.kt")
+      public void testExtensionPropertyMustHaveAccessorsOrBeAbstract2() {
+        runTest("compiler/testData/diagnostics/tests/properties/extensionPropertyMustHaveAccessorsOrBeAbstract2.kt");
+      }
+
+      @Test
       @TestMetadata("flexibleTypeReceiver.kt")
       public void testFlexibleTypeReceiver() {
         runTest("compiler/testData/diagnostics/tests/properties/flexibleTypeReceiver.kt");
