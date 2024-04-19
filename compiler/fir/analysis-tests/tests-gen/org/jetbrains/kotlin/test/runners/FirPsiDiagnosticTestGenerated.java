@@ -5661,6 +5661,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
     }
 
     @Test
+    @TestMetadata("incorrectLabelReference.kt")
+    public void testIncorrectLabelReference() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/incorrectLabelReference.kt");
+    }
+
+    @Test
     @TestMetadata("intersectDynamicAndString.kt")
     public void testIntersectDynamicAndString() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intersectDynamicAndString.kt");
