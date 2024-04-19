@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameter
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameterRef
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeProjection
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeRef
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
-import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.generators.tree.TypeRefWithVariance
-import org.jetbrains.kotlin.generators.tree.withArgs
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.generators.tree.AbstractField
+import org.jetbrains.kotlin.generators.tree.ClassRef
 
 object FieldSets {
     val calleeReference by lazy { field("calleeReference", reference, withReplace = true) }
@@ -49,17 +46,18 @@ object FieldSets {
         ).withTransform(needTransformInOtherChildren = true)
     }
 
-    fun AbstractFieldConfigurator<*>.ConfigureContext.symbolWithPackageWithArgument(packageName: String, symbolClassName: String) =
-        field("symbol", type(packageName, symbolClassName).withArgs(element))
+    fun declaredSymbol(name: String, symbolType: ClassRef<*>): Field =
+        field(name, symbolType)
+            .apply { symbolFieldRole = AbstractField.SymbolFieldRole.DECLARED }
 
-    fun symbolWithPackage(packageName: String, symbolClassName: String): Field =
-        field("symbol", type(packageName, symbolClassName))
+    fun declaredSymbol(symbolType: ClassRef<*>): Field = declaredSymbol("symbol", symbolType)
 
-    fun AbstractFieldConfigurator<*>.ConfigureContext.symbolWithArgument(symbolClassName: String): Field =
-        symbolWithPackageWithArgument("fir.symbols.impl", symbolClassName)
+    fun referencedSymbol(name: String, symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field =
+        field(name, symbolType, nullable, withReplace)
+            .apply { symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED }
 
-    fun symbol(symbolClassName: String): Field =
-        symbolWithPackage("fir.symbols.impl", symbolClassName)
+    fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field =
+        referencedSymbol("symbol", symbolType, nullable, withReplace)
 
     fun body(nullable: Boolean = false, withReplace: Boolean = false) =
         field("body", block, nullable, withReplace = withReplace)

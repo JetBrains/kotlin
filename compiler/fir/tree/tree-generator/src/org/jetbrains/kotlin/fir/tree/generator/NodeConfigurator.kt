@@ -12,19 +12,18 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.calleeReference
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.classKind
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.controlFlowGraphReferenceField
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declarations
+import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declaredSymbol
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.effectiveVisibility
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.initializer
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.modality
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.receivers
+import org.jetbrains.kotlin.fir.tree.generator.FieldSets.referencedSymbol
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.returnTypeRef
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.scopeProvider
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.smartcastStability
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.status
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.superTypeRefs
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.symbol
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.symbolWithArgument
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.symbolWithPackageWithArgument
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeArguments
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameterRefs
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameters
@@ -52,7 +51,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeParameterRef.configure {
-            +symbol(typeParameterSymbolType.typeName)
+            +referencedSymbol(typeParameterSymbolType)
         }
 
         typeParametersOwner.configure {
@@ -96,7 +95,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         declaration.configure {
-            +symbolWithPackageWithArgument("fir.symbols", "FirBasedSymbol")
+            +declaredSymbol(firBasedSymbolType.withArgs(declaration))
             +field("moduleData", firModuleDataType)
             +field("origin", declarationOriginType)
             +field("attributes", declarationAttributesType)
@@ -107,7 +106,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("returnTypeRef", typeRef, withReplace = true).withTransform()
             +field("receiverParameter", receiverParameter, nullable = true, withReplace = true).withTransform()
             +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
-            +symbolWithArgument("FirCallableSymbol")
+            +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
 
             +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
             +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
@@ -116,7 +115,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         function.configure {
-            +symbolWithArgument("FirFunctionSymbol")
+            +declaredSymbol(functionSymbolType.withArgs(function))
             +fieldList(valueParameter, withReplace = true).withTransform()
             +body(nullable = true, withReplace = true).withTransform()
         }
@@ -127,7 +126,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         errorFunction.configure {
-            +symbol("FirErrorFunctionSymbol")
+            +declaredSymbol(errorFunctionSymbolType)
         }
 
         memberDeclaration.configure {
@@ -286,12 +285,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         classLikeDeclaration.configure {
-            +symbolWithArgument("FirClassLikeSymbol")
+            +declaredSymbol(classLikeSymbolType.withArgs(classLikeDeclaration))
             +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
         }
 
         klass.configure {
-            +symbolWithArgument("FirClassSymbol")
+            +declaredSymbol(classSymbolType.withArgs(klass))
             +classKind
             +superTypeRefs(withReplace = true).withTransform()
             +declarations.withTransform()
@@ -301,15 +300,15 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         regularClass.configure {
             +name
-            +symbol("FirRegularClassSymbol")
+            +declaredSymbol(regularClassSymbolType)
             +booleanField("hasLazyNestedClassifiers")
-            +field("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
+            +referencedSymbol("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
             +superTypeRefs(withReplace = true)
             +fieldList(contextReceiver, useMutableOrEmpty = true)
         }
 
         anonymousObject.configure {
-            +symbol("FirAnonymousObjectSymbol")
+            +declaredSymbol(anonymousObjectSymbolType)
         }
 
         anonymousObjectExpression.configure {
@@ -319,13 +318,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         typeAlias.configure {
             +typeParameters
             +name
-            +symbol("FirTypeAliasSymbol")
+            +declaredSymbol(typeAliasSymbolType)
             +field("expandedTypeRef", typeRef, withReplace = true).withTransform()
             +annotations
         }
 
         anonymousFunction.configure {
-            +symbol("FirAnonymousFunctionSymbol")
+            +declaredSymbol(anonymousFunctionSymbolType)
             +field(label, nullable = true)
             +field("invocationKind", eventOccurrencesRangeType, nullable = true, withReplace = true).apply {
                 isMutable = true
@@ -348,8 +347,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         typeParameter.configure {
             +name
-            +symbol("FirTypeParameterSymbol")
-            +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
+            +declaredSymbol(typeParameterSymbolType)
+            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
                 withBindThis = false
             }
             +field(varianceType)
@@ -361,7 +360,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         simpleFunction.configure {
             +name
-            +symbol("FirNamedFunctionSymbol")
+            +declaredSymbol(namedFunctionSymbolType)
             +annotations
             +typeParameters
         }
@@ -372,16 +371,16 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         property.configure {
             +fieldList(contextReceiver, useMutableOrEmpty = true, withReplace = true).withTransform()
-            +symbol("FirPropertySymbol")
-            +field("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
+            +declaredSymbol(propertySymbolType)
+            +referencedSymbol("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
             +booleanField("isLocal")
             +field("bodyResolveState", propertyBodyResolveStateType, withReplace = true)
             +typeParameters
         }
 
         propertyAccessor.configure {
-            +symbol("FirPropertyAccessorSymbol")
-            +field("propertySymbol", firPropertySymbolType).apply {
+            +declaredSymbol(propertyAccessorSymbolType)
+            +referencedSymbol("propertySymbol", firPropertySymbolType).apply {
                 withBindThis = false
             }
             +booleanField("isGetter")
@@ -391,8 +390,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         backingField.configure {
-            +field("symbol", backingFieldSymbolType)
-            +field("propertySymbol", firPropertySymbolType).apply {
+            +declaredSymbol(backingFieldSymbolType)
+            +referencedSymbol("propertySymbol", firPropertySymbolType).apply {
                 withBindThis = false
             }
             +initializer.withTransform().withReplace()
@@ -423,7 +422,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         constructor.configure {
             +annotations
-            +symbol("FirConstructorSymbol")
+            +declaredSymbol(constructorSymbolType)
             +field("delegatedConstructor", delegatedConstructorCall, nullable = true, withReplace = true).withTransform()
             +body(nullable = true)
             +booleanField("isPrimary")
@@ -442,9 +441,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         valueParameter.configure {
-            +symbol("FirValueParameterSymbol")
+            +declaredSymbol(valueParameterSymbolType)
             +field("defaultValue", expression, nullable = true, withReplace = true)
-            +field("containingFunctionSymbol", functionSymbolType.withArgs(TypeRef.Star)).apply {
+            +referencedSymbol("containingFunctionSymbol", functionSymbolType.withArgs(TypeRef.Star)).apply {
                 withBindThis = false
             }
             generateBooleanFields("crossinline", "noinline", "vararg")
@@ -457,7 +456,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         variable.configure {
             +name
-            +symbolWithArgument("FirVariableSymbol")
+            +declaredSymbol(variableSymbolType.withArgs(variable))
             +initializer.withTransform().withReplace()
             +field("delegate", expression, nullable = true, withReplace = true).withTransform()
             generateBooleanFields("var", "val")
@@ -474,30 +473,30 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         errorProperty.configure {
-            +symbol("FirErrorPropertySymbol")
+            +declaredSymbol(errorPropertySymbolType)
         }
 
         enumEntry.configure {
-            +symbol("FirEnumEntrySymbol")
+            +declaredSymbol(enumEntrySymbolType)
         }
 
         field.configure {
-            +symbol("FirFieldSymbol")
+            +declaredSymbol(fieldSymbolType)
             generateBooleanFields("hasConstantInitializer")
         }
 
         anonymousInitializer.configure {
             +body(nullable = true, withReplace = true)
-            +symbol("FirAnonymousInitializerSymbol")
+            +declaredSymbol(anonymousInitializerSymbolType)
             // the containing declaration is nullable, because it is not immediately clear how to obtain it in all places in the fir builder
             // TODO: review and consider making not-nullable (KT-64195)
-            +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true).apply {
+            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true).apply {
                 withBindThis = false
             }
         }
 
         danglingModifierList.configure {
-            +symbol("FirDanglingModifierSymbol")
+            +declaredSymbol(danglingModifierSymbolType)
         }
 
         file.configure {
@@ -507,20 +506,20 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +stringField("name")
             +field("sourceFile", sourceFileType, nullable = true)
             +field("sourceFileLinesMapping", sourceFileLinesMappingType, nullable = true)
-            +symbol("FirFileSymbol")
+            +declaredSymbol(fileSymbolType)
         }
 
         script.configure {
             +name
             +declarations.withTransform().withReplace()
-            +symbol("FirScriptSymbol")
+            +declaredSymbol(scriptSymbolType)
             +fieldList("parameters", property).withTransform()
             +fieldList(contextReceiver, useMutableOrEmpty = true).withTransform()
             +field("resultPropertyName", nameType, nullable = true)
         }
 
         codeFragment.configure {
-            +symbol("FirCodeFragmentSymbol")
+            +declaredSymbol(codeFragmentSymbolType)
             +field(block, withReplace = true).withTransform()
         }
 
@@ -558,7 +557,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         annotationCall.configure {
             +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
             +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
-            +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
+            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
                 withBindThis = false
             }
         }
@@ -706,7 +705,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("packageFqName", fqNameType)
             +field("relativeClassFqName", fqNameType, nullable = true)
             +field("classId", classIdType, nullable = true)
-            +field("symbol", classLikeSymbolType, nullable = true)
+            +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
             +booleanField("isNullableLHSForCallableReference", withReplace = true)
             +booleanField("resolvedToCompanionObject", withReplace = true)
             +booleanField("canBeValue", withReplace = true)
@@ -716,7 +715,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         resolvedReifiedParameterReference.configure {
-            +field("symbol", typeParameterSymbolType)
+            +referencedSymbol(typeParameterSymbolType)
         }
 
         stringConcatenationCall.configure {
@@ -757,11 +756,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         namedReferenceWithCandidateBase.configure {
-            +field("candidateSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
+            +referencedSymbol("candidateSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
         }
 
         resolvedNamedReference.configure {
-            +field("resolvedSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
+            +referencedSymbol("resolvedSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
         }
 
         resolvedCallableReference.configure {
@@ -770,11 +769,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         delegateFieldReference.configure {
-            +field("resolvedSymbol", delegateFieldSymbolType)
+            +referencedSymbol("resolvedSymbol", delegateFieldSymbolType)
         }
 
         backingFieldReference.configure {
-            +field("resolvedSymbol", backingFieldSymbolType)
+            +referencedSymbol("resolvedSymbol", backingFieldSymbolType)
         }
 
         superReference.configure {
@@ -784,7 +783,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         thisReference.configure {
             +stringField("labelName", nullable = true)
-            +field("boundSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true, withReplace = true)
+            +referencedSymbol("boundSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true, withReplace = true)
             +intField("contextReceiverNumber", withReplace = true)
             +booleanField("isImplicit")
             +field("diagnostic", coneDiagnosticType, nullable = true, withReplace = true)
