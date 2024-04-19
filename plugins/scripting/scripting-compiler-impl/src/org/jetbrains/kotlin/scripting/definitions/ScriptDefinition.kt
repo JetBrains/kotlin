@@ -138,13 +138,22 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         val filePathPattern by lazy {
             compilationConfiguration[ScriptCompilationConfiguration.filePathPattern]?.takeIf { it.isNotBlank() }
         }
+        val fileNamePattern by lazy {
+            @Suppress("DEPRECATION_ERROR")
+            compilationConfiguration[ScriptCompilationConfiguration.fileNamePattern]?.takeIf { it.isNotBlank() }
+        }
 
         override fun isScript(script: SourceCode): Boolean {
             val extension = ".$fileExtension"
             val location = script.locationId ?: return false
-            return (script.name?.endsWith(extension) == true || location.endsWith(extension)) && filePathPattern?.let {
-                Regex(it).matches(FileUtilRt.toSystemIndependentName(location))
-            } != false
+            val systemIndependentName = FileUtilRt.toSystemIndependentName(location)
+
+            if (script.name?.endsWith(extension) != true && !location.endsWith(extension)) return false
+
+            if (filePathPattern != null) return Regex(filePathPattern!!).matches(systemIndependentName)
+            if (fileNamePattern != null) return Regex(fileNamePattern!!).matches(systemIndependentName.substringAfterLast('/'))
+
+            return true
         }
 
         override val fileExtension: String get() = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!
