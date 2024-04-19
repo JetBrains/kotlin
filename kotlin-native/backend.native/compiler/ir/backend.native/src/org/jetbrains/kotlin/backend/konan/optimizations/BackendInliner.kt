@@ -145,6 +145,10 @@ internal class BackendInliner(
                                 && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
                                 /*&& irFunction.fileOrNull?.path?.endsWith("tt.kt") == true*/) {
                             if (functionsToInline.add(calleeIrFunction)) {
+//                                if (calleeIrFunction is IrConstructor && calleeIrFunction.constructedClass.name.asString() == "ConcurrentModificationException") {
+//                                    println("ZZZ: ${calleeIrFunction.render()}")
+//                                    calleeIrFunction.constructedClass.getAllSuperclasses()
+//                                }
                                 callee.body.forEachVirtualCall { node ->
                                     val devirtualizedCallSite = devirtualizedCallSites[node]
                                     if (devirtualizedCallSite != null)
@@ -155,7 +159,7 @@ internal class BackendInliner(
                     }
 
                     if (functionsToInline.isEmpty()) {
-                        //println("Nothing to inline to ${irFunction.render()}")
+//                        println("Nothing to inline to ${irFunction.render()}")
                         function.body.forEachVirtualCall { node ->
                             val devirtualizedCallSite = devirtualizedCallSites[node]
                             if (devirtualizedCallSite != null)
@@ -314,18 +318,26 @@ internal class FunctionInlining(
         return copiedDevirtualizedCallSites
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        expression.transformChildrenVoid(this)
-        val calleeSymbol = when (expression) {
-            is IrCall -> expression.symbol
-            is IrConstructorCall -> expression.symbol
-            is IrDelegatingConstructorCall -> expression.symbol
-            else -> return expression
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) = when (expression.symbol) {
+        initInstance -> {
+            val instance = expression.getValueArgument(0)!!
+            val constructorCall = expression.getValueArgument(1) as IrConstructorCall
+            instance.transformChildrenVoid()
+            constructorCall.transformChildrenVoid()
+            tryInline(constructorCall, instance)
+            //expression
         }
+        else -> {
+            expression.transformChildrenVoid()
+            tryInline(expression, null)
+        }
+    } ?: expression
 
+    private fun tryInline(callSite: IrFunctionAccessExpression, instance: IrExpression?): IrExpression? {
+        val calleeSymbol = callSite.symbol
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(calleeSymbol)
-        if (actualCallee?.body == null || expression.isVirtualCall) {
-            return expression
+        if (actualCallee?.body == null || callSite.isVirtualCall) {
+            return null
         }
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
@@ -333,12 +345,13 @@ internal class FunctionInlining(
                 ?: containerScope?.irElement as? IrDeclarationParent
                 ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
-        val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
+        val inliner = Inliner(callSite, instance, actualCallee, currentScope ?: containerScope!!, parent, context)
         return inliner.inline()
     }
 
     private inner class Inliner(
             val callSite: IrFunctionAccessExpression,
+            val givenInstance: IrExpression?,
             val callee: IrFunction,
             val currentScope: ScopeWithIr,
             val parent: IrDeclarationParent?,
@@ -410,7 +423,9 @@ internal class FunctionInlining(
                 })
             }
 
-            val instance: IrValueDeclaration? = when (callSite) {
+            val instance: IrValueDeclaration? = givenInstance?.let {
+                currentScope.scope.createTemporaryVariable(it, nameHint = "\$inst")
+            } ?: when (callSite) {
                 is IrDelegatingConstructorCall -> (currentScope.irElement as IrConstructor).constructedClass.thisReceiver!!
                 is IrConstructorCall -> {
                     val constructedClassType = (callee as IrConstructor).constructedClassType
@@ -479,7 +494,17 @@ internal class FunctionInlining(
 
             return if (instance !is IrVariable)
                 returnableBlock
-            else {
+            else if (givenInstance != null) {
+                IrBlockImpl(
+                        callSite.startOffset, callSite.endOffset,
+                        unitType,
+                        origin = null,
+                        statements = listOf(
+                                instance,
+                                returnableBlock,
+                        )
+                )
+            } else {
                 IrBlockImpl(
                         callSite.startOffset, callSite.endOffset,
                         (callee as IrConstructor).constructedClassType,
