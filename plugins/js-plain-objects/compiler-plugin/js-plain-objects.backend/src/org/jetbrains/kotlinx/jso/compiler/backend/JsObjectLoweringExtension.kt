@@ -8,12 +8,17 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -24,25 +29,73 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
     private val jsFunction = context.referenceFunctions(StandardIds.JS_FUNCTION_ID).single()
     private val EXPECTED_ORIGIN = IrDeclarationOrigin.GeneratedByPlugin(JsPlainObjectsPluginKey)
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         val file = declaration.file
         val parent = declaration.parentClassOrNull
 
         if (parent == null || declaration !is IrSimpleFunction || declaration.origin != EXPECTED_ORIGIN) return null
 
-        file.declarations.add(declaration)
+        val proxyFunction = declaration.createFunctionContainingTheLogic().also(file::addChild)
+        declaration.body = declaration.generateBodyWithTheProxyFunctionCall(proxyFunction)
 
-        declaration.body = when (declaration.name) {
-            StandardNames.DATA_CLASS_COPY -> declaration.generateBodyForCopyFunction()
-            OperatorNameConventions.INVOKE -> declaration.generateBodyForFactoryFunction()
-            else -> error("Unexpected function with name `${declaration.name.identifier}`")
+        return null
+    }
+
+    private fun IrSimpleFunction.createFunctionContainingTheLogic(): IrSimpleFunction {
+        val declaration = this
+
+        return context.irFactory.buildFun {
+            updateFrom(declaration)
+            name = declaration.name
+            returnType = declaration.returnType
+            origin = declaration.origin
+            isInline = true
+            isExternal = false
+        }.apply {
+            copyParameterDeclarationsFrom(declaration)
+
+            extensionReceiverParameter = dispatchReceiverParameter
+            dispatchReceiverParameter = null
+
+            returnType = returnType.remapTypeParameters(declaration, this)
+
+            body = when (declaration.name) {
+                StandardNames.DATA_CLASS_COPY -> generateBodyForCopyFunction()
+                OperatorNameConventions.INVOKE -> generateBodyForFactoryFunction()
+                else -> error("Unexpected function with name `${declaration.name.identifier}`")
+            }
         }
+    }
 
-        declaration.parent = file
-        declaration.isExternal = false
+    private fun IrSimpleFunction.generateBodyWithTheProxyFunctionCall(proxyFunction: IrSimpleFunction): IrBlockBody {
+        val declaration = this
+        return context.irFactory.createBlockBody(startOffset, declaration.endOffset).apply {
+            statements += IrReturnImpl(
+                declaration.startOffset,
+                declaration.endOffset,
+                declaration.returnType,
+                declaration.symbol,
+                IrCallImpl(
+                    declaration.startOffset,
+                    declaration.endOffset,
+                    declaration.returnType,
+                    proxyFunction.symbol,
+                    proxyFunction.typeParameters.size,
+                    proxyFunction.valueParameters.size,
+                ).apply {
+                    declaration.dispatchReceiverParameter?.let {
+                        extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
+                    }
 
-        return emptyList()
+                    for ((index, parameter) in declaration.valueParameters.withIndex()) {
+                        putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol))
+                    }
+                    for ((index, type) in declaration.typeParameters.withIndex()) {
+                        putTypeArgument(index, type.defaultType)
+                    }
+                }
+            )
+        }
     }
 
     private fun IrSimpleFunction.generateBodyForFactoryFunction(): IrBlockBody {
@@ -87,7 +140,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 initializer = IrGetValueImpl(
                     declaration.startOffset,
                     declaration.endOffset,
-                    declaration.dispatchReceiverParameter!!.symbol
+                    declaration.extensionReceiverParameter!!.symbol
                 )
             }
             statements += IrReturnImpl(
