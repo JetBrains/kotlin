@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
@@ -189,7 +188,6 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         parent: FirClassSymbol<*>,
         jsPlainObjectInterface: FirRegularClassSymbol,
     ): FirSimpleFunction {
-        val interfaceType = jsPlainObjectInterface.defaultType()
         return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface) {
             buildPropertyAccessExpression {
                 calleeReference = buildResolvedNamedReference {
@@ -209,6 +207,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         getParameterDefaultValueFromProperty: FirPropertySymbol.() -> FirExpression?
     ): FirSimpleFunction {
         val jsPlainObjectProperties = session.jsPlainObjectPropertiesProvider.getJsPlainObjectsPropertiesForClass(jsPlainObjectInterface)
+
         val functionTarget = FirFunctionTarget(null, isLambda = false)
         val jsPlainObjectInterfaceDefaultType = jsPlainObjectInterface.defaultType()
 
@@ -221,9 +220,9 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             returnTypeRef = jsPlainObjectInterfaceDefaultType.toFirResolvedTypeRef()
 
             status = FirResolvedDeclarationStatusImpl(
-                jsPlainObjectInterface.visibility,
+                Visibilities.Public,
                 Modality.FINAL,
-                jsPlainObjectInterface.visibility.toEffectiveVisibility(parent, forClass = true)
+                Visibilities.Public.toEffectiveVisibility(parent, forClass = true)
             ).apply {
                 isInline = true
                 isOperator = true
