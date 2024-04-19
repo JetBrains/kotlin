@@ -57,7 +57,15 @@ public data class DokkaSourceSetImpl(
     override val suppressedFiles: Set<File> = emptySet(),
     override val analysisPlatform: Platform = DokkaDefaults.analysisPlatform,
     override val documentedVisibilities: Set<DokkaConfiguration.Visibility> = DokkaDefaults.documentedVisibilities,
-) : DokkaSourceSet
+) : DokkaSourceSet {
+    override fun equals(other: Any?): Boolean {
+        return sourceSetID == (other as? DokkaSourceSet)?.sourceSetID
+    }
+
+    override fun hashCode(): Int {
+        return sourceSetID.hashCode()
+    }
+}
 
 public data class DokkaModuleDescriptionImpl(
     override val name: String,

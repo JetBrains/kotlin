@@ -6,6 +6,7 @@ package org.jetbrains.dokka.base
 
 import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.base.generation.SingleModuleGeneration
+import org.jetbrains.dokka.base.generation.SourceSetIdUniquenessChecker
 import org.jetbrains.dokka.base.renderers.*
 import org.jetbrains.dokka.base.renderers.html.*
 import org.jetbrains.dokka.base.renderers.html.command.consumers.PathToRootConsumer
@@ -260,6 +261,10 @@ public class DokkaBase : DokkaPlugin() {
     }
     public val baseSearchbarDataInstaller: Extension<PageTransformer, *, *> by extending {
         htmlPreprocessors providing ::SearchbarDataInstaller order { after(sourceLinksTransformer) }
+    }
+
+    internal val sourceSetIdUniquenessChecker by extending {
+        CoreExtensions.preGenerationCheck providing ::SourceSetIdUniquenessChecker
     }
 
     //<editor-fold desc="Deprecated API left for compatibility">
