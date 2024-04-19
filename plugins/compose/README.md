@@ -16,8 +16,6 @@ fun Greeting(name: String) {
 
 Compose functions should be side-effect free, and should only read data that was explicitly passed into the composable function from the caller (eg. do not read from globals).
 
-Compose is still experimental and should not be used in a production application.  Furthermore, Compose requires enabling the new/experimental IR (Intermediate Representation) backend to the Kotlin compiler, so you will likely encounter language bugs related to the new backend.
-
 The compose compiler plugin makes use of some experimental extension points to the Kotlin compiler.  In particular, an extension point that allows us to intercept the invocation of composable functions.  You may also see some references to an XML-like syntax (known internally as KTX) which is our old syntax from before the method interception was a thing.  We are transitioning from the KTX syntax to using a Kotlin DSL based on intercepted function calls.
 
 ## Feedback
