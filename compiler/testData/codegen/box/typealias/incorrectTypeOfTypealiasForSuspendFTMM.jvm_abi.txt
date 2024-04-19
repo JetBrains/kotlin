@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS LibKt.class
+		PACKAGE METADATA
+			FUNCTION foo(Lkotlin/jvm/functions/Function3;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(function: suspend kotlin/Function3<kotlin/String, kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
+					K2
+						(function: suspend kotlin/Function3<kotlin/String, kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = suspend kotlin/Function3<kotlin/String, kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> */)

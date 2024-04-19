@@ -1,0 +1,9 @@
+MODULE main
+	CLASS InlineSuspendTypealiasKt.class
+		PACKAGE METADATA
+			FUNCTION foo(Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+				Property: class.metadata.function.valueParameters
+					K1
+						(handler: suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
+					K2
+						(handler: suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> */)

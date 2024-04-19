@@ -1,8 +1,0 @@
-MODULE main
-	CLASS Outer$Inner.class
-		CLASS METADATA
-			Property: class.metadata.superTypes
-				K1
-					[Outer.InnerBase /* = OIB^ */]
-				K2
-					[Outer.InnerBase]

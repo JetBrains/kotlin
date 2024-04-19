@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: TODO
 open class LockFreeLinkedListNode(val s: String)
 private class SendBuffered(s: String) : LockFreeLinkedListNode(s)
 open class AddLastDesc2<out T : LockFreeLinkedListNode>(val node: T)
