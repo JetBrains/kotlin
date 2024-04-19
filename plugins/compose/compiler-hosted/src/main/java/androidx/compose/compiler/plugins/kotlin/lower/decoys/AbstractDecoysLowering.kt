@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering
@@ -38,12 +39,14 @@ abstract class AbstractDecoysLowering(
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
-    override val signatureBuilder: IdSignatureFactory
+    override val signatureBuilder: IdSignatureFactory,
+    featureFlags: FeatureFlags,
 ) : AbstractComposeLowering(
     context = pluginContext,
     symbolRemapper = symbolRemapper,
     metrics = metrics,
-    stabilityInferencer = stabilityInferencer
+    stabilityInferencer = stabilityInferencer,
+    featureFlags = featureFlags
 ), DecoyTransformBase {
 
     override fun visitFile(declaration: IrFile): IrFile {

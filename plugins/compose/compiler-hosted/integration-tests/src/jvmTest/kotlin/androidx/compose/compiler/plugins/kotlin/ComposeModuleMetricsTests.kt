@@ -22,7 +22,10 @@ import org.junit.Test
 class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         // Tests in this file are about testing the output, so we want non-skippable composables
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(FeatureFlag.StrongSkipping.disabledName)
+        )
     }
 
     @Test

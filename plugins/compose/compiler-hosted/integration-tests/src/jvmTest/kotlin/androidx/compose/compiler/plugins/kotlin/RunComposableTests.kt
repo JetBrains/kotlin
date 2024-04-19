@@ -440,7 +440,6 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         val instanceClass = compiledClassesLoader.loadClass(className)
 
         val instanceOfClass = instanceClass.getDeclaredConstructor().newInstance()
-        println(instanceClass.methods.joinToString())
         val testMethod = instanceClass.getMethod(
             "test",
             Composer::class.java,

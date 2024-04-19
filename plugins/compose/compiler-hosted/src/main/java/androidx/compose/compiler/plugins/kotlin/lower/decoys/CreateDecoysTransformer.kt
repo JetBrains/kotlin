@@ -18,6 +18,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.ModuleLoweringPass
@@ -87,12 +88,14 @@ class CreateDecoysTransformer(
     signatureBuilder: IdSignatureFactory,
     stabilityInferencer: StabilityInferencer,
     metrics: ModuleMetrics,
+    featureFlags: FeatureFlags,
 ) : AbstractDecoysLowering(
     pluginContext = pluginContext,
     symbolRemapper = symbolRemapper,
     metrics = metrics,
     stabilityInferencer = stabilityInferencer,
-    signatureBuilder = signatureBuilder
+    signatureBuilder = signatureBuilder,
+    featureFlags = featureFlags
 ), ModuleLoweringPass {
 
     private val originalFunctions: MutableMap<IrFunction, IrDeclarationParent> = mutableMapOf()

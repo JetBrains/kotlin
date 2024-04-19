@@ -18,6 +18,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -76,8 +77,9 @@ open class DurableKeyTransformer(
     symbolRemapper: DeepCopySymbolRemapper,
     stabilityInferencer: StabilityInferencer,
     metrics: ModuleMetrics,
-) :
-    AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
+    featureFlags: FeatureFlags,
+    ) :
+    AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
     override fun lower(module: IrModuleFragment) {

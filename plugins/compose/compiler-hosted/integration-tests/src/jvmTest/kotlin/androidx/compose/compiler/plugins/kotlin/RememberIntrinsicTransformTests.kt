@@ -23,8 +23,13 @@ import org.junit.Test
 class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+                FeatureFlag.IntrinsicRemember.featureName
+            )
+        )
     }
 
     private fun comparisonPropagation(
@@ -793,9 +798,14 @@ class RememberIntrinsicTransformTestsStrongSkipping(
 ) : AbstractIrTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, true)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.IntrinsicRemember.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+                FeatureFlag.StrongSkipping.featureName
+            )
+        )
     }
 
     @Test

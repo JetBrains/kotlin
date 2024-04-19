@@ -166,7 +166,10 @@ class MultipleStabilityConfigurationTest(useFir: Boolean) : AbstractIrTransformT
                 "$PATH_TO_CONFIG_FILES/config2.conf"
             )
         )
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(FeatureFlag.OptimizeNonSkippingGroups.featureName)
+        )
     }
 
     @Test
