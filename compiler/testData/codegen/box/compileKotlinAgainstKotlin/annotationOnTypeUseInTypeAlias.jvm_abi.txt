@@ -6,13 +6,23 @@ MODULE lib
 					K1
 						C<@Anno(value = "OK") MyMaybeFoo^>
 					K2
+						C<@Anno(value = "OK") Foo?>
+				Property: class.metadata.typeAlias.expandedType
+					K1
 						C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyMaybeFoo^ */>
+					K2
+						C<@Anno(value = "OK") Foo?>
 			TYPE ALIAS MyCMyFoo
 				Property: class.metadata.typeAlias.underlyingType
 					K1
 						C<@Anno(value = "OK") MyFoo^?>
 					K2
+						C<@Anno(value = "OK") Foo?>
+				Property: class.metadata.typeAlias.expandedType
+					K1
 						C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyFoo^? */>
+					K2
+						C<@Anno(value = "OK") Foo?>
 MODULE main
 	CLASS BKt.class
 		PACKAGE METADATA
@@ -21,10 +31,10 @@ MODULE main
 					K1
 						(myc: C<@Anno(value = "OK") Foo? /* = MyFoo^? */> /* = MyCMyFoo^ */)
 					K2
-						(myc: C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyFoo^? */> /* = MyCMyFoo^ */)
+						(myc: C<@Anno(value = "OK") Foo?> /* = MyCMyFoo^ */)
 			FUNCTION testMyMaybeFoo(LC;)V
 				Property: class.metadata.function.valueParameters
 					K1
 						(mycmyb: C<@Anno(value = "OK") Foo? /* = MyMaybeFoo^? */> /* = MyCMaybeFoo^ */)
 					K2
-						(mycmyb: C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyMaybeFoo^ */> /* = MyCMaybeFoo^ */)
+						(mycmyb: C<@Anno(value = "OK") Foo?> /* = MyCMaybeFoo^ */)

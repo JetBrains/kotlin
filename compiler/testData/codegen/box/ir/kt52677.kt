@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: TODO
 // ISSUE: KT-52677
 // MODULE: lib
 // FILE: lib.kt
