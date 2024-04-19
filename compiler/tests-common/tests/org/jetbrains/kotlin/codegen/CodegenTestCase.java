@@ -206,11 +206,19 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             classLoader = ForTestCompileRuntime.runtimeJarClassLoader();
         }
 
-        return new GeneratedClassLoader(
-                generateClassesInFile(),
-                classLoader,
-                getClassPathURLs()
-        );
+        List<URL> classPath = new LinkedList<>(Arrays.asList(getClassPathURLs()));
+        try {
+            classPath.add(ForTestCompileRuntime.runtimeJarForTests().toURI().toURL());
+            if (configurationKind.getWithReflection()) {
+                classPath.add(ForTestCompileRuntime.reflectJarForTests().toURI().toURL());
+            }
+            classPath.add(ForTestCompileRuntime.scriptRuntimeJarForTests().toURI().toURL());
+            classPath.add(ForTestCompileRuntime.kotlinTestJarForTests().toURI().toURL());
+            return new GeneratedClassLoader(generateClassesInFile(), classLoader, classPath.toArray(new URL[0]));
+        }
+        catch (MalformedURLException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     @NotNull

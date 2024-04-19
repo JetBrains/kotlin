@@ -32818,6 +32818,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       public void testHmppSimple() {
         runTest("compiler/testData/codegen/box/multiplatform/multiModule/hmppSimple.kt");
       }
+
+      @TestMetadata("stdlibClassRedefine.kt")
+      public void testStdlibClassRedefine() {
+        runTest("compiler/testData/codegen/box/multiplatform/multiModule/stdlibClassRedefine.kt");
+      }
     }
   }
 

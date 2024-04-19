@@ -330,13 +330,15 @@ internal fun generatedTestClassLoader(
     classFileFactory: ClassFileFactory,
 ): GeneratedClassLoader {
     val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-    val parentClassLoader = if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
-        testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
-    } else {
-        testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
-    }
+    val libPathProvider = testServices.standardLibrariesPathProvider
     val classpath = computeTestRuntimeClasspath(testServices, module)
-    return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())
+    classpath += libPathProvider.runtimeJarForTests()
+    if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
+        classpath += libPathProvider.reflectJarForTests()
+    }
+    classpath += libPathProvider.scriptRuntimeJarForTests()
+    classpath += libPathProvider.kotlinTestJarForTests()
+    return GeneratedClassLoader(classFileFactory, null, *(classpath.map { it.toURI().toURL() }.toTypedArray()))
 }
 
 private fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: TestModule): MutableList<File> {
