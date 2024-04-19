@@ -148,6 +148,8 @@ class AtomicStressTest {
     }
 
     @Test fun stackConcurrentPush() {
+        if (Platform.osFamily == OsFamily.WINDOWS) return // https://youtrack.jetbrains.com/issue/KT-67578
+
         val stack = LockFreeStack<Int>()
         val writers = ThreadPool.execute {
             stack.push(it)
