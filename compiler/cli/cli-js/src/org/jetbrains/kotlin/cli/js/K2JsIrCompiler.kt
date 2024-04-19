@@ -143,6 +143,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         paths: KotlinPaths?
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != OK) return pluginLoadResult
@@ -247,6 +248,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             messageCollector.report(ERROR, "Could not resolve output directory", null)
             return COMPILATION_ERROR
         }
+
+        performanceManager?.notifyCompilerInitialized(
+            sourcesFiles.size,
+            environmentForJS.countLinesOfCode(sourcesFiles),
+            "$moduleName-${configurationJs[JSConfigurationKeys.MODULE_KIND]}"
+        )
 
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
