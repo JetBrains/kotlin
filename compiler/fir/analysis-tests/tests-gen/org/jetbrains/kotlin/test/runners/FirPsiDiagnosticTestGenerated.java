@@ -5673,6 +5673,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
     }
 
     @Test
+    @TestMetadata("incorrectReturnFromNothingLambda.kt")
+    public void testIncorrectReturnFromNothingLambda() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/incorrectReturnFromNothingLambda.kt");
+    }
+
+    @Test
     @TestMetadata("intersectDynamicAndString.kt")
     public void testIntersectDynamicAndString() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intersectDynamicAndString.kt");

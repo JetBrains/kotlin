@@ -1,0 +1,89 @@
+FILE: incorrectReturnFromNothingLambda.kt
+    public sealed class Result4k<out T, out E> : R|kotlin/Any| {
+        protected constructor<out T, out E>(): R|Result4k<T, E>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final data class Success<out T> : R|Result4k<T, kotlin/Nothing>| {
+        public constructor<out T>(value: R|T|): R|Success<T>| {
+            super<R|Result4k<T, kotlin/Nothing>|>()
+        }
+
+        public final val value: R|T| = R|<local>/value|
+            public get(): R|T|
+
+        public final operator fun component1(): R|T|
+
+        public final fun copy(value: R|T| = this@R|/Success|.R|/Success.value|): R|Success<T>|
+
+    }
+    public final data class Failure<out E> : R|Result4k<kotlin/Nothing, E>| {
+        public constructor<out E>(reason: R|E|): R|Failure<E>| {
+            super<R|Result4k<kotlin/Nothing, E>|>()
+        }
+
+        public final val reason: R|E| = R|<local>/reason|
+            public get(): R|E|
+
+        public final operator fun component1(): R|E|
+
+        public final fun copy(reason: R|E| = this@R|/Failure|.R|/Failure.reason|): R|Failure<E>|
+
+    }
+    public final inline fun <T, E> R|Result4k<T, E>|.onFailure(block: R|(Failure<E>) -> kotlin/Nothing|): R|T| {
+        ^onFailure when (this@R|/onFailure|) {
+            ($subj$ is R|Success<T>|) ->  {
+                this@R|/onFailure|.R|SubstitutionOverride</Success.value: R|T|>|
+            }
+            ($subj$ is R|Failure<E>|) ->  {
+                R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Nothing|>|(this@R|/onFailure|)
+            }
+        }
+
+    }
+    public final data class MyData : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/collections/List<kotlin/String>|): R|MyData| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/collections/List<kotlin/String>| = R|<local>/b|
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/collections/List<kotlin/String>|
+
+        public final fun copy(a: R|kotlin/Int| = this@R|/MyData|.R|/MyData.a|, b: R|kotlin/collections/List<kotlin/String>| = this@R|/MyData|.R|/MyData.b|): R|MyData|
+
+    }
+    public abstract fun interface MyDataWithoutAB : R|kotlin/Any| {
+        public abstract fun complete(mkB: R|(kotlin/Int) -> kotlin/String|): R|MyData|
+
+    }
+    public final fun doAThing(): R|Result4k<MyDataWithoutAB, kotlin/Unit>| {
+        lval list: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3), Int(4)))
+        ^doAThing R|/Success.Success|<R|MyDataWithoutAB|>(R|/MyDataWithoutAB|(<L> = MyDataWithoutAB@fun <anonymous>(mkB: R|(kotlin/Int) -> kotlin/String|): R|MyData| <inline=NoInline>  {
+            ^ R|/MyData.MyData|(Int(1), R|<local>/list|.R|kotlin/collections/flatMap|<R|kotlin/Int|, R|kotlin/String|>(<L> = flatMap@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/collections/Iterable<kotlin/String>| <inline=Inline, kind=UNKNOWN>  {
+                ^ R|kotlin/collections/List|<R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int|>(R|<local>/it|, <L> = List@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int|): R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+                    ^ R|<local>/it|
+                }
+                ).R|kotlin/collections/map|<R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int|, R|kotlin/String|>(<L> = map@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+                    lval int: R|kotlin/Int| = R|/failable|().R|/onFailure|<R|kotlin/Int|, R|kotlin/Unit|>(<L> = onFailure@fun <anonymous>(it: R|Failure<kotlin/Unit>|): R|kotlin/Nothing| <inline=Inline, kind=UNKNOWN>  {
+                        ^doAThing R|<local>/it|
+                    }
+                    )
+                    ^ R|<local>/mkB|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/String|>|(R|<local>/int|)
+                }
+                )
+            }
+            ))
+        }
+        ))
+    }
+    public final fun failable(): R|Result4k<kotlin/Int, kotlin/Unit>| {
+        ^failable R|/Success.Success|<R|kotlin/Int|>(Int(1))
+    }
