@@ -821,6 +821,12 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
+        @TestMetadata("notNullTypeAgainstNullableWildcard.kt")
+        public void testNotNullTypeAgainstNullableWildcard() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/notNullTypeAgainstNullableWildcard.kt");
+        }
+
+        @Test
         @TestMetadata("NullMarkedVsPackageNullUnmarked.kt")
         public void testNullMarkedVsPackageNullUnmarked() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullMarkedVsPackageNullUnmarked.kt");
@@ -1062,6 +1068,12 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("notNullTypeAgainstNullableWildcard.kt")
+        public void testNotNullTypeAgainstNullableWildcard() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/notNullTypeAgainstNullableWildcard.kt");
         }
 
         @Test
