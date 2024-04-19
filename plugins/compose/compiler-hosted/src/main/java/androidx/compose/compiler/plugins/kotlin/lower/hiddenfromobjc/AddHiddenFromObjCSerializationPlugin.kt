@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -46,6 +47,20 @@ class AddHiddenFromObjCSerializationPlugin(
         ProtoBuf.Annotation.newBuilder().apply {
             id = extension.stringTable.getQualifiedClassNameIndex(annotationToAdd)
         }.build()
+
+    override fun afterClass(
+        descriptor: ClassDescriptor,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: DescriptorSerializer,
+        extension: SerializerExtension
+    ) {
+        if (descriptor in hideFromObjCDeclarationsSet) {
+            val annotationProto = createAnnotationProto(extension)
+            proto.addExtension(KlibMetadataSerializerProtocol.classAnnotation, annotationProto)
+            proto.flags = proto.flags or hasAnnotationFlag
+        }
+    }
 
     override fun afterConstructor(
         descriptor: ConstructorDescriptor,
