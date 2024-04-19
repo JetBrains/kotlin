@@ -17,6 +17,7 @@ import org.gradle.internal.service.scopes.ProjectScopeServices
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.tooling.events.OperationCompletionListener
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradleSubplugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import java.lang.reflect.Field
 import java.util.concurrent.atomic.AtomicReference
@@ -41,6 +42,17 @@ fun buildProjectWithJvm(
 ) = buildProject(projectBuilder) {
     preApplyCode()
     project.applyKotlinJvmPlugin()
+    project.applyKotlinComposePlugin()
+    code()
+}
+
+fun buildProjectWithMPP(
+    projectBuilder: ProjectBuilder.() -> Unit = { },
+    preApplyCode: Project.() -> Unit = {},
+    code: Project.() -> Unit = {}
+) = buildProject(projectBuilder) {
+    preApplyCode()
+    project.applyMultiplatformPlugin()
     project.applyKotlinComposePlugin()
     code()
 }
@@ -96,4 +108,15 @@ fun Project.applyKotlinJvmPlugin() {
 
 fun Project.applyKotlinComposePlugin() {
     project.plugins.apply(ComposeCompilerGradleSubplugin::class.java)
+}
+
+fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
+    addBuildEventsListenerRegistryMock(this)
+    disableLegacyWarning(project)
+    plugins.apply("kotlin-multiplatform")
+    return extensions.getByName("kotlin") as KotlinMultiplatformExtension
+}
+
+internal fun disableLegacyWarning(project: Project) {
+    project.extraProperties.set("kotlin.js.compiler.nowarn", "true")
 }

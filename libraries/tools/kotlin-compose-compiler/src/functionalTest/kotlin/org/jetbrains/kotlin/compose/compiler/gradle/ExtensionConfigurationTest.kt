@@ -11,6 +11,7 @@ import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.junit.jupiter.api.Test
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithJvm
+import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.composeOptions
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -109,15 +110,10 @@ class ExtensionConfigurationTest {
         project.evaluate()
 
         val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
-        val composeOptions = jvmTask.pluginOptions.get()
-            .flatMap { compilerPluginConfig ->
-                compilerPluginConfig.allOptions().filter { it.key == "androidx.compose.compiler.plugins.kotlin" }.values
-            }
-            .flatten()
-            .map { it.key to it.value }
+        val composeOptions = jvmTask.composeOptions()
 
         assertions(composeOptions, project)
     }
 
-    fun Project.simulateAgpPresence() = configurations.resolvable("kotlin-extension")
+    private fun Project.simulateAgpPresence() = configurations.resolvable("kotlin-extension")
 }
