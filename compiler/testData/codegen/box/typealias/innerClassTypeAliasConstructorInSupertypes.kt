@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: TODO
 class Outer(val x: String) {
     abstract inner class InnerBase
 

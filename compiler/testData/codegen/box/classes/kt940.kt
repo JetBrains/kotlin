@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: TODO
 // WITH_STDLIB
 
 fun box() : String {

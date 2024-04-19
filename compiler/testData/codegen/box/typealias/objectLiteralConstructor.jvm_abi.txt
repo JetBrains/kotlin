@@ -1,8 +1,0 @@
-MODULE main
-	CLASS ObjectLiteralConstructorKt$describeSendBuffered$1.class
-		CLASS METADATA
-			Property: class.metadata.superTypes
-				K1
-					[AddLastDesc2<SendBuffered> /* = AddLastDesc^<SendBuffered> */]
-				K2
-					[AddLastDesc2<SendBuffered>]

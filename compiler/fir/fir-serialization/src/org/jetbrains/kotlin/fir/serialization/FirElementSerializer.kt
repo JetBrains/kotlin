@@ -879,18 +879,20 @@ class FirElementSerializer private constructor(
         correspondingTypeRef: FirTypeRef? = null,
         isDefinitelyNotNullType: Boolean = false,
     ): ProtoBuf.Type.Builder {
-        val typeProto = typeOrTypealiasProto(type, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
-        val expanded = if (type is ConeClassLikeType) type.fullyExpandedType(session) else type
-        if (expanded === type) {
-            return typeProto
+        val expandedTypeProto = typeOrTypealiasProto(type, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
+        val typealiasType = type.abbreviatedType
+
+        if (typealiasType != null) {
+            val typealiasProto = typeOrTypealiasProto(typealiasType, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
+
+            if (useTypeTable()) {
+                expandedTypeProto.abbreviatedTypeId = typeTable[typealiasProto]
+            } else {
+                expandedTypeProto.setAbbreviatedType(typealiasProto)
+            }
         }
-        val expandedProto = typeOrTypealiasProto(expanded, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
-        if (useTypeTable()) {
-            expandedProto.abbreviatedTypeId = typeTable[typeProto]
-        } else {
-            expandedProto.setAbbreviatedType(typeProto)
-        }
-        return expandedProto
+
+        return expandedTypeProto
     }
 
     private fun typeOrTypealiasProto(
@@ -1006,17 +1008,6 @@ class FirElementSerializer private constructor(
         }
 
         extension.serializeTypeAnnotations(typeAnnotations, builder)
-
-        // TODO: abbreviated type
-//        val abbreviation = type.getAbbreviatedType()?.abbreviation
-//        if (abbreviation != null) {
-//            if (useTypeTable()) {
-//                builder.abbreviatedTypeId = typeId(abbreviation)
-//            } else {
-//                builder.setAbbreviatedType(typeProto(abbreviation))
-//            }
-//        }
-
         return builder
     }
 
