@@ -42,12 +42,14 @@ class StrongSkippingModeTransformTests(
     }
 
     override fun CompilerConfiguration.updateConfiguration() {
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, true)
         put(
-            ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-            intrinsicRememberEnabled
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.StrongSkipping.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+                FeatureFlag.IntrinsicRemember.name(intrinsicRememberEnabled)
+            )
         )
-        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
     }
 
     @Test

@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
@@ -71,8 +72,9 @@ class ClassStabilityTransformer(
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     private val classStabilityInferredCollection: ClassStabilityInferredCollection? = null,
-    private val messageCollector: MessageCollector? = null
-) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, mutableSetOf<ClassDescriptor>()),
+    private val messageCollector: MessageCollector? = null,
+    featureFlags: FeatureFlags,
+) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, classStabilityInferredCollection, featureFlags),
     ClassLoweringPass,
     ModuleLoweringPass {
 

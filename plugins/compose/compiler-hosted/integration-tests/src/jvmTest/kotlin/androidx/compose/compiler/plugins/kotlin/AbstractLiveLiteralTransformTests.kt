@@ -63,7 +63,8 @@ abstract class AbstractLiveLiteralTransformTests(
                                 pluginContext,
                                 symbolRemapper,
                                 ModuleMetricsImpl("temp") { stabilityInferencer.stabilityOf(it) },
-                                stabilityInferencer
+                                stabilityInferencer,
+                                FeatureFlags()
                             ) {
                                 override fun makeKeySet(): MutableSet<String> {
                                     return super.makeKeySet().also { builtKeys = it }
