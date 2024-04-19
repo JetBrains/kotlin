@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":compiler:cli-base"))
     api(project(":compiler:util"))
     api(project(":compiler:frontend"))
     api(project(":compiler:backend-common"))

@@ -109,6 +109,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val messageCollector: MessageCollector,
         val mainCallArguments: List<String>?
     ) {
+        private val performanceManager = module.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+
         private fun lowerIr(): LoweredIr {
             return compile(
                 mainCallArguments,
@@ -137,11 +139,18 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val transformer = IrModuleToJsTransformer(ir.context, ir.moduleFragmentToUniqueName, mainCallArguments != null)
 
             val mode = TranslationMode.fromFlags(arguments.irDce, arguments.granularity, arguments.irMinimizedMemberNames)
-            return transformer.makeJsCodeGenerator(ir.allModules, mode)
+            return transformer
+                .also { performanceManager?.notifyIRGenerationStarted() }
+                .makeJsCodeGenerator(ir.allModules, mode)
         }
 
         fun compileAndTransformIrNew(): CompilationOutputsBuilt {
-            return makeJsCodeGenerator().generateJsCode(relativeRequirePath = true, outJsProgram = false)
+            return makeJsCodeGenerator()
+                .generateJsCode(relativeRequirePath = true, outJsProgram = false)
+                .also {
+                    performanceManager?.notifyIRGenerationFinished()
+                    performanceManager?.notifyGenerationFinished()
+                }
         }
     }
 
