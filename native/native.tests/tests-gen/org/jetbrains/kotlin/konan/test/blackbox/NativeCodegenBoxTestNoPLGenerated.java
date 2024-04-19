@@ -17647,6 +17647,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       }
 
       @Test
+      @TestMetadata("noRecursiveProblemWithProjection.kt")
+      public void testNoRecursiveProblemWithProjection() {
+        runTest("compiler/testData/codegen/box/fir/noRecursiveProblemWithProjection.kt");
+      }
+
+      @Test
       @TestMetadata("SamWithReceiverMavenProjectImportHandler.kt")
       public void testSamWithReceiverMavenProjectImportHandler() {
         runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");

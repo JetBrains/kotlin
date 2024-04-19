@@ -21801,6 +21801,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("noRecursiveProblemWithProjection.kt")
+    public void testNoRecursiveProblemWithProjection() {
+      runTest("compiler/testData/codegen/box/fir/noRecursiveProblemWithProjection.kt");
+    }
+
+    @Test
     @TestMetadata("noSymbolForIntRangeIterator.kt")
     public void testNoSymbolForIntRangeIterator() {
       runTest("compiler/testData/codegen/box/fir/noSymbolForIntRangeIterator.kt");

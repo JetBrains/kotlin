@@ -20632,6 +20632,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("noRecursiveProblemWithProjection.kt")
+    public void testNoRecursiveProblemWithProjection() {
+      runTest("compiler/testData/codegen/box/fir/noRecursiveProblemWithProjection.kt");
+    }
+
+    @Test
     @TestMetadata("notFoundClasses.kt")
     public void testNotFoundClasses() {
       runTest("compiler/testData/codegen/box/fir/notFoundClasses.kt");

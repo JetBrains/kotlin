@@ -18161,6 +18161,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fir/noInfer.kt");
     }
 
+    @TestMetadata("noRecursiveProblemWithProjection.kt")
+    public void testNoRecursiveProblemWithProjection() {
+      runTest("compiler/testData/codegen/box/fir/noRecursiveProblemWithProjection.kt");
+    }
+
     @TestMetadata("noSymbolForIntRangeIterator.kt")
     public void testNoSymbolForIntRangeIterator() {
       runTest("compiler/testData/codegen/box/fir/noSymbolForIntRangeIterator.kt");
