@@ -105,13 +105,12 @@ class ComposeIrGenerationExtension(
             }
         }
 
-        if (pluginContext.platform.isNative() &&
-            descriptorSerializerContext?.hideFromObjCDeclarationsSet != null) {
+        if (pluginContext.platform.isNative()) {
             AddHiddenFromObjCLowering(
                 pluginContext,
                 symbolRemapper,
                 metrics,
-                descriptorSerializerContext.hideFromObjCDeclarationsSet,
+                descriptorSerializerContext?.hideFromObjCDeclarationsSet,
                 stabilityInferencer
             ).lower(moduleFragment)
         }

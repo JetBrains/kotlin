@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.name.FqName
@@ -49,6 +50,10 @@ class HideFromObjCDeclarationsSet {
 
     fun add(property: IrProperty) {
         set.add(property.descriptor.fqNameSafe)
+    }
+
+    fun add(cls: IrClass) {
+        set.add(cls.descriptor.fqNameSafe)
     }
 
     operator fun contains(item: DeclarationDescriptor): Boolean {
