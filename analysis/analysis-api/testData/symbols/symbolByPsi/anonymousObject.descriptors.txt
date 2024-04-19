@@ -15,6 +15,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: run
   origin: SOURCE

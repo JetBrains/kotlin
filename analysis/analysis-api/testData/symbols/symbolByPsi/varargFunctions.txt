@@ -15,6 +15,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: primitive
   origin: SOURCE
@@ -74,6 +75,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: nullablePrimitive
   origin: SOURCE
@@ -133,6 +135,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: nonPrimitive
   origin: SOURCE
@@ -192,6 +195,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: error
   origin: SOURCE

@@ -148,6 +148,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: bar
   origin: SOURCE
@@ -186,6 +187,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: true
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: values
   origin: SOURCE_MEMBER_GENERATED
@@ -225,6 +227,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: true
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: valueOf
   origin: SOURCE_MEMBER_GENERATED

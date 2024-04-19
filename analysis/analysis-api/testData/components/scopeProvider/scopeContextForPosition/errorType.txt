@@ -81,6 +81,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: test
         origin: SOURCE

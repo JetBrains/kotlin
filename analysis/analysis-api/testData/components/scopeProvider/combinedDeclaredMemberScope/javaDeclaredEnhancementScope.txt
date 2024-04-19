@@ -68,6 +68,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: foo
   origin: JAVA

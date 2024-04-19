@@ -213,6 +213,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: foo
   origin: DELEGATED
@@ -251,6 +252,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: smth
   origin: DELEGATED

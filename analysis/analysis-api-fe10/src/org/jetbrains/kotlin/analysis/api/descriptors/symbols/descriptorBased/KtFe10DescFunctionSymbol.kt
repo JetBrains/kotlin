@@ -89,6 +89,9 @@ internal class KtFe10DescFunctionSymbol private constructor(
     override val isStatic: Boolean
         get() = withValidityAssertion { descriptor is JavaCallableMemberDescriptor && DescriptorUtils.isStaticDeclaration(descriptor) }
 
+    override val isTailRec: Boolean
+        get() = withValidityAssertion { descriptor.isTailrec }
+
     override val isBuiltinFunctionInvoke: Boolean
         get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
 

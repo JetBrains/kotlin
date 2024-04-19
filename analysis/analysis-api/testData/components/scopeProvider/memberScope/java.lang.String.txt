@@ -68,6 +68,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: hash32
   origin: JAVA
@@ -204,6 +205,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: isEmpty
   origin: JAVA
@@ -242,6 +244,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: codePointAt
   origin: JAVA
@@ -305,6 +308,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: codePointBefore
   origin: JAVA
@@ -368,6 +372,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: codePointCount
   origin: JAVA
@@ -455,6 +460,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: offsetByCodePoints
   origin: JAVA
@@ -542,6 +548,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getChars
   origin: JAVA
@@ -628,6 +635,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getChars
   origin: JAVA
@@ -765,6 +773,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getBytes
   origin: JAVA
@@ -899,6 +908,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getBytes
   origin: JAVA
@@ -960,6 +970,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getBytes
   origin: JAVA
@@ -1021,6 +1032,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getBytes
   origin: JAVA
@@ -1058,6 +1070,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: equals
   origin: JAVA
@@ -1121,6 +1134,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: contentEquals
   origin: JAVA
@@ -1183,6 +1197,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: contentEquals
   origin: JAVA
@@ -1245,6 +1260,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: equalsIgnoreCase
   origin: JAVA
@@ -1307,6 +1323,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: compareTo
   origin: JAVA
@@ -1369,6 +1386,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: compareToIgnoreCase
   origin: JAVA
@@ -1431,6 +1449,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: regionMatches
   origin: JAVA
@@ -1565,6 +1584,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: regionMatches
   origin: JAVA
@@ -1723,6 +1743,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: startsWith
   origin: JAVA
@@ -1809,6 +1830,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: startsWith
   origin: JAVA
@@ -1871,6 +1893,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: endsWith
   origin: JAVA
@@ -1933,6 +1956,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: hashCode
   origin: JAVA
@@ -1971,6 +1995,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: indexOf
   origin: JAVA
@@ -2034,6 +2059,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: indexOf
   origin: JAVA
@@ -2121,6 +2147,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: indexOf
   origin: JAVA
@@ -2183,6 +2210,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: indexOf
   origin: JAVA
@@ -2269,6 +2297,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: indexOfSupplementary
   origin: JAVA
@@ -2356,6 +2385,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
@@ -2419,6 +2449,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
@@ -2506,6 +2537,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
@@ -2568,6 +2600,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
@@ -2654,6 +2687,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: lastIndexOfSupplementary
   origin: JAVA
@@ -2741,6 +2775,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: substring
   origin: JAVA
@@ -2803,6 +2838,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: substring
   origin: JAVA
@@ -2889,6 +2925,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: subSequence
   origin: JAVA
@@ -2976,6 +3013,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: concat
   origin: JAVA
@@ -3037,6 +3075,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: replace
   origin: JAVA
@@ -3123,6 +3162,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: replace
   origin: JAVA
@@ -3207,6 +3247,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: matches
   origin: JAVA
@@ -3269,6 +3310,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: contains
   origin: JAVA
@@ -3331,6 +3373,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: replaceFirst
   origin: JAVA
@@ -3415,6 +3458,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: replaceAll
   origin: JAVA
@@ -3499,6 +3543,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: split
   origin: JAVA
@@ -3584,6 +3629,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: split
   origin: JAVA
@@ -3645,6 +3691,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toLowerCase
   origin: JAVA
@@ -3706,6 +3753,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toLowerCase
   origin: JAVA
@@ -3743,6 +3791,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toUpperCase
   origin: JAVA
@@ -3804,6 +3853,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toUpperCase
   origin: JAVA
@@ -3841,6 +3891,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: trim
   origin: JAVA
@@ -3878,6 +3929,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toString
   origin: JAVA
@@ -3916,6 +3968,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toCharArray
   origin: JAVA
@@ -3953,6 +4006,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: intern
   origin: JAVA
@@ -3990,6 +4044,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: get
   origin: JAVA

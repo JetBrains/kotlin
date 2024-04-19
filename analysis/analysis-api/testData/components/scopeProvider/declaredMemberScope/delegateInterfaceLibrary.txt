@@ -385,6 +385,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: foo
   origin: SOURCE
@@ -712,6 +713,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: smth
   origin: SOURCE

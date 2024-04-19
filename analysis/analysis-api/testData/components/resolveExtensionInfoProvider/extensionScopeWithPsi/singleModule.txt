@@ -79,6 +79,7 @@ callables: 5
     isOverride: false
     isStatic: false
     isSuspend: false
+    isTailRec: false
     modality: FINAL
     name: genTopLevelFun1
     origin: SOURCE
@@ -133,6 +134,7 @@ callables: 5
     isOverride: false
     isStatic: false
     isSuspend: false
+    isTailRec: false
     modality: FINAL
     name: genTopLevelExtension1
     origin: SOURCE

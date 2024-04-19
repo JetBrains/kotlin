@@ -34,6 +34,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: memberInContext
         origin: SOURCE
@@ -63,6 +64,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: equals
         origin: LIBRARY
@@ -113,6 +115,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: hashCode
         origin: LIBRARY
@@ -142,6 +145,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: toString
         origin: LIBRARY
@@ -259,6 +263,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: test
         origin: SOURCE

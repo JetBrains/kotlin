@@ -76,6 +76,9 @@ internal class KtFe10PsiFunctionSymbol(
     override val isStatic: Boolean
         get() = withValidityAssertion { false }
 
+    override val isTailRec: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.TAILREC_KEYWORD) }
+
     override val isBuiltinFunctionInvoke: Boolean
         get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
 

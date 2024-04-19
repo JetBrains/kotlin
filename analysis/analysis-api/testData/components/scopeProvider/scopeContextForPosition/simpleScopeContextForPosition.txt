@@ -46,6 +46,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: memberInA
         origin: SOURCE
@@ -75,6 +76,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: equals
         origin: LIBRARY
@@ -125,6 +127,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: hashCode
         origin: LIBRARY
@@ -154,6 +157,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: toString
         origin: LIBRARY
@@ -221,6 +225,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: memberInB
         origin: SOURCE
@@ -250,6 +255,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: equals
         origin: LIBRARY
@@ -300,6 +306,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: hashCode
         origin: LIBRARY
@@ -329,6 +336,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: toString
         origin: LIBRARY
@@ -452,6 +460,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: localFunB
         origin: SOURCE
@@ -577,6 +586,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: methodInC
         origin: SOURCE
@@ -629,6 +639,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: equals
         origin: LIBRARY
@@ -679,6 +690,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: hashCode
         origin: LIBRARY
@@ -708,6 +720,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: toString
         origin: LIBRARY
@@ -924,6 +937,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: withA
         origin: SOURCE
@@ -983,6 +997,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: withB
         origin: SOURCE
@@ -1042,6 +1057,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: withJavaClass
         origin: SOURCE
@@ -1101,6 +1117,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: topLevel
         origin: SOURCE

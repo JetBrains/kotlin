@@ -56,6 +56,13 @@ public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     public abstract val isOverride: Boolean
     public abstract val isInfix: Boolean
     public abstract val isStatic: Boolean
+
+    /**
+     * This variable represents whether a function symbol is tail-recursive or not.
+     *
+     * @return true if the function is tail-recursive, false otherwise
+     */
+    public abstract val isTailRec: Boolean
     public abstract val contractEffects: List<KtContractEffectDeclaration>
 
     /**

@@ -18,6 +18,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: and
   origin: LIBRARY
@@ -84,6 +85,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: compareTo
   origin: LIBRARY
@@ -150,6 +152,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: compareTo
   origin: LIBRARY
@@ -216,6 +219,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: compareTo
   origin: LIBRARY
@@ -282,6 +286,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: compareTo
   origin: LIBRARY
@@ -348,6 +353,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: compareTo
   origin: LIBRARY
@@ -414,6 +420,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: compareTo
   origin: LIBRARY
@@ -477,6 +484,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: dec
   origin: LIBRARY
@@ -518,6 +526,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: div
   origin: LIBRARY
@@ -584,6 +593,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: div
   origin: LIBRARY
@@ -650,6 +660,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: div
   origin: LIBRARY
@@ -716,6 +727,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: div
   origin: LIBRARY
@@ -782,6 +794,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: div
   origin: LIBRARY
@@ -848,6 +861,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: div
   origin: LIBRARY
@@ -914,6 +928,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: equals
   origin: LIBRARY
@@ -977,6 +992,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: inc
   origin: LIBRARY
@@ -1018,6 +1034,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: inv
   origin: LIBRARY
@@ -1059,6 +1076,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: minus
   origin: LIBRARY
@@ -1125,6 +1143,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: minus
   origin: LIBRARY
@@ -1191,6 +1210,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: minus
   origin: LIBRARY
@@ -1257,6 +1277,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: minus
   origin: LIBRARY
@@ -1323,6 +1344,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: minus
   origin: LIBRARY
@@ -1389,6 +1411,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: minus
   origin: LIBRARY
@@ -1455,6 +1478,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: or
   origin: LIBRARY
@@ -1521,6 +1545,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: plus
   origin: LIBRARY
@@ -1587,6 +1612,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: plus
   origin: LIBRARY
@@ -1653,6 +1679,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: plus
   origin: LIBRARY
@@ -1719,6 +1746,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: plus
   origin: LIBRARY
@@ -1785,6 +1813,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: plus
   origin: LIBRARY
@@ -1851,6 +1880,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: plus
   origin: LIBRARY
@@ -1914,6 +1944,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
@@ -1977,6 +2008,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
@@ -2040,6 +2072,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
@@ -2103,6 +2136,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
@@ -2171,6 +2205,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rangeUntil
   origin: LIBRARY
@@ -2239,6 +2274,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rangeUntil
   origin: LIBRARY
@@ -2307,6 +2343,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rangeUntil
   origin: LIBRARY
@@ -2375,6 +2412,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rangeUntil
   origin: LIBRARY
@@ -2443,6 +2481,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rem
   origin: LIBRARY
@@ -2511,6 +2550,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rem
   origin: LIBRARY
@@ -2579,6 +2619,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rem
   origin: LIBRARY
@@ -2647,6 +2688,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rem
   origin: LIBRARY
@@ -2715,6 +2757,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rem
   origin: LIBRARY
@@ -2783,6 +2826,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: rem
   origin: LIBRARY
@@ -2849,6 +2893,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: shl
   origin: LIBRARY
@@ -2915,6 +2960,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: shr
   origin: LIBRARY
@@ -2981,6 +3027,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: times
   origin: LIBRARY
@@ -3047,6 +3094,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: times
   origin: LIBRARY
@@ -3113,6 +3161,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: times
   origin: LIBRARY
@@ -3179,6 +3228,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: times
   origin: LIBRARY
@@ -3245,6 +3295,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: times
   origin: LIBRARY
@@ -3311,6 +3362,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: times
   origin: LIBRARY
@@ -3377,6 +3429,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toByte
   origin: LIBRARY
@@ -3418,6 +3471,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toChar
   origin: LIBRARY
@@ -3459,6 +3513,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toDouble
   origin: LIBRARY
@@ -3500,6 +3555,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toFloat
   origin: LIBRARY
@@ -3541,6 +3597,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toInt
   origin: LIBRARY
@@ -3582,6 +3639,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toLong
   origin: LIBRARY
@@ -3623,6 +3681,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toShort
   origin: LIBRARY
@@ -3664,6 +3723,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toString
   origin: LIBRARY
@@ -3705,6 +3765,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: unaryMinus
   origin: LIBRARY
@@ -3746,6 +3807,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: unaryPlus
   origin: LIBRARY
@@ -3787,6 +3849,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: ushr
   origin: LIBRARY
@@ -3853,6 +3916,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: xor
   origin: LIBRARY
@@ -3916,6 +3980,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: hashCode
   origin: LIBRARY

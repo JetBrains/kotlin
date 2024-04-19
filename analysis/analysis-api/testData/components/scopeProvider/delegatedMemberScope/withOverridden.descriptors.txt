@@ -15,6 +15,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: bar
   origin: DELEGATED

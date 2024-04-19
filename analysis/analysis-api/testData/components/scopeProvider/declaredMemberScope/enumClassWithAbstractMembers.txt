@@ -106,6 +106,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: bar
   origin: SOURCE

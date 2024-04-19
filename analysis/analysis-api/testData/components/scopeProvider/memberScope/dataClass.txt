@@ -288,6 +288,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: check
   origin: SOURCE
@@ -433,6 +434,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: component1
   origin: SOURCE_MEMBER_GENERATED
@@ -471,6 +473,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: component2
   origin: SOURCE_MEMBER_GENERATED
@@ -509,6 +512,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: component3
   origin: SOURCE_MEMBER_GENERATED
@@ -547,6 +551,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: copy
   origin: SOURCE_MEMBER_GENERATED
@@ -658,6 +663,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: equals
   origin: SOURCE_MEMBER_GENERATED
@@ -721,6 +727,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: hashCode
   origin: SOURCE_MEMBER_GENERATED
@@ -759,6 +766,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toString
   origin: SOURCE_MEMBER_GENERATED

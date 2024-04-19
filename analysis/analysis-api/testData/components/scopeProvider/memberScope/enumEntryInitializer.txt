@@ -106,6 +106,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: clone
   origin: LIBRARY
@@ -148,6 +149,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: compareTo
   origin: SUBSTITUTION_OVERRIDE
@@ -211,6 +213,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: equals
   origin: LIBRARY
@@ -278,6 +281,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: hashCode
   origin: LIBRARY
@@ -320,6 +324,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toString
   origin: LIBRARY
@@ -563,6 +568,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: getDeclaringClass
   origin: SUBSTITUTION_OVERRIDE
@@ -600,6 +606,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: FINAL
   name: finalize
   origin: JAVA

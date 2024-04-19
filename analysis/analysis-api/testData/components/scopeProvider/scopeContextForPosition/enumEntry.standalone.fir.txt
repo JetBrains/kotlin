@@ -137,6 +137,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: foo
         origin: SOURCE
@@ -166,6 +167,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: clone
         origin: LIBRARY
@@ -195,6 +197,7 @@ scopes:
         isOverride: true
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: compareTo
         origin: SUBSTITUTION_OVERRIDE
@@ -245,6 +248,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: equals
         origin: LIBRARY
@@ -295,6 +299,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: hashCode
         origin: LIBRARY
@@ -324,6 +329,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: toString
         origin: LIBRARY
@@ -488,6 +494,7 @@ scopes:
         isOverride: true
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: getDeclaringClass
         origin: SUBSTITUTION_OVERRIDE
@@ -516,6 +523,7 @@ scopes:
         isOverride: true
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: finalize
         origin: JAVA
@@ -587,6 +595,7 @@ scopes:
         isOverride: false
         isStatic: true
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: values
         origin: SOURCE_MEMBER_GENERATED
@@ -621,6 +630,7 @@ scopes:
         isOverride: false
         isStatic: true
         isSuspend: false
+        isTailRec: false
         modality: FINAL
         name: valueOf
         origin: SOURCE_MEMBER_GENERATED
@@ -770,6 +780,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: equals
         origin: LIBRARY
@@ -820,6 +831,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: hashCode
         origin: LIBRARY
@@ -849,6 +861,7 @@ scopes:
         isOverride: false
         isStatic: false
         isSuspend: false
+        isTailRec: false
         modality: OPEN
         name: toString
         origin: LIBRARY

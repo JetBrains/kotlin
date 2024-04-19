@@ -15,6 +15,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
@@ -63,6 +64,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY

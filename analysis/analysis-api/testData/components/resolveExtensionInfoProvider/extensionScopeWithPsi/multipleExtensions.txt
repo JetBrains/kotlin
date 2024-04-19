@@ -82,6 +82,7 @@ callables: 2
     isOverride: false
     isStatic: false
     isSuspend: false
+    isTailRec: false
     modality: FINAL
     name: rexCallable1
     origin: SOURCE
@@ -115,6 +116,7 @@ callables: 2
     isOverride: false
     isStatic: false
     isSuspend: false
+    isTailRec: false
     modality: FINAL
     name: rexCallable2
     origin: SOURCE

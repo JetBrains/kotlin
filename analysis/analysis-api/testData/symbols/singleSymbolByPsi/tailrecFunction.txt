@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableIdIfNonLocal: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -9,21 +9,22 @@ KtFunctionSymbol:
   isExpect: false
   isExtension: false
   isExternal: false
-  isInfix: true
+  isInfix: false
   isInline: false
-  isOperator: true
+  isOperator: false
   isOverride: false
   isStatic: false
   isSuspend: false
-  isTailRec: false
+  isTailRec: true
   modality: FINAL
-  name: dynamicFunctionCall
-  origin: JS_DYNAMIC
+  name: foo
+  origin: SOURCE
   receiverParameter: null
-  returnType: KtDynamicType:
+  returnType: KtUsualClassType:
     annotationsList: []
-    type: dynamic
-  symbolKind: CLASS_MEMBER
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol:
@@ -36,25 +37,23 @@ KtFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
-      isVararg: true
-      name: args
-      origin: JS_DYNAMIC
+      isVararg: false
+      name: i
+      origin: SOURCE
       receiverParameter: null
-      returnType: KtDynamicType:
+      returnType: KtUsualClassType:
         annotationsList: []
-        type: dynamic
+        ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: null
-      getContainingJvmClassName: null
+      getContainingFileSymbol: KtFileSymbol(tailrecFunction.kt)
+      getContainingJvmClassName: TailrecFunctionKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtDynamicType:
-    annotationsList: []
-    type: dynamic
-  getContainingFileSymbol: null
-  getContainingJvmClassName: null
+  getContainingFileSymbol: KtFileSymbol(tailrecFunction.kt)
+  getContainingJvmClassName: TailrecFunctionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

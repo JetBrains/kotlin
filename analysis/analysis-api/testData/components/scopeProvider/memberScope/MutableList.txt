@@ -15,6 +15,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: add
   origin: LIBRARY
@@ -81,6 +82,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: add
   origin: LIBRARY
@@ -171,6 +173,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
@@ -266,6 +269,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
@@ -337,6 +341,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: clear
   origin: LIBRARY
@@ -379,6 +384,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
@@ -425,6 +431,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
@@ -496,6 +503,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: remove
   origin: LIBRARY
@@ -562,6 +570,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: removeAll
   origin: LIBRARY
@@ -633,6 +642,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: removeAt
   origin: LIBRARY
@@ -699,6 +709,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: retainAll
   origin: LIBRARY
@@ -770,6 +781,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: set
   origin: LIBRARY
@@ -859,6 +871,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: subList
   origin: LIBRARY
@@ -1003,6 +1016,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: isEmpty
   origin: INTERSECTION_OVERRIDE
@@ -1045,6 +1059,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: contains
   origin: INTERSECTION_OVERRIDE
@@ -1111,6 +1126,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: iterator
   origin: INTERSECTION_OVERRIDE
@@ -1157,6 +1173,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: containsAll
   origin: INTERSECTION_OVERRIDE
@@ -1228,6 +1245,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: get
   origin: SUBSTITUTION_OVERRIDE
@@ -1294,6 +1312,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: indexOf
   origin: SUBSTITUTION_OVERRIDE
@@ -1360,6 +1379,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: lastIndexOf
   origin: SUBSTITUTION_OVERRIDE
@@ -1426,6 +1446,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: equals
   origin: LIBRARY
@@ -1489,6 +1510,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: hashCode
   origin: LIBRARY
@@ -1527,6 +1549,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toString
   origin: LIBRARY
@@ -1565,6 +1588,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getFirst
   origin: SUBSTITUTION_OVERRIDE
@@ -1606,6 +1630,7 @@ KtFunctionSymbol:
   isOverride: true
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getLast
   origin: SUBSTITUTION_OVERRIDE

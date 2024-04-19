@@ -15,6 +15,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: true
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: bar
   origin: JAVA
@@ -48,6 +49,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: hello
   origin: JAVA

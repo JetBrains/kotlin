@@ -54,6 +54,7 @@ public interface KtRendererOtherModifiersProvider {
                     if (symbol.isInfix) add(KtTokens.INFIX_KEYWORD)
                     if (symbol.isOperator) add(KtTokens.OPERATOR_KEYWORD)
                     if (symbol.isSuspend) add(KtTokens.SUSPEND_KEYWORD)
+                    if (symbol.isTailRec) add(KtTokens.TAILREC_KEYWORD)
                 }
 
                 if (symbol is KtPropertySymbol) {

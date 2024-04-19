@@ -119,6 +119,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("tailrecFunction.kt")
+  public void testTailrecFunction() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/tailrecFunction.kt");
+  }
+
+  @Test
   @TestMetadata("typeAnnotationWithArgument.kt")
   public void testTypeAnnotationWithArgument() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationWithArgument.kt");

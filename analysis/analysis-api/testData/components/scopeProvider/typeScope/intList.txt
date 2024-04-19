@@ -180,6 +180,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: contains
   origin: LIBRARY
@@ -229,6 +230,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: containsAll
   origin: LIBRARY
@@ -283,6 +285,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: get
   origin: LIBRARY
@@ -332,6 +335,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: indexOf
   origin: LIBRARY
@@ -381,6 +385,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: isEmpty
   origin: LIBRARY
@@ -410,6 +415,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: iterator
   origin: LIBRARY
@@ -443,6 +449,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: lastIndexOf
   origin: LIBRARY
@@ -492,6 +499,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
@@ -525,6 +533,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
@@ -579,6 +588,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: ABSTRACT
   name: subList
   origin: LIBRARY
@@ -719,6 +729,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: equals
   origin: LIBRARY
@@ -769,6 +780,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: hashCode
   origin: LIBRARY
@@ -798,6 +810,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: toString
   origin: LIBRARY
@@ -827,6 +840,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getFirst
   origin: LIBRARY
@@ -855,6 +869,7 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
   modality: OPEN
   name: getLast
   origin: LIBRARY
