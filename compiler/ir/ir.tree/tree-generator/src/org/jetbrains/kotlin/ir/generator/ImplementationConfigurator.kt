@@ -159,8 +159,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("endOffset", undefinedOffset(), withGetter = true)
             implementation.generationCallback = {
                 println()
-                print()
-                println(
+                printlnMultiLine(
                     """
                     companion object {
                         @Deprecated(
@@ -170,7 +169,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
                             org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment(module, fqName)
                     }
-                    """.replaceIndent(currentIndent)
+                    """
                 )
             }
         }
