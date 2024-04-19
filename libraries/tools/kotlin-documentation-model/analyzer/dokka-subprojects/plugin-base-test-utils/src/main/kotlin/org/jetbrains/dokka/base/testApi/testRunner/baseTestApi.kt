@@ -38,10 +38,10 @@ public class BaseDokkaTestGenerator(
 
             val singleModuleGeneration = context.single(CoreExtensions.generation) as SingleModuleGeneration
 
+            verificationStage { singleModuleGeneration.validityCheck(context) }
+
             val modulesFromPlatforms = singleModuleGeneration.createDocumentationModels()
             documentablesCreationStage(modulesFromPlatforms)
-
-            verificationStage { singleModuleGeneration.validityCheck(context) }
 
             val filteredModules = singleModuleGeneration.transformDocumentationModelBeforeMerge(modulesFromPlatforms)
             documentablesFirstTransformationStep(filteredModules)
@@ -91,7 +91,7 @@ public data class BaseTestMethods(
 
 public class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
     public var pluginsSetupStage: (DokkaContext) -> Unit = {}
-    public var verificationStage: (() -> Unit) -> Unit = {}
+    public var verificationStage: (() -> Unit) -> Unit = { it() }
     public var documentablesCreationStage: (List<DModule>) -> Unit = {}
     public var preMergeDocumentablesTransformationStage: (List<DModule>) -> Unit = {}
     public var documentablesMergingStage: (DModule) -> Unit = {}

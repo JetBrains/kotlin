@@ -168,10 +168,12 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
         val configurationWithNoJVM = dokkaConfiguration {
             sourceSets {
                 sourceSet {
+                    name = "jvm"
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                     analysisPlatform = "jvm"
                 }
                 sourceSet {
+                    name = "js"
                     sourceRoots = listOf("src/main/kotlin/basic/TestJS.kt")
                     analysisPlatform = "js"
                 }

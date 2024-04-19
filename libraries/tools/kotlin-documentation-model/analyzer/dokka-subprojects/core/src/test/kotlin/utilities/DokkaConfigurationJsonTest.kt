@@ -7,10 +7,10 @@ package utilities
 import org.jetbrains.dokka.DokkaConfigurationImpl
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.DokkaSourceSetImpl
+import org.jetbrains.dokka.testApi.assertDokkaConfigurationEquals
 import org.jetbrains.dokka.toCompactJsonString
 import java.io.File
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class DokkaConfigurationJsonTest {
     @Test
@@ -29,7 +29,7 @@ class DokkaConfigurationJsonTest {
 
         val jsonString = configuration.toCompactJsonString()
         val parsedConfiguration = DokkaConfigurationImpl(jsonString)
-        assertEquals(configuration, parsedConfiguration)
+        assertDokkaConfigurationEquals(configuration, parsedConfiguration)
     }
 
     @Test
@@ -53,7 +53,7 @@ class DokkaConfigurationJsonTest {
         """.trimIndent()
 
         val parsedConfiguration = DokkaConfigurationImpl(json)
-        assertEquals(
+        assertDokkaConfigurationEquals(
             DokkaConfigurationImpl(
                 moduleName = "moduleName",
                 outputDir = File("customOutputDir"),
@@ -66,7 +66,7 @@ class DokkaConfigurationJsonTest {
                     )
                 )
             ),
-            parsedConfiguration
+            parsedConfiguration,
         )
     }
 }
