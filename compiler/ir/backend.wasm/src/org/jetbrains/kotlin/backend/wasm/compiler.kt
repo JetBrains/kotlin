@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
@@ -51,6 +52,9 @@ fun compileToLoweredIr(
 ): Pair<List<IrModuleFragment>, WasmBackendContext> {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
+    val performanceManager = depsDescriptors.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyIRTranslationStarted()
+
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = loadIr(
         depsDescriptors,
         irFactory,
@@ -83,7 +87,11 @@ fun compileToLoweredIr(
         for (file in module.files)
             markExportedDeclarations(context, file, exportedDeclarations)
 
+    performanceManager?.notifyIRTranslationFinished()
+    performanceManager?.notifyGenerationStarted()
+    performanceManager?.notifyIRLoweringStarted()
     wasmPhases.invokeToplevel(phaseConfig, context, allModules)
+    performanceManager?.notifyIRLoweringFinished()
 
     return Pair(allModules, context)
 }
@@ -179,7 +187,7 @@ private fun generateSourceMap(
         prev = location
 
         location.apply {
-            // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.   
+            // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
             val relativePath = pathResolver.getPathRelativeToSourceRoots(File(file)).substring(3)
             sourceMapBuilder.addMapping(relativePath, null, { null }, line, column, null, mapping.offset)
         }
