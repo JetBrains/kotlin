@@ -102,7 +102,6 @@ class FirParcelizeDeclarationGenerator(
     ): FirSimpleFunction {
         return createMemberFunction(owner, key, name, returnType) {
             modality = if (owner.modality == Modality.FINAL) Modality.FINAL else Modality.OPEN
-            status { isOverride = true }
             init()
         }
     }
