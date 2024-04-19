@@ -76,7 +76,7 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 
     compilerOptions {
         allWarningsAsErrors.set(true)
