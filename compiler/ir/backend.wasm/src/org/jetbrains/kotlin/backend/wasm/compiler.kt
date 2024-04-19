@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToTsDeclarations
-import org.jetbrains.kotlin.ir.backend.js.export.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -29,20 +26,14 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WasmTarget
-import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
-import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
-import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
-import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
 import java.io.ByteArrayOutputStream
 import java.io.File
-import kotlin.math.exp
 
 class WasmCompilerResult(
     val wat: String?,
@@ -201,6 +192,7 @@ fun compileWasm(
     )
 }
 
+//language=js
 fun WasmCompiledModuleFragment.generateAsyncWasiWrapper(wasmFilePath: String): String = """
 import { WASI } from 'wasi';
 import { argv, env } from 'node:process';
@@ -305,9 +297,13 @@ $imports
     
     try {
       if (isNodeJs) {
-        const fs = await import(/* webpackIgnore: true */'node:fs');
-        const url = await import(/* webpackIgnore: true */'node:url');
-        const wasmBuffer = fs.readFileSync(url.fileURLToPath(import.meta.resolve(wasmFilePath)));
+        const module = await import(/* webpackIgnore: true */'node:module');
+        const importMeta = import.meta;
+        require = module.default.createRequire(importMeta.url);
+        const fs = require('fs');
+        const url = require('url');
+        const filepath = import.meta.resolve(wasmFilePath);
+        const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
         const wasmModule = new WebAssembly.Module(wasmBuffer);
         wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
       }
