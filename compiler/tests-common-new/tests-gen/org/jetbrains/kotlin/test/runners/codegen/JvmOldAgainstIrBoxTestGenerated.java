@@ -985,11 +985,5 @@ public class JvmOldAgainstIrBoxTestGenerated extends AbstractJvmOldAgainstIrBoxT
     public void testAllFilesPresentInTypeAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR, true);
     }
-
-    @Test
-    @TestMetadata("implicitReturn.kt")
-    public void testImplicitReturn() {
-      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations/implicitReturn.kt");
-    }
   }
 }

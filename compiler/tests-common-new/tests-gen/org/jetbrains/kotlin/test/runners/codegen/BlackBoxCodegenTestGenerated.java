@@ -625,45 +625,15 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
       }
 
       @Test
-      @TestMetadata("implicitReturn.kt")
-      public void testImplicitReturn() {
-        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/implicitReturn.kt");
-      }
-
-      @Test
-      @TestMetadata("implicitReturnAgainstCompiled.kt")
-      public void testImplicitReturnAgainstCompiled() {
-        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/implicitReturnAgainstCompiled.kt");
-      }
-
-      @Test
       @TestMetadata("kt41484.kt")
       public void testKt41484() {
         runTest("compiler/testData/codegen/box/annotations/typeAnnotations/kt41484.kt");
       }
 
       @Test
-      @TestMetadata("methodParameters.kt")
-      public void testMethodParameters() {
-        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/methodParameters.kt");
-      }
-
-      @Test
       @TestMetadata("methodTypeParameters.kt")
       public void testMethodTypeParameters() {
         runTest("compiler/testData/codegen/box/annotations/typeAnnotations/methodTypeParameters.kt");
-      }
-
-      @Test
-      @TestMetadata("typeAnnotationTarget6.kt")
-      public void testTypeAnnotationTarget6() {
-        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/typeAnnotationTarget6.kt");
-      }
-
-      @Test
-      @TestMetadata("typeUseAnnotation.kt")
-      public void testTypeUseAnnotation() {
-        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/typeUseAnnotation.kt");
       }
     }
   }
@@ -9952,12 +9922,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
       @Test
       public void testAllFilesPresentInTypeAnnotations() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-      }
-
-      @Test
-      @TestMetadata("implicitReturn.kt")
-      public void testImplicitReturn() {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations/implicitReturn.kt");
       }
     }
   }

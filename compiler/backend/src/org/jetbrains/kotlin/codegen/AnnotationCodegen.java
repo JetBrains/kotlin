@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
@@ -161,7 +161,6 @@ public abstract class AnnotationCodegen {
         }
 
         generateAdditionalAnnotations(annotated, returnType, annotationDescriptorsAlreadyPresent, parameterContainer);
-        generateTypeAnnotations(annotated, typeForTypeAnnotations);
     }
 
     private void generateAdditionalAnnotations(
@@ -712,19 +711,4 @@ public abstract class AnnotationCodegen {
     private static AnnotationVisitor safe(@Nullable AnnotationVisitor av) {
         return av == null ? NO_ANNOTATION_VISITOR : av;
     }
-
-    private void generateTypeAnnotations(@NotNull Annotated annotated, @Nullable KotlinType type) {
-        if (isAccessor(annotated) || type == null || !state.getConfig().getEmitJvmTypeAnnotations()) {
-            return;
-        }
-
-        Iterable<TypePathInfo<AnnotationDescriptor>> infos =
-                new PsiTypeAnnotationCollector().collectTypeAnnotations(type);
-        for (TypePathInfo<AnnotationDescriptor> info : infos) {
-            for (AnnotationDescriptor annotationDescriptor : info.getAnnotations()) {
-                genAnnotation(annotationDescriptor, info.getPath(), true);
-            }
-        }
-    }
-
 }

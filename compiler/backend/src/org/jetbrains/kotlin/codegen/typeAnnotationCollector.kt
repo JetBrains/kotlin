@@ -5,21 +5,14 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariance
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.TypePath
-
 
 class TypePathInfo<T>(
     val path: TypePath?,
@@ -41,18 +34,6 @@ private class State<T>(val path: MutableList<String>) {
 
     fun rememberAnnotations(annotations: List<T>) {
         results.add(TypePathInfo(TypePath.fromString(path.joinToString("")), annotations))
-    }
-}
-
-class PsiTypeAnnotationCollector : TypeAnnotationCollector<AnnotationDescriptor>(SimpleClassicTypeSystemContext) {
-
-    override fun KotlinTypeMarker.extractAnnotations(): List<AnnotationDescriptor> {
-        require(this is KotlinType)
-        return annotations.filter {
-            //We only generate annotations which have the TYPE_USE Java target.
-            // Those are type annotations which were compiled with JVM target bytecode version 1.8 or greater
-            isCompiledToJvm8OrHigher(it.annotationClass)
-        }
     }
 }
 
@@ -98,10 +79,6 @@ abstract class TypeAnnotationCollector<T>(val context: TypeSystemCommonBackendCo
 
 
     abstract fun KotlinTypeMarker.extractAnnotations(): List<T>
-
-    fun isCompiledToJvm8OrHigher(descriptor: ClassDescriptor?): Boolean =
-        (descriptor as? DeserializedClassDescriptor)?.let { classDescriptor -> isCompiledToJvm8OrHigher(classDescriptor.source) }
-            ?: true
 
     fun isCompiledToJvm8OrHigher(source: SourceElement): Boolean =
         (source !is KotlinJvmBinarySourceElement ||

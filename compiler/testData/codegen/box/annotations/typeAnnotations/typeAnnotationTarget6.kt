@@ -1,5 +1,5 @@
 // EMIT_JVM_TYPE_ANNOTATIONS
-// TARGET_BACKEND: JVM
+// TARGET_BACKEND: JVM_IR
 
 // No virtual method getAnnotatedReturnType()Ljava/lang/reflect/AnnotatedType
 // IGNORE_BACKEND: ANDROID
