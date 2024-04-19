@@ -5649,6 +5649,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     }
 
     @Test
+    @TestMetadata("incorrectExtensionFunctionType.kt")
+    public void testIncorrectExtensionFunctionType() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/incorrectExtensionFunctionType.kt");
+    }
+
+    @Test
     @TestMetadata("incorrectLabelReference.kt")
     public void testIncorrectLabelReference() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/incorrectLabelReference.kt");
