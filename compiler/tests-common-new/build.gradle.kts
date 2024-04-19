@@ -64,6 +64,9 @@ projectTest(
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+    jvmArgs("--add-exports", "jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
+    jvmArgs("--add-exports", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED")
+    jvmArgs("--add-exports", "jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED")
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(17)
     }

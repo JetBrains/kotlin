@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_PARAM_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EMIT_JVM_TYPE_ANNOTATIONS
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
@@ -51,6 +50,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_OPTIMI
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIED_NULL_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OLD_INNER_CLASSES_LOGIC
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETERS_METADATA
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_TYPE_TABLE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -137,7 +137,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
-            TestJdkKind.FULL_JDK -> if (JavaVersion.current() >= JavaVersion.compose(9)) File(System.getProperty("java.home")) else null
+            TestJdkKind.FULL_JDK -> if (JavaVersion.current() >= JavaVersion.compose(9)) KtTestUtil.getJdk8Home() else null
             TestJdkKind.ANDROID_API -> null
         }
 
