@@ -172,4 +172,4 @@ public annotation class ExperimentalJsCollectionsApi
 @MustBeDocumented
 @OptionalExpectation
 @SinceKotlin("2.0")
-public expect annotation class JsStatic
+public expect annotation class JsStatic()

@@ -310,4 +310,4 @@ public annotation class JsExternalArgument
 @Target(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
 @MustBeDocumented
 @SinceKotlin("2.0")
-public actual annotation class JsStatic
+public actual annotation class JsStatic()
