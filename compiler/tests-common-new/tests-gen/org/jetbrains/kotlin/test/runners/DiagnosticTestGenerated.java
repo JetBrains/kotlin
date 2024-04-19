@@ -11907,6 +11907,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("hiddenPropertyAccessors2.kt")
+      public void testHiddenPropertyAccessors2() {
+        runTest("compiler/testData/diagnostics/tests/deprecated/hiddenPropertyAccessors2.kt");
+      }
+
+      @Test
       @TestMetadata("importJavaSamInterface.kt")
       public void testImportJavaSamInterface() {
         runTest("compiler/testData/diagnostics/tests/deprecated/importJavaSamInterface.kt");
