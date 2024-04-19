@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.js.klib.*
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.K2JVMCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
@@ -314,15 +313,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val outputKlibPath =
                 if (arguments.irProduceKlibFile) outputDir.resolve("$outputName.klib").normalize().absolutePath
                 else outputDirPath
-            if (configuration.get(CommonConfigurationKeys.USE_FIR) == true) {
-                sourceModule = processSourceModuleWithK2(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
-            } else {
-                sourceModule = processSourceModule(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
+            sourceModule = produceSourceModule(configuration, environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
 
-                if (!sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
-                    return OK
-            }
-
+            if (configuration.get(CommonConfigurationKeys.USE_FIR) != true && !sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
+                return OK
         }
 
         if (!arguments.irProduceJs) return OK
@@ -459,13 +453,34 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         return OK
     }
 
-    private fun processSourceModule(
+    private fun produceSourceModule(
+        configuration: CompilerConfiguration,
+        environmentForJS: KotlinCoreEnvironment,
+        libraries: List<String>,
+        friendLibraries: List<String>,
+        arguments: K2JSCompilerArguments,
+        outputKlibPath: String,
+    ): ModulesStructure {
+        val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+        performanceManager?.notifyAnalysisStarted()
+
+        val sourceModule = if (configuration.get(CommonConfigurationKeys.USE_FIR) == true) {
+            processSourceModuleWithK2(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
+        } else {
+            processSourceModuleWithK1(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
+        }
+
+        return sourceModule
+    }
+
+    private fun processSourceModuleWithK1(
         environmentForJS: KotlinCoreEnvironment,
         libraries: List<String>,
         friendLibraries: List<String>,
         arguments: K2JSCompilerArguments,
         outputKlibPath: String
     ): ModulesStructure {
+        val performanceManager = environmentForJS.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
         lateinit var sourceModule: ModulesStructure
         do {
             val analyzerFacade = when (arguments.wasm) {
@@ -486,6 +501,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
             }
         } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
+        performanceManager?.notifyAnalysisFinished()
 
         if (sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && (arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
             val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
@@ -534,6 +550,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         outputKlibPath: String
     ): ModulesStructure {
         val configuration = environmentForJS.configuration
+        val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
@@ -574,6 +591,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
         }
 
+        performanceManager?.notifyAnalysisFinished()
         if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
             throw CompilationErrorException()
         }
