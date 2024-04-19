@@ -39392,6 +39392,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
       public void testHmppSimple() {
         runTest("compiler/testData/codegen/box/multiplatform/multiModule/hmppSimple.kt");
       }
+
+      @Test
+      @TestMetadata("stdlibClassRedefine.kt")
+      public void testStdlibClassRedefine() {
+        runTest("compiler/testData/codegen/box/multiplatform/multiModule/stdlibClassRedefine.kt");
+      }
     }
   }
 

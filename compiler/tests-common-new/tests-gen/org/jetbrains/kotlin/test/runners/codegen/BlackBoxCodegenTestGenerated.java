@@ -36407,6 +36407,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
       public void testExpectInterfaceInheritance() {
         runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectInterfaceInheritance.kt");
       }
+
+      @Test
+      @TestMetadata("stdlibClassRedefine.kt")
+      public void testStdlibClassRedefine() {
+        runTest("compiler/testData/codegen/box/multiplatform/multiModule/stdlibClassRedefine.kt");
+      }
     }
   }
 
