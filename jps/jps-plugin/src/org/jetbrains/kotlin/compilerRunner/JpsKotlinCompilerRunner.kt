@@ -270,7 +270,34 @@ class JpsKotlinCompilerRunner {
     private fun withAdditionalCompilerArgs(compilerArgs: CommonCompilerArguments): Array<String> {
         val allArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs) +
                 (compilerSettings?.additionalArgumentsAsList ?: emptyList())
-        return allArgs.toTypedArray()
+        return filterDuplicatedCompilerPluginOptions(allArgs).toTypedArray()
+    }
+
+    /*
+    * This function filters duplicates of -P plugin:<pluginId>:<optionName>=<value> in the compiler arguments
+    * */
+    private fun filterDuplicatedCompilerPluginOptions(compilerArguments: List<String>): List<String> {
+        val filteredArguments = mutableListOf<String>()
+        val knownPluginOptions = mutableSetOf<String>()
+        val argumentsIterator = compilerArguments.iterator()
+
+        while (argumentsIterator.hasNext()) {
+            val argument = argumentsIterator.next()
+            // try to find pair -P plugin:<pluginId>:<optionName>=<value>
+            if (argument == "-P" && argumentsIterator.hasNext()) {
+                val pluginOption = argumentsIterator.next() // expected plugin:<pluginId>:<optionName>=<value>
+                val elementIsUnique = knownPluginOptions.add(pluginOption)
+                if (elementIsUnique) {
+                    filteredArguments.add(argument) // add -P
+                    filteredArguments.add(pluginOption) // add the plugin option
+                }
+            } else {
+                // skip filtering for all other arguments
+                filteredArguments.add(argument)
+            }
+        }
+
+        return filteredArguments
     }
 
     private fun reportCategories(verbose: Boolean): Array<Int> {
@@ -390,4 +417,8 @@ class JpsKotlinCompilerRunner {
                 )
             }
         }
+
+    @TestOnly
+    fun filterDuplicatedCompilerPluginOptionsForTest(compilerArguments: List<String>): List<String> =
+        filterDuplicatedCompilerPluginOptions(compilerArguments)
 }

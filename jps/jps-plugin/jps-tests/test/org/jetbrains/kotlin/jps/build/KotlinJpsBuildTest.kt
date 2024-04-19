@@ -799,6 +799,19 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    fun testKotlinLombokProjectWithConfigFile() {
+        initProject(LOMBOK)
+        myProject.modules.forEach {
+            val facet = it.container.getChild(
+                JpsKotlinFacetModuleExtension.KIND
+            )
+            facet.settings.compilerArguments = K2JVMCompilerArguments()
+            val lombokConfigPath = workDir.resolve("lombok.config").also { assert(it.exists()) }
+            facet.settings.compilerSettings!!.additionalArguments += " -P plugin:org.jetbrains.kotlin.lombok:config=${lombokConfigPath}"
+        }
+        buildAllModules().assertSuccessful()
+    }
+
     @WorkingDir("KotlinProject")
     fun testModuleRebuildOnPluginClasspathsChange() {
         initProject(JVM_MOCK_RUNTIME)
