@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.js.klib.*
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.K2JVMCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
@@ -84,9 +85,9 @@ private class DisposableZipFileSystemAccessor private constructor(
 }
 
 class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
+    class K2JsIrCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JS (IR) Compiler")
 
-    override val defaultPerformanceManager: CommonCompilerPerformanceManager =
-        object : CommonCompilerPerformanceManager("Kotlin to JS (IR) Compiler") {}
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2JsIrCompilerPerformanceManager()
 
     override fun createArguments(): K2JSCompilerArguments {
         return K2JSCompilerArguments()
