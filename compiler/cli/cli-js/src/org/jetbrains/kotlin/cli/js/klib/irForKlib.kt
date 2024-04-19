@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedDat
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -55,6 +56,9 @@ fun generateIrForKlibSerialization(
     verifySignatures: Boolean = true,
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
 ): Pair<IrModuleFragment, IrPluginContext> {
+    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyIRTranslationStarted()
+
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
