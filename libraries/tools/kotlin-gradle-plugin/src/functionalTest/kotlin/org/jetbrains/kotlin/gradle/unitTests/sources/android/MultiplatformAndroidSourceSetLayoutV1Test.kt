@@ -190,23 +190,6 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
     }
 
     @Test
-    fun `AndroidSourceSet#kotlinSourceSet convention`() {
-        kotlin.androidTarget()
-
-        fun AndroidSourceSet.kotlinSourceSetByConvention(): KotlinSourceSet =
-            (this as HasConvention).convention.plugins["kotlin"] as KotlinSourceSet
-
-        val main = android.sourceSets.getByName("main")
-        assertSame(kotlin.sourceSets.getByName("androidMain"), main.kotlinSourceSetByConvention())
-
-        val test = android.sourceSets.getByName("test")
-        assertSame(kotlin.sourceSets.getByName("androidTest"), test.kotlinSourceSetByConvention())
-
-        val androidTest = android.sourceSets.getByName("androidTest")
-        assertSame(kotlin.sourceSets.getByName("androidAndroidTest"), androidTest.kotlinSourceSetByConvention())
-    }
-
-    @Test
     fun `AndroidSourceSet kotlin AndroidSourceDirectorySet`() {
         kotlin.androidTarget()
         project.evaluate()
