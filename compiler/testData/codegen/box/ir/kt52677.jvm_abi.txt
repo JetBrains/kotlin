@@ -1,0 +1,8 @@
+MODULE lib
+	CLASS UuidSerializer.class
+		CLASS METADATA
+			Property: class.metadata.superTypes
+				K1
+					[MySerializer<@MySerializable(c = UuidSerializer::class) Uuid1 /* = Uuid^ */>]
+				K2
+					[MySerializer<@MySerializable(c = UuidSerializer::class) Uuid1>]

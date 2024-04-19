@@ -6,4 +6,9 @@ MODULE lib
 					K1
 						lib/Single<lib/DomainEither^<T#0>>
 					K2
+						lib/Single<lib/Either<T#0>>
+				Property: class.metadata.typeAlias.expandedType
+					K1
 						lib/Single<lib/Either<T#0> /* = lib/DomainEither^<T#0> */>
+					K2
+						lib/Single<lib/Either<T#0>>
