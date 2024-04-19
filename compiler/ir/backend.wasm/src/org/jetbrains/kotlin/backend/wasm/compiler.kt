@@ -53,7 +53,6 @@ fun compileToLoweredIr(
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
     val performanceManager = depsDescriptors.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyIRTranslationStarted()
 
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = loadIr(
         depsDescriptors,

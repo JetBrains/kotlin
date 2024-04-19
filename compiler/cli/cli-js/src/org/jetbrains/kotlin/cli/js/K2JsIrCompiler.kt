@@ -289,7 +289,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 return OK
         }
 
-        if (!arguments.irProduceJs) return OK
+        if (!arguments.irProduceJs) {
+            performanceManager?.notifyIRTranslationFinished()
+            return OK
+        }
 
         val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND] ?: error("cannot get 'module kind' from configuration")
 
@@ -329,6 +332,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
             }
 
+            performanceManager?.notifyIRTranslationFinished()
             return OK
         }
 
@@ -573,6 +577,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         // FIR2IR
+        performanceManager?.notifyIRTranslationStarted()
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
 
         if (configuration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)) {
