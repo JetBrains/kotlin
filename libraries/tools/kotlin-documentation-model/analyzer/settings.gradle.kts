@@ -102,6 +102,7 @@ include(
 // cases: https://docs.gradle.org/current/userguide/composite_builds.html#included_build_substitution_limitations.
 // Should no longer be a problem once Dokka's artifacts are relocated, see #3245.
 project(":dokka-subprojects:core").name = "dokka-core"
+project(":dokka-subprojects:core-test-api").name = "dokka-test-api"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

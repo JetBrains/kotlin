@@ -78,15 +78,18 @@ public fun interface DokkaConfigurationBuilder<T : Any> {
 
 public fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = this.map { it.build() }
 
+/**
+ * Represents a unique identifier for a [DokkaConfiguration.DokkaSourceSet].
+ * It should be unique across the whole project.
+ *
+ * @property scopeId The unique identifier of the scope that this source set is placed in.
+ *    Each scope provides only unique source set names.
+ *    E.g. One DokkaTask inside the Gradle plugin represents one source set scope, since there cannot be multiple
+ *    source sets with the same name. However, a Gradle project will not be a proper scope, since there can be
+ *    multiple DokkaTasks that contain source sets with the same name (but different configuration)
+ * @property sourceSetName The name of the source set.
+ */
 public data class DokkaSourceSetID(
-    /**
-     * Unique identifier of the scope that this source set is placed in.
-     * Each scope provide only unique source set names.
-     *
-     * E.g. One DokkaTask inside the Gradle plugin represents one source set scope, since there cannot be multiple
-     * source sets with the same name. However, a Gradle project will not be a proper scope, since there can be
-     * multple DokkaTasks that contain source sets with the same name (but different configuration)
-     */
     val scopeId: String,
     val sourceSetName: String
 ) : Serializable {
@@ -170,6 +173,13 @@ public interface DokkaConfiguration : Serializable {
         public val values: String
     }
 
+    /**
+     * Each [DokkaSourceSet] is uniquely identified by its [sourceSetID].
+     * This means that if two [DokkaSourceSet]s will have the same [sourceSetID] they will be interchangeable.
+     * [equals] and [hashCode] must be defined only based on [sourceSetID].
+     *
+     * **See Also:** [Dokka#3246](https://github.com/Kotlin/dokka/issues/3246)
+     */
     public interface DokkaSourceSet : Serializable {
         public val sourceSetID: DokkaSourceSetID
         public val displayName: String

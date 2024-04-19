@@ -137,6 +137,13 @@ private fun TestDokkaSourceSet.toDokkaSourceSet(relativeToDir: File): DokkaConfi
         override val apiVersion: String?
             get() = apiVersion
 
+        override fun equals(other: Any?): Boolean {
+            return sourceSetID == (other as? DokkaConfiguration.DokkaSourceSet)?.sourceSetID
+        }
+
+        override fun hashCode(): Int {
+            return sourceSetID.hashCode()
+        }
 
         /*
          * The properties below are not used by the analysis modules,
