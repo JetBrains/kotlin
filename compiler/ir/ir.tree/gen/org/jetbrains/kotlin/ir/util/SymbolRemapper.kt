@@ -87,4 +87,8 @@ interface SymbolRemapper : DeclaredSymbolRemapper, ReferencedSymbolRemapper {
     companion object {
         val EMPTY: SymbolRemapper = Empty()
     }
+
+    // This method is left for compatibility with Compose. Do not use it, it will be removed soon.
+    fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? =
+        symbol?.let { getReferencedClass(it) }
 }

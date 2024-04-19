@@ -118,9 +118,14 @@ fun SmartPrinter.printFunctionDeclaration(
     isInline: Boolean = false,
     allParametersOnSeparateLines: Boolean = false,
     optInAnnotation: ClassRef<*>? = null,
+    deprecation: Deprecated? = null,
 ) {
     optInAnnotation?.let {
         println("@", it.render())
+    }
+
+    deprecation?.let {
+        printDeprecation(it)
     }
 
     if (visibility != Visibility.PUBLIC) {
@@ -178,6 +183,7 @@ inline fun SmartPrinter.printFunctionWithBlockBody(
     override: Boolean = false,
     isInline: Boolean = false,
     allParametersOnSeparateLines: Boolean = false,
+    deprecation: Deprecated? = null,
     blockBody: () -> Unit,
 ) {
     printFunctionDeclaration(
@@ -191,8 +197,19 @@ inline fun SmartPrinter.printFunctionWithBlockBody(
         override,
         isInline,
         allParametersOnSeparateLines,
+        deprecation = deprecation,
     )
     printBlock(blockBody)
+}
+
+private fun SmartPrinter.printDeprecation(deprecation: Deprecated) {
+    println("@Deprecated(")
+    withIndent {
+        println("message = \"", deprecation.message, "\",")
+        println("replaceWith = ReplaceWith(\"", deprecation.replaceWith.expression, "\"),")
+        println("level = DeprecationLevel.", deprecation.level.name, ",")
+    }
+    println(")")
 }
 
 context(ImportCollector)
@@ -215,13 +232,7 @@ fun SmartPrinter.printPropertyDeclaration(
     printKDoc(kDoc)
 
     deprecation?.let {
-        println("@Deprecated(")
-        withIndent {
-            println("message = \"", it.message, "\",")
-            println("replaceWith = ReplaceWith(\"", it.replaceWith.expression, "\"),")
-            println("level = DeprecationLevel.", it.level.name, ",")
-        }
-        println(")")
+        printDeprecation(it)
     }
 
     if (isVolatile) {
