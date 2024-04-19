@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -54,8 +55,17 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                     freeArgs = listOf("-Pkotlin.native.toolchain.enabled=false"),
                 )
             ) {
-                // Only klib-compilation tasks are launched, so no dependencies should be downloaded
-                assertOutputDoesNotContain("(KonanProperties) Downloading dependency")
+                // Linux downloads dependencies because on CI tests on Linux are launched against default K/N version
+                // (which doesn't contain `b38cc9c02407e3ae726d2b16751c1bdc78550cb4 [native] Make KonanConfig initialization more lazy` yet),
+                // but MacOS tests are launched on CI against freshly built-version (which does contain this commit)
+                //
+                // This test is expected to fail on advancing K/N version, after which the difference should be gone
+                // and only `assertOutputDoesNotContain` can be left
+                if (HostManager.hostIsMac) {
+                    assertOutputDoesNotContain("(KonanProperties) Downloading dependency")
+                } else {
+                    assertOutputContains("(KonanProperties) Downloading dependency")
+                }
                 assertOutputDoesNotContain("Downloading dependency for Kotlin Native")
             }
         }
