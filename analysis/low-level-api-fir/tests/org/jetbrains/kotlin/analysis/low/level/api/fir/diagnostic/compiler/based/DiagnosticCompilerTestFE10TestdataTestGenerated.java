@@ -10647,6 +10647,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       public void testSuperCall() {
         runTest("compiler/testData/diagnostics/tests/defaultArguments/superCall.kt");
       }
+
+      @Test
+      @TestMetadata("superCallWithDelegation.kt")
+      public void testSuperCallWithDelegation() {
+        runTest("compiler/testData/diagnostics/tests/defaultArguments/superCallWithDelegation.kt");
+      }
     }
 
     @Nested
