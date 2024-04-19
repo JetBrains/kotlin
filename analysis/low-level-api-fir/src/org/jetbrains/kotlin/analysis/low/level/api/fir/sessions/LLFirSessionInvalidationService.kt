@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
@@ -19,6 +21,16 @@ import org.jetbrains.kotlin.analysis.providers.topics.*
  * sessions in [LLFirSessionCache] and the cache has to be kept consistent.
  */
 internal class LLFirSessionInvalidationService(private val project: Project) {
+    init {
+        LowMemoryWatcher.register({
+                                      val application = ApplicationManager.getApplication()
+                                      application.invokeLater(
+                                          Runnable { application.runWriteAction(Runnable { invalidateAll(includeLibraryModules = true) }) },
+                                          ModalityState.defaultModalityState()
+                                      )
+                                  }, project)
+    }
+
     internal class LLKotlinModuleStateModificationListener(val project: Project) : KotlinModuleStateModificationListener {
         override fun onModification(module: KtModule, modificationKind: KotlinModuleStateModificationKind) {
             getInstance(project).invalidate(module)
