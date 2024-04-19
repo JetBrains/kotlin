@@ -325,135 +325,135 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         }
 
-        if (arguments.irProduceJs) {
-            messageCollector.report(INFO, "Produce executable: $outputDirPath")
-            messageCollector.report(INFO, "Cache directory: ${arguments.cacheDirectory}")
+        if (!arguments.irProduceJs) return OK
 
-            if (icCaches != null) {
-                val beforeIc2Js = System.currentTimeMillis()
+        messageCollector.report(INFO, "Produce executable: $outputDirPath")
+        messageCollector.report(INFO, "Cache directory: ${arguments.cacheDirectory}")
 
-                // We use one cache directory for both caches: JS AST and JS code.
-                // This guard MUST be unlocked after a successful preparing icCaches (see prepareIcCaches()).
-                // Do not use IncrementalCacheGuard::acquire() - it may drop an entire cache here, and
-                // it breaks the logic from JsExecutableProducer(), therefore use IncrementalCacheGuard::tryAcquire() instead
-                // TODO: One day, when we will lower IR and produce JS AST per module,
-                //      think about using different directories for JS AST and JS code.
-                icCaches.cacheGuard.tryAcquire()
+        if (icCaches != null) {
+            val beforeIc2Js = System.currentTimeMillis()
 
-                val jsExecutableProducer = JsExecutableProducer(
-                    mainModuleName = moduleName,
-                    moduleKind = moduleKind,
-                    sourceMapsInfo = SourceMapsInfo.from(configurationJs),
-                    caches = icCaches.artifacts,
-                    relativeRequirePath = true
-                )
+            // We use one cache directory for both caches: JS AST and JS code.
+            // This guard MUST be unlocked after a successful preparing icCaches (see prepareIcCaches()).
+            // Do not use IncrementalCacheGuard::acquire() - it may drop an entire cache here, and
+            // it breaks the logic from JsExecutableProducer(), therefore use IncrementalCacheGuard::tryAcquire() instead
+            // TODO: One day, when we will lower IR and produce JS AST per module,
+            //      think about using different directories for JS AST and JS code.
+            icCaches.cacheGuard.tryAcquire()
 
-                val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.granularity, outJsProgram = false)
-                outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
+            val jsExecutableProducer = JsExecutableProducer(
+                mainModuleName = moduleName,
+                moduleKind = moduleKind,
+                sourceMapsInfo = SourceMapsInfo.from(configurationJs),
+                caches = icCaches.artifacts,
+                relativeRequirePath = true
+            )
 
-                icCaches.cacheGuard.release()
+            val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.granularity, outJsProgram = false)
+            outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
 
-                messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
-                for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
-                    messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
-                }
+            icCaches.cacheGuard.release()
 
-                for (module in rebuiltModules) {
-                    messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
-                }
-
-                return OK
+            messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+            for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
+                messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
             }
 
-            val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
-
-            val module = if (includes != null) {
-                if (sourcesFiles.isNotEmpty()) {
-                    messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
-                }
-                val includesPath = File(includes).canonicalPath
-                val mainLibPath = libraries.find { File(it).canonicalPath == includesPath }
-                    ?: error("No library with name $includes ($includesPath) found")
-                val kLib = MainModule.Klib(mainLibPath)
-                ModulesStructure(
-                    projectJs,
-                    kLib,
-                    configurationJs,
-                    libraries,
-                    friendLibraries
-                )
-            } else {
-                sourceModule!!
+            for (module in rebuiltModules) {
+                messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
             }
 
-            if (arguments.wasm) {
-                val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
-                val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
+            return OK
+        }
 
-                val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
-                    depsDescriptors = module,
-                    phaseConfig = createPhaseConfig(wasmPhases, arguments, messageCollector),
-                    irFactory = IrFactoryImpl,
-                    exportedDeclarations = setOf(FqName("main")),
-                    generateTypeScriptFragment = generateDts,
-                    propertyLazyInitialization = arguments.irPropertyLazyInitialization,
-                )
-                val dceDumpNameCache = DceDumpNameCache()
-                if (arguments.irDce) {
-                    eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
-                }
+        val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
 
-                dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
+        val module = if (includes != null) {
+            if (sourcesFiles.isNotEmpty()) {
+                messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
+            }
+            val includesPath = File(includes).canonicalPath
+            val mainLibPath = libraries.find { File(it).canonicalPath == includesPath }
+                ?: error("No library with name $includes ($includesPath) found")
+            val kLib = MainModule.Klib(mainLibPath)
+            ModulesStructure(
+                projectJs,
+                kLib,
+                configurationJs,
+                libraries,
+                friendLibraries
+            )
+        } else {
+            sourceModule!!
+        }
 
-                val res = compileWasm(
-                    allModules = allModules,
-                    backendContext = backendContext,
-                    typeScriptFragment = typeScriptFragment,
-                    baseFileName = outputName,
-                    emitNameSection = arguments.wasmDebug,
-                    allowIncompleteImplementations = arguments.irDce,
+        if (arguments.wasm) {
+            val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
+            val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
+
+            val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
+                depsDescriptors = module,
+                phaseConfig = createPhaseConfig(wasmPhases, arguments, messageCollector),
+                irFactory = IrFactoryImpl,
+                exportedDeclarations = setOf(FqName("main")),
+                generateTypeScriptFragment = generateDts,
+                propertyLazyInitialization = arguments.irPropertyLazyInitialization,
+            )
+            val dceDumpNameCache = DceDumpNameCache()
+            if (arguments.irDce) {
+                eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
+            }
+
+            dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
+
+            val res = compileWasm(
+                allModules = allModules,
+                backendContext = backendContext,
+                typeScriptFragment = typeScriptFragment,
+                baseFileName = outputName,
+                emitNameSection = arguments.wasmDebug,
+                allowIncompleteImplementations = arguments.irDce,
                     generateWat = configuration.get(JSConfigurationKeys.WASM_GENERATE_WAT, false),
-                    generateSourceMaps = generateSourceMaps,
-                )
+                generateSourceMaps = generateSourceMaps,
+            )
 
-                writeCompilationResult(
-                    result = res,
-                    dir = outputDir,
-                    fileNameBase = outputName,
-                )
+            writeCompilationResult(
+                result = res,
+                dir = outputDir,
+                fileNameBase = outputName,
+            )
 
-                return OK
-            } else {
-                if (arguments.irDceDumpReachabilityInfoToFile != null) {
-                    messageCollector.report(STRONG_WARNING, "Dumping the reachability info to file is supported only for Kotlin/Wasm.")
-                }
-                if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
-                    messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is supported only for Kotlin/Wasm.")
-                }
+            return OK
+        } else {
+            if (arguments.irDceDumpReachabilityInfoToFile != null) {
+                messageCollector.report(STRONG_WARNING, "Dumping the reachability info to file is supported only for Kotlin/Wasm.")
             }
-
-            val start = System.currentTimeMillis()
-
-            try {
-                val ir2JsTransformer = Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments)
-                val outputs = ir2JsTransformer.compileAndTransformIrNew()
-
-                messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
-
-                outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
-            } catch (e: CompilationException) {
-                messageCollector.report(
-                    ERROR,
-                    e.stackTraceToString(),
-                    CompilerMessageLocation.create(
-                        path = e.path,
-                        line = e.line,
-                        column = e.column,
-                        lineContent = e.content
-                    )
-                )
-                return INTERNAL_ERROR
+            if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
+                messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is supported only for Kotlin/Wasm.")
             }
+        }
+
+        val start = System.currentTimeMillis()
+
+        try {
+            val ir2JsTransformer = Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments)
+            val outputs = ir2JsTransformer.compileAndTransformIrNew()
+
+            messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
+
+            outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
+        } catch (e: CompilationException) {
+            messageCollector.report(
+                ERROR,
+                e.stackTraceToString(),
+                CompilerMessageLocation.create(
+                    path = e.path,
+                    line = e.line,
+                    column = e.column,
+                    lineContent = e.content
+                )
+            )
+            return INTERNAL_ERROR
         }
 
         return OK
