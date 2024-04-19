@@ -33,6 +33,7 @@ fun main(args: Array<String>) {
             elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
             elementTransformerVoidType to ::TransformerVoidPrinter,
             typeTransformerType to ::TypeTransformerPrinter.bind(model.rootElement),
+            deepCopyIrTreeWithSymbolsType to ::DeepCopyIrTreeWithSymbolsPrinter,
         ),
         ImplementationConfigurator,
         createImplementationPrinter = ::ImplementationPrinter,

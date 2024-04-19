@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
-internal class TransformerVoidPrinter(
+internal open class TransformerVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
 ) : AbstractTransformerVoidPrinter<Element, Field>(printer) {

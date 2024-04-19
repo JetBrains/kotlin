@@ -90,23 +90,7 @@ abstract class AbstractTreeBuilder {
         mutability: ListField.Mutability,
         isChild: Boolean = true,
         initializer: ListField.() -> Unit = {}
-    ): ListField {
-        val listType = when (mutability) {
-            ListField.Mutability.MutableList -> StandardTypes.mutableList
-            ListField.Mutability.Array -> StandardTypes.array
-            else -> StandardTypes.list
-        }
-        return ListField(
-            name = name,
-            baseType = baseType,
-            listType = listType,
-            isNullable = nullable,
-            mutable = mutability == ListField.Mutability.Var,
-            isChild = isChild,
-        ).apply(initializer).apply {
-            initializer()
-        }
-    }
+    ): ListField = ListField(name, baseType, nullable, mutability, isChild).apply(initializer)
 
     fun build(): Model {
         val elements = configurationCallbacks.map { it() }

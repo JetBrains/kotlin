@@ -94,14 +94,53 @@ fun AbstractElement<*, *, *>.extendedKDoc(): String = buildString {
     append("Generated from: [${element.propertyName}]")
 }
 
-data class FunctionParameter(val name: String, val type: TypeRef, val defaultValue: String? = null) {
+data class FunctionParameter(
+    val name: String,
+    val type: TypeRef,
+    val defaultValue: String? = null,
+    val annotations: List<String> = emptyList(),
+) {
 
     context(ImportCollector)
     fun render(): String = buildString {
+        for (annotation in annotations) {
+            append(annotation, " ")
+        }
         append(name, ": ", type.render())
         defaultValue?.let {
             append(" = ", it)
         }
+    }
+}
+
+context(ImportCollector)
+fun SmartPrinter.printSecondaryConstructorDeclaration(
+    parameters: List<FunctionParameter>,
+    visibility: Visibility = Visibility.PUBLIC,
+    allParametersOnSeparateLines: Boolean = false,
+    deprecation: Deprecated? = null,
+) {
+    printDeprecation(deprecation)
+    printVisibility(visibility)
+    print("constructor(")
+    printFunctionParameters(parameters, allParametersOnSeparateLines)
+    print(")")
+}
+
+context(ImportCollector)
+private fun SmartPrinter.printFunctionParameters(parameters: List<FunctionParameter>, allParametersOnSeparateLines: Boolean) {
+    if (allParametersOnSeparateLines) {
+        if (parameters.isNotEmpty()) {
+            println()
+            withIndent {
+                for (parameter in parameters) {
+                    print(parameter.render())
+                    println(",")
+                }
+            }
+        }
+    } else {
+        print(parameters.joinToString { it.render() })
     }
 }
 
@@ -122,10 +161,7 @@ fun SmartPrinter.printFunctionDeclaration(
     optInAnnotation?.let {
         println("@", it.render())
     }
-
-    if (visibility != Visibility.PUBLIC) {
-        print(visibility.name.toLowerCaseAsciiOnly(), " ")
-    }
+    printVisibility(visibility)
     when (modality) {
         null -> {}
         Modality.FINAL -> print("final ")
@@ -145,20 +181,7 @@ fun SmartPrinter.printFunctionDeclaration(
         print(extensionReceiver.render(), ".")
     }
     print(name, "(")
-
-    if (allParametersOnSeparateLines) {
-        if (parameters.isNotEmpty()) {
-            println()
-            withIndent {
-                for (parameter in parameters) {
-                    print(parameter.render())
-                    println(",")
-                }
-            }
-        }
-    } else {
-        print(parameters.joinToString { it.render() })
-    }
+    printFunctionParameters(parameters, allParametersOnSeparateLines)
     print(")")
     if (returnType != StandardTypes.unit) {
         print(": ", returnType.render())
@@ -195,10 +218,38 @@ inline fun SmartPrinter.printFunctionWithBlockBody(
     printBlock(blockBody)
 }
 
+data class PrimaryConstructorParameter(
+    val functionParameter: FunctionParameter,
+    val kind: VariableKind,
+    val visibility: Visibility = Visibility.PUBLIC,
+) {
+    val name by functionParameter::name
+    val type by functionParameter::type
+    val defaultValue by functionParameter::defaultValue
+}
+
+context(ImportCollector)
+private fun SmartPrinter.printDeprecation(deprecation: Deprecated?) {
+    if (deprecation == null) return
+    println("@Deprecated(")
+    withIndent {
+        println("message = \"", deprecation.message, "\",")
+        println("replaceWith = ReplaceWith(\"", deprecation.replaceWith.expression, "\"),")
+        println("level = DeprecationLevel.", deprecation.level.name, ",")
+    }
+    println(")")
+}
+
+private fun SmartPrinter.printVisibility(visibility: Visibility) {
+    if (visibility != Visibility.PUBLIC) {
+        print(visibility.name.toLowerCaseAsciiOnly(), " ")
+    }
+}
+
 context(ImportCollector)
 fun SmartPrinter.printPropertyDeclaration(
     name: String,
-    type: TypeRef,
+    type: TypeRef?,
     kind: VariableKind,
     inConstructor: Boolean = false,
     visibility: Visibility = Visibility.PUBLIC,
@@ -213,16 +264,7 @@ fun SmartPrinter.printPropertyDeclaration(
     initializer: String? = null,
 ) {
     printKDoc(kDoc)
-
-    deprecation?.let {
-        println("@Deprecated(")
-        withIndent {
-            println("message = \"", it.message, "\",")
-            println("replaceWith = ReplaceWith(\"", it.replaceWith.expression, "\"),")
-            println("level = DeprecationLevel.", it.level.name, ",")
-        }
-        println(")")
-    }
+    printDeprecation(deprecation)
 
     if (isVolatile) {
         println("@", type<Volatile>().render())
@@ -236,11 +278,7 @@ fun SmartPrinter.printPropertyDeclaration(
             else -> println("@", rendered)
         }
     }
-
-    if (visibility != Visibility.PUBLIC) {
-        print(visibility.name.toLowerCaseAsciiOnly(), " ")
-    }
-
+    printVisibility(visibility)
     modality?.let {
         print(it.name.toLowerCaseAsciiOnly(), " ")
     }
@@ -256,7 +294,10 @@ fun SmartPrinter.printPropertyDeclaration(
         VariableKind.VAL -> print("val ")
         VariableKind.VAR -> print("var ")
     }
-    print(name, ": ", type.render())
+    print(name)
+    if (type != null) {
+        print(": ", type.render())
+    }
 
     if (initializer != null) {
         print(" = $initializer")

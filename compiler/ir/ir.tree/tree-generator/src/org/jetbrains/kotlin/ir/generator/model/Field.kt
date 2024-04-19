@@ -76,17 +76,22 @@ class ListField(
     name: String,
     override var baseType: TypeRef,
     private val isNullable: Boolean,
-    override val listType: ClassRef<PositionTypeParameterRef>,
-    mutable: Boolean,
+    val mutability: Mutability,
     override val isChild: Boolean,
-) : Field(name, mutable), AbstractListField {
+) : Field(name, mutability == Mutability.Var), AbstractListField {
+
+    override val listType: ClassRef<PositionTypeParameterRef> = when (mutability) {
+        Mutability.MutableList -> StandardTypes.mutableList
+        Mutability.Array -> StandardTypes.array
+        Mutability.Var -> StandardTypes.list
+    }
 
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = listType.withArgs(baseType).copy(isNullable)
 
     override fun replaceType(newType: TypeRefWithNullability) = copy()
 
-    override fun internalCopy() = ListField(name, baseType, isNullable, listType, isMutable, isChild)
+    override fun internalCopy() = ListField(name, baseType, isNullable, mutability, isChild)
 
     enum class Mutability {
         Var,

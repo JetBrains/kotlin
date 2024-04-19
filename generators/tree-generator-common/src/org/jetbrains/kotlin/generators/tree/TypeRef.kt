@@ -48,6 +48,9 @@ fun TypeRef.render(): String = buildString { renderTo(this) }
 
 sealed interface ClassOrElementRef : TypeRefWithNullability, Importable
 
+fun ClassOrElementRef.isSameClassAs(other: ClassOrElementRef): Boolean =
+    packageName == other.packageName && typeName == other.typeName
+
 // Based on com.squareup.kotlinpoet.ClassName
 class ClassRef<P : TypeParameterRef> private constructor(
     val kind: TypeKind,

@@ -289,7 +289,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("thisReceiver", valueParameter, nullable = true)
         +field(
             "valueClassRepresentation",
-            type<ValueClassRepresentation<*>>().withArgs(type(Packages.types, "IrSimpleType")),
+            type<ValueClassRepresentation<*>>().withArgs(irSimpleTypeType),
             nullable = true,
         ) {
             skipInIrFactory()

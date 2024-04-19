@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.util.bfs
 
 /**
  * Returns a bottom-up hierarchy of inheritance, from this element's parents, to its top-most base elements, recursively,
- * in a depth first manner.
+ * in a depth-first manner.
  */
 fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsDepthFirst(): Sequence<Element> = sequence {
     for (parent in elementParents) {
@@ -20,14 +20,14 @@ fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsDepthFirs
 
 /**
  * Returns a bottom-up hierarchy of inheritance, from this element, to its top-most base elements, recursively,
- * in a depth first manner.
+ * in a depth-first manner.
  */
 fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsAndSelfDepthFirst(): Sequence<Element> =
     sequenceOf(this) + elementAncestorsDepthFirst()
 
 /**
  * Returns a bottom-up hierarchy of inheritance, from this element, to its top-most base elements, recursively,
- * in a breadth first manner.
+ * in a breadth-first manner.
  */
 fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsAndSelfBreadthFirst(): Sequence<Element> =
     listOf(this).bfs { element ->
@@ -90,3 +90,9 @@ val AbstractElement<*, *, *>.safeDecapitalizedName: String
         "Class" -> "klass"
         else -> name.replaceFirstChar(Char::lowercaseChar)
     }
+
+fun <Element : AbstractElement<Element, *, *>> Element.isSubclassOf(otherClass: ClassOrElementRef): Boolean {
+    if (otherClass.isSameClassAs(this)) return true
+    return elementParents.any { it.element.isSubclassOf(otherClass) } || otherParents.any { otherClass.isSameClassAs(it) }
+}
+

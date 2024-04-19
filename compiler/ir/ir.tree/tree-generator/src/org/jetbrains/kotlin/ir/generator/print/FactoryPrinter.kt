@@ -42,19 +42,25 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile = p
     println("}")
 }
 
-private class FactoryMethod(val element: Element) {
+internal class FactoryMethod(val element: Element) {
 
     val name = "create" + element.name.capitalizeAsciiOnly()
 
-    val parameters = (element.allFields + element.additionalIrFactoryMethodParameters)
-        .filterNot { it.name in element.fieldsToSkipInIrFactoryMethod }
-        .mapNotNull { field ->
-            (field.useInIrFactoryStrategy as? Field.UseFieldAsParameterInIrFactoryStrategy.Yes)?.let {
-                FunctionParameter(field.name, it.customType ?: field.typeRef, it.defaultValue)
-            }
+    private fun factoryMethodParameter(field: Field): FunctionParameter? {
+        if (field.name in element.fieldsToSkipInIrFactoryMethod) return null
+        return (field.useInIrFactoryStrategy as? Field.UseFieldAsParameterInIrFactoryStrategy.Yes)?.let {
+            FunctionParameter(field.name, it.customType ?: field.typeRef, it.defaultValue)
         }
-        .sortedBy { it.defaultValue != null } // All parameters with default values must go last
-        .toMutableList()
+    }
+
+    val parametersAndFields: List<Pair<FunctionParameter, Field?>> = buildList<Pair<FunctionParameter, Field?>> {
+        element.allFields.forEach { field ->
+            factoryMethodParameter(field)?.let { add(it to field) }
+        }
+        element.additionalIrFactoryMethodParameters.forEach { field ->
+            factoryMethodParameter(field)?.let { add(it to null) }
+        }
+    }.sortedBy { (parameter, _) -> parameter.defaultValue != null } // All parameters with default values must go last
 }
 
 private const val MAX_FUNCTION_PARAMETERS_ON_ONE_LINE = 2
@@ -64,10 +70,10 @@ private fun SmartPrinter.printFactoryMethod(factoryMethod: FactoryMethod) {
     println()
     printFunctionDeclaration(
         name = factoryMethod.name,
-        parameters = factoryMethod.parameters,
+        parameters = factoryMethod.parametersAndFields.map { it.first },
         returnType = factoryMethod.element,
         typeParameters = factoryMethod.element.params,
-        allParametersOnSeparateLines = factoryMethod.parameters.size > MAX_FUNCTION_PARAMETERS_ON_ONE_LINE,
+        allParametersOnSeparateLines = factoryMethod.parametersAndFields.size > MAX_FUNCTION_PARAMETERS_ON_ONE_LINE,
     )
     println()
 }
