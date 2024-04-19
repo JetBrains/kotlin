@@ -21436,6 +21436,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Test
+    @TestMetadata("copyOnObject.kt")
+    public void testCopyOnObject() {
+      runTest("compiler/testData/codegen/box/fir/copyOnObject.kt");
+    }
+
+    @Test
     @TestMetadata("CustomHashSetSize.kt")
     public void testCustomHashSetSize() {
       runTest("compiler/testData/codegen/box/fir/CustomHashSetSize.kt");

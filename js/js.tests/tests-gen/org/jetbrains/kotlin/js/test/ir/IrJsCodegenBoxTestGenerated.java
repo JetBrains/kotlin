@@ -16396,6 +16396,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("copyOnObject.kt")
+    public void testCopyOnObject() {
+      runTest("compiler/testData/codegen/box/fir/copyOnObject.kt");
+    }
+
+    @Test
     @TestMetadata("deserializedOptInDeprecated.kt")
     public void testDeserializedOptInDeprecated() {
       runTest("compiler/testData/codegen/box/fir/deserializedOptInDeprecated.kt");
