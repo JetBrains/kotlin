@@ -6581,6 +6581,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("usefulCastInMap.kt")
+      public void testUsefulCastInMap() {
+        runTest("compiler/testData/diagnostics/tests/cast/usefulCastInMap.kt");
+      }
+
+      @Test
       @TestMetadata("UselessSafeCast.kt")
       public void testUselessSafeCast() {
         runTest("compiler/testData/diagnostics/tests/cast/UselessSafeCast.kt");
