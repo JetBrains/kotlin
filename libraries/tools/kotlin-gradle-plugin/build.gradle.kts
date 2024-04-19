@@ -239,20 +239,41 @@ gradlePlugin {
     }
 }
 
+/**
+ * Finds the matching source set by the same rules as Gradle uses for proper KGP variant selection.
+ *
+ * Examples:
+ * - for Gradle 7.6.3 the used variant is `gradle76`
+ * - for Gradle 7.3 the used variant is `gradle71`
+ */
+fun findHighestPossibleGradleVersionSourceSet(): SourceSet {
+    val gradleVersion = GradleVersion.current().version
+    val minorGradleVersion = if (gradleVersion.count { it == '.' } == 2) {
+        gradleVersion.substringBeforeLast(".")
+    } else {
+        gradleVersion
+    }.replace(".", "").toInt()
+    val sourceSetName = sourceSets.names.sorted()
+        .map { it.removePrefix("gradle").toIntOrNull() to it }
+        .filter { it.first != null }
+        .last { it.first!! <= minorGradleVersion }.second
+    return sourceSets.getByName(sourceSetName)
+}
+
 // Gradle plugins functional tests
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-
     val functionalTestSourceSet = sourceSets.create("functionalTest") {
-        compileClasspath += mainSourceSet.output
-        runtimeClasspath += mainSourceSet.output
+        val kgpSourceSet = findHighestPossibleGradleVersionSourceSet()
+        compileClasspath += kgpSourceSet.output
+        runtimeClasspath += kgpSourceSet.output
 
         configurations.getByName(implementationConfigurationName) {
-            extendsFrom(configurations.getByName(mainSourceSet.implementationConfigurationName))
+            extendsFrom(configurations.getByName(kgpSourceSet.implementationConfigurationName))
             extendsFrom(configurations.getByName(testSourceSet.implementationConfigurationName))
         }
 
         configurations.getByName(runtimeOnlyConfigurationName) {
-            extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
+            extendsFrom(configurations.getByName(kgpSourceSet.runtimeOnlyConfigurationName))
             extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
         }
     }
@@ -267,7 +288,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
         }
     }
-    functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("main"))
+    functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("gradle82"))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
     tasks.register<Test>("functionalTest")
