@@ -935,6 +935,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         }
 
         @Test
+        @TestMetadata("nullableArray.kt")
+        public void testNullableArray() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/nullableArray.kt");
+        }
+
+        @Test
         @TestMetadata("NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt")
         public void testNullableProjectionOfWildcardWithNonNullBoundsInOutPosition() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullableProjectionOfWildcardWithNonNullBoundsInOutPosition.kt");
@@ -1170,6 +1176,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         @TestMetadata("NullUnmarkedVsTypeNullMarked.kt")
         public void testNullUnmarkedVsTypeNullMarked() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsTypeNullMarked.kt");
+        }
+
+        @Test
+        @TestMetadata("nullableArray.kt")
+        public void testNullableArray() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/nullableArray.kt");
         }
 
         @Test
