@@ -28403,6 +28403,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("extensionPropertyMustHaveAccessorsOrBeAbstract2.kt")
+      public void testExtensionPropertyMustHaveAccessorsOrBeAbstract2() {
+        runTest("compiler/testData/diagnostics/tests/properties/extensionPropertyMustHaveAccessorsOrBeAbstract2.kt");
+      }
+
+      @Test
       @TestMetadata("flexibleTypeReceiver.kt")
       public void testFlexibleTypeReceiver() {
         runTest("compiler/testData/diagnostics/tests/properties/flexibleTypeReceiver.kt");
