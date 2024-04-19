@@ -17061,6 +17061,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("noInformationForStarProjectionCase.kt")
+      public void testNoInformationForStarProjectionCase() {
+        runTest("compiler/testData/diagnostics/tests/inference/noInformationForStarProjectionCase.kt");
+      }
+
+      @Test
       @TestMetadata("nonFunctionalExpectedTypeForLambdaArgument.kt")
       public void testNonFunctionalExpectedTypeForLambdaArgument() {
         runTest("compiler/testData/diagnostics/tests/inference/nonFunctionalExpectedTypeForLambdaArgument.kt");
