@@ -45,7 +45,11 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 KotlinTestUtils.assertEqualsToFile(
                     projectPath.resolve("diagnostics-linkIosArm64.txt"), extractProjectsAndTheirDiagnostics()
                 )
-                assertTasksSkipped(":linkIosArm64")
+                // Do not assert :linkIosArm64, because it's a plain umbrella-like `org.gradle.DefaultTask` instance,
+                // and it doesn't get disabled even on linuxes (see [KotlinNativeConfigureBinariesSideEffect])
+                assertTasksSkipped(":linkDebugTestIosArm64")
+                assertTasksSkipped(":linkReleaseExecutableIosArm64")
+                assertTasksSkipped(":linkDebugExecutableIosArm64")
             }
         }
     }
