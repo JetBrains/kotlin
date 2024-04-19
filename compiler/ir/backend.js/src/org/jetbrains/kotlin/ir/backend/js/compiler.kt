@@ -49,9 +49,6 @@ fun compile(
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
-    val performanceManager = depsDescriptors.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyIRTranslationStarted()
-
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
         loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 

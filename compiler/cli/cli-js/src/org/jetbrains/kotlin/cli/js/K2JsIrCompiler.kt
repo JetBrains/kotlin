@@ -328,7 +328,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 return OK
         }
 
-        if (!arguments.irProduceJs) return OK
+        if (!arguments.irProduceJs) {
+            performanceManager?.notifyIRTranslationFinished()
+            return OK
+        }
 
         messageCollector.report(INFO, "Produce executable: $outputDirPath")
         messageCollector.report(INFO, "Cache directory: ${arguments.cacheDirectory}")
@@ -366,6 +369,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
             }
 
+            performanceManager?.notifyIRTranslationFinished()
             return OK
         }
 
@@ -610,6 +614,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         // FIR2IR
+        performanceManager?.notifyIRTranslationStarted()
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, true)
         if (diagnosticsReporter.hasErrors) {

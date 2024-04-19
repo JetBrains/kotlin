@@ -226,10 +226,6 @@ fun transformFirToIr(
     }
 
     val firResult = FirResult(firOutputs)
-
-    val performanceManager = moduleStructure.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyIRTranslationStarted()
-
     return firResult.convertToIrAndActualize(
         fir2IrExtensions,
         Fir2IrConfiguration.forKlibCompilation(moduleStructure.compilerConfiguration, diagnosticsReporter),
@@ -241,8 +237,6 @@ fun transformFirToIr(
         actualizerTypeContextProvider = ::IrTypeSystemContextImpl
     ) { _, irPart ->
         (irPart.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
-    }.also {
-        performanceManager?.notifyIRTranslationFinished()
     }
 }
 
