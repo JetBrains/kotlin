@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
@@ -49,6 +50,8 @@ fun compile(
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
+    val performanceManager = depsDescriptors.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    performanceManager?.notifyIRTranslationStarted()
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
         loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
@@ -92,6 +95,7 @@ fun compileIr(
     val moduleDescriptor = moduleFragment.descriptor
     val irFactory = symbolTable.irFactory
     val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
+    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
@@ -130,10 +134,14 @@ fun compileIr(
 
     // TODO should be done incrementally
     generateJsTests(context, allModules.last())
+    performanceManager?.notifyIRTranslationFinished()
 
+    performanceManager?.notifyGenerationStarted()
+    performanceManager?.notifyIRLoweringStarted()
     (irFactory.stageController as? WholeWorldStageController)?.let {
         lowerPreservingTags(allModules, context, phaseConfig, it)
     } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
 
+    performanceManager?.notifyIRLoweringFinished()
     return LoweredIr(context, moduleFragment, allModules, moduleToName)
 }
