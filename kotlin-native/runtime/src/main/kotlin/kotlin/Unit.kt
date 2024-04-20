@@ -11,6 +11,6 @@ import kotlin.native.internal.ExportTypeInfo
  * The type with only one value: the `Unit` object.
  */
 @ExportTypeInfo("theUnitTypeInfo")
-public object Unit {
+public actual object Unit {
     override fun toString(): String = "kotlin.Unit"
 }
