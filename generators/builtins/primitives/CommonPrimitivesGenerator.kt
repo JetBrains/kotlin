@@ -19,7 +19,11 @@ class CommonPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject(thisKind: PrimitiveType) {
-        annotations += """Suppress("EXPECTED_PROPERTY_INITIALIZER")"""
+        if (thisKind.isFloatingPoint) {
+            annotations += """Suppress("EXPECTED_PROPERTY_INITIALIZER", "DIVISION_BY_ZERO")"""
+        } else {
+            annotations += """Suppress("EXPECTED_PROPERTY_INITIALIZER")"""
+        }
     }
 
     override fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {
