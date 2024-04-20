@@ -1586,7 +1586,7 @@ public expect class Long : Number, Comparable<Long> {
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
 @ActualizeByJvmBuiltinProvider
 public expect class Float : Number, Comparable<Float> {
-    @Suppress("EXPECTED_PROPERTY_INITIALIZER")
+    @Suppress("EXPECTED_PROPERTY_INITIALIZER", "DIVISION_BY_ZERO")
     public companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -1920,7 +1920,7 @@ public expect class Float : Number, Comparable<Float> {
 /** Represents a double-precision 64-bit IEEE 754 floating point number. */
 @ActualizeByJvmBuiltinProvider
 public expect class Double : Number, Comparable<Double> {
-    @Suppress("EXPECTED_PROPERTY_INITIALIZER")
+    @Suppress("EXPECTED_PROPERTY_INITIALIZER", "DIVISION_BY_ZERO")
     public companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
