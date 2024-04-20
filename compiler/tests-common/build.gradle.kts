@@ -70,7 +70,7 @@ dependencies {
     testApi(commonDependency("one.util:streamex"))
     testApi(commonDependency("org.codehaus.woodstox:stax2-api"))
     testApi(commonDependency("com.fasterxml:aalto-xml"))
-    testApi("org.opentest4j:opentest4j:1.2.0")
+    testApi(libs.opentest4j)
 
     testApi(jpsModel()) { isTransitive = false }
     testApi(jpsModelImpl()) { isTransitive = false }

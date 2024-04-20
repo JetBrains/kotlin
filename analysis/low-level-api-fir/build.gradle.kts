@@ -48,7 +48,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))
 
-    testImplementation("org.opentest4j:opentest4j:1.2.0")
+    testImplementation(libs.opentest4j)
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testImplementation(toolsJar())
     testImplementation(projectTests(":compiler:tests-common"))
