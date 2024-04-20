@@ -155,3 +155,27 @@ public inline fun repeat(times: Int, action: (Int) -> Unit) {
         action(index)
     }
 }
+
+/**
+ * This function performs a given operation on an input of type T.
+ * The operation is specified by a string and can be one of the following: "run", "also", "with", "apply".
+ * The operation is performed by calling the corresponding scope function in Kotlin.
+ * The function takes a lambda with receiver as a parameter, which is the block of code to be executed within the scope function.
+ * If an unsupported operation is provided, the function throws an IllegalArgumentException.
+ *
+ * @param input The input on which the operation is performed.
+ * @param operation The operation to be performed. Can be one of the following: "run", "also", "with", "apply".
+ * @param block The block of code to be executed within the scope function.
+ * @return The result of the operation. The type of the result depends on the operation and the block of code.
+ * @throws IllegalArgumentException If an unsupported operation is provided.
+ */
+@kotlin.internal.InlineOnly
+public fun <T> performOperation(input: T, operation: String, block: T.() -> Unit): Any? {
+    return when (operation) {
+        "run" -> input.run(block)
+        "also" -> input.also(block)
+        "with" -> with(input, block)
+        "apply" -> input.apply(block)
+        else -> throw IllegalArgumentException("Operation not supported")
+    }
+}
