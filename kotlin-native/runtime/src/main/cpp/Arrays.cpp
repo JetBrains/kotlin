@@ -599,9 +599,9 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
     ArrayHeader* array = byteArray->array();
     uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, 0));
 
-#if KONAN_MACOSX || KONAN_IOS || KONAN_TVOS || KONAN_WATCHOS
+#if KONAN_MACOSX || KONAN_IOS || KONAN_TVOS || KONAN_WATCHOS || KONAN_ANDROID
     arc4random_buf(address, size);
-#elif KONAN_LINUX || KONAN_ANDROID
+#elif KONAN_LINUX
     #include <sys/syscall.h>
     #include <unistd.h>
     #include <sys/types.h>
@@ -613,9 +613,9 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
     #ifdef SYS_getrandom
         static std::atomic<bool> use_getrandom(true);
         if (use_getrandom.load(std::memory_order_acquire)) {
-            size_t count = 0;
+            long count = 0;
             while (count < size) {
-                size_t ret = syscall(SYS_getrandom, address + count, size - count, 0); // blocking
+                long ret = syscall(SYS_getrandom, address + count, size - count, 0); // blocking
                 if (ret >= 0) {
                     count += ret;
                 }
@@ -639,9 +639,9 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
         if (fd < 0) {
             throw std::runtime_error("Failed to open /dev/[u]random");
         }
-        size_t count = 0;
+        long count = 0;
         while(count < size) {
-            size_t ret = read(fd, address + count, size - count);
+            long ret = read(fd, address + count, size - count);
             if (ret >= 0) {
                 count += ret;
             }
