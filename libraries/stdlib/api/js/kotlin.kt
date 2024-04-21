@@ -1,3 +1,7 @@
+public val kotlin.UUID.Companion.BITWISE_ORDER: kotlin.Comparator<kotlin.UUID> { get; }
+
+public val kotlin.UUID.Companion.TIMESTAMP_ORDER: kotlin.Comparator<kotlin.UUID> { get; }
+
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
@@ -3657,6 +3661,47 @@ public final inline class UShortArray : kotlin.collections.Collection<kotlin.USh
     public final operator fun set(index: kotlin.Int, value: kotlin.UShort): kotlin.Unit
 
     public open override fun toString(): kotlin.String
+}
+
+public final class UUID {
+    public final val isIETFVariant: kotlin.Boolean { get; }
+
+    public final val leastSignificantBits: kotlin.Long { get; }
+
+    public final val mostSignificantBits: kotlin.Long { get; }
+
+    public final val version: kotlin.Int { get; }
+
+    public final fun toByteArray(): kotlin.ByteArray
+
+    public final fun toHexString(): kotlin.String
+
+    @kotlin.internal.InlineOnly
+    public final inline fun toLongs(block: (mostSignificantBits: kotlin.Long, leastSignificantBits: kotlin.Long) -> kotlin.Unit): kotlin.Unit
+
+    public open override fun toString(): kotlin.String
+
+    public companion object of UUID {
+        public final val MAX_VALUE: kotlin.UUID { get; }
+
+        public final val MIN_VALUE: kotlin.UUID { get; }
+
+        public const final val SIZE_BITS: kotlin.Int = 128 { get; }
+
+        public const final val SIZE_BYTES: kotlin.Int = 16 { get; }
+
+        public final fun fromByteArray(byteArray: kotlin.ByteArray): kotlin.UUID
+
+        public final fun fromLongs(mostSignificantBits: kotlin.Long, leastSignificantBits: kotlin.Long): kotlin.UUID
+
+        public final fun fromULongs(mostSignificantBits: kotlin.ULong, leastSignificantBits: kotlin.ULong): kotlin.UUID
+
+        public final fun parse(uuidString: kotlin.String): kotlin.UUID
+
+        public final fun parseHex(hexString: kotlin.String): kotlin.UUID
+
+        public final fun randomUUIDv4(): kotlin.UUID
+    }
 }
 
 public open class UninitializedPropertyAccessException : kotlin.RuntimeException {
