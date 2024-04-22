@@ -26,7 +26,7 @@ class ExtensionConfigurationTest {
                     "sourceInformation" to "false",
                     "intrinsicRemember" to "false",
                     "nonSkippingGroupOptimization" to "false",
-                    "experimentalStrongSkipping" to "false",
+                    "strongSkipping" to "false",
                     "traceMarkersEnabled" to "false",
                 ),
                 options

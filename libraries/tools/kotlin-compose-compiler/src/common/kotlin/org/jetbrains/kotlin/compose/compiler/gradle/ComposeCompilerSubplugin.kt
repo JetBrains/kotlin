@@ -80,7 +80,7 @@ class ComposeCompilerGradleSubplugin
                 })
                 add(composeExtension.enableStrongSkippingMode.map {
                     // Rename once the option in Compose compiler is also renamed
-                    SubpluginOption("experimentalStrongSkipping", it.toString())
+                    SubpluginOption("strongSkipping", it.toString())
                 })
                 add(composeExtension.stabilityConfigurationFile.map<SubpluginOption> {
                     FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile))
