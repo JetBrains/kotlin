@@ -40553,6 +40553,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("kt67628.kt")
+      public void testKt67628() {
+        runTest("compiler/testData/diagnostics/tests/typealias/kt67628.kt");
+      }
+
+      @Test
       @TestMetadata("localTypeAlias.kt")
       public void testLocalTypeAlias() {
         runTest("compiler/testData/diagnostics/tests/typealias/localTypeAlias.kt");
