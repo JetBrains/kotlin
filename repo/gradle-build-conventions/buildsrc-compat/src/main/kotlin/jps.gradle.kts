@@ -69,6 +69,8 @@ fun updateCompilerXml() {
         "native/commonizer",
         "native/commonizer-api",
         "native/objcexport-header-generator",
+        "native/swift/swift-export-standalone/tests",
+        "native/swift/swift-export-standalone/tests-gen",
         "plugins/atomicfu/atomicfu-compiler/test/org/jetbrains/kotlin/konan/test/blackbox",
         "plugins/atomicfu/atomicfu-runtime",
         "plugins/fir-plugin-prototype/plugin-annotations",

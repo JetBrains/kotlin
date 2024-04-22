@@ -34,7 +34,10 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":native:native.tests"))
+
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        testApi(projectTests(":native:native.tests"))
+    }
 }
 
 sourceSets {
