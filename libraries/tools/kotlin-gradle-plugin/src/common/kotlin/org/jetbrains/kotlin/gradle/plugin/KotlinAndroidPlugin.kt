@@ -28,7 +28,8 @@ internal open class KotlinAndroidPlugin(
                 project.objects.newInstance(
                     KotlinAndroidTarget::class.java,
                     "",
-                    project
+                    project,
+                    false,
                 ).also { target ->
                     val kotlinAndroidExtension = project.kotlinExtension as KotlinAndroidProjectExtension
                     kotlinAndroidExtension.targetFuture.complete(target)

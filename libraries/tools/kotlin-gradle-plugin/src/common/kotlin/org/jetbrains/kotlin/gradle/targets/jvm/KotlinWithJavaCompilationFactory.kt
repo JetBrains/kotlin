@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationLanguageSettingsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationTaskNamesContainerFactory
@@ -54,7 +54,7 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
             compilationTaskNamesContainerFactory = JvmWithJavaCompilationTaskNamesContainerFactory(javaSourceSet),
 
             /* Use compile & runtime classpath from javaSourceSet by default */
-            preConfigureAction = DefaultKotlinCompilationPreConfigure + { compilation ->
+            preConfigureAction = KotlinCompilationLanguageSettingsConfigurator + { compilation ->
                 compilation.compileDependencyFiles = project.filesProvider { javaSourceSet.compileClasspath }
                 compilation.runtimeDependencyFiles = project.filesProvider { javaSourceSet.runtimeClasspath }
             },
