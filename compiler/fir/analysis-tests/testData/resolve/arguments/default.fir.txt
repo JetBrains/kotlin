@@ -19,5 +19,5 @@ FILE: default.kt
         R|/baz|(Int(1))
         R|/baz|(Int(1), vararg(String(my), String(yours)))
         R|/baz|(Int(1), Boolean(true))
-        R|/baz<Inapplicable(INAPPLICABLE): /baz>#|(Int(0), String(), Boolean(false))
+        R|/baz<Inapplicable(INAPPLICABLE): /baz>#|(Int(0), vararg(String(), Boolean(false)))
     }
