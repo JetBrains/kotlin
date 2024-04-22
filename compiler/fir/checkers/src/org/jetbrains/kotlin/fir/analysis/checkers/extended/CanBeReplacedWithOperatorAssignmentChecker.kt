@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.isPrimitive
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -40,7 +41,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
         val rValue = expression.rValue as? FirFunctionCall ?: return
         if (rValue.source?.kind is KtFakeSourceElementKind) return
 
-        if (rValue.explicitReceiver?.resolvedType?.isPrimitive != true) return
+        if (rValue.explicitReceiver?.resolvedType?.fullyExpandedType(context.session)?.isPrimitive != true) return
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
         if (rValueResolvedSymbol.dispatchReceiverClassTypeOrNull()?.isPrimitive != true) return
 

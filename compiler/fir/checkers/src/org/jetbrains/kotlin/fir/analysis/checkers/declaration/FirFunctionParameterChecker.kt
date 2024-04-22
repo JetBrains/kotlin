@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
@@ -66,12 +67,12 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val varargParameterType = when (function) {
                 is FirAnonymousFunction -> coneType
                 else -> coneType.arrayElementType()
-            } ?: continue
+            }?.fullyExpandedType(context.session) ?: continue
             // LUB is checked to ensure varargParameterType may
             // never be anything except `Nothing` or `Nothing?`
             // in case it is a complex type that quantifies
             // over many other types.
-            if (varargParameterType.leastUpperBound(context.session).isNothingOrNullableNothing ||
+            if (varargParameterType.leastUpperBound(context.session).fullyExpandedType(context.session).isNothingOrNullableNothing ||
                 (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.

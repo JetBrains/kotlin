@@ -58,8 +58,8 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
 
         val source = whenExpression.source ?: return
 
-        val subjectType = whenExpression.subject?.resolvedType?.lowerBoundIfFlexible()
-        val subjectClassSymbol = subjectType?.fullyExpandedType(context.session)?.toRegularClassSymbol(context.session)
+        val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(context.session)?.lowerBoundIfFlexible()
+        val subjectClassSymbol = subjectType?.toRegularClassSymbol(context.session)
 
         if (whenExpression.usedAsExpression) {
             if (source.isIfExpression) {

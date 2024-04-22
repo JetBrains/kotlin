@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedConeType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -1111,7 +1112,7 @@ class Fir2IrVisitor(
             }
         }
         if (source?.kind is KtRealSourceElementKind) {
-            val lastStatementHasNothingType = (statements.lastOrNull() as? FirExpression)?.resolvedType?.isNothing == true
+            val lastStatementHasNothingType = (statements.lastOrNull() as? FirExpression)?.resolvedType?.fullyExpandedType(session)?.isNothing == true
             return statements.convertToIrBlock(source, origin, forceUnitType = origin?.isLoop == true || lastStatementHasNothingType)
         }
         return statements.convertToIrExpressionOrBlock(source, origin)

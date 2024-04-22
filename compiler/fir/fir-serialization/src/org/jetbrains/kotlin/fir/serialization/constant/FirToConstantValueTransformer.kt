@@ -177,7 +177,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
             requiredMembersPhase = FirResolvePhase.TYPES
         )?.getDeclaredConstructors()?.firstOrNull()?.let {
             for (parameterSymbol in it.valueParameterSymbols) {
-                if (result[parameterSymbol.name] == null && parameterSymbol.resolvedReturnTypeRef.coneType.isArrayType) {
+                if (result[parameterSymbol.name] == null && parameterSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isArrayType) {
                     result[parameterSymbol.name] = ArrayValue(emptyList())
                 }
             }

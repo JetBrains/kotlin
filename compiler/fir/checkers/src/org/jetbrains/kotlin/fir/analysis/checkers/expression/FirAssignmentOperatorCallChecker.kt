@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
@@ -26,7 +27,7 @@ object FirAssignmentOperatorCallChecker : FirFunctionCallChecker(MppCheckerKind.
         ) {
             return
         }
-        if (!expression.resolvedType.isUnit) {
+        if (!expression.resolvedType.fullyExpandedType(context.session).isUnit) {
             reporter.reportOn(
                 expression.source,
                 FirErrors.ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,

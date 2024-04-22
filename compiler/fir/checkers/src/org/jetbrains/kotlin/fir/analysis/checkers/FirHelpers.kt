@@ -532,7 +532,7 @@ fun checkTypeMismatch(
 }
 
 internal fun checkCondition(condition: FirExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-    val coneType = condition.resolvedType.lowerBoundIfFlexible()
+    val coneType = condition.resolvedType.fullyExpandedType(context.session).lowerBoundIfFlexible()
     if (coneType !is ConeErrorType && !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.type)) {
         reporter.reportOn(
             condition.source,

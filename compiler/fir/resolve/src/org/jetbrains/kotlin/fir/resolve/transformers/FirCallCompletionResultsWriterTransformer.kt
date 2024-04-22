@@ -1044,7 +1044,7 @@ class FirCallCompletionResultsWriterTransformer(
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type
         arrayLiteral.resultType =
-            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.isPrimitiveArray == true)
+            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType(session)?.isPrimitiveArray == true)
         return arrayLiteral
     }
 

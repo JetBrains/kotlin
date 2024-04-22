@@ -53,7 +53,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
         val functionReturnType = if (targetElement is FirConstructor)
             context.session.builtinTypes.unitType.coneType
         else
-            targetElement.returnTypeRef.coneType
+            targetElement.returnTypeRef.coneType.fullyExpandedType(context.session)
         if (targetElement is FirAnonymousFunction) {
             if (sourceKind is KtFakeSourceElementKind.ImplicitReturn.FromLastStatement &&
                 functionReturnType.isUnit
