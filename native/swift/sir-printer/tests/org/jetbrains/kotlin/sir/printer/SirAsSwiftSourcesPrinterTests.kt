@@ -560,6 +560,7 @@ class SirAsSwiftSourcesPrinterTests {
                             initKind = SirInitializerKind.ORDINARY
                             visibility = SirVisibility.PUBLIC
                             isFailable = true
+                            isOverride = false
                             parameters.addAll(
                                 listOf(
                                     SirParameter(
@@ -602,6 +603,7 @@ class SirAsSwiftSourcesPrinterTests {
                             initKind = SirInitializerKind.ORDINARY
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
+                            isOverride = false
                             parameters.addAll(
                                 listOf(
                                     SirParameter(
@@ -632,6 +634,7 @@ class SirAsSwiftSourcesPrinterTests {
                             initKind = SirInitializerKind.REQUIRED
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
+                            isOverride = false
                             parameters.addAll(
                                 listOf(
                                     SirParameter(
@@ -662,6 +665,7 @@ class SirAsSwiftSourcesPrinterTests {
                             initKind = SirInitializerKind.CONVENIENCE
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
+                            isOverride = false
                             parameters.addAll(
                                 listOf(
                                     SirParameter(

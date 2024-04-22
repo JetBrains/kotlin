@@ -163,7 +163,7 @@ public class SirAsSwiftSourcesPrinter(
     )
 
     private fun SirClass.printSuperClass() = print(
-        superClass?.let { ": ${it.swift} " }
+        superClass?.let { ": ${it.swift} " } ?: ""
     )
 
     private fun SirElement.printName() =print(
