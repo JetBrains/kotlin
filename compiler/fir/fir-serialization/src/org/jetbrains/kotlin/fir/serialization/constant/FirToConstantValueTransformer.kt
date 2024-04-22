@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
@@ -170,7 +171,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
             requiredMembersPhase = FirResolvePhase.TYPES
         )?.getDeclaredConstructors()?.firstOrNull()?.let {
             for (parameterSymbol in it.valueParameterSymbols) {
-                if (result[parameterSymbol.name] == null && parameterSymbol.resolvedReturnTypeRef.coneType.isArrayType) {
+                if (result[parameterSymbol.name] == null && parameterSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isArrayType) {
                     result[parameterSymbol.name] = ArrayValue(emptyList())
                 }
             }

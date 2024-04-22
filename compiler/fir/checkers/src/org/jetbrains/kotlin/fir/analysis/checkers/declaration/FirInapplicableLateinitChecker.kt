@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
 object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -80,7 +81,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
         }
 
         if (declaration.returnTypeRef.coneType.isSingleFieldValueClass(context.session)) {
-            val declarationType = declaration.returnTypeRef.coneType
+            val declarationType = declaration.returnTypeRef.coneType.fullyExpandedType(context.session)
             val variables = if (declaration.isLocal) "local variables" else "properties"
             when {
                 declarationType.isUnsignedType -> reporter.reportError(

@@ -191,7 +191,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
         }
 
         fun parameterHasCycle(ownedAnnotation: FirRegularClassSymbol, parameter: FirValueParameterSymbol): Boolean {
-            val returnType = parameter.resolvedReturnTypeRef.coneType
+            val returnType = parameter.resolvedReturnTypeRef.coneType.fullyExpandedType(session)
             return when {
                 parameter.isVararg || returnType.isNonPrimitiveArray -> false
                 returnType.typeArguments.isNotEmpty() -> {

@@ -221,7 +221,7 @@ class FirSyntheticCallGenerator(
     }
 
     private fun calculateArrayOfSymbol(expectedTypeRef: FirTypeRef): FirNamedFunctionSymbol? {
-        val coneType = expectedTypeRef.coneType
+        val coneType = expectedTypeRef.coneType.fullyExpandedType(session)
         val arrayCallName = when {
             coneType.isPrimitiveArray -> {
                 val arrayElementClassId = coneType.arrayElementType()!!.classId

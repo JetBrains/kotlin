@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
 object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -32,10 +33,11 @@ object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(M
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        if (type.isArrayOfNothing()) {
+        val fullyExpandedType = type.fullyExpandedType(context.session)
+        if (fullyExpandedType.isArrayOfNothing()) {
             reporter.reportOn(source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
         } else {
-            for (typeArg in type.typeArguments) {
+            for (typeArg in fullyExpandedType.typeArguments) {
                 val typeArgType = typeArg.type ?: continue
                 checkTypeAndTypeArguments(typeArgType, source, context, reporter)
             }

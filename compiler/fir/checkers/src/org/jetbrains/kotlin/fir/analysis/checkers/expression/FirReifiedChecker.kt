@@ -32,7 +32,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             val typeArgumentProjection = typeArguments.elementAt(index)
             val source = typeArgumentProjection.source ?: calleeReference.source ?: continue
 
-            val typeArgument = typeArgumentProjection.toConeTypeProjection().type ?: continue
+            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType(context.session) ?: continue
             val typeParameter = typeParameters[index]
 
             if (typeParameter.isReifiedTypeParameterOrFromKotlinArray()) {

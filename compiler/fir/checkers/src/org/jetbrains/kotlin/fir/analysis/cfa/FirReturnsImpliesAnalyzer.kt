@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.BlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
@@ -100,7 +101,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
         val resultExpression = if (isReturn) (node.fir as FirReturnExpression).result else node.fir
 
-        val expressionType = (resultExpression as? FirExpression)?.resolvedType
+        val expressionType = (resultExpression as? FirExpression)?.resolvedType?.fullyExpandedType(context.session)
         if (expressionType == builtinTypes.nothingType.type) return false
 
         if (isReturn && resultExpression is FirWhenExpression) {
