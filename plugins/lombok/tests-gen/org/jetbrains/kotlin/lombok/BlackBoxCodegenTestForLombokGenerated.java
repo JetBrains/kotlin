@@ -103,6 +103,12 @@ public class BlackBoxCodegenTestForLombokGenerated extends AbstractBlackBoxCodeg
   }
 
   @Test
+  @TestMetadata("conflictingGetter.kt")
+  public void testConflictingGetter() {
+    runTest("plugins/lombok/testData/box/conflictingGetter.kt");
+  }
+
+  @Test
   @TestMetadata("data.kt")
   public void testData() {
     runTest("plugins/lombok/testData/box/data.kt");
