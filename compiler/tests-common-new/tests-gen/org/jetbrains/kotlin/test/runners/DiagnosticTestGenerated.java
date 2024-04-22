@@ -36305,6 +36305,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("explicitTypeArguments.kt")
+      public void testExplicitTypeArguments() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/explicitTypeArguments.kt");
+      }
+
+      @Test
       @TestMetadata("extensionSafeCall.kt")
       public void testExtensionSafeCall() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/extensionSafeCall.kt");
