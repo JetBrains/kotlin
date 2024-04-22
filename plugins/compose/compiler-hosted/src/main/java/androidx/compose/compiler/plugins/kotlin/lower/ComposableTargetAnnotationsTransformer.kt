@@ -107,15 +107,12 @@ class ComposableTargetAnnotationsTransformer(
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer
 ) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer) {
-    private val ComposableTargetClass = symbolRemapper.getReferencedClassOrNull(
-        getTopLevelClassOrNull(ComposeClassIds.ComposableTarget)
-    )
-    private val ComposableOpenTargetClass = symbolRemapper.getReferencedClassOrNull(
-        getTopLevelClassOrNull(ComposeClassIds.ComposableOpenTarget)
-    )
-    private val ComposableInferredTargetClass = symbolRemapper.getReferencedClassOrNull(
-        getTopLevelClassOrNull(ComposeClassIds.ComposableInferredTarget)
-    )
+    private val ComposableTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableTarget)
+        ?.let(symbolRemapper::getReferencedClass)
+    private val ComposableOpenTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableOpenTarget)
+        ?.let(symbolRemapper::getReferencedClass)
+    private val ComposableInferredTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableInferredTarget)
+        ?.let(symbolRemapper::getReferencedClass)
 
     /**
      * A map of element to the owning function of the element.
