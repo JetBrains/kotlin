@@ -200,4 +200,12 @@ abstract class AbstractElement<Element, Field, Implementation>(
     override fun substitute(map: TypeParameterSubstitutionMap): Element = this as Element
 
     fun withStarArgs(): ElementRef<Element> = copy(params.associateWith { TypeRef.Star })
+
+    operator fun TypeVariable.unaryPlus() = apply {
+        params.add(this)
+    }
+
+    operator fun Field.unaryPlus() = apply {
+        fields.add(this)
+    }
 }

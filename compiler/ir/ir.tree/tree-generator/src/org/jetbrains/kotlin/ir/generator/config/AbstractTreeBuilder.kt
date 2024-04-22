@@ -6,20 +6,17 @@
 package org.jetbrains.kotlin.ir.generator.config
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.ir.generator.Model
-import org.jetbrains.kotlin.ir.generator.model.*
-import org.jetbrains.kotlin.ir.generator.model.ElementOrRef
-import org.jetbrains.kotlin.ir.generator.model.ElementRef
+import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
+import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.types.Variance
-import kotlin.properties.PropertyDelegateProvider
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
+import org.jetbrains.kotlin.ir.generator.model.SingleField
 
-abstract class AbstractTreeBuilder {
-    private val configurationCallbacks = mutableListOf<() -> Element>()
+abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field, Element.Category>() {
 
-    abstract val rootElement: Element
+    override fun createElement(name: String, propertyName: String, category: Element.Category): Element {
+        return Element(name, propertyName, category)
+    }
 
     protected fun Field.skipInIrFactory() {
         customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.No
@@ -27,27 +24,6 @@ abstract class AbstractTreeBuilder {
 
     protected fun Field.useFieldInIrFactory(customType: TypeRef? = null, defaultValue: String? = null) {
         customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(customType, defaultValue)
-    }
-
-    fun element(category: Element.Category, name: String? = null, initializer: Element.() -> Unit = {}): ElementDelegate {
-        val del = ElementDelegate(category, name)
-        configurationCallbacks.add {
-            del.element!!.apply {
-                initializer()
-                if (elementParents.isEmpty() && this != rootElement) {
-                    elementParents.add(ElementRef(rootElement))
-                }
-            }
-        }
-        return del
-    }
-
-    protected fun Element.parent(type: ClassRef<*>) {
-        otherParents.add(type)
-    }
-
-    protected fun Element.parent(type: ElementOrRef) {
-        elementParents.add(ElementRef(type.element, type.args, type.nullable))
     }
 
     protected fun Element.needAcceptMethod() {
@@ -64,10 +40,6 @@ abstract class AbstractTreeBuilder {
 
     protected fun Element.noMethodInVisitor() {
         generateVisitorMethod = false
-    }
-
-    protected fun param(name: String, vararg bounds: TypeRef, variance: Variance = Variance.INVARIANT): TypeVariable {
-        return TypeVariable(name, bounds.toList(), variance)
     }
 
     protected fun field(
@@ -106,11 +78,6 @@ abstract class AbstractTreeBuilder {
         ).apply(initializer).apply {
             initializer()
         }
-    }
-
-    fun build(): Model {
-        val elements = configurationCallbacks.map { it() }
-        return Model(elements, rootElement)
     }
 
     /**
@@ -164,23 +131,5 @@ abstract class AbstractTreeBuilder {
         val int = type<Int>()
         val string = type<String>()
         val boolean = type<Boolean>()
-    }
-}
-
-class ElementDelegate(
-    private val category: Element.Category,
-    private val name: String?
-) : ReadOnlyProperty<AbstractTreeBuilder, Element>, PropertyDelegateProvider<AbstractTreeBuilder, ElementDelegate> {
-    var element: Element? = null
-        private set
-
-    override fun getValue(thisRef: AbstractTreeBuilder, property: KProperty<*>): Element {
-        return element!!
-    }
-
-    override fun provideDelegate(thisRef: AbstractTreeBuilder, property: KProperty<*>): ElementDelegate {
-        val path = thisRef.javaClass.name + "." + property.name
-        element = Element(name ?: property.name.replaceFirstChar(Char::uppercaseChar), path, category)
-        return this
     }
 }

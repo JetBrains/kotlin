@@ -93,15 +93,4 @@ class Element(
     var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
 
     override fun toString() = name
-
-    operator fun TypeVariable.unaryPlus() = apply {
-        params.add(this)
-    }
-
-    operator fun Field.unaryPlus() = apply {
-        fields.add(this)
-    }
 }
-
-typealias ElementRef = GenericElementRef<Element>
-typealias ElementOrRef = GenericElementOrRef<Element>

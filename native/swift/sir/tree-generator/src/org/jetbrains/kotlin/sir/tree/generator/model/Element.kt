@@ -17,9 +17,4 @@ class Element(name: String, override val propertyName: String) : AbstractElement
 
     override val packageName: String
         get() = BASE_PACKAGE
-
-    operator fun Field.unaryPlus(): Field {
-        fields.add(this)
-        return this
-    }
 }
