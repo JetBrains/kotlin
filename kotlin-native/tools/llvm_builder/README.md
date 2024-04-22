@@ -34,7 +34,7 @@ Set of required `$DISTRIBUTION_COMPONENTS` depends on OS:
 |---------|----------------------------------------------------------------------------------------|
 | Windows | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers`             |
 | macOS   | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers`             |
-| Linux   | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers compiler_rt` |
+| Linux   | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers compiler-rt` |
 
 ### Tuning
 Run `python3 package.py -h` to check how one can tune script's behavior.
