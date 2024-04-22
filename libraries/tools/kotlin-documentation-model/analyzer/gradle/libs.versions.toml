@@ -1,12 +1,9 @@
 [versions]
 
-gradlePlugin-kotlin = "1.9.22"
+gradlePlugin-kotlin = "2.0.0-RC1"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
-gradlePlugin-android = "4.2.2"
-gradlePlugin-android-dokkatoo = "8.0.2"
+gradlePlugin-android = "7.1.3"
 gradlePlugin-dokka = "1.9.20"
-gradlePlugin-gradle-customUserData = "1.13"
-gradlePlugin-gradle-enterprise = "3.16.2"
 
 kotlinx-coroutines = "1.7.3"
 kotlinx-collections-immutable = "0.3.6"
@@ -14,14 +11,14 @@ kotlinx-serialization = "1.6.0"
 kotlinx-bcv = "0.13.2"
 
 ## Analysis
-kotlin-compiler = "1.9.22"
+kotlin-compiler = "2.0.0-RC1"
 kotlin-compiler-k2 = "2.0.20-dev-7"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
 # on the classpath and will fail with hard to debug problems in runtime.
 # See: https://github.com/JetBrains/kotlin/blob/e6633d3d9214402fcf3585ae8c24213a4761cc8b/gradle/versions.properties#L1
-intellij-platform = "213.7172.25"
+intellij-platform = "213.7172.53"
 
 ## HTML
 jsoup = "1.16.1"
@@ -58,6 +55,10 @@ gradlePlugin-shadow = "8.1.1"
 gradlePlugin-gradlePluginPublish = "1.2.1"
 gradlePlugin-gradleNode = "7.0.1"
 
+## Gradle enterprise
+gradlePlugin-gradle-customUserData = "1.13"
+gradlePlugin-gradle-enterprise = "3.16.2"
+
 ## Test
 junit = "5.9.3"
 kotest = "5.6.2"
@@ -71,19 +72,11 @@ kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collec
 kotlinx-serialization-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
 
-#### Dokka ####
-# TODO [structure-refactoring] Needed for Dokkatoo only, needs to be removed.
-dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.ref = "gradlePlugin-dokka" }
-dokka-allModulesPagePlugin = { module = "org.jetbrains.dokka:all-modules-page-plugin", version.ref = "gradlePlugin-dokka" }
-dokka-templatingPlugin = { module = "org.jetbrains.dokka:templating-plugin", version.ref = "gradlePlugin-dokka" }
-
 #### Gradle plugins ####
 # The Maven coordinates of Gradle plugins that are either used in convention plugins, or in Dokka subprojects
 gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "gradlePlugin-kotlin" }
 gradlePlugin-kotlin-klibCommonizerApi = { module = "org.jetbrains.kotlin:kotlin-klib-commonizer-api", version.ref = "gradlePlugin-kotlin" }
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-android" }
-gradlePlugin-android-dokkatoo = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-android-dokkatoo" }
-gradlePlugin-androidApi-dokkatoo = { module = "com.android.tools.build:gradle-api", version.ref = "gradlePlugin-android-dokkatoo" }
 gradlePlugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "gradlePlugin-dokka" }
 gradlePlugin-shadow = { module = "com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
 gradlePlugin-gradlePublish = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
