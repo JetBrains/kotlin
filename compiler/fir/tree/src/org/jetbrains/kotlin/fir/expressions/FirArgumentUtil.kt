@@ -30,12 +30,9 @@ fun buildResolvedArgumentList(
 
 fun buildArgumentListForErrorCall(
     original: FirArgumentList,
-    mapping: LinkedHashMap<FirExpression, FirValueParameter>
+    mapping: LinkedHashMap<FirExpression, out FirValueParameter>,
 ): FirArgumentList {
-    return FirResolvedArgumentListForErrorCall(
-        original,
-        original.arguments.associateWithTo(LinkedHashMap()) { key -> mapping[key] },
-    )
+    return FirResolvedArgumentListForErrorCall(original, mapping)
 }
 
 object FirEmptyArgumentList : FirAbstractArgumentList() {

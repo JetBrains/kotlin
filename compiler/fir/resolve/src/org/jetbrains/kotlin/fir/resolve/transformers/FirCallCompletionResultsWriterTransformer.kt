@@ -351,12 +351,11 @@ class FirCallCompletionResultsWriterTransformer(
         val originalArgumentList = result.argumentList
         val subCandidate = calleeReference.candidate
         val resultType = result.resolvedType.substituteType(subCandidate)
+        val allArgs = if (calleeReference.isError) originalArgumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
+        val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
         if (calleeReference.isError) {
-            subCandidate.argumentMapping?.let {
-                result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
-            }
+            result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
         } else {
-            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 val newArgumentList = buildResolvedArgumentList(originalArgumentList, it)
                 val symbol = subCandidate.symbol
@@ -485,12 +484,11 @@ class FirCallCompletionResultsWriterTransformer(
                 }
             }
         }
+        val allArgs = if (calleeReference.isError) annotationCall.argumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
+        val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
         if (calleeReference.isError) {
-            subCandidate.argumentMapping?.let {
-                annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, it))
-            }
+            annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, allArgsMapping))
         } else {
-            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 annotationCall.replaceArgumentList(buildResolvedArgumentList(annotationCall.argumentList, it))
             }
@@ -504,14 +502,27 @@ class FirCallCompletionResultsWriterTransformer(
         return transformAnnotationCall(errorAnnotationCall, data)
     }
 
-    private fun Candidate.handleVarargs() {
+    /**
+     * The function does two things:
+     * 1. Changes [Candidate.argumentMapping] if at least one vararg is presented.
+     *    The new mapping wraps vararg arguments
+     * 2. Returns mapping of **all** args to parameters. Since args can be missing in the [Candidate.argumentMapping],
+     *    the returned collection may contain `null`s. Generally speaking, it should only happen only in some cases when
+     *    `calleeReference.isError` is `true` (see function usages)
+     */
+    private fun Candidate.handleVarargsAndReturnAllArgsMapping(argumentList: List<FirExpression>): LinkedHashMap<FirExpression, out FirValueParameter?> {
         val argumentMapping = this.argumentMapping
         val varargParameter = argumentMapping?.values?.firstOrNull { it.isVararg }
-        if (varargParameter != null) {
+        return if (varargParameter != null) {
             // Create a FirVarargArgumentExpression for the vararg arguments
             val varargParameterTypeRef = varargParameter.returnTypeRef
             val resolvedArrayType = varargParameterTypeRef.substitute(this)
-            this.argumentMapping = remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentMapping)
+            val argumentMappingWithAllArgs =
+                remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentMapping, argumentList)
+            this.argumentMapping = argumentMappingWithAllArgs.filterValuesNotNull()
+            return argumentMappingWithAllArgs
+        } else {
+            argumentList.associateWithTo(LinkedHashMap()) { argumentMapping?.get(it) }
         }
     }
 
@@ -700,12 +711,11 @@ class FirCallCompletionResultsWriterTransformer(
         val subCandidate = calleeReference.candidate
 
         val originalArgumentList = delegatedConstructorCall.argumentList
+        val allArgs = if (calleeReference.isError) originalArgumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
+        val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
         if (calleeReference.isError) {
-            subCandidate.argumentMapping?.let {
-                delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
-            }
+            delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
         } else {
-            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(originalArgumentList, it))
             }
@@ -1115,4 +1125,14 @@ internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(
 
 internal fun FirQualifiedAccessExpression.addNonFatalDiagnostic(diagnostic: ConeDiagnostic) {
     replaceNonFatalDiagnostics(nonFatalDiagnostics + listOf(diagnostic))
+}
+
+private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): LinkedHashMap<K, V> {
+    val result = LinkedHashMap<K, V>()
+    for ((key, value) in this) {
+        if (value != null) {
+            result[key] = value
+        }
+    }
+    return result
 }

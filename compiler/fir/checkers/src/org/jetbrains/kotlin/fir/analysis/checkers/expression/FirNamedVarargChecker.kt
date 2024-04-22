@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.types.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -43,7 +44,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
         fun checkArgument(argument: FirExpression, isVararg: Boolean, expectedArrayType: ConeKotlinType) {
             if (!isNamedSpread(argument)) return
             if (!argument.isFakeSpread && argument.isNamed) {
-                if (isVararg && (expression as? FirResolvable)?.calleeReference !is FirErrorNamedReference) {
+                if (isVararg && (expression as? FirResolvable)?.calleeReference !is FirResolvedErrorReference) {
                     reporter.reportOn(argument.expression.source, redundantSpreadWarningFactory, context)
                 }
                 return
