@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform")
+    `maven-publish`
 }
 
 kotlin {
@@ -8,7 +9,16 @@ kotlin {
     }
 }
 
+group = "org.jetbrains.kotlin"
+version = "1.0"
+
 repositories {
     mavenLocal()
     mavenCentral()
+}
+
+publishing {
+    repositories {
+        maven("<localRepo>")
+    }
 }

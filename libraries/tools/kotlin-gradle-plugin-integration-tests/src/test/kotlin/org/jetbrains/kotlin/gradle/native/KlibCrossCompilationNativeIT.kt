@@ -9,9 +9,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 
 @DisplayName("Tests for checking klib cross-compilation in KGP")
 @NativeGradlePluginTests
@@ -50,6 +51,55 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 assertTasksSkipped(":linkDebugTestIosArm64")
                 assertTasksSkipped(":linkReleaseExecutableIosArm64")
                 assertTasksSkipped(":linkDebugExecutableIosArm64")
+            }
+        }
+    }
+
+    @GradleTest
+    fun publishIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion, @TempDir localRepository: Path) {
+        nativeProject("klibCrossCompilationWithGradlePropertyEnabled", gradleVersion, localRepoDir = localRepository) {
+            build(":publish") {
+                KotlinTestUtils.assertEqualsToFile(
+                    originalTestDataPath.resolve("diagnostics-publish.txt"),
+                    extractProjectsAndTheirDiagnostics()
+                )
+                assertTasksExecuted(
+                    // compilation of contents (for iOS-compilation and for common sources)
+                    ":compileKotlinIosArm64",
+                    ":allMetadataJar",
+
+                    // various meta-files are assembled
+                    ":generateProjectStructureMetadata",
+                    ":generateMetadataFileForIosArm64Publication",
+                    ":generateMetadataFileForKotlinMultiplatformPublication",
+                    ":generatePomFileForIosArm64Publication",
+                    ":generatePomFileForKotlinMultiplatformPublication",
+                    ":buildKotlinToolingMetadata",
+
+                    // sources are assembled for publication (for iOS-compilation and for whole KMP project)
+                    ":iosArm64SourcesJar",
+                    ":sourcesJar",
+
+                    // publish tasks themselves
+                    ":publishIosArm64PublicationToMavenRepository",
+                    ":publishKotlinMultiplatformPublicationToMavenRepository",
+                    ":publish"
+                )
+
+                assertExpectedMavenRepositoryLayout(localRepository) {
+                    assertHasGroup("org.jetbrains.kotlin") {
+                        // root publication
+                        assertHasModule("klibCrossCompilationWithGradlePropertyEnabled", "1.0") {
+                            assertHasArtifact(".jar") // composite metadata jar
+                            assertHasKotlinToolingMetadata() // kotlin-tooling-metadata is published in root-module only
+                        }
+
+                        // platform publication
+                        assertHasModule("klibCrossCompilationWithGradlePropertyEnabled-iosarm64", "1.0") {
+                            assertHasArtifact(".klib")
+                        }
+                    }
+                }
             }
         }
     }
