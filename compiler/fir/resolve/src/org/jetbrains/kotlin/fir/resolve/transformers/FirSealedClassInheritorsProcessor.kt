@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -95,7 +92,7 @@ class FirSealedClassInheritorsProcessor(
         private fun collectInheritorsOfCorrespondingExpectSealedClass(expectClassId: ClassId, inheritors: MutableSet<ClassId>) {
             if (!session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
             val correspondingExpectClass = session.dependenciesSymbolProvider.getRegularClassSymbolByClassId(expectClassId)?.fir ?: return
-            if (correspondingExpectClass.isExpect) {
+            if (correspondingExpectClass.isExpect && correspondingExpectClass.isSealed) {
                 val commonInheritors = correspondingExpectClass.getSealedClassInheritors(correspondingExpectClass.moduleData.session)
                 inheritors.addAll(commonInheritors)
             }

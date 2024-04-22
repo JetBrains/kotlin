@@ -27289,6 +27289,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestDataPath("$PROJECT_ROOT")
       public class Java {
         @Test
+        @TestMetadata("actualJavaSealedClass.kt")
+        public void testActualJavaSealedClass() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/java/actualJavaSealedClass.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInJava() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/java"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
