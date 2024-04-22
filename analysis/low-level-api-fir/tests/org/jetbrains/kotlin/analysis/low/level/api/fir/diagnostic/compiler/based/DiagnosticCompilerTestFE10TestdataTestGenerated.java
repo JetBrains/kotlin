@@ -41165,6 +41165,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("namedVarargWithTypeAliasArgument.kt")
+      public void testNamedVarargWithTypeAliasArgument() {
+        runTest("compiler/testData/diagnostics/tests/varargs/namedVarargWithTypeAliasArgument.kt");
+      }
+
+      @Test
       @TestMetadata("NilaryVsVararg.kt")
       public void testNilaryVsVararg() {
         runTest("compiler/testData/diagnostics/tests/varargs/NilaryVsVararg.kt");
