@@ -6,7 +6,7 @@ gradle-enterprise = "3.16.2"
 gradle-plugin-publish = "1.2.1"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.4.0"
-guava = "31.1-jre"
+guava = "33.1.0-jre"
 jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.5.0"
 shadow = "8.1.1" # Should be in sync with version in kotlin-native/

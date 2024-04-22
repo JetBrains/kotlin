@@ -55,6 +55,7 @@ if (PlatformInfo.isMac()) {
 
 apply plugin: "kotlin.native.build-tools-conventions"
 apply plugin: "platform-manager"
+apply plugin: "java"
 
 allprojects {
     repositories {

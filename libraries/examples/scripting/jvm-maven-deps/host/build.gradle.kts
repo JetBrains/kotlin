@@ -9,8 +9,8 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(project(":compiler:util"))
 
-    testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(project(":kotlin-scripting-compiler"))
+    testRuntimeOnly(project(":kotlin-compiler-embeddable"))
+    testRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
 
     testImplementation(libs.junit4)
 }
