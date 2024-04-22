@@ -1312,6 +1312,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val name: String
     }
 
+    interface ReservedMemberFromInterfaceInsideValueClass : KtFirDiagnostic<KtClass> {
+        override val diagnosticClass get() = ReservedMemberFromInterfaceInsideValueClass::class
+        val interfaceName: String
+        val methodName: String
+    }
+
     interface TypeArgumentOnTypedValueClassEquals : KtFirDiagnostic<KtTypeReference> {
         override val diagnosticClass get() = TypeArgumentOnTypedValueClassEquals::class
     }

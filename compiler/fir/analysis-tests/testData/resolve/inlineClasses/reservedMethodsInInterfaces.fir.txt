@@ -1,0 +1,176 @@
+Module: lib
+FILE: module_lib_reservedMethodsInInterfaces.kt
+    public abstract interface Lib : R|kotlin/Any| {
+        public open override fun hashCode(): R|kotlin/Boolean| {
+            ^hashCode Boolean(true)
+        }
+
+        public abstract fun box(): R|kotlin/Boolean|
+
+    }
+    public abstract interface Lib1 : R|kotlin/Any| {
+        public open fun box(): R|kotlin/Boolean| {
+            ^box Boolean(true)
+        }
+
+    }
+    public abstract interface Lib2 : R|kotlin/Any| {
+        public abstract fun box(): R|kotlin/Boolean|
+
+    }
+    public abstract interface Lib3 : R|kotlin/Any| {
+        public open fun box(): R|kotlin/Boolean| {
+            ^box Boolean(true)
+        }
+
+    }
+Module: main
+FILE: module_main_reservedMethodsInInterfaces.kt
+    public abstract interface I1 : R|kotlin/Any| {
+        public open fun <T> equals(other: R|A1|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+        public open override fun hashCode(): R|kotlin/Boolean| {
+            ^hashCode Boolean(true)
+        }
+
+        public open fun box(): R|kotlin/Boolean| {
+            ^box Boolean(true)
+        }
+
+    }
+    @R|kotlin/jvm/JvmInline|() public final inline class A1 : R|I1| {
+        public constructor(i: R|kotlin/Int|): R|A1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun main1(): R|kotlin/Unit| {
+        lval a1: R|A1| = R|/A1.A1|(Int(1))
+        lval a2: R|A1| = R|/A1.A1|(Int(2))
+        R|<local>/a1|.R|/I1.equals|<R|kotlin/Int|>(R|<local>/a2|)
+    }
+    public abstract interface I2 : R|kotlin/Any| {
+        public open fun <T> equals(other: R|A2<T>|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+        public abstract fun box(): R|kotlin/Boolean|
+
+    }
+    public abstract interface I2_ : R|I2| {
+    }
+    @R|kotlin/jvm/JvmInline|() public final inline class A2<T> : R|I2_| {
+        public constructor<T>(i: R|kotlin/Int|): R|A2<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun main2(): R|kotlin/Unit| {
+        lval a1: R|A2<kotlin/Int>| = R|/A2.A2|<R|kotlin/Int|>(Int(1))
+        lval a2: R|A2<kotlin/String>| = R|/A2.A2|<R|kotlin/String|>(Int(2))
+        R|<local>/a1|.R|SubstitutionOverride</A2.equals: R|kotlin/Boolean|>|<R|kotlin/String|>(R|<local>/a2|)
+    }
+    public abstract interface I3 : R|kotlin/Any| {
+        public open fun <T> equals(other: R|A3|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+        public open override fun hashCode(): R|kotlin/Boolean| {
+            ^hashCode Boolean(true)
+        }
+
+        public open fun box(): R|kotlin/Boolean| {
+            ^box Boolean(true)
+        }
+
+    }
+    @R|kotlin/jvm/JvmInline|() public final inline class A3 : R|I3| {
+        public constructor(i: R|kotlin/Int|, i1: R|kotlin/Int|): R|A3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final val i1: R|kotlin/Int| = R|<local>/i1|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun main3(): R|kotlin/Unit| {
+        lval a1: R|A3| = R|/A3.A3|(Int(1), Int(-1))
+        lval a2: R|A3| = R|/A3.A3|(Int(2), Int(-2))
+        R|<local>/a1|.R|/I3.equals|<R|kotlin/Int|>(R|<local>/a2|)
+    }
+    public abstract interface I4 : R|kotlin/Any| {
+        public open fun <T> equals(other: R|A4<T>|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    @R|kotlin/jvm/JvmInline|() public final inline class A4<T> : R|I4|, R|Lib| {
+        public constructor<T>(i: R|kotlin/Int|, i1: R|kotlin/Int|): R|A4<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final val i1: R|kotlin/Int| = R|<local>/i1|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun main4(): R|kotlin/Unit| {
+        lval a1: R|A4<kotlin/Int>| = R|/A4.A4|<R|kotlin/Int|>(Int(1), Int(-1))
+        lval a2: R|A4<kotlin/String>| = R|/A4.A4|<R|kotlin/String|>(Int(2), Int(-2))
+        R|<local>/a1|.R|SubstitutionOverride</A4.equals: R|kotlin/Boolean|>|<R|kotlin/String|>(R|<local>/a2|)
+    }
+    public abstract interface I5 : R|kotlin/Any| {
+        public open fun <T> equals(other: R|A5<T>|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    @R|kotlin/jvm/JvmInline|() public final inline class A5<T> : R|I5|, R|Lib1|, R|Lib2|, R|Lib3| {
+        public constructor<T>(i: R|kotlin/Int|, i1: R|kotlin/Int|): R|A5<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final val i1: R|kotlin/Int| = R|<local>/i1|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun main5(): R|kotlin/Unit| {
+        lval a1: R|A5<kotlin/Int>| = R|/A5.A5|<R|kotlin/Int|>(Int(1), Int(-1))
+        lval a2: R|A5<kotlin/String>| = R|/A5.A5|<R|kotlin/String|>(Int(2), Int(-2))
+        R|<local>/a1|.R|SubstitutionOverride</A5.equals: R|kotlin/Boolean|>|<R|kotlin/String|>(R|<local>/a2|)
+    }
+    public abstract class AC : R|kotlin/Any| {
+        public constructor(): R|AC| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun equals(arg: R|AC|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    @R|kotlin/jvm/JvmInline|() public final inline class A6 : R|AC| {
+        public constructor(i: R|kotlin/Int|): R|A6| {
+            super<R|AC|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+    }

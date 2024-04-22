@@ -1573,6 +1573,13 @@ internal class ReservedMemberInsideValueClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtFunction>(firDiagnostic, token), KtFirDiagnostic.ReservedMemberInsideValueClass
 
+internal class ReservedMemberFromInterfaceInsideValueClassImpl(
+    override val interfaceName: String,
+    override val methodName: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtClass>(firDiagnostic, token), KtFirDiagnostic.ReservedMemberFromInterfaceInsideValueClass
+
 internal class TypeArgumentOnTypedValueClassEqualsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
