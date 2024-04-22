@@ -64,6 +64,9 @@ public class SirAsSwiftSourcesPrinter(
         print(" ")
         printName()
         print(" ")
+        if (this is SirClass) {
+            printSuperClass()
+        }
         println("{")
         withIndent {
             printChildren()
@@ -150,6 +153,10 @@ public class SirAsSwiftSourcesPrinter(
             is SirStruct -> "struct"
             is SirModule -> error("there is no keyword for module. Do not print module as declaration container.")
         }
+    )
+
+    private fun SirClass.printSuperClass() = print(
+        superClass?.let { ": ${it.swift} " }
     )
 
     private fun SirElement.printName() =print(

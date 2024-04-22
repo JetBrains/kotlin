@@ -1,13 +1,13 @@
 import KotlinBridges
 import KotlinRuntime
 
-public class Class_without_package {
-    public class INNER_CLASS {
+public class Class_without_package : KotlinRuntime.KotlinBase {
+    public class INNER_CLASS : KotlinRuntime.KotlinBase {
         public init() {
             fatalError()
         }
     }
-    public class INNER_OBJECT {
+    public class INNER_OBJECT : KotlinRuntime.KotlinBase {
         public static var shared: Swift.Int32 {
             get {
                 fatalError()
@@ -21,13 +21,13 @@ public class Class_without_package {
         fatalError()
     }
 }
-public class Demo {
-    public class INNER_CLASS {
+public class Demo : KotlinRuntime.KotlinBase {
+    public class INNER_CLASS : KotlinRuntime.KotlinBase {
         public init() {
             fatalError()
         }
     }
-    public class INNER_OBJECT {
+    public class INNER_OBJECT : KotlinRuntime.KotlinBase {
         public static var shared: Swift.Int32 {
             get {
                 fatalError()
@@ -90,13 +90,13 @@ public class Demo {
         fatalError()
     }
 }
-public class Object_without_package {
-    public class INNER_CLASS {
+public class Object_without_package : KotlinRuntime.KotlinBase {
+    public class INNER_CLASS : KotlinRuntime.KotlinBase {
         public init() {
             fatalError()
         }
     }
-    public class INNER_OBJECT {
+    public class INNER_OBJECT : KotlinRuntime.KotlinBase {
         public static var shared: Swift.Int32 {
             get {
                 fatalError()
@@ -156,13 +156,13 @@ public func recieve_object_wp(
     fatalError()
 }
 public extension main.namespace.deeper {
-    public class Class_with_package {
-        public class INNER_CLASS {
+    public class Class_with_package : KotlinRuntime.KotlinBase {
+        public class INNER_CLASS : KotlinRuntime.KotlinBase {
             public init() {
                 fatalError()
             }
         }
-        public class INNER_OBJECT {
+        public class INNER_OBJECT : KotlinRuntime.KotlinBase {
             public static var shared: Swift.Int32 {
                 get {
                     fatalError()
@@ -176,13 +176,13 @@ public extension main.namespace.deeper {
             fatalError()
         }
     }
-    public class Object_with_package {
-        public class INNER_CLASS {
+    public class Object_with_package : KotlinRuntime.KotlinBase {
+        public class INNER_CLASS : KotlinRuntime.KotlinBase {
             public init() {
                 fatalError()
             }
         }
-        public class INNER_OBJECT {
+        public class INNER_OBJECT : KotlinRuntime.KotlinBase {
             public static var shared: Swift.Int32 {
                 get {
                     fatalError()

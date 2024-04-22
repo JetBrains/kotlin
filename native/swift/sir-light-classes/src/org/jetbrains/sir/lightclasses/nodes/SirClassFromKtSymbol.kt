@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -47,6 +48,12 @@ internal class SirClassFromKtSymbol(
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
         childDeclarations() + syntheticDeclarations()
+    }
+
+    override val superClass: SirType? by lazy {
+        // For now, we support only `class C : Kotlin.Any()` class declarations, and
+        // translate Kotlin.Any to KotlinRuntime.KotlinBase.
+        SirNominalType(KotlinRuntimeModule.kotlinBase)
     }
 
     context(SirSession, KtAnalysisSession)

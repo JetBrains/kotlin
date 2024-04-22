@@ -89,6 +89,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
         parent(declarationContainer)
+
+        +field("superClass", typeType, nullable = true)
     }
 
     val `typealias`: Element by element {

@@ -11,3 +11,5 @@ import org.jetbrains.kotlin.sir.SirOrigin
 public data class KotlinSource(
     val symbol: KtSymbol,
 ) : SirOrigin.Foreign.SourceCode
+
+public class KotlinRuntimeElement : SirOrigin.Foreign.SourceCode
