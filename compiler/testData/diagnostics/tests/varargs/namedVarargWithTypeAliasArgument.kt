@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 typealias ReadonlyArray<T> = Array<T>
 
 fun printAll(vararg values: Any?) {}
