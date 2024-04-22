@@ -28,6 +28,7 @@ import javax.inject.Inject
 abstract class KotlinAndroidTarget @Inject constructor(
     final override val targetName: String,
     project: Project,
+    val isMultiplatformProject: Boolean,
 ) : AbstractKotlinTarget(project),
     HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
 

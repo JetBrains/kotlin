@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifie
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier.Property
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.sourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinAndroidCompilationAssociator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationLanguageSettingsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationSourceSetsContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
@@ -36,6 +38,11 @@ class KotlinJvmAndroidCompilationFactory internal constructor(
         ),
         compilationAssociator = KotlinAndroidCompilationAssociator,
         compilationSourceSetsContainerFactory = AndroidCompilationSourceSetsContainerFactory(target, variant),
+        preConfigureAction = if (target.isMultiplatformProject) {
+            DefaultKotlinCompilationPreConfigure
+        } else {
+            KotlinCompilationLanguageSettingsConfigurator
+        }
     )
 
     override fun create(name: String): KotlinJvmAndroidCompilation {
