@@ -602,6 +602,9 @@ void Kotlin_BooleanArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KBool
 #include <fcntl.h>
 #include <errno.h>
 #include <atomic>
+#elif KONAN_WINDOWS
+#pragma comment (lib,"bcrypt.lib")
+#include <bcrypt.h>
 #endif
 
 // Mostly taken from kotlin-native/runtime/src/mimalloc/c/random.c
@@ -654,8 +657,6 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
             throw std::runtime_error("Failed to read from /dev/[u]random");
         }
 #elif KONAN_WINDOWS
-    #pragma comment (lib,"bcrypt.lib")
-    #include <bcrypt.h>
     NTSTATUS status = BCryptGenRandom(NULL, (PUCHAR)address, (ULONG)size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
     if (status != STATUS_SUCCESS) {
         throw std::runtime_error("Unexpected failure in random bytes generation");
