@@ -43098,6 +43098,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("jvmNameOnFile.kt")
+        public void testJvmNameOnFile() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmNameOnFile.kt");
+        }
+
+        @Test
         @TestMetadata("jvmNameOnMangledNames.kt")
         public void testJvmNameOnMangledNames() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmNameOnMangledNames.kt");
