@@ -3710,6 +3710,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       public void testInlineClassMembers() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassMembers.kt");
       }
+
+      @Test
+      @TestMetadata("reservedMethodsInInterfaces.kt")
+      public void testReservedMethodsInInterfaces() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/reservedMethodsInInterfaces.kt");
+      }
     }
 
     @Nested

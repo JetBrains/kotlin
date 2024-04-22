@@ -172,8 +172,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DANGEROUS_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_CONSISTENT_COPY_AND_EXPOSED_COPY_ARE_INCOMPATIBLE_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_CONSISTENT_COPY_WRONG_ANNOTATION_TARGET
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_INVISIBLE_COPY_USAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_CONFLICT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_DEFAULT_VALUES
@@ -576,6 +576,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_ANNOTATI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_ANNOTATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLUTION_TO_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER
@@ -1648,6 +1649,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Secondary constructors with bodies are reserved for future releases."
         )
         map.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member name ''{0}'' is reserved for future releases.", TO_STRING)
+        map.put(
+            RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS,
+            "Member name ''{1}'' is reserved for future releases but is implemented in supertype ''{0}''.",
+            TO_STRING,
+            TO_STRING,
+        )
         map.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must all be star projections.")
         map.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes.")
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be 'Cloneable'.")

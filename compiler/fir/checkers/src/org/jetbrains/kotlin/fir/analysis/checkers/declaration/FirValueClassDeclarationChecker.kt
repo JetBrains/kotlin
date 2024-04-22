@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.isRecursiveValueClassType
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -27,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -87,6 +86,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         var primaryConstructorParametersByName = mapOf<Name, FirValueParameter>()
         val primaryConstructorPropertiesByName = mutableMapOf<Name, FirProperty>()
         var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
+        val isCustomEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
 
         for (innerDeclaration in declaration.declarations) {
             when (innerDeclaration) {
@@ -111,19 +111,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 is FirRegularClass -> {
                     if (innerDeclaration.isInner) {
                         reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
-                    }
-                }
-
-                is FirSimpleFunction -> {
-                    val functionName = innerDeclaration.name.asString()
-
-                    if (functionName in boxAndUnboxNames
-                        || (functionName in equalsAndHashCodeNames
-                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses))
-                    ) {
-                        reporter.reportOn(
-                            innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
-                        )
                     }
                 }
 
@@ -168,6 +155,34 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 }
 
                 else -> {}
+            }
+        }
+
+        val reservedNames = boxAndUnboxNames + if (isCustomEqualsSupported) emptySet() else equalsAndHashCodeNames
+        val classScope = declaration.unsubstitutedScope(context)
+        for (reservedName in reservedNames) {
+            classScope.processFunctionsByName(Name.identifier(reservedName)) {
+                val functionSymbol = it.unwrapFakeOverrides()
+                if (functionSymbol.isAbstract) return@processFunctionsByName
+                val containingClassSymbol = functionSymbol.getContainingClassSymbol(context.session) ?: return@processFunctionsByName
+                if (containingClassSymbol == declaration.symbol) {
+                    if (functionSymbol.source?.kind is KtRealSourceElementKind) {
+                        reporter.reportOn(
+                            functionSymbol.source,
+                            FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS,
+                            reservedName,
+                            context
+                        )
+                    }
+                } else if (containingClassSymbol.classKind == ClassKind.INTERFACE) {
+                    reporter.reportOn(
+                        declaration.source,
+                        FirErrors.RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS,
+                        containingClassSymbol.name.asString(),
+                        reservedName,
+                        context
+                    )
+                }
             }
         }
 
@@ -234,7 +249,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)) {
+        if (isCustomEqualsSupported) {
             val (equalsFromAnyOverriding, typedEquals) = run {
                 var equalsFromAnyOverriding: FirSimpleFunction? = null
                 var typedEquals: FirSimpleFunction? = null

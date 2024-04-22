@@ -392,6 +392,7 @@ object FirErrors {
     val MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER: KtDiagnosticFactory0 by error0<KtExpression>()
     val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS: KtDiagnosticFactory0 by error0<PsiElement>()
     val RESERVED_MEMBER_INSIDE_VALUE_CLASS: KtDiagnosticFactory1<String> by error1<KtFunction, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS: KtDiagnosticFactory2<String, String> by error2<KtClass, String, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS: KtDiagnosticFactory0 by error0<KtTypeReference>()
     val INNER_CLASS_INSIDE_VALUE_CLASS: KtDiagnosticFactory0 by error0<KtDeclaration>(SourceElementPositioningStrategies.INNER_MODIFIER)
     val VALUE_CLASS_CANNOT_BE_CLONEABLE: KtDiagnosticFactory0 by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
