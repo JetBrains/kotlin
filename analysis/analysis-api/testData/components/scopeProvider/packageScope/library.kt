@@ -1,3 +1,6 @@
+// IGNORE_FE10
+// KT-64503
+
 // MODULE: unrelatedLibrary
 // MODULE_KIND: LibraryBinary
 // FILE: Unrelated.kt

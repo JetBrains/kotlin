@@ -1,3 +1,6 @@
+// IGNORE_FE10
+// KT-64503
+
 // MODULE: unrelatedDependency
 // MODULE_KIND: Source
 // FILE: Unrelated.kt

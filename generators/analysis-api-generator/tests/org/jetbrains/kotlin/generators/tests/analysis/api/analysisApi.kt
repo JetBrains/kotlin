@@ -581,6 +581,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 model(it, "delegatedMemberScope")
             }
 
+            test<AbstractPackageScopeTest> {
+                model(it, "packageScope")
+            }
+
             group(filter = frontendIs(FrontendKind.Fir)) {
                 test<AbstractSubstitutionOverridesUnwrappingTest> {
                     model(it, "substitutionOverridesUnwrapping")
@@ -609,10 +613,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
                 test<AbstractCombinedDeclaredMemberScopeTest> {
                     model(it, "combinedDeclaredMemberScope")
-                }
-
-                test<AbstractPackageScopeTest> {
-                    model(it, "packageScope")
                 }
             }
         }
