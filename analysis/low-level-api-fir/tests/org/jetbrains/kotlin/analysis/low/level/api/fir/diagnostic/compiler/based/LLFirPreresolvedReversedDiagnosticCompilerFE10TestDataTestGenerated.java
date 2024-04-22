@@ -1084,6 +1084,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("obsoleteInsufficientDescription.kt")
+    public void testObsoleteInsufficientDescription() {
+      runTest("compiler/testData/diagnostics/tests/obsoleteInsufficientDescription.kt");
+    }
+
+    @Test
     @TestMetadata("OperatorChecks.kt")
     public void testOperatorChecks() {
       runTest("compiler/testData/diagnostics/tests/OperatorChecks.kt");
