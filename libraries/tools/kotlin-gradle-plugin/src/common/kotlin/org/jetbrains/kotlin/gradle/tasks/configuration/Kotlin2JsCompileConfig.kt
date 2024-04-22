@@ -38,7 +38,6 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
             task.libraryFilterCacheService.value(libraryFilterCachingService).disallowChanges()
             task.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges()
-            task.wasmKotlinPlatformEnabled.value(compilation.platformType == KotlinPlatformType.wasm).disallowChanges()
         }
     }
 

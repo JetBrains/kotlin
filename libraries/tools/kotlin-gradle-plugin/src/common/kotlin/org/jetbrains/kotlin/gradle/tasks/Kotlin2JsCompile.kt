@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingS
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
@@ -123,9 +122,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
         @Suppress("DEPRECATION_ERROR")
         super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
     }
-
-    @get:Input
-    val wasmKotlinPlatformEnabled: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JSCompilerArguments> {
         primitive { args ->

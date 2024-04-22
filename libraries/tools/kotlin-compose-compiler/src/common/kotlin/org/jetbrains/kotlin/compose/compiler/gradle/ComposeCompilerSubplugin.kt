@@ -11,7 +11,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compose.compiler.gradle.model.builder.ComposeCompilerModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import javax.inject.Inject
 
 class ComposeCompilerGradleSubplugin
@@ -30,7 +29,6 @@ class ComposeCompilerGradleSubplugin
     override fun apply(target: Project) {
         composeExtension = target.extensions.create("composeCompiler", ComposeCompilerGradlePluginExtension::class.java)
         registry.register(ComposeCompilerModelBuilder())
-        target.disableSignatureCheckClashForJsAndWasm()
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
@@ -101,24 +99,6 @@ class ComposeCompilerGradleSubplugin
 
     private val Project.agpComposeConfiguration get() = configurations.findByName("kotlin-extension")
     private val Project.isAgpComposeEnabled get() = agpComposeConfiguration != null
-
-    // Originally done here: https://github.com/JetBrains/compose-multiplatform/pull/3445
-    private fun Project.disableSignatureCheckClashForJsAndWasm() {
-        // currently k/wasm compile task is covered by KotlinJsCompile type
-        project.tasks.withType(Kotlin2JsCompile::class.java).configureEach { task ->
-            task.compilerOptions.freeCompilerArgs.add(
-                composeExtension.targetKotlinPlatforms.zip(task.wasmKotlinPlatformEnabled) { platformTypes, isWasm ->
-                    if (!isWasm && platformTypes.contains(KotlinPlatformType.js)) {
-                        "-Xklib-enable-signature-clash-checks=false"
-                    } else if (isWasm && platformTypes.contains(KotlinPlatformType.wasm)) {
-                        "-Xklib-enable-signature-clash-checks=false"
-                    } else {
-                        ""
-                    }
-                }
-            )
-        }
-    }
 
     /** Get ID of the Kotlin Compiler plugin */
     override fun getCompilerPluginId() = "androidx.compose.compiler.plugins.kotlin"
