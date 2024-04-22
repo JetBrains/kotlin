@@ -40,13 +40,7 @@ sealed class Field(
 
     override fun toString() = "$name: $typeRef"
 
-    override val isVolatile: Boolean
-        get() = false
-
     override var isFinal: Boolean = false
-
-    override val isParameter: Boolean
-        get() = false
 
     override fun copy() = internalCopy().also(::updateFieldsInCopy)
 

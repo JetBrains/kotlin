@@ -29,15 +29,15 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     abstract val namePrefix: String
 
-    abstract val kDoc: String?
+    var kDoc: String? = null
 
-    abstract val fields: Set<Field>
+    val fields = mutableSetOf<Field>()
 
-    abstract val params: List<TypeVariable>
+    val params = mutableListOf<TypeVariable>()
 
-    abstract val elementParents: List<ElementRef<Element>>
+    val elementParents = mutableListOf<ElementRef<Element>>()
 
-    abstract val otherParents: MutableList<ClassRef<*>>
+    val otherParents = mutableListOf<ClassRef<*>>()
 
     val parentRefs: List<ClassOrElementRef>
         get() = elementParents + otherParents
@@ -173,6 +173,18 @@ abstract class AbstractElement<Element, Field, Implementation>(
      * Note that classes referenced in field types will be imported automatically.
      */
     val additionalImports = mutableListOf<Importable>()
+
+    override var kind: ImplementationKind? = null
+
+    @Suppress("UNCHECKED_CAST")
+    final override val element: Element
+        get() = this as Element
+
+    final override val args: Map<NamedTypeParameterRef, TypeRef>
+        get() = emptyMap()
+
+    final override val nullable: Boolean
+        get() = false
 
     var doPrint = true
 

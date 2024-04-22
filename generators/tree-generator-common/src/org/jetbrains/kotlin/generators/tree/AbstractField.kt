@@ -19,11 +19,13 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     var kDoc: String? = null
 
-    abstract val isVolatile: Boolean
+    open val isVolatile: Boolean
+        get() = false
 
     abstract val isFinal: Boolean
 
-    abstract val isParameter: Boolean
+    open val isParameter: Boolean
+        get() = false
 
     open val arbitraryImportables: MutableList<Importable> = mutableListOf()
 

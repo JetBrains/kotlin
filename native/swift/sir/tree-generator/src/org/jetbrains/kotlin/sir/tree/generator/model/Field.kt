@@ -20,13 +20,7 @@ abstract class Field(
 
     override var defaultValueInBuilder: String? = null
 
-    override val isVolatile: Boolean
-        get() = false
-
     override var isFinal: Boolean = false
-
-    override val isParameter: Boolean
-        get() = false
 
     abstract fun internalCopy(): Field
 

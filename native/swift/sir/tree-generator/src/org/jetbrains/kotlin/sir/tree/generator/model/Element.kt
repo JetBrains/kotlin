@@ -10,34 +10,13 @@ import org.jetbrains.kotlin.sir.tree.generator.BASE_PACKAGE
 
 class Element(name: String, override val propertyName: String) : AbstractElement<Element, Field, Implementation>(name) {
 
-    override var kDoc: String? = null
-
-    override val fields: MutableSet<Field> = mutableSetOf()
-
-    override val params: MutableList<TypeVariable> = mutableListOf()
-
-    override val elementParents: MutableList<ElementRef<Element>> = mutableListOf()
-
-    override val otherParents: MutableList<ClassRef<*>> = mutableListOf()
-
     override var visitorParameterName: String = safeDecapitalizedName
-
-    override var kind: ImplementationKind? = null
 
     override val namePrefix: String
         get() = "Sir"
 
     override val packageName: String
         get() = BASE_PACKAGE
-
-    override val element: Element
-        get() = this
-
-    override val nullable: Boolean
-        get() = false
-
-    override val args: Map<NamedTypeParameterRef, TypeRef>
-        get() = emptyMap()
 
     operator fun Field.unaryPlus(): Field {
         fields.add(this)
