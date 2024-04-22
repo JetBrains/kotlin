@@ -294,12 +294,11 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         }
     }
 
-    override fun visitLambdaArgumentExpression(
-        lambdaArgumentExpression: FirLambdaArgumentExpression,
+    override fun visitAnonymousFunctionExpression(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
         data: StmtConversionContext,
     ): ExpEmbedding {
-        // TODO: check whether there are other cases.
-        val function = (lambdaArgumentExpression.expression as FirAnonymousFunctionExpression).anonymousFunction
+        val function = anonymousFunctionExpression.anonymousFunction
         return LambdaExp(data.embedFunctionSignature(function.symbol), function, data)
     }
 

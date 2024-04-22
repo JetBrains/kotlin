@@ -1,4 +1,4 @@
-/is_type_contract.kt:(121,142): info: Generated Viper text for unverifiableTypeCheck:
+/is_type_contract.kt:(151,172): info: Generated Viper text for unverifiableTypeCheck:
 field pkg$kotlin$class_String$member_length: Ref
 
 method global$fun_unverifiableTypeCheck$fun_take$NT_Int$return$T_Boolean(local$x: Ref)
@@ -21,9 +21,9 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-/is_type_contract.kt:(186,215): warning: Cannot verify that if the function returns then x is Unit.
+/is_type_contract.kt:(216,245): warning: Cannot verify that if the function returns then x is Unit.
 
-/is_type_contract.kt:(289,311): info: Generated Viper text for nullableNotNonNullable:
+/is_type_contract.kt:(319,341): info: Generated Viper text for nullableNotNonNullable:
 method global$fun_nullableNotNonNullable$fun_take$NT_Int$return$T_Unit(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -35,4 +35,4 @@ method global$fun_nullableNotNonNullable$fun_take$NT_Int$return$T_Unit(local$x: 
   label label$ret$0
 }
 
-/is_type_contract.kt:(346,374): warning: Cannot verify that if the function returns then x is Int.
+/is_type_contract.kt:(376,404): warning: Cannot verify that if the function returns then x is Int.
