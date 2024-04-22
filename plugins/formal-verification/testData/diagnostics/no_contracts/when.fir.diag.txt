@@ -156,6 +156,8 @@ method global$fun_unused_result$fun_take$$return$T_Int()
 /when.kt:(1222,1229): info: Generated Viper text for when_is:
 method global$fun_when_is$fun_take$T_class_global$class_Foo$return$T_Boolean(local$x: Ref)
   returns (ret$0: Ref)
+  requires acc(T_class_global$class_Foo(local$x), wildcard)
+  ensures acc(T_class_global$class_Foo(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
   var anonymous$0: Ref

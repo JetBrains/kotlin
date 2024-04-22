@@ -3,17 +3,17 @@ field class_Foo$member_x: Ref
 
 method class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
   returns (ret: Ref)
-  requires acc(this.class_Foo$member_x, wildcard)
-  ensures acc(this.class_Foo$member_x, wildcard)
+  requires acc(T_class_global$class_Foo(this), wildcard)
+  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
 method global$fun_testSafeCall$fun_take$NT_class_global$class_Foo$return$NT_Unit(local$foo: Ref)
   returns (ret$0: Ref)
   requires local$foo != dom$RuntimeType$nullValue() ==>
-    acc(local$foo.class_Foo$member_x, wildcard)
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures local$foo != dom$RuntimeType$nullValue() ==>
-    acc(local$foo.class_Foo$member_x, wildcard)
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$unitType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
@@ -32,15 +32,15 @@ field class_Foo$member_x: Ref
 
 method class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
   returns (ret: Ref)
-  requires acc(this.class_Foo$member_x, wildcard)
-  ensures acc(this.class_Foo$member_x, wildcard)
+  requires acc(T_class_global$class_Foo(this), wildcard)
+  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
 method global$fun_testSafeCallNonNullable$fun_take$T_class_global$class_Foo$return$NT_Unit(local$foo: Ref)
   returns (ret$0: Ref)
-  requires acc(local$foo.class_Foo$member_x, wildcard)
-  ensures acc(local$foo.class_Foo$member_x, wildcard)
+  requires acc(T_class_global$class_Foo(local$foo), wildcard)
+  ensures acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$unitType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
@@ -60,16 +60,16 @@ field class_Foo$member_x: Ref
 method global$fun_testSafeCallProperty$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: Ref)
   returns (ret$0: Ref)
   requires local$foo != dom$RuntimeType$nullValue() ==>
-    acc(local$foo.class_Foo$member_x, wildcard)
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures local$foo != dom$RuntimeType$nullValue() ==>
-    acc(local$foo.class_Foo$member_x, wildcard)
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
   if (local$foo != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
+    unfold acc(T_class_global$class_Foo(local$foo), wildcard)
     anonymous$0 := local$foo.class_Foo$member_x
-    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
     ret$0 := anonymous$0
   } else {
     ret$0 := dom$RuntimeType$nullValue()}
@@ -82,15 +82,15 @@ field class_Foo$member_x: Ref
 
 method global$fun_testSafeCallPropertyNonNullable$fun_take$T_class_global$class_Foo$return$NT_Int(local$foo: Ref)
   returns (ret$0: Ref)
-  requires acc(local$foo.class_Foo$member_x, wildcard)
-  ensures acc(local$foo.class_Foo$member_x, wildcard)
+  requires acc(T_class_global$class_Foo(local$foo), wildcard)
+  ensures acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
   if (local$foo != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
+    unfold acc(T_class_global$class_Foo(local$foo), wildcard)
     anonymous$0 := local$foo.class_Foo$member_x
-    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
     ret$0 := anonymous$0
   } else {
     ret$0 := dom$RuntimeType$nullValue()}

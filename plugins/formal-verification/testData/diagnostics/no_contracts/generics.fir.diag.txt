@@ -4,6 +4,8 @@ field class_Box$member_t: Ref
 method class_Box$fun_genericMethod$fun_take$T_class_global$class_Box$NT_Any$return$NT_Any(this: Ref,
   local$x: Ref)
   returns (ret$0: Ref)
+  requires acc(T_class_global$class_Box(this), wildcard)
+  ensures acc(T_class_global$class_Box(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_Box())
@@ -19,6 +21,7 @@ field class_Box$member_t: Ref
 method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Box())
+  ensures acc(T_class_global$class_Box(ret), wildcard)
 
 
 method global$fun_createBox$fun_take$$return$T_Int() returns (ret$0: Ref)
@@ -51,6 +54,7 @@ field class_Box$member_t: Ref
 method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Box())
+  ensures acc(T_class_global$class_Box(ret), wildcard)
 
 
 method global$fun_setGenericField$fun_take$$return$T_Unit()
@@ -100,6 +104,8 @@ field class_Box$member_t: Ref
 
 method global$fun_genericAsIfCondition$fun_take$T_class_global$class_Box$return$T_Int(local$box: Ref)
   returns (ret$0: Ref)
+  requires acc(T_class_global$class_Box(local$box), wildcard)
+  ensures acc(T_class_global$class_Box(local$box), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   var anonymous$0: Ref

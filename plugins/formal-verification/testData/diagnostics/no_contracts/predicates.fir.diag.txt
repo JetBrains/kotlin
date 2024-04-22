@@ -7,31 +7,12 @@ field class_Foo$member_y: Ref
 
 field class_Rec$member_next: Ref
 
-function T_class_global$class_Bar$get$class_Bar$member_foo(special$get$function$subject: Ref): Ref
-  requires acc(T_class_global$class_Bar(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_global$class_Bar(special$get$function$subject), write) in
-    special$get$function$subject.class_Bar$member_foo)
-}
-
-function T_class_global$class_Foo$get$class_Foo$member_x(special$get$function$subject: Ref): Ref
-  requires acc(T_class_global$class_Foo(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_global$class_Foo(special$get$function$subject), write) in
-    special$get$function$subject.class_Foo$member_x)
-}
-
-function T_class_global$class_Rec$get$class_Rec$member_next(special$get$function$subject: Ref): Ref
-  requires acc(T_class_global$class_Rec(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_global$class_Rec(special$get$function$subject), write) in
-    special$get$function$subject.class_Rec$member_next)
-}
-
 predicate T_class_global$class_Bar(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.class_Bar$member_foo, wildcard) &&
-  acc(T_class_global$class_Foo(special$class$predicate$subject.class_Bar$member_foo), write) &&
-  acc(T_class_global$class_Baz(special$class$predicate$subject), write)
+  acc(T_class_global$class_Foo(special$class$predicate$subject.class_Bar$member_foo), wildcard) &&
+  acc(T_class_global$class_Baz(special$class$predicate$subject), wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_Bar$member_foo),
+  dom$RuntimeType$T_class_global$class_Foo())
 }
 
 predicate T_class_global$class_Baz(special$class$predicate$subject: Ref) {
@@ -39,23 +20,27 @@ predicate T_class_global$class_Baz(special$class$predicate$subject: Ref) {
 }
 
 predicate T_class_global$class_Foo(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_Foo$member_x, wildcard)
+  acc(special$class$predicate$subject.class_Foo$member_x, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_Foo$member_x),
+  dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_Rec(special$class$predicate$subject: Ref) {
   acc(special$class$predicate$subject.class_Rec$member_next, wildcard) &&
   (special$class$predicate$subject.class_Rec$member_next !=
   dom$RuntimeType$nullValue() ==>
-  acc(T_class_global$class_Rec(special$class$predicate$subject.class_Rec$member_next), write))
+  acc(T_class_global$class_Rec(special$class$predicate$subject.class_Rec$member_next), wildcard)) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_Rec$member_next),
+  dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Rec()))
 }
 
 method global$fun_useFoo$fun_take$T_class_global$class_Bar$T_class_global$class_Rec$return$T_Unit(local$bar: Ref,
   local$rec: Ref)
   returns (ret$0: Ref)
-  requires acc(local$bar.class_Bar$member_foo, wildcard)
-  requires acc(local$rec.class_Rec$member_next, wildcard)
-  ensures acc(local$bar.class_Bar$member_foo, wildcard)
-  ensures acc(local$rec.class_Rec$member_next, wildcard)
+  requires acc(T_class_global$class_Bar(local$bar), wildcard)
+  requires acc(T_class_global$class_Rec(local$rec), wildcard)
+  ensures acc(T_class_global$class_Bar(local$bar), wildcard)
+  ensures acc(T_class_global$class_Rec(local$rec), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Bar())
@@ -69,43 +54,24 @@ field class_A$member_x: Ref
 
 field class_A$member_y: Ref
 
-function T_class_global$class_A$get$class_A$member_x(special$get$function$subject: Ref): Ref
-  requires acc(T_class_global$class_A(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_global$class_A(special$get$function$subject), write) in
-    special$get$function$subject.class_A$member_x)
-}
-
-function T_class_global$class_B$get$class_A$member_x(special$get$function$subject: Ref): Ref
-  requires acc(T_class_global$class_B(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_global$class_B(special$get$function$subject), write) in
-    T_class_global$class_A$get$class_A$member_x(special$get$function$subject))
-}
-
-function T_class_global$class_C$get$class_A$member_x(special$get$function$subject: Ref): Ref
-  requires acc(T_class_global$class_C(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_global$class_C(special$get$function$subject), write) in
-    T_class_global$class_B$get$class_A$member_x(special$get$function$subject))
-}
-
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_A$member_x, wildcard)
+  acc(special$class$predicate$subject.class_A$member_x, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_A$member_x),
+  dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
-  acc(T_class_global$class_A(special$class$predicate$subject), write)
+  acc(T_class_global$class_A(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
-  acc(T_class_global$class_B(special$class$predicate$subject), write)
+  acc(T_class_global$class_B(special$class$predicate$subject), wildcard)
 }
 
 method global$fun_three_layers_hierarchy$fun_take$T_class_global$class_C$return$T_Unit(local$c: Ref)
   returns (ret$0: Ref)
-  requires acc(local$c.class_A$member_x, wildcard)
-  ensures acc(local$c.class_A$member_x, wildcard)
+  requires acc(T_class_global$class_C(local$c), wildcard)
+  ensures acc(T_class_global$class_C(local$c), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$T_class_global$class_C())
@@ -116,39 +82,8 @@ method global$fun_three_layers_hierarchy$fun_take$T_class_global$class_C$return$
 /predicates.kt:(287,301): info: Generated Viper text for list_hierarchy:
 field special$size: Ref
 
-function T_class_pkg$kotlin$collections$global$class_Collection$get$special$size(special$get$function$subject: Ref): Ref
-  requires acc(T_class_pkg$kotlin$collections$global$class_Collection(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_pkg$kotlin$collections$global$class_Collection(special$get$function$subject), write) in
-    special$get$function$subject.special$size)
-}
-
-function T_class_pkg$kotlin$collections$global$class_List$get$special$size(special$get$function$subject: Ref): Ref
-  requires acc(T_class_pkg$kotlin$collections$global$class_List(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_pkg$kotlin$collections$global$class_List(special$get$function$subject), write) in
-    T_class_pkg$kotlin$collections$global$class_Collection$get$special$size(special$get$function$subject))
-}
-
-function T_class_pkg$kotlin$collections$global$class_MutableCollection$get$special$size(special$get$function$subject: Ref): Ref
-  requires acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$get$function$subject), write) in
-    T_class_pkg$kotlin$collections$global$class_Collection$get$special$size(special$get$function$subject))
-}
-
-function T_class_pkg$kotlin$collections$global$class_MutableList$get$special$size(special$get$function$subject: Ref): Ref
-  requires acc(T_class_pkg$kotlin$collections$global$class_MutableList(special$get$function$subject), write)
-{
-  (unfolding acc(T_class_pkg$kotlin$collections$global$class_MutableList(special$get$function$subject), write) in
-    T_class_pkg$kotlin$collections$global$class_List$get$special$size(special$get$function$subject))
-}
-
 predicate T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.special$size, write) &&
-  dom$RuntimeType$intFromRef(special$class$predicate$subject.special$size) >=
-  0 &&
-  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), write)
+  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject: Ref) {
@@ -156,29 +91,31 @@ predicate T_class_pkg$kotlin$collections$global$class_Iterable(special$class$pre
 }
 
 predicate T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), write)
+  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), write) &&
-  acc(T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject), write)
+  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), wildcard) &&
+  acc(T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), write)
+  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), wildcard)
 }
 
 predicate T_class_pkg$kotlin$collections$global$class_MutableList(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject), write) &&
-  acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject), write)
+  acc(T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject), wildcard) &&
+  acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject), wildcard)
 }
 
 method global$fun_list_hierarchy$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$xs: Ref)
   returns (ret$0: Ref)
   requires acc(local$xs.special$size, write)
   requires dom$RuntimeType$intFromRef(local$xs.special$size) >= 0
+  requires acc(T_class_pkg$kotlin$collections$global$class_MutableList(local$xs), wildcard)
   ensures acc(local$xs.special$size, write)
   ensures dom$RuntimeType$intFromRef(local$xs.special$size) >= 0
+  ensures acc(T_class_pkg$kotlin$collections$global$class_MutableList(local$xs), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$xs), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_MutableList())

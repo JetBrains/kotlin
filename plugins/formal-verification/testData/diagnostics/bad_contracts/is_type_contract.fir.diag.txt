@@ -16,6 +16,8 @@ method global$fun_unverifiableTypeCheck$fun_take$NT_Int$return$T_Boolean(local$x
 
 method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Ref)
+  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
+  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 

@@ -6,14 +6,19 @@ field class_AlwaysPlusOne$member_num: Ref
 method class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_AlwaysPlusOne())
+  ensures acc(T_class_global$class_AlwaysPlusOne(ret), wildcard)
 
 
 method class_AlwaysPlusOne$getter_num(this: Ref) returns (ret: Ref)
+  requires acc(T_class_global$class_AlwaysPlusOne(this), wildcard)
+  ensures acc(T_class_global$class_AlwaysPlusOne(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 method class_AlwaysPlusOne$setter_num(this: Ref, local$value: Ref)
   returns (ret: Ref)
+  requires acc(T_class_global$class_AlwaysPlusOne(this), wildcard)
+  ensures acc(T_class_global$class_AlwaysPlusOne(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
@@ -38,6 +43,7 @@ field class_Person$member_age: Ref
 method class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(local$age: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Person())
+  ensures acc(T_class_global$class_Person(ret), wildcard)
 
 
 method global$fun_testSetter$fun_take$$return$T_Unit() returns (ret$0: Ref)
@@ -65,11 +71,15 @@ field class_Foo$member_b: Ref
 method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
+  ensures acc(T_class_global$class_Bar(ret), wildcard)
 
 
 method class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
   returns (ret: Ref)
+  requires acc(T_class_global$class_Bar(local$b), wildcard)
+  ensures acc(T_class_global$class_Bar(local$b), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
+  ensures acc(T_class_global$class_Foo(ret), wildcard)
 
 
 method global$fun_testSetterCascade$fun_take$$return$T_Unit()
@@ -86,6 +96,7 @@ method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   anonymous$1 := local0$f.class_Foo$member_b
   exhale acc(local0$f.class_Foo$member_b, write)
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(anonymous$1), wildcard)
   inhale acc(anonymous$1.class_Bar$member_a, write)
   anonymous$1.class_Bar$member_a := dom$RuntimeType$intToRef(42)
   exhale acc(anonymous$1.class_Bar$member_a, write)
@@ -98,13 +109,18 @@ field class_Baz$member__a: Ref
 method class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Baz())
+  ensures acc(T_class_global$class_Baz(ret), wildcard)
 
 
 method class_Baz$getter_a(this: Ref) returns (ret: Ref)
+  requires acc(T_class_global$class_Baz(this), wildcard)
+  ensures acc(T_class_global$class_Baz(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 method class_Baz$setter_a(this: Ref, local$value: Ref) returns (ret: Ref)
+  requires acc(T_class_global$class_Baz(this), wildcard)
+  ensures acc(T_class_global$class_Baz(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
@@ -126,6 +142,7 @@ field class_Bar$member_a: Ref
 method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
+  ensures acc(T_class_global$class_Bar(ret), wildcard)
 
 
 method global$fun_testSetterLambda$fun_take$$return$T_Unit()

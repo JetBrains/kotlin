@@ -47,14 +47,14 @@ field class_Foo$member_x: Ref
 method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
-  ensures acc(ret.class_Foo$member_x, wildcard)
+  ensures acc(T_class_global$class_Foo(ret), wildcard)
   ensures ret.class_Foo$member_x == local$x
 
 
 method global$ext_getter_succ$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Ref)
-  requires acc(this.class_Foo$member_x, wildcard)
-  ensures acc(this.class_Foo$member_x, wildcard)
+  requires acc(T_class_global$class_Foo(this), wildcard)
+  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
@@ -76,22 +76,22 @@ field class_Foo$member_x: Ref
 method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
-  ensures acc(ret.class_Foo$member_x, wildcard)
+  ensures acc(T_class_global$class_Foo(ret), wildcard)
   ensures ret.class_Foo$member_x == local$x
 
 
 method global$ext_getter_strange$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Ref)
-  requires acc(this.class_Foo$member_x, wildcard)
-  ensures acc(this.class_Foo$member_x, wildcard)
+  requires acc(T_class_global$class_Foo(this), wildcard)
+  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 method global$ext_setter_strange$fun_take$T_class_global$class_Foo$T_Int$return$T_Unit(this: Ref,
   local$v: Ref)
   returns (ret: Ref)
-  requires acc(this.class_Foo$member_x, wildcard)
-  ensures acc(this.class_Foo$member_x, wildcard)
+  requires acc(T_class_global$class_Foo(this), wildcard)
+  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 

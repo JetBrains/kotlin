@@ -16,6 +16,8 @@ method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: Ref)
 
 method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Ref)
+  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
+  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
@@ -37,6 +39,8 @@ method global$fun_isString$fun_take$T_Any$return$T_Boolean(local$obj: Ref)
 
 method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Ref)
+  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
+  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
@@ -58,7 +62,7 @@ field class_Foo$member_bar: Ref
 method class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
-  ensures acc(ret.class_Foo$member_bar, wildcard)
+  ensures acc(T_class_global$class_Foo(ret), wildcard)
 
 
 method global$fun_constructorReturnType$fun_take$$return$T_Boolean()
@@ -79,8 +83,8 @@ field class_Foo$member_bar: Ref
 
 method global$fun_subtypeSuperType$fun_take$T_class_global$class_Bar$return$T_Unit(local$bar: Ref)
   returns (ret$0: Ref)
-  requires acc(local$bar.class_Foo$member_bar, wildcard)
-  ensures acc(local$bar.class_Foo$member_bar, wildcard)
+  requires acc(T_class_global$class_Bar(local$bar), wildcard)
+  ensures acc(T_class_global$class_Bar(local$bar), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   ensures true ==>
     dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Foo())
@@ -95,16 +99,15 @@ field class_Foo$member_bar: Ref
 
 method global$fun_typeOfField$fun_take$T_class_global$class_Foo$return$T_Boolean(local$foo: Ref)
   returns (ret$0: Ref)
-  requires acc(local$foo.class_Foo$member_bar, wildcard)
-  ensures acc(local$foo.class_Foo$member_bar, wildcard)
+  requires acc(T_class_global$class_Foo(local$foo), wildcard)
+  ensures acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   ensures dom$RuntimeType$boolFromRef(ret$0) == true
 {
   var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
+  unfold acc(T_class_global$class_Foo(local$foo), wildcard)
   anonymous$0 := local$foo.class_Foo$member_bar
-  inhale acc(anonymous$0.class_Foo$member_bar, wildcard)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$T_class_global$class_Bar())
   if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$T_class_global$class_Bar())) {
     ret$0 := dom$RuntimeType$boolToRef(true)
     goto label$ret$0

@@ -373,6 +373,7 @@ sealed interface Exp : IntoSilver<viper.silver.ast.Exp> {
     data class PredicateAccess(
         val predicateName: MangledName,
         val formalArgs: List<Exp>,
+        val perm: PermExp,
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
@@ -392,7 +393,7 @@ sealed interface Exp : IntoSilver<viper.silver.ast.Exp> {
             )
             return PredicateAccessPredicate(
                 predicateAccess,
-                PermExp.FullPerm().toSilver(),
+                perm.toSilver(),
                 pos.toSilver(),
                 info.toSilver(),
                 trafos.toSilver()

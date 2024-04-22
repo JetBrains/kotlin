@@ -134,6 +134,8 @@ method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_
 
 method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Ref)
+  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
+  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
@@ -186,6 +188,8 @@ method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$r
 
 method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Ref)
+  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
+  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 

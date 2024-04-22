@@ -5,15 +5,17 @@ field class_A$member_fieldOverride: Ref
 
 method class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_global$class_B(local$fieldOverride: Ref)
   returns (ret: Ref)
+  requires acc(T_class_global$class_FieldB(local$fieldOverride), wildcard)
+  ensures acc(T_class_global$class_FieldB(local$fieldOverride), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_B())
-  ensures acc(ret.class_A$member_fieldNotOverride, wildcard)
-  ensures acc(ret.class_A$member_fieldOverride, wildcard)
+  ensures acc(T_class_global$class_B(ret), wildcard)
   ensures ret.class_A$member_fieldOverride == local$fieldOverride
 
 
 method class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_FieldB())
+  ensures acc(T_class_global$class_FieldB(ret), wildcard)
 
 
 method global$fun_createB$fun_take$$return$T_Unit() returns (ret$0: Ref)
@@ -27,12 +29,13 @@ method global$fun_createB$fun_take$$return$T_Unit() returns (ret$0: Ref)
   ret$0 := dom$RuntimeType$unitValue()
   local0$fieldB := class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
   local0$b := class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_global$class_B(local0$fieldB)
+  unfold acc(T_class_global$class_B(local0$b), wildcard)
+  unfold acc(T_class_global$class_A(local0$b), wildcard)
   anonymous$0 := local0$b.class_A$member_fieldOverride
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$T_class_global$class_FieldA())
   local0$fieldOverride := anonymous$0
+  unfold acc(T_class_global$class_B(local0$b), wildcard)
+  unfold acc(T_class_global$class_A(local0$b), wildcard)
   local0$fieldNotOverride := local0$b.class_A$member_fieldNotOverride
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fieldNotOverride),
-    dom$RuntimeType$T_class_global$class_C())
   label label$ret$0
 }
 
@@ -42,25 +45,25 @@ field class_FirstBackingFieldClass$member_x: Ref
 method class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_FirstBackingFieldClass())
-  ensures acc(ret.class_FirstBackingFieldClass$member_x, wildcard)
+  ensures acc(T_class_global$class_FirstBackingFieldClass(ret), wildcard)
 
 
 method class_NoBackingFieldClass$constructor$fun_take$$return$T_class_global$class_NoBackingFieldClass()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_NoBackingFieldClass())
-  ensures acc(ret.class_FirstBackingFieldClass$member_x, wildcard)
+  ensures acc(T_class_global$class_NoBackingFieldClass(ret), wildcard)
 
 
 method class_NoBackingFieldClass$getter_x(this: Ref) returns (ret: Ref)
-  requires acc(this.class_FirstBackingFieldClass$member_x, wildcard)
-  ensures acc(this.class_FirstBackingFieldClass$member_x, wildcard)
+  requires acc(T_class_global$class_NoBackingFieldClass(this), wildcard)
+  ensures acc(T_class_global$class_NoBackingFieldClass(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 method class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_global$class_SecondBackingFieldClass(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_SecondBackingFieldClass())
-  ensures acc(ret.class_FirstBackingFieldClass$member_x, wildcard)
+  ensures acc(T_class_global$class_SecondBackingFieldClass(ret), wildcard)
   ensures ret.class_FirstBackingFieldClass$member_x == local$x
 
 
@@ -76,13 +79,15 @@ method global$fun_createBFsAndNoBF$fun_take$$return$T_Unit()
   var local0$sbfx: Ref
   ret$0 := dom$RuntimeType$unitValue()
   local0$fbf := class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
+  unfold acc(T_class_global$class_FirstBackingFieldClass(local0$fbf), wildcard)
   local0$fbfx := local0$fbf.class_FirstBackingFieldClass$member_x
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fbfx), dom$RuntimeType$intType())
   local0$nbf := class_NoBackingFieldClass$constructor$fun_take$$return$T_class_global$class_NoBackingFieldClass()
   local0$nbfx := class_NoBackingFieldClass$getter_x(local0$nbf)
   local0$sbf := class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_global$class_SecondBackingFieldClass(dom$RuntimeType$intToRef(10))
+  unfold acc(T_class_global$class_SecondBackingFieldClass(local0$sbf), wildcard)
+  unfold acc(T_class_global$class_NoBackingFieldClass(local0$sbf), wildcard)
+  unfold acc(T_class_global$class_FirstBackingFieldClass(local0$sbf), wildcard)
   local0$sbfx := local0$sbf.class_FirstBackingFieldClass$member_x
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$sbfx), dom$RuntimeType$intType())
   label label$ret$0
 }
 
@@ -92,7 +97,7 @@ field class_X$member_a: Ref
 method class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(local$a: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Y())
-  ensures acc(ret.class_X$member_a, wildcard)
+  ensures acc(T_class_global$class_Y(ret), wildcard)
 
 
 method global$fun_createY$fun_take$$return$T_Unit() returns (ret$0: Ref)
@@ -102,7 +107,8 @@ method global$fun_createY$fun_take$$return$T_Unit() returns (ret$0: Ref)
   var local0$ya: Ref
   ret$0 := dom$RuntimeType$unitValue()
   local0$y := class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(dom$RuntimeType$intToRef(10))
+  unfold acc(T_class_global$class_Y(local0$y), wildcard)
+  unfold acc(T_class_global$class_X(local0$y), wildcard)
   local0$ya := local0$y.class_X$member_a
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$ya), dom$RuntimeType$intType())
   label label$ret$0
 }

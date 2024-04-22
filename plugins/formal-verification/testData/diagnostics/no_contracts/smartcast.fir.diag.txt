@@ -15,6 +15,10 @@ method global$fun_smartcastReturn$fun_take$NT_Int$return$T_Int(local$n: Ref)
 /smartcast.kt:(69,87): info: Generated Viper text for isNullOrEmptyWrong:
 method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean(local$seq: Ref)
   returns (ret$0: Ref)
+  requires local$seq != dom$RuntimeType$nullValue() ==>
+    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
+  ensures local$seq != dom$RuntimeType$nullValue() ==>
+    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$seq), dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$global$class_CharSequence()))
@@ -36,4 +40,7 @@ method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_C
 
 method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Ref)
+  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
+  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+

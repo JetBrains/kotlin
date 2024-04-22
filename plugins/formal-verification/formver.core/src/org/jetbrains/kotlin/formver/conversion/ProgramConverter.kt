@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -63,7 +64,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             domains = listOf(RuntimeTypeDomain(classes.values.toList())),
             fields = SpecialFields.all.map { it.toViper() } +
                     classes.values.flatMap { it.flatMapUniqueFields { _, field -> listOf(field.toViper()) } }.distinctBy { it.name },
-            functions = SpecialFunctions.all + classes.values.flatMap { it.getterFunctions() }.distinctBy { it.name },
+            functions = SpecialFunctions.all,
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.toList(),
             predicates = classes.values.map { it.predicate }
         )
@@ -107,7 +108,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 // `ProgramConverter`.
 
                 // Phase 1
-                val newEmbedding = ClassTypeEmbedding(className)
+                val newEmbedding = ClassTypeEmbedding(className, symbol.classKind == ClassKind.INTERFACE)
                 classes[className] = newEmbedding
 
                 // Phase 2
@@ -198,7 +199,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         }
     }
 
-    private val FirRegularClassSymbol.propertySymbols : List<FirPropertySymbol>
+    private val FirRegularClassSymbol.propertySymbols: List<FirPropertySymbol>
         get() = this.declarationSymbols.filterIsInstance<FirPropertySymbol>()
 
     private fun embedFullSignature(symbol: FirFunctionSymbol<*>): FullNamedFunctionSignature {
@@ -231,7 +232,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 params.mapNotNull { param ->
                     constructorParamSymbolsToFields[param.symbol]?.let { field ->
                         (field.accessPolicy == AccessPolicy.ALWAYS_READABLE).ifTrue {
-                            EqCmp(FieldAccess(returnVariable, field), param)
+                            EqCmp(PrimitiveFieldAccess(returnVariable, field), param)
                         }
                     }
                 }

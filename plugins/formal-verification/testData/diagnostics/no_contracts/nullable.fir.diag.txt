@@ -135,9 +135,9 @@ field pkg$kotlin$class_String$member_length: Ref
 method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: Ref)
   returns (ret$0: Ref)
   requires local$s != dom$RuntimeType$nullValue() ==>
-    acc(local$s.pkg$kotlin$class_String$member_length, wildcard)
+    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
   ensures local$s != dom$RuntimeType$nullValue() ==>
-    acc(local$s.pkg$kotlin$class_String$member_length, wildcard)
+    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$s), dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$global$class_String()))
@@ -156,6 +156,8 @@ method pkg$kotlin$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int(this: Ref)
 
 method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Ref)
+  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
+  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
@@ -165,9 +167,9 @@ field pkg$kotlin$class_String$member_length: Ref
 method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: Ref)
   returns (ret$0: Ref)
   requires local$s != dom$RuntimeType$nullValue() ==>
-    acc(local$s.pkg$kotlin$class_String$member_length, wildcard)
+    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
   ensures local$s != dom$RuntimeType$nullValue() ==>
-    acc(local$s.pkg$kotlin$class_String$member_length, wildcard)
+    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$l: Ref
@@ -175,8 +177,8 @@ method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_S
   ret$0 := dom$RuntimeType$unitValue()
   if (local$s != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
+    unfold acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
     anonymous$0 := local$s.pkg$kotlin$class_String$member_length
-    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
     local0$l := anonymous$0
   } else {
     local0$l := dom$RuntimeType$nullValue()}
@@ -185,6 +187,8 @@ method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_S
 
 method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Ref)
+  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
+  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
@@ -193,19 +197,19 @@ field class_Foo$member_v: Ref
 
 method class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo(this: Ref)
   returns (ret: Ref)
-  requires acc(this.class_Foo$member_v, wildcard)
-  ensures acc(this.class_Foo$member_v, wildcard)
+  requires acc(T_class_global$class_Foo(this), wildcard)
+  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
   ensures ret != dom$RuntimeType$nullValue() ==>
-    acc(ret.class_Foo$member_v, wildcard)
+    acc(T_class_global$class_Foo(ret), wildcard)
 
 
 method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: Ref)
   returns (ret$0: Ref)
   requires local$foo != dom$RuntimeType$nullValue() ==>
-    acc(local$foo.class_Foo$member_v, wildcard)
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures local$foo != dom$RuntimeType$nullValue() ==>
-    acc(local$foo.class_Foo$member_v, wildcard)
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
 {
   var anonymous$0: Ref
@@ -221,8 +225,8 @@ method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_I
     anonymous$0 := dom$RuntimeType$nullValue()}
   if (anonymous$0 != dom$RuntimeType$nullValue()) {
     var anonymous$2: Ref
+    unfold acc(T_class_global$class_Foo(anonymous$0), wildcard)
     anonymous$2 := anonymous$0.class_Foo$member_v
-    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
     ret$0 := anonymous$2
   } else {
     ret$0 := dom$RuntimeType$nullValue()}

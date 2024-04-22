@@ -1,11 +1,15 @@
 /as_operator.kt:(38,44): info: Generated Viper text for testAs:
 method global$fun_testAs$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local$foo: Ref)
   returns (ret$0: Ref)
+  requires acc(T_class_global$class_Foo(local$foo), wildcard)
+  ensures acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$T_class_global$class_Bar())
+  ensures acc(T_class_global$class_Bar(ret$0), wildcard)
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
   ret$0 := local$foo
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(ret$0), wildcard)
   goto label$ret$0
   label label$ret$0
 }
@@ -13,11 +17,19 @@ method global$fun_testAs$fun_take$T_class_global$class_Foo$return$T_class_global
 /as_operator.kt:(78,92): info: Generated Viper text for testNullableAs:
 method global$fun_testNullableAs$fun_take$NT_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: Ref)
   returns (ret$0: Ref)
+  requires local$foo != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Foo(local$foo), wildcard)
+  ensures local$foo != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Bar()))
+  ensures ret$0 != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Bar(ret$0), wildcard)
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
   ret$0 := local$foo
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Bar()))
+  inhale ret$0 != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Bar(ret$0), wildcard)
   goto label$ret$0
   label label$ret$0
 }
@@ -25,7 +37,11 @@ method global$fun_testNullableAs$fun_take$NT_class_global$class_Foo$return$NT_cl
 /as_operator.kt:(129,139): info: Generated Viper text for testSafeAs:
 method global$fun_testSafeAs$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: Ref)
   returns (ret$0: Ref)
+  requires acc(T_class_global$class_Foo(local$foo), wildcard)
+  ensures acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Bar()))
+  ensures ret$0 != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Bar(ret$0), wildcard)
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
   if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Bar())) {
@@ -33,6 +49,8 @@ method global$fun_testSafeAs$fun_take$T_class_global$class_Foo$return$NT_class_g
   } else {
     ret$0 := dom$RuntimeType$nullValue()}
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Bar()))
+  inhale ret$0 != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Bar(ret$0), wildcard)
   goto label$ret$0
   label label$ret$0
 }
@@ -40,7 +58,13 @@ method global$fun_testSafeAs$fun_take$T_class_global$class_Foo$return$NT_class_g
 /as_operator.kt:(175,193): info: Generated Viper text for testNullableSafeAs:
 method global$fun_testNullableSafeAs$fun_take$NT_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: Ref)
   returns (ret$0: Ref)
+  requires local$foo != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Foo(local$foo), wildcard)
+  ensures local$foo != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Bar()))
+  ensures ret$0 != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Bar(ret$0), wildcard)
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
   if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Bar())) {
@@ -48,6 +72,8 @@ method global$fun_testNullableSafeAs$fun_take$NT_class_global$class_Foo$return$N
   } else {
     ret$0 := dom$RuntimeType$nullValue()}
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Bar()))
+  inhale ret$0 != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Bar(ret$0), wildcard)
   goto label$ret$0
   label label$ret$0
 }

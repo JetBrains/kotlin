@@ -40,6 +40,6 @@ data class FieldAccessTypeInvariantEmbedding(val field: FieldEmbedding, val perm
 
 // Note that at present, the predicate name and class name are the same.
 // We may want to mangle it better down the line.
-data class PredicateAccessTypeInvariantEmbedding(val predicateName: MangledName) : TypeInvariantEmbedding {
-    override fun fillHole(exp: ExpEmbedding): ExpEmbedding = PredicateAccessPermissions(predicateName, listOf(exp))
+data class PredicateAccessTypeInvariantEmbedding(val predicateName: MangledName, val perm: PermExp) : TypeInvariantEmbedding {
+    override fun fillHole(exp: ExpEmbedding): ExpEmbedding = PredicateAccessPermissions(predicateName, listOf(exp), perm)
 }

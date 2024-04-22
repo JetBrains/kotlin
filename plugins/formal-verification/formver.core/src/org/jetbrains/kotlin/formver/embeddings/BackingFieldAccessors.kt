@@ -5,12 +5,19 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.formver.conversion.AccessPolicy
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.expression.*
 
 class BackingFieldGetter(val field: FieldEmbedding) : GetterEmbedding {
-    override fun getValue(receiver: ExpEmbedding, ctx: StmtConversionContext): ExpEmbedding =
-        FieldAccess(receiver, field).withAccessAndProvenInvariants()
+    override fun getValue(receiver: ExpEmbedding, ctx: StmtConversionContext): ExpEmbedding {
+        return if (field.accessPolicy == AccessPolicy.ALWAYS_READABLE) {
+            FieldAccess(receiver, field)
+        } else {
+            FieldAccess(receiver, field).withAccessAndProvenInvariants()
+        }
+    }
+
 }
 
 class BackingFieldSetter(val field: FieldEmbedding) : SetterEmbedding {
