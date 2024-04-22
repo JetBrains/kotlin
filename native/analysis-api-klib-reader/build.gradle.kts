@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 sourceSets {
