@@ -351,12 +351,12 @@ class FirCallCompletionResultsWriterTransformer(
         val originalArgumentList = result.argumentList
         val subCandidate = calleeReference.candidate
         val resultType = result.resolvedType.substituteType(subCandidate)
+        subCandidate.handleVarargs()
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
                 result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
             }
         } else {
-            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 val newArgumentList = buildResolvedArgumentList(originalArgumentList, it)
                 val symbol = subCandidate.symbol
