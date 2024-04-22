@@ -88,7 +88,6 @@ internal class ClassMemberGenerator(
             }
 
             if (klass is FirRegularClass && (irClass.isValue || irClass.isData)) {
-                val dataClassMembersGenerator = DataClassMembersGenerator(c)
                 if (irClass.isSingleFieldValueClass) {
                     dataClassMembersGenerator.generateBodiesForSingleFieldValueClassMembers(klass, irClass)
                 }
@@ -188,10 +187,10 @@ internal class ClassMemberGenerator(
                         when {
                             DataClassResolver.isComponentLike(irFunction.name) ->
                                 firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
-                                    ?: DataClassMembersGenerator(c).generateDataClassComponentBody(irFunction, containingClass as FirRegularClass)
+                                    ?: dataClassMembersGenerator.generateDataClassComponentBody(irFunction, containingClass as FirRegularClass)
                             DataClassResolver.isCopy(irFunction.name) ->
                                 firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
-                                    ?: DataClassMembersGenerator(c).generateDataClassCopyBody(irFunction, containingClass as FirRegularClass)
+                                    ?: dataClassMembersGenerator.generateDataClassCopyBody(irFunction, containingClass as FirRegularClass)
                             else ->
                                 irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
                         }
