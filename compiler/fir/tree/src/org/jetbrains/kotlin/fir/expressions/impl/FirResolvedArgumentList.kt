@@ -60,7 +60,7 @@ internal class FirResolvedArgumentListImpl(
 
 internal class FirResolvedArgumentListForErrorCall(
     override val originalArgumentList: FirArgumentList?,
-    private var _mapping: LinkedHashMap<FirExpression, FirValueParameter?>,
+    private var _mapping: LinkedHashMap<FirExpression, out FirValueParameter?>,
 ) : FirResolvedArgumentList() {
 
     override var mapping: LinkedHashMap<FirExpression, FirValueParameter> = computeMapping()
