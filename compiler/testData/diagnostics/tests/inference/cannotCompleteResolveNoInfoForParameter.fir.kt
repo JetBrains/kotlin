@@ -10,7 +10,7 @@ fun <T, K> g(a: Any, l: List<T>, vararg x: In<K>): Collection<T> {throw Exceptio
 
 fun <T> test(l: List<T>) {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>(1, emptyList())
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>g<!>(1, emptyList(), In<String>(), In<Int>())
+    <!NONE_APPLICABLE!>g<!>(1, emptyList(), In<String>(), In<Int>())
 }
 
 fun <T> emptyList(): List<T> {throw Exception()}
