@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.plugin.services
 
+import androidx.compose.compiler.plugins.kotlin.ComposeIrGenerationExtension
+import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
+// import androidx.compose.runtime.ComposeVersion
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -19,5 +22,8 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
         FirExtensionRegistrarAdapter.registerExtension(FirPluginPrototypeExtensionRegistrar())
         IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller())
+
+        FirExtensionRegistrarAdapter.registerExtension(ComposeFirExtensionRegistrar())
+        IrGenerationExtension.registerExtension(ComposeIrGenerationExtension())
     }
 }

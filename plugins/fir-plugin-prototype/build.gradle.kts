@@ -5,6 +5,10 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    google()
+}
+
 dependencies {
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
@@ -33,6 +37,7 @@ dependencies {
     testApi(project(":compiler:fir:checkers:checkers.native"))
     testApi(project(":compiler:fir:checkers:checkers.wasm"))
     testApi(project(":compiler:fir:plugin-utils"))
+    testApi(project(":plugins:compose-compiler-plugin:compiler-hosted"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
@@ -46,6 +51,8 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
     testRuntimeOnly(toolsJar())
+
+    implementation("androidx.compose.runtime:runtime:1.6.6")
 }
 
 optInToExperimentalCompilerApi()
