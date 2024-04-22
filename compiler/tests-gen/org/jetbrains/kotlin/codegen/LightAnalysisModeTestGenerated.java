@@ -18041,6 +18041,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fir/incorrectBytecodeWithEnhancedNullability.kt");
     }
 
+    @TestMetadata("initializationInLocalInnerClassWithSecondaryConstructor.kt")
+    public void testInitializationInLocalInnerClassWithSecondaryConstructor() {
+      runTest("compiler/testData/codegen/box/fir/initializationInLocalInnerClassWithSecondaryConstructor.kt");
+    }
+
     @TestMetadata("internalPotentialOverride.kt")
     public void testInternalPotentialOverride() {
       runTest("compiler/testData/codegen/box/fir/internalPotentialOverride.kt");

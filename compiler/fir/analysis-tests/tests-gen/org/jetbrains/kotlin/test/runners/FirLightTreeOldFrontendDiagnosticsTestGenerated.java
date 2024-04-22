@@ -7991,6 +7991,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("initializationInLocalInnerClassWithSecondaryConstructor.kt")
+      public void testInitializationInLocalInnerClassWithSecondaryConstructor() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalInnerClassWithSecondaryConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("initializationInLocalViaExplicitThis_after.kt")
       public void testInitializationInLocalViaExplicitThis_after() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalViaExplicitThis_after.kt");

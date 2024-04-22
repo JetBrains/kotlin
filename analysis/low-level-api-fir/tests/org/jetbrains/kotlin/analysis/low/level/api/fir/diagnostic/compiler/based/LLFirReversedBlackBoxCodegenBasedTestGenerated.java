@@ -21669,6 +21669,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("initializationInLocalInnerClassWithSecondaryConstructor.kt")
+    public void testInitializationInLocalInnerClassWithSecondaryConstructor() {
+      runTest("compiler/testData/codegen/box/fir/initializationInLocalInnerClassWithSecondaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("internalPotentialOverride.kt")
     public void testInternalPotentialOverride() {
       runTest("compiler/testData/codegen/box/fir/internalPotentialOverride.kt");

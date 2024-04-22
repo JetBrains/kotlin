@@ -18002,6 +18002,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("initializationInLocalInnerClassWithSecondaryConstructor.kt")
+      public void testInitializationInLocalInnerClassWithSecondaryConstructor() {
+        runTest("compiler/testData/codegen/box/fir/initializationInLocalInnerClassWithSecondaryConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("listAssignmentInWhen.kt")
       public void testListAssignmentInWhen() {
         runTest("compiler/testData/codegen/box/fir/listAssignmentInWhen.kt");
