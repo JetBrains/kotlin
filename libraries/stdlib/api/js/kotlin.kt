@@ -1,7 +1,3 @@
-public val kotlin.UUID.Companion.BITWISE_ORDER: kotlin.Comparator<kotlin.UUID> { get; }
-
-public val kotlin.UUID.Companion.TIMESTAMP_ORDER: kotlin.Comparator<kotlin.UUID> { get; }
-
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
@@ -3682,6 +3678,8 @@ public final class UUID {
     public open override fun toString(): kotlin.String
 
     public companion object of UUID {
+        public final val BITWISE_ORDER: kotlin.Comparator<kotlin.UUID> { get; }
+
         public final val MAX_VALUE: kotlin.UUID { get; }
 
         public final val MIN_VALUE: kotlin.UUID { get; }
@@ -3689,6 +3687,8 @@ public final class UUID {
         public const final val SIZE_BITS: kotlin.Int = 128 { get; }
 
         public const final val SIZE_BYTES: kotlin.Int = 16 { get; }
+
+        public final val TIMESTAMP_ORDER: kotlin.Comparator<kotlin.UUID> { get; }
 
         public final fun fromByteArray(byteArray: kotlin.ByteArray): kotlin.UUID
 

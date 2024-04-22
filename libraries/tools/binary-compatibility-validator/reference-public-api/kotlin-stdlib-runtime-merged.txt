@@ -523,16 +523,13 @@ public final class kotlin/UUID$Companion {
 	public final fun fromByteArray ([B)Lkotlin/UUID;
 	public final fun fromLongs (JJ)Lkotlin/UUID;
 	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/UUID;
+	public final fun getBITWISE_ORDER ()Ljava/util/Comparator;
 	public final fun getMAX_VALUE ()Lkotlin/UUID;
 	public final fun getMIN_VALUE ()Lkotlin/UUID;
+	public final fun getTIMESTAMP_ORDER ()Ljava/util/Comparator;
 	public final fun parse (Ljava/lang/String;)Lkotlin/UUID;
 	public final fun parseHex (Ljava/lang/String;)Lkotlin/UUID;
 	public final fun randomUUIDv4 ()Lkotlin/UUID;
-}
-
-public final class kotlin/UUIDKt {
-	public static final fun getBITWISE_ORDER (Lkotlin/UUID$Companion;)Ljava/util/Comparator;
-	public static final fun getTIMESTAMP_ORDER (Lkotlin/UUID$Companion;)Ljava/util/Comparator;
 }
 
 public final class kotlin/UninitializedPropertyAccessException : java/lang/RuntimeException {
