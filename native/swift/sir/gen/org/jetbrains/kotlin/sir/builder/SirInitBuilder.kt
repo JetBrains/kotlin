@@ -24,6 +24,7 @@ class SirInitBuilder {
     var isFailable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val parameters: MutableList<SirParameter> = mutableListOf()
     lateinit var initKind: SirInitializerKind
+    var isOverride: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     fun build(): SirInit {
         return SirInitImpl(
@@ -35,6 +36,7 @@ class SirInitBuilder {
             isFailable,
             parameters,
             initKind,
+            isOverride,
         )
     }
 
@@ -62,5 +64,6 @@ inline fun buildInitCopy(original: SirInit, init: SirInitBuilder.() -> Unit): Si
     copyBuilder.isFailable = original.isFailable
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.initKind = original.initKind
+    copyBuilder.isOverride = original.isOverride
     return copyBuilder.apply(init).build()
 }

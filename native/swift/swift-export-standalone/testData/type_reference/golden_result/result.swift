@@ -3,7 +3,7 @@ import KotlinRuntime
 
 public class Class_without_package : KotlinRuntime.KotlinBase {
     public class INNER_CLASS : KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             fatalError()
         }
     }
@@ -13,17 +13,17 @@ public class Class_without_package : KotlinRuntime.KotlinBase {
                 fatalError()
             }
         }
-        private init() {
+        private override init() {
             fatalError()
         }
     }
-    public init() {
+    public override init() {
         fatalError()
     }
 }
 public class Demo : KotlinRuntime.KotlinBase {
     public class INNER_CLASS : KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             fatalError()
         }
     }
@@ -33,7 +33,7 @@ public class Demo : KotlinRuntime.KotlinBase {
                 fatalError()
             }
         }
-        private init() {
+        private override init() {
             fatalError()
         }
     }
@@ -92,7 +92,7 @@ public class Demo : KotlinRuntime.KotlinBase {
 }
 public class Object_without_package : KotlinRuntime.KotlinBase {
     public class INNER_CLASS : KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             fatalError()
         }
     }
@@ -102,7 +102,7 @@ public class Object_without_package : KotlinRuntime.KotlinBase {
                 fatalError()
             }
         }
-        private init() {
+        private override init() {
             fatalError()
         }
     }
@@ -111,7 +111,7 @@ public class Object_without_package : KotlinRuntime.KotlinBase {
             fatalError()
         }
     }
-    private init() {
+    private override init() {
         fatalError()
     }
 }
@@ -158,7 +158,7 @@ public func recieve_object_wp(
 public extension main.namespace.deeper {
     public class Class_with_package : KotlinRuntime.KotlinBase {
         public class INNER_CLASS : KotlinRuntime.KotlinBase {
-            public init() {
+            public override init() {
                 fatalError()
             }
         }
@@ -168,17 +168,17 @@ public extension main.namespace.deeper {
                     fatalError()
                 }
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
         }
-        public init() {
+        public override init() {
             fatalError()
         }
     }
     public class Object_with_package : KotlinRuntime.KotlinBase {
         public class INNER_CLASS : KotlinRuntime.KotlinBase {
-            public init() {
+            public override init() {
                 fatalError()
             }
         }
@@ -188,7 +188,7 @@ public extension main.namespace.deeper {
                     fatalError()
                 }
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
         }
@@ -197,7 +197,7 @@ public extension main.namespace.deeper {
                 fatalError()
             }
         }
-        private init() {
+        private override init() {
             fatalError()
         }
     }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
 import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
@@ -30,7 +31,7 @@ internal class SirInitFromKtSymbol(
         KotlinSource(ktSymbol)
     }
     override val kind: SirCallableKind by lazyWithSessions {
-        ktSymbol.sirCallableKind
+        SirCallableKind.CLASS_METHOD
     }
     override val parameters: MutableList<SirParameter> by lazyWithSessions {
         mutableListOf<SirParameter>().apply {
@@ -41,6 +42,10 @@ internal class SirInitFromKtSymbol(
     }
     override val documentation: String? by lazyWithSessions {
         ktSymbol.documentation()
+    }
+
+    override val isOverride: Boolean by lazy {
+        computeIsOverrideForDesignatedInit(parent, parameters)
     }
 
     override var parent: SirDeclarationParent

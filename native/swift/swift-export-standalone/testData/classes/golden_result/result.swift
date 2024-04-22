@@ -2,7 +2,7 @@ import KotlinBridges
 import KotlinRuntime
 
 public class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         fatalError()
     }
     public func foo() -> Swift.Int32 {
@@ -51,7 +51,7 @@ public class Foo : KotlinRuntime.KotlinBase {
         /**
         * this is a sample comment for INSIDE_CLASS without package
         */
-        public init() {
+        public override init() {
             fatalError()
         }
         /**
@@ -106,7 +106,7 @@ demo comment for packageless object
 public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
     public class Bar : KotlinRuntime.KotlinBase {
         public class CLASS_INSIDE_CLASS_INSIDE_OBJECT : KotlinRuntime.KotlinBase {
-            public init() {
+            public override init() {
                 fatalError()
             }
         }
@@ -125,7 +125,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         }
     }
     public class Foo : KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             fatalError()
         }
     }
@@ -135,7 +135,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
                 fatalError()
             }
         }
-        private init() {
+        private override init() {
             fatalError()
         }
     }
@@ -157,7 +157,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
             fatalError()
         }
     }
-    private init() {
+    private override init() {
         fatalError()
     }
     public func foo() -> Swift.Int32 {
@@ -181,7 +181,7 @@ public extension main.namespace.deeper {
                         fatalError()
                     }
                 }
-                public init() {
+                public override init() {
                     fatalError()
                 }
                 public func foo() -> Swift.Bool {
@@ -201,7 +201,7 @@ public extension main.namespace.deeper {
                     fatalError()
                 }
             }
-            public init() {
+            public override init() {
                 fatalError()
             }
             public func foo() -> Swift.Bool {
@@ -221,7 +221,7 @@ public extension main.namespace.deeper {
                 fatalError()
             }
         }
-        public init() {
+        public override init() {
             fatalError()
         }
         public func foo() -> Swift.Bool {
@@ -229,7 +229,7 @@ public extension main.namespace.deeper {
         }
     }
     public class NAMESPACED_CLASS : KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             fatalError()
         }
     }
@@ -247,7 +247,7 @@ public extension main.namespace.deeper {
                         fatalError()
                     }
                 }
-                private init() {
+                private override init() {
                     fatalError()
                 }
             }
@@ -266,7 +266,7 @@ public extension main.namespace.deeper {
             }
         }
         public class Foo : KotlinRuntime.KotlinBase {
-            public init() {
+            public override init() {
                 fatalError()
             }
         }
@@ -276,7 +276,7 @@ public extension main.namespace.deeper {
                     fatalError()
                 }
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
         }
@@ -298,7 +298,7 @@ public extension main.namespace.deeper {
                 fatalError()
             }
         }
-        private init() {
+        private override init() {
             fatalError()
         }
         public func foo() -> Swift.Int32 {
@@ -315,7 +315,7 @@ public extension main.namespace {
             /**
             * this is a sample comment for INSIDE_CLASS with package
             */
-            public init() {
+            public override init() {
                 fatalError()
             }
         }
@@ -338,7 +338,7 @@ public extension main.namespace {
                 fatalError()
             }
         }
-        public init() {
+        public override init() {
             fatalError()
         }
         /**
@@ -357,14 +357,14 @@ public extension main.namespace {
         *  demo comment for
         *  NAMESPACED_CLASS
         */
-        public init() {
+        public override init() {
             fatalError()
         }
     }
 }
 public extension main.why_we_need_module_names {
     public class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             fatalError()
         }
         public func foo() -> Swift.Void {

@@ -115,6 +115,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("parameters", parameterType)
 
         +field("initKind", initKind)
+
+        +field("isOverride", boolean)
     }
 
     val function by element {

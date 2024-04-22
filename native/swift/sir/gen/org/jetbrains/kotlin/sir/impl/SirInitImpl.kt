@@ -21,6 +21,7 @@ internal class SirInitImpl(
     override val isFailable: Boolean,
     override val parameters: MutableList<SirParameter>,
     override val initKind: SirInitializerKind,
+    override val isOverride: Boolean,
 ) : SirInit() {
     override lateinit var parent: SirDeclarationParent
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir
 
 enum class SirInitializerKind {
+    // Probably should be called designated instead.
     ORDINARY,
     REQUIRED,
     CONVENIENCE

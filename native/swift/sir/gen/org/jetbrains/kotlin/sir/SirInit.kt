@@ -21,4 +21,5 @@ abstract class SirInit : SirCallable() {
     abstract val isFailable: Boolean
     abstract val parameters: List<SirParameter>
     abstract val initKind: SirInitializerKind
+    abstract val isOverride: Boolean
 }

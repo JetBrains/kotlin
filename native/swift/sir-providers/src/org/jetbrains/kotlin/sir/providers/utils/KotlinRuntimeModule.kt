@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.sir.providers.utils
 
-import org.jetbrains.kotlin.sir.SirClass
-import org.jetbrains.kotlin.sir.SirDeclaration
-import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildClass
+import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
 
 /**
@@ -29,8 +28,16 @@ public object KotlinRuntimeModule : SirModule() {
         buildClass {
             name = "KotlinBase"
             origin = KotlinRuntimeElement()
-        }.also {
-            it.parent = KotlinRuntimeModule
+            declarations += buildInit {
+                origin = KotlinRuntimeElement()
+                kind = SirCallableKind.CLASS_METHOD
+                isFailable = false
+                initKind = SirInitializerKind.ORDINARY
+                isOverride = false
+            }
+        }.also { klass ->
+            klass.parent = KotlinRuntimeModule
+            klass.declarations.forEach { it.parent = klass }
         }
     }
 }

@@ -124,6 +124,7 @@ public class SirAsSwiftSourcesPrinter(
     private fun SirCallable.print() {
         printDocumentation()
         printVisibility()
+        printOverride()
         printPreNameKeywords()
         printName()
         printPostNameKeywords()
@@ -136,6 +137,12 @@ public class SirAsSwiftSourcesPrinter(
             body.print()
         }
         println("}")
+    }
+
+    private fun SirCallable.printOverride() {
+        if (this is SirInit && this.isOverride) {
+            print("override ")
+        }
     }
 
     private fun SirDeclaration.printDocumentation() {
