@@ -1,3 +1,12 @@
 package
 
 public fun bar(): kotlin.Unit
+public fun </*0*/ T, /*1*/ R : kotlin.Comparable<R>, /*2*/ K> kotlin.collections.Iterable<T>.maxOf(/*0*/ selector: (T) -> R, /*1*/ vararg x: In<K> /*kotlin.Array<out In<K>>*/): kotlin.Unit
+
+public final class In</*0*/ in K> {
+    public constructor In</*0*/ in K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

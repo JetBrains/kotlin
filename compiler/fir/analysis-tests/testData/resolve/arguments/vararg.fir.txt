@@ -9,9 +9,9 @@ FILE: vararg.kt
         R|/foo|(Int(1), vararg(String(my), String(yours)))
         R|/foo|(Int(1), vararg(*R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(my), String(yours)))))
         R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(String())
-        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(Int(1), Int(2))
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(Int(1), vararg(Int(2)))
         R|/bar|(Int(1), Boolean(true), vararg(*R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(my), String(yours)))))
-        R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(Int(0), Boolean(false), *String(), String(other))
-        R|/bar<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /bar>#|(Int(0), String(), Boolean(true))
-        R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(Int(0), Boolean(false), *String(), String(other), String(yet other))
+        R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(Int(0), Boolean(false), String(other), vararg(*String()))
+        R|/bar<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /bar>#|(Int(0), vararg(String(), Boolean(true)))
+        R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(Int(0), Boolean(false), String(other), String(yet other), vararg(*String()))
     }
