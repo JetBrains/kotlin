@@ -99,6 +99,7 @@ abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFi
                 "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=127.0.0.1:0",
                 "-ea",
                 "-classpath", classpath.joinToString(File.pathSeparator),
+                "-Djava.awt.headless=true", // ensure that test process doesn't launch a separate window
                 TestProcessServer::class.qualifiedName,
                 TestProcessServer.DEBUG_TEST
             )

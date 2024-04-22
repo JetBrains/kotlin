@@ -343,9 +343,8 @@ private inline fun CheckerContext.visitCurrentScope(
 private fun CheckerContext.findValueParameterForLambdaAtIndex(
     elementIndex: Int
 ): FirValueParameter? {
-    val argument = containingElements.getOrNull(elementIndex - 1) as? FirAnonymousFunctionExpression
-        ?: return null
-    val argumentList = containingElements.getOrNull(elementIndex - 2) as? FirResolvedArgumentList
-        ?: return null
+    val function = containingElements.getOrNull(elementIndex) as? FirAnonymousFunction ?: return null
+    val argumentList = containingElements.getOrNull(elementIndex - 1) as? FirResolvedArgumentList ?: return null
+    val argument = argumentList.arguments.find { it is FirAnonymousFunctionExpression && it.anonymousFunction == function } ?: return null
     return argumentList.mapping[argument]
 }

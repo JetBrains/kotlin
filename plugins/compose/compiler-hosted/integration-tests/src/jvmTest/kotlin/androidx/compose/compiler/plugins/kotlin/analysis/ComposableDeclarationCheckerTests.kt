@@ -173,8 +173,8 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             fun Test() {
                 val composableLambda = @Composable {}
                 acceptSuspend @Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>
-                acceptComposableSuspend @Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>
-                acceptComposableSuspend(<!ARGUMENT_TYPE_MISMATCH!>composableLambda<!>)
+                acceptComposableSuspend @Composable {}
+                acceptComposableSuspend(composableLambda)
                 acceptSuspend(<!COMPOSABLE_SUSPEND_FUN!><!ARGUMENT_TYPE_MISMATCH!>@Composable <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun()<!> { }<!>)
             }
         """

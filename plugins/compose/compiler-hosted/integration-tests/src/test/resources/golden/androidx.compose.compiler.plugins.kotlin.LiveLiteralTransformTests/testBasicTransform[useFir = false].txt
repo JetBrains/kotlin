@@ -52,7 +52,7 @@ internal object LiveLiterals%TestKt {
   }
   val String%arg-0%call-print-1%fun-A: String = "Hello World"
   var State%String%arg-0%call-print-1%fun-A: State<String>?
-  @LiveLiteralInfo(key = "String%arg-0%call-print-1%fun-A", offset = 86)
+  @LiveLiteralInfo(key = "String%arg-0%call-print-1%fun-A", offset = 85)
   fun String%arg-0%call-print-1%fun-A(): String {
     if (!isLiveLiteralsEnabled) {
       return String%arg-0%call-print-1%fun-A

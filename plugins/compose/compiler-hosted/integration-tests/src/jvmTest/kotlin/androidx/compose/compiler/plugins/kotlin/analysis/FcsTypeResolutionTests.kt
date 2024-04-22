@@ -582,7 +582,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                     MultiChildren { x, y ->
                         println(x + y)
                     }
-                    <!NONE_APPLICABLE!>MultiChildren<!> { x, y, z ->
+                    <!NONE_APPLICABLE!>MultiChildren<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE!>y<!>, <!CANNOT_INFER_PARAMETER_TYPE!>z<!> ->
                         <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(x <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> y <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> z)
                     }
                 }

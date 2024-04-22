@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Assert.assertEquals
+import org.junit.Assume.assumeFalse
 
 abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     private fun OutputFile.printApi(): String {
@@ -30,6 +31,7 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
         expected: String,
         dumpClasses: Boolean = false
     ) {
+        assumeFalse(useFir) // fixme: FIR generates invokedynamic instead of classes, convert to goldens for separate expected strings
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
 

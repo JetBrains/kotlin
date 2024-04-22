@@ -65,7 +65,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             environment.project,
             allKtFiles,
-            CliBindingTrace(),
+            CliBindingTrace(environment.project),
             environment.configuration,
             environment::createPackagePartProvider
         )

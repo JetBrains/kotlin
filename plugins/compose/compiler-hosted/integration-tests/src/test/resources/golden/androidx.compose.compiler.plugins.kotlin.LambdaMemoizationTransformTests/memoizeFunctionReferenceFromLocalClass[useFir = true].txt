@@ -30,7 +30,7 @@ class MainActivity {
   @Composable
   fun Test(%composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
-    sourceInformation(%composer, "C(Test)<go>:Test.kt")
+    sourceInformation(%composer, "C(Test)<test::...>:Test.kt")
     val %dirty = %changed
     if (%changed and 0b1110 == 0) {
       %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010

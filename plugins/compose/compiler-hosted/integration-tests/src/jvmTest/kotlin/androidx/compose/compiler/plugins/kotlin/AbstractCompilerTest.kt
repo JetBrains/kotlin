@@ -61,25 +61,6 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
             File(path).applyExistenceCheck().absolutePath
         }
 
-        private val projectRoot: String by lazy {
-            File(homeDir, "../../../../../..").applyExistenceCheck().absolutePath
-        }
-
-        val kotlinHome: File by lazy {
-            File(projectRoot, "prebuilts/androidx/external/org/jetbrains/kotlin/")
-                .applyExistenceCheck()
-        }
-
-        private val outDir: File by lazy {
-            File(System.getenv("OUT_DIR") ?: File(projectRoot, "out").absolutePath)
-                .applyExistenceCheck()
-        }
-
-        val composePluginJar: File by lazy {
-            File(outDir, "androidx/compose/compiler/compiler/build/repackaged/embedded.jar")
-                .applyExistenceCheck()
-        }
-
         @JvmStatic
         @BeforeClass
         fun setSystemProperties() {
