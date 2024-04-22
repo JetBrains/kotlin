@@ -61,8 +61,8 @@ fun FirSession.doUnify(
     // Foo? ~ X?  =>  Foo ~ X
     if (originalType?.nullability == ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
         return doUnify(
-            originalTypeProjection.removeQuestionMark(typeContext),
-            typeWithParametersProjection.removeQuestionMark(typeContext),
+            originalTypeProjection.removeQuestionMark(this),
+            typeWithParametersProjection.removeQuestionMark(this),
             targetTypeParameters, result,
         )
     }
@@ -123,13 +123,13 @@ fun FirSession.doUnify(
     return true
 }
 
-private fun ConeTypeProjection.removeQuestionMark(typeContext: ConeTypeContext): ConeTypeProjection {
-    val type = type
+private fun ConeTypeProjection.removeQuestionMark(session: FirSession): ConeTypeProjection {
+    val type = type?.fullyExpandedType(session)
     require(type != null && type.nullability.isNullable) {
         "Expected nullable type, got $type"
     }
 
-    return replaceType(type.withNullability(ConeNullability.NOT_NULL, typeContext))
+    return replaceType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext))
 }
 
 private fun ConeTypeProjection.replaceType(newType: ConeKotlinType): ConeTypeProjection =
