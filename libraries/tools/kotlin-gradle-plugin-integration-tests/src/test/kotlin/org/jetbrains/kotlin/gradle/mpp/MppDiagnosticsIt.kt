@@ -231,7 +231,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     private fun TestProject.expectedOutputFile(suffix: String? = null): File {
         val suffixIfAny = if (suffix != null) "-$suffix" else ""
-        return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
+        return originalTestDataPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
     }
 
     private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {

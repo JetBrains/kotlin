@@ -23,7 +23,7 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     fun compileIosTargetOnNonDarwinHostWithDefaultSettings(gradleVersion: GradleVersion) {
         nativeProject("klibCrossCompilationDefaultSettings", gradleVersion) {
             build(":compileKotlinIosArm64") {
-                KotlinTestUtils.assertEqualsToFile(projectPath.resolve("diagnostics.txt"), extractProjectsAndTheirDiagnostics())
+                KotlinTestUtils.assertEqualsToFile(originalTestDataPath.resolve("diagnostics.txt"), extractProjectsAndTheirDiagnostics())
                 assertTasksSkipped(":compileKotlinIosArm64")
             }
         }
@@ -36,14 +36,14 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
         nativeProject("klibCrossCompilationWithGradlePropertyEnabled", gradleVersion) {
             build(":compileKotlinIosArm64") {
                 KotlinTestUtils.assertEqualsToFile(
-                    projectPath.resolve("diagnostics-compileKotlinIosArm64.txt"), extractProjectsAndTheirDiagnostics()
+                    originalTestDataPath.resolve("diagnostics-compileKotlinIosArm64.txt"), extractProjectsAndTheirDiagnostics()
                 )
                 assertTasksExecuted(":compileKotlinIosArm64")
             }
 
             build(":linkIosArm64") {
                 KotlinTestUtils.assertEqualsToFile(
-                    projectPath.resolve("diagnostics-linkIosArm64.txt"), extractProjectsAndTheirDiagnostics()
+                    originalTestDataPath.resolve("diagnostics-linkIosArm64.txt"), extractProjectsAndTheirDiagnostics()
                 )
                 // Do not assert :linkIosArm64, because it's a plain umbrella-like `org.gradle.DefaultTask` instance,
                 // and it doesn't get disabled even on linuxes (see [KotlinNativeConfigureBinariesSideEffect])

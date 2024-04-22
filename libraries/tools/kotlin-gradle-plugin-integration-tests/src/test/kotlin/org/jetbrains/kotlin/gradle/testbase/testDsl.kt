@@ -85,7 +85,8 @@ fun KGPBaseTest.project(
         enableGradleDebug = enableGradleDebug,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
-        environmentVariables = environmentVariables
+        environmentVariables = environmentVariables,
+        originalTestDataPath = projectName.testProjectPath
     )
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
@@ -395,6 +396,7 @@ class TestProject(
      */
     val kotlinDaemonDebugPort: Int? = null,
     val environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+    val originalTestDataPath: Path,
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
 
@@ -771,14 +773,14 @@ private fun TestProject.agreeToBuildScanService() {
     val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
     settingsFile.append(
         """
-            
+
         gradleEnterprise {
             buildScan {
                 termsOfServiceUrl = "https://gradle.com/terms-of-service"
                 termsOfServiceAgree = "yes"
             }
         }
-            
+
         """.trimIndent()
     )
 }
