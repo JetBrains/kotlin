@@ -1,15 +1,15 @@
 Classifier names:
 
 Callable names:
-bar
-doBar
-doFoo
-foo
-internalBar
-internalDoBar
-internalDoFoo
-internalFoo
-privateBar
-privateDoBar
-privateDoFoo
-privateFoo
+  bar
+  doBar
+  doFoo
+  foo
+  internalBar
+  internalDoBar
+  internalDoFoo
+  internalFoo
+  privateBar
+  privateDoBar
+  privateDoFoo
+  privateFoo

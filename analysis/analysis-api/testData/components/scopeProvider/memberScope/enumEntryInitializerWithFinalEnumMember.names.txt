@@ -1,22 +1,22 @@
 Classifier names:
-Companion
+  Companion
 
 Callable names:
-<init>
-A
-clone
-compareTo
-entries
-equals
-finalize
-foo
-getDeclaringClass
-hashCode
-name
-ordinal
-readObject
-readObjectNoData
-toString
-valueOf
-values
-x
+  <init>
+  A
+  clone
+  compareTo
+  entries
+  equals
+  finalize
+  foo
+  getDeclaringClass
+  hashCode
+  name
+  ordinal
+  readObject
+  readObjectNoData
+  toString
+  valueOf
+  values
+  x

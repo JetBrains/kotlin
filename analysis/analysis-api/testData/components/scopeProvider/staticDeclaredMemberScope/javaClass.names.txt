@@ -1,7 +1,7 @@
 Classifier names:
-InnerClass
-NestedClass
+  InnerClass
+  NestedClass
 
 Callable names:
-bar
-foo
+  bar
+  foo

@@ -1,8 +1,8 @@
 Classifier names:
 
 Callable names:
-<init>
-equals
-hashCode
-invoke
-toString
+  <init>
+  equals
+  hashCode
+  invoke
+  toString

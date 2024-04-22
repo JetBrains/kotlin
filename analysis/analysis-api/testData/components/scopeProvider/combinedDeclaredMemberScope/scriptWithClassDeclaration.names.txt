@@ -1,6 +1,6 @@
 Classifier names:
-Person
+  Person
 
 Callable names:
-$$result
-foo
+  $$result
+  foo

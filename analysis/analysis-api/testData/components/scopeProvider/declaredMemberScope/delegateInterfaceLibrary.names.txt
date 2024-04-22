@@ -1,9 +1,9 @@
 Classifier names:
 
 Callable names:
-bar
-doo
-foo
-p
-smth
-zoo
+  bar
+  doo
+  foo
+  p
+  smth
+  zoo

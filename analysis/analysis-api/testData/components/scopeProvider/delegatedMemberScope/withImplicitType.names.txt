@@ -1,10 +1,10 @@
 Classifier names:
 
 Callable names:
-<init>
-bar
-equals
-foo
-hashCode
-p
-toString
+  <init>
+  bar
+  equals
+  foo
+  hashCode
+  p
+  toString

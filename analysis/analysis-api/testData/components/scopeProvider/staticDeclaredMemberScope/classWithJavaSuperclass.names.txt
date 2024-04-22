@@ -1,9 +1,9 @@
 Classifier names:
-C2
-Companion
-O2
+  C2
+  Companion
+  O2
 
 Callable names:
-<init>
-bar
-foo
+  <init>
+  bar
+  foo

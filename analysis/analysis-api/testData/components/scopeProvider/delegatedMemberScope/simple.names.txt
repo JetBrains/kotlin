@@ -1,13 +1,13 @@
 Classifier names:
 
 Callable names:
-<init>
-bar
-doo
-equals
-foo
-hashCode
-p
-smth
-toString
-zoo
+  <init>
+  bar
+  doo
+  equals
+  foo
+  hashCode
+  p
+  smth
+  toString
+  zoo

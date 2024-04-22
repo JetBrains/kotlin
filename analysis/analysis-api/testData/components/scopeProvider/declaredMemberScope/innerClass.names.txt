@@ -1,5 +1,5 @@
 Classifier names:
-ClassInB
-InnerClassInB
+  ClassInB
+  InnerClassInB
 
 Callable names:

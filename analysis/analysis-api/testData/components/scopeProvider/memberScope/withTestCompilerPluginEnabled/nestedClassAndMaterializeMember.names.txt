@@ -1,9 +1,9 @@
 Classifier names:
-Nested
+  Nested
 
 Callable names:
-<init>
-equals
-hashCode
-materialize
-toString
+  <init>
+  equals
+  hashCode
+  materialize
+  toString

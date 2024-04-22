@@ -1,8 +1,8 @@
 Classifier names:
 
 Callable names:
-bar
-doo
-foo
-smth
-zoo
+  bar
+  doo
+  foo
+  smth
+  zoo

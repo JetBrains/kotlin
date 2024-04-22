@@ -1,6 +1,6 @@
 Classifier names:
-JavaClass
-KotlinClass
-SuperClass
+  JavaClass
+  KotlinClass
+  SuperClass
 
 Callable names:

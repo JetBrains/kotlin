@@ -171,11 +171,15 @@ internal object TestScopeRenderer {
  */
 fun PrettyPrinter.renderNamesContainedInScope(scope: KtScopeLike) {
     appendLine("Classifier names:")
-    renderSortedNames(scope.getPossibleClassifierNames())
+    withIndent {
+        renderSortedNames(scope.getPossibleClassifierNames())
+    }
     appendLine()
 
     appendLine("Callable names:")
-    renderSortedNames(scope.getPossibleCallableNames())
+    withIndent {
+        renderSortedNames(scope.getPossibleCallableNames())
+    }
 }
 
 private fun PrettyPrinter.renderSortedNames(names: Set<Name>) {

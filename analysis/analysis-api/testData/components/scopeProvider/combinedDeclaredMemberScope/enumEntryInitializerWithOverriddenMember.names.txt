@@ -1,5 +1,5 @@
 Classifier names:
 
 Callable names:
-<init>
-foo
+  <init>
+  foo

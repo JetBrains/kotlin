@@ -1,11 +1,11 @@
 Classifier names:
-ClassInA
-ClassInB
-InnerClassInA
-InnerClassInB
+  ClassInA
+  ClassInB
+  InnerClassInA
+  InnerClassInB
 
 Callable names:
-<init>
-equals
-hashCode
-toString
+  <init>
+  equals
+  hashCode
+  toString
