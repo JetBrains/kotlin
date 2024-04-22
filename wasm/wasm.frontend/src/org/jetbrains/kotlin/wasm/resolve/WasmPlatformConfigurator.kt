@@ -50,7 +50,7 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(WasmDiagnosticSuppressor)
-        container.useInstance(JsExternalChecker(allowCompanionInInterface = false))
+        container.useInstance(JsExternalChecker(allowCompanionInInterface = false, allowUnsignedTypes = true))
         container.useInstance(JsExportDeclarationChecker(allowCompanionInInterface = false, includeUnsignedNumbers = true))
     }
 

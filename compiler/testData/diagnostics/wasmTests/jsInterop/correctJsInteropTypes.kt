@@ -21,10 +21,10 @@ external fun correctJsInteropTypes(
     float: Float,
     double: Double,
     // unsigned integer types
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uByte: UByte<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uShort: UShort<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uInt: UInt<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uLong: ULong<!>,
+    uByte: UByte,
+    uShort: UShort,
+    uInt: UInt,
+    uLong: ULong,
     // string types
     string: String,
     // function types
@@ -46,10 +46,10 @@ external fun correctNullableJsInteropTypes(
     float: Float?,
     double: Double?,
     // unsigned integer types
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uByte: UByte?<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uShort: UShort?<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uInt: UInt?<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uLong: ULong?<!>,
+    uByte: UByte?,
+    uShort: UShort?,
+    uInt: UInt?,
+    uLong: ULong?,
     // string types
     string: String?,
     // function types
@@ -78,10 +78,10 @@ external fun floatAsReturnType(): Float
 external fun doubleAsReturnType(): Double
 
 // unsigned integer types
-external fun uByteAsReturnType(): <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>UByte<!>
-external fun uShortAsReturnType(): <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>UShort<!>
-external fun uIntAsReturnType(): <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>UInt<!>
-external fun uLongAsReturnType(): <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>ULong<!>
+external fun uByteAsReturnType(): UByte
+external fun uShortAsReturnType(): UShort
+external fun uIntAsReturnType(): UInt
+external fun uLongAsReturnType(): ULong
 
 // string types
 external fun stringAsReturnType(): String
@@ -108,10 +108,10 @@ external fun floatAsVarargParameterType(vararg args: Float)
 external fun doubleAsVarargParameterType(vararg args: Double)
 
 // unsigned integer types
-external fun uByteAsVarargParameterType(<!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>vararg args: UByte<!>)
-external fun uShortAsVarargParameterType(<!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>vararg args: UShort<!>)
-external fun uIntAsVarargParameterType(<!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>vararg args: UInt<!>)
-external fun uLongAsVarargParameterType(<!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>vararg args: ULong<!>)
+external fun uByteAsVarargParameterType(vararg args: UByte)
+external fun uShortAsVarargParameterType(vararg args: UShort)
+external fun uIntAsVarargParameterType(vararg args: UInt)
+external fun uLongAsVarargParameterType(vararg args: ULong)
 
 // string types
 external fun stringAsVarargParameterType(vararg args: String)
@@ -212,10 +212,10 @@ external val floatProperty: Float
 external val doubleProperty: Double
 
 // unsigned integer types
-external val uByteProperty: <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>UByte<!>
-external val uShortProperty: <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>UShort<!>
-external val uIntProperty: <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>UInt<!>
-external val uLongProperty: <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>ULong<!>
+external val uByteProperty: UByte
+external val uShortProperty: UShort
+external val uIntProperty: UInt
+external val uLongProperty: ULong
 
 // string types
 external val stringProperty: String
@@ -350,10 +350,10 @@ external fun aliasedCorrectJsInteropTypes(
     float: AliasedFloat,
     double: AliasedDouble,
     // unsigned integer types
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uByte: AliasedUByte<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uShort: AliasedUShort<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uInt: AliasedUInt<!>,
-    <!INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>uLong: AliasedULong<!>,
+    uByte: AliasedUByte,
+    uShort: AliasedUShort,
+    uInt: AliasedUInt,
+    uLong: AliasedULong,
     // string types
     string: AliasedString,
     // function types
