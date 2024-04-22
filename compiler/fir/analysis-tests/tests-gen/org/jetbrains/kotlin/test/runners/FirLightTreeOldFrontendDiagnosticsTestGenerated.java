@@ -20939,6 +20939,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("notInlinableWithLabel.kt")
+      public void testNotInlinableWithLabel() {
+        runTest("compiler/testData/diagnostics/tests/inline/notInlinableWithLabel.kt");
+      }
+
+      @Test
       @TestMetadata("nothingToInline.kt")
       public void testNothingToInline() {
         runTest("compiler/testData/diagnostics/tests/inline/nothingToInline.kt");
