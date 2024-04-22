@@ -2,6 +2,9 @@
 ### Java
 *.class
 
+# new Kotlin 2.0 state dir
+.kotlin/
+
 # Package Files #
 *.jar
 *.war
