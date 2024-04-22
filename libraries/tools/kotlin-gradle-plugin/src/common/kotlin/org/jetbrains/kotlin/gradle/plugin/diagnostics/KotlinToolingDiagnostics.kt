@@ -863,7 +863,8 @@ object KotlinToolingDiagnostics {
 
     object ResourceMayNotBeResolvedWithGradleVersion : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(
-            targetName: String, currentGradleVersion: String, minimumRequiredVersion: String) = build(
+            targetName: String, currentGradleVersion: String, minimumRequiredVersion: String,
+        ) = build(
             """
             Resources for target $targetName may not be resolved. Minimum required Gradle version is ${minimumRequiredVersion} but current is ${currentGradleVersion}.
             
@@ -951,6 +952,14 @@ object KotlinToolingDiagnostics {
             redundantEdges.forEach { edge -> appendLine(" * ${edge.from}.dependsOn(${edge.to})") }
             appendLine("They are already added from Kotlin Target Hierarchy template https://kotl.in/hierarchy-template")
         }
+    }
+
+    object BrokenKotlinNativeBundleError : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(kotlinNativeHomePropertyValue: String?, kotlinNativeHomeProperty: String): ToolingDiagnostic =
+            build(
+                "The Kotlin/Native distribution ($kotlinNativeHomePropertyValue) used in this build does not provide required subdirectories." +
+                        " Make sure that the '$kotlinNativeHomeProperty' property points to a valid Kotlin/Native distribution.",
+            )
     }
 }
 

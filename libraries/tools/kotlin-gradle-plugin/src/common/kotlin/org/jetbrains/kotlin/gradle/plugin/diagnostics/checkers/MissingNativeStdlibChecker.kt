@@ -12,6 +12,7 @@ import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.commonizer.stdlib
 import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 
 /**
@@ -43,6 +45,7 @@ internal object MissingNativeStdlibChecker : KotlinGradleProjectChecker {
             it.parameters.noStdlibEnabled.set(project.hasProperty("kotlin.native.nostdlib"))
             it.parameters.kotlinNativeToolchainEnabled.set(project.kotlinNativeToolchainEnabled)
             it.parameters.stdlib.setFrom(project.konanDistribution.stdlib)
+            it.parameters.overriddenKotlinNativeHome.set(project.kotlinPropertiesProvider.nativeHome)
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
 
     internal abstract class StdlibExistenceCheckerValueSource :
@@ -52,11 +55,12 @@ internal object MissingNativeStdlibChecker : KotlinGradleProjectChecker {
             val noStdlibEnabled: Property<Boolean>
             val kotlinNativeToolchainEnabled: Property<Boolean>
             val stdlib: ConfigurableFileCollection
+            val overriddenKotlinNativeHome: Property<String>
         }
 
         override fun obtain(): Boolean {
             return parameters.noStdlibEnabled.get() || // suppressed
-                    parameters.kotlinNativeToolchainEnabled.get() || // with toolchain, we download konan after configuration phase, thus, we shouldn't check existence here
+                    (parameters.kotlinNativeToolchainEnabled.get() && !parameters.overriddenKotlinNativeHome.isPresent) || // with toolchain, we download konan after configuration phase, thus, we shouldn't check existence here
                     parameters.stdlib.singleFile.exists()
         }
     }
