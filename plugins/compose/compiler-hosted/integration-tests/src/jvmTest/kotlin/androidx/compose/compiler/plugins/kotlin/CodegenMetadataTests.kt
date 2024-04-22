@@ -51,8 +51,8 @@ class CodegenMetadataTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
             """
             import androidx.compose.runtime.Composable
             import kotlin.reflect.KProperty
-            import kotlinx.metadata.jvm.KotlinClassMetadata
-            import kotlinx.metadata.jvm.localDelegatedProperties
+            import kotlin.metadata.jvm.KotlinClassMetadata
+            import kotlin.metadata.jvm.localDelegatedProperties
 
             inline operator fun String.getValue(thisRef: Any?, property: KProperty<*>) = 0
 

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -106,9 +107,14 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             { null },
             FirExtensionRegistrar.getInstances(project),
             configuration.languageVersionSettings,
+            JvmTarget.JVM_17,
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
+            configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
+            predefinedJavaComponents = null,
             needRegisterJavaElementFinder = true,
+            registerExtraComponents = {},
+            init = {}
         )
     }
 
@@ -122,7 +128,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val binaryModuleData = BinaryModuleData.initialize(
             Name.identifier(rootModuleName),
             CommonPlatforms.defaultCommonPlatform,
-            CommonPlatformAnalyzerServices
         )
         val dependencyList = DependencyListForCliModule.build(binaryModuleData)
         val projectEnvironment = VfsBasedProjectEnvironment(
@@ -141,6 +146,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             librariesScope,
             projectEnvironment.getPackagePartProvider(librariesScope),
             configuration.languageVersionSettings,
+            predefinedJavaComponents = null,
             registerExtraComponents = {}
         )
 
@@ -150,7 +156,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             dependencyList.dependsOnDependencies,
             dependencyList.friendsDependencies,
             CommonPlatforms.defaultCommonPlatform,
-            CommonPlatformAnalyzerServices
         )
 
         val platformModuleData = FirModuleDataImpl(
@@ -159,7 +164,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             dependencyList.dependsOnDependencies + commonModuleData,
             dependencyList.friendsDependencies,
             JvmPlatforms.jvm8,
-            JvmPlatformAnalyzerServices
         )
 
         val commonSession = createSourceSession(
@@ -231,7 +235,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             project,
             ClassBuilderFactories.TEST,
             irModuleFragment.descriptor,
-            NoScopeRecordCliBindingTrace().bindingContext,
+            NoScopeRecordCliBindingTrace(project).bindingContext,
             configuration
         ).isIrBackend(
             true

@@ -19,7 +19,6 @@ package androidx.compose.compiler.plugins.kotlin
 import org.junit.Test
 
 // TODO(b/282189431): run this test with K2
-@Suppress("unused")
 class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
     @Test
     fun testBasicMpp() {
