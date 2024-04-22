@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -569,6 +570,21 @@ open class CommonizerIT : KGPBaseTest() {
 
             build(":clean") {
                 assertDirectoryExists(commonizerIdeOutput, "Expected ide output directory to survive cleaning")
+            }
+        }
+    }
+
+    @DisplayName("Commonize native distribution with Ios Linux and Windows on non-Mac host, with klib cross-compilation enabled")
+    @GradleTest
+    @TestMetadata("commonizeNativeDistributionWithIosLinuxWindows")
+    fun testCommonizeNativeCrossDistributionWithCrossCompilationEnabled(gradleVersion: GradleVersion) {
+        nativeProject("commonizeNativeDistributionWithIosLinuxWindows", gradleVersion) {
+
+            build(":cleanNativeDistributionCommonization")
+
+            build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
+                assertTasksExecuted(":commonizeNativeDistribution")
+                assertOutputContains(commonizerOutput)
             }
         }
     }
