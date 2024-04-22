@@ -43,16 +43,17 @@ linkerOpts.osx = \
 linkerOpts.linux = \
     -Wl,-z,noexecstack \
     -lrt -ldl -lpthread -lz -lm \
-    -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMX86Disassembler -lLLVMX86AsmParser \
-    -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMWebAssemblyDisassembler -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc \
-    -lLLVMWebAssemblyAsmParser -lLLVMWebAssemblyInfo -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc \
-    -lLLVMAArch64Utils -lLLVMAArch64Info -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMCFGuard -lLLVMGlobalISel -lLLVMSelectionDAG \
-    -lLLVMAsmPrinter -lLLVMDebugInfoDWARF -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMUtils -lLLVMARMInfo -lLLVMLTO \
-    -lLLVMPasses -lLLVMCoroutines -lLLVMObjCARCOpts -lLLVMExtensions -lLLVMCodeGen -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize \
-    -lLLVMScalarOpts -lLLVMIRReader -lLLVMAsmParser -lLLVMInstCombine -lLLVMFrontendOpenMP -lLLVMAggressiveInstCombine \
-    -lLLVMTarget -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMTextAPI -lLLVMMCParser \
-    -lLLVMMC -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMBitReader -lLLVMCore -lLLVMRemarks -lLLVMBitstreamReader -lLLVMBinaryFormat \
-    -lLLVMSupport -lLLVMDemangle
+    -lLLVMMipsDisassembler -lLLVMMipsAsmParser -lLLVMMipsCodeGen -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMX86TargetMCA -lLLVMMCA \
+    -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMWebAssemblyDisassembler \
+    -lLLVMWebAssemblyAsmParser -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc -lLLVMWebAssemblyUtils -lLLVMWebAssemblyInfo \
+    -lLLVMAArch64Disassembler -lLLVMAArch64AsmParser -lLLVMAArch64CodeGen -lLLVMAArch64Desc -lLLVMAArch64Utils -lLLVMAArch64Info \
+    -lLLVMARMDisassembler -lLLVMARMAsmParser -lLLVMARMCodeGen -lLLVMCFGuard -lLLVMGlobalISel -lLLVMSelectionDAG -lLLVMAsmPrinter \
+    -lLLVMDebugInfoMSF -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMUtils -lLLVMARMInfo -lLLVMLTO -lLLVMPasses -lLLVMCoroutines \
+    -lLLVMObjCARCOpts -lLLVMExtensions -lLLVMCodeGen -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize -lLLVMIRReader -lLLVMAsmParser \
+    -lLLVMFrontendOpenMP -lLLVMScalarOpts -lLLVMInstCombine -lLLVMAggressiveInstCombine -lLLVMTarget -lLLVMLinker -lLLVMTransformUtils \
+    -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMDebugInfoDWARF -lLLVMObject -lLLVMTextAPI -lLLVMMCParser -lLLVMMC \
+    -lLLVMDebugInfoCodeView -lLLVMBitReader -lLLVMCore -lLLVMRemarks -lLLVMBitstreamReader -lLLVMBinaryFormat -lLLVMSupport \
+    -lLLVMDemangle
 
 # ./llvm-config --libs analysis bitreader bitwriter core linker target analysis ipo instrumentation lto arm aarch64 webassembly x86
 linkerOpts.mingw = \
