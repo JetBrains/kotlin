@@ -3032,12 +3032,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("internalOpenLateinit.kt")
-    public void testInternalOpenLateinit() {
-      runTest("compiler/testData/codegen/box/bridges/internalOpenLateinit.kt");
-    }
-
-    @Test
     @TestMetadata("kt12416.kt")
     public void testKt12416() {
       runTest("compiler/testData/codegen/box/bridges/kt12416.kt");
@@ -9435,6 +9429,18 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("internalLeakBug.kt")
     public void testInternalLeakBug() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalLeakBug.kt");
+    }
+
+    @Test
+    @TestMetadata("internalOpenLateinit_defaultModule.kt")
+    public void testInternalOpenLateinit_defaultModule() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalOpenLateinit_defaultModule.kt");
+    }
+
+    @Test
+    @TestMetadata("internalOpenLateinit_nonDefaultModule.kt")
+    public void testInternalOpenLateinit_nonDefaultModule() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalOpenLateinit_nonDefaultModule.kt");
     }
 
     @Test

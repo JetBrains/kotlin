@@ -3043,12 +3043,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("internalOpenLateinit.kt")
-    public void testInternalOpenLateinit() {
-      runTest("compiler/testData/codegen/box/bridges/internalOpenLateinit.kt");
-    }
-
-    @Test
     @TestMetadata("jsName.kt")
     public void testJsName() {
       runTest("compiler/testData/codegen/box/bridges/jsName.kt");
@@ -9500,6 +9494,18 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("internalLeakBug.kt")
     public void testInternalLeakBug() {
       runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalLeakBug.kt");
+    }
+
+    @Test
+    @TestMetadata("internalOpenLateinit_defaultModule.kt")
+    public void testInternalOpenLateinit_defaultModule() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalOpenLateinit_defaultModule.kt");
+    }
+
+    @Test
+    @TestMetadata("internalOpenLateinit_nonDefaultModule.kt")
+    public void testInternalOpenLateinit_nonDefaultModule() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalOpenLateinit_nonDefaultModule.kt");
     }
 
     @Test

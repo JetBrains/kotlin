@@ -194,6 +194,18 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
   }
 
   @Test
+  @TestMetadata("internalOpenLateinit_defaultModule.kt")
+  public void testInternalOpenLateinit_defaultModule() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalOpenLateinit_defaultModule.kt");
+  }
+
+  @Test
+  @TestMetadata("internalOpenLateinit_nonDefaultModule.kt")
+  public void testInternalOpenLateinit_nonDefaultModule() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalOpenLateinit_nonDefaultModule.kt");
+  }
+
+  @Test
   @TestMetadata("internalSetterOverridden.kt")
   public void testInternalSetterOverridden() {
     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
