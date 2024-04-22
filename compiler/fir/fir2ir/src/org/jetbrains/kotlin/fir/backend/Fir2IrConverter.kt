@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtFile
 
 class Fir2IrConverter(
@@ -539,7 +540,16 @@ class Fir2IrConverter(
                         }
                     }
                     for (scriptDeclaration in declaration.declarations) {
-                        if (scriptDeclaration !is FirAnonymousInitializer) {
+                        val needProcessMember = when (scriptDeclaration) {
+                            is FirAnonymousInitializer -> false // processed later
+                            is FirProperty -> {
+                                // '_' DD element
+                                scriptDeclaration.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
+                                        scriptDeclaration.destructuringDeclarationContainerVariable == null
+                            }
+                            else -> true
+                        }
+                        if (needProcessMember) {
                             processMemberDeclaration(scriptDeclaration, containingClass = null, irScript, delegateFieldToPropertyMap = null)
                         }
                     }

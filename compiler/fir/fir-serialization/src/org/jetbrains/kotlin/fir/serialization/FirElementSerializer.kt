@@ -307,6 +307,7 @@ class FirElementSerializer private constructor(
         return builder
     }
 
+    @OptIn(UnexpandedTypeCheck::class)
     fun scriptProto(script: FirScript): ProtoBuf.Class.Builder = whileAnalysing(session, script) {
         val builder = ProtoBuf.Class.newBuilder()
 
@@ -344,7 +345,20 @@ class FirElementSerializer private constructor(
 
         for (declaration in callableMembers) {
             when (declaration) {
-                is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
+                is FirProperty -> {
+                    val skipPropertyMetadata = when {
+                        declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
+                            declaration.returnTypeRef.let { (it.isUnit || it.isNothing || it.isNullableNothing) }
+                        }
+                        declaration.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> { // '_' DD element
+                            declaration.destructuringDeclarationContainerVariable != null
+                        }
+                        else -> false
+                    }
+                    if (!skipPropertyMetadata) {
+                        propertyProto(declaration)?.let { builder.addProperty(it) }
+                    }
+                }
                 is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
                 else -> {}
             }
