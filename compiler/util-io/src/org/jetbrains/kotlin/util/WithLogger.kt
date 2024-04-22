@@ -5,6 +5,7 @@ import kotlin.system.exitProcess
 interface Logger {
     fun log(message: String)
     fun warning(message: String)
+    fun strongWarning(message: String) = warning(message)
     fun error(message: String)
 
     @Deprecated(FATAL_DEPRECATION_MESSAGE, ReplaceWith(FATAL_REPLACEMENT))

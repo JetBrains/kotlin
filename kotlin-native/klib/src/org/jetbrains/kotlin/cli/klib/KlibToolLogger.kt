@@ -28,6 +28,7 @@ internal class KlibToolLogger(private val output: KlibToolOutput) : Logger, IrMe
         when (severity) {
             IrMessageLogger.Severity.INFO -> log(message)
             IrMessageLogger.Severity.WARNING -> warning(message)
+            IrMessageLogger.Severity.STRONG_WARNING -> strongWarning(message)
             IrMessageLogger.Severity.ERROR -> error(message)
         }
     }

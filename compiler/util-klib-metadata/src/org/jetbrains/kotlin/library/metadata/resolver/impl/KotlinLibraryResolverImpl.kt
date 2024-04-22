@@ -88,7 +88,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
             val librariesWithDuplicatedUniqueNames = groupedByUniqName.filterValues { it.size > 1 }
             librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { (uniqueName, libraries) ->
                 val libraryPaths = libraries.map { it.libraryFile.absolutePath }.sorted().joinToString()
-                logger.warning("KLIB resolver: The same 'unique_name=$uniqueName' found in more than one library: $libraryPaths")
+                logger.strongWarning("KLIB resolver: The same 'unique_name=$uniqueName' found in more than one library: $libraryPaths")
             }
             groupedByUniqName.map { it.value.first() } // This line is the reason of such issues as KT-63573.
         }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 interface IrMessageLogger {
 
     enum class Severity {
-        INFO, WARNING, ERROR
+        INFO, WARNING, STRONG_WARNING, ERROR
     }
 
     data class Location(val filePath: String, val line: Int, val column: Int)

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.util.Logger
 private class IrMessageLoggerAdapter(private val irMessageLogger: IrMessageLogger) : Logger {
     override fun log(message: String) = irMessageLogger.report(INFO, message, null)
     override fun warning(message: String) = irMessageLogger.report(WARNING, message, null)
+    override fun strongWarning(message: String) = irMessageLogger.report(STRONG_WARNING, message, null)
     override fun error(message: String) = irMessageLogger.report(ERROR, message, null)
 
     @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))

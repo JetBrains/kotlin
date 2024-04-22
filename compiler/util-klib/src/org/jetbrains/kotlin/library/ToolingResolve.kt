@@ -45,7 +45,7 @@ object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
                     }
                     else -> { // TODO: choose the best fit among all available candidates
                         // mimic as old style library and warn
-                        logger.warning(
+                        logger.strongWarning(
                             "KLIB resolver: Library '$libraryFile' can not be read." +
                                     " Multiple components found: ${components.map { it.path.substringAfter(localRoot.path) }}"
                         )

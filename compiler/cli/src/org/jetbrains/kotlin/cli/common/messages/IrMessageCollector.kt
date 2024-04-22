@@ -17,6 +17,7 @@ class IrMessageCollector(private val messageCollector: MessageCollector) : IrMes
             return when (severity) {
                 IrMessageLogger.Severity.INFO -> CompilerMessageSeverity.INFO
                 IrMessageLogger.Severity.WARNING -> CompilerMessageSeverity.WARNING
+                IrMessageLogger.Severity.STRONG_WARNING -> CompilerMessageSeverity.STRONG_WARNING
                 IrMessageLogger.Severity.ERROR -> CompilerMessageSeverity.ERROR
             }
         }

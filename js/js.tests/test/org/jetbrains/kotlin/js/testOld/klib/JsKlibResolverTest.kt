@@ -58,7 +58,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
             .toList()
 
         lines.assertHasLineWithPrefix("error: KLIB resolver: Could not find \"<path>/v2/lib1\"")
-        //lines.assertHasLineWithPrefix("warning: KLIB resolver: Skipping '<path>/v2/lib1'. Incompatible ABI version")
+        lines.assertHasLineWithPrefix("warning: KLIB resolver: Skipping '<path>/v2/lib1'. Incompatible ABI version")
     }
 
     private fun createKlibDir(name: String, version: Int): File =
