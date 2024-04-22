@@ -7847,6 +7847,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("breakContinueWithElvisInLambda.kt")
+      public void testBreakContinueWithElvisInLambda() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakContinueWithElvisInLambda.kt");
+      }
+
+      @Test
       @TestMetadata("breakInLambdaPassedToDirectInvoke.kt")
       public void testBreakInLambdaPassedToDirectInvoke() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakInLambdaPassedToDirectInvoke.kt");
