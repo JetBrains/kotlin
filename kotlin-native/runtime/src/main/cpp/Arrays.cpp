@@ -594,6 +594,16 @@ void Kotlin_BooleanArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KBool
   fillImpl<KBoolean>(thiz, fromIndex, toIndex, value);
 }
 
+#if KONAN_LINUX
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <atomic>
+#endif
+
 // Mostly taken from kotlin-native/runtime/src/mimalloc/c/random.c
 void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
     ArrayHeader* array = byteArray->array();
@@ -602,14 +612,6 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
 #if KONAN_MACOSX || KONAN_IOS || KONAN_TVOS || KONAN_WATCHOS || KONAN_ANDROID
     arc4random_buf(address, size);
 #elif KONAN_LINUX
-    #include <sys/syscall.h>
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <fcntl.h>
-    #include <errno.h>
-    #include <atomic>
-
     #ifdef SYS_getrandom
         static std::atomic<bool> use_getrandom(true);
         if (use_getrandom.load(std::memory_order_acquire)) {
