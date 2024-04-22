@@ -113,12 +113,12 @@ public class BindingTraceContext implements BindingTrace {
 
     private BindingTraceContext(@NotNull MutableSlicedMap map, BindingTraceFilter filter, boolean isValidationEnabled, Project project) {
         this.map = map;
+        this.project = project;
         this.mutableDiagnostics =
                 filter.getIgnoreDiagnostics()
                 ? null
                 : new MutableDiagnosticsWithSuppression(new BindingContextSuppressCache(bindingContext), Diagnostics.Companion.getEMPTY());
         this.isValidationEnabled = isValidationEnabled;
-        this.project = project;
     }
 
     @TestOnly
