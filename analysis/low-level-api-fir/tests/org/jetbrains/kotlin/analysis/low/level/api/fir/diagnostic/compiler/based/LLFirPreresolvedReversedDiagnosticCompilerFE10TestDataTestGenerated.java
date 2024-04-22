@@ -29854,6 +29854,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("supertypeOrder.kt")
+        public void testSupertypeOrder() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/supertypeOrder.kt");
+        }
+
+        @Test
         @TestMetadata("unrelatedInherited.kt")
         public void testUnrelatedInherited() {
           runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/unrelatedInherited.kt");
