@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.text
 
 @OptIn(CheckersComponentInternal::class)
 class ExpressionCheckersDiagnosticComponent(
@@ -72,6 +73,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: CheckerContext) {
+        println("visitFunctionCall: ${functionCall.source.text}")
         checkers.allFunctionCallCheckers.check(functionCall, data)
     }
 
@@ -111,6 +113,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: CheckerContext) {
+        println("visitWhenExpressions: $whenExpression")
         checkers.allWhenExpressionCheckers.check(whenExpression, data)
     }
 

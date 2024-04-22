@@ -281,9 +281,6 @@ abstract class FirVisitor<out R, in D> {
     open fun visitElvisExpression(elvisExpression: FirElvisExpression, data: D): R =
         visitElement(elvisExpression, data)
 
-    open fun visitCompoundExpression(compoundExpression: FirCompoundExpression, data: D): R =
-        visitElement(compoundExpression, data)
-
     open fun visitCompoundExpressionBranch(compoundExpressionBranch: FirCompoundExpressionBranch, data: D): R =
         visitElement(compoundExpressionBranch, data)
 

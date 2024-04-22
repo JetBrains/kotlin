@@ -715,14 +715,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(elvisExpression)
     }
 
-    final override fun visitCompoundExpression(compoundExpression: FirCompoundExpression, data: Nothing?) {
-        visitCompoundExpression(compoundExpression)
-    }
-
-    open fun visitCompoundExpression(compoundExpression: FirCompoundExpression) {
-        visitElement(compoundExpression)
-    }
-
     final override fun visitCompoundExpressionBranch(compoundExpressionBranch: FirCompoundExpressionBranch, data: Nothing?) {
         visitCompoundExpressionBranch(compoundExpressionBranch)
     }

@@ -1391,6 +1391,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 receiver: FirExpression,
                 vararg arguments: FirExpression
             ): FirFunctionCall = buildFunctionCall {
+
+                println("function call")
                 this.source = source
                 explicitReceiver = receiver
                 argumentList = when (arguments.size) {

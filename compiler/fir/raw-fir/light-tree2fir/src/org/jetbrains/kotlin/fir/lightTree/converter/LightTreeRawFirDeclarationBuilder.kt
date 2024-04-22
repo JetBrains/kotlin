@@ -74,7 +74,7 @@ class LightTreeRawFirDeclarationBuilder(
             //TODO throw error
             throw Exception()
         }
-
+        println("convertFile")
         val fileSymbol = FirFileSymbol()
         var fileAnnotations = mutableListOf<FirAnnotation>()
         val importList = mutableListOf<FirImport>()
@@ -114,6 +114,7 @@ class LightTreeRawFirDeclarationBuilder(
         return buildFile {
             symbol = fileSymbol
             source = file.toFirSourceElement()
+            println("source: $source")
             origin = FirDeclarationOrigin.Source
             moduleData = baseModuleData
             name = sourceFile.name
@@ -133,6 +134,7 @@ class LightTreeRawFirDeclarationBuilder(
         println("convertBlockExpression")
         return convertBlockExpressionWithoutBuilding(block).build()
     }
+
 
     fun convertBlockExpressionWithoutBuilding(block: LighterASTNode, kind: KtFakeSourceElementKind? = null): FirBlockBuilder {
         val firStatements = block.forEachChildrenReturnList<FirStatement> { node, container ->
@@ -1834,6 +1836,7 @@ class LightTreeRawFirDeclarationBuilder(
 
             val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
+
                     source = functionSource
                     receiverParameter = receiverType?.convertToReceiverParameter()
                     symbol = functionSymbol as FirAnonymousFunctionSymbol
@@ -1907,6 +1910,7 @@ class LightTreeRawFirDeclarationBuilder(
                         convertFunctionBody(block, expression, allowLegacyContractDescription)
                     }
                     this.body = bodyWithContractDescription.first
+
                     val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
                     contractDescription?.let {
                         if (this is FirSimpleFunctionBuilder) {
@@ -1947,6 +1951,7 @@ class LightTreeRawFirDeclarationBuilder(
         return when {
             blockNode != null -> {
                 val block = convertBlock(blockNode)
+                println("convertFunctionBody: $blockNode")
                 val contractDescription = runIf(allowLegacyContractDescription) {
                     val blockSource = block.source
                     val diagnostic = when {

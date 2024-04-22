@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.SyntaxTreeBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -452,7 +453,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     private void parsePostfixExpression() {
         PsiBuilder.Marker expression = mark();
-
+        System.out.println("parsePostfixExpression");
         boolean firstExpressionParsed = at(COLONCOLON) ? parseDoubleColonSuffix(mark()) : parseAtomicExpression();
 
         while (true) {
@@ -502,7 +503,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : typeArguments annotatedLambda
      *   ;
      */
-    private boolean parseCallSuffix() {
+    private boolean     parseCallSuffix() {
+
         if (parseCallWithClosure()) {
             // do nothing
         }
@@ -533,6 +535,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      * atomicExpression typeParameters? valueParameters? functionLiteral*
      */
     private void parseSelectorCallExpression() {
+        System.out.println("parseSelectorCallExpression");
         PsiBuilder.Marker mark = mark();
         parseAtomicExpression();
         if (!myBuilder.newlineBeforeCurrentToken() && parseCallSuffix()) {
@@ -1630,12 +1633,19 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         assert _at(IF_KEYWORD);
         System.out.println("parse if");
-        PsiBuilder.Marker marker = mark();
 
 
-        advance(); //IF_KEYWORD
-
+         //IF_KEYWORD
+        PsiBuilder.Marker functionCall = mark();
+        PsiBuilder.Marker compoundExpression1 = mark();
+        PsiBuilder.Marker compoundExpression = mark();
+        PsiBuilder.Marker block = mark();
+        PsiBuilder.Marker ifstatement = mark();
         parseCompoundExpression();
+        PsiBuilder.Marker condition = mark();
+        parseExpression();
+        condition.done(CONDITION);
+        expect(RPAR, "Expecting ')");
 
         PsiBuilder.Marker thenBranch = mark();
         if (!at(ELSE_KEYWORD) && !at(SEMICOLON)) {
@@ -1656,13 +1666,16 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
             elseBranch.done(ELSE);
         }
-
-        marker.done(IF);
+        ifstatement.done(IF);
+        block.done(BLOCK);
+        compoundExpression.done(COMPOUND_EXPRESSION);
+        compoundExpression1.done(COMPOUND_EXPRESSION);
+        functionCall.done(CALL_EXPRESSION);
     }
 
     private void parseCompoundExpression(){
-        PsiBuilder.Marker compoundExpression = mark();
-        myBuilder.disableNewlines();
+        advance();
+        myBuilder.enableNewlines();
         System.out.println("modified_parse_condition");
         if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {
             while(true) {
@@ -1684,12 +1697,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 advance(); // SEMICOLON
             }
 
-            PsiBuilder.Marker condition = mark();
-            parseExpression();
-            condition.done(CONDITION);
-            expect(RPAR, "Expecting ')");
+
         }
-        compoundExpression.done(COMPOUND_EXPRESSION);
+
         myBuilder.restoreNewlinesState();
 
     }

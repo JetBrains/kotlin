@@ -115,7 +115,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val contextReceiverArgumentListOwner by element(Expression)
     val checkNotNullCall by element(Expression, expression, call, resolvable)
     val elvisExpression by element(Expression, expression, resolvable)
-    val compoundExpression by element(Expression, expression, resolvable)
+    //val compoundExpression by element(Expression, expression, resolvable)
     val compoundExpressionBranch by element(Expression)
 
     val arrayLiteral by element(Expression, expression, call)
