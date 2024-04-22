@@ -5188,6 +5188,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("illFormed.kt")
+      public void testIllFormed() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/typeParameters/illFormed.kt");
+      }
+
+      @Test
       @TestMetadata("kt38288.kt")
       public void testKt38288() {
         runTest("compiler/fir/analysis-tests/testData/resolve/typeParameters/kt38288.kt");
