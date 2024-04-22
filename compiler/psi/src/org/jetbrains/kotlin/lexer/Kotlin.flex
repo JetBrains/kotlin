@@ -17,16 +17,20 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 %{
     private static final class State {
         final int lBraceCount;
+        final int dollarCount;
         final int state;
 
-        public State(int state, int lBraceCount) {
+        public State(int state, int lBraceCount, int dollarCount) {
             this.state = state;
             this.lBraceCount = lBraceCount;
+            this.dollarCount = dollarCount;
         }
 
         @Override
         public String toString() {
-            return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
+            return "yystate = " + state
+              + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount)
+              + (dollarCount == 0 ? "" : "dollarCount = " + dollarCount);
         }
     }
 
@@ -37,7 +41,13 @@ import org.jetbrains.kotlin.lexer.KtTokens;
     private int commentDepth;
 
     private void pushState(int state) {
-        states.push(new State(yystate(), lBraceCount));
+        states.push(new State(yystate(), lBraceCount, -1));
+        lBraceCount = 0;
+        yybegin(state);
+    }
+
+    private void pushState(int state, int dollarCount) {
+        states.push(new State(yystate(), lBraceCount, dollarCount));
         lBraceCount = 0;
         yybegin(state);
     }
@@ -46,6 +56,18 @@ import org.jetbrains.kotlin.lexer.KtTokens;
         State state = states.pop();
         lBraceCount = state.lBraceCount;
         yybegin(state.state);
+    }
+
+    private int interpolatingQuotes() {
+        State state = states.peek();
+        switch (state.dollarCount) {
+            case -1:
+                throw new IllegalArgumentException("Unexpected quotes count: " + state);
+            case 0:
+                return 1;
+            default:
+                return state.dollarCount;
+        }
     }
 
     private IElementType commentStateToTokenType(int state) {
@@ -114,20 +136,22 @@ CHARACTER_LITERAL="'"([^\\\'\n]|{ESCAPE_SEQUENCE})*("'"|\\)?
 ESCAPE_SEQUENCE=\\(u{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}|[^\n])
 
 // ANY_ESCAPE_SEQUENCE = \\[^]
+INTERPOLATION = \$+
+
 THREE_QUO = (\"\"\")
 THREE_OR_MORE_QUO = ({THREE_QUO}\"*)
 
 REGULAR_STRING_PART=[^\\\"\n\$]+
-SHORT_TEMPLATE_ENTRY=\${IDENTIFIER}
+SHORT_TEMPLATE_ENTRY={INTERPOLATION}{IDENTIFIER}
 LONELY_DOLLAR=\$
-LONG_TEMPLATE_ENTRY_START=\$\{
+LONG_TEMPLATE_ENTRY_START={INTERPOLATION}\{
 LONELY_BACKTICK=`
 
 %%
 
 // String templates
 
-{THREE_QUO}                      { pushState(RAW_STRING); return KtTokens.OPEN_QUOTE; }
+{INTERPOLATION}?{THREE_QUO}      { pushState(RAW_STRING, yylength() - 3); return KtTokens.OPEN_QUOTE; }
 <RAW_STRING> \n                  { return KtTokens.REGULAR_STRING_PART; }
 <RAW_STRING> \"                  { return KtTokens.REGULAR_STRING_PART; }
 <RAW_STRING> \\                  { return KtTokens.REGULAR_STRING_PART; }
@@ -143,16 +167,25 @@ LONELY_BACKTICK=`
                                     }
                                  }
 
-\"                          { pushState(STRING); return KtTokens.OPEN_QUOTE; }
+{INTERPOLATION}?\"          { pushState(STRING, yylength() - 1); return KtTokens.OPEN_QUOTE; }
 <STRING> \n                 { popState(); yypushback(1); return KtTokens.DANGLING_NEWLINE; }
 <STRING> \"                 { popState(); return KtTokens.CLOSING_QUOTE; }
 <STRING> {ESCAPE_SEQUENCE}  { return KtTokens.ESCAPE_SEQUENCE; }
 
 <STRING, RAW_STRING> {REGULAR_STRING_PART}         { return KtTokens.REGULAR_STRING_PART; }
 <STRING, RAW_STRING> {SHORT_TEMPLATE_ENTRY}        {
-                                                        pushState(SHORT_TEMPLATE_ENTRY);
-                                                        yypushback(yylength() - 1);
-                                                        return KtTokens.SHORT_TEMPLATE_ENTRY_START;
+                                                        int dollars = yytext().toString().lastIndexOf('$') + 1;
+                                                        int interpolatingDollars = interpolatingQuotes();
+                                                        if (dollars < interpolatingDollars) { // not enough dollars
+                                                            return KtTokens.REGULAR_STRING_PART;
+                                                        } else if (dollars == interpolatingDollars) {
+                                                            pushState(SHORT_TEMPLATE_ENTRY);
+                                                            yypushback(yylength() - dollars);
+                                                            return KtTokens.SHORT_TEMPLATE_ENTRY_START;
+                                                        } else { // too many dollars
+                                                            yypushback(yylength() - dollars + interpolatingDollars);
+                                                            return KtTokens.REGULAR_STRING_PART;
+                                                        }
                                                    }
 // Only *this* keyword is itself an expression valid in this position
 // *null*, *true* and *false* are also keywords and expression, but it does not make sense to put them
@@ -161,7 +194,19 @@ LONELY_BACKTICK=`
 <SHORT_TEMPLATE_ENTRY> {IDENTIFIER}    { popState(); return KtTokens.IDENTIFIER; }
 
 <STRING, RAW_STRING> {LONELY_DOLLAR}               { return KtTokens.REGULAR_STRING_PART; }
-<STRING, RAW_STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return KtTokens.LONG_TEMPLATE_ENTRY_START; }
+<STRING, RAW_STRING> {LONG_TEMPLATE_ENTRY_START}   {
+                                                        int dollars = yylength() - 1;
+                                                        int interpolatingDollars = interpolatingQuotes();
+                                                        if (dollars < interpolatingDollars) { // not enough dollars
+                                                            return KtTokens.REGULAR_STRING_PART;
+                                                        } else if (dollars == interpolatingDollars) {
+                                                            pushState(LONG_TEMPLATE_ENTRY);
+                                                            return KtTokens.LONG_TEMPLATE_ENTRY_START;
+                                                        } else { // too many dollars
+                                                            yypushback(interpolatingDollars + 1);
+                                                            return KtTokens.REGULAR_STRING_PART;
+                                                        }
+                                                    }
 
 <LONG_TEMPLATE_ENTRY> "{"              { lBraceCount++; return KtTokens.LBRACE; }
 <LONG_TEMPLATE_ENTRY> "}"              {
