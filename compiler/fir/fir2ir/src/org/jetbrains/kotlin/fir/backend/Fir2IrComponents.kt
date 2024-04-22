@@ -50,7 +50,7 @@ interface Fir2IrComponents {
     val callablesGenerator: Fir2IrCallableDeclarationsGenerator
     val classifiersGenerator: Fir2IrClassifiersGenerator
     val lazyDeclarationsGenerator: Fir2IrLazyDeclarationsGenerator
-    val dataClassMembersGenerator: DataClassMembersGenerator
+    val dataClassMembersGenerator: Fir2IrDataClassMembersGenerator
 
     val annotationGenerator: AnnotationGenerator
     val callGenerator: CallAndReferenceGenerator

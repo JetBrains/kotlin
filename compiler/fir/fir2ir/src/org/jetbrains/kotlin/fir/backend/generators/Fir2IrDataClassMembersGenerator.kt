@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  * fir own logic that traverses class hierarchies in fir elements. Also, this one creates and passes IR elements, instead of providing how
  * to declare them, to [DataClassMembersGenerator].
  */
-class DataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
+class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
 
     fun generateSingleFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
         return MyDataClassMethodsGenerator(irClass, klass, IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
