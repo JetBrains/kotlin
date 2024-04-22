@@ -30,11 +30,14 @@ fun buildResolvedArgumentList(
 
 fun buildArgumentListForErrorCall(
     original: FirArgumentList,
-    mapping: LinkedHashMap<FirExpression, FirValueParameter>
+    mapping: LinkedHashMap<FirExpression, FirValueParameter>,
 ): FirArgumentList {
+    val argToVarargArg = mapping.keys.filterIsInstance<FirVarargArgumentsExpression>()
+        .flatMap { varargArg -> varargArg.arguments.map { it to varargArg } }
+        .toMap()
     return FirResolvedArgumentListForErrorCall(
         original,
-        original.arguments.associateWithTo(LinkedHashMap()) { key -> mapping[key] },
+        original.arguments.map { argToVarargArg[it] ?: it }.associateWithTo(LinkedHashMap()) { key -> mapping[key] }
     )
 }
 

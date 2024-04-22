@@ -351,12 +351,12 @@ class FirCallCompletionResultsWriterTransformer(
         val originalArgumentList = result.argumentList
         val subCandidate = calleeReference.candidate
         val resultType = result.resolvedType.substituteType(subCandidate)
+        subCandidate.handleVarargs()
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
                 result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
             }
         } else {
-            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 val newArgumentList = buildResolvedArgumentList(originalArgumentList, it)
                 val symbol = subCandidate.symbol
@@ -485,12 +485,12 @@ class FirCallCompletionResultsWriterTransformer(
                 }
             }
         }
+        subCandidate.handleVarargs()
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
                 annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, it))
             }
         } else {
-            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 annotationCall.replaceArgumentList(buildResolvedArgumentList(annotationCall.argumentList, it))
             }
@@ -700,12 +700,12 @@ class FirCallCompletionResultsWriterTransformer(
         val subCandidate = calleeReference.candidate
 
         val originalArgumentList = delegatedConstructorCall.argumentList
+        subCandidate.handleVarargs()
         if (calleeReference.isError) {
             subCandidate.argumentMapping?.let {
                 delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, it))
             }
         } else {
-            subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(originalArgumentList, it))
             }
