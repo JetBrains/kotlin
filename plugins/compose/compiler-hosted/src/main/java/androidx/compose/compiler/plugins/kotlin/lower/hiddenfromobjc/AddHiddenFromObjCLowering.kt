@@ -23,8 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.lower.ComposableSymbolRemapper
 import androidx.compose.compiler.plugins.kotlin.lower.containsComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.lower.needsComposableRemapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -58,7 +56,6 @@ class AddHiddenFromObjCLowering(
         getTopLevelClass(ClassId.fromString("kotlin/native/HiddenFromObjC"))
     }
 
-    private val shouldAnnotateClass = ArrayDeque<Boolean>()
     private var currentShouldAnnotateClass = false
 
     override fun lower(module: IrModuleFragment) {
@@ -73,7 +70,7 @@ class AddHiddenFromObjCLowering(
      * after the issue is resolved, `visitClass` could be removed entirely
      */
     override fun visitClass(declaration: IrClass): IrStatement {
-        shouldAnnotateClass.push(currentShouldAnnotateClass)
+        val previousShouldAnnotateClass = currentShouldAnnotateClass
         currentShouldAnnotateClass = false
 
         val cls = super.visitClass(declaration) as IrClass
@@ -86,7 +83,7 @@ class AddHiddenFromObjCLowering(
             hideFromObjCDeclarationsSet?.add(cls)
         }
 
-        currentShouldAnnotateClass = shouldAnnotateClass.pop()
+        currentShouldAnnotateClass = previousShouldAnnotateClass
         return cls
     }
 
