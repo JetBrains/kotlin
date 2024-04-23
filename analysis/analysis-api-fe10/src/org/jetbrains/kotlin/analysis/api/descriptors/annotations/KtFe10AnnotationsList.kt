@@ -39,7 +39,7 @@ internal class KtFe10AnnotationsList private constructor(
     override val annotationInfos: List<KtAnnotationApplicationInfo>
         get() = withValidityAssertion {
             mapNotIgnoredAnnotationsWithIndex { index, annotation ->
-                annotation.toKtAnnotationInfo(index)
+                annotation.toKtAnnotationInfo(analysisContext, index)
             }
         }
 

@@ -44,7 +44,7 @@ internal class KtFirAnnotationListForType private constructor(
     override val annotationInfos: List<KtAnnotationApplicationInfo>
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).mapIndexed { index, annotation ->
-                annotation.toKtAnnotationInfo(useSiteSession, index)
+                annotation.toKtAnnotationInfo(useSiteSession, index, token)
             }
         }
 

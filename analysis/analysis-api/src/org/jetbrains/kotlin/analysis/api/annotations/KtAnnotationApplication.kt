@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtCallElement
  * @see KtAnnotationApplicationInfo
  * @see KtAnnotationApplicationWithArgumentsInfo
  */
-public sealed interface KtAnnotationApplication {
+public sealed interface KtAnnotationApplication : KtLifetimeOwner {
     /**
      * The [ClassId] of applied annotation. [ClassId] is a fully qualified name on annotation class.
      */

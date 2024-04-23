@@ -150,6 +150,7 @@ internal object FirAnnotationValueConverter {
                                     constructorSymbolPointer = with(builder.analysisSession) {
                                         builder.functionLikeBuilder.buildConstructorSymbol(resolvedSymbol).createPointer()
                                     },
+                                    token = token
                                 ),
                                 token
                             )

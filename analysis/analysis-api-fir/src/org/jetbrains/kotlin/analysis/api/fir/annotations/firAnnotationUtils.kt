@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -167,9 +168,10 @@ internal fun annotations(
 internal fun annotationInfos(
     firSymbol: FirBasedSymbol<*>,
     useSiteSession: FirSession,
+    token: KtLifetimeToken,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KtAnnotationApplicationInfo> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
-    annotation.toKtAnnotationInfo(useSiteSession, index)
+    annotation.toKtAnnotationInfo(useSiteSession, index, token)
 }
 
 internal fun annotationClassIds(

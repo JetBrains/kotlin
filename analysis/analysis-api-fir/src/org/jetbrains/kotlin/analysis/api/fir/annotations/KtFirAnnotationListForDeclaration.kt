@@ -32,7 +32,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
 
     override val annotationInfos: List<KtAnnotationApplicationInfo>
         get() = withValidityAssertion {
-            annotationInfos(firSymbol, useSiteSession)
+            annotationInfos(firSymbol, useSiteSession, token)
         }
 
     override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {

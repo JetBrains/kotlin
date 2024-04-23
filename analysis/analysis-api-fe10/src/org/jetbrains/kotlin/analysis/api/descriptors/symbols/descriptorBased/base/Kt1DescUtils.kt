@@ -491,6 +491,7 @@ internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisC
                     arguments = value.getKtNamedAnnotationArguments(analysisContext),
                     index = null,
                     constructorSymbolPointer = null,
+                    token = token
                 ),
                 token
             )
@@ -680,16 +681,23 @@ internal fun AnnotationDescriptor.toKtAnnotationApplication(
         arguments = getKtNamedAnnotationArguments(analysisContext),
         index = index,
         constructorSymbolPointer = null,
+        token = analysisContext.token
     )
 }
 
-internal fun AnnotationDescriptor.toKtAnnotationInfo(index: Int): KtAnnotationApplicationInfo = KtAnnotationApplicationInfo(
-    classId = classIdForAnnotation,
-    psi = psi,
-    useSiteTarget = useSiteTarget,
-    isCallWithArguments = allValueArguments.isNotEmpty(),
-    index = index,
-)
+internal fun AnnotationDescriptor.toKtAnnotationInfo(
+    analysisContext: Fe10AnalysisContext,
+    index: Int
+): KtAnnotationApplicationInfo {
+    return KtAnnotationApplicationInfo(
+        classId = classIdForAnnotation,
+        psi = psi,
+        useSiteTarget = useSiteTarget,
+        isCallWithArguments = allValueArguments.isNotEmpty(),
+        index = index,
+        token = analysisContext.token
+    )
+}
 
 private val AnnotationDescriptor.psi: KtCallElement? get() = (source as? PsiSourceElement)?.psi as? KtCallElement
 internal val AnnotationDescriptor.classIdForAnnotation: ClassId? get() = annotationClass?.maybeLocalClassId
