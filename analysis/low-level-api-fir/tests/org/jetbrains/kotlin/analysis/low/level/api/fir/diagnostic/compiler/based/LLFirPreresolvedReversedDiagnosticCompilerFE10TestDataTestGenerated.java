@@ -9905,6 +9905,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("MultipleBranchesInWhileLoopInInlinedLambda.kt")
+      public void testMultipleBranchesInWhileLoopInInlinedLambda() {
+        runTest("compiler/testData/diagnostics/tests/dataFlow/MultipleBranchesInWhileLoopInInlinedLambda.kt");
+      }
+
+      @Test
       @TestMetadata("smartCastWithLambdaAndCallableReference.kt")
       public void testSmartCastWithLambdaAndCallableReference() {
         runTest("compiler/testData/diagnostics/tests/dataFlow/smartCastWithLambdaAndCallableReference.kt");
