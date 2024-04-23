@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.KtTypeProjection
+import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
@@ -66,10 +67,10 @@ internal interface KtFirAnalysisSessionComponent {
             }
         }
 
-    fun createTypeCheckerContext(): TypeCheckerState {
+    fun createTypeCheckerContext(errorTypePolicy: KaSubtypingErrorTypePolicy): TypeCheckerState {
         // TODO use correct session here,
         return analysisSession.firResolveSession.useSiteFirSession.typeContext.newTypeCheckerState(
-            errorTypesEqualToAnything = false,
+            errorTypesEqualToAnything = errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT,
             stubTypesEqualToAnything = true,
         )
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.components.KtSubtypingComponent
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
@@ -17,25 +18,25 @@ internal class KtFirSubtypingComponent(
     override val analysisSession: KtFirAnalysisSession,
     override val token: KtLifetimeToken,
 ) : KtSubtypingComponent(), KtFirAnalysisSessionComponent {
-    override fun isEqualTo(first: KtType, second: KtType): Boolean {
+    override fun isEqualTo(first: KtType, second: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
         second.assertIsValidAndAccessible()
         check(first is KtFirType)
         check(second is KtFirType)
         return AbstractTypeChecker.equalTypes(
-            createTypeCheckerContext(),
+            createTypeCheckerContext(errorTypePolicy),
             first.coneType,
-            second.coneType
+            second.coneType,
         )
     }
 
-    override fun isSubTypeOf(subType: KtType, superType: KtType): Boolean {
+    override fun isSubTypeOf(subType: KtType, superType: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
         superType.assertIsValidAndAccessible()
         check(subType is KtFirType)
         check(superType is KtFirType)
         return AbstractTypeChecker.isSubtypeOf(
-            createTypeCheckerContext(),
+            createTypeCheckerContext(errorTypePolicy),
             subType.coneType,
-            superType.coneType
+            superType.coneType,
         )
     }
 }
