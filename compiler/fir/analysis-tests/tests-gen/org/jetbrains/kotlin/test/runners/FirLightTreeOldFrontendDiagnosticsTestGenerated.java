@@ -14181,6 +14181,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("NonSuspendAnonFuncAsInitializerOfSuspendFunctionType.kt")
+      public void testNonSuspendAnonFuncAsInitializerOfSuspendFunctionType() {
+        runTest("compiler/testData/diagnostics/tests/functionAsExpression/NonSuspendAnonFuncAsInitializerOfSuspendFunctionType.kt");
+      }
+
+      @Test
+      @TestMetadata("NonSuspendAnonFuncAsReturnValueOfSuspendFunctionTypeInConcreteFunction.kt")
+      public void testNonSuspendAnonFuncAsReturnValueOfSuspendFunctionTypeInConcreteFunction() {
+        runTest("compiler/testData/diagnostics/tests/functionAsExpression/NonSuspendAnonFuncAsReturnValueOfSuspendFunctionTypeInConcreteFunction.kt");
+      }
+
+      @Test
       @TestMetadata("parameterAsReceiverInference.kt")
       public void testParameterAsReceiverInference() {
         runTest("compiler/testData/diagnostics/tests/functionAsExpression/parameterAsReceiverInference.kt");
