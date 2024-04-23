@@ -31069,6 +31069,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("getterTypeDiffersByAnnotation.kt")
+      public void testGetterTypeDiffersByAnnotation() {
+        runTest("compiler/testData/diagnostics/tests/properties/getterTypeDiffersByAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("inferPropertyTypeFromGetter.kt")
       public void testInferPropertyTypeFromGetter() {
         runTest("compiler/testData/diagnostics/tests/properties/inferPropertyTypeFromGetter.kt");
