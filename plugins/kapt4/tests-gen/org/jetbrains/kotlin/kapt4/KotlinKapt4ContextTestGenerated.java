@@ -528,6 +528,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
   }
 
   @Test
+  @TestMetadata("kt66541.kt")
+  public void testKt66541() {
+    runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/kt66541.kt");
+  }
+
+  @Test
   @TestMetadata("kt66687.kt")
   public void testKt66687() {
     runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/kt66687.kt");

@@ -1,4 +1,5 @@
-
+typealias TInt = Int
+typealias TUint = UInt
 
 object Foo {
     const val aString: String = "foo"
@@ -18,6 +19,9 @@ object Foo {
     val i = Int.MAX_VALUE
     val j = "$e$g"
     val k = g + j
+
+    val aliasedInt: TInt = 1
+    val aliasedUInt: TUint = 1U
 }
 
 object Boo {

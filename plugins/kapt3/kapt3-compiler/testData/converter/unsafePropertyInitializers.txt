@@ -54,6 +54,18 @@ public final class Boo {
  *   public final const val aString: kotlin/String (* = ... *)
  *     public final get
  *
+ *   // field: aliasedInt:I
+ *   // getter: getAliasedInt()I
+ *   public final val aliasedInt: kotlin/Int (* = TInt^ *) (* = ... *)
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: aliasedUInt:I
+ *   // getter: getAliasedUInt-pVg5ArA()I
+ *   public final val aliasedUInt: kotlin/UInt (* = TUint^ *) (* = ... *)
+ *     public final get
+ *
  *   // field: bInt:I
  *   // getter: getBInt()I
  *   public final val bInt: kotlin/Int (* = ... *)
@@ -144,6 +156,8 @@ public final class Foo {
     private static final java.lang.String j = null;
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String k = null;
+    private static final int aliasedInt = 1;
+    private static final int aliasedUInt = 1;
     @org.jetbrains.annotations.NotNull()
     public static final Foo INSTANCE = null;
 
@@ -210,6 +224,10 @@ public final class Foo {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getK() {
         return null;
+    }
+
+    public final int getAliasedInt() {
+        return 0;
     }
 }
 
@@ -414,5 +432,26 @@ public enum State {
     @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<State> getEntries() {
         return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   public typealias TInt = kotlin/Int (* = kotlin/Int *)
+ *
+ *   public typealias TUint = kotlin/UInt (* = kotlin/UInt *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class UnsafePropertyInitializersKt {
+
+    public UnsafePropertyInitializersKt() {
+        super();
     }
 }
