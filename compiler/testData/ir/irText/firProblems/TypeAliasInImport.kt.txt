@@ -1,0 +1,29 @@
+// FILE: b.kt
+package b
+
+object Obj {
+  val prop: Int
+    field = 1
+    get
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun method() {
+  }
+
+}
+
+typealias ObjTA = Obj
+// FILE: a.kt
+package a
+
+fun test() {
+  Obj.method()
+  Obj.<get-prop>() /*~> Unit */
+  Obj.method()
+  Obj.<get-prop>() /*~> Unit */
+}
