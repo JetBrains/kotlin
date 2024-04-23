@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.util
 
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.buildImport
 
 val SirCallable.allParameters: List<SirParameter>
     get() = when (this) {
@@ -45,4 +46,21 @@ fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () ->
     child.parent = this
     declarations += child
     return child
+}
+
+/**
+ * Add imports of [newImports] that are not yet added.
+ */
+fun SirModule.updateImports(newImports: List<String>) {
+    val existingImports = allImports().map { it.moduleName }
+    val delta = newImports.filterNot { it in existingImports }
+    delta
+        .filter { it != "Swift" && it != this.name }
+        .forEach {
+            addChild {
+                buildImport {
+                    moduleName = it
+                }
+            }
+        }
 }

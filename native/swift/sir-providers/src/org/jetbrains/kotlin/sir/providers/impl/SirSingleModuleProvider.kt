@@ -17,25 +17,11 @@ import org.jetbrains.kotlin.sir.util.addChild
  */
 public class SirSingleModuleProvider(
     private val swiftModuleName: String,
-    private val bridgeModuleName: String,
 ) : SirModuleProvider {
 
     private val theModule by lazy {
         buildModule {
             name = swiftModuleName
-        }.also {
-            // imports should be reworked - KT-66727
-            it.addChild {
-                buildImport {
-                    moduleName = bridgeModuleName
-                }
-            }
-
-            it.addChild {
-                buildImport {
-                    moduleName = "KotlinRuntime"
-                }
-            }
         }
     }
 

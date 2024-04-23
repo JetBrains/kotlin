@@ -1,6 +1,3 @@
-import KotlinBridges
-import KotlinRuntime
-
 public typealias RegularInteger = Swift.Int32
 public extension main.typealiases.inner {
     public typealias Foo = main.typealiases.Foo

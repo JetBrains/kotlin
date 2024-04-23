@@ -1,5 +1,4 @@
 import KotlinBridges
-import KotlinRuntime
 
 public var baz: Swift.Int32 {
     get {

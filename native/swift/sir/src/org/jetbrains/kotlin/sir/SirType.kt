@@ -43,3 +43,15 @@ class SirExistentialType(
         return this::class.hashCode()
     }
 }
+
+/**
+ * A synthetic type for unknown Kotlin types. For example,
+ * it might be an incomplete declaration in IDE or declaration from an not imported library.
+ *
+ */
+object SirUnknownType : SirType
+
+/**
+ * A synthetic type for not yet supported Kotlin types.
+ */
+object SirUnsupportedType : SirType

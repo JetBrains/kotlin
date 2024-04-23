@@ -1,6 +1,3 @@
-import KotlinBridges
-import KotlinRuntime
-
 public class Class_without_package : KotlinRuntime.KotlinBase {
     public class INNER_CLASS : KotlinRuntime.KotlinBase {
         public override init() {

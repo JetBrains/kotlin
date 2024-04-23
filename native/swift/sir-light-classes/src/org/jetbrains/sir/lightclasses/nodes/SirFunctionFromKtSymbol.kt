@@ -15,12 +15,14 @@ import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirCallableKind
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.translateParameterType
+import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
 internal class SirFunctionFromKtSymbol(
     override val ktSymbol: KtFunctionLikeSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirFunction(), SirFromKtSymbol {
+) : SirFunction(), SirFromKtSymbol<KtFunctionLikeSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val origin: SirOrigin by lazy {
@@ -40,7 +42,7 @@ internal class SirFunctionFromKtSymbol(
         }
     }
     override val returnType: SirType by lazyWithSessions {
-        ktSymbol.returnType.translateType(analysisSession)
+        this@SirFunctionFromKtSymbol.translateReturnType(analysisSession)
     }
     override val documentation: String? by lazyWithSessions {
         ktSymbol.documentation()

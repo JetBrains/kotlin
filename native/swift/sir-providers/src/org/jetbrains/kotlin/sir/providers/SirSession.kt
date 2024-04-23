@@ -56,8 +56,8 @@ public interface SirSession :
 
     override fun KtModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
 
-    override fun KtType.translateType(ktAnalysisSession: KtAnalysisSession): SirType =
-        with(typeProvider) { this@translateType.translateType(ktAnalysisSession) }
+    override fun translateType(request: SirTypeProvider.TranslationRequest): SirTypeProvider.TranslationResponse =
+        with(typeProvider) { translateType(request) }
 
     override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
@@ -114,10 +114,37 @@ public interface SirChildrenProvider {
 
 public interface SirTypeProvider {
 
-    /**
-     * Translates the given [KtType] to [SirType].
-     */
-    public fun KtType.translateType(ktAnalysisSession: KtAnalysisSession): SirType
+    public fun translateType(request: TranslationRequest): TranslationResponse
+
+    // For now, this request contains only a type.
+    // In the future, we will likely need more information to get a proper Swift type:
+    // * Use-site (function parameter/return type, supertype)
+    // * Boxed/unboxed
+    public class TranslationRequest(
+        public val ktType: KtType,
+    )
+
+    public sealed interface TranslationResponse {
+
+        /**
+         * Type is successfully found and supported.
+         */
+        public class Success(
+            public val sirType: SirType,
+            // Long shot for the cases when we receive a parametrized type.
+            public val containingModules: List<String>,
+        ) : TranslationResponse
+
+        /**
+         * Type is not found.
+         */
+        public class Unknown : TranslationResponse
+
+        /**
+         * Type is found, but currently not supported.
+         */
+        public class Unsupported : TranslationResponse
+    }
 }
 
 public interface SirVisibilityChecker {

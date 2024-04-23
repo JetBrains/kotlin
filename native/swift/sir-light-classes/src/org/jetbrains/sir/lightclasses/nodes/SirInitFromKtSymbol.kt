@@ -9,18 +9,20 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.extensions.sirCallableKind
 
 internal class SirInitFromKtSymbol(
     override val ktSymbol: KtConstructorSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirInit(), SirFromKtSymbol {
+) : SirInit(), SirFromKtSymbol<KtConstructorSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val isFailable: Boolean = false

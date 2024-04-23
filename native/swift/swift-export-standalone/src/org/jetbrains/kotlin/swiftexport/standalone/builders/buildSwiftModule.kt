@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
+import org.jetbrains.kotlin.sir.providers.UnknownTypeStrategy
+import org.jetbrains.kotlin.sir.providers.UnsupportedTypeStrategy
 import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
@@ -32,7 +34,8 @@ import kotlin.io.path.Path
 internal fun buildSwiftModule(
     input: InputModule,
     kotlinDistribution: Distribution,
-    bridgeModuleName: String,
+    unsupportedTypeStrategy: UnsupportedTypeStrategy,
+    unknownTypeStrategy: UnknownTypeStrategy,
 ): SirModule {
     val (module, scopeProvider) = when (input) {
         is InputModule.Source -> createModuleWithScopeProviderFromSources(kotlinDistribution, input)
@@ -40,8 +43,8 @@ internal fun buildSwiftModule(
     }
 
     return analyze(module) {
-        val sirSession = StandaloneSirSession(module) {
-            SirSingleModuleProvider(swiftModuleName = input.name, bridgeModuleName = bridgeModuleName)
+        val sirSession = StandaloneSirSession(unsupportedTypeStrategy, unknownTypeStrategy, module) {
+            SirSingleModuleProvider(swiftModuleName = input.name)
         }
         with(sirSession) {
             module.sirModule().also {

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.B
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.STABLE_DECLARATIONS_ORDER
+import org.jetbrains.kotlin.sir.providers.UnknownTypeStrategy as InternalUnknownTypeStrategy
+import org.jetbrains.kotlin.sir.providers.UnsupportedTypeStrategy as InternalUnsupportedTypeStrategy
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
@@ -19,6 +21,8 @@ import java.nio.file.Path
 public data class SwiftExportConfig(
     val settings: Map<String, String> = emptyMap(),
     val logger: SwiftExportLogger = createDummyLogger(),
+    val unsupportedTypeStrategy: UnsupportedTypeStrategy = UnsupportedTypeStrategy.Fail,
+    val unknownTypeStrategy: UnknownTypeStrategy = UnknownTypeStrategy.Fail,
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath)
 ) {
     public companion object {
@@ -38,6 +42,32 @@ public data class SwiftExportConfig(
         public const val RENDER_DOC_COMMENTS: String = "RENDER_DOC_COMMENTS"
 
         public const val ROOT_PACKAGE: String = "rootPackage"
+    }
+}
+
+/**
+ * What should we do when encounter a not yet supported type?
+ */
+public enum class UnsupportedTypeStrategy {
+    Fail,
+    SpecialType;
+
+    internal fun toInternalType(): InternalUnsupportedTypeStrategy = when (this) {
+        Fail -> InternalUnsupportedTypeStrategy.Fail
+        SpecialType -> InternalUnsupportedTypeStrategy.SpecialType
+    }
+}
+
+/**
+ * What should we do when encounter an unknown type (e.g., a type from unknown klib or incomplete declaration in IDE)?
+ */
+public enum class UnknownTypeStrategy {
+    Fail,
+    SpecialType;
+
+    internal fun toInternalType(): InternalUnknownTypeStrategy = when (this) {
+        Fail -> InternalUnknownTypeStrategy.Fail
+        SpecialType -> InternalUnknownTypeStrategy.SpecialType
     }
 }
 

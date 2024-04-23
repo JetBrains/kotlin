@@ -40,6 +40,8 @@ object Comparators {
         get(): String = when (this) {
             is SirExistentialType -> error("Existential types are not supported yet")
             is SirNominalType -> type.name
+            SirUnknownType -> "SirUnknownType"
+            SirUnsupportedType -> "SirUnsupportedType"
         }
 
     private inline fun <T, reified R> Comparator<T>.thenComparing(comparator: Comparator<R>): Comparator<T> {
