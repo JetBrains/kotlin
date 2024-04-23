@@ -5,6 +5,16 @@ plugins {
     id("jps-compatible")
 }
 
+val composeVersion = "1.7.0-alpha07"
+repositories {
+    google {
+        content {
+            includeVersion("androidx.compose.runtime", "runtime", composeVersion)
+            includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
+        }
+    }
+}
+
 dependencies {
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
@@ -33,6 +43,7 @@ dependencies {
     testApi(project(":compiler:fir:checkers:checkers.native"))
     testApi(project(":compiler:fir:checkers:checkers.wasm"))
     testApi(project(":compiler:fir:plugin-utils"))
+    testApi(project(":plugins:compose-compiler-plugin:compiler-hosted"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
@@ -46,6 +57,8 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
     testRuntimeOnly(toolsJar())
+
+    implementation("androidx.compose.runtime:runtime:$composeVersion")
 }
 
 optInToExperimentalCompilerApi()

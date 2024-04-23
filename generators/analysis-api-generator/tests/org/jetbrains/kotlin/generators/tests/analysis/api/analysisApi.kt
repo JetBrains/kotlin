@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callRes
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTestWithAnalysisAndComposeCompilerPlugin
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByDelegatedMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
@@ -124,7 +124,7 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
             model("firPluginPrototypeMultiModule", pattern = TestGeneratorUtil.KT)
         }
 
-        test<AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis>(filter = testModuleKindIs(TestModuleKind.Source)) {
+        test<AbstractCompilerFacilityTestWithAnalysisAndComposeCompilerPlugin>(filter = testModuleKindIs(TestModuleKind.Source)) {
             model("bugsFromRealComposeApps", pattern = TestGeneratorUtil.KT)
         }
     }

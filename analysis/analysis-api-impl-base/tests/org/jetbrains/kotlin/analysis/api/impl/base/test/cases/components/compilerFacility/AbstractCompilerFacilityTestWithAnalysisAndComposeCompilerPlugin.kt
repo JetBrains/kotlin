@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  * `FirLazyExpression`. The difference can result in crashes. This class helps us test the IDE situation that first calls analysis
  * APIs and conducts CodeGen.
  */
-abstract class AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis : AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest() {
+abstract class AbstractCompilerFacilityTestWithAnalysisAndComposeCompilerPlugin : AbstractCompilerFacilityTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         // First, run AA for type resolution.
         testServices.ktTestModuleStructure.allMainKtFiles.forEach { file ->
