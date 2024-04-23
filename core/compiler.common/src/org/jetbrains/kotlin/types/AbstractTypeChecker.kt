@@ -243,12 +243,49 @@ object AbstractTypeChecker {
         return equalTypes(context.newTypeCheckerState(false, stubTypesEqualToAnything), a, b)
     }
 
+    private data class IsSubtypeOfCacheKey (
+        val subType: KotlinTypeMarker,
+        val superType: KotlinTypeMarker,
+        val isFromNullabilityConstraint: Boolean,
+
+        val isErrorTypeEqualsToAnything: Boolean,
+        val isStubTypeEqualsToAnything: Boolean,
+        val allowedTypeVariable: Boolean,
+        val typeSystemContext: TypeSystemContext,
+        val kotlinTypePreparator: AbstractTypePreparator,
+        val kotlinTypeRefiner: AbstractTypeRefiner
+    )
+    private val isSubtypeOfCache = hashMapOf<IsSubtypeOfCacheKey, Boolean>()
+
     @JvmOverloads
     fun isSubtypeOf(
         state: TypeCheckerState,
         subType: KotlinTypeMarker,
         superType: KotlinTypeMarker,
         isFromNullabilityConstraint: Boolean = false
+    ): Boolean {
+        val key = IsSubtypeOfCacheKey(
+            subType = subType,
+            superType = superType,
+            isFromNullabilityConstraint = isFromNullabilityConstraint,
+            isErrorTypeEqualsToAnything = state.isErrorTypeEqualsToAnything,
+            isStubTypeEqualsToAnything = state.isStubTypeEqualsToAnything,
+            allowedTypeVariable = state.allowedTypeVariable,
+            typeSystemContext = state.typeSystemContext,
+            kotlinTypePreparator = state.kotlinTypePreparator,
+            kotlinTypeRefiner = state.kotlinTypeRefiner,
+        )
+        isSubtypeOfCache[key]?.let { return it }
+        val value = doIsSubtypeOf(state, subType, superType, isFromNullabilityConstraint)
+        isSubtypeOfCache[key] = value
+        return value
+    }
+
+    private fun doIsSubtypeOf(
+        state: TypeCheckerState,
+        subType: KotlinTypeMarker,
+        superType: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean,
     ): Boolean {
         if (subType === superType) return true
 
