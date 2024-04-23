@@ -50,6 +50,10 @@ fun main() {
         ""
     }
 
+    val sam: Supplier<String> = Supplier {
+        <!TYPE_MISMATCH!>foo()<!>
+    }
+
     Supplier<String?> {
         foo()
     }

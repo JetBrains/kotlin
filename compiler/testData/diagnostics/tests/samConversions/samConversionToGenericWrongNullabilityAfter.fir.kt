@@ -40,6 +40,22 @@ fun main() {
         ""
     }
 
+    Supplier<String> {
+        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>foo()<!>
+        run { return@Supplier <!ARGUMENT_TYPE_MISMATCH!>foo()<!> }
+        try {
+            if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>foo()<!>
+            2
+        } finally {
+            Unit
+        }
+        ""
+    }
+
+    val sam: Supplier<String> = Supplier {
+        <!ARGUMENT_TYPE_MISMATCH!>foo()<!>
+    }
+
     object : Supplier<String> {
         override fun get(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = foo()
     }

@@ -26,7 +26,7 @@ fun main() {
 
     Supplier<String>(
         fun(): String {
-            if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH, TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+            if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>foo()<!>
             return ""
         }
     )
@@ -48,6 +48,10 @@ fun main() {
             Unit
         }
         ""
+    }
+
+    val sam: Supplier<String> = Supplier {
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
     }
 
     Supplier<String?> {

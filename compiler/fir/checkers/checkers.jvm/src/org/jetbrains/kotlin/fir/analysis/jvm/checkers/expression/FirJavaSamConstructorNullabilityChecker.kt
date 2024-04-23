@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
@@ -28,10 +28,11 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) return
 
-        val symbol = expression.calleeReference.toResolvedFunctionSymbol() ?: return
+        val calleeReference = expression.calleeReference
+        if (calleeReference.isError()) return
+        val symbol = calleeReference.toResolvedFunctionSymbol() ?: return
         if (symbol.origin != FirDeclarationOrigin.SamConstructor) return
         if (symbol.resolvedReturnType.toRegularClassSymbol(context.session)?.isJavaOrEnhancement != true) return
-        if (expression.typeArguments.none { it is FirTypeProjectionWithVariance && it.typeRef.isExplicitNotNullTypeArgument(context.session) }) return
 
         val (lambda, parameter) = expression.resolvedArgumentMapping?.entries?.singleOrNull() ?: return
         if (lambda !is FirAnonymousFunctionExpression) return
@@ -52,11 +53,6 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
                 )
             }
         }
-    }
-
-    private fun FirTypeRef.isExplicitNotNullTypeArgument(session: FirSession): Boolean {
-        if (this !is FirResolvedTypeRef) return false
-        return delegatedTypeRef is FirUserTypeRef && !type.canBeNull(session)
     }
 
     private fun FirAnonymousFunctionExpression.getReturnedExpressions(): List<FirExpression> {
