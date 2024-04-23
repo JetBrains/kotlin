@@ -14,35 +14,49 @@ public interface StringSupplier {
     String get();
 }
 
+// FILE: JavaTestValueProvider.java
+import org.jetbrains.annotations.Nullable;
+
+public class TestValueProvider {
+    @Nullable
+    static String getNullableString() {
+        return null;
+    }
+}
+
 // FILE: test.kt
 import java.util.function.Supplier
 
 inline fun run(fn: () -> Unit) = fn()
 
+typealias StringAlias = String
+
 fun main() {
     Supplier<String> {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
     }
 
-    Supplier<String>(
-        fun(): String {
-            if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>foo()<!>
-            return ""
-        }
-    )
-
-    Supplier<String>(
-        fun(): String? {
-            if (true) return <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
-            return ""
-        }
-    )
+    Supplier<StringAlias> {
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+    }
 
     Supplier<String> {
-        if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
-        run { return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!> }
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>TestValueProvider.getNullableString()<!>
+    }
+
+    Supplier<String>  {
+        val x = 1
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>when(x) {
+            1 -> returnNullableString()
+            else -> ""
+        }<!>
+    }
+
+    Supplier<String> {
+        if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+        run { return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!> }
         try {
-            if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+            if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
             2
         } finally {
             Unit
@@ -51,52 +65,122 @@ fun main() {
     }
 
     val sam: Supplier<String> = Supplier {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>foo()<!>
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
     }
 
     Supplier<String?> {
-        foo()
+        returnNullableString()
     }
 
     Supplier<_> {
-        foo()
+        returnNullableString()
     }
 
     Supplier {
-        foo()
+        returnNullableString()
+    }
+
+    Supplier<String>(
+        fun(): String {
+            if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+            return ""
+        }
+    )
+
+    Supplier<String>(
+        fun(): String? {
+        if (true) return <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+        return ""
+    }
+    )
+
+    Supplier<String> {
+        if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+        ""
     }
 
     object : Supplier<String> {
-        override fun get(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = foo()
+        override fun get(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = returnNullableString()
     }
 
     object : Supplier<String> {
-        override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>() = foo()
+        override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>() = returnNullableString()
     }
 
     MySupplier<String> {
-        foo()
+        returnNullableString()
     }
 
     object : MySupplier<String> {
-        override fun get(): String? = foo()
+        override fun get(): String? = returnNullableString()
     }
 
     object : MySupplier<String> {
-        override fun get() = foo()
+        override fun get() = returnNullableString()
     }
 
     StringSupplier {
-        foo()
+        returnNullableString()
     }
 
     object : StringSupplier {
-        override fun get(): String? = foo()
+        override fun get(): String? = returnNullableString()
     }
 
     object : StringSupplier {
-        override fun get() = foo()
+        override fun get() = returnNullableString()
     }
 }
 
-fun foo(): String? = null
+fun returnNullableString(): String? = null
+
+// FILE: edge-cases.kt
+import java.util.function.Supplier
+
+fun scopes () {
+    Supplier<String> {
+        <!ARGUMENT_TYPE_MISMATCH!>run {
+        returnNullableString()
+    }<!>
+    }
+
+    Supplier<String> {
+        <!ARGUMENT_TYPE_MISMATCH!>run {
+        return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+    }<!>
+    }
+
+    Supplier<String> {
+        <!ARGUMENT_TYPE_MISMATCH!>run run@ {
+        return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+    }<!>
+    }
+
+    Supplier<String> lambda@ {
+        <!ARGUMENT_TYPE_MISMATCH!>run {
+        return@lambda returnNullableString()
+    }<!>
+    }
+}
+
+fun <T: Number> test1(x: T) {
+    Supplier<T> {
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>x.foo()<!>
+    }
+}
+
+fun <T> test2(x: T) where T: Any?, T: Comparable<T> {
+    Supplier<T> {
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>x.foo()<!>
+    }
+}
+
+fun <T> T.foo(): T? = null!!
+
+fun <T> T.foo2(): T? = null!!
+
+fun test()  {
+    Supplier<String> {
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString().foo2()<!>
+    }
+}

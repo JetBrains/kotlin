@@ -13,38 +13,47 @@ public interface StringSupplier {
     String get();
 }
 
+// FILE: JavaTestValueProvider.java
+import org.jetbrains.annotations.Nullable;
+
+public class TestValueProvider {
+    @Nullable
+    static String getNullableString() {
+        return null;
+    }
+}
+
 // FILE: test.kt
 import java.util.function.Supplier
 
+typealias StringAlias = String
+
 fun main() {
     Supplier<String> {
-        foo()
+        returnNullableString()
     }
 
-    Supplier<String>(
-        fun(): String {
-            if (true) return <!TYPE_MISMATCH, TYPE_MISMATCH!>foo()<!>
-            return ""
+    Supplier<StringAlias> {
+        returnNullableString()
+    }
+
+    Supplier<String> {
+        TestValueProvider.getNullableString()
+    }
+
+    Supplier<String> {
+        val x = 1
+        when(x) {
+            1 -> returnNullableString()
+            else -> ""
         }
-    )
-
-    Supplier<String>(
-        <!TYPE_MISMATCH!>fun(): String? {
-            if (true) return foo()
-            return ""
-        }<!>
-    )
-
-    Supplier<String> {
-        if (true) return@Supplier foo()
-        ""
     }
 
     Supplier<String> {
-        if (true) return@Supplier foo()
-        run { return@Supplier foo() }
+        if (true) return@Supplier returnNullableString()
+        run { return@Supplier returnNullableString() }
         <!UNREACHABLE_CODE!>try {
-            if (true) return@Supplier foo()
+            if (true) return@Supplier returnNullableString()
             2
         } finally {
             Unit
@@ -52,41 +61,123 @@ fun main() {
         <!UNREACHABLE_CODE!>""<!>
     }
 
+    Supplier<String?> {
+        returnNullableString()
+    }
+
+    Supplier<_> {
+        returnNullableString()
+    }
+
+    Supplier {
+        returnNullableString()
+    }
+
+    Supplier<String>(
+        fun(): String {
+            if (true) return <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+            return ""
+        }
+    )
+
+    Supplier<String>(
+        <!TYPE_MISMATCH!>fun(): String? {
+            if (true) return returnNullableString()
+            return ""
+        }<!>
+    )
+
+    Supplier<String> {
+        if (true) return@Supplier returnNullableString()
+        ""
+    }
+
     val sam: Supplier<String> = Supplier {
-        <!TYPE_MISMATCH!>foo()<!>
+        <!TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     object : Supplier<String> {
-        override fun get(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = foo()
+        override fun get(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = returnNullableString()
     }
 
     object : Supplier<String> {
-        override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>() = foo()
+        override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>() = returnNullableString()
     }
 
     MySupplier<String> {
-        foo()
+        returnNullableString()
     }
 
     object : MySupplier<String> {
-        override fun get(): String? = foo()
+        override fun get(): String? = returnNullableString()
     }
 
     object : MySupplier<String> {
-        override fun get() = foo()
+        override fun get() = returnNullableString()
     }
 
     StringSupplier {
-        foo()
+        returnNullableString()
     }
 
     object : StringSupplier {
-        override fun get(): String? = foo()
+        override fun get(): String? = returnNullableString()
     }
 
     object : StringSupplier {
-        override fun get() = foo()
+        override fun get() = returnNullableString()
     }
 }
 
-fun foo(): String? = null
+fun returnNullableString(): String? = null
+
+// FILE: edge-cases.kt
+import java.util.function.Supplier
+
+fun scopes () {
+    Supplier<String> {
+        run {
+            returnNullableString()
+        }
+    }
+
+    Supplier<String> {
+        run {
+            return@run returnNullableString()
+        }
+    }
+
+    Supplier<String> {
+        run run@ {
+            return@run returnNullableString()
+        }
+    }
+
+    Supplier<String> lambda@ {
+        run {
+            return@lambda returnNullableString()
+        }
+    }
+}
+
+fun <T: Number> test1(x: T) {
+    Supplier<T> {
+        x.foo()
+    }
+}
+
+fun <T> test2(x: T) where T: Any?, T: Comparable<T> {
+    Supplier<T> {
+        x.foo()
+    }
+}
+
+fun <T> T.foo(): T? = null!!
+
+fun <T> T.foo2(): T? = null!!
+
+fun test()  {
+    Supplier<String> {
+        returnNullableString().foo2()
+    }
+}
