@@ -323,8 +323,13 @@ class ExpressionCodegen(
 
         // Private operator functions don't have null checks on value parameters,
         // see `DescriptorAsmUtil.genNotNullAssertionsForParameters`.
-        if (!DescriptorVisibilities.isPrivate(irFunction.visibility) || irFunction !is IrSimpleFunction || !irFunction.isOperator) {
-            irFunction.valueParameters.forEach(::generateNonNullAssertion)
+        if (DescriptorVisibilities.isPrivate(irFunction.visibility) && irFunction is IrSimpleFunction && irFunction.isOperator)
+            return
+
+        for (parameter in irFunction.valueParameters) {
+            if (!parameter.origin.isSynthetic) {
+                generateNonNullAssertion(parameter)
+            }
         }
     }
 

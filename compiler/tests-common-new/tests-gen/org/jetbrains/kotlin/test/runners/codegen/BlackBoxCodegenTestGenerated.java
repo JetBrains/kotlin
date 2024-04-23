@@ -30083,9 +30083,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
       }
 
       @Test
-      @TestMetadata("nullabilityAssertions.kt")
-      public void testNullabilityAssertions() {
-        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nullabilityAssertions.kt");
+      @TestMetadata("nullabilityAssertionForCapturedValueParameter.kt")
+      public void testNullabilityAssertionForCapturedValueParameter() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nullabilityAssertionForCapturedValueParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("nullabilityAssertionForReceiverParameter.kt")
+      public void testNullabilityAssertionForReceiverParameter() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nullabilityAssertionForReceiverParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("nullabilityAssertionForValueParameter.kt")
+      public void testNullabilityAssertionForValueParameter() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nullabilityAssertionForValueParameter.kt");
       }
 
       @Test

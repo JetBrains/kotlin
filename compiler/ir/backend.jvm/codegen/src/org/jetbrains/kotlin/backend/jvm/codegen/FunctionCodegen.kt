@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
-import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.mapType
@@ -338,19 +336,16 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, co
         mv.visitParameter(irFunction.extensionReceiverName(config), 0)
     }
     for (irParameter in irFunction.valueParameters) {
+        val origin = irParameter.origin
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
         // explicitly or implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
         // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
         // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
         val access = when {
-            irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
-            // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
-            //      to generate LVT entries for them)
-            irParameter.origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
-            irParameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
-            irParameter.origin == BOUND_VALUE_PARAMETER -> Opcodes.ACC_SYNTHETIC
-            irParameter.origin == BOUND_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
-            irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
+            origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
+            origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
+            origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
+            origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
             else -> 0
         }
         mv.visitParameter(irParameter.name.asString(), access)

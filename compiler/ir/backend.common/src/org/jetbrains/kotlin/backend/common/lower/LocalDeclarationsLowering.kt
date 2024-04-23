@@ -51,9 +51,9 @@ interface VisibilityPolicy {
     }
 }
 
-val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl
+val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
-val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl
+val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
 /*
   Local functions raised in LocalDeclarationLowering continue to refer to

@@ -4,12 +4,12 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_TEXT
 
-// FILE: nullabilityAssertions.kt
+// FILE: box.kt
 // JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
 fun box(): String {
-    val fn: (String) -> String = { it }
+    val fn: String.() -> String = { this }
     try {
         J.test(fn)
     } catch (e: NullPointerException) {
@@ -20,6 +20,7 @@ fun box(): String {
 }
 
 // FILE: J.java
+
 import kotlin.jvm.functions.Function1;
 
 public class J {
