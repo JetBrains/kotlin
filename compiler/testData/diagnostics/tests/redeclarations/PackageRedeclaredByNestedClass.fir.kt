@@ -1,5 +1,5 @@
 // FILE: a.kt
-package a.b
+package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>a.b<!>
 
 // FILE: b.kt
 class a {

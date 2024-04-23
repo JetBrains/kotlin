@@ -1273,6 +1273,21 @@ object LightTreePositioningStrategies {
             return markElement(nodeToMark, startOffset, endOffset, tree, node)
         }
     }
+
+    val PACKAGE_DIRECTIVE_NAME_EXPRESSION: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.PACKAGE_DIRECTIVE) {
+                val expression = tree.findChildByType(node, KtNodeTypes.DOT_QUALIFIED_EXPRESSION) ?: node
+                return super.mark(expression, expression.startOffset, expression.endOffset, tree)
+            }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
+    }
 }
 
 fun KtSourceElement.hasValOrVar(): Boolean =

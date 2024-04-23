@@ -407,4 +407,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
         PositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
     )
+
+    val PACKAGE_DIRECTIVE_NAME_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+        PositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+    )
 }

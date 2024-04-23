@@ -11,5 +11,5 @@ package redeclarations
   val <!REDECLARATION!>A<!> = 1
 
 // FILE: b.kt
-  package redeclarations.A
+  package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>redeclarations.A<!>
     class A {}
