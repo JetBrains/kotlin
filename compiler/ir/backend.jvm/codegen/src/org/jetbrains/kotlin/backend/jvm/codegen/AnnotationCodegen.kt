@@ -401,9 +401,7 @@ abstract class AnnotationCodegen(
         ) {
             return
         }
-        val infos: Iterable<TypePathInfo<IrConstructorCall>> =
-            IrTypeAnnotationCollector(classCodegen.typeMapper.typeSystem).collectTypeAnnotations(type)
-        for (info in infos) {
+        for (info in IrTypeAnnotationCollector().collectTypeAnnotations(type)) {
             for (annotation in info.annotations) {
                 genAnnotation(annotation, info.path, true)
             }

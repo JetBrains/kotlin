@@ -9,13 +9,12 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.TypePath
 
@@ -40,47 +39,43 @@ private class State<T>(val path: MutableList<String>) {
     }
 }
 
-internal class IrTypeAnnotationCollector(val context: TypeSystemCommonBackendContext) {
-    private lateinit var state: State<IrConstructorCall>
+internal class IrTypeAnnotationCollector {
+    private val state: State<IrConstructorCall> = State(arrayListOf())
 
-    fun collectTypeAnnotations(kotlinType: KotlinTypeMarker): ArrayList<TypePathInfo<IrConstructorCall>> {
-        state = State(arrayListOf())
+    fun collectTypeAnnotations(kotlinType: IrType): List<TypePathInfo<IrConstructorCall>> {
         kotlinType.gatherTypeAnnotations()
         return state.results
     }
 
-    private fun KotlinTypeMarker.gatherTypeAnnotations() {
-        with(context) {
-            if (isFlexible()) {
-                return upperBoundIfFlexible().gatherTypeAnnotations()
-            } else if (typeConstructor().isInnerClass()) {
-                //skip inner classes for now it's not clear should type annotations on outer be supported or not
-                return
-            }
+    private fun IrType.gatherTypeAnnotations() {
+        if (classOrNull?.owner?.isInner == true) {
+            // Skip inner classes for now. It's not clear whether type annotations on outer class should be supported.
+            return
+        }
 
-            extractAnnotations().takeIf { it.isNotEmpty() }?.let { state.rememberAnnotations(it) }
+        extractAnnotations().ifNotEmpty(state::rememberAnnotations)
 
-            for (index in 0 until argumentsCount()) {
-                val type = getArgument(index)
-                //skip in/out variance for now it's not clear should type annotations on wildcard bound be supported or not
-                if (type.getVariance() == TypeVariance.INV) {
-                    when {
-                        this@gatherTypeAnnotations.isArrayOrNullableArray() -> type.getType().process("[")
-                        else -> type.getType().process("$index;")
-                    }
+        if (this !is IrSimpleType) return
+
+        for ((index, argument) in arguments.withIndex()) {
+            // Skip in/out variance for now. It's not clear whether type annotations on wildcard bound should be supported.
+            if (argument is IrTypeProjection && argument.variance == Variance.INVARIANT) {
+                if (isArray() || isNullableArray()) {
+                    argument.type.process("[")
+                } else {
+                    argument.type.process("$index;")
                 }
             }
         }
     }
 
-    fun KotlinTypeMarker.process(step: String) {
+    private fun IrType.process(step: String) {
         state.addStep(step)
         this.gatherTypeAnnotations()
         state.removeStep()
     }
 
-    fun KotlinTypeMarker.extractAnnotations(): List<IrConstructorCall> {
-        require(this is IrType)
+    private fun IrType.extractAnnotations(): List<IrConstructorCall> {
         return annotations.filter {
             val annotationClass = it.symbol.owner.parentAsClass
 
@@ -93,8 +88,8 @@ internal class IrTypeAnnotationCollector(val context: TypeSystemCommonBackendCon
     }
 
     private fun isCompiledToJvm8OrHigher(source: SourceElement): Boolean =
-        (source !is KotlinJvmBinarySourceElement ||
-                (source.binaryClass as? FileBasedKotlinClass)?.classVersion ?: 0 >= Opcodes.V1_8)
+        source !is KotlinJvmBinarySourceElement ||
+                ((source.binaryClass as? FileBasedKotlinClass)?.classVersion ?: 0) >= Opcodes.V1_8
 
     private val IrClass.isCompiledToJvm8OrHigher: Boolean
         get() =
