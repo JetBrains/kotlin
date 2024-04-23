@@ -41,6 +41,22 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.concurrent.ConcurrentHashMap
+
+/*private var totalRequests = 0
+private var requestHits = 0
+private var resultHits = 0
+private val findClassRequests: MutableMap<FindClassCacheKey, JavaClass?> = hashMapOf()
+private val findClassResults: MutableMap<FindClassCacheKey, JavaClass?> = hashMapOf()
+
+private data class FindClassCacheKey(
+    val classId: ClassId,
+    @Suppress("ArrayInDataClass")
+    val previouslyFoundClassFileContent: ByteArray?,
+    val outerClass: JavaClass?,
+    val searchScope: GlobalSearchScope,
+    val result: JavaClass?,
+)*/
 
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
@@ -58,7 +74,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         index: JvmDependenciesIndex,
         packagePartProviders: List<JvmPackagePartProvider>,
         singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
-        usePsiClassFilesReading: Boolean
+        usePsiClassFilesReading: Boolean,
     ) {
         this.index = index
         this.packagePartProviders = packagePartProviders
@@ -101,7 +117,34 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope) = findClass(JavaClassFinder.Request(classId), searchScope)
 
+    private val findClassCache: MutableMap<FindClassCacheKey, JavaClass?> = hashMapOf()
+
+    private data class FindClassCacheKey(
+        val classId: ClassId,
+        @Suppress("ArrayInDataClass")
+        val previouslyFoundClassFileContent: ByteArray?,
+        val outerClass: JavaClass?,
+        val searchScope: GlobalSearchScope,
+    )
+
     override fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
+        /*totalRequests++
+        val result = doFindClass(request, searchScope)
+
+        val reqKey = FindClassCacheKey(request.classId, request.previouslyFoundClassFileContent, request.outerClass, searchScope, null)
+        val resKey = FindClassCacheKey(request.classId, request.previouslyFoundClassFileContent, request.outerClass, searchScope, result)
+        if (findClassRequests.putIfAbsent(reqKey, result) != null) {
+            requestHits++
+        }
+        if (findClassResults.putIfAbsent(resKey, result) != null) {
+            resultHits++
+        }*/
+
+        val key = FindClassCacheKey(request.classId, request.previouslyFoundClassFileContent, request.outerClass, searchScope)
+        return findClassCache.getOrPut(key) { doFindClass(request, searchScope) }
+    }
+
+    private fun doFindClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
         val (classId, classFileContentFromRequest, outerClassFromRequest) = request
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
 
@@ -239,7 +282,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private fun findVirtualFileGivenPackage(
         packageDir: VirtualFile,
         classNameWithInnerClasses: String,
-        rootType: JavaRoot.RootType
+        rootType: JavaRoot.RootType,
     ): VirtualFile? {
         val topLevelClassName = classNameWithInnerClasses.substringBefore('.')
 
@@ -334,3 +377,4 @@ private fun <T : Any> safely(compute: () -> T): T? =
 
 private fun String.toSafeFqName(): FqName? = safely { FqName(this) }
 private fun String.toSafeTopLevelClassId(): ClassId? = safely { ClassId.topLevel(FqName(this)) }
+
