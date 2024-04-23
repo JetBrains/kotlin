@@ -29171,6 +29171,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("ClassifierRedeclaresLibPackage.kt")
+      public void testClassifierRedeclaresLibPackage() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/ClassifierRedeclaresLibPackage.kt");
+      }
+
+      @Test
       @TestMetadata("ConflictingExtensionProperties.kt")
       public void testConflictingExtensionProperties() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/ConflictingExtensionProperties.kt");
@@ -29234,6 +29240,48 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("NoRedeclarationForEnumEntriesAndDefaultObjectMembers.kt")
       public void testNoRedeclarationForEnumEntriesAndDefaultObjectMembers() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/NoRedeclarationForEnumEntriesAndDefaultObjectMembers.kt");
+      }
+
+      @Test
+      @TestMetadata("PackageRedeclaredByCallable.kt")
+      public void testPackageRedeclaredByCallable() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/PackageRedeclaredByCallable.kt");
+      }
+
+      @Test
+      @TestMetadata("PackageRedeclaredByClassInAnotherModule.kt")
+      public void testPackageRedeclaredByClassInAnotherModule() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/PackageRedeclaredByClassInAnotherModule.kt");
+      }
+
+      @Test
+      @TestMetadata("PackageRedeclaredByClassInFriendModule.kt")
+      public void testPackageRedeclaredByClassInFriendModule() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/PackageRedeclaredByClassInFriendModule.kt");
+      }
+
+      @Test
+      @TestMetadata("PackageRedeclaredByJavaClass.kt")
+      public void testPackageRedeclaredByJavaClass() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/PackageRedeclaredByJavaClass.kt");
+      }
+
+      @Test
+      @TestMetadata("PackageRedeclaredByNestedClass.kt")
+      public void testPackageRedeclaredByNestedClass() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/PackageRedeclaredByNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("PackageRedeclaresLibClass.kt")
+      public void testPackageRedeclaresLibClass() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/PackageRedeclaresLibClass.kt");
+      }
+
+      @Test
+      @TestMetadata("ParentPackageRedeclaredByClass.kt")
+      public void testParentPackageRedeclaredByClass() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/ParentPackageRedeclaredByClass.kt");
       }
 
       @Test
