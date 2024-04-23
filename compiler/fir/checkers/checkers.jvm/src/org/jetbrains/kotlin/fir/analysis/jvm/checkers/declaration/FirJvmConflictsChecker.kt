@@ -19,7 +19,7 @@ object FirJvmConflictsChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val javaSymbol = context.session.javaSymbolProvider?.getClassLikeSymbolByClassId(declaration.classId) ?: return
         reporter.reportOn(
-            declaration.source, FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION, listOf(declaration.symbol, javaSymbol), context
+            declaration.source, FirErrors.CLASSIFIER_REDECLARATION, listOf(declaration.symbol, javaSymbol), context
         )
     }
 }

@@ -1,6 +1,6 @@
 sealed class A
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : A()
+class <!CLASSIFIER_REDECLARATION!>B<!> : A()
 
 interface C : <!INTERFACE_WITH_SUPERCLASS!>A<!>
 
@@ -28,7 +28,7 @@ sealed class P {
 
 class K : P()
 
-object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> {
+object <!CLASSIFIER_REDECLARATION!>B<!> {
     class I : P()
 }
 

@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
@@ -2684,11 +2685,17 @@ internal class RedeclarationImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.Redeclaration
 
-internal class PackageOrClassifierRedeclarationImpl(
+internal class ClassifierRedeclarationImpl(
     override val conflictingDeclarations: List<KtSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.PackageOrClassifierRedeclaration
+) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.ClassifierRedeclaration
+
+internal class PackageConflictsWithClassifierImpl(
+    override val conflictingClassId: ClassId,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtPackageDirective>(firDiagnostic, token), KtFirDiagnostic.PackageConflictsWithClassifier
 
 internal class ExpectAndActualInTheSameModuleImpl(
     override val declaration: KtSymbol,

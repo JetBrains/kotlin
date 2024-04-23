@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
+open class <!CLASSIFIER_REDECLARATION!>A<!> {
     open fun foo(): String = "Fail"
 }
 expect class C1() : A
