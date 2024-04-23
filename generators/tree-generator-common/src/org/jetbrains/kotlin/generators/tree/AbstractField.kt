@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+import org.jetbrains.kotlin.generators.tree.imports.Importable
+
 abstract class AbstractField<Field : AbstractField<Field>> {
     abstract val origin: Field
 

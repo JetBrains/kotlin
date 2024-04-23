@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.Importable
 
 sealed class Field : AbstractField<Field>() {
     open var withReplace: Boolean = false

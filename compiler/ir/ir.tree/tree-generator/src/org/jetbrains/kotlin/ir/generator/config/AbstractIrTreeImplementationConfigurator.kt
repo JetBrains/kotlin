@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.generator.config
 
-import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.ir.generator.Packages
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tree.printer
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.config.AbstractBuilderConfigurator
 import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element

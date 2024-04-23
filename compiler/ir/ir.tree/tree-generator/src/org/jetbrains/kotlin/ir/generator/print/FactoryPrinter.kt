@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import org.jetbrains.kotlin.generators.tree.ImportCollector
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration

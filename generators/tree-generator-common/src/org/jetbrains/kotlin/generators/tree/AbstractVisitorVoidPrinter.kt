@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.utils.SmartPrinter
 

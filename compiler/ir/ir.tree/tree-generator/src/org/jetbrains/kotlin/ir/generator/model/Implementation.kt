@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.generator.model
 
 import org.jetbrains.kotlin.generators.tree.AbstractImplementation
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.ImportCollector
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.utils.SmartPrinter
 
 class Implementation(element: Element, name: String?) : AbstractImplementation<Implementation, Element, Field>(element, name) {

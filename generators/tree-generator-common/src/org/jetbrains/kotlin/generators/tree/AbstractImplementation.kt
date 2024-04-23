@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.imports.Importable
 /**
  * A class representing a non-abstract implementation of an abstract class/interface of a tree node.
  */

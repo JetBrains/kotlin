@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 
 val phaseAsResolveStateExtentionImport = ArbitraryImportable("org.jetbrains.kotlin.fir.declarations", "asResolveState")
 val resolvePhaseExtensionImport = ArbitraryImportable("org.jetbrains.kotlin.fir.declarations", "resolvePhase")

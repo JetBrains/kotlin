@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.imports.Importable
 sealed class Builder<BuilderField, Element> : FieldContainer<BuilderField>, TypeRefWithNullability, Importable
         where BuilderField : AbstractField<*>,
               Element : AbstractElement<Element, *, *> {

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldList
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldWithDefault
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
 import org.jetbrains.kotlin.utils.SmartPrinter

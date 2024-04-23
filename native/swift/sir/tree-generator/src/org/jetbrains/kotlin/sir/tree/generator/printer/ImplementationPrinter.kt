@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.tree.generator.printer
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.sir.tree.generator.model.*
 import org.jetbrains.kotlin.sir.tree.generator.model.ListField
 import org.jetbrains.kotlin.sir.tree.generator.swiftIrImplementationDetailAnnotation

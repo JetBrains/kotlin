@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tree.config
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.Importable
 import org.jetbrains.kotlin.generators.tree.printer.call
 
 /**

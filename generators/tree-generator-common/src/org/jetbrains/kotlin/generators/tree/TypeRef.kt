@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.imports.Importable
 import org.jetbrains.kotlin.generators.tree.printer.braces
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer

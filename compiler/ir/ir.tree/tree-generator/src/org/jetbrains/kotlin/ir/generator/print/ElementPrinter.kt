@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType

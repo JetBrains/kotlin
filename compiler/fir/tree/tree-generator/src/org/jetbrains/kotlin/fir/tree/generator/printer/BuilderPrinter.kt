@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.fir.tree.generator.toMutableOrEmptyImport
 import org.jetbrains.kotlin.generators.tree.AbstractBuilderPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
-import org.jetbrains.kotlin.generators.tree.ImportCollector
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.utils.SmartPrinter
 
 internal class BuilderPrinter(printer: SmartPrinter) : AbstractBuilderPrinter<Element, Implementation, FieldWithDefault, Field>(printer) {

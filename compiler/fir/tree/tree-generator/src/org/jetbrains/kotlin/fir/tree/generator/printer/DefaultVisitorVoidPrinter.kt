@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.tree.generator.firVisitorVoidType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.utils.SmartPrinter
 
 internal class DefaultVisitorVoidPrinter(

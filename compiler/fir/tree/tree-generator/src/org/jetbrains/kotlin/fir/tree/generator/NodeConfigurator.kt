@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder.Companion.baseFirElement
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
-import org.jetbrains.kotlin.generators.tree.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.AbstractField
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.TypeRef
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
