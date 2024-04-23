@@ -187,8 +187,10 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
             val b = other.arrayMap[index]
 
             if (a == null && b == null) continue
-            if ((a == null) != (b == null)) return true
-            if (a!!.implementsEquality && a != b) return true
+            if ((a ?: b)!!.implementsEquality) {
+                if ((a == null) != (b == null)) return true
+                if (a != b) return true
+            }
         }
 
         return false

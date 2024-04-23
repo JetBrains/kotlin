@@ -183,47 +183,47 @@ FILE fqName:<root> fileName:/1.kt
         TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>
           CALL 'public open fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.A' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
             $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.String> origin=null
-              <T>: kotlin.String
-              elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=null
+              <T>: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
+              elements: VARARG type=kotlin.Array<out @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> varargElementType=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
                 CONST String type=kotlin.String value="1"
       VAR name:k2 type:kotlin.collections.Set<kotlin.String> [val]
         TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>
           CALL 'public open fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.B' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
             $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.String> origin=null
-              <T>: kotlin.String
-              elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=null
+              <T>: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
+              elements: VARARG type=kotlin.Array<out @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> varargElementType=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
                 CONST String type=kotlin.String value="1"
       VAR name:k3 type:kotlin.collections.Set<kotlin.String> [val]
         TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>
           CALL 'public open fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.C' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
             $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.String> origin=null
-              <T>: kotlin.String
-              elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=null
+              <T>: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
+              elements: VARARG type=kotlin.Array<out @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> varargElementType=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
                 CONST String type=kotlin.String value="1"
       VAR name:k4 type:kotlin.collections.Set<kotlin.String> [val]
         TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>
           CALL 'public open fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.D' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
             $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
-            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.String> origin=null
-              <T>: kotlin.String
-              elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=null
+              <T>: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
+              elements: VARARG type=kotlin.Array<out @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> varargElementType=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
                 CONST String type=kotlin.String value="1"
       VAR name:k5 type:kotlin.collections.Set<kotlin.String> [val]
         TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>
           CALL 'public open fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.E' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
             $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
-            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.String> origin=null
-              <T>: kotlin.String
-              elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=null
+              <T>: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
+              elements: VARARG type=kotlin.Array<out @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> varargElementType=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String
                 CONST String type=kotlin.String value="1"
       VAR name:k6 type:kotlin.collections.Set<kotlin.String> [val]
         TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.String> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.String>
           CALL 'public open fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] kotlin.String>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.String>? declared in <root>.F' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] kotlin.String>? origin=null
             $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
-            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.String> origin=null
-              <T>: kotlin.String
-              elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            elements: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<@[EnhancedNullability] kotlin.String> origin=null
+              <T>: @[EnhancedNullability] kotlin.String
+              elements: VARARG type=kotlin.Array<out @[EnhancedNullability] kotlin.String> varargElementType=@[EnhancedNullability] kotlin.String
                 CONST String type=kotlin.String value="1"

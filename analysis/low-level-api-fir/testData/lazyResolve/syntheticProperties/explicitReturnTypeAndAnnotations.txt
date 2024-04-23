@@ -170,7 +170,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 BODY_RESOLVE:
 TARGET: public open override [<synthetic> BODY_RESOLVE] val something: R|@R|Anno|(s = <strcat>(String(type: ), R|/prop|))  kotlin/String|
     @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(s = <strcat>(String(type: ), R|/prop|))  kotlin/String| {
-        ^getSomething String(str).R|kotlin/also|<R|kotlin/String|>(::R|kotlin/io/println|)
+        ^getSomething String(str).R|kotlin/also|<R|@R|Anno|(s = <strcat>(String(type: ), R|/prop|))  kotlin/String|>(::R|kotlin/io/println|)
     }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         }
 
         @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(s = <strcat>(String(type: ), R|/prop|))  kotlin/String| {
-            ^getSomething String(str).R|kotlin/also|<R|kotlin/String|>(::R|kotlin/io/println|)
+            ^getSomething String(str).R|kotlin/also|<R|@R|Anno|(s = <strcat>(String(type: ), R|/prop|))  kotlin/String|>(::R|kotlin/io/println|)
         }
 
     }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
         }
 
         @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(s = <strcat>(String(type: ), R|/prop|))  kotlin/String| {
-            ^getSomething String(str).R|kotlin/also|<R|kotlin/String|>(::R|kotlin/io/println|)
+            ^getSomething String(str).R|kotlin/also|<R|@R|Anno|(s = <strcat>(String(type: ), R|/prop|))  kotlin/String|>(::R|kotlin/io/println|)
         }
 
     }
