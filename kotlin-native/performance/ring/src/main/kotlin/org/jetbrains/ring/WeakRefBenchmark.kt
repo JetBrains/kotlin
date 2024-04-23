@@ -45,8 +45,12 @@ private class ReferenceWrapper private constructor(
     }
 }
 
-private fun ReferenceWrapper.stress() = (1..REPEAT_COUNT).sumOf {
-    this.value
+private fun ReferenceWrapper.stress(): Int {
+    var sum = 0
+    for (i in 1..REPEAT_COUNT) {
+        sum += this.value
+    }
+    return sum
 }
 
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
