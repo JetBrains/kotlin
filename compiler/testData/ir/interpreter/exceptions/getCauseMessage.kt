@@ -9,7 +9,7 @@ fun getArrayElement(array: IntArray, index: Int): Int {
     }
 }
 
-const val a = <!EVALUATED: `-1`!>try {
+const val a = <!EVALUATED: `Index -1 out of bounds for length 3`!>try {
     getArrayElement(intArrayOf(1, 2, 3), -1).let { "Element at given index is " + it }
 } catch (e: Exception) {
     e.cause?.message ?: "Exception without message"
