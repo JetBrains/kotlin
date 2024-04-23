@@ -75,6 +75,16 @@ abstract class AbstractSwiftRunnerTestBase(
             }
         }
 
+        val unsupportedTypeStrategy = when (inputModuleKind) {
+            InputModuleKind.Source -> UnsupportedTypeStrategy.SpecialType
+            InputModuleKind.Binary -> UnsupportedTypeStrategy.Fail
+        }
+
+        val unknownTypeStrategy = when (inputModuleKind) {
+            InputModuleKind.Source -> UnknownTypeStrategy.SpecialType
+            InputModuleKind.Binary -> UnknownTypeStrategy.Fail
+        }
+
         val defaultConfig: Map<String, String> = mapOf(
             SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
             SwiftExportConfig.RENDER_DOC_COMMENTS to (if (renderDocComments) "true" else "false"),
@@ -96,6 +106,8 @@ abstract class AbstractSwiftRunnerTestBase(
                 settings = config,
                 logger = createDummyLogger(),
                 distribution = Distribution(KonanHome.konanHomePath),
+                unknownTypeStrategy = unknownTypeStrategy,
+                unsupportedTypeStrategy = unsupportedTypeStrategy,
             )
         )
 
