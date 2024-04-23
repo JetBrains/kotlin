@@ -4,11 +4,11 @@
 // - Show declarations: true
 
 // Library unique name: <value_parameters_library>
-final fun value_parameters.test/funWithDefaultArgs(kotlin/Int =..., kotlin/Long, kotlin/String =...): kotlin/String // value_parameters.test/funWithDefaultArgs|-2013334893880470152[0]
-final fun context(kotlin/Int, kotlin/Long) value_parameters.test/funWithDefaultArgs(kotlin/Int =..., kotlin/Long, kotlin/String =...): kotlin/String // value_parameters.test/funWithDefaultArgs|-1283395221811731897[0]
+final fun value_parameters.test/funWithDefaultArgs(kotlin/Int = ..., kotlin/Long, kotlin/String = ...): kotlin/String // value_parameters.test/funWithDefaultArgs|-2013334893880470152[0]
+final fun context(kotlin/Int, kotlin/Long) value_parameters.test/funWithDefaultArgs(kotlin/Int = ..., kotlin/Long, kotlin/String = ...): kotlin/String // value_parameters.test/funWithDefaultArgs|-1283395221811731897[0]
 final inline fun value_parameters.test/funWithInlineParameters1(kotlin/Function1<kotlin/Int, kotlin/String>, noinline kotlin/Function1<kotlin/Int, kotlin/String>, crossinline kotlin/Function1<kotlin/Int, kotlin/String>): kotlin/String // value_parameters.test/funWithInlineParameters1|8789385144825475619[0]
 final inline fun value_parameters.test/funWithInlineParameters2(kotlin/Function1<kotlin/Int, kotlin/String>, noinline kotlin/Function1<kotlin/Int, kotlin/String>, crossinline kotlin/Function1<kotlin/Int, kotlin/String>): kotlin/String // value_parameters.test/funWithInlineParameters2|-8517782923091139351[0]
-final inline fun value_parameters.test/funWithMixedStuff(crossinline kotlin/Function1<kotlin/Int, kotlin/String> =...): kotlin/String // value_parameters.test/funWithMixedStuff|6465248722251168090[0]
+final inline fun value_parameters.test/funWithMixedStuff(crossinline kotlin/Function1<kotlin/Int, kotlin/String> = ...): kotlin/String // value_parameters.test/funWithMixedStuff|6465248722251168090[0]
 final fun value_parameters.test/funWithVararg(kotlin/Array<out kotlin/Any?>...): kotlin/String // value_parameters.test/funWithVararg|-6768739871601372622[0]
-final fun value_parameters.test/funWithVarargAndDefaultArg(kotlin/Array<out kotlin/Any?>... =...): kotlin/String // value_parameters.test/funWithVarargAndDefaultArg|8916237708127614843[0]
-final fun value_parameters.test/funWithVarargAndDefaultArg(kotlin/LongArray... =...): kotlin/String // value_parameters.test/funWithVarargAndDefaultArg|7273069930119485025[0]
+final fun value_parameters.test/funWithVarargAndDefaultArg(kotlin/Array<out kotlin/Any?>... = ...): kotlin/String // value_parameters.test/funWithVarargAndDefaultArg|8916237708127614843[0]
+final fun value_parameters.test/funWithVarargAndDefaultArg(kotlin/LongArray... = ...): kotlin/String // value_parameters.test/funWithVarargAndDefaultArg|7273069930119485025[0]

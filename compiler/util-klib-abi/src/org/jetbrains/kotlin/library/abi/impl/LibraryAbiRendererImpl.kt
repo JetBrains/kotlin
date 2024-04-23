@@ -424,7 +424,7 @@ internal class AbiRendererImpl(
                 if (valueParameter.isCrossinline) append("crossinline ")
                 appendType(valueParameter.type)
                 if (valueParameter.isVararg) append("...")
-                if (valueParameter.hasDefaultArg) append(" =...")
+                if (valueParameter.hasDefaultArg) append(" = ...")
                 return ""
             }
 
