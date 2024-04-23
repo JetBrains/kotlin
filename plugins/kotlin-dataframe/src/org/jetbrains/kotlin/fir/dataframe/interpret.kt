@@ -112,7 +112,8 @@ fun <T> KotlinTypeFacade.interpret(
                     is FirFunctionCall -> {
                         val interpreter = expression.loadInterpreter()
                             ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable.")
-                        interpret(expression, interpreter, emptyMap(), reporter)
+                        val result = interpret(expression, interpreter, emptyMap(), reporter)
+                        result
                     }
 
                     is FirPropertyAccessExpression -> {
@@ -148,7 +149,10 @@ fun <T> KotlinTypeFacade.interpret(
                                 if (interpreter == null) {
                                     reporter.reportInterpretationError(result, "Cannot load interpreter")
                                 }
-                                interpreter?.let { interpret(result, interpreter, reporter = reporter)?.value }
+                                interpreter?.let {
+                                    val value = interpret(result, interpreter, reporter = reporter)?.value
+                                    value
+                                }
                             }
 
                             is FirErrorExpression -> null
