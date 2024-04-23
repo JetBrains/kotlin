@@ -11,7 +11,7 @@ import java.util.SortedSet
 /**
  * Used to collect [TypeRef]s for printing a list of imports for those [TypeRef]s.
  */
-class ImportCollector(currentPackage: String) : ImportCollecting {
+internal class ImportCollector(currentPackage: String) : ImportCollecting {
 
     companion object {
         private val STAR = sortedSetOf("*")
