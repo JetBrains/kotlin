@@ -51,7 +51,7 @@ internal class SirTypealiasFromKtSymbol(
             val typeRequest = SirTypeProvider.TranslationRequest(ktSymbol.expandedType)
             type = when (val response = translateType(typeRequest)) {
                 is SirTypeProvider.TranslationResponse.Success -> {
-                    ktSymbol.getContainingModule().sirModule().updateImports(response.containingModules)
+                    ktSymbol.getContainingModule().sirModule().updateImports(response.requiredModules)
                     response.sirType
                 }
                 is SirTypeProvider.TranslationResponse.Unknown ->

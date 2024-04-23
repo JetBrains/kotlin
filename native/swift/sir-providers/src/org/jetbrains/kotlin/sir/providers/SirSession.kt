@@ -132,7 +132,7 @@ public interface SirTypeProvider {
         public class Success(
             public val sirType: SirType,
             // Long shot for the cases when we receive a parametrized type.
-            public val containingModules: List<String>,
+            public val requiredModules: List<String>,
         ) : TranslationResponse
 
         /**

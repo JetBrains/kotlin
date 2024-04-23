@@ -11,13 +11,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
+import org.jetbrains.kotlin.sir.util.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 
 context(SirSession, KtAnalysisSession)
 internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
     val typeRequest = SirTypeProvider.TranslationRequest(ktSymbol.returnType)
     return when (val response = translateType(typeRequest)) {
-        is SirTypeProvider.TranslationResponse.Success -> response.sirType
+        is SirTypeProvider.TranslationResponse.Success -> {
+            val sirModule = ktSymbol.getContainingModule().sirModule()
+            sirModule.updateImports(response.requiredModules)
+            response.sirType
+        }
         is SirTypeProvider.TranslationResponse.Unknown ->
             error("Return type ${ktSymbol.returnType} in ${ktSymbol.render()} is not found.")
         is SirTypeProvider.TranslationResponse.Unsupported ->
@@ -30,8 +35,8 @@ internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateParameterType(va
     val typeRequest = SirTypeProvider.TranslationRequest(valueParameter.returnType)
     return when (val response = translateType(typeRequest)) {
         is SirTypeProvider.TranslationResponse.Success -> {
-            // TODO: import dependencies
-
+            val sirModule = ktSymbol.getContainingModule().sirModule()
+            sirModule.updateImports(response.requiredModules)
             response.sirType
         }
         is SirTypeProvider.TranslationResponse.Unknown -> {
