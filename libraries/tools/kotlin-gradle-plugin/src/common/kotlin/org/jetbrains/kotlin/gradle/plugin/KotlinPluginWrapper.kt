@@ -68,7 +68,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     override fun apply(project: Project) {
         project.registerDefaultVariantImplementations()
-        BuildFusService.registerIfAbsent(project, pluginVersion)
+        val fusEnabled = project.properties.getOrDefault("kotlin.statistics.fus.enabled","true").toString().toBoolean()
+        if (fusEnabled) {
+            BuildFusService.registerIfAbsent(project, pluginVersion)
+        }
 
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)
