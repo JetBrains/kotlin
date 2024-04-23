@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
               then: CONST Int type=kotlin.Int value=3
             BRANCH
               if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=NOT_IN
-                $this: CALL 'public open fun contains (value: kotlin.Int): kotlin.Boolean declared in kotlin.ranges.IntRange' type=kotlin.Boolean origin=IN
+                $this: CALL 'public open fun contains (value: kotlin.Int): kotlin.Boolean declared in kotlin.ranges.IntRange' type=kotlin.Boolean origin=NOT_IN
                   $this: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                     $this: CONST Int type=kotlin.Int value=10
                     other: CONST Int type=kotlin.Int value=20

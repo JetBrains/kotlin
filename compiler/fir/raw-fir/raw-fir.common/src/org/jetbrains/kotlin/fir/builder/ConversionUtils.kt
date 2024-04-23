@@ -200,13 +200,17 @@ fun FirExpression.generateContainsOperation(
     baseSource: KtSourceElement?,
     operationReferenceSource: KtSourceElement?
 ): FirFunctionCall {
-    val containsCall = createConventionCall(operationReferenceSource, baseSource, argument, OperatorNameConventions.CONTAINS)
+    val resultReferenceSource = if (inverted)
+        operationReferenceSource?.fakeElement(KtFakeSourceElementKind.DesugaredInvertedContains)
+    else
+        operationReferenceSource
+    val containsCall = createConventionCall(resultReferenceSource, baseSource, argument, OperatorNameConventions.CONTAINS)
     if (!inverted) return containsCall
 
     return buildFunctionCall {
         source = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredInvertedContains)
         calleeReference = buildSimpleNamedReference {
-            source = operationReferenceSource?.fakeElement(KtFakeSourceElementKind.DesugaredInvertedContains)
+            source = resultReferenceSource
             name = OperatorNameConventions.NOT
         }
         explicitReceiver = containsCall

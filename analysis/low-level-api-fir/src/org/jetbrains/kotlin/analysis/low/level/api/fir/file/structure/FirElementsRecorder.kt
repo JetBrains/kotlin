@@ -128,11 +128,16 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         it.isSourceForSmartCasts(element) ||
                         it.kind == KtFakeSourceElementKind.DanglingModifierList ||
                         it.isSourceForArrayAugmentedAssign(element) ||
-                        it.isSourceForCompoundAccess(element)
+                        it.isSourceForCompoundAccess(element) ||
+                        it.isSourceForInvertedInOperator(element)
             }.psi as? KtElement
             ?: return
         cache(psi, element, cache)
     }
+
+    private fun KtSourceElement.isSourceForInvertedInOperator(fir: FirElement) =
+        kind == KtFakeSourceElementKind.DesugaredInvertedContains
+                && fir is FirResolvedNamedReference && fir.name == OperatorNameConventions.CONTAINS
 
     /**
      * FIR represents compound assignment and inc/dec operations as multiple smaller instructions. Here we choose the write operation as the
