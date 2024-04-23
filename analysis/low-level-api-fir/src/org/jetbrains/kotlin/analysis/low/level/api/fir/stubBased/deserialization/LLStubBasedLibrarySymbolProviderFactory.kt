@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.createNativeForwardDeclarationsSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -83,7 +84,7 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
-        return listOf(
+        return listOfNotNull(
             createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
                 project,
                 scope,
@@ -91,7 +92,13 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
                 moduleDataProvider,
                 kotlinScopeProvider,
                 isFallbackDependenciesProvider,
-            )
+            ),
+            createNativeForwardDeclarationsSymbolProvider(
+                project,
+                session,
+                moduleDataProvider,
+                kotlinScopeProvider,
+            ),
         )
     }
 

@@ -66,9 +66,10 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         contextualModule = session.llFirModuleData.ktModule.takeIf { !isFallbackDependenciesProvider },
     )
 
-    override val symbolNamesProvider: FirSymbolNamesProvider = LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider)
-
     override val allowKotlinPackage: Boolean get() = true
+
+    override val symbolNamesProvider: FirSymbolNamesProvider =
+        LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider, allowKotlinPackage)
 
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(

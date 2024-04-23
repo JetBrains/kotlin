@@ -62,8 +62,12 @@ internal open class LLFirKotlinSymbolNamesProvider(
     }
 
     companion object {
-        fun cached(session: FirSession, declarationProvider: KotlinDeclarationProvider): FirCachedSymbolNamesProvider =
-            FirDelegatingCachedSymbolNamesProvider(session, LLFirKotlinSymbolNamesProvider(declarationProvider))
+        fun cached(
+            session: FirSession,
+            declarationProvider: KotlinDeclarationProvider,
+            allowKotlinPackage: Boolean? = null,
+        ): FirCachedSymbolNamesProvider =
+            FirDelegatingCachedSymbolNamesProvider(session, LLFirKotlinSymbolNamesProvider(declarationProvider, allowKotlinPackage))
     }
 }
 

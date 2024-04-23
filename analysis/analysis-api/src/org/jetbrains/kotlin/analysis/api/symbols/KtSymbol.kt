@@ -162,6 +162,13 @@ public enum class KaSymbolOrigin {
      * See: [Dynamic type Kotlin documentation](https://kotlinlang.org/docs/dynamic-type.html)
      */
     JS_DYNAMIC,
+
+    /**
+     * Kotlin/Native forward declaration.
+     *
+     * See: [Forward declarations in 1.9.20+](https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#new-approach-to-forward-declarations)
+     */
+    NATIVE_FORWARD_DECLARATION,
 }
 
 public typealias KtSymbolOrigin = KaSymbolOrigin
