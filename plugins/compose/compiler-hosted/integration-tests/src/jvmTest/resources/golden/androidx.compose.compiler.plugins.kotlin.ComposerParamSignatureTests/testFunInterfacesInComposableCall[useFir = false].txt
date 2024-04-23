@@ -1,0 +1,31 @@
+//
+// Source
+// ------------------------------------------
+
+fun interface MeasurePolicy {
+    fun compute(value: Int): Unit
+}
+
+@NonRestartableComposable
+@Composable fun Text() {
+    Layout { value ->
+        println(value)
+    }
+}
+
+@Composable inline fun Layout(policy: MeasurePolicy) {
+    policy.compute(0)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public abstract interface MeasurePolicy {
+  public abstract compute(I)V
+}
+public final class TestKt {
+  public final static Text(Landroidx/compose/runtime/Composer;I)V
+  public final static Layout(LMeasurePolicy;Landroidx/compose/runtime/Composer;I)V
+  private final static Text%lambda%0(I)V
+}

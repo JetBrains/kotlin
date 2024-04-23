@@ -1,0 +1,16 @@
+//
+// Source
+// ------------------------------------------
+
+val myProperty: () -> Unit @Composable get() {
+    return {  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static getMyProperty(Landroidx/compose/runtime/Composer;I)Lkotlin/jvm/functions/Function0;
+  private final static _get_myProperty_%lambda%0()Lkotlin/Unit;
+}

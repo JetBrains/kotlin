@@ -1,0 +1,72 @@
+//
+// Source
+// ------------------------------------------
+
+fun A() {}
+val b: Int get() = 123
+fun C(x: Int) {
+    var x = 0
+    x++
+
+    class D {
+        fun E() { A() }
+        val F: Int get() = 123
+    }
+    val g = object { fun H() {} }
+}
+fun I(block: () -> Unit) { block() }
+fun J() {
+    I {
+        I {
+            A()
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static A()V
+  public final static getB()I
+  public final static C(I)V
+  public final static I(Lkotlin/jvm/functions/Function0;)V
+  public final static J()V
+  public final static INNERCLASS TestKt%C%g%1 null null
+  public final static INNERCLASS TestKt%C%D null D
+  final static INNERCLASS TestKt%J%1 null null
+}
+public final class TestKt%C%D {
+  public <init>()V
+  public final E()V
+  public final getF()I
+  OUTERCLASS TestKt C (I)V
+  public final static INNERCLASS TestKt%C%D null D
+}
+public final class TestKt%C%g%1 {
+  <init>()V
+  public final H()V
+  OUTERCLASS TestKt C (I)V
+  public final static INNERCLASS TestKt%C%g%1 null null
+}
+final class TestKt%J%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+  <init>()V
+  public final invoke()V
+  public synthetic bridge invoke()Ljava/lang/Object;
+  static <clinit>()V
+  public final static LTestKt%J%1; INSTANCE
+  OUTERCLASS TestKt J ()V
+  final static INNERCLASS TestKt%J%1 null null
+  final static INNERCLASS TestKt%J%1%1 null null
+}
+final class TestKt%J%1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+  <init>()V
+  public final invoke()V
+  public synthetic bridge invoke()Ljava/lang/Object;
+  static <clinit>()V
+  public final static LTestKt%J%1%1; INSTANCE
+  OUTERCLASS TestKt%J%1 invoke ()V
+  final static INNERCLASS TestKt%J%1 null null
+  final static INNERCLASS TestKt%J%1%1 null null
+}

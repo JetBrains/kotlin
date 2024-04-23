@@ -27,7 +27,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
-internal const val TEST_RESOURCES_ROOT = "plugins/compose/compiler-hosted/integration-tests/src/test/resources"
+internal const val TEST_RESOURCES_ROOT = "plugins/compose/compiler-hosted/integration-tests/src/jvmTest/resources"
 
 abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {

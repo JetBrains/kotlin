@@ -1,0 +1,30 @@
+//
+// Source
+// ------------------------------------------
+
+fun interface A {
+    @Composable fun compute(value: Int): Unit
+}
+fun Example(a: A) {
+    Example { it -> a.compute(it) }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public abstract interface A {
+  public abstract compute(ILandroidx/compose/runtime/Composer;I)V
+}
+public final class TestKt {
+  public final static Example(LA;)V
+  final static INNERCLASS TestKt%Example%1 null null
+}
+final class TestKt%Example%1 implements A {
+  <init>(LA;)V
+  public final compute(ILandroidx/compose/runtime/Composer;I)V
+  private final static compute%lambda%0(LTestKt%Example%1;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  final synthetic LA; %a
+  OUTERCLASS TestKt Example (LA;)V
+  final static INNERCLASS TestKt%Example%1 null null
+}

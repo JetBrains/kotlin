@@ -1,0 +1,68 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun Wrap(content: @Composable (x: Int) -> Unit) {
+    content(123)
+}
+@Composable fun App(x: Int) {
+    print(x)
+    Wrap { a ->
+        print(a)
+        print(x)
+        Wrap { b ->
+            print(x)
+            print(a)
+            print(b)
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static Wrap(Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)V
+  public final static App(ILandroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%App%1 null null
+  final static INNERCLASS TestKt%App%2 null null
+  final static INNERCLASS TestKt%Wrap%1 null null
+}
+final class TestKt%Wrap%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(Lkotlin/jvm/functions/Function3;I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic Lkotlin/jvm/functions/Function3; %content
+  final synthetic I %%changed
+  OUTERCLASS TestKt Wrap (Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Wrap%1 null null
+}
+final class TestKt%App%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
+  <init>(I)V
+  public final invoke(ILandroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %x
+  OUTERCLASS TestKt App (ILandroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%App%1 null null
+  final static INNERCLASS TestKt%App%1%1 null null
+}
+final class TestKt%App%1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
+  <init>(II)V
+  public final invoke(ILandroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %x
+  final synthetic I %a
+  OUTERCLASS TestKt%App%1 invoke (ILandroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%App%1 null null
+  final static INNERCLASS TestKt%App%1%1 null null
+}
+final class TestKt%App%2 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(II)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %x
+  final synthetic I %%changed
+  OUTERCLASS TestKt App (ILandroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%App%2 null null
+}

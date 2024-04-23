@@ -1,0 +1,20 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun Foo(a: String, b: () -> Unit) { }
+@Composable fun Example() {
+    Foo(b={}, a="Hello, world!")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static Foo(Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+  public final static Example(Landroidx/compose/runtime/Composer;I)V
+  private final static Foo%lambda%0(Ljava/lang/String;Lkotlin/jvm/functions/Function0;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Example%lambda%1()Lkotlin/Unit;
+  private final static Example%lambda%2(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

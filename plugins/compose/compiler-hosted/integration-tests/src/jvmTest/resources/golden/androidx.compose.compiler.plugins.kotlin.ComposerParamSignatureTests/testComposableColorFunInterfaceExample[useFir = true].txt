@@ -1,0 +1,96 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.ui.graphics.Color
+import java.lang.UnsupportedOperationException
+
+@Composable
+public fun Text(text: String, color: Color = Color.Unspecified) {}
+
+@Immutable
+@kotlin.jvm.JvmInline
+value class Color(val value: ULong) {
+    companion object {
+        @Stable
+        val Red = Color(0xFFFF0000)
+
+        @Stable
+        val Blue = Color(0xFF0000FF)
+    }
+}
+
+@Composable fun condition(): Boolean = true
+
+fun interface ButtonColors {
+    @Composable fun getColor(): Color
+}
+@Composable
+fun Button(colors: ButtonColors) {
+    Text("hello world", color = colors.getColor())
+}
+@Composable
+fun Test() {
+    Button {
+        if (condition()) Color.Red else Color.Blue
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class Color {
+  public final getValue-s-VKNKU()J
+  public static toString-impl(J)Ljava/lang/String;
+  public toString()Ljava/lang/String;
+  public static hashCode-impl(J)I
+  public hashCode()I
+  public static equals-impl(JLjava/lang/Object;)Z
+  public equals(Ljava/lang/Object;)Z
+  private synthetic <init>(J)V
+  public static constructor-impl(J)J
+  public final static synthetic box-impl(J)LColor;
+  public final synthetic unbox-impl()J
+  public final static equals-impl0(JJ)Z
+  public final static synthetic access%getRed%cp()J
+  public final static synthetic access%getBlue%cp()J
+  static <clinit>()V
+  public final static LColor%Companion; Companion
+  private final J value
+  private final static J Red
+  private final static J Blue
+  public final static INNERCLASS Color%Companion Color Companion
+}
+public final class Color%Companion {
+  private <init>()V
+  public final getRed-0d7_KjU()J
+  public static synthetic getRed-0d7_KjU%annotations()V
+  public final getBlue-0d7_KjU()J
+  public static synthetic getBlue-0d7_KjU%annotations()V
+  public synthetic <init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final static INNERCLASS Color%Companion Color Companion
+}
+public abstract interface ButtonColors {
+  public abstract getColor-WaAFU9c(Landroidx/compose/runtime/Composer;I)J
+}
+public final class TestKt {
+  public final static Text-iJQMabo(Ljava/lang/String;JLandroidx/compose/runtime/Composer;II)V
+  public final static condition(Landroidx/compose/runtime/Composer;I)Z
+  public final static Button(LButtonColors;Landroidx/compose/runtime/Composer;I)V
+  public final static Test(Landroidx/compose/runtime/Composer;I)V
+  private final static Text_iJQMabo%lambda%0(Ljava/lang/String;JIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Button%lambda%1(LButtonColors;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Test%lambda%2(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  final static INNERCLASS TestKt%Test%1 null null
+  public final static INNERCLASS androidx/compose/ui/graphics/Color%Companion androidx/compose/ui/graphics/Color Companion
+}
+final class TestKt%Test%1 implements ButtonColors {
+  <init>()V
+  public final getColor-WaAFU9c(Landroidx/compose/runtime/Composer;I)J
+  static <clinit>()V
+  public final static LTestKt%Test%1; INSTANCE
+  OUTERCLASS TestKt Test (Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Test%1 null null
+  public final static INNERCLASS androidx/compose/ui/graphics/Color%Companion androidx/compose/ui/graphics/Color Companion
+}
