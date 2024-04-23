@@ -7,16 +7,12 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
-import org.jetbrains.kotlin.generators.tree.printer.braces
-import org.jetbrains.kotlin.generators.tree.printer.printBlock
-import org.jetbrains.kotlin.generators.tree.printer.printKDoc
-import org.jetbrains.kotlin.generators.tree.printer.typeParameters
-import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 
 abstract class AbstractImplementationPrinter<Implementation, Element, ImplementationField>(
-    private val printer: SmartPrinter,
+    private val printer: ImportCollectingPrinter,
 )
         where Implementation : AbstractImplementation<Implementation, Element, ImplementationField>,
               Element : AbstractElement<Element, *, Implementation>,
@@ -29,20 +25,17 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
 
-    protected abstract fun makeFieldPrinter(printer: SmartPrinter): AbstractFieldPrinter<ImplementationField>
+    protected abstract fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<ImplementationField>
 
-    context(ImportCollector)
-    protected open fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {
+    protected open fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
     }
 
-    context(ImportCollector)
-    protected open fun SmartPrinter.printAdditionalConstructorParameters(implementation: Implementation) {
+    protected open fun ImportCollectingPrinter.printAdditionalConstructorParameters(implementation: Implementation) {
     }
 
-    context(ImportCollector)
     fun printImplementation(implementation: Implementation) {
-        addAllImports(implementation.additionalImports)
         printer.run {
+            addAllImports(implementation.additionalImports)
             printKDoc(implementation.kDoc)
             buildSet {
                 if (implementation.requiresOptIn) {

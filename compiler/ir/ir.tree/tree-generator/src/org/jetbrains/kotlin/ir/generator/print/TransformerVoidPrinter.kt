@@ -7,19 +7,18 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
 internal class TransformerVoidPrinter(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
     override val visitorType: ClassRef<*>,
 ) : AbstractTransformerVoidPrinter<Element, Field>(printer) {
 
@@ -48,8 +47,7 @@ internal class TransformerVoidPrinter(
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = false
 
-    context(ImportCollector)
-    override fun SmartPrinter.printAdditionalMethods() {
+    override fun ImportCollectingPrinter.printAdditionalMethods() {
         println()
         val typeParameter = TypeVariable("T", listOf(IrTree.rootElement))
         printFunctionWithBlockBody(
@@ -77,7 +75,6 @@ internal class TransformerVoidPrinter(
         }
     }
 
-    context(ImportCollector)
     override fun printMethodsForElement(element: Element) {
         val parent = element.parentInVisitor
         if (!element.transformByChildrenVoid && parent == null) return
@@ -113,7 +110,6 @@ internal class TransformerVoidPrinter(
         }
     }
 
-    context(ImportCollector)
     override fun printVisitor(elements: List<Element>) {
         super.printVisitor(elements)
         printer.run {

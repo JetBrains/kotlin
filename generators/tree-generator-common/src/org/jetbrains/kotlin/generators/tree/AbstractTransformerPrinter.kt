@@ -7,19 +7,14 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
-import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
-import org.jetbrains.kotlin.generators.tree.printer.printBlock
-import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
-import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
-import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.generators.tree.printer.*
 
 abstract class AbstractTransformerPrinter<Element : AbstractElement<Element, Field, *>, Field : AbstractField<Field>>(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override fun visitMethodReturnType(element: Element) = element.transformerClass
 
-    context(ImportCollector)
     override fun printMethodsForElement(element: Element) {
         printer.run {
             println()

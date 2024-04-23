@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.fir.tree.generator.firVisitorType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 
 internal class TransformerPrinter(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
     override val visitorType: ClassRef<*>,
     private val rootElement: Element,
 ) : AbstractTransformerPrinter<Element, Field>(printer) {

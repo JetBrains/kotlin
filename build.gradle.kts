@@ -478,15 +478,6 @@ val mppProjects by extra {
     )
 }
 
-val projectsWithEnabledContextReceivers by extra {
-    listOf(
-        ":compiler:fir:tree:tree-generator",
-        ":compiler:ir.tree:tree-generator",
-        ":native:swift:sir:tree-generator",
-        ":generators:tree-generator-common",
-    )
-}
-
 val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
     listOf(
         ":analysis:analysis-api-fe10",

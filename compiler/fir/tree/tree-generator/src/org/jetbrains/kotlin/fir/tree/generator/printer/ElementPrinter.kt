@@ -10,21 +10,18 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.*
-import org.jetbrains.kotlin.utils.SmartPrinter
 
 private val elementsWithReplaceSource = setOf(
     FirTreeBuilder.qualifiedAccessExpression,
     FirTreeBuilder.delegatedConstructorCall,
 )
 
-internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
+internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElementPrinter<Element, Field>(printer) {
 
-    override fun makeFieldPrinter(printer: SmartPrinter) = object : AbstractFieldPrinter<Field>(printer) {}
+    override fun makeFieldPrinter(printer: ImportCollectingPrinter) = object : AbstractFieldPrinter<Field>(printer) {}
 
-    context(ImportCollector)
-    override fun SmartPrinter.printAdditionalMethods(element: Element) {
+    override fun ImportCollectingPrinter.printAdditionalMethods(element: Element) {
         val kind = element.kind ?: error("Expected non-null element kind")
         with(element) {
             val treeName = "FIR"

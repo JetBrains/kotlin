@@ -15,10 +15,11 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.fir.tree.generator.toMutableOrEmptyImport
 import org.jetbrains.kotlin.generators.tree.AbstractBuilderPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
-import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 
-internal class BuilderPrinter(printer: SmartPrinter) : AbstractBuilderPrinter<Element, Implementation, FieldWithDefault, Field>(printer) {
+internal class BuilderPrinter(
+    printer: ImportCollectingPrinter
+) : AbstractBuilderPrinter<Element, Implementation, FieldWithDefault, Field>(printer) {
 
     override val implementationDetailAnnotation: ClassRef<*>
         get() = firImplementationDetailType
@@ -28,8 +29,7 @@ internal class BuilderPrinter(printer: SmartPrinter) : AbstractBuilderPrinter<El
 
     override fun actualTypeOfField(field: Field) = field.getMutableType(forBuilder = true)
 
-    context(ImportCollector)
-    override fun SmartPrinter.printFieldReferenceInImplementationConstructorCall(field: FieldWithDefault) {
+    override fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: FieldWithDefault) {
         print(field.name)
         if (field.isMutableOrEmptyList) {
             addImport(toMutableOrEmptyImport)
@@ -37,7 +37,6 @@ internal class BuilderPrinter(printer: SmartPrinter) : AbstractBuilderPrinter<El
         }
     }
 
-    context(ImportCollector)
     override fun copyField(
         field: FieldWithDefault,
         originalParameterName: String,

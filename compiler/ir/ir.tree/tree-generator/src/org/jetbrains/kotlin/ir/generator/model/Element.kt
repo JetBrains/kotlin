@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.ir.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.elementBaseType
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
@@ -109,7 +108,7 @@ class Element(
     var transformByChildren = false
     var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
 
-    var generationCallback: (context(ImportCollector) SmartPrinter.() -> Unit)? = null
+    var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
 
     override var kDoc: String? = null
 

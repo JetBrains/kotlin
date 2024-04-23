@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
-import org.jetbrains.kotlin.utils.SmartPrinter
 
 abstract class AbstractVisitorVoidPrinter<Element, Field>(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
 ) : AbstractVisitorPrinter<Element, Field>(printer)
         where Element : AbstractElement<Element, Field, *>,
               Field : AbstractField<Field> {
@@ -33,7 +33,6 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
 
     abstract val overriddenVisitMethodsAreFinal: Boolean
 
-    context(ImportCollector)
     final override fun printMethodsForElement(element: Element) {
         val parentInVisitor = parentInVisitor(element)
         if (!element.isRootElement && parentInVisitor == null) return
@@ -46,7 +45,7 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
             override = true,
         )
 
-        fun SmartPrinter.printBody(parentInVisitor: Element?) {
+        fun ImportCollectingPrinter.printBody(parentInVisitor: Element?) {
             printBlock {
                 if (parentInVisitor != null) {
                     println(parentInVisitor.visitFunctionName, "(", element.visitorParameterName, ")")

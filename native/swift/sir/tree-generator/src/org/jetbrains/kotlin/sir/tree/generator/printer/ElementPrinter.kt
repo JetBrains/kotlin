@@ -5,20 +5,19 @@
 
 package org.jetbrains.kotlin.sir.tree.generator.printer
 
-import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.AbstractElementPrinter
+import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
 import org.jetbrains.kotlin.sir.tree.generator.model.Field
-import org.jetbrains.kotlin.utils.SmartPrinter
 
-internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
+internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElementPrinter<Element, Field>(printer) {
 
-    override fun makeFieldPrinter(printer: SmartPrinter) = object : AbstractFieldPrinter<Field>(printer) {
+    override fun makeFieldPrinter(printer: ImportCollectingPrinter) = object : AbstractFieldPrinter<Field>(printer) {
         override fun forceMutable(field: Field): Boolean = field.isMutable
     }
 
-    context(ImportCollector)
-    override fun SmartPrinter.printAdditionalMethods(element: Element) {
+    override fun ImportCollectingPrinter.printAdditionalMethods(element: Element) {
         // do nothing
     }
 }

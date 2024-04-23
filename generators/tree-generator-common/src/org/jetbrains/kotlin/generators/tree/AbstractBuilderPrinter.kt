@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
-abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, ElementField>(val printer: SmartPrinter)
+abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, ElementField>(val printer: ImportCollectingPrinter)
         where Element : AbstractElement<Element, ElementField, Implementation>,
               Implementation : AbstractImplementation<Implementation, Element, BuilderField>,
               BuilderField : AbstractField<*>,
@@ -27,15 +27,13 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
 
     protected abstract val builderDslAnnotation: ClassRef<*>
 
-    context(ImportCollector)
-    protected open fun SmartPrinter.printFieldReferenceInImplementationConstructorCall(field: BuilderField) {
+    protected open fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: BuilderField) {
         print(field.name)
     }
 
     protected open fun actualTypeOfField(field: ElementField): TypeRefWithNullability =
         if (field is ListField) StandardTypes.mutableList.withArgs(field.baseType) else field.typeRef
 
-    context(ImportCollector)
     protected open fun copyField(field: BuilderField, originalParameterName: String, copyBuilderVariableName: String) {
         printer.run {
             when {
@@ -54,10 +52,9 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
     }
 
-    context(ImportCollector)
     fun printBuilder(builder: Builder<BuilderField, Element>) {
-        addAllImports(builder.usedTypes)
         printer.run {
+            addAllImports(builder.usedTypes)
             if (builder is LeafBuilder<*, *, *> && builder.allFields.isEmpty()) {
                 @Suppress("UNCHECKED_CAST")
                 printDslBuildFunction(builder as LeafBuilder<BuilderField, Element, Implementation>, hasRequiredFields = false)
@@ -152,8 +149,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
             defaultValue = "{}".takeIf { !hasRequiredFields },
         )
 
-    context(ImportCollector)
-    private fun SmartPrinter.contractCallsInPlaceExactlyOnce() {
+    private fun ImportCollectingPrinter.contractCallsInPlaceExactlyOnce() {
         addStarImport("kotlin.contracts")
         print("contract")
         printBlock {
@@ -164,8 +160,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
     private fun builderFunctionName(builder: LeafBuilder<BuilderField, Element, Implementation>) =
         "build" + builder.implementation.run { name?.removePrefix(namePrefix) ?: element.name }
 
-    context(ImportCollector)
-    private fun SmartPrinter.printDslBuildFunction(
+    private fun ImportCollectingPrinter.printDslBuildFunction(
         builder: LeafBuilder<BuilderField, Element, Implementation>,
         hasRequiredFields: Boolean,
     ) {
@@ -210,8 +205,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
     private fun BuilderField.needNotNullDelegate(fieldIsUseless: Boolean) =
         needBackingField(fieldIsUseless) && (typeRef == StandardTypes.boolean || typeRef == StandardTypes.int)
 
-    context(ImportCollector)
-    private fun SmartPrinter.printFieldInBuilder(
+    private fun ImportCollectingPrinter.printFieldInBuilder(
         field: BuilderField,
         builder: Builder<BuilderField, Element>,
         fieldIsUseless: Boolean,
@@ -269,7 +263,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         return needNewLine to hasRequiredFields
     }
 
-    private fun SmartPrinter.printDeprecationOnUselessFieldIfNeeded(
+    private fun ImportCollectingPrinter.printDeprecationOnUselessFieldIfNeeded(
         field: AbstractField<*>,
         builder: Builder<BuilderField, Element>,
         fieldIsUseless: Boolean,
@@ -285,8 +279,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
     }
 
-    context(ImportCollector)
-    private fun SmartPrinter.printFieldListInBuilder(
+    private fun ImportCollectingPrinter.printFieldListInBuilder(
         field: ElementField,
         builder: Builder<BuilderField, Element>,
         fieldIsUseless: Boolean,
@@ -300,7 +293,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         println()
     }
 
-    private fun SmartPrinter.printModifiers(builder: Builder<BuilderField, Element>, field: AbstractField<*>, fieldIsUseless: Boolean) {
+    private fun ImportCollectingPrinter.printModifiers(builder: Builder<BuilderField, Element>, field: AbstractField<*>, fieldIsUseless: Boolean) {
         if (builder is IntermediateBuilder) {
             print("abstract ")
         }
@@ -319,8 +312,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
     }
 
-    context(ImportCollector)
-    private fun SmartPrinter.printDslBuildCopyFunction(
+    private fun ImportCollectingPrinter.printDslBuildCopyFunction(
         builder: LeafBuilder<BuilderField, Element, Implementation>,
         hasRequiredFields: Boolean,
     ) {

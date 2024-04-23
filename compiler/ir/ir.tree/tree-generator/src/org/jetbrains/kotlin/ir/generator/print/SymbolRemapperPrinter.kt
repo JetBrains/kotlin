@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.AbstractField.SymbolFieldRole
+import org.jetbrains.kotlin.generators.tree.ClassOrElementRef
+import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.*
-import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
@@ -24,7 +25,7 @@ private fun symbolRemapperMethodName(symbolType: ClassRef<*>, role: SymbolFieldR
 }
 
 internal abstract class AbstractSymbolRemapperPrinter(
-    private val printer: SmartPrinter,
+    private val printer: ImportCollectingPrinter,
     val elements: List<Element>,
     val roles: List<SymbolFieldRole>,
 ) {
@@ -52,8 +53,7 @@ internal abstract class AbstractSymbolRemapperPrinter(
     open val kDoc: String?
         get() = null
 
-    context(ImportCollector)
-    private fun SmartPrinter.printMethod(symbolType: ClassRef<*>, role: SymbolFieldRole) {
+    private fun ImportCollectingPrinter.printMethod(symbolType: ClassRef<*>, role: SymbolFieldRole) {
         val symbolParameter = FunctionParameter("symbol", symbolType)
         printFunctionDeclaration(
             symbolRemapperMethodName(symbolType, role),
@@ -64,13 +64,11 @@ internal abstract class AbstractSymbolRemapperPrinter(
         printMethodImplementation(symbolParameter, role)
     }
 
-    context(ImportCollector)
-    protected open fun SmartPrinter.printMethodImplementation(symbolParameter: FunctionParameter, role: SymbolFieldRole) {
+    protected open fun ImportCollectingPrinter.printMethodImplementation(symbolParameter: FunctionParameter, role: SymbolFieldRole) {
         println()
     }
 
-    context(ImportCollector)
-    protected open fun SmartPrinter.printAdditionalDeclarations() {}
+    protected open fun ImportCollectingPrinter.printAdditionalDeclarations() {}
 
     private val Element.fieldsWithSymbols: List<FieldWithSymbol>
         get() = allFields.mapNotNull { field ->
@@ -83,7 +81,6 @@ internal abstract class AbstractSymbolRemapperPrinter(
             FieldWithSymbol(symbolType.copy(nullable = false), field.name, role, this)
         }
 
-    context(ImportCollector)
     fun printSymbolRemapper() {
         printer.run {
             printKDoc(
@@ -136,7 +133,7 @@ internal abstract class AbstractSymbolRemapperPrinter(
 }
 
 internal class DeclaredSymbolRemapperInterfacePrinter(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
 ) : AbstractSymbolRemapperPrinter(printer, elements, roles = listOf(SymbolFieldRole.DECLARED)) {
@@ -148,7 +145,7 @@ internal class DeclaredSymbolRemapperInterfacePrinter(
 }
 
 internal class ReferencedSymbolRemapperInterfacePrinter(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
 ) : AbstractSymbolRemapperPrinter(printer, elements, roles = listOf(SymbolFieldRole.REFERENCED)) {
@@ -160,7 +157,7 @@ internal class ReferencedSymbolRemapperInterfacePrinter(
 }
 
 internal class SymbolRemapperInterfacePrinter(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
 ) : AbstractSymbolRemapperPrinter(printer, elements, roles = emptyList()) {
@@ -170,8 +167,7 @@ internal class SymbolRemapperInterfacePrinter(
     override val symbolRemapperSuperTypes: List<ClassRef<*>>
         get() = listOf(declaredSymbolRemapperType, referencedSymbolRemapperType)
 
-    context(ImportCollector)
-    override fun SmartPrinter.printAdditionalDeclarations() {
+    override fun ImportCollectingPrinter.printAdditionalDeclarations() {
         println()
         EmptySymbolRemapperPrinter(this, elements).printSymbolRemapper()
         println()
@@ -194,7 +190,7 @@ internal class SymbolRemapperInterfacePrinter(
 }
 
 private class EmptySymbolRemapperPrinter(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
     elements: List<Element>,
 ) : AbstractSymbolRemapperPrinter(printer, elements, listOf(SymbolFieldRole.DECLARED, SymbolFieldRole.REFERENCED)) {
 
@@ -210,8 +206,7 @@ private class EmptySymbolRemapperPrinter(
         get() = "The default implementation of [${org.jetbrains.kotlin.ir.generator.symbolRemapperType.simpleName}]\n" +
                 "that just keeps the old symbols everywhere."
 
-    context(ImportCollector)
-    override fun SmartPrinter.printMethodImplementation(
+    override fun ImportCollectingPrinter.printMethodImplementation(
         symbolParameter: FunctionParameter,
         role: SymbolFieldRole
     ) {
@@ -223,7 +218,7 @@ internal fun printSymbolRemapper(
     generationPath: File,
     model: Model,
     type: ClassRef<*>,
-    makePrinter: (SmartPrinter, List<Element>, ClassRef<*>) -> AbstractSymbolRemapperPrinter,
+    makePrinter: (ImportCollectingPrinter, List<Element>, ClassRef<*>) -> AbstractSymbolRemapperPrinter,
 ) = printGeneratedType(generationPath, TREE_GENERATOR_README, type.packageName, type.simpleName) {
     makePrinter(this, model.elements, type).printSymbolRemapper()
 }

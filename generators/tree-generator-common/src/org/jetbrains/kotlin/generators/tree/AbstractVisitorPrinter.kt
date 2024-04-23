@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
 abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, *>, Field : AbstractField<Field>>(
-    val printer: SmartPrinter,
+    val printer: ImportCollectingPrinter,
 ) {
 
     /**
@@ -65,8 +64,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
     /**
      * Prints a single visitor method declaration, without body.
      */
-    context(ImportCollector)
-    protected fun SmartPrinter.printVisitMethodDeclaration(
+    protected fun ImportCollectingPrinter.printVisitMethodDeclaration(
         element: Element,
         hasDataParameter: Boolean = true,
         modality: Modality? = null,
@@ -95,7 +93,6 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
         )
     }
 
-    context(ImportCollector)
     protected fun printMethodDeclarationForElement(element: Element, modality: Modality? = null, override: Boolean) {
         printer.run {
             println()
@@ -107,7 +104,6 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
         }
     }
 
-    context(ImportCollector)
     protected open fun printMethodsForElement(element: Element) {
         printer.run {
             val parentInVisitor = parentInVisitor(element)
@@ -131,11 +127,9 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
         }
     }
 
-    context(ImportCollector)
-    protected open fun SmartPrinter.printAdditionalMethods() {
+    protected open fun ImportCollectingPrinter.printAdditionalMethods() {
     }
 
-    context(ImportCollector)
     open fun printVisitor(elements: List<Element>) {
         val visitorType = this.visitorType
         printer.run {

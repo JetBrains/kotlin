@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.generators.tree
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
 abstract class AbstractTransformerVoidPrinter<Element : AbstractElement<Element, Field, *>, Field : AbstractField<Field>>(
-    printer: SmartPrinter
+    printer: ImportCollectingPrinter
 ) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     final override val visitorTypeParameters: List<TypeVariable>
@@ -27,7 +27,6 @@ abstract class AbstractTransformerVoidPrinter<Element : AbstractElement<Element,
     override val visitorSuperType: ClassRef<PositionTypeParameterRef>?
         get() = transformerSuperClass.withArgs(visitorDataType)
 
-    context(ImportCollector)
     override fun printMethodsForElement(element: Element) {
         printer.run {
             val elementParameterName = element.visitorParameterName

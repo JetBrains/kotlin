@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldList
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldWithDefault
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
-import org.jetbrains.kotlin.utils.SmartPrinter
 
-context(ImportCollector)
-fun SmartPrinter.transformFunctionDeclaration(
+fun ImportCollectingPrinter.transformFunctionDeclaration(
     field: Field,
     returnType: TypeRef,
     override: Boolean,
@@ -27,8 +25,7 @@ fun SmartPrinter.transformFunctionDeclaration(
     transformFunctionDeclaration(field.name.replaceFirstChar(Char::uppercaseChar), returnType, override, implementationKind)
 }
 
-context(ImportCollector)
-fun SmartPrinter.transformOtherChildrenFunctionDeclaration(
+fun ImportCollectingPrinter.transformOtherChildrenFunctionDeclaration(
     element: TypeRef,
     override: Boolean,
     implementationKind: ImplementationKind,
@@ -36,8 +33,7 @@ fun SmartPrinter.transformOtherChildrenFunctionDeclaration(
     transformFunctionDeclaration("OtherChildren", element, override, implementationKind)
 }
 
-context(ImportCollector)
-private fun SmartPrinter.transformFunctionDeclaration(
+private fun ImportCollectingPrinter.transformFunctionDeclaration(
     transformName: String,
     returnType: TypeRef,
     override: Boolean,
@@ -59,8 +55,7 @@ private fun SmartPrinter.transformFunctionDeclaration(
     )
 }
 
-context(ImportCollector)
-fun SmartPrinter.replaceFunctionDeclaration(
+fun ImportCollectingPrinter.replaceFunctionDeclaration(
     field: Field,
     override: Boolean,
     implementationKind: ImplementationKind,

@@ -39,6 +39,12 @@ interface IndentingPrinter {
     fun print(vararg objects: Any?): IndentingPrinter
 
     /**
+     * Prints the multi-line string literal [s] while respecting [currentIndent].
+     * Whitespace-only lines are made empty.
+     */
+    fun printlnMultiLine(s: String): IndentingPrinter
+
+    /**
      * Increases the indentation level by one.
      *
      * @return `this`

@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import org.jetbrains.kotlin.generators.tree.printer.extendedKDoc
+import org.jetbrains.kotlin.generators.tree.printer.printKDoc
+import org.jetbrains.kotlin.generators.tree.printer.withNewPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -15,23 +18,21 @@ import org.jetbrains.kotlin.utils.withIndent
  * A common class for printing FIR or IR tree elements.
  */
 abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, *>, Field : AbstractField<Field>>(
-    private val printer: SmartPrinter,
+    private val printer: ImportCollectingPrinter,
 ) {
 
-    protected abstract fun makeFieldPrinter(printer: SmartPrinter): AbstractFieldPrinter<Field>
+    protected abstract fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<Field>
 
-    context(ImportCollector)
-    protected abstract fun SmartPrinter.printAdditionalMethods(element: Element)
+    protected abstract fun ImportCollectingPrinter.printAdditionalMethods(element: Element)
 
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
 
     protected open fun filterFields(element: Element): Collection<Field> = element.allFields
 
-    context(ImportCollector)
     fun printElement(element: Element) {
-        addAllImports(element.additionalImports)
         printer.run {
+            addAllImports(element.additionalImports)
             val kind = element.kind ?: error("Expected non-null element kind")
 
             printKDoc(element.extendedKDoc())
@@ -48,7 +49,8 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
             }
             print(element.params.multipleUpperBoundsList())
 
-            val body = SmartPrinter(StringBuilder()).apply {
+            val printer = SmartPrinter(StringBuilder())
+            this@AbstractElementPrinter.printer.withNewPrinter(printer) {
                 val fieldPrinter = makeFieldPrinter(this)
                 withIndent {
                     for (field in filterFields(element)) {
@@ -66,7 +68,8 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
                     }
                     printAdditionalMethods(element)
                 }
-            }.toString()
+            }
+            val body = printer.toString()
 
             if (body.isNotEmpty()) {
                 println(" {")

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.imports.Importable
+
 /**
  * Represents an abstract class/interface for a tree node in the tree generator.
  *
@@ -86,9 +87,8 @@ abstract class AbstractElement<Element, Field, Implementation>(
     override val typeName: String
         get() = namePrefix + name
 
-    context(ImportCollector)
-    final override fun renderTo(appendable: Appendable) {
-        addImport(this)
+    final override fun renderTo(appendable: Appendable, importCollector: ImportCollecting) {
+        importCollector.addImport(this)
         appendable.append(typeName)
         if (params.isNotEmpty()) {
             params.joinTo(appendable, prefix = "<", postfix = ">") { it.name }

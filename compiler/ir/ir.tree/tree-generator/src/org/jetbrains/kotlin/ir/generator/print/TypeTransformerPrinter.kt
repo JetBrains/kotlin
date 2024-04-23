@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
 import org.jetbrains.kotlin.ir.generator.IrTree
@@ -17,11 +17,10 @@ import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.SingleField
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
 internal class TypeTransformerPrinter(
-    printer: SmartPrinter,
+    printer: ImportCollectingPrinter,
     override val visitorType: ClassRef<*>,
     private val rootElement: Element,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
@@ -58,8 +57,7 @@ internal class TypeTransformerPrinter(
         return irTypeFields + parentsFields
     }
 
-    context(ImportCollector)
-    override fun SmartPrinter.printAdditionalMethods() {
+    override fun ImportCollectingPrinter.printAdditionalMethods() {
         val typeTP = TypeVariable("Type", listOf(irTypeType.copy(nullable = true)))
         printFunctionDeclaration(
             name = "transformType",
@@ -74,7 +72,6 @@ internal class TypeTransformerPrinter(
         println()
     }
 
-    context(ImportCollector)
     override fun printMethodsForElement(element: Element) {
         val irTypeFields = element.getFieldsWithIrTypeType()
         if (irTypeFields.isEmpty()) return

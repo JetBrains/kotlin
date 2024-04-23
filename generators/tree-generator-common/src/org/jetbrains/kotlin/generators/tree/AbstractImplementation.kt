@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.imports.Importable
+
 /**
  * A class representing a non-abstract implementation of an abstract class/interface of a tree node.
  */
@@ -28,9 +29,8 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     override val typeName: String
         get() = name ?: (element.typeName + "Impl")
 
-    context(ImportCollector)
-    override fun renderTo(appendable: Appendable) {
-        addImport(this)
+    override fun renderTo(appendable: Appendable, importCollector: ImportCollecting) {
+        importCollector.addImport(this)
         appendable.append(this.typeName)
         if (element.params.isNotEmpty()) {
             element.params.joinTo(appendable, prefix = "<", postfix = ">") { it.name }

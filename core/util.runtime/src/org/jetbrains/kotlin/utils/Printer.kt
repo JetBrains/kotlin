@@ -89,6 +89,15 @@ open class Printer private constructor(
         return this
     }
 
+    override fun printlnMultiLine(s: String): IndentingPrinter {
+        printlnWithNoIndent(
+            s.replaceIndent(currentIndent)
+                .lines()
+                .joinToString(separator = "\n") { it.ifBlank { "" } }
+        )
+        return this
+    }
+
     override fun pushIndent(): Printer {
         currentIndent += indentUnit
         return this

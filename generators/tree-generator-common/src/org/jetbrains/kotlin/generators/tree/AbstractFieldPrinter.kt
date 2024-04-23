@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
 abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
-    private val printer: SmartPrinter,
+    private val printer: ImportCollectingPrinter,
 ) {
 
     /**
@@ -31,7 +30,6 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
     protected open val wrapOptInAnnotations: Boolean
         get() = false
 
-    context(ImportCollector)
     fun printField(
         field: Field,
         inImplementation: Boolean,

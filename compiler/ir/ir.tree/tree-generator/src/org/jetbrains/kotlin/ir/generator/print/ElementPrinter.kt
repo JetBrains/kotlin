@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.AbstractElementPrinter
+import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
+import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
+import org.jetbrains.kotlin.generators.tree.nullable
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
@@ -16,15 +18,14 @@ import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.SingleField
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 private val transformIfNeeded = ArbitraryImportable("$BASE_PACKAGE.util", "transformIfNeeded")
 private val transformInPlace = ArbitraryImportable("$BASE_PACKAGE.util", "transformInPlace")
 
-internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
+internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElementPrinter<Element, Field>(printer) {
 
-    override fun makeFieldPrinter(printer: SmartPrinter) = object : AbstractFieldPrinter<Field>(printer) {
+    override fun makeFieldPrinter(printer: ImportCollectingPrinter) = object : AbstractFieldPrinter<Field>(printer) {
         override fun forceMutable(field: Field) = field.isMutable
     }
 
@@ -41,9 +42,8 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
         }
     }
 
-    context(ImportCollector)
-    override fun SmartPrinter.printAdditionalMethods(element: Element) {
-        element.generationCallback?.invoke(this@ImportCollector, this)
+    override fun ImportCollectingPrinter.printAdditionalMethods(element: Element) {
+        element.generationCallback?.invoke(this)
 
         printAcceptMethod(
             element = element,

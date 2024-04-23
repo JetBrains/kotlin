@@ -41,16 +41,8 @@ class SmartPrinter private constructor(private val printer: Printer) : Indenting
         return this
     }
 
-    /**
-     * Prints the multi-line string literal [s] while respecting [currentIndent].
-     * Whitespace-only lines are made empty.
-     */
-    fun printlnMultiLine(s: String): SmartPrinter {
-        printer.printlnWithNoIndent(
-            s.replaceIndent(currentIndent)
-                .lines()
-                .joinToString(separator = "\n") { it.ifBlank { "" } }
-        )
+    override fun printlnMultiLine(s: String): SmartPrinter {
+        printer.printlnMultiLine(s)
         notFirstPrint = false
         return this
     }

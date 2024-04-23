@@ -5,20 +5,14 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
-import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
-import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
-import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
-import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
-import org.jetbrains.kotlin.generators.tree.render
+import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
 import org.jetbrains.kotlin.ir.generator.irFactoryType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
-import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.ir.generator.stageControllerType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
@@ -59,8 +53,7 @@ private class FactoryMethod(val element: Element) {
 
 private const val MAX_FUNCTION_PARAMETERS_ON_ONE_LINE = 2
 
-context(ImportCollector)
-private fun SmartPrinter.printFactoryMethod(factoryMethod: FactoryMethod) {
+private fun ImportCollectingPrinter.printFactoryMethod(factoryMethod: FactoryMethod) {
     println()
     printFunctionDeclaration(
         name = factoryMethod.name,
