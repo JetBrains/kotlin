@@ -44,7 +44,7 @@ class FirKotlinScopeProvider(
         memberRequiredPhase: FirResolvePhase?,
     ) -> FirContainingNamesAwareScope = { _, declaredMemberScope, session, _, _ ->
         PlatformDependentFilteringScope(declaredMemberScope, session)
-    }
+    },
 ) : FirScopeProvider(), FirSessionComponent {
     override fun getUseSiteMemberScope(
         klass: FirClass,
@@ -97,7 +97,7 @@ class FirKotlinScopeProvider(
     override fun getStaticMemberScopeForCallables(
         klass: FirClass,
         useSiteSession: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
     ): FirContainingNamesAwareScope? {
         return when (klass.classKind) {
             ClassKind.ENUM_CLASS -> FirNameAwareOnlyCallablesScope(
@@ -115,7 +115,7 @@ class FirKotlinScopeProvider(
     override fun getNestedClassifierScope(
         klass: FirClass,
         useSiteSession: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
     ): FirContainingNamesAwareScope? {
         return useSiteSession.nestedClassifierScope(klass)
     }
@@ -170,7 +170,7 @@ data class ConeSubstitutionScopeKey(
     val lookupTag: ConeClassLikeLookupTag,
     val isFromExpectClass: Boolean,
     val substitutor: ConeSubstitutor,
-    val derivedClassLookupTag: ConeClassLikeLookupTag?
+    val derivedClassLookupTag: ConeClassLikeLookupTag?,
 ) : ScopeSessionKey<FirClass, FirClassSubstitutionScope>()
 
 fun FirClass.unsubstitutedScope(
@@ -179,9 +179,11 @@ fun FirClass.unsubstitutedScope(
     withForcedTypeCalculator: Boolean,
     memberRequiredPhase: FirResolvePhase?,
 ): FirTypeScope {
-    val scope = scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession, memberRequiredPhase)
-    if (withForcedTypeCalculator) return FirScopeWithCallableCopyReturnTypeUpdater(scope, CallableCopyTypeCalculator.Forced)
-    return scope
+    return scopeSession.unsubstitutedScopeCache.getOrPut(ScopeSession.CacheKey(this, withForcedTypeCalculator, memberRequiredPhase)) {
+        val scope = scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession, memberRequiredPhase)
+        if (withForcedTypeCalculator) return FirScopeWithCallableCopyReturnTypeUpdater(scope, CallableCopyTypeCalculator.Forced)
+        scope
+    }
 }
 
 fun FirClassSymbol<*>.unsubstitutedScope(

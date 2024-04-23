@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.util.PrivateForInline
 
 class ScopeSession {
@@ -21,6 +24,15 @@ class ScopeSession {
             build()
         } as FS
     }
+
+
+    data class CacheKey(
+        val clazz: FirClass,
+        val withForcedTypeCalculator: Boolean,
+        val memberRequiredPhase: FirResolvePhase?,
+    )
+
+    val unsubstitutedScopeCache = hashMapOf<CacheKey, FirTypeScope> ()
 }
 
 abstract class ScopeSessionKey<ID : Any, FS : Any>
