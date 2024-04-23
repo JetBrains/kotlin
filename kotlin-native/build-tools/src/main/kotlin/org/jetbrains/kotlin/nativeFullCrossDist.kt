@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin
 
+import kotlinBuildProperties
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.Copy
@@ -68,7 +69,7 @@ fun getDarwinOnlyTargets(): Set<KonanTarget> {
 }
 
 private val Project.pathToDarwinDistProperty: String?
-    get() = findProperty(PATH_TO_DARWIN_DIST_PROPERTY) as? String
+    get() = kotlinBuildProperties.getOrNull(PATH_TO_DARWIN_DIST_PROPERTY) as? String
 
 private val File.klib: File
     get() = File(this, "klib")
