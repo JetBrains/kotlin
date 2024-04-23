@@ -170,7 +170,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private val context = codegen.context
 
     private val IrCall.llvmReturnType: LLVMTypeRef
-        get() = LLVMGetReturnType(codegen.getLlvmFunctionType(symbol.owner))!!
+        get() = codegen.getLlvmFunctionReturnType(symbol.owner).llvmType
 
 
     private fun LLVMTypeRef.sizeInBits() = LLVMSizeOfTypeInBits(codegen.llvmTargetData, this).toInt()

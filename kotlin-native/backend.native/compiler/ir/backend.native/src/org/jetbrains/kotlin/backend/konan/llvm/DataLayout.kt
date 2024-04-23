@@ -31,7 +31,3 @@ internal fun IrType.toLLVMType(llvm: CodegenLlvmHelpers): LLVMTypeRef =
 
 internal fun IrType.isVoidAsReturnType() = isUnit() || isNothing()
 
-internal fun IrType.getLLVMReturnType(llvm: CodegenLlvmHelpers) = when {
-    isVoidAsReturnType() -> llvm.voidType
-    else -> toLLVMType(llvm)
-}

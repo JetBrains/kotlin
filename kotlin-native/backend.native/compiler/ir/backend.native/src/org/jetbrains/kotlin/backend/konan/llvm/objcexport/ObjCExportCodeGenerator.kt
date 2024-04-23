@@ -173,7 +173,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
         forbidRuntime = true // Don't emit safe points, frame management etc.
 
         val actualArgs = signature.parameterTypes.indices.map { param(it) }
-        val actualCallable = if (functionIsPassedAsLastParameter) LlvmCallable(signature.llvmFunctionType, param(signature.parameterTypes.size), signature) else function
+        val actualCallable = if (functionIsPassedAsLastParameter) LlvmCallable(param(signature.parameterTypes.size), signature) else function
 
         // Use LLVMBuildCall instead of call, because the latter enforces using exception handler, which is exactly what we have to avoid.
         val result = actualCallable.buildCall(builder, actualArgs).let { callResult ->
@@ -205,20 +205,6 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
 
     fun dispose() {
         rttiGenerator.dispose()
-    }
-
-    fun ObjCExportFunctionGenerationContext.callFromBridge(
-            llvmFunction: LLVMValueRef,
-            args: List<LLVMValueRef>,
-            resultLifetime: Lifetime = Lifetime.IRRELEVANT
-    ): LLVMValueRef {
-        val llvmDeclarations = LlvmCallable(
-                getGlobalFunctionType(llvmFunction),
-                // llvmFunction could be a function pointer here, and we can't infer attributes from it.
-                llvmFunction,
-                LlvmFunctionAttributeProvider.makeEmpty()
-        )
-        return callFromBridge(llvmDeclarations, args, resultLifetime)
     }
 
     fun ObjCExportFunctionGenerationContext.callFromBridge(

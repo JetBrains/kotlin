@@ -183,7 +183,7 @@ internal inline fun generateFunctionNoRuntime(
             switchToRunnable = false, needSafePoint = true)
     try {
         functionGenerationContext.forbidRuntime = true
-        require(!functionGenerationContext.isObjectType(functionGenerationContext.returnType!!)) {
+        require(!functionProto.signature.returnsObjectType) {
             "Cannot return object from function without Kotlin runtime"
         }
 
@@ -277,7 +277,8 @@ internal object VirtualTablesLookup {
         val canCallViaVtable = !owner.isInterface
         val layoutBuilder = generationState.context.getLayoutBuilder(owner)
 
-        val functionType = codegen.getLlvmFunctionType(irFunction)
+        val llvmFunctionSignature = LlvmFunctionSignature(irFunction, this)
+        val functionType = llvmFunctionSignature.llvmFunctionType
         val functionPtrType = pointerType(functionType)
         val functionPtrPtrType = pointerType(functionPtrType)
         val llvmMethod = when {
@@ -299,9 +300,8 @@ internal object VirtualTablesLookup {
             }
         }
         return LlvmCallable(
-                functionType,
                 bitcast(functionPtrType, llvmMethod),
-                LlvmFunctionSignature(irFunction, this)
+                llvmFunctionSignature
         )
     }
 }
@@ -836,7 +836,7 @@ internal abstract class FunctionGenerationContext(
              verbatim: Boolean = false,
              resultSlot: LLVMValueRef? = null,
     ): LLVMValueRef {
-        val callArgs = if (verbatim || !isObjectType(llvmCallable.returnType)) {
+        val callArgs = if (verbatim || !llvmCallable.returnsObjectType) {
             args
         } else {
             // If function returns an object - create slot for the returned value or give local arena.
@@ -1381,7 +1381,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun prologue() {
-        if (isObjectType(returnType!!)) {
+        if (function.returnsObjectType) {
             returnSlot = function.param( function.numParams - 1)
         }
 

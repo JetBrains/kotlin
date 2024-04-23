@@ -90,7 +90,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             bodyType,
             immutable = true
     )
-    val functionSig = LlvmFunctionSignature(LlvmRetType(codegen.kObjHeaderPtr), listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(codegen.kObjHeaderPtrPtr)))
+    val functionSig = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(codegen.kObjHeaderPtrPtr)))
     return functionGenerator(
             functionSig.toProto("convertBlock${bridge.nameSuffix}", null, LLVMLinkage.LLVMInternalLinkage)
     ).generate {
@@ -128,7 +128,7 @@ private fun FunctionGenerationContext.loadBlockInvoke(
     val functionType = signature.llvmFunctionType
     val functionPointerType = pointerType(functionType)
     val functionPointer = load(functionPointerType, bitcast(pointerType(functionPointerType), invokePtr))
-    return LlvmCallable(functionType, functionPointer, signature)
+    return LlvmCallable(functionPointer, signature)
 }
 
 private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(
