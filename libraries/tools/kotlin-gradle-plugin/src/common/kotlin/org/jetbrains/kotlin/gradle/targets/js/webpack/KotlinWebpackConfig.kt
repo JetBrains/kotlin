@@ -91,7 +91,7 @@ data class KotlinWebpackConfig(
     data class DevServer(
         var open: Any = true,
         var port: Int? = null,
-        var proxy: MutableMap<String, Any>? = null,
+        var proxy: MutableList<Proxy>? = null,
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
         var client: Client? = null
@@ -104,6 +104,14 @@ data class KotlinWebpackConfig(
                 var warnings: Boolean
             ) : Serializable
         }
+
+        data class Proxy(
+            val context: MutableList<String>,
+            val target: String,
+            val pathRewrite: MutableMap<String, String>? = null,
+            val secure: Boolean? = null,
+            val changeOrigin: Boolean? = null
+        ) : Serializable
     }
 
     @Suppress("unused")
