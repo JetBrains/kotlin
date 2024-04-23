@@ -500,13 +500,12 @@ open class FirSupertypeResolverVisitor(
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
-        resolveTypeAliasSupertype(typeAlias, typeAlias.expandedTypeRef, resolveRecursively = true)
+        resolveTypeAliasSupertype(typeAlias, typeAlias.expandedTypeRef)
     }
 
     fun resolveTypeAliasSupertype(
         typeAlias: FirTypeAlias,
         expandedTypeRef: FirTypeRef,
-        resolveRecursively: Boolean,
     ): List<FirResolvedTypeRef> {
         if (expandedTypeRef is FirResolvedTypeRef) {
             return listOf(expandedTypeRef)
@@ -515,23 +514,20 @@ open class FirSupertypeResolverVisitor(
         return resolveSpecificClassLikeSupertypes(typeAlias) { transformer, scope ->
             val resolvedTypeRef = transformer.transformTypeRef(expandedTypeRef, scope)
 
-            if (resolveRecursively) {
-                fun visitNestedTypeAliases(type: TypeArgumentMarker) {
-                    if (type is ConeClassLikeType) {
-                        val symbol = type.lookupTag.toSymbol(session)
-                        if (symbol is FirTypeAliasSymbol) {
-                            visitTypeAlias(symbol.fir, null)
-                        } else if (symbol is FirClassLikeSymbol) {
-                            for (typeArgument in type.typeArguments) {
-                                visitNestedTypeAliases(typeArgument)
-                            }
+            fun visitNestedTypeAliases(type: TypeArgumentMarker) {
+                if (type is ConeClassLikeType) {
+                    val symbol = type.lookupTag.toSymbol(session)
+                    if (symbol is FirTypeAliasSymbol) {
+                        visitTypeAlias(symbol.fir, null)
+                    } else if (symbol is FirClassLikeSymbol) {
+                        for (typeArgument in type.typeArguments) {
+                            visitNestedTypeAliases(typeArgument)
                         }
                     }
                 }
-
-                visitNestedTypeAliases(resolvedTypeRef.type)
             }
 
+            visitNestedTypeAliases(resolvedTypeRef.type)
             listOf(resolvedTypeRef)
         }
     }
@@ -805,7 +801,8 @@ open class SupertypeComputationSession {
     }
 
     private fun getResolvedExpandedType(typeAlias: FirTypeAlias): ConeClassLikeType? =
-        typeAlias.expandedConeType ?: getResolvedExpandedTypeRef(typeAlias).coneTypeSafe<ConeClassLikeType>()
+        (typeAlias.expandedTypeRef.takeIf { it is FirResolvedTypeRef } ?: getResolvedExpandedTypeRef(typeAlias))
+            .coneTypeSafe<ConeClassLikeType>()
 }
 
 sealed class SupertypeComputationStatus {

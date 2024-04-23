@@ -127,7 +127,7 @@ private class LLFirSuperTypeTargetResolver(
             is FirTypeAlias -> performResolve(
                 declaration = target,
                 superTypeRefsForTransformation = { target.expandedTypeRef },
-                resolver = { supertypeResolver.resolveTypeAliasSupertype(target, it, resolveRecursively = false) },
+                resolver = { supertypeResolver.resolveTypeAliasSupertype(target, it) },
                 superTypeUpdater = { superTypeRefs ->
                     val expandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(superTypeRefs.single(), target.llFirSession)
                     target.replaceExpandedTypeRef(expandedTypeRef)
