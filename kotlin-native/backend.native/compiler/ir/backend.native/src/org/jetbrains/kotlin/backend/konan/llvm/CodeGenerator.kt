@@ -716,8 +716,6 @@ internal abstract class FunctionGenerationContext(
     private fun applyMemoryOrderAndAlignment(value: LLVMValueRef, memoryOrder: LLVMAtomicOrdering?, alignment: Int?): LLVMValueRef {
         memoryOrder?.let { LLVMSetOrdering(value, it) }
         alignment?.let { LLVMSetAlignment(value, it) }
-        // Use loadSlot() API for that.
-        assert(!isObjectRef(value))
         return value
     }
 

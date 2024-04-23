@@ -124,14 +124,6 @@ fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     return LLVMConstIntGetZExtValue(value)
 }
 
-internal fun ContextUtils.isObjectRef(value: LLVMValueRef): Boolean {
-    return isObjectType(value.type)
-}
-
-internal fun RuntimeAware.isObjectType(type: LLVMTypeRef): Boolean {
-    return type == kObjHeaderPtr || type == kArrayHeaderPtr
-}
-
 /**
  * Reads [size] bytes contained in this array.
  */
