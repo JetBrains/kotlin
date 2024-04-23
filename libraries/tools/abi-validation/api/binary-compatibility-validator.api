@@ -11,7 +11,7 @@ public class kotlinx/validation/ApiValidationExtension {
 	public final fun getPublicMarkers ()Ljava/util/Set;
 	public final fun getPublicPackages ()Ljava/util/Set;
 	public final fun getValidationDisabled ()Z
-	public final fun klib (Lkotlin/jvm/functions/Function1;)V
+	public final fun klib (Lorg/gradle/api/Action;)V
 	public final fun setAdditionalSourceSets (Ljava/util/Set;)V
 	public final fun setApiDumpDirectory (Ljava/lang/String;)V
 	public final fun setIgnoredClasses (Ljava/util/Set;)V
