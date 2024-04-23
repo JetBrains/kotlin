@@ -2596,6 +2596,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
       runTest("compiler/testData/ir/irText/firProblems/timesInBuilder.kt");
     }
 
+    @TestMetadata("TypeAliasInImport.kt")
+    public void testTypeAliasInImport() {
+      runTest("compiler/testData/ir/irText/firProblems/TypeAliasInImport.kt");
+    }
+
     @TestMetadata("TypeParameterBounds.kt")
     public void testTypeParameterBounds() {
       runTest("compiler/testData/ir/irText/firProblems/TypeParameterBounds.kt");

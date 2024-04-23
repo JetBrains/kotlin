@@ -2825,6 +2825,12 @@ public class ClassicNativeIrTextTestGenerated extends AbstractClassicNativeIrTex
     }
 
     @Test
+    @TestMetadata("TypeAliasInImport.kt")
+    public void testTypeAliasInImport() {
+      runTest("compiler/testData/ir/irText/firProblems/TypeAliasInImport.kt");
+    }
+
+    @Test
     @TestMetadata("TypeParameterBounds.kt")
     public void testTypeParameterBounds() {
       runTest("compiler/testData/ir/irText/firProblems/TypeParameterBounds.kt");
