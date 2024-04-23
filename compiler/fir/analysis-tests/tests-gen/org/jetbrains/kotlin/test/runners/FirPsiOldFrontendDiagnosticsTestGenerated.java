@@ -31424,6 +31424,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("emptyLambdaUnitNoDiscrimination.kt")
+        public void testEmptyLambdaUnitNoDiscrimination() {
+          runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/emptyLambdaUnitNoDiscrimination.kt");
+        }
+
+        @Test
         @TestMetadata("equivalentCallsDifferentVisibility.kt")
         public void testEquivalentCallsDifferentVisibility() {
           runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/equivalentCallsDifferentVisibility.kt");

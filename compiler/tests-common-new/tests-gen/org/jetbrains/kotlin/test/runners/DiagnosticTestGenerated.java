@@ -33852,6 +33852,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("emptyLambdaUnitNoDiscrimination.kt")
+        public void testEmptyLambdaUnitNoDiscrimination() {
+          runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/emptyLambdaUnitNoDiscrimination.kt");
+        }
+
+        @Test
         @TestMetadata("equivalentCallsDifferentVisibility.kt")
         public void testEquivalentCallsDifferentVisibility() {
           runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/equivalentCallsDifferentVisibility.kt");
