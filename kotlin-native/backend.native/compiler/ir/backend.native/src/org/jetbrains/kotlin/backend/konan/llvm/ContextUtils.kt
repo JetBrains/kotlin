@@ -306,8 +306,16 @@ internal open class BasicLlvmHelpers(bitcodeContext: BitcodePostProcessingContex
                 ?.getInitializer()
                 ?.let { getOperands(it) }
                 ?.groupBy(
-                        { LLVMGetInitializer(LLVMGetOperand(LLVMGetOperand(it, 1), 0))?.getAsCString() ?: "" },
-                        { LLVMGetOperand(LLVMGetOperand(it, 0), 0)!! }
+                        {
+                            LLVMGetInitializer(
+                                    if (bitcodeContext.config.useLlvmOpaquePointers) LLVMGetOperand(it, 1)
+                                    else LLVMGetOperand(LLVMGetOperand(it, 1), 0)
+                            )?.getAsCString() ?: ""
+                        },
+                        {
+                            if (bitcodeContext.config.useLlvmOpaquePointers) LLVMGetOperand(it, 0)!!
+                            else LLVMGetOperand(LLVMGetOperand(it, 0), 0)!!
+                        }
                 )
                 ?.filterKeys { it != "" }
                 ?: emptyMap()

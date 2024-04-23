@@ -181,7 +181,12 @@ internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState
 
     val goodFunctions = staticData.getGlobal("Kotlin_callsCheckerGoodFunctionNames")?.getInitializer()?.run {
         getOperands(this).map {
-            LLVMGetInitializer(LLVMGetOperand(it, 0))!!.getAsCString()
+            val global = if (generationState.config.useLlvmOpaquePointers) {
+                it
+            } else {
+                LLVMGetOperand(it, 0)
+            }
+            LLVMGetInitializer(global)!!.getAsCString()
         }.toList()
     } ?: emptyList()
 
