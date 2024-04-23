@@ -406,8 +406,7 @@ tasks.register("crossDist") {
             "crossDistRuntime",
             "distDef",
             "distStdlib",
-            "crossDistStdlibCache",
-            copyDarwinKlibsForFullCrossDist
+            "crossDistStdlibCache"
 }
 
 tasks.register("bundle") {
@@ -455,6 +454,7 @@ def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish"
 tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundlePrebuiltForPublish)
     dependsOn("crossDistPlatformLibs")
+    dependsOn(copyDarwinKlibsForFullCrossDist)
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
     archiveVersion.set(kotlinVersion)
