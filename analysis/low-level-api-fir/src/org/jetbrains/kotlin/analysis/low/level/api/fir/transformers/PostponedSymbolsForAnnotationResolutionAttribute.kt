@@ -37,7 +37,7 @@ private object PostponedSymbolsForAnnotationResolutionKey : FirDeclarationDataKe
  * @see LLFirImplicitBodyTargetResolver
  * @see LLFirAnnotationArgumentsTargetResolver
  */
-internal var FirCallableDeclaration.postponedSymbolsForAnnotationResolution: Collection<FirBasedSymbol<*>>?
+internal var FirDeclaration.postponedSymbolsForAnnotationResolution: Collection<FirBasedSymbol<*>>?
         by FirDeclarationDataRegistry.data(PostponedSymbolsForAnnotationResolutionKey)
 
 /**
