@@ -359,6 +359,7 @@
 /libraries/tools/maven-archetypes/ "Kotlin Build Tools"
 /libraries/tools/mutability-annotations-compat/ "Kotlin Libraries"
 /libraries/tools/script-runtime/ "Kotlin Compiler Core"
+/libraries/tools/required-reason-finder/ "Kotlin Apple Ecosystem"
 
 /libraries/maven-settings.xml "Kotlin Build Infrastructure"
 /libraries/pom.xml "Kotlin Build Infrastructure"
