@@ -46,7 +46,7 @@ interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent
                 conflictingDeclaration is FirClassLikeSymbol<*> &&
                         conflictingDeclaration.getContainingClassSymbol(context.session) == null &&
                         symbols.any { it is FirClassLikeSymbol<*> } -> {
-                    FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
+                    FirErrors.CLASSIFIER_REDECLARATION
                 }
                 else -> {
                     FirErrors.REDECLARATION

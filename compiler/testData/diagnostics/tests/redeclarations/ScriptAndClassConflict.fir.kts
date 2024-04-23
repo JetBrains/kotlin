@@ -2,7 +2,7 @@
 package test
 
 class A
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>F1<!>
+class <!CLASSIFIER_REDECLARATION!>F1<!>
 
 // FILE: A.kts
 package test
