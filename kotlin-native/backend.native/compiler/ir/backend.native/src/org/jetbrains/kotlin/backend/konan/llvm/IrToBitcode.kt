@@ -72,7 +72,7 @@ internal class NativeCodeGeneratorException(val declarations: List<IrElement>, c
 
 internal enum class FieldStorageKind {
     GLOBAL, // In the old memory model these are only accessible from the "main" thread.
-    SHARED_FROZEN,
+    SHARED_FROZEN, // Shouldn't be used anymore, since legacy MM and freezing are no longer supported.
     THREAD_LOCAL
 }
 
@@ -107,9 +107,6 @@ internal fun IrField.isGlobalNonPrimitive(context: Context) = when  {
         else -> storageKind(context) == FieldStorageKind.GLOBAL
     }
 
-
-internal fun IrField.shouldBeFrozen(context: Context): Boolean =
-        this.storageKind(context) == FieldStorageKind.SHARED_FROZEN
 
 internal fun IrFunction.shouldGenerateBody(): Boolean = when {
     this is IrConstructor && constructedClass.isInlined() -> false
@@ -400,10 +397,7 @@ internal class CodeGeneratorVisitor(
     private fun FunctionGenerationContext.initGlobalField(irField: IrField) {
         val address = staticFieldPtr(irField, this)
         val initialValue = if (irField.hasNonConstInitializer) {
-            val initialization = evaluateExpression(irField.initializer!!.expression)
-            if (irField.shouldBeFrozen(context))
-                freeze(initialization, currentCodeContext.exceptionHandler)
-            initialization
+            evaluateExpression(irField.initializer!!.expression)
         } else {
             null
         }
@@ -1846,8 +1840,6 @@ internal class CodeGeneratorVisitor(
             require(value.symbol.owner.isStatic) { "A receiver expected for a non-static field: ${value.render()}" }
             if (value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
-            if (value.symbol.owner.shouldBeFrozen(context) && value.origin != ObjectClassLowering.IrStatementOriginFieldPreInit)
-                functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
             address = staticFieldPtr(value.symbol.owner, functionGenerationContext)
             alignment = generationState.llvmDeclarations.forStaticField(value.symbol.owner).alignment
         }

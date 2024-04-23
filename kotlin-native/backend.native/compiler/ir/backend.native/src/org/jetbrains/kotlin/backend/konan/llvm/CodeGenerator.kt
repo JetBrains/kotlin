@@ -768,11 +768,6 @@ internal abstract class FunctionGenerationContext(
         }
     }
 
-    fun freeze(value: LLVMValueRef, exceptionHandler: ExceptionHandler) {
-        if (isObjectRef(value))
-            call(llvm.freezeSubgraph, listOf(value), Lifetime.IRRELEVANT, exceptionHandler)
-    }
-
     fun checkGlobalsAccessible(exceptionHandler: ExceptionHandler) {
         if (context.memoryModel == MemoryModel.STRICT)
             call(llvm.checkGlobalsAccessible, emptyList(), Lifetime.IRRELEVANT, exceptionHandler)
