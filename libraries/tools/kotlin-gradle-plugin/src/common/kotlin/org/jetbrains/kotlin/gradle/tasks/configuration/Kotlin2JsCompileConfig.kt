@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -38,6 +42,19 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
             task.libraryFilterCacheService.value(libraryFilterCachingService).disallowChanges()
             task.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges()
+
+
+            task.projectVersion.value(project.provider { project.version.toString() }).disallowChanges()
+            if (!compilation.isMain && project.kotlinPropertiesProvider.enableKlibKt64115Workaround) {
+                task.mainCompilationModuleName.value(
+                    compilation.tcs.compilation
+                        .target
+                        .compilations
+                        .getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                        .compileTaskProvider
+                        .flatMap { (it.compilerOptions as KotlinJsCompilerOptions).moduleName }
+                )
+            }
         }
     }
 

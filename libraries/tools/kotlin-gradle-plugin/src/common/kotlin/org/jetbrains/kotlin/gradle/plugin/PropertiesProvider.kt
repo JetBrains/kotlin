@@ -588,6 +588,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION) ?: false
 
     /**
+     * Enable workaround for KT-64115, where both main compilation exploded klib and the same compressed klib
+     * could end up in the test compilation leading to the compiler warning.
+     */
+    val enableKlibKt64115Workaround: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_KLIBS_KT64115_WORKAROUND_ENABLED) ?: true
+
+    /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
      */
@@ -706,7 +713,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS =
             property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createArchiveTasksForCustomCompilations")
         val KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL = property("$KOTLIN_INTERNAL_NAMESPACE.compiler.arguments.log.level")
-        val KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION = property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
+        val KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
+            property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
+        val KOTLIN_KLIBS_KT64115_WORKAROUND_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.enableWorkaroundForKT64115")
     }
 
     companion object {
