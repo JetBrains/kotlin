@@ -141,7 +141,7 @@ fun Project.projectTest(
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
     maxMetaspaceSizeMb: Int = 512,
-    reservedCodeCacheSizeMb: Int = 256,
+    reservedCodeCacheSizeMb: Int = 1024,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
