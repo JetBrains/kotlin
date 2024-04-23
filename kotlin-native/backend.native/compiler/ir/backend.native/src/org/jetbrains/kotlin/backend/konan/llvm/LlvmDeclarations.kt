@@ -56,8 +56,12 @@ internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDe
 
 }
 
+internal class ObjectBodyType(val llvmBodyType: LLVMTypeRef, objectFieldIndices: List<Int>) {
+    val sortedIndicesOfObjectFields = objectFieldIndices.sorted()
+}
+
 internal class ClassLlvmDeclarations(
-        val bodyType: LLVMTypeRef,
+        val bodyType: ObjectBodyType,
         val typeInfoGlobal: StaticData.Global,
         val writableTypeInfoGlobal: StaticData.Global?,
         val typeInfo: ConstPointer,
@@ -252,6 +256,14 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 context.getLayoutBuilder(declaration).getFields(llvm)
         val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", fields)
 
+        val objectFieldIndices = fields.mapNotNull {
+            if (it.type.binaryTypeIsReference()) {
+                fieldIndices.getValue(it.irFieldSymbol)
+            } else {
+                null
+            }
+        }
+
         require(alignment == runtime.objectAlignment) {
             "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is $alignment"
         }
@@ -335,7 +347,15 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             it.setZeroInitializer()
         }
 
-        return ClassLlvmDeclarations(bodyType, typeInfoGlobal, writableTypeInfoGlobal, typeInfoPtr, objCDeclarations, alignment, fieldIndices)
+        return ClassLlvmDeclarations(
+                ObjectBodyType(bodyType, objectFieldIndices),
+                typeInfoGlobal,
+                writableTypeInfoGlobal,
+                typeInfoPtr,
+                objCDeclarations,
+                alignment,
+                fieldIndices
+        )
     }
 
     private fun createUniqueDeclarations(
@@ -392,12 +412,13 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
                     ?: error(containingClass.render())
             val index = classDeclarations.fieldIndices[declaration.symbol]!!
+            val bodyType = classDeclarations.bodyType.llvmBodyType
             declaration.metadata = KonanMetadata.InstanceField(
                     declaration,
                     FieldLlvmDeclarations(
                             index,
-                            classDeclarations.bodyType,
-                            gcd(LLVMOffsetOfElement(llvm.runtime.targetData, classDeclarations.bodyType, index), llvm.runtime.objectAlignment.toLong()).toInt()
+                            bodyType,
+                            gcd(LLVMOffsetOfElement(llvm.runtime.targetData, bodyType, index), llvm.runtime.objectAlignment.toLong()).toInt()
                     )
             )
         } else {

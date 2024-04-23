@@ -412,7 +412,7 @@ internal class StackLocalsManagerImpl(
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
         val classInfo = llvmDeclarations.forClass(irClass)
-        val type = classInfo.bodyType
+        val type = classInfo.bodyType.llvmBodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
             LLVMSetAlignment(stackSlot, classInfo.alignment)
@@ -512,7 +512,7 @@ internal class StackLocalsManagerImpl(
             }
         } else {
             val info = llvmDeclarations.forClass(stackLocal.irClass)
-            val type = info.bodyType
+            val type = info.bodyType.llvmBodyType
             for (fieldIndex in info.fieldIndices.values.sorted()) {
                 val fieldType = LLVMStructGetTypeAtIndex(type, fieldIndex)!!
 

@@ -177,8 +177,8 @@ internal class RTTIGenerator(
     )
 
     // Keep in sync with Konan_RuntimeType.
-    private val runtimeTypeMap = mapOf(
-            llvm.kObjHeaderPtr to 1,
+    private val RT_OBJECT = 1
+    private val primitiveRuntimeTypeMap = mapOf(
             llvm.int8Type to 2,
             llvm.int16Type to 3,
             llvm.int32Type to 4,
@@ -208,7 +208,7 @@ internal class RTTIGenerator(
 
         val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
 
-        val bodyType = llvmDeclarations.bodyType
+        val bodyType = llvmDeclarations.bodyType.llvmBodyType
 
         val instanceSize = getInstanceSize(bodyType, irClass)
 
@@ -227,7 +227,7 @@ internal class RTTIGenerator(
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
                 pointerType(runtime.typeInfoType), interfaces)
 
-        val objOffsets = getObjOffsets(bodyType)
+        val objOffsets = getObjOffsets(llvmDeclarations.bodyType)
 
         val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", llvm.int32Type, objOffsets)
 
@@ -264,7 +264,7 @@ internal class RTTIGenerator(
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
                     irClass.symbol == context.ir.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
-                    else -> genProcessObjectInMark(bodyType)
+                    else -> genProcessObjectInMark(llvmDeclarations.bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
         )
@@ -282,16 +282,9 @@ internal class RTTIGenerator(
         exportTypeInfoIfRequired(irClass, irClass.llvmTypeInfoPtr)
     }
 
-    private fun getIndicesOfObjectFields(bodyType: LLVMTypeRef) : List<Int> =
-            getStructElements(bodyType).mapIndexedNotNull { index, type ->
-                index.takeIf {
-                    isObjectType(type)
-                }
-            }
-
-    private fun getObjOffsets(bodyType: LLVMTypeRef): List<ConstInt32> =
-            getIndicesOfObjectFields(bodyType).map { index ->
-                llvm.constInt32(LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt())
+    private fun getObjOffsets(bodyType: ObjectBodyType): List<ConstInt32> =
+            bodyType.sortedIndicesOfObjectFields.map { index ->
+                llvm.constInt32(LLVMOffsetOfElement(llvmTargetData, bodyType.llvmBodyType, index).toInt())
             }
 
     fun vtable(irClass: IrClass): ConstArray {
@@ -392,8 +385,14 @@ internal class RTTIGenerator(
         }
     }
 
-    private fun mapRuntimeType(type: LLVMTypeRef): Int =
-            runtimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
+    private fun mapRuntimeType(type: LLVMTypeRef, isObjectType: Boolean): Int {
+        if (isObjectType) {
+            require(type == llvm.kObjHeaderPtr) { "Expected object type, got ${llvmtype2string(type)}" }
+            return RT_OBJECT
+        }
+
+        return primitiveRuntimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
+    }
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
         context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
@@ -426,12 +425,13 @@ internal class RTTIGenerator(
 
         val className = irClass.fqNameForIrSerialization.toString()
         val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
-        val bodyType = llvmDeclarations.bodyType
+        val bodyType = llvmDeclarations.bodyType.llvmBodyType
         val elementType = getElementType(irClass)
 
         val value = if (elementType != null) {
             // An array type.
-            val runtimeElementType = mapRuntimeType(elementType)
+            val isElementTypeObject = irClass.isKotlinArray()
+            val runtimeElementType = mapRuntimeType(elementType, isElementTypeObject)
             Struct(runtime.extendedTypeInfoType,
                     llvm.constInt32(-runtimeElementType),
                     NullPointer(llvm.int32Type), NullPointer(llvm.int8Type), NullPointer(llvm.int8PtrType),
@@ -439,11 +439,14 @@ internal class RTTIGenerator(
         } else {
             class FieldRecord(val offset: Int, val type: Int, val name: String)
 
+            val objectFieldIndices = llvmDeclarations.bodyType.sortedIndicesOfObjectFields.toSet()
+
             val fields = context.getLayoutBuilder(irClass).getFields(llvm).map {
                 val index = llvmDeclarations.fieldIndices[it.irFieldSymbol]!!
+                val isObjectType = index in objectFieldIndices
                 FieldRecord(
                         LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(),
-                        mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, index)!!),
+                        mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, index)!!, isObjectType),
                         it.name)
             }
             val offsetsPtr = staticData.placeGlobalConstArray("kextoff:$className", llvm.int32Type,
@@ -482,8 +485,8 @@ internal class RTTIGenerator(
         )
     }
 
-    private fun genProcessObjectInMark(classType: LLVMTypeRef) : ConstPointer {
-        val indicesOfObjectFields = getIndicesOfObjectFields(classType)
+    private fun genProcessObjectInMark(classType: ObjectBodyType): ConstPointer {
+        val indicesOfObjectFields = classType.sortedIndicesOfObjectFields
         return when {
             indicesOfObjectFields.isEmpty() -> {
                 // TODO: Try to generate it here instead of importing from the runtime.
@@ -500,12 +503,12 @@ internal class RTTIGenerator(
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
             methodImpls: Map<IrFunction, ConstPointer>,
-            bodyType: LLVMTypeRef,
+            bodyType: ObjectBodyType,
             immutable: Boolean = false
     ): ConstPointer {
         assert(irClass.isInterface)
 
-        val size = LLVMStoreSizeOfType(llvmTargetData, bodyType).toInt()
+        val size = LLVMStoreSizeOfType(llvmTargetData, bodyType.llvmBodyType).toInt()
 
         val superClass = context.ir.symbols.any.owner
 
