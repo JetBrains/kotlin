@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
@@ -42,21 +42,21 @@ public sealed class KtExtensionApplicabilityResult : KtLifetimeOwner {
     }
 
     public class ApplicableAsExtensionCallable(
-        private val _substitutor: KtSubstitutor,
-        private val _receiverCastRequired: Boolean,
+        substitutor: KtSubstitutor,
+        receiverCastRequired: Boolean,
         override val token: KtLifetimeToken
     ) : Applicable() {
-        override val substitutor: KtSubstitutor = withValidityAssertion { _substitutor }
-        override val receiverCastRequired: Boolean get() = withValidityAssertion { _receiverCastRequired }
+        override val substitutor: KtSubstitutor by validityAsserted(substitutor)
+        override val receiverCastRequired: Boolean by validityAsserted(receiverCastRequired)
     }
 
     public class ApplicableAsFunctionalVariableCall(
-        private val _substitutor: KtSubstitutor,
-        private val _receiverCastRequired: Boolean,
+        substitutor: KtSubstitutor,
+        receiverCastRequired: Boolean,
         override val token: KtLifetimeToken
     ) : Applicable() {
-        override val substitutor: KtSubstitutor get() = withValidityAssertion { _substitutor }
-        override val receiverCastRequired: Boolean get() = withValidityAssertion { _receiverCastRequired }
+        override val substitutor: KtSubstitutor by validityAsserted(substitutor)
+        override val receiverCastRequired: Boolean by validityAsserted(receiverCastRequired)
     }
 
     public class NonApplicable(

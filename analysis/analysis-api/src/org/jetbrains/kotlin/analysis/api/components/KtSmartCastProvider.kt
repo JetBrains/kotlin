@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.KtExpression
+import java.util.Objects
 
 public abstract class KtSmartCastProvider : KtAnalysisSessionComponent() {
     public abstract fun getSmartCastedInfo(expression: KtExpression): KtSmartCastInfo?
@@ -39,22 +40,42 @@ public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.smartCastProvider.getImplicitReceiverSmartCast(this) }
 }
 
-public data class KtSmartCastInfo(
-    private val _smartCastType: KtType,
-    private val _isStable: Boolean,
+public class KtSmartCastInfo(
+    private val backingSmartCastType: KtType,
+    private val backingIsStable: Boolean,
     override val token: KtLifetimeToken
 ) : KtLifetimeOwner {
-    public val isStable: Boolean get() = withValidityAssertion { _isStable }
-    public val smartCastType: KtType get() = withValidityAssertion { _smartCastType }
+    public val isStable: Boolean get() = withValidityAssertion { backingIsStable }
+    public val smartCastType: KtType get() = withValidityAssertion { backingSmartCastType }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KtSmartCastInfo &&
+                other.backingSmartCastType == backingSmartCastType &&
+                other.backingIsStable == backingIsStable
+    }
+
+    override fun hashCode(): Int = Objects.hash(backingSmartCastType, backingIsStable)
 }
 
-public data class KtImplicitReceiverSmartCast(
-    private val _type: KtType,
-    private val _kind: KtImplicitReceiverSmartCastKind,
+public class KtImplicitReceiverSmartCast(
+    private val backingType: KtType,
+    private val backingKind: KtImplicitReceiverSmartCastKind,
     override val token: KtLifetimeToken
 ) : KtLifetimeOwner {
-    public val type: KtType get() = withValidityAssertion { _type }
-    public val kind: KtImplicitReceiverSmartCastKind get() = withValidityAssertion { _kind }
+    public val type: KtType get() = withValidityAssertion { backingType }
+    public val kind: KtImplicitReceiverSmartCastKind get() = withValidityAssertion { backingKind }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KtImplicitReceiverSmartCast &&
+                other.backingType == backingType &&
+                other.backingKind == backingKind
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(backingType, backingKind)
+    }
 }
 
 public enum class KtImplicitReceiverSmartCastKind {

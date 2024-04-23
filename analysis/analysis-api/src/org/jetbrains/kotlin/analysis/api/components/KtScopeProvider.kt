@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import java.util.Objects
 
 public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
     public abstract fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope
@@ -260,27 +262,27 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
 }
 
 public class KtScopeContext(
-    private val _scopes: List<KtScopeWithKind>,
-    private val _implicitReceivers: List<KtImplicitReceiver>,
+    scopes: List<KtScopeWithKind>,
+    implicitReceivers: List<KtImplicitReceiver>,
     override val token: KtLifetimeToken
 ) : KtLifetimeOwner {
-    public val implicitReceivers: List<KtImplicitReceiver> get() = withValidityAssertion { _implicitReceivers }
+    public val implicitReceivers: List<KtImplicitReceiver> by validityAsserted(implicitReceivers)
 
     /**
      * Scopes for position, sorted according to their indexes in scope tower, i.e. the first scope is the closest one to position.
      */
-    public val scopes: List<KtScopeWithKind> get() = withValidityAssertion { _scopes }
+    public val scopes: List<KtScopeWithKind> by validityAsserted(scopes)
 }
 
 public class KtImplicitReceiver(
     override val token: KtLifetimeToken,
-    private val _type: KtType,
-    private val _ownerSymbol: KtSymbol,
-    private val _receiverScopeIndexInTower: Int
+    type: KtType,
+    ownerSymbol: KtSymbol,
+    scopeIndexInTower: Int
 ) : KtLifetimeOwner {
-    public val ownerSymbol: KtSymbol get() = withValidityAssertion { _ownerSymbol }
-    public val type: KtType get() = withValidityAssertion { _type }
-    public val scopeIndexInTower: Int get() = withValidityAssertion { _receiverScopeIndexInTower }
+    public val ownerSymbol: KtSymbol by validityAsserted(ownerSymbol)
+    public val type: KtType by validityAsserted(type)
+    public val scopeIndexInTower: Int by validityAsserted(scopeIndexInTower)
 }
 
 
@@ -354,11 +356,20 @@ public sealed class KtScopeKind {
     public class ScriptMemberScope(override val indexInTower: Int) : NonLocalScope()
 }
 
-public data class KtScopeWithKind(
-    private val _scope: KtScope,
-    private val _kind: KtScopeKind,
-    override val token: KtLifetimeToken
+public class KtScopeWithKind(
+    private val backingScope: KtScope,
+    private val backingKind: KtScopeKind,
+    override val token: KtLifetimeToken,
 ) : KtLifetimeOwner {
-    public val scope: KtScope get() = withValidityAssertion { _scope }
-    public val kind: KtScopeKind get() = withValidityAssertion { _kind }
+    public val scope: KtScope get() = withValidityAssertion { backingScope }
+    public val kind: KtScopeKind get() = withValidityAssertion { backingKind }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KtScopeWithKind &&
+                other.backingScope == backingScope &&
+                other.backingKind == backingKind
+    }
+
+    override fun hashCode(): Int = Objects.hash(backingScope, backingKind)
 }

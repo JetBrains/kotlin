@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
@@ -27,7 +26,7 @@ public abstract class KtSubstitutorFactory : KtAnalysisSessionComponent() {
  */
 @OptIn(ExperimentalContracts::class, KtAnalysisApiInternals::class)
 public inline fun KtAnalysisSession.buildSubstitutor(
-    build: KtSubstitutorBuilder.() -> Unit
+    build: KtSubstitutorBuilder.() -> Unit,
 ): KtSubstitutor {
     contract {
         callsInPlace(build, InvocationKind.EXACTLY_ONCE)
@@ -38,17 +37,16 @@ public inline fun KtAnalysisSession.buildSubstitutor(
 
 public class KtSubstitutorBuilder
 @KtAnalysisApiInternals constructor(override val token: KtLifetimeToken) : KtLifetimeOwner {
-    private val _mapping = mutableMapOf<KtTypeParameterSymbol, KtType>()
+    private val backingMapping = mutableMapOf<KtTypeParameterSymbol, KtType>()
 
-    public val mappings: Map<KtTypeParameterSymbol, KtType> get() = withValidityAssertion { _mapping }
+    public val mappings: Map<KtTypeParameterSymbol, KtType> get() = withValidityAssertion { backingMapping }
 
     /**
      * Adds a new [typeParameter] -> [type] substitution to the substitutor which is being built.
      * If there already was a substitution with a [typeParameter], replaces corresponding substitution with a new one.
      */
-    public fun substitution(typeParameter: KtTypeParameterSymbol, type: KtType) {
-        assertIsValidAndAccessible()
-        _mapping[typeParameter] = type
+    public fun substitution(typeParameter: KtTypeParameterSymbol, type: KtType): Unit = withValidityAssertion {
+        backingMapping[typeParameter] = type
     }
 
     /**
@@ -56,9 +54,8 @@ public class KtSubstitutorBuilder
      * If there already was a substitution with a [KtTypeParameterSymbol] which is present in a [substitutions],
      * replaces corresponding substitution with a new one.
      */
-    public fun substitutions(substitutions: Map<KtTypeParameterSymbol, KtType>) {
-        assertIsValidAndAccessible()
-        _mapping += substitutions
+    public fun substitutions(substitutions: Map<KtTypeParameterSymbol, KtType>): Unit = withValidityAssertion {
+        backingMapping += substitutions
     }
 }
 

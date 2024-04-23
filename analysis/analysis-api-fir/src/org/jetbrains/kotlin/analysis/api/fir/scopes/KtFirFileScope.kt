@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,12 +29,12 @@ internal class KtFirFileScope(
     override val token: KtLifetimeToken get() = builder.token
 
     private val allNamesCached by cached {
-        _callableNames + _classifierNames
+        backingCallableNames + _classifierNames
     }
 
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
 
-    private val _callableNames: Set<Name> by cached {
+    private val backingCallableNames: Set<Name> by cached {
         val result = mutableSetOf<Name>()
         owner.firSymbol.fir.declarations
             .mapNotNullTo(result) { firDeclaration ->
@@ -48,7 +48,7 @@ internal class KtFirFileScope(
         result
     }
 
-    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion { _callableNames }
+    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion { backingCallableNames }
 
     private val _classifierNames: Set<Name> by cached {
         val result = mutableSetOf<Name>()

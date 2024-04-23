@@ -110,30 +110,39 @@ If you fixed a bug or added new functionality to an existing feature, consider a
 
 ## Follow Analysis API Implementation Contracts
 
-* Add `KtLifetimeTokenOwner` as supertype for all declarations which contains other `KtLifetimeTokenOwner` inside (eg, via parameter types,
-  function return types) to ensure that internal `KtLifetimeTokenOwner` are not exposed via your declaration.
-* You have some declaration which implements `KtLifetimeTokenOwner`. It means that this declaration has a lifetime. And this declaration has
-  to be checked to ensure that it is not used after its lifetime has come to the end. To ensure that all methods(except `hashCode`/`equals`
-  /`toString`) and properties should be wrapped into `withValidityAssertion { .. }` check:
+* Add `KtLifetimeOwner` as supertype for all declarations that contains other `KtLifetimeOwner` inside (e.g., via parameter types,
+  function return types) to ensure that internal `KtLifetimeOwner` are not exposed via your declaration.
+* You have some declaration which implements `KtLifetimeOwner`. It means that this declaration has a lifetime. And this declaration has
+  to be checked to ensure that it is not used after its lifetime has come to an end. To ensure that all methods (except `hashCode`/`equals`
+  /`toString`) and properties should be wrapped into `withValidityAssertion { .. }` check. For simple cases there a constructor parameter
+  should be exposed, `by validityAsserted` should be used. If the constructor parameter should be reused without validity assertion,
+  it should be private and the name should contain `backing` prefix.
 
 ```kotlin
 public class KtCall(
-    private val _symbol: KtSymbol,
-    private val _isInvokeCall: Boolean,
-) : KtLifetimeTokenOwner {
-    public val symbol: KtSymbol get() = withValidityAssertion { _symbol }
-    public val isInvokeCall: Boolean get() = withValidityAssertion { _isInvokeCall }
+    private val backingSymbol: KtSymbol,
+    private val backingIsInvokeCall: Boolean,
+    additionalInformation: String,
+) : KtLifetimeOwner {
+    public val symbol: KtSymbol get() = withValidityAssertion { backingSymbol }
+    public val isInvokeCall: Boolean get() = withValidityAssertion { backingIsInvokeCall }
+    public val additionalInformation: String by validityAsserted(additionalInformation)
 
     public fun isImplicitCall(): Boolean = withValidityAssertion {
         // IMPL
     }
 
     override fun equals(other: Any?): Boolean { // no withValidityAssertion
-        // IMPL
+        return this === other || 
+                other is KtCall && 
+                other.backingSymbol == backingSymbol &&
+                other.backingIsInvokeCall == backingIsInvokeCall
     }
+  
     override fun hashCode(): Int { // no withValidityAssertion
-        // IMPL
+        return Objects.hashCode(backingSymbol, backingIsInvokeCall)
     }
+  
     override fun toString(): String { // no withValidityAssertion
         // IMPL
     }

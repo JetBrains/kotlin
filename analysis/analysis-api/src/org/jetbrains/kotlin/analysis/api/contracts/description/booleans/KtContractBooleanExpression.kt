@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,13 +23,14 @@ public sealed interface KtContractBooleanExpression : KtLifetimeOwner
  * Represents boolean parameter reference passed to `booleanExpression` argument of [kotlin.contracts.SimpleEffect.implies].
  */
 public class KtContractBooleanValueParameterExpression(
-    private val _parameterSymbol: KtParameterSymbol
+    private val backingParameterSymbol: KtParameterSymbol
 ) : KtContractBooleanExpression {
-    override val token: KtLifetimeToken get() = _parameterSymbol.token
-    public val parameterSymbol: KtParameterSymbol get() = withValidityAssertion { _parameterSymbol }
-    override fun hashCode(): Int = _parameterSymbol.hashCode()
-    override fun equals(other: Any?): Boolean =
-        other is KtContractBooleanValueParameterExpression && other._parameterSymbol == _parameterSymbol
+    override val token: KtLifetimeToken get() = backingParameterSymbol.token
+    public val parameterSymbol: KtParameterSymbol get() = withValidityAssertion { backingParameterSymbol }
+    override fun hashCode(): Int = backingParameterSymbol.hashCode()
+    override fun equals(other: Any?): Boolean {
+        return this === other || other is KtContractBooleanValueParameterExpression && other.backingParameterSymbol == backingParameterSymbol
+    }
 }
 
 /**
@@ -37,11 +38,14 @@ public class KtContractBooleanValueParameterExpression(
  * [kotlin.contracts.SimpleEffect.implies].
  */
 public class KtContractBooleanConstantExpression(
-    private val _booleanConstant: Boolean,
+    private val backingBooleanConstant: Boolean,
     override val token: KtLifetimeToken
 ) : KtContractBooleanExpression {
-    public val booleanConstant: Boolean get() = withValidityAssertion { _booleanConstant }
+    public val booleanConstant: Boolean get() = withValidityAssertion { backingBooleanConstant }
 
-    override fun equals(other: Any?): Boolean = other is KtContractBooleanConstantExpression && other._booleanConstant == _booleanConstant
-    override fun hashCode(): Int = _booleanConstant.hashCode()
+    override fun equals(other: Any?): Boolean {
+        return this === other || other is KtContractBooleanConstantExpression && other.backingBooleanConstant == backingBooleanConstant
+    }
+
+    override fun hashCode(): Int = backingBooleanConstant.hashCode()
 }
