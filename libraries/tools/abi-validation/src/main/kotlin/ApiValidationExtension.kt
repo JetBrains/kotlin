@@ -6,6 +6,7 @@
 package kotlinx.validation
 
 import kotlinx.validation.api.klib.KlibSignatureVersion
+import org.gradle.api.Action
 
 public open class ApiValidationExtension {
 
@@ -86,8 +87,8 @@ public open class ApiValidationExtension {
      * Configure KLib ABI validation settings.
      */
     @ExperimentalBCVApi
-    public fun klib(block: KlibValidationSettings.() -> Unit) {
-        block(this.klib)
+    public fun klib(config: Action<KlibValidationSettings>) {
+        config.execute(this.klib)
     }
 }
 
