@@ -323,7 +323,7 @@ class CandidateInterceptor(
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false
-                }.also { parameterSymbol.bind(it) }
+                }
                 body = buildBlock {
                     this.coneTypeOrNull = returnType
                     dataSchemaApis.asReversed().forEach {
@@ -361,7 +361,6 @@ class CandidateInterceptor(
                 inlineStatus = InlineStatus.Inline
             }.also {
                 target.bind(it)
-                fSymbol.bind(it)
             }
         }
 

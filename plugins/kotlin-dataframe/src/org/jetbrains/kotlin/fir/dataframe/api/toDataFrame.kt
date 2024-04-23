@@ -106,7 +106,7 @@ internal fun KotlinTypeFacade.toDataFrame(
         return declarations
             .filter { it.first.effectiveVisibility == EffectiveVisibility.Public }
             .map { (it, name) ->
-                var resolvedReturnType = it.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY)
+                var resolvedReturnType = it.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
                     .coneType.upperBoundIfFlexible()
 
                 resolvedReturnType = if (resolvedReturnType is ConeTypeParameterType) {

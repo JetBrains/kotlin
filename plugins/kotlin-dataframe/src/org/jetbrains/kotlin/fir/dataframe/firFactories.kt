@@ -77,10 +77,10 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
                     Modality.FINAL,
                     effectiveVisibility
             )
-        }.also { firPropertyAccessorSymbol.bind(it) }
+        }
         name = propertyName
         this.symbol = firPropertySymbol
         isVar = false
         isLocal = false
-    }.also { firPropertySymbol.bind(it) }
+    }
 }
