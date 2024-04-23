@@ -574,7 +574,7 @@ object FirErrors {
     val CONFLICTING_OVERLOADS: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val REDECLARATION: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> by error1<KtNamedDeclaration, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val CLASSIFIER_REDECLARATION: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> by error1<KtNamedDeclaration, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
-    val PACKAGE_CONFLICTS_WITH_CLASSIFIER: KtDiagnosticFactory1<ClassId> by error1<KtPackageDirective, ClassId>()
+    val PACKAGE_CONFLICTS_WITH_CLASSIFIER: KtDiagnosticFactory1<ClassId> by error1<KtPackageDirective, ClassId>(SourceElementPositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION)
     val EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE: KtDiagnosticFactory1<FirBasedSymbol<*>> by error1<KtNamedDeclaration, FirBasedSymbol<*>>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
     val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE: KtDiagnosticFactory0 by error0<PsiElement>()
 

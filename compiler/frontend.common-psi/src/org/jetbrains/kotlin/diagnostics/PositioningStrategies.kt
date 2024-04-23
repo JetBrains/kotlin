@@ -1140,4 +1140,11 @@ object PositioningStrategies {
             return super.mark(element)
         }
     }
+
+    val PACKAGE_DIRECTIVE_NAME_EXPRESSION: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            val packageNameExpression = (element as? KtPackageDirective)?.packageNameExpression
+            return super.mark(packageNameExpression ?: element)
+        }
+    }
 }

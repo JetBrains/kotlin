@@ -417,4 +417,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
         PositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
     )
+
+    val PACKAGE_DIRECTIVE_NAME_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+        PositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+    )
 }

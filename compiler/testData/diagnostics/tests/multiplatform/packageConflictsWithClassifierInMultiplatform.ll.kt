@@ -5,7 +5,7 @@ package a
 class b
 
 // FILE: common2.kt
-package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>c.d<!>
+package c.d
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

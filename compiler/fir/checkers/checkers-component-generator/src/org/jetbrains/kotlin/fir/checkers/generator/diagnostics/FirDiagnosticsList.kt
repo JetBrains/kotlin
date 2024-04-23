@@ -1139,7 +1139,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CLASSIFIER_REDECLARATION by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
             parameter<Collection<Symbol>>("conflictingDeclarations")
         }
-        val PACKAGE_CONFLICTS_WITH_CLASSIFIER by error<KtPackageDirective>() {
+        val PACKAGE_CONFLICTS_WITH_CLASSIFIER by error<KtPackageDirective>(PositioningStrategy.PACKAGE_DIRECTIVE_NAME_EXPRESSION) {
             parameter<ClassId>("conflictingClassId")
         }
         val EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
