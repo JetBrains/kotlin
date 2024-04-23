@@ -96,6 +96,9 @@ internal inline fun <reified T> String.load(): T {
         "ReadJson0" -> ReadJson0()
         "ReadCSV0" -> ReadCSV0()
         "Rename" -> Rename()
+        "Select0" -> Select0()
+        "Expr0" -> Expr0()
+        "And0" -> And0()
         else -> error("$this")
     } as T
 }
