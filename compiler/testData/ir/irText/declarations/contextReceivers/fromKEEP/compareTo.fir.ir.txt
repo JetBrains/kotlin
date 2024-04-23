@@ -230,7 +230,7 @@ FILE fqName:<root> fileName:/compareTo.kt
           WHEN type=T of <root>.<get-min> origin=IF
             BRANCH
               if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
-                arg0: CALL 'public final fun compareTo <T> ($context_receiver_0: java.util.Comparator<T of <root>.compareTo>, other: T of <root>.compareTo): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                arg0: CALL 'public final fun compareTo <T> ($context_receiver_0: java.util.Comparator<T of <root>.compareTo>, other: T of <root>.compareTo): kotlin.Int declared in <root>' type=kotlin.Int origin=LT
                   <T>: T of <root>.<get-min>
                   $receiver: CALL 'public final fun <get-first> (): A of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null

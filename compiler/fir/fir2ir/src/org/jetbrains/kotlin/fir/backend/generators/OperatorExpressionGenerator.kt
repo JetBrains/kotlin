@@ -67,12 +67,14 @@ internal class OperatorExpressionGenerator(
 
         fun fallbackToRealCall(): IrExpression {
             val (symbol, origin) = getSymbolAndOriginForComparison(operation, irBuiltIns.intType.classifierOrFail)
+            val irCompareToCall = comparisonExpression.compareToCall.accept(visitor, null) as IrCall
+            irCompareToCall.origin = origin
             return primitiveOp2(
                 startOffset, endOffset,
                 symbol!!,
                 irBuiltIns.booleanType,
                 origin,
-                comparisonExpression.compareToCall.accept(visitor, null) as IrExpression,
+                irCompareToCall,
                 IrConstImpl.int(startOffset, endOffset, irBuiltIns.intType, 0)
             )
         }
