@@ -5,44 +5,26 @@
 
 package org.jetbrains.kotlin.ir.generator.print.symbol
 
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.AbstractField.SymbolFieldRole
-import org.jetbrains.kotlin.generators.tree.ClassOrElementRef
-import org.jetbrains.kotlin.generators.tree.ClassRef
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.*
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classifierSymbol
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.typeAliasSymbol
+import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.ir.generator.model.Element
-import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
+import org.jetbrains.kotlin.ir.generator.model.symbol.findFieldsWithSymbols
+import org.jetbrains.kotlin.ir.generator.model.symbol.symbolRemapperMethodName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
-
-private fun symbolRemapperMethodName(symbolType: ClassRef<*>, role: SymbolFieldRole): String {
-    val elementName = symbolType.simpleName.removePrefix("Ir").removeSuffix("Symbol")
-    return "get${role.name.lowercase().capitalizeAsciiOnly()}$elementName"
-}
 
 internal abstract class AbstractSymbolRemapperPrinter(
     private val printer: ImportCollectingPrinter,
     val elements: List<Element>,
     val roles: List<SymbolFieldRole>,
 ) {
-    private data class FieldWithSymbol(
-        val symbolType: ClassRef<*>,
-        val fieldName: String,
-        val role: SymbolFieldRole,
-        val fieldContainer: ClassOrElementRef,
-    )
-
-    companion object {
-        private val additionalSymbolFields = listOf(
-            FieldWithSymbol(classifierSymbolType, "classifier", SymbolFieldRole.REFERENCED, irSimpleTypeType),
-            FieldWithSymbol(typeAliasSymbolType, "typeAlias", SymbolFieldRole.REFERENCED, irTypeAbbreviationType)
-        )
-    }
-
     abstract val symbolRemapperType: ClassRef<*>
 
     abstract val implementationKind: ImplementationKind
@@ -53,12 +35,12 @@ internal abstract class AbstractSymbolRemapperPrinter(
     open val kDoc: String?
         get() = null
 
-    private fun ImportCollectingPrinter.printMethod(symbolType: ClassRef<*>, role: SymbolFieldRole) {
-        val symbolParameter = FunctionParameter("symbol", symbolType)
+    private fun ImportCollectingPrinter.printMethod(symbolClass: Symbol, role: SymbolFieldRole) {
+        val symbolParameter = FunctionParameter("symbol", symbolClass)
         printFunctionDeclaration(
-            symbolRemapperMethodName(symbolType, role),
+            symbolRemapperMethodName(symbolClass, role),
             parameters = listOf(symbolParameter),
-            returnType = symbolType,
+            returnType = symbolClass,
             override = symbolRemapperSuperTypes.isNotEmpty(),
         )
         printMethodImplementation(symbolParameter, role)
@@ -69,17 +51,6 @@ internal abstract class AbstractSymbolRemapperPrinter(
     }
 
     protected open fun ImportCollectingPrinter.printAdditionalDeclarations() {}
-
-    private val Element.fieldsWithSymbols: List<FieldWithSymbol>
-        get() = allFields.mapNotNull { field ->
-            val role = field.symbolFieldRole ?: return@mapNotNull null
-            val symbolType = if (field is ListField) {
-                field.baseType
-            } else {
-                field.typeRef
-            } as? ClassRef<*> ?: return@mapNotNull null
-            FieldWithSymbol(symbolType.copy(nullable = false), field.name, role, this)
-        }
 
     fun printSymbolRemapper() {
         printer.run {
@@ -99,26 +70,15 @@ internal abstract class AbstractSymbolRemapperPrinter(
                 print(joinToString(prefix = " : ") { it.render() + if (it.kind == TypeKind.Class) "()" else "" })
             }
             printBlock {
-                val elementSymbolFields = elements.flatMap { element ->
-                    if (element.implementations.isNotEmpty()) {
-                        element.fieldsWithSymbols
-                    } else {
-                        emptyList()
-                    }
-                }
                 for (role in roles) {
-                    val allSymbolFields = (elementSymbolFields + additionalSymbolFields)
-                        .filter { it.role == role }
-                        .groupBy { it.symbolType }
-                    for ((symbolType, fields) in allSymbolFields) {
+                    for ((symbolType, fields) in findFieldsWithSymbols(elements, role)) {
                         println()
                         if (symbolRemapperSuperTypes.isEmpty()) {
                             val kDoc = buildString {
                                 append("Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):")
                                 for ((_, fieldName, _, element) in fields) {
-                                    addImport(element)
                                     appendLine()
-                                    append("- [${element.typeName}.$fieldName]")
+                                    append("- [${element.render()}.$fieldName]")
                                 }
                             }
                             printKDoc(kDoc)

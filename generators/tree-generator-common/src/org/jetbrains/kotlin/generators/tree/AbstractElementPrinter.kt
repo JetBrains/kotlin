@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.extendedKDoc
@@ -30,11 +31,13 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
 
     protected open fun filterFields(element: Element): Collection<Field> = element.allFields
 
+    protected open fun ImportCollecting.elementKDoc(element: Element): String = element.extendedKDoc()
+
     fun printElement(element: Element) {
         printer.run {
             val kind = element.kind ?: error("Expected non-null element kind")
 
-            printKDoc(element.extendedKDoc())
+            printKDoc(elementKDoc(element))
             print(kind.title, " ", element.typeName)
             print(element.params.typeParameters())
 
