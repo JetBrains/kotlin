@@ -368,6 +368,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("packageConflictsWithClassifierInMultiplatform.kt")
+  public void testPackageConflictsWithClassifierInMultiplatform() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/packageConflictsWithClassifierInMultiplatform.kt");
+  }
+
+  @Test
   @TestMetadata("platformRedeclarationOfExpect.kt")
   public void testPlatformRedeclarationOfExpect() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/platformRedeclarationOfExpect.kt");
