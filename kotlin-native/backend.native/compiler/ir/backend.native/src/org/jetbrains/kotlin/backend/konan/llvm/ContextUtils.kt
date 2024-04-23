@@ -357,7 +357,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     private fun importMemset(): LlvmCallable {
         val functionType = functionType(voidType, false, int8PtrType, int8Type, int32Type, int1Type)
-        return llvmIntrinsic("llvm.memset.p0i8.i32", functionType)
+        return llvmIntrinsic(
+                if (context.config.useLlvmOpaquePointers) "llvm.memset.p0.i32"
+                else "llvm.memset.p0i8.i32",
+                functionType)
     }
 
     private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmCallable {
