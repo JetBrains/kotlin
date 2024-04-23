@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
  */
 internal class NativeTestGroupingMessageCollector(
     compilerArgs: Array<String>,
-    delegate: MessageCollector
+    delegate: MessageCollector,
 ) : GroupingMessageCollector(
     delegate,
     /*treatWarningsAsErrors =*/ false,
-    /*reportAllWarnings =*/ false,
+    /*reportAllWarnings =*/ true, // Any warning that survived to this place is actually a strong_warning, and it should not be suppressed.
 ) {
     private var hasWarningsWithRaisedSeverity: Boolean = false
 
@@ -69,7 +69,8 @@ internal class NativeTestGroupingMessageCollector(
                     || isUnsafeCompilerArgumentsWarning(message)
                     || isLibraryIncludedMoreThanOnceWarning(message)
                     || isK2Experimental(message)
-                    || isPartialLinkageWarning(message) -> {
+                    || isPartialLinkageWarning(message)
+                    || isKlibResolver(message) -> {
                 // These warnings are known and should not be reported as errors.
                 severity
             }
@@ -110,6 +111,8 @@ internal class NativeTestGroupingMessageCollector(
 
     private fun isK2Experimental(message: String): Boolean = message.startsWith(K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX)
 
+    private fun isKlibResolver(message: String): Boolean = message.startsWith(KLIB_RESOLVER_WARNING_PREFIX)
+
     private fun isPartialLinkageWarning(message: String): Boolean = message.matches(PARTIAL_LINKAGE_WARNING_REGEX)
 
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
@@ -119,6 +122,7 @@ internal class NativeTestGroupingMessageCollector(
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
+        private const val KLIB_RESOLVER_WARNING_PREFIX = "KLIB resolver: "
 
         private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^<[^<>]+>( @ (?:(?!: ).)+)?: .*")
 

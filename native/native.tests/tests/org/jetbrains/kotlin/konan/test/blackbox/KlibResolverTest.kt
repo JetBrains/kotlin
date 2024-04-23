@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.library.SearchPathResolver
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Tag
-import org.junit.jupiter.api.Test
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncompatibleAbiMessages
+import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.Isolated
@@ -69,18 +70,56 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testWarningAboutRejectedLibraryIsNotSuppressed() {
+        val modules = createModules(
+            Module("lib1"),
+            Module("lib2", "lib1"),
+        )
+
+        // Control compilation -- should finish successfully.
+        modules.compileModules(
+            produceUnpackedKlibs = true,
+            useLibraryNamesInCliArguments = false
+        )
+
+        // Compilation with patched manifest -- should fail.
+        try {
+            modules.compileModules(
+                produceUnpackedKlibs = true,
+                useLibraryNamesInCliArguments = false
+            ) { module, klib ->
+                if (module.name == "lib1") {
+                    patchManifestToBumpAbiVersion(JUnit5Assertions, klib.klibFile)
+                }
+            }
+
+            fail { "Normally unreachable code" }
+        } catch (cte: CompilationToolException) {
+            assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(
+                assertions = JUnit5Assertions,
+                compilerOutput = cte.reason,
+                missingLibrary = "/klib-files.unpacked.paths.transformed/lib1",
+                baseDir = buildDir
+            )
+        }
+    }
+
+    @Test
     fun testIrProvidersMatch() {
         testIrProvidersMismatchImpl(irProvidersMismatchSrcDir, TestCompilerArgs.EMPTY)
     }
 
     @Test
     fun testIrProvidersMismatch() {
-        val freeCompilerArgs = TestCompilerArgs(listOf(
-            "-manifest",
-            irProvidersMismatchSrcDir.resolve("manifest.properties").absolutePath
-        ))
+        val freeCompilerArgs = TestCompilerArgs(
+            listOf(
+                "-manifest",
+                irProvidersMismatchSrcDir.resolve("manifest.properties").absolutePath
+            )
+        )
         try {
             testIrProvidersMismatchImpl(irProvidersMismatchSrcDir, freeCompilerArgs)
+            fail { "Normally unreachable code" }
         } catch (cte: CompilationToolException) {
             if (!cte.reason.contains("The library requires unknown IR provider: UNSUPPORTED"))
                 throw cte
@@ -146,13 +185,15 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     private fun List<Module>.compileModules(
         produceUnpackedKlibs: Boolean,
-        useLibraryNamesInCliArguments: Boolean
+        useLibraryNamesInCliArguments: Boolean,
+        transform: ((module: Module, klib: KLIB) -> Unit)? = null
     ) {
         val klibFilesDir = buildDir.resolve(
             listOf(
                 "klib-files",
                 if (produceUnpackedKlibs) "unpacked" else "packed",
-                if (useLibraryNamesInCliArguments) "names" else "paths"
+                if (useLibraryNamesInCliArguments) "names" else "paths",
+                if (transform != null) "transformed" else "non-transformed"
             ).joinToString(".")
         )
         klibFilesDir.mkdirs()
@@ -186,7 +227,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                     expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
                 )
 
-                compilation.result.assertSuccess()
+                val klib = compilation.result.assertSuccess().resultingArtifact
+                transform?.invoke(module, klib)
             }
         }
     }

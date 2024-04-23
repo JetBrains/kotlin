@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.js.testOld.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncompatibleAbiMessages
+import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.util.*
 
 class JsKlibResolverTest : TestCaseWithTmpdir() {
     fun testWarningAboutRejectedLibraryIsNotSuppressed() {
@@ -37,12 +37,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         // Now patch lib1:
         val lib1V2 = createKlibDir("lib1", 2)
         lib1V1.copyRecursively(lib1V2)
-        patchManifest(lib1V2) { key, value ->
-            if (key == KLIB_PROPERTY_ABI_VERSION)
-                KotlinAbiVersion.CURRENT.copy(major = KotlinAbiVersion.CURRENT.major + 1).toString()
-            else
-                value
-        }
+        patchManifestToBumpAbiVersion(JUnit4Assertions, lib1V2)
 
         val result = compileKlib(
             sourceFile = testDataDir.resolve("lib2.kt"),
@@ -52,40 +47,11 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
 
         result.assertFailure() // Should not compile successfully.
 
-        val lines = result.output.lineSequence()
-            .filter(String::isNotBlank)
-            .map { it.replace(tmpdir.absolutePath, "<path>") }
-            .toList()
-
-        lines.assertHasLineWithPrefix("error: KLIB resolver: Could not find \"<path>/v2/lib1\"")
-        lines.assertHasLineWithPrefix("warning: KLIB resolver: Skipping '<path>/v2/lib1'. Incompatible ABI version")
+        assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(JUnit4Assertions, result.output, missingLibrary = "/v2/lib1", tmpdir)
     }
 
     private fun createKlibDir(name: String, version: Int): File =
         tmpdir.resolve("v$version").resolve(name).apply(File::mkdirs)
-
-    private fun patchManifest(klib: File, transform: (String, String) -> String) {
-        val manifestFile = klib.resolve("default/manifest")
-        assertTrue(manifestFile.isFile)
-
-        Properties().apply {
-            manifestFile.inputStream().use { load(it) }
-            entries.forEach { entry -> entry.setValue(transform(entry.key.toString(), entry.value.toString())) }
-            manifestFile.outputStream().use { store(it, null) }
-        }
-    }
-
-    private fun List<String>.assertHasLineWithPrefix(prefix: String) {
-        if (none { it.startsWith(prefix) }) {
-            fail(
-                """
-                    No line starting with prefix found: $prefix
-                    There are $size lines:
-                    ${joinToString("\n")}
-                """.trimIndent()
-            )
-        }
-    }
 
     private fun compileKlib(sourceFile: File, dependency: File?, outputFile: File): CompilationResult {
         val libraries = listOfNotNull(
