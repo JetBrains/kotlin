@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
@@ -75,7 +77,18 @@ class Fir2IrTypeConverter(
     private val capturedTypeCache = mutableMapOf<ConeCapturedType, IrType>()
     private val errorTypeForCapturedTypeStub by lazy { createErrorType() }
 
+    private data class ToIrTypeKey(val type: FirTypeRef, val typeOrigin: ConversionTypeOrigin)
+    private val typeCache = session.firCachesFactory.createCache<ToIrTypeKey, IrType, Fir2IrTypeConverter> { key, ctx ->
+        with(ctx) {
+            key.type.doToIrType(key.typeOrigin)
+        }
+    }
+
     fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType {
+        return typeCache.getValue(ToIrTypeKey(this, typeOrigin), this@Fir2IrTypeConverter)
+    }
+
+    fun FirTypeRef.doToIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType {
         capturedTypeCache.clear()
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
