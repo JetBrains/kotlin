@@ -11,6 +11,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAny
@@ -408,7 +409,7 @@ internal class StackLocalsManagerImpl(
     fun isEmpty() = stackLocals.isEmpty()
 
     private fun FunctionGenerationContext.createRootSetSlot() =
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr) else null
+            if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr, true) else null
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
         val classInfo = llvmDeclarations.forClass(irClass)
@@ -513,10 +514,9 @@ internal class StackLocalsManagerImpl(
         } else {
             val info = llvmDeclarations.forClass(stackLocal.irClass)
             val type = info.bodyType.llvmBodyType
-            for (fieldIndex in info.fieldIndices.values.sorted()) {
-                val fieldType = LLVMStructGetTypeAtIndex(type, fieldIndex)!!
+            for ((fieldSymbol, fieldIndex) in info.fieldIndices.entries.sortedBy{ e -> e.value }) {
 
-                if (isObjectType(fieldType)) {
+                if (fieldSymbol.owner.type.binaryTypeIsReference()) {
                     val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
                     if (refsOnly)
                         storeHeapRef(kNullObjHeaderPtr, fieldPtr)
@@ -680,10 +680,10 @@ internal abstract class FunctionGenerationContext(
         LLVMMoveBasicBlockAfter(block, this.entryBb)
     }
 
-    fun alloca(type: LLVMTypeRef?, name: String = "", variableLocation: VariableDebugLocation? = null): LLVMValueRef {
-        if (isObjectType(type!!)) {
+    fun alloca(type: LLVMTypeRef?, isObjectType: Boolean, name: String = "", variableLocation: VariableDebugLocation? = null): LLVMValueRef {
+        if (isObjectType) {
             appendingTo(localsInitBb) {
-                val slotAddress = gep(type, slotsPhi!!, llvm.int32(slotCount), name)
+                val slotAddress = gep(type!!, slotsPhi!!, llvm.int32(slotCount), name)
                 variableLocation?.let {
                     slotToVariableLocation[slotCount] = it
                 }
@@ -729,6 +729,7 @@ internal abstract class FunctionGenerationContext(
 
     fun loadSlot(
             type: LLVMTypeRef,
+            isObjectType: Boolean,
             address: LLVMValueRef,
             isVar: Boolean,
             resultSlot: LLVMValueRef? = null,
@@ -739,8 +740,8 @@ internal abstract class FunctionGenerationContext(
         val value = LLVMBuildLoad2(builder, type, address, name)!!
         memoryOrder?.let { LLVMSetOrdering(value, it) }
         alignment?.let { LLVMSetAlignment(value, it) }
-        if (isObjectType(type) && isVar) {
-            val slot = resultSlot ?: alloca(type, variableLocation = null)
+        if (isObjectType && isVar) {
+            val slot = resultSlot ?: alloca(type, isObjectType, variableLocation = null)
             storeStackRef(value, slot)
         }
         return value
@@ -760,9 +761,9 @@ internal abstract class FunctionGenerationContext(
         updateRef(value, ptr, onStack = true)
     }
 
-    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null) {
+    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null) {
         when {
-            isObjectRef(value) -> updateRef(value, ptr, onStack, isVolatile, alignment)
+            isObjectRef -> updateRef(value, ptr, onStack, isVolatile, alignment)
             else -> store(value, ptr, if (isVolatile) LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent else null, alignment)
         }
     }
@@ -847,7 +848,7 @@ internal abstract class FunctionGenerationContext(
                     localAllocs++
                     // Case of local call. Use memory allocated on stack.
                     val type = llvmCallable.returnType
-                    val stackPointer = alloca(type)
+                    val stackPointer = alloca(type, llvmCallable.returnsObjectType)
                     //val objectHeader = structGep(stackPointer, 0)
                     //setTypeInfoForLocalObject(objectHeader)
                     stackPointer
@@ -856,7 +857,7 @@ internal abstract class FunctionGenerationContext(
 
                 SlotType.RETURN -> returnSlot!!
 
-                SlotType.ANONYMOUS -> vars.createAnonymousSlot()
+                SlotType.ANONYMOUS -> vars.createAnonymousSlot(llvmCallable.returnsObjectType)
 
                 else -> throw Error("Incorrect slot type: ${resultLifetime.slotType}")
             }

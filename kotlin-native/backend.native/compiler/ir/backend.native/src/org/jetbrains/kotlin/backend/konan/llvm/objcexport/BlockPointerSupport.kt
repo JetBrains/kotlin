@@ -48,7 +48,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         val thisRef = param(0)
         val associatedObjectHolder = if (useSeparateHolder) {
             val bodyPtr = bitcast(pointerType(bodyType), thisRef)
-            loadSlot(codegen.kObjHeaderPtr, structGep(bodyType, bodyPtr, 1), isVar = false)
+            loadSlot(codegen.kObjHeaderPtr, true, structGep(bodyType, bodyPtr, 1), isVar = false)
         } else {
             thisRef
         }
@@ -342,7 +342,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             val invoke = generateInvoke(blockType, invokeName, genBlockBody).bitcast(invokeType).llvm
             val descriptor = blockDescriptor.llvmGlobal
 
-            val blockOnStack = alloca(blockLiteralType)
+            val blockOnStack = alloca(blockLiteralType, false)
             val blockOnStackBase = structGep(blockLiteralType, blockOnStack, 0)
             val refHolder = structGep(blockLiteralType, blockOnStack, 1)
 

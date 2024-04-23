@@ -394,7 +394,7 @@ internal class CodeGeneratorVisitor(
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
         val initializer = irField.initializer ?: return
         val address = staticFieldPtr(irField, this)
-        storeAny(evaluateExpression(initializer.expression), address, false)
+        storeAny(evaluateExpression(initializer.expression), address, irField.type.binaryTypeIsReference(), false)
     }
 
     private fun FunctionGenerationContext.initGlobalField(irField: IrField) {
@@ -411,7 +411,7 @@ internal class CodeGeneratorVisitor(
             call(llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
                     ?: kNullObjHeaderPtr))
         } else if (initialValue != null) {
-            storeAny(initialValue, address, false)
+            storeAny(initialValue, address, irField.type.binaryTypeIsReference(), false)
         }
     }
 
@@ -1773,6 +1773,7 @@ internal class CodeGeneratorVisitor(
         }
         return functionGenerationContext.loadSlot(
                 value.type.toLLVMType(llvm),
+                value.type.binaryTypeIsReference(),
                 fieldAddress,
                 !value.symbol.owner.isFinal,
                 resultSlot,
@@ -1851,7 +1852,7 @@ internal class CodeGeneratorVisitor(
             alignment = generationState.llvmDeclarations.forStaticField(value.symbol.owner).alignment
         }
         functionGenerationContext.storeAny(
-                valueToAssign, address, false,
+                valueToAssign, address, value.symbol.owner.type.binaryTypeIsReference(), false,
                 isVolatile = value.symbol.owner.hasAnnotation(KonanFqNames.volatile),
                 alignment = alignment,
         )

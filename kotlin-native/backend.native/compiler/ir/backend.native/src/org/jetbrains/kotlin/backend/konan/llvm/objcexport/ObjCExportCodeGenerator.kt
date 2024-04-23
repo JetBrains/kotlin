@@ -1211,7 +1211,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     error("Method is not instance and thus can't have bridge for overriding: $baseMethod")
 
                 MethodBridgeValueParameter.ErrorOutParameter ->
-                    alloca(llvm.int8PtrType).also {
+                    alloca(llvm.int8PtrType, false).also {
                         store(llvm.kNullInt8Ptr, it)
                         errorOutPtr = it
                     }
