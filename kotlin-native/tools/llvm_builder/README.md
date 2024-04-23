@@ -50,10 +50,23 @@ Some examples:
 
 ### Docker
 
+#### Linux 
+
 You can use Docker to build LLVM for Linux:
 ```shell
 docker build -t kotlin-llvm-builder .
 docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --install-path /output/llvm-11.1.0-linux-x64 --pack
+```
+
+#### Windows 
+
+> [!WARNING]  
+> Windows containers support is experimental
+
+If your host machine is Windows you can use Windows Docker container to build LLVM for Windows: 
+```shell 
+docker build -t kotlin-llvm-builder
+docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --instal-path /output/llvm-11-1.0-windows-x64 --pack
 ```
 
 ### Known problems
