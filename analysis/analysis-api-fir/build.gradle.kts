@@ -5,10 +5,6 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    google()
-}
-
 dependencies {
     api(project(":compiler:psi"))
     api(project(":compiler:fir:fir2ir"))
@@ -57,8 +53,6 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-
-    implementation("androidx.compose.runtime:runtime:1.6.6")
 }
 
 sourceSets {

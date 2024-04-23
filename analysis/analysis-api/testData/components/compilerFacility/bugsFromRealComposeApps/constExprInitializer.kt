@@ -1,4 +1,4 @@
-// WITH_FIR_TEST_COMPILER_PLUGIN
+// WITH_COMPOSE_COMPILER_PLUGIN
 // DUMP_IR
 
 // FILE: data/PodcastWithExtraInfo.kt

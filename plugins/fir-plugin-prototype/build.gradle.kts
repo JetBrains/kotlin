@@ -5,10 +5,6 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    google()
-}
-
 dependencies {
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
@@ -51,8 +47,6 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
     testRuntimeOnly(toolsJar())
-
-    implementation("androidx.compose.runtime:runtime:1.6.6")
 }
 
 optInToExperimentalCompilerApi()
