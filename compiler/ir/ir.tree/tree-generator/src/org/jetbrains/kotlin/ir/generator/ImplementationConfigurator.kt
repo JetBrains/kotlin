@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.simpleFunctionSymbol
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.ListField
+import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.utils.withIndent
 
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
@@ -65,7 +68,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(simpleFunction, "IrFunctionImpl")
 
         impl(functionWithLateBinding) {
-            configureDeclarationWithLateBindinig(simpleFunctionSymbolType)
+            configureDeclarationWithLateBindinig(simpleFunctionSymbol)
         }
 
         impl(field) {
@@ -79,7 +82,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(property)
 
         impl(propertyWithLateBinding) {
-            configureDeclarationWithLateBindinig(propertySymbolType)
+            configureDeclarationWithLateBindinig(propertySymbol)
         }
 
         impl(localDelegatedProperty) {
@@ -305,7 +308,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
     }
 
-    private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: ClassRef<*>) {
+    private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: Symbol) {
         implementation.bindOwnedSymbol = false
         default("isBound") {
             value = "_symbol != null"

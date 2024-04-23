@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.generators.tree.ListField as AbstractListField
 
 sealed class Field(
@@ -28,6 +29,8 @@ sealed class Field(
             } else {
                 UseFieldAsParameterInIrFactoryStrategy.Yes(null, null)
             }
+
+    abstract val symbolClass: Symbol?
 
     override var defaultValueInBuilder: String?
         get() = null
@@ -61,6 +64,12 @@ class SingleField(
     override val isChild: Boolean,
 ) : Field(name, mutable) {
 
+    override val symbolClass: Symbol?
+        get() = (typeRef as? ElementOrRef<*>)?.element as? Symbol
+
+    override val containsElement: Boolean
+        get() = (typeRef as? ElementOrRef<*>)?.element is Element
+
     override fun replaceType(newType: TypeRefWithNullability) =
         SingleField(name, newType, isMutable, isChild).also(::updateFieldsInCopy)
 
@@ -78,6 +87,12 @@ class ListField(
 
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = listType.withArgs(baseType).copy(isNullable)
+
+    override val symbolClass: Symbol?
+        get() = (baseType as? ElementOrRef<*>)?.element as? Symbol
+
+    override val containsElement: Boolean
+        get() = (baseType as? ElementOrRef<*>)?.element is Element
 
     override fun replaceType(newType: TypeRefWithNullability) = copy()
 
