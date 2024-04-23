@@ -11,7 +11,7 @@ library {
 
       public constructor()
 
-      public final val arrayConst: kotlin/Any /* = ... */
+      public final val arrayConst: kotlin/Any
         public final get
 
       public final val booleanConst: kotlin/Boolean /* = ... */
@@ -26,7 +26,7 @@ library {
       public final val doubleConst: kotlin/Double /* = ... */
         public final get
 
-      public final val enumConst: test/Weapon? /* = ... */
+      public final val enumConst: test/Weapon?
         public final get
 
       public final val floatConst: kotlin/Float /* = ... */
@@ -60,7 +60,7 @@ library {
 
     package {
 
-      public final val arrayConst: kotlin/Any /* = ... */
+      public final val arrayConst: kotlin/Any
         public final get
 
       public final val booleanConst: kotlin/Boolean /* = ... */
@@ -75,7 +75,7 @@ library {
       public final val doubleConst: kotlin/Double /* = ... */
         public final get
 
-      public final val enumConst: test/Weapon? /* = ... */
+      public final val enumConst: test/Weapon?
         public final get
 
       public final val floatConst: kotlin/Float /* = ... */

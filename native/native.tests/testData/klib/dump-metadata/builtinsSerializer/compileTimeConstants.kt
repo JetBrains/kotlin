@@ -1,5 +1,7 @@
 package test
 
+import kotlin.reflect.KClass
+
 enum class Weapon {
     ROCK,
     PAPER,

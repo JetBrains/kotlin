@@ -14,7 +14,7 @@ library {
       public constructor()
 
       // signature: test/Class.arrayConst|-5420156590449024299[0]
-      public final val arrayConst: kotlin/Any /* = ... */
+      public final val arrayConst: kotlin/Any
         // signature: test/Class.arrayConst.<get-arrayConst>|1136504332961129324[0]
         public final get
 
@@ -39,7 +39,7 @@ library {
         public final get
 
       // signature: test/Class.enumConst|1893601016514874327[0]
-      public final val enumConst: test/Weapon? /* = ... */
+      public final val enumConst: test/Weapon?
         // signature: test/Class.enumConst.<get-enumConst>|2301643281552555608[0]
         public final get
 
@@ -90,7 +90,7 @@ library {
     package {
 
       // signature: test/arrayConst|-5420156590449024299[0]
-      public final val arrayConst: kotlin/Any /* = ... */
+      public final val arrayConst: kotlin/Any
         // signature: test/arrayConst.<get-arrayConst>|1136504332961129324[0]
         public final get
 
@@ -115,7 +115,7 @@ library {
         public final get
 
       // signature: test/enumConst|1893601016514874327[0]
-      public final val enumConst: test/Weapon? /* = ... */
+      public final val enumConst: test/Weapon?
         // signature: test/enumConst.<get-enumConst>|2301643281552555608[0]
         public final get
 

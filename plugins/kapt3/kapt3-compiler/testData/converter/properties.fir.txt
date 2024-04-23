@@ -6,7 +6,7 @@
  *
  *   // field: constClassValue:Lkotlin/reflect/KClass;
  *   // getter: getConstClassValue()Lkotlin/reflect/KClass;
- *   public final val constClassValue: kotlin/reflect/KClass<*> (* = ... *)
+ *   public final val constClassValue: kotlin/reflect/KClass<*>
  *     public final get
  *
  *   // field: constJavaClassValue:Ljava/lang/Class;

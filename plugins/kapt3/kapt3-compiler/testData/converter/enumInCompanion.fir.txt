@@ -5,7 +5,7 @@
  *   public constructor()
  *
  *   // field: foo:LTest$Companion$Example;
- *   private final val foo: Test.Companion.Example (* = ... *)
+ *   private final val foo: Test.Companion.Example
  *     private final get
  *
  *   // companion object: Companion
@@ -84,7 +84,7 @@ public final class Test {
  *   public constructor()
  *
  *   // field: foo:LTest2$Amigo$Example;
- *   private final val foo: Test2.Amigo.Example (* = ... *)
+ *   private final val foo: Test2.Amigo.Example
  *     private final get
  *
  *   // companion object: Amigo
@@ -163,7 +163,7 @@ public final class Test2 {
  *   public constructor()
  *
  *   // field: foo:LTest3$Amigo$Example;
- *   private final val foo: Test3.Amigo.Example (* = ... *)
+ *   private final val foo: Test3.Amigo.Example
  *     private final get
  *
  *   // nested class: Amigo
@@ -315,7 +315,7 @@ public final class Test4 {
  *   public constructor()
  *
  *   // field: foo:LTest5$Amigos$Companion$Goo$Example;
- *   private final val foo: Test5.Amigos.Companion.Goo.Example (* = ... *)
+ *   private final val foo: Test5.Amigos.Companion.Goo.Example
  *     private final get
  *
  *   // nested class: Amigos
