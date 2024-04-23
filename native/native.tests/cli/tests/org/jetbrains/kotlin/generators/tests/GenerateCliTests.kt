@@ -14,7 +14,7 @@ fun main() {
     val mainClassName = TestGeneratorUtil.getMainClassName()
 
     generateTestGroupSuite(arrayOf(), mainClassName) {
-        testGroup("native/native.tests/cli-tests/tests-gen", "native/native.tests/testData") {
+        testGroup("native/native.tests/cli/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeCliTest> {
                 model("cli/native", extension = "args", testMethod = "doNativeTest", recursive = false)
             }
