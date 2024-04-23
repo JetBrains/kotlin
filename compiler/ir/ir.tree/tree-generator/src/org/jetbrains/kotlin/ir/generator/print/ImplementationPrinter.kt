@@ -51,12 +51,11 @@ internal class ImplementationPrinter(printer: SmartPrinter) : AbstractImplementa
     context(ImportCollector)
     override fun SmartPrinter.printAdditionalConstructorParameters(implementation: Implementation) {
         if (implementation.element.category == Element.Category.Expression) {
-            print()
-            println(
+            printlnMultiLine(
                 """
-    @Suppress("UNUSED_PARAMETER")
-    constructorIndicator: ${type("org.jetbrains.kotlin.ir.util", "IrElementConstructorIndicator").render()}?,
-            """.replaceIndent(currentIndent)
+                @Suppress("UNUSED_PARAMETER")
+                constructorIndicator: ${type(Packages.util, "IrElementConstructorIndicator").render()}?,
+                """
             )
         }
     }
