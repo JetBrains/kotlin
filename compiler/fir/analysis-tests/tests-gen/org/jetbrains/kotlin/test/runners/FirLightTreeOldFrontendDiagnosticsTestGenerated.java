@@ -17415,6 +17415,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("UnitUpperboundLambdaReturnTypeWithExplicitReturn.kt")
+      public void testUnitUpperboundLambdaReturnTypeWithExplicitReturn() {
+        runTest("compiler/testData/diagnostics/tests/inference/UnitUpperboundLambdaReturnTypeWithExplicitReturn.kt");
+      }
+
+      @Test
       @TestMetadata("unsoundness1.kt")
       public void testUnsoundness1() {
         runTest("compiler/testData/diagnostics/tests/inference/unsoundness1.kt");
