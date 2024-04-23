@@ -48,20 +48,23 @@ fun Project.setupCrossDistCopyTask(): TaskProvider<Copy> = tasks.register<Copy>(
     into(project.kotlinNativeDist.klib.platform)
 }
 
-// Assume that all Macs have the same enabled targets and use them as "darwin-only" targets
+// Assume that all Macs have the same enabled targets, and that Darwin dist is exactly a superset of any other dist
+// TODO(KT-67686) Expose proper API here
 fun getDarwinOnlyTargets(): Set<KonanTarget> {
     val enabledByHost = HostManager().enabledByHost
-    val enabledOnMacosX64 = enabledByHost[KonanTarget.MACOS_X64]?.toSet() ?: emptySet()
-    val enabledOnMacosArm64 = enabledByHost[KonanTarget.MACOS_ARM64]?.toSet() ?: emptySet()
+    val enabledOnMacosX64 = enabledByHost[KonanTarget.MACOS_X64]!!.toSet()
+    val enabledOnMacosArm64 = enabledByHost[KonanTarget.MACOS_ARM64]!!.toSet()
 
-    // Assert the assumption
+    // Assert the assumption: all macs have the same enabled targets
     require(enabledOnMacosArm64 == enabledOnMacosX64) {
         val symmetricalDifference = (enabledOnMacosArm64 union enabledOnMacosX64) - (enabledOnMacosArm64 intersect enabledOnMacosX64)
         "Attention! Enabled targets for macosArm64 and macosX64 are different!\n" +
                 "Diff = $symmetricalDifference\n" +
                 "Please, revise the code for building Full K/N Cross-Dist"
     }
-    return enabledOnMacosX64
+
+    val enabledOnThisHost = enabledByHost[HostManager.host]!!.toSet()
+    return enabledOnMacosX64 subtract enabledOnThisHost
 }
 
 private val Project.pathToDarwinDistProperty: String?
