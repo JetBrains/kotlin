@@ -39,9 +39,11 @@ object Comparators {
     private val SirType.swift
         get(): String = when (this) {
             is SirExistentialType -> error("Existential types are not supported yet")
-            is SirNominalType -> type.name
             SirUnknownType -> "SirUnknownType"
             SirUnsupportedType -> "SirUnsupportedType"
+            is SirClassType -> declaration.name
+            is SirEnumType -> declaration.name
+            is SirStructType -> declaration.name
         }
 
     private inline fun <T, reified R> Comparator<T>.thenComparing(comparator: Comparator<R>): Comparator<T> {

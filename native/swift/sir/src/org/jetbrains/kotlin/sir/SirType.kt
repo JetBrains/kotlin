@@ -7,24 +7,79 @@ package org.jetbrains.kotlin.sir
 
 sealed interface SirType
 
-class SirNominalType(
-    val type: SirNamedDeclaration,
-    val parent: SirNominalType? = null,
-) : SirType {
+sealed interface SirNominalType : SirType {
+
+    val parent: SirNominalType?
+
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
+}
+
+class SirClassType(
+    val declaration: SirClass,
+    override val parent: SirNominalType? = null,
+) : SirNominalType {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other != null && this::class != other::class) return false
+        if (javaClass != other?.javaClass) return false
 
-        other as SirNominalType
+        other as SirClassType
 
-        if (type != other.type) return false
+        if (declaration != other.declaration) return false
         if (parent != other.parent) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = type.hashCode()
+        var result = declaration.hashCode()
+        result = 31 * result + (parent?.hashCode() ?: 0)
+        return result
+    }
+}
+
+class SirStructType(
+    val declaration: SirStruct,
+    override val parent: SirNominalType? = null,
+) : SirNominalType {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SirStructType
+
+        if (declaration != other.declaration) return false
+        if (parent != other.parent) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = declaration.hashCode()
+        result = 31 * result + (parent?.hashCode() ?: 0)
+        return result
+    }
+}
+
+class SirEnumType(
+    val declaration: SirEnum,
+    override val parent: SirNominalType? = null,
+) : SirNominalType {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SirEnumType
+
+        if (declaration != other.declaration) return false
+        if (parent != other.parent) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = declaration.hashCode()
         result = 31 * result + (parent?.hashCode() ?: 0)
         return result
     }

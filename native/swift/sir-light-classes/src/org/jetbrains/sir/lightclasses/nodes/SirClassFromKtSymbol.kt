@@ -76,7 +76,7 @@ internal class SirClassFromKtSymbol(
             buildVariable {
                 origin = SirOrigin.ObjectAccessor(`for` = KotlinSource(ktSymbol))
                 visibility = SirVisibility.PUBLIC
-                type = SirNominalType(SirSwiftModule.int32) // todo: fixme when types become available - KT-65808
+                type = SirClassType(this@SirClassFromKtSymbol)
                 name = "shared"
                 getter = buildGetter {
                     kind = SirCallableKind.STATIC_METHOD

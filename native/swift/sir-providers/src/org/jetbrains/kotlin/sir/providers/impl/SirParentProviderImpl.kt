@@ -43,7 +43,7 @@ public class SirParentProviderImpl(private val sirSession: SirSession) : SirPare
                     sirModule.addChild {
                         buildExtension {
                             origin = enumAsPackage.origin
-                            extendedType = SirNominalType(enumAsPackage)
+                            extendedType = SirEnumType(enumAsPackage)
                             visibility = SirVisibility.PUBLIC
                         }
                     }

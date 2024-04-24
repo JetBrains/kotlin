@@ -91,7 +91,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         }
     }
     public class OBJECT_INSIDE_OBJECT : KotlinRuntime.KotlinBase {
-        public static var shared: Swift.Int32 {
+        public static var shared: main.OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT {
             get {
                 fatalError()
             }
@@ -100,7 +100,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
             fatalError()
         }
     }
-    public static var shared: Swift.Int32 {
+    public static var shared: main.OBJECT_NO_PACKAGE {
         get {
             fatalError()
         }
@@ -197,7 +197,7 @@ public extension main.namespace.deeper {
     public class OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
         public class Bar : KotlinRuntime.KotlinBase {
             public class OBJECT_INSIDE_CLASS : KotlinRuntime.KotlinBase {
-                public static var shared: Swift.Int32 {
+                public static var shared: main.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS {
                     get {
                         fatalError()
                     }
@@ -226,7 +226,7 @@ public extension main.namespace.deeper {
             }
         }
         public class OBJECT_INSIDE_OBJECT : KotlinRuntime.KotlinBase {
-            public static var shared: Swift.Int32 {
+            public static var shared: main.namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT {
                 get {
                     fatalError()
                 }
@@ -235,7 +235,7 @@ public extension main.namespace.deeper {
                 fatalError()
             }
         }
-        public static var shared: Swift.Int32 {
+        public static var shared: main.namespace.deeper.OBJECT_WITH_PACKAGE {
             get {
                 fatalError()
             }

@@ -20,7 +20,7 @@ val SirCallable.returnType: SirType
     get() = when (this) {
         is SirFunction -> this.returnType
         is SirGetter -> this.valueType
-        is SirSetter, is SirInit -> SirNominalType(SirSwiftModule.void)
+        is SirSetter, is SirInit -> SirStructType(SirSwiftModule.void)
     }
 
 val SirAccessor.valueType: SirType
@@ -39,7 +39,7 @@ val SirVariable.accessors: List<SirAccessor>
 
 val SirParameter.name: String? get() = parameterName ?: argumentName
 
-val SirType.isVoid: Boolean get() = this is SirNominalType && this.type == SirSwiftModule.void
+val SirType.isVoid: Boolean get() = this is SirStructType && this.declaration == SirSwiftModule.void
 
 fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () -> T): T {
     val child = producer()

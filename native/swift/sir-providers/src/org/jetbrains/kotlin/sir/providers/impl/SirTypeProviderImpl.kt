@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.sir.SirNamedDeclaration
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirUnknownType
-import org.jetbrains.kotlin.sir.SirUnsupportedType
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.UnknownTypeStrategy
@@ -50,7 +47,7 @@ public class SirTypeProviderImpl(
             else -> null
         }
         if (builtInType != null) {
-            return SirTypeProvider.TranslationResponse.Success(SirNominalType(builtInType), listOf(SirSwiftModule.name))
+            return SirTypeProvider.TranslationResponse.Success(SirStructType(builtInType), listOf(SirSwiftModule.name))
         }
         return when (kotlinType) {
             is KtUsualClassType -> handleUsualClassType(kotlinType)
@@ -72,8 +69,14 @@ public class SirTypeProviderImpl(
     private fun handleUsualClassType(kotlinType: KtUsualClassType): SirTypeProvider.TranslationResponse {
         val classSymbol = kotlinType.classSymbol
         val sirDeclaration = classSymbol.sirDeclaration() as SirNamedDeclaration
+        val type = when (sirDeclaration) {
+            is SirClass -> SirClassType(sirDeclaration)
+            is SirStruct -> SirStructType(sirDeclaration)
+            is SirEnum -> SirEnumType(sirDeclaration)
+            else -> return SirTypeProvider.TranslationResponse.Unsupported()
+        }
         val module = classSymbol.getContainingModule().sirModule()
-        return SirTypeProvider.TranslationResponse.Success(SirNominalType(sirDeclaration), listOf(module.name))
+        return SirTypeProvider.TranslationResponse.Success(type, listOf(module.name))
     }
 
     private fun handleUnsupportedType(): SirTypeProvider.TranslationResponse = when (unsupportedTypeStrategy) {

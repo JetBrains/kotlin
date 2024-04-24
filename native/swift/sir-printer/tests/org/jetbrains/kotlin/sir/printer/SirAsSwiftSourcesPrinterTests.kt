@@ -421,7 +421,9 @@ class SirAsSwiftSourcesPrinterTests {
                             origin = SirOrigin.Unknown
                             visibility = SirVisibility.PUBLIC
                             name = "Foo"
-                        })})}
+                        })
+                })
+        }
 
         runTest(
             module,
@@ -444,7 +446,9 @@ class SirAsSwiftSourcesPrinterTests {
                             origin = SirOrigin.Unknown
                             visibility = SirVisibility.PUBLIC
                             name = "INNER_CLASS"
-                        })})}
+                        })
+                })
+        }
 
         runTest(
             module,
@@ -896,4 +900,12 @@ class SirAsSwiftSourcesPrinterTests {
         val actualSwiftSrc = SirAsSwiftSourcesPrinter.print(module, stableDeclarationsOrder = false, renderDocComments = true)
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
     }
+}
+
+// A hack to avoid porting tests :)
+private fun SirNominalType(declaration: SirDeclaration): SirNominalType = when (declaration) {
+    is SirClass -> SirClassType(declaration)
+    is SirStruct -> SirStructType(declaration)
+    is SirEnum -> SirEnumType(declaration)
+    else -> error("Unexpected type declaration: $declaration")
 }

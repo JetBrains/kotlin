@@ -139,3 +139,11 @@ private fun readRequestFromFile(file: File): BridgeRequest {
 private enum class BridgeRequestKind {
     FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER
 }
+
+// A hack to avoid porting tests :)
+private fun SirNominalType(declaration: SirDeclaration): SirNominalType = when (declaration) {
+    is SirClass -> SirClassType(declaration)
+    is SirStruct -> SirStructType(declaration)
+    is SirEnum -> SirEnumType(declaration)
+    else -> error("Unexpected type declaration: $declaration")
+}

@@ -90,7 +90,7 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
 }
 
 private val SirType.isSupported: Boolean
-    get() = this is SirNominalType && type.parent == SirSwiftModule
+    get() = this is SirStructType && declaration.parent == SirSwiftModule
 
 private val SirCallable.bridgeSuffix: String
     get() = when (this) {
