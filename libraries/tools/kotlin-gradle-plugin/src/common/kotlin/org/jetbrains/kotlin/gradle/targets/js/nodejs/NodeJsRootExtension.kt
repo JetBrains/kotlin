@@ -79,7 +79,7 @@ open class NodeJsRootExtension(
     // Release schedule: https://github.com/nodejs/Release
     // Actual LTS and Current versions: https://nodejs.org/en/download/
     // Older versions and more information, e.g. V8 version inside: https://nodejs.org/en/download/releases/
-    override var version by Property("20.10.0")
+    override var version by Property("22.0.0")
 
     override var command by Property("node")
 
