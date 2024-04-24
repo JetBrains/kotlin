@@ -83,6 +83,18 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
   }
 
   @Test
+  @TestMetadata("callableReference_consumer.kt")
+  public void testCallableReference_consumer() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/callableReference_consumer.kt");
+  }
+
+  @Test
+  @TestMetadata("callableReference_function.kt")
+  public void testCallableReference_function() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/callableReference_function.kt");
+  }
+
+  @Test
   @TestMetadata("forExpression.kt")
   public void testForExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/forExpression.kt");

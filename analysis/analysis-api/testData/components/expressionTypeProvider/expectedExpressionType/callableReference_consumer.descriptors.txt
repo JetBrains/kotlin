@@ -1,0 +1,9 @@
+expression: consumer::accept
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: [
+    in KtTypeParameterType:
+      annotationsList: []
+      type: T
+  ]
+  type: java/util/function/Consumer<in T>
