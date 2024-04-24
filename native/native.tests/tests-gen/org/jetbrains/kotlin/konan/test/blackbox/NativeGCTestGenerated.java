@@ -88,6 +88,12 @@ public class NativeGCTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("ExternalRCRefTest.kt")
+  public void testExternalRCRefTest() {
+    runTest("native/native.tests/testData/gc/ExternalRCRefTest.kt");
+  }
+
+  @Test
   @TestMetadata("gcStats.kt")
   public void testGcStats() {
     runTest("native/native.tests/testData/gc/gcStats.kt");

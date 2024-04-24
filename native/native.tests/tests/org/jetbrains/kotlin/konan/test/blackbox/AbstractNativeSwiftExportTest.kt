@@ -164,7 +164,9 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = TestCompilerArgs(
                 listOf(
                     "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
-                    "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi"
+                    "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
+                    "-opt-in", "kotlin.native.internal.InternalForKotlinNative", // for uninitialized object instance manipulation, and ExternalRCRef.
+                    "-Xbinary=swiftExport=true",
                 )
             ),
             nominalPackageName = PackageName(testName),

@@ -202,7 +202,7 @@ internal enum class KotlinType(val repr: String) {
     Float("Float"),
     Double("Double"),
 
-    Object(repr = "COpaquePointer")
+    Object(repr = "kotlin.native.internal.NativePtr")
 }
 
 internal sealed class Bridge(
@@ -217,9 +217,9 @@ internal sealed class Bridge(
     }
 
     class AsObject(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
-        override fun generateSwiftToKotlinConversion(parameterName: String): String = "dereferenceSpecialRef($parameterName)"
+        override fun generateSwiftToKotlinConversion(parameterName: String): String = "kotlin.native.internal.ref.dereferenceExternalRCRef($parameterName)"
 
-        override fun generateKotlinToSwiftConversion(parameterName: String): String = "createSpecialRef($parameterName)"
+        override fun generateKotlinToSwiftConversion(parameterName: String): String = "kotlin.native.internal.ref.createRetainedExternalRCRef($parameterName)"
     }
 
     abstract fun generateSwiftToKotlinConversion(parameterName: String): String

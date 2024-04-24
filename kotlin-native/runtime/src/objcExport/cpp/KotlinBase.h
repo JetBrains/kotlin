@@ -5,10 +5,22 @@
 
 #pragma once
 
+#include <inttypes.h>
 #import <Foundation/Foundation.h>
 
 struct ObjHeader;
 
 @interface KotlinBase : NSObject <NSCopying>
+
 + (instancetype)createRetainedWrapper:(struct ObjHeader *)obj;
+
+// Initialize this class with kotlin.native.ref.ExternalRCRef
+// Does not retain `ref` itself.
+// If `ref` already points to another `KotlinBase` instance,
+// this returns that instance.
+- (instancetype)initWithExternalRCRef:(uintptr_t)ref NS_REFINED_FOR_SWIFT;
+
+// Return kotlin.native.ref.ExternalRCRef stored in this class
+- (uintptr_t)externalRCRef NS_REFINED_FOR_SWIFT;
+
 @end

@@ -658,33 +658,3 @@ void kotlin::initObjectPool() noexcept {
 void kotlin::compactObjectPoolInCurrentThread() noexcept {
     alloc::compactObjectPoolInCurrentThread();
 }
-
-RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_Interop_derefSpecialRef, mm::RawSpecialRef *ref) {
-    RETURN_OBJ(ref ? *mm::ObjCBackRef(ref) : nullptr);
-}
-
-RUNTIME_NOTHROW extern "C" mm::RawSpecialRef *Kotlin_Interop_createSpecialRef(ObjHeader *object) {
-    return object ? static_cast<mm::RawSpecialRef *>(mm::ObjCBackRef::create(object)) : nullptr;
-}
-
-RUNTIME_NOTHROW extern "C" void Kotlin_Interop_disposeSpecialRef(mm::RawSpecialRef *ref) {
-    if (ref) {
-        mm::ObjCBackRef(ref).dispose();
-    }
-}
-
-RUNTIME_NOTHROW extern "C" void Kotlin_Interop_retainSpecialRef(mm::RawSpecialRef *ref) {
-    if (ref) {
-        mm::ObjCBackRef(ref).retain();
-    }
-}
-
-RUNTIME_NOTHROW extern "C" bool Kotlin_Interop_tryRetainSpecialRef(mm::RawSpecialRef *ref) {
-    return ref ? mm::ObjCBackRef(ref).tryRetain() : false;
-}
-
-RUNTIME_NOTHROW extern "C" void Kotlin_Interop_releaseSpecialRef(mm::RawSpecialRef *ref) {
-    if (ref) {
-        mm::ObjCBackRef(ref).release();
-    }
-}

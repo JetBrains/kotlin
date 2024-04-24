@@ -164,6 +164,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
             freeCompilerArgs = TestCompilerArgs(listOf(
                 "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
                 "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
+                "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
             )),
             nominalPackageName = PackageName(moduleName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).run {

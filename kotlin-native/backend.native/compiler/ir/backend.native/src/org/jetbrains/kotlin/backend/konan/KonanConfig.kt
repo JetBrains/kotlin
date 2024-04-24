@@ -363,6 +363,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
+    val swiftExport by lazy {
+        configuration.get(BinaryOptions.swiftExport) ?: false
+    }
+
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         if (debug) add("debug.bc")
         add("runtime.bc")

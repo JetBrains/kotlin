@@ -2809,6 +2809,7 @@ internal class CodeGeneratorVisitor(
         overrideRuntimeGlobal("Kotlin_objcDisposeWithRunLoop", llvm.constInt32(if (context.config.objcDisposeWithRunLoop) 1 else 0))
         overrideRuntimeGlobal("Kotlin_enableSafepointSignposts", llvm.constInt32(if (context.config.enableSafepointSignposts) 1 else 0))
         overrideRuntimeGlobal("Kotlin_globalDataLazyInit", llvm.constInt32(if (context.config.globalDataLazyInit) 1 else 0))
+        overrideRuntimeGlobal("Kotlin_swiftExport", llvm.constInt32(if (context.config.swiftExport) 1 else 0))
     }
 
     //-------------------------------------------------------------------------//

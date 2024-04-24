@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-uintptr_t get_null();
 uintptr_t get_singleton_object();
 uintptr_t get_static_object();
 uintptr_t get_array();
@@ -31,7 +30,6 @@ int main() {
     test(get_singleton_object(), get_singleton_object(), compare_identities, -1);
     test(get_static_object(), get_static_object(), compare_identities, -2);
     test(get_local_object(), get_local_object(), compare_objects, -3);
-    test(get_null(), get_null(), compare_identities, -4);
     test(get_array(), get_array(), compare_arrays, -5);
 
     return 0;

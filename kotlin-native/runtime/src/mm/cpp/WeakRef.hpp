@@ -12,6 +12,8 @@
 
 namespace kotlin::mm {
 
+// TODO(KT-67741): Unify different SpecialRefs
+
 // Weak reference to a Kotlin object.
 // GC automatically invalidates the reference when the Kotlin object is collected.
 // Use `create` and `dispose` to create and destroy the weak reference.

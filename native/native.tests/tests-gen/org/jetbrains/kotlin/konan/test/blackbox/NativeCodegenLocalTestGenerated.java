@@ -1418,6 +1418,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     public void testIsExperimentalMM() {
       runTest("native/native.tests/testData/codegen/intrinsics/isExperimentalMM.kt");
     }
+
+    @Test
+    @TestMetadata("uninitializedInstance.kt")
+    public void testUninitializedInstance() {
+      runTest("native/native.tests/testData/codegen/intrinsics/uninitializedInstance.kt");
+    }
   }
 
   @Nested

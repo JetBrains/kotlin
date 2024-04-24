@@ -14,31 +14,6 @@ import kotlin.concurrent.AtomicReference
 import kotlinx.cinterop.*
 import kotlinx.cinterop.NativePtr
 
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_derefSpecialRef")
-public external fun dereferenceSpecialRef(ref: COpaquePointer?): Any?
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_createSpecialRef")
-@Escapes(0b01)
-public external fun createSpecialRef(ref: Any?): COpaquePointer?
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_disposeSpecialRef")
-public external fun disposeSpecialRef(ref: COpaquePointer?)
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_retainSpecialRef")
-public external fun retainSpecialRef(ref: COpaquePointer?)
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_tryRetainSpecialRef")
-public external fun tryRetainSpecialRef(ref: COpaquePointer?): Boolean
-
-@ExperimentalNativeApi
-@GCUnsafeCall("Kotlin_Interop_releaseSpecialRef")
-public external fun releaseSpecialRef(ref: COpaquePointer?)
-
 @ExportForCppRuntime
 @PublishedApi
 internal fun ThrowNullPointerException(): Nothing {
@@ -238,13 +213,13 @@ internal fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     return result as Array<T>
 }
 
-@PublishedApi
 @TypedIntrinsic(IntrinsicType.CREATE_UNINITIALIZED_INSTANCE)
-internal external fun <T> createUninitializedInstance(): T
+@InternalForKotlinNative
+public external fun <T> createUninitializedInstance(): T
 
-@PublishedApi
 @TypedIntrinsic(IntrinsicType.INIT_INSTANCE)
-internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
+@InternalForKotlinNative
+public external fun initInstance(thiz: Any, constructorCall: Any): Unit
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.IS_SUBTYPE)

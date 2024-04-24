@@ -14,6 +14,8 @@ namespace kotlin::mm {
 
 class ThreadData;
 
+// TODO(KT-67741): Unify different SpecialRefs
+
 // Stable reference to a Kotlin object.
 // Every stable reference makes Kotlin object be in the root set.
 // Use `create` and `dispose` to create and destroy the stable reference.

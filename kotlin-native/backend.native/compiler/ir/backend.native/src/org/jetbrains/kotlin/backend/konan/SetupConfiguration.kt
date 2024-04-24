@@ -41,7 +41,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.moduleName?.let { put(MODULE_NAME, it) }
 
     // TODO: allow overriding the prefix directly.
-    arguments.moduleName?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
+    // With Swift Export, exported prefix must be Kotlin.
+    ("Kotlin".takeIf { get(BinaryOptions.swiftExport) == true } ?: arguments.moduleName)?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
 
     arguments.target?.let { put(TARGET, it) }
 
