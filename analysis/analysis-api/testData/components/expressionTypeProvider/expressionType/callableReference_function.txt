@@ -1,0 +1,2 @@
+expression: function::apply
+type: kotlin.reflect.KFunction1<CapturedType(in T), CapturedType(out U)>

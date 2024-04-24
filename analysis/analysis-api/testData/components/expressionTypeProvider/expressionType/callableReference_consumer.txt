@@ -1,0 +1,2 @@
+expression: consumer::accept
+type: kotlin.reflect.KFunction1<CapturedType(in T), kotlin.Unit>
