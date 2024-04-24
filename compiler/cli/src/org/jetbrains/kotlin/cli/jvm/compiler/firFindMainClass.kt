@@ -54,6 +54,7 @@ fun findMainClass(fir: List<FirFile>): FqName? {
     }
 }
 
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 private class FirMainClassFinder(
     private var groupedMainFunctions: MutableMap<FirDeclaration, MutableList<FirSimpleFunction>>
 ) : FirVisitor<Unit, Pair<FirDeclaration, FirRegularClass?>>() {
