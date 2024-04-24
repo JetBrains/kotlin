@@ -43,7 +43,7 @@ internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateParameterType(va
             error("Parameter ${valueParameter.render()} in ${ktSymbol.render()} is not found.")
         }
         is SirTypeProvider.TranslationResponse.Unsupported -> {
-            error("Parameter type ${ktSymbol.returnType} in ${ktSymbol.render()} is not supported.")
+            error("Parameter ${valueParameter.render()} in ${ktSymbol.render()} is not supported.")
         }
     }
 }

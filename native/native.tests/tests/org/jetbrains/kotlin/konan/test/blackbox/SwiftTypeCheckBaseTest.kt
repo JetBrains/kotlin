@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.createModuleMap
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
-import kotlin.io.path.*
 
 
 abstract class SwiftTypeCheckBaseTest : AbstractNativeSimpleTest() {
