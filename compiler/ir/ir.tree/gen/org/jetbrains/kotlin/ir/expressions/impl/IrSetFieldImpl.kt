@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -28,10 +27,6 @@ class IrSetFieldImpl internal constructor(
     override var superQualifierSymbol: IrClassSymbol?,
     override var origin: IrStatementOrigin?,
 ) : IrSetField() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
     override var receiver: IrExpression? = null
 
     override lateinit var value: IrExpression

@@ -42,10 +42,6 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
 
     override var metadata: MetadataSource? = null
 
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
     override val containerSource: DeserializedContainerSource?
         get() = null
 

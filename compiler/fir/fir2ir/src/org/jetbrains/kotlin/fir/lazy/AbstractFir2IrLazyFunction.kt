@@ -95,10 +95,6 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
-    @Suppress("LeakingThis")
-    override var attributeOwnerId: IrAttributeContainer = this
-    override var originalBeforeInline: IrAttributeContainer? = null
-
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")

@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 abstract class IrElementBase : IrElement {
     /**
@@ -28,6 +30,23 @@ abstract class IrElementBase : IrElement {
      */
     private var attributeMap: Array<Any?>? = null
 
+    private data object DummyAttributeOwnerId : IrAttributeContainer {
+        override val endOffset: Int get() = -1
+        override val startOffset: Int get() = -1
+        override var attributeOwnerId: IrAttributeContainer
+            get() = this
+            set(value) = shouldNotBeCalled()
+        override var originalBeforeInline: IrAttributeContainer?
+            get() = null
+            set(value) = shouldNotBeCalled()
+        override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
+        override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement = this
+        override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {}
+        override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {}
+    }
+
+    final override var attributeOwnerId: IrAttributeContainer = (this as? IrAttributeContainer) ?: DummyAttributeOwnerId
+    final override var originalBeforeInline: IrAttributeContainer? = null
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data)

@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -28,10 +27,6 @@ class IrEnumConstructorCallImpl internal constructor(
     protected override val typeArguments: Array<IrType?>,
     override var symbol: IrConstructorSymbol,
 ) : IrEnumConstructorCall() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
     override var dispatchReceiver: IrExpression? = null
 
     override var extensionReceiver: IrExpression? = null

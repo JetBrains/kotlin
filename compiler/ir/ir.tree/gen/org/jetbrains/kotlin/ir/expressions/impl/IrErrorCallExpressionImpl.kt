@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
@@ -24,10 +23,6 @@ class IrErrorCallExpressionImpl internal constructor(
     override var type: IrType,
     override var description: String,
 ) : IrErrorCallExpression() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
     override var explicitReceiver: IrExpression? = null
 
     override val arguments: MutableList<IrExpression> = SmartList()

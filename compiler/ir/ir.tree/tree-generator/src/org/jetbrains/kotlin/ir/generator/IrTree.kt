@@ -106,6 +106,14 @@ object IrTree : AbstractTreeBuilder() {
         +offsetField("end")
 
         kDoc = "The root interface of the IR tree. Each IR node implements this interface."
+
+        generationCallback = {
+            println()
+            printPropertyDeclaration("attributeOwnerId", attributeContainer, VariableKind.VAR)
+            println()
+            printPropertyDeclaration("originalBeforeInline", attributeContainer.copy(nullable = true), VariableKind.VAR)
+            println()
+        }
     }
     val statement: Element by element(Other)
 
@@ -310,19 +318,6 @@ object IrTree : AbstractTreeBuilder() {
         }
     }
     val attributeContainer: Element by element(Declaration) {
-        kDoc = """
-            Represents an IR element that can be copied, but must remember its original element. It is
-            useful, for example, to keep track of generated names for anonymous declarations.
-            @property attributeOwnerId original element before copying. Always satisfies the following
-              invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
-            @property originalBeforeInline original element before inlining. Useful only with IR
-              inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
-              idempotence invariant and can contain a chain of declarations.
-        """.trimIndent()
-
-        +field("attributeOwnerId", attributeContainer, isChild = false)
-        // null <=> this element wasn't inlined
-        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false)
     }
     val mutableAnnotationContainer: Element by element(Declaration) {
         parent(type(Packages.declarations, "IrAnnotationContainer"))
@@ -469,7 +464,7 @@ object IrTree : AbstractTreeBuilder() {
     val moduleFragment: Element by element(Declaration) {
         needTransformMethod()
         transformByChildren = true
-        
+
         +descriptor("ModuleDescriptor").apply {
             optInAnnotation = null
         }
@@ -571,7 +566,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val externalPackageFragment: Element by element(Declaration) {
         transformByChildren = true
-        
+
         kDoc = """
             This is a root parent element for external declarations (meaning those that come from
             another compilation unit/module, not to be confused with [IrPossiblyExternalDeclaration.isExternal]). 
@@ -597,7 +592,7 @@ object IrTree : AbstractTreeBuilder() {
     val file: Element by element(Declaration) {
         needTransformMethod()
         transformByChildren = true
-        
+
         parent(packageFragment)
         parent(mutableAnnotationContainer)
         parent(metadataSourceOwner)

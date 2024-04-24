@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -36,6 +37,9 @@ interface IrElement {
      * @see IrFileEntry.getSourceRangeInfo
      */
     val endOffset: Int
+
+    var attributeOwnerId: IrAttributeContainer
+    var originalBeforeInline: IrAttributeContainer?
 
     /**
      * Runs the provided [visitor] on the IR subtree with the root at this node.

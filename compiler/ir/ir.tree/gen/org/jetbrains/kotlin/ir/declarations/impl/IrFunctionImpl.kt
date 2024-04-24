@@ -59,10 +59,6 @@ class IrFunctionImpl @IrImplementationDetail constructor(
 
     override var body: IrBody? = null
 
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
         get() = symbol.descriptor
