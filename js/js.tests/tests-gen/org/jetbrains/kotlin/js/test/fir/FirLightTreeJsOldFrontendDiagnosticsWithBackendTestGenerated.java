@@ -26,6 +26,22 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/constants")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Constants {
+    @Test
+    public void testAllFilesPresentInConstants() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/constants"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("simpleConstFromLib.kt")
+    public void testSimpleConstFromLib() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/constants/simpleConstFromLib.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/exportedNamesClash")
   @TestDataPath("$PROJECT_ROOT")
   public class ExportedNamesClash {
