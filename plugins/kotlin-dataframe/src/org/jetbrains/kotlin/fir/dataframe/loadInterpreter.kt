@@ -99,6 +99,7 @@ internal inline fun <reified T> String.load(): T {
         "Select0" -> Select0()
         "Expr0" -> Expr0()
         "And0" -> And0()
+        "Remove0" -> Remove0()
         else -> error("$this")
     } as T
 }
