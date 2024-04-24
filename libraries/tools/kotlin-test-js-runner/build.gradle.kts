@@ -73,9 +73,18 @@ tasks {
     val test by registering(NpxTask::class) {
         group = "verification"
 
+        val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+
         dependsOn(npmInstall)
 
         command.set("mocha")
+
+        if (isTeamcityBuild) {
+            args.addAll(
+                "--reporter",
+                "mocha-teamcity-reporter"
+            )
+        }
     }
 
     val npmBuild by registering(NpxTask::class) {
