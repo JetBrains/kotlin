@@ -14,12 +14,12 @@ public abstract class KtSubtypingComponent : KtAnalysisSessionComponent() {
 }
 
 public interface KtSubtypingComponentMixIn : KtAnalysisSessionMixIn {
-    infix public fun KtType.isEqualTo(other: KtType): Boolean =
+    public fun KtType.isEqualTo(other: KtType): Boolean =
         withValidityAssertion { analysisSession.subtypingComponent.isEqualTo(this, other) }
 
-    infix public fun KtType.isSubTypeOf(superType: KtType): Boolean =
+    public fun KtType.isSubTypeOf(superType: KtType): Boolean =
         withValidityAssertion { analysisSession.subtypingComponent.isSubTypeOf(this, superType) }
 
-    infix public fun KtType.isNotSubTypeOf(superType: KtType): Boolean =
+    public fun KtType.isNotSubTypeOf(superType: KtType): Boolean =
         withValidityAssertion { !analysisSession.subtypingComponent.isSubTypeOf(this, superType) }
 }
