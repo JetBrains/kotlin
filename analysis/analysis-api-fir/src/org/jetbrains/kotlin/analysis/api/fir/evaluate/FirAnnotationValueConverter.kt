@@ -78,8 +78,8 @@ internal object FirAnnotationValueConverter {
             for (expr in this@convertVarargsExpression) {
                 val converted = expr.convertConstantExpression(builder) ?: continue
 
-                if (expr is FirSpreadArgumentExpression || expr is FirNamedArgumentExpression) {
-                    addAll((converted as KtArrayAnnotationValue).values)
+                if ((expr is FirSpreadArgumentExpression || expr is FirNamedArgumentExpression) && converted is KtArrayAnnotationValue) {
+                    addAll(converted.values)
                 } else {
                     add(converted)
                 }
