@@ -15,6 +15,10 @@ import kotlin.io.path.writeText
 
 @DisplayName("JVM API validation")
 class KotlinJvmApiTest : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
+        configurationCache = true
+    )
+
     @DisplayName("Kotlin compilation can be set up using APIs")
     @JvmGradlePluginTests
     @GradleTest
