@@ -78,10 +78,10 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
      * Having two libraries with the same `unique_name` we only keep the first one.
      *
      * TODO: This is actually undesirable behavior.
-     *  - In certain situations it harms, e.g. KT-63573
-     *  - But sometimes it is really necessary, e.g. KT-64115
+     *  - In certain situations it harms, e.g. KT-63573 (fixed).
+     *  - But sometimes it is really necessary, e.g. KT-64115 (fixed).
      *  - Overall, we should not do any resolve inside the compiler (such as skipping KLIBs that happen to have repeated `unique_name`).
-     *    This is an opaque process which better should be performed by the build system (e.g. Gradle). To be fixed in KT-64169
+     *    This is an opaque process which better should be performed by the build system (e.g. Gradle). KT-64169 (fixed).
      */
     private fun List<KotlinLibrary>.omitDuplicateNames() =
         groupBy { it.uniqueName }.let { groupedByUniqName ->
