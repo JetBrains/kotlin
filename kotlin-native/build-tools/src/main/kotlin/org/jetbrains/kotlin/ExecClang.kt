@@ -38,6 +38,7 @@ abstract class ExecClang @Inject constructor(
 
     private fun clangArgsForCppRuntime(target: KonanTarget): List<String> {
         return platformManager.platform(target).clang.clangArgsForKonanSources.asList()
+                .filterNot { it.startsWith("-D__ENVIRONMENT_OS_VERSION_MIN_REQUIRED__=") } // Remove after bootstrap update. KT-67730
     }
 
     fun clangArgsForCppRuntime(targetName: String?): List<String> {
