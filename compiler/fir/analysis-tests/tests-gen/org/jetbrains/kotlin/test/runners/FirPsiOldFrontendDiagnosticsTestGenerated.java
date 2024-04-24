@@ -38887,6 +38887,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("overloadsWithUnsignedAfter.kt")
+      public void testOverloadsWithUnsignedAfter() {
+        runTest("compiler/testData/diagnostics/tests/unsignedTypes/overloadsWithUnsignedAfter.kt");
+      }
+
+      @Test
       @TestMetadata("unsignedLiteralsInsideConstVals.kt")
       public void testUnsignedLiteralsInsideConstVals() {
         runTest("compiler/testData/diagnostics/tests/unsignedTypes/unsignedLiteralsInsideConstVals.kt");

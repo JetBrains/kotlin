@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -83,7 +85,7 @@ abstract class AbstractConeCallConflictResolver(
 
             // any signed >= any unsigned
 
-            if (!specificClassId.isUnsigned && generalClassId.isUnsigned) {
+            if (specificClassId.isSignedIntegerType && generalClassId.isUnsigned) {
                 return true
             }
 
@@ -108,7 +110,17 @@ abstract class AbstractConeCallConflictResolver(
             return specificClassId == Double && generalClassId == Float
         }
 
-        private val ClassId.isUnsigned get() = this in StandardClassIds.unsignedTypes
+        private val ClassId.isUnsigned: Boolean get() = this in StandardClassIds.unsignedTypes
+
+        private val useCorrectSignedCheck: Boolean =
+            inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSpecificityCheckForSignedAndUnsigned)
+
+        private val ClassId.isSignedIntegerType: Boolean
+            get() = if (useCorrectSignedCheck) {
+                this in StandardClassIds.signedIntegerTypes
+            } else {
+                !isUnsigned
+            }
     }
 
     protected fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {

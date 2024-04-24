@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// LANGUAGE: -CorrectSpecificityCheckForSignedAndUnsigned
+// LANGUAGE: +CorrectSpecificityCheckForSignedAndUnsigned
 fun doStuff(value: Any) = "Any"
 fun doStuff(value: UByte) = "UByte"
 
