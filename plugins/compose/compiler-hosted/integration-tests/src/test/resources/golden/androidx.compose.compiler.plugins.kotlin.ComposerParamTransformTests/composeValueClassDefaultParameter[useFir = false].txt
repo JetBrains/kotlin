@@ -5,6 +5,19 @@
 import androidx.compose.runtime.*
 
 @Composable fun Example(data: Data = Data(""), intData: IntData = IntData(0)) {}
+@Composable fun ExampleNullable(data: Data? = Data(""), intData: IntData = IntData(0)) {}
+@Composable fun ExampleNullableData(data: NullableData = NullableData(null), intData: IntData = IntData(0)) {}
+@Composable private fun PrivateExample(data: Data = Data(""), intData: IntData = IntData(0)) {}
+@Composable internal fun InternalExample(data: Data = Data(""), intData: IntData = IntData(0)) {}
+@Composable @PublishedApi internal fun PublishedExample(data: Data = Data(""), intData: IntData = IntData(0)) {}
+
+abstract class Test {
+    @Composable private fun PrivateExample(data: Data = Data("")) {}
+    @Composable fun PublicExample(data: Data = Data("")) {}
+    @Composable internal fun InternalExample(data: Data = Data("")) {}
+    @Composable @PublishedApi internal fun PublishedExample(data: Data = Data("")) {}
+    @Composable protected fun ProtectedExample(data: Data = Data("")) {}
+}
 
 //
 // Transformed IR
@@ -33,4 +46,267 @@ fun Example(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, 
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
     Example(data, intData, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
+}
+@Composable
+fun ExampleNullable(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(ExampleNullable)P(0:Data,1:IntData):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      data = Data("")
+    }
+    if (%default and 0b0010 != 0) {
+      intData = IntData(0)
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    ExampleNullable(data, intData, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+fun ExampleNullableData(data: NullableData?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(ExampleNullableData)P(0:NullableData,1:IntData):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      data = NullableData(null)
+    }
+    if (%default and 0b0010 != 0) {
+      intData = IntData(0)
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    ExampleNullableData(data, intData, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+private fun PrivateExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(PrivateExample)P(0:Data,1:IntData):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      data = Data("")
+    }
+    if (%default and 0b0010 != 0) {
+      intData = IntData(0)
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    PrivateExample(data, intData, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+internal fun InternalExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(InternalExample)P(0:Data,1:IntData):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      data = Data("")
+    }
+    if (%default and 0b0010 != 0) {
+      intData = IntData(0)
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    InternalExample(data, intData, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+@PublishedApi
+internal fun PublishedExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(PublishedExample)P(0:Data,1:IntData):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      data = Data("")
+    }
+    if (%default and 0b0010 != 0) {
+      intData = IntData(0)
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    PublishedExample(data, intData, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@StabilityInferred(parameters = 1)
+abstract class Test {
+  @Composable
+  private fun PrivateExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(PrivateExample)P(0:Data):Test.kt")
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (%default and 0b0001 != 0) {
+        data = Data("")
+      }
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.PrivateExample(data, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    }
+  }
+  @Composable
+  fun PublicExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(PublicExample)P(0:Data):Test.kt")
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (%default and 0b0001 != 0) {
+        data = Data("")
+      }
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.PublicExample(data, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    }
+  }
+  @Composable
+  internal fun InternalExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(InternalExample)P(0:Data):Test.kt")
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (%default and 0b0001 != 0) {
+        data = Data("")
+      }
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.InternalExample(data, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    }
+  }
+  @Composable
+  @PublishedApi
+  internal fun PublishedExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(PublishedExample)P(0:Data):Test.kt")
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (%default and 0b0001 != 0) {
+        data = Data("")
+      }
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.PublishedExample(data, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    }
+  }
+  @Composable
+  protected fun ProtectedExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(ProtectedExample)P(0:Data):Test.kt")
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (%default and 0b0001 != 0) {
+        data = Data("")
+      }
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.ProtectedExample(data, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    }
+  }
+  static val %stable: Int = 0
+  @Composable
+  @JvmSynthetic
+  fun PublicExample(data: Data, %composer: Composer?, %changed: Int, %default: Int) {
+    return PublicExample(data, %composer, %changed, %default)
+  }
+  @Composable
+  @PublishedApi
+  @JvmSynthetic
+  internal fun PublishedExample(data: Data, %composer: Composer?, %changed: Int, %default: Int) {
+    return PublishedExample(data, %composer, %changed, %default)
+  }
+  @Composable
+  @JvmSynthetic
+  protected fun ProtectedExample(data: Data, %composer: Composer?, %changed: Int, %default: Int) {
+    return ProtectedExample(data, %composer, %changed, %default)
+  }
+}
+@Composable
+@JvmSynthetic
+fun Example(data: Data, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
+  return Example(data, intData, %composer, %changed, %default)
+}
+@Composable
+@PublishedApi
+@JvmSynthetic
+internal fun PublishedExample(data: Data, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
+  return PublishedExample(data, intData, %composer, %changed, %default)
 }

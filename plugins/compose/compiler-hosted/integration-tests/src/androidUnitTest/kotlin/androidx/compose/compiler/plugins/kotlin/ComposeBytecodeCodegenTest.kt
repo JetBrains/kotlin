@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 
@@ -796,11 +797,18 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             """,
             validate = {
                 // select Example function body
-                val match = Regex("public final static Example[\\s\\S]*?LOCALVARIABLE").find(it)!!
+                val func = Regex("public final static Example[\\s\\S]*?LOCALVARIABLE")
+                    .findAll(it)
+                    .single()
                 assertFalse(message = "Function body should not contain a not-null check.") {
-                    match.value.contains("Intrinsics.checkNotNullParameter")
+                    func.value.contains("Intrinsics.checkNotNullParameter")
+                }
+                val stub = Regex("public final static synthetic Example[\\s\\S]*?LOCALVARIABLE")
+                    .findAll(it)
+                    .single()
+                assertTrue(message = "Function stub should contain a not-null check.") {
+                    stub.value.contains("Intrinsics.checkNotNullParameter")
                 }
             },
-            dumpClasses = true
         )
 }
