@@ -395,12 +395,12 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
         this is BirType && isNullable()
 
     @Suppress("UNCHECKED_CAST")
-    override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker =
-        makeTypeIntersection(types as List<BirType>) as SimpleTypeMarker
+    override fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker =
+        makeTypeIntersection(types as Collection<BirType>) as SimpleTypeMarker
 
     @Suppress("UNCHECKED_CAST")
-    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker =
-        makeTypeIntersection(types as List<BirType>)
+    override fun intersectTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker =
+        makeTypeIntersection(types as Collection<BirType>)
 
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean =
         this is BirSimpleType && birTypePredicates_isPrimitiveType()

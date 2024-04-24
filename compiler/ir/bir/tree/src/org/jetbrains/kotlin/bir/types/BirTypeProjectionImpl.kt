@@ -33,7 +33,7 @@ fun makeTypeProjection(type: BirType, variance: Variance): BirTypeProjection =
         else -> BirTypeProjectionImpl(type, variance)
     }
 
-fun makeTypeIntersection(types: List<BirType>): BirType =
+fun makeTypeIntersection(types: Collection<BirType>): BirType =
     with(types.map { makeTypeProjection(it, Variance.INVARIANT).type }.distinct()) {
         if (size == 1) return single()
         else firstOrNull { !it.isClassType(IdSignatureValues.any) } ?: first { it.isNotNullClassType((IdSignatureValues.any)) }
