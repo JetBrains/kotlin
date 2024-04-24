@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
-import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -17,7 +19,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class KotlinCompileApiTest {
 
@@ -25,7 +26,7 @@ class KotlinCompileApiTest {
     val tmpDir = TemporaryFolder()
 
     private lateinit var project: ProjectInternal
-    private lateinit var plugin: KotlinJvmFactory
+    private lateinit var plugin: KotlinApiPlugin
     private lateinit var taskApi: KotlinJvmCompile
     private lateinit var taskImpl: KotlinCompile
 
@@ -142,5 +143,19 @@ class KotlinCompileApiTest {
         plugin.kotlinExtension.explicitApi = ExplicitApiMode.Strict
         project.evaluate()
         assertEquals(ExplicitApiMode.Strict, taskImpl.explicitApiMode.orNull)
+    }
+
+    @Test
+    fun testBuiltToolsApiVersion() {
+        val compilerDependency = project.configurations
+            .getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME)
+            .incoming
+            .dependencies
+            .single()
+
+        assertEquals(
+            "$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${plugin.pluginVersion}",
+            "${compilerDependency.group}:${compilerDependency.name}:${compilerDependency.version}"
+        )
     }
 }

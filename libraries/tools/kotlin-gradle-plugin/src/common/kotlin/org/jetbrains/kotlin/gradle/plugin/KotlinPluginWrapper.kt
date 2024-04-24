@@ -115,7 +115,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                         .withType<ExternalDependency>()
                         .configureEach { dependency ->
                             dependency.version { versionConstraint ->
-                                versionConstraint.strictly(project.kotlinExtension.compilerVersion.get())
+                                versionConstraint.strictly(project.kotlinExtensionOrNull?.compilerVersion?.get() ?: pluginVersion)
                             }
                         }
                 }
