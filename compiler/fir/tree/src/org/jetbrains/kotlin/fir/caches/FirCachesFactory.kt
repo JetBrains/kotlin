@@ -20,6 +20,8 @@ abstract class FirCachesFactory : FirSessionComponent {
      *
      * Where:
      * [CONTEXT] -- type of value which be used to create value by [createValue]
+     *
+     * Consider using [org.jetbrains.kotlin.fir.caches.createCache] shortcut if your cache does not need any kind of [CONTEXT] parameter.
      */
     abstract fun <K : Any, V, CONTEXT> createCache(createValue: (K, CONTEXT) -> V): FirCache<K, V, CONTEXT>
 
