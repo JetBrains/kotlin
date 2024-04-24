@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.generators.builtins.generateBuiltIns
 
 import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIterators
-import org.jetbrains.kotlin.generators.builtins.arrays.GenerateArrays
+import org.jetbrains.kotlin.generators.builtins.arrays.*
 import org.jetbrains.kotlin.generators.builtins.functions.GenerateFunctions
 import org.jetbrains.kotlin.generators.builtins.iterators.GenerateIterators
 import org.jetbrains.kotlin.generators.builtins.numbers.GenerateFloorDivMod
@@ -89,8 +89,18 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Uni
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Char.kt")) { WasmCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Char.kt")) { NativeCharGenerator(it) }
 
+
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/functions/Functions.kt")) { GenerateFunctions(it) }
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Arrays.kt")) { GenerateArrays(it) }
+    generate(File(BUILT_INS_COMMON_DIR, "Array.kt")) { GenerateCommonArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_COMMON_DIR, "Arrays.kt")) { GenerateCommonArrays(it, primitiveArrays = true) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Array.kt")) { GenerateJvmArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Arrays.kt")) { GenerateJvmArrays(it, primitiveArrays = true) }
+    generate(File(BUILT_INS_NATIVE_DIR_JS, "Array.kt")) { GenerateJsArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_NATIVE_DIR_JS, "Arrays.kt")) { GenerateJsArrays(it, primitiveArrays = true) }
+    generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Array.kt")) { GenerateWasmArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Arrays.kt")) { GenerateWasmArrays(it, primitiveArrays = true) }
+    generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Array.kt")) { GenerateNativeArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Arrays.kt")) { GenerateNativeArrays(it, primitiveArrays = true) }
     generate(File(STDLIB_DIR, "kotlin/collections/PrimitiveIterators.kt")) { GenerateIterators(it) }
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/internal/ArrayIterators.kt")) { GenerateArrayIterators(it) }
     generate(File(STDLIB_DIR, "kotlin/ranges/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
