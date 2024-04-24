@@ -242,6 +242,10 @@ class FirPCLAInferenceSession(
         // Even if the calls themselves are trivial
         if (dispatchReceiver?.isReceiverPostponed() == true) return false
         if (givenExtensionReceiverOptions.any { it.isReceiverPostponed() }) return false
+        // At the step of candidate's system creation, there are no chosen context receiver values, yet
+        // (see org.jetbrains.kotlin.fir.resolve.calls.CheckContextReceivers)
+        // Thus, we just postpone everything with symbols requiring some context receivers
+        if ((symbol as? FirCallableSymbol)?.resolvedContextReceivers?.isNotEmpty() == true) return false
 
         // Accesses to local variables or local functions which return types contain not fixed TVs
         val returnType = (symbol as? FirCallableSymbol)?.let(returnTypeCalculator::tryCalculateReturnType)

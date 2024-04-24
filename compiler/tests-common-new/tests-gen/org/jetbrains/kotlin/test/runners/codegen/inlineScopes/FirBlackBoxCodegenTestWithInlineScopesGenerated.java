@@ -3508,6 +3508,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("contextReceivers.kt")
+    public void testContextReceivers() {
+      runTest("compiler/testData/codegen/box/builderInference/contextReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("kt65341.kt")
     public void testKt65341() {
       runTest("compiler/testData/codegen/box/builderInference/kt65341.kt");
