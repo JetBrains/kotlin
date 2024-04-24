@@ -102,3 +102,6 @@ internal abstract class PropertiesBuildService @Inject constructor(
         override fun call(): T? = value
     }
 }
+
+internal val Project.propertiesService: Provider<PropertiesBuildService>
+    get() = PropertiesBuildService.registerIfAbsent(this)
