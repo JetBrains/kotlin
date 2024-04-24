@@ -43,4 +43,5 @@ object KonanFqNames {
     val refinesInSwift = FqName("kotlin.native.RefinesInSwift")
     val shouldRefineInSwift = FqName("kotlin.native.ShouldRefineInSwift")
     val reflectionPackageName = FqName("kotlin.native.internal.ReflectionPackageName")
+    val noInline = FqName("kotlin.native.NoInline")
 }

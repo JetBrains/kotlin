@@ -50,6 +50,7 @@ internal class BackendInliner(
 ) {
     private val context = generationState.context
     private val symbols = context.ir.symbols
+    private val noInline = symbols.noInline
     private val string = symbols.string
     private val throwable = symbols.throwable
     private val invokeSuspendFunction = symbols.invokeSuspendFunction
@@ -140,6 +141,7 @@ internal class BackendInliner(
                         val threshold = if (calleeIrFunction is IrSimpleFunction) 33 else 33
                         if (!isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
                                 //&& calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
+                                && !calleeIrFunction.hasAnnotation(noInline)
                                 && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
                                 && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
                                 && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true

@@ -11,6 +11,7 @@ import kotlin.native.ref.WeakReference
 import kotlin.native.ref.Cleaner
 import kotlin.native.ref.createCleaner
 import kotlin.native.runtime.GC
+import kotlin.native.NoInline
 
 class AtomicBoolean(initialValue: Boolean) {
     private val impl = AtomicInt(if (initialValue) 1 else 0)
@@ -168,7 +169,7 @@ fun testCleanerWithException() {
     val called = AtomicBoolean(false);
     var funBoxWeak: WeakReference<FunBox>? = null
     var cleanerWeak: WeakReference<Cleaner>? = null
-    {
+    @NoInline fun local() {
         val funBox = FunBox { called.value = true }
         funBoxWeak = WeakReference(funBox)
         val cleaner = createCleaner(funBox) {
@@ -176,7 +177,8 @@ fun testCleanerWithException() {
             error("Cleaner block failed")
         }
         cleanerWeak = WeakReference(cleaner)
-    }()
+    }
+    local()
 
     GC.collect()
     performGCOnCleanerWorker()
