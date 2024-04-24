@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.Properties
 import kotlin.io.path.*
 import kotlin.streams.asSequence
 
@@ -74,15 +75,25 @@ abstract class AbstractSwiftRunnerTestBase(
             }
         }
 
+        val defaultConfig: Map<String, String> = mapOf(
+            SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
+            SwiftExportConfig.RENDER_DOC_COMMENTS to (if (renderDocComments) "true" else "false"),
+            SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
+        )
+
+        val discoveredConfig = (moduleRoot / "config.properties").takeIf { it.exists() }?.let { configPath ->
+            Properties().apply { load(configPath.toFile().inputStream()) }.let { properties ->
+                properties.propertyNames().asSequence().mapNotNull { it as? String }.associateWith { properties.getProperty(it) }.toMap()
+            }
+        } ?: emptyMap()
+
+        val config = defaultConfig + discoveredConfig
+
         runSwiftExport(
             input = inputModule,
             output = output,
             config = SwiftExportConfig(
-                settings = mapOf(
-                    SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
-                    SwiftExportConfig.RENDER_DOC_COMMENTS to (if (renderDocComments) "true" else "false"),
-                    SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
-                ),
+                settings = config,
                 logger = createDummyLogger(),
                 distribution = Distribution(KonanHome.konanHomePath),
             )

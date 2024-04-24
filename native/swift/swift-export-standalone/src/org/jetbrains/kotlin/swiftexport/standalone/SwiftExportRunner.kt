@@ -36,6 +36,8 @@ public data class SwiftExportConfig(
         public const val STABLE_DECLARATIONS_ORDER: String = "STABLE_DECLARATIONS_ORDER"
 
         public const val RENDER_DOC_COMMENTS: String = "RENDER_DOC_COMMENTS"
+
+        public const val ROOT_PACKAGE: String = "rootPackage"
     }
 }
 

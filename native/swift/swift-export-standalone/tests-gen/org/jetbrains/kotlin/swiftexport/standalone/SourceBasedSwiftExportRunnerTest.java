@@ -48,6 +48,12 @@ public class SourceBasedSwiftExportRunnerTest extends AbstractSourceBasedSwiftRu
   }
 
   @Test
+  @TestMetadata("package_flattening")
+  public void testPackage_flattening() {
+    runTest("native/swift/swift-export-standalone/testData/package_flattening/");
+  }
+
+  @Test
   @TestMetadata("type_reference")
   public void testType_reference() {
     runTest("native/swift/swift-export-standalone/testData/type_reference/");
