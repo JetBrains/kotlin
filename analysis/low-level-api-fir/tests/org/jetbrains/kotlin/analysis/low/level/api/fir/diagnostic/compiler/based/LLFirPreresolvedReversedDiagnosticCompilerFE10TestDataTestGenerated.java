@@ -41291,6 +41291,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("overloadsWithUnsigned.kt")
+      public void testOverloadsWithUnsigned() {
+        runTest("compiler/testData/diagnostics/tests/unsignedTypes/overloadsWithUnsigned.kt");
+      }
+
+      @Test
       @TestMetadata("unsignedLiteralsInsideConstVals.kt")
       public void testUnsignedLiteralsInsideConstVals() {
         runTest("compiler/testData/diagnostics/tests/unsignedTypes/unsignedLiteralsInsideConstVals.kt");
