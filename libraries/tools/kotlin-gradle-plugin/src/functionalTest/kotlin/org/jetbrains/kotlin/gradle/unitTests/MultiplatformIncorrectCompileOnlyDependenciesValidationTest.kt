@@ -21,8 +21,11 @@ import kotlin.test.fail
 @OptIn(ExperimentalWasmDsl::class)
 class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
 
-    private fun setupKmpProject(configure: Project.() -> Unit): Project {
-        val project = buildProjectWithMPP {
+    private fun setupKmpProject(
+        preApplyCode: Project.() -> Unit = {},
+        configure: Project.() -> Unit
+    ): Project {
+        val project = buildProjectWithMPP(preApplyCode = preApplyCode) {
             kotlin {
                 jvm()
 
@@ -223,7 +226,11 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
 
     @Test
     fun `when dependency is defined as compileOnly but not api, and kotlin-mpp warning is disabled, expect no warning`() {
-        val project = setupKmpProject {
+        val project = setupKmpProject(
+            preApplyCode = {
+                propertiesExtension.set("kotlin.suppressGradlePluginWarnings", "IncorrectCompileOnlyDependencyWarning")
+            }
+        ) {
             kotlin {
                 sourceSets.apply {
                     commonMain {
@@ -233,8 +240,6 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
                     }
                 }
             }
-
-            propertiesExtension.set("kotlin.suppressGradlePluginWarnings", "IncorrectCompileOnlyDependencyWarning")
         }
 
         project.runLifecycleAwareTest {
@@ -245,7 +250,11 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
 
     @Test
     fun `when dependency is defined in nativeMain as compileOnly but not api, and kotlin-native warning is disabled, expect no warning`() {
-        val project = setupKmpProject {
+        val project = setupKmpProject(
+            preApplyCode = {
+                propertiesExtension.set("kotlin.native.ignoreIncorrectDependencies", "true")
+            }
+        ) {
             kotlin {
                 sourceSets.apply {
                     nativeMain {
@@ -255,7 +264,6 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
                     }
                 }
             }
-            propertiesExtension.set("kotlin.native.ignoreIncorrectDependencies", "true")
         }
 
         project.runLifecycleAwareTest {
@@ -264,7 +272,7 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
 
             val deprecatedPropertyWarning = diagnostics.filter { it.id == KotlinToolingDiagnostics.DeprecatedGradleProperties.id }
                 .firstOrNull { it.message.contains("kotlin.native.ignoreIncorrectDependencies") }
-            if (deprecatedPropertyWarning != null) {
+            if (deprecatedPropertyWarning == null) {
                 fail("Expected warning regarding deprecated property `kotlin.native.ignoreIncorrectDependencies`, but found none.")
                 // Note for future devs: If this assertion starts failing because the property has been removed,
                 // then this entire test can probably be removed.
