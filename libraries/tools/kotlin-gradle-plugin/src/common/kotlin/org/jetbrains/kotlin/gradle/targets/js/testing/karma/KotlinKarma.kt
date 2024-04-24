@@ -104,6 +104,7 @@ class KotlinKarma(
         requiredDependencies.add(versions.karma)
 
         useKotlinReporter()
+        useWebpackOutputPlugin()
         useMocha()
         useWebpack()
         useSourceMapSupport()
@@ -161,6 +162,22 @@ class KotlinKarma(
                         layout: { type: 'pattern', pattern: '%[%d{DATETIME}:%p [%c]: %]%m' }
                     }
                 ]
+            """.trimIndent()
+            )
+        }
+    }
+
+    private fun useWebpackOutputPlugin() {
+        config.frameworks.add("webpack-output")
+
+        confJsWriters.add {
+            // Not all log events goes through this appender
+            // For example Error in config file
+            //language=ES6
+            it.appendLine(
+                """
+                config.plugins = config.plugins || [];
+                config.plugins.push('kotlin-test-js-runner/karma-webpack-output.js');
             """.trimIndent()
             )
         }
