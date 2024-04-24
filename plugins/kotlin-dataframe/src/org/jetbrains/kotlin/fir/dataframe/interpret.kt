@@ -264,7 +264,11 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
                 SimpleCol(f(result),Marker(arg))
             }
 
-            it.classId == Names.COLUM_GROUP_CLASS_ID -> TODO()
+            it.classId == Names.COLUM_GROUP_CLASS_ID -> {
+                val arg: ConeClassLikeType = it.typeArguments.single() as ConeClassLikeType
+                val path = f(result)
+                SimpleColumnGroup(path, pluginDataFrameSchema(arg).columns(), anyRow)
+            }
             else -> return emptyList()
         }
         listOf(
