@@ -12397,6 +12397,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("genericWithEnumBound.kt")
+      public void testGenericWithEnumBound() {
+        runTest("compiler/testData/diagnostics/tests/enum/genericWithEnumBound.kt");
+      }
+
+      @Test
       @TestMetadata("ifEnumEntry.kt")
       public void testIfEnumEntry() {
         runTest("compiler/testData/diagnostics/tests/enum/ifEnumEntry.kt");

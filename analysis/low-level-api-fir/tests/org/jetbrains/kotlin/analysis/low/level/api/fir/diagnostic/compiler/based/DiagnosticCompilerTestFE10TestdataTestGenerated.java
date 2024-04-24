@@ -12397,6 +12397,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("genericWithEnumBound.kt")
+      public void testGenericWithEnumBound() {
+        runTest("compiler/testData/diagnostics/tests/enum/genericWithEnumBound.kt");
+      }
+
+      @Test
       @TestMetadata("ifEnumEntry.kt")
       public void testIfEnumEntry() {
         runTest("compiler/testData/diagnostics/tests/enum/ifEnumEntry.kt");
