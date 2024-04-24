@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import javax.xml.ws.spi.Invoker
 
 private fun ConeDiagnostic.toKtDiagnostic(
     source: KtSourceElement?,
