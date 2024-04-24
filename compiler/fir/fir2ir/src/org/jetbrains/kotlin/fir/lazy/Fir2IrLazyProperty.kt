@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.asCompileTimeIrInitializer
 import org.jetbrains.kotlin.fir.backend.utils.toIrConst
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -29,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -137,7 +135,8 @@ class Fir2IrLazyProperty(
         symbols.backingFieldSymbol == null -> null
         fir.hasExplicitBackingField -> {
             val backingFieldType = fir.backingField?.returnTypeRef?.toIrType(c)
-            val initializer = fir.backingField?.initializer ?: fir.initializer
+            val evaluatedInitializer = fir.evaluatedInitializer?.unwrapOr<FirExpression> {}
+            val initializer = fir.backingField?.initializer ?: evaluatedInitializer ?: fir.initializer
             val visibility = fir.backingField?.visibility ?: fir.visibility
             callablesGenerator.createBackingField(
                 this@Fir2IrLazyProperty,
@@ -177,7 +176,8 @@ class Fir2IrLazyProperty(
                 fir.initializer,
                 type
             ).also { field ->
-                field.initializer = toIrInitializer(fir.initializer)
+                val evaluatedInitializer = fir.evaluatedInitializer?.unwrapOr<FirExpression> {}
+                field.initializer = toIrInitializer(evaluatedInitializer ?: fir.initializer)
             }
         }
         else -> null
