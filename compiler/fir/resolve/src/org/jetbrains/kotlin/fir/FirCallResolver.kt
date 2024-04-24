@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -496,11 +496,10 @@ class FirCallResolver(
         return@runCallableReferenceResolution applicability to true
     }
 
-    fun resolveDelegatingConstructorCall(
+    fun callInfoForDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        constructedType: ConeClassLikeType?,
-        derivedClassLookupTag: ConeClassLikeLookupTag
-    ): FirDelegatedConstructorCall {
+        constructedType: ConeClassLikeType?
+    ): CallInfo {
         val name = SpecialNames.INIT
         val symbol = constructedType?.lookupTag?.toSymbol(components.session)
         val typeArguments = constructedType?.typeArguments
@@ -508,7 +507,7 @@ class FirCallResolver(
             ?.map { it.toFirTypeProjection() }
             ?: emptyList()
 
-        val callInfo = CallInfo(
+        return CallInfo(
             delegatedConstructorCall,
             CallKind.DelegatingConstructorCall,
             name,
@@ -522,6 +521,14 @@ class FirCallResolver(
             components.containingDeclarations,
             resolutionMode = ResolutionMode.ContextIndependent,
         )
+    }
+
+    fun resolveDelegatingConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        constructedType: ConeClassLikeType?,
+        derivedClassLookupTag: ConeClassLikeLookupTag
+    ): FirDelegatedConstructorCall {
+        val callInfo = callInfoForDelegatingConstructorCall(delegatedConstructorCall, constructedType)
         towerResolver.reset()
 
         if (constructedType == null) {
@@ -544,7 +551,7 @@ class FirCallResolver(
             transformer.resolutionContext
         )
 
-        return selectDelegatingConstructorCall(delegatedConstructorCall, name, result, callInfo)
+        return selectDelegatingConstructorCall(delegatedConstructorCall, callInfo.name, result, callInfo)
     }
 
     private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {

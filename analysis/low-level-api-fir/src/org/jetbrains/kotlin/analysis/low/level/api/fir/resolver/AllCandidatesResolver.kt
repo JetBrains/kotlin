@@ -97,8 +97,16 @@ class AllCandidatesResolver(private val firSession: FirSession) {
 
         val constructedType = delegatedConstructorCall.constructedTypeRef.coneType as ConeClassLikeType
         return run {
-            bodyResolveComponents.callResolver
-                .resolveDelegatingConstructorCall(delegatedConstructorCall, constructedType, derivedClassLookupTag)
+            val callInfo = bodyResolveComponents.callResolver.callInfoForDelegatingConstructorCall(
+                delegatedConstructorCall,
+                constructedType,
+            )
+
+            with(bodyResolveComponents.towerResolver) {
+                reset()
+                runResolverForDelegatingConstructor(callInfo, constructedType, derivedClassLookupTag, resolutionContext)
+            }
+
             bodyResolveComponents.collector.allCandidates
                 .map { OverloadCandidate(it, isInBestCandidates = it in bodyResolveComponents.collector.bestCandidates()) }
                 .apply { postProcessCandidates() }
