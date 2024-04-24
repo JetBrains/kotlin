@@ -29,9 +29,9 @@ plugins {
 
 // region: Util functions.
 fun KonanTarget.defFiles() =
-    project.fileTree("src/platform/${family.visibleName}")
-            .filter { it.name.endsWith(".def") }
-            .map { DefFile(it, this) }
+        project.fileTree("src/platform/${family.visibleName}")
+                .filter { it.name.endsWith(".def") }
+                .map { DefFile(it, this) }
 
 
 fun defFileToLibName(target: String, name: String) = "$target-$name"
@@ -49,6 +49,7 @@ enabledTargets(platformManager).forEach { target ->
     val installTasks = mutableListOf<TaskProvider<out Task>>()
     val cacheTasks = mutableListOf<TaskProvider<out Task>>()
 
+    // First register all interop-libraries
     target.defFiles().forEach { df ->
         val libName = defFileToLibName(targetName, df.name)
         val fileNamePrefix = PlatformLibsInfo.namePrefix
@@ -62,17 +63,30 @@ enabledTargets(platformManager).forEach { target ->
                 noEndorsedLibs(true)
                 noPack(true)
                 libraries {
-                    klibFiles(df.config.depends.map { "$konanHome/klib/platform/$targetName/${fileNamePrefix}${it}" })
+                    klibFiles(df.config.depends.map { layout.buildDirectory.dir("konan/libs/$targetName/${fileNamePrefix}${it}") })
                 }
                 extraOpts("-Xpurge-user-libs", "-Xshort-module-name", df.name, "-Xdisable-experimental-annotation")
                 compilerOpts("-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}")
             }
         }
+    }
+
+    // After all interop-libraries are registered, configure tasks (need to do it after all interop-libraries
+    // are registered, because they cross-reference each other)
+    target.defFiles().forEach { df ->
+        val libName = defFileToLibName(targetName, df.name)
+        val fileNamePrefix = PlatformLibsInfo.namePrefix
+        val artifactName = "${fileNamePrefix}${df.name}"
 
         @Suppress("UNCHECKED_CAST")
         val libTask = konanArtifacts.getByName(libName).getByTarget(targetName) as TaskProvider<KonanInteropTask>
         libTask.configure {
-            dependsOn(df.config.depends.map { defFileToLibName(targetName, it) })
+            dependsOn(
+                    df.config.depends.map {
+                        val dependencyLibName = defFileToLibName(targetName, it)
+                        konanArtifacts.getByName(dependencyLibName).getByTarget(targetName)
+                    }
+            )
             dependsOn(":kotlin-native:${targetName}CrossDist")
 
             enableParallel = project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true
