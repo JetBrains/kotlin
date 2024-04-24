@@ -27,6 +27,7 @@ import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.nio.file.Path
 import java.security.MessageDigest
+import kotlin.io.path.absolute
 
 private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/crossCompilationIdentity"
 
@@ -61,7 +62,7 @@ abstract class KlibCrossCompilationIdentityTest : AbstractNativeSimpleTest() {
     }
 
     private fun doCrossCompilationIdentityTest(testInfo: TestInfo) {
-        Assumptions.assumeTrue(isCrossDistAvailable())
+//        Assumptions.assumeTrue(isCrossDistAvailable())
         val testName = testInfo.testMethod.get().name.toString()
             .let { if (it.startsWith("test")) it.removePrefix("test") else it }
             .decapitalizeAsciiOnly()
@@ -77,7 +78,12 @@ abstract class KlibCrossCompilationIdentityTest : AbstractNativeSimpleTest() {
         }
         val testDataDir = File(testData.parent)
 
-        val compilationResult = compileLibrary(testRunSettings, testData).assertSuccess()
+        val compilationResult = compileLibrary(
+            testRunSettings,
+            testData,
+            packed = false,
+            freeCompilerArgs = listOf("-Xklib-relative-path-base=${testDataDir.canonicalPath}")
+        ).assertSuccess()
         val klib: TestCompilationArtifact.KLIB = compilationResult.resultingArtifact
 
         val metadataDump = klib.dumpMetadata(
@@ -91,12 +97,12 @@ abstract class KlibCrossCompilationIdentityTest : AbstractNativeSimpleTest() {
             testRunSettings.get<KotlinNativeClassLoader>().classLoader,
             printSignatures = true,
             signatureVersion = null
-        ).sanitizeIrDump(testDataDir)
+        )
         KotlinTestUtils.assertEqualsToFile(File(testDataDir, "$testName.ir.txt"), irDump)
 
         val defaultFolder = klib.klibFile.toPath().resolve("default")
         val irFolder = defaultFolder.resolve("ir")
-        val linkdataFolder = defaultFolder.resolve("ir")
+        val linkdataFolder = defaultFolder.resolve("linkdata")
         val irMd5 = irFolder.computeMd5()
         val linkdataMd5 = linkdataFolder.computeMd5()
 
@@ -110,16 +116,18 @@ abstract class KlibCrossCompilationIdentityTest : AbstractNativeSimpleTest() {
 
 
     companion object {
-        private const val TEST_DATA_ROOT_STUB = "<testdata-root>"
-
         @OptIn(ExperimentalStdlibApi::class)
         private fun Path.computeMd5(): String {
+            val base = toFile()
+            require(base.exists()) { "File doesn't exist: ${absolute()}" }
             val md = MessageDigest.getInstance("MD5")
-            toFile().walkTopDown().forEach { md.update(it.readBytes()) }
+            base.walkTopDown()
+                .filter { it.isFile }
+                .sortedBy { it.relativeTo(base) }
+                .forEach { md.update(it.readBytes()) }
+
             return md.digest().toHexString()
         }
-
-        private fun String.sanitizeIrDump(testDataRoot: File): String = replace(testDataRoot.canonicalPath, TEST_DATA_ROOT_STUB)
 
         private fun isCrossDistAvailable(): Boolean = false // TODO(KT-66968): need CI support
     }

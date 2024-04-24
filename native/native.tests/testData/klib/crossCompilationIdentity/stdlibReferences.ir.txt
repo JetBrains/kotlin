@@ -1,5 +1,5 @@
 MODULE_FRAGMENT name:<stdlibReferences>
-  FILE fqName:test fileName:<testdata-root>/stdlibReferences.kt
+  FILE fqName:test fileName:stdlibReferences.kt
     CLASS CLASS name:Foo signature:test/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Foo
       CONSTRUCTOR signature:test/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:test.Foo [primary]

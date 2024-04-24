@@ -1,5 +1,5 @@
 MODULE_FRAGMENT name:<simpleReferenceToDarwinApi>
-  FILE fqName:simple fileName:<testdata-root>/simpleReferenceToDarwinApi.kt
+  FILE fqName:simple fileName:simpleReferenceToDarwinApi.kt
     FUN name:use signature:simple/use|use(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl>
       BLOCK_BODY
         VAR name:x type:<unbound IrClassPublicSymbolImpl> [val]

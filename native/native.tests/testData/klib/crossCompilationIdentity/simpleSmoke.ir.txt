@@ -1,5 +1,5 @@
 MODULE_FRAGMENT name:<simpleSmoke>
-  FILE fqName:simple fileName:<testdata-root>/simpleSmoke.kt
+  FILE fqName:simple fileName:simpleSmoke.kt
     CLASS INTERFACE name:I signature:simple/I|null[0] modality:ABSTRACT visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:simple.I
       FUN name:interfaceFun signature:simple/I.interfaceFun|interfaceFun(kotlin.Int){}[0] visibility:public modality:ABSTRACT <> ($this:simple.I, default:<unbound IrClassPublicSymbolImpl>) returnType:<unbound IrClassPublicSymbolImpl>
