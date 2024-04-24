@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.Composi
 import org.jetbrains.kotlin.analysis.providers.impl.packageProviders.CompositeKotlinPackageProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 
@@ -73,8 +77,8 @@ internal class LLFirProviderHelper(
     val allowKotlinPackage: Boolean = canContainKotlinPackage ||
             firSession.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
-    private val classifierByClassId =
-        firSession.firCachesFactory.createCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> { classId, context ->
+    private val classifierByClassId: FirCache<KeyWithPsiContext<ClassId>, FirClassLikeDeclaration?, KtClassLikeDeclaration?> =
+        firSession.firCachesFactory.createCache { (classId, _), context ->
             require(context == null || context.isPhysical)
             val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return@createCache null
 
@@ -87,8 +91,8 @@ internal class LLFirProviderHelper(
                 }
         }
 
-    private val callablesByCallableId =
-        firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> { callableId, context ->
+    private val callablesByCallableId: FirCache<KeyWithPsiContext<CallableId>, List<FirCallableSymbol<*>>, Collection<KtFile>?> =
+        firSession.firCachesFactory.createCache { (callableId, _), context ->
             require(context == null || context.all { it.isPhysical })
             val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
             buildList {
@@ -113,13 +117,16 @@ internal class LLFirProviderHelper(
     ): FirClassLikeDeclaration? {
         if (classId.isLocal) return null
         if (!allowKotlinPackage && classId.isKotlinPackage()) return null
-        return classifierByClassId.getNotNullValueForNotNullContext(classId, classLikeDeclaration)
+        return classifierByClassId.getNotNullValueForNotNullContext(
+            KeyWithPsiContext.create(classId, classLikeDeclaration?.let(::setOf)),
+            classLikeDeclaration
+        )
     }
 
     fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         if (!allowKotlinPackage && packageFqName.isKotlinPackage()) return emptyList()
         val callableId = CallableId(packageFqName, name)
-        return callablesByCallableId.getValue(callableId)
+        return callablesByCallableId.getValue(KeyWithPsiContext.create(callableId))
     }
 
     /**
@@ -128,7 +135,7 @@ internal class LLFirProviderHelper(
      */
     fun getTopLevelCallableSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirCallableSymbol<*>> {
         if (!allowKotlinPackage && callableId.packageName.isKotlinPackage()) return emptyList()
-        return callablesByCallableId.getValue(callableId, callableFiles)
+        return callablesByCallableId.getValue(KeyWithPsiContext.create(callableId, callableFiles), callableFiles)
     }
 
     fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
@@ -163,3 +170,41 @@ internal class LLFirProviderHelper(
 
 private fun ClassId.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
 private fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+
+/**
+ * This class allows creating unique keys for an arbitrary [KEY] and a set of [PsiElement]s.
+ *
+ * This allows to use [FirCache] in a situation when the stored result should be associated not only with
+ * some immutable [key] value, but also with a set of [PsiElement]s supplied as a context.
+ *
+ * To not hold the strong references onto the [PsiElement]s, [SmartPsiElementPointer] is used.
+ *
+ * [contextPsiElementPointers] are not supposed to be used to create the cache's values; they are only
+ * needed to make the [KeyWithPsiContext] instances unique inside the cache.
+ *
+ * Do not use the constructor directly - use [create] method instead.
+ */
+private data class KeyWithPsiContext<KEY>(
+    val key: KEY,
+    val contextPsiElementPointers: Set<SmartPsiElementPointer<PsiElement>>?,
+) {
+    companion object {
+
+        /**
+         * N.B. When you call `create(key, null)` and `create(key, emptyList())`, it results in a pair of objects
+         * which are **not equal to each other**!
+         *
+         * Pay attention to that when you implement the value computation for your [FirCache].
+         */
+        fun <KEY> create(id: KEY, contextPsiElements: Collection<PsiElement>? = null): KeyWithPsiContext<KEY> {
+            val pointers = contextPsiElements
+                ?.map {
+                    @Suppress("DEPRECATION")
+                    it.createSmartPointer()
+                }
+                ?.toSet()
+
+            return KeyWithPsiContext(id, pointers)
+        }
+    }
+}
