@@ -4007,6 +4007,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("contextReceivers.kt")
+      public void testContextReceivers() {
+        runTest("compiler/testData/diagnostics/tests/builderInference/contextReceivers.kt");
+      }
+
+      @Test
       @TestMetadata("overloadResolutionByLambdaReturnType.kt")
       public void testOverloadResolutionByLambdaReturnType() {
         runTest("compiler/testData/diagnostics/tests/builderInference/overloadResolutionByLambdaReturnType.kt");
