@@ -12,8 +12,8 @@ FILE: a.kt
     }
 Module: b
 FILE: b.kt
-    public final val bar: R|Foo<kotlin/Int>?| = R|/C.C|<R|kotlin/Int|>().R|SubstitutionOverride</C.foo: R|Foo<kotlin/Int>?|>|
-        public get(): R|Foo<kotlin/Int>?|
+    public final val bar: R|{Foo<kotlin/Int>?=} kotlin/collections/List<kotlin/String>?| = R|/C.C|<R|kotlin/Int|>().R|SubstitutionOverride</C.foo: R|{Foo<kotlin/Int>?=} kotlin/collections/List<kotlin/String>?|>|
+        public get(): R|{Foo<kotlin/Int>?=} kotlin/collections/List<kotlin/String>?|
     public final fun box(): R|kotlin/String| {
         ^box String(OK)
     }

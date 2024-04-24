@@ -1,3 +1,7 @@
+// IGNORE_REVERSED_RESOLVE
+// IGNORE_NON_REVERSED_RESOLVE
+// ISSUE: KT-67743
+
 interface Diagnostic {
     val name: String
 }
