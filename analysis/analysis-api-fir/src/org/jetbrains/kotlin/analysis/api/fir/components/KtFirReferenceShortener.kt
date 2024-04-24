@@ -230,7 +230,7 @@ private enum class ImportKind {
     /** Star imported (star import) by Kotlin default. */
     DEFAULT_STAR;
 
-    infix fun hasHigherPriorityThan(that: ImportKind): Boolean = this < that
+    fun hasHigherPriorityThan(that: ImportKind): Boolean = this < that
 
     companion object {
         fun fromScope(scope: FirScope): ImportKind {
