@@ -30,6 +30,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.isUncertain
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
 import androidx.compose.compiler.plugins.kotlin.irTrace
+import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer.ComposeDefaultValueStubOrigin
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.DecoyFqNames
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -702,6 +703,12 @@ class ComposableFunctionBodyTransformer(
         val scope = currentFunctionScope
         // if the function isn't composable, there's nothing to do
         if (!scope.isComposable) return super.visitFunction(declaration)
+        if (declaration.origin == ComposeDefaultValueStubOrigin) {
+            // this is a synthetic function stub, don't touch the body, only remove the stub origin
+            declaration.origin = IrDeclarationOrigin.DEFINED
+            return declaration
+        }
+
         val restartable = declaration.shouldBeRestartable()
         val isLambda = declaration.isLambda()
 

@@ -149,6 +149,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -178,6 +179,12 @@ abstract class AbstractComposeLowering(
 
     protected val composableIrClass: IrClass
         get() = symbolRemapper.getReferencedClass(_composableIrClass.symbol).owner
+
+    protected val jvmSyntheticIrClass by guardedLazy {
+        context.referenceClass(
+            ClassId(StandardClassIds.BASE_JVM_PACKAGE, Name.identifier("JvmSynthetic"))
+        )!!.owner
+    }
 
     fun referenceFunction(symbol: IrFunctionSymbol): IrFunctionSymbol {
         return symbolRemapper.getReferencedFunction(symbol)
