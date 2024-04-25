@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>test_return<!>(): Int {
     return 0
     return 1

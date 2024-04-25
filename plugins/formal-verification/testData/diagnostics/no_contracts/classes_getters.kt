@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 class Foo(val a: Int, val b: Int)
 
 class Bar(val f: Foo)

@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>while_loop<!>(b: Boolean): Boolean {
     while (b) {
         val a = 1

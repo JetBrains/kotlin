@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 class Foo(val x: Int) {
     fun <!VIPER_TEXT!>member_fun<!>(): Int {
         return x

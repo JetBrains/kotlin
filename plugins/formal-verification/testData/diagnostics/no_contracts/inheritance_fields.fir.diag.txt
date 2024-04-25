@@ -1,4 +1,4 @@
-/inheritance_fields.kt:(208,215): info: Generated Viper text for createB:
+/inheritance_fields.kt:(227,234): info: Generated Viper text for createB:
 field class_A$member_fieldNotOverride: Ref
 
 field class_A$member_fieldOverride: Ref
@@ -39,7 +39,7 @@ method global$fun_createB$fun_take$$return$T_Unit() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/inheritance_fields.kt:(680,696): info: Generated Viper text for createBFsAndNoBF:
+/inheritance_fields.kt:(699,715): info: Generated Viper text for createBFsAndNoBF:
 field class_FirstBackingFieldClass$member_x: Ref
 
 method class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
@@ -91,7 +91,7 @@ method global$fun_createBFsAndNoBF$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/inheritance_fields.kt:(1019,1026): info: Generated Viper text for createY:
+/inheritance_fields.kt:(1038,1045): info: Generated Viper text for createY:
 field class_X$member_a: Ref
 
 method class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(local$a: Ref)

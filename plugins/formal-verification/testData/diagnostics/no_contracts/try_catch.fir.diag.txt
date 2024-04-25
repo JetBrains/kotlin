@@ -1,4 +1,4 @@
-/try_catch.kt:(139,148): info: Generated Viper text for try_catch:
+/try_catch.kt:(158,167): info: Generated Viper text for try_catch:
 field pkg$kotlin$class_String$member_length: Ref
 
 field pkg$kotlin$class_Throwable$member_cause: Ref
@@ -43,7 +43,7 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-/try_catch.kt:(253,269): info: Generated Viper text for nested_try_catch:
+/try_catch.kt:(272,288): info: Generated Viper text for nested_try_catch:
 field pkg$kotlin$class_String$member_length: Ref
 
 field pkg$kotlin$class_Throwable$member_cause: Ref
@@ -102,7 +102,7 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-/try_catch.kt:(559,580): info: Generated Viper text for try_catch_with_inline:
+/try_catch.kt:(578,599): info: Generated Viper text for try_catch_with_inline:
 field pkg$kotlin$class_String$member_length: Ref
 
 field pkg$kotlin$class_Throwable$member_cause: Ref
@@ -150,7 +150,7 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-/try_catch.kt:(674,693): info: Generated Viper text for try_catch_shadowing:
+/try_catch.kt:(693,712): info: Generated Viper text for try_catch_shadowing:
 field pkg$kotlin$class_String$member_length: Ref
 
 field pkg$kotlin$class_Throwable$member_cause: Ref
@@ -191,7 +191,7 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-/try_catch.kt:(804,820): info: Generated Viper text for multiple_catches:
+/try_catch.kt:(823,839): info: Generated Viper text for multiple_catches:
 field pkg$kotlin$class_String$member_length: Ref
 
 field pkg$kotlin$class_Throwable$member_cause: Ref
@@ -250,7 +250,7 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-/try_catch.kt:(1036,1049): info: Generated Viper text for use_exception:
+/try_catch.kt:(1055,1068): info: Generated Viper text for use_exception:
 field pkg$kotlin$class_String$member_length: Ref
 
 field pkg$kotlin$class_Throwable$member_cause: Ref
@@ -299,4 +299,3 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
-

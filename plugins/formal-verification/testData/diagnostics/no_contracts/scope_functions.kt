@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>use_run<!>() {
     val x: Int
     run {

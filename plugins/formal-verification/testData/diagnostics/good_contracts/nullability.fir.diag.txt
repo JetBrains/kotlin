@@ -1,4 +1,4 @@
-/nullability.kt:(4,15): info: Generated Viper text for return_null:
+/nullability.kt:(24,35): info: Generated Viper text for return_null:
 method global$fun_return_null$fun_take$$return$NT_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))

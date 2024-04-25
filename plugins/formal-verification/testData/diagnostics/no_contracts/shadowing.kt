@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>shadow_local<!>(): Unit {
     var foo: Int
     val x = 0

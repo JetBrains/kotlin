@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 class Foo(var x: Int)
 
 fun <!VIPER_TEXT!>get_foo<!>(): Foo = Foo(0)

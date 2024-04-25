@@ -1,4 +1,4 @@
-/inlining_captured.kt:(136,147): info: Generated Viper text for capture_arg:
+/inlining_captured.kt:(155,166): info: Generated Viper text for capture_arg:
 method global$fun_capture_arg$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
   returns (ret$0: Ref)
   requires acc(local$g.special$function_object_call_counter, write)
@@ -29,7 +29,7 @@ method global$fun_capture_arg$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
   label label$ret$0
 }
 
-/inlining_captured.kt:(207,218): info: Generated Viper text for capture_var:
+/inlining_captured.kt:(226,237): info: Generated Viper text for capture_var:
 method global$fun_capture_var$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -50,7 +50,7 @@ method global$fun_capture_var$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/inlining_captured.kt:(278,296): info: Generated Viper text for capture_and_shadow:
+/inlining_captured.kt:(297,315): info: Generated Viper text for capture_and_shadow:
 method global$fun_capture_and_shadow$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -75,7 +75,7 @@ method global$fun_capture_and_shadow$fun_take$T_Int$return$T_Int(local$x: Ref)
   label label$ret$0
 }
 
-/inlining_captured.kt:(499,516): info: Generated Viper text for capture_var_clash:
+/inlining_captured.kt:(518,535): info: Generated Viper text for capture_var_clash:
 method global$fun_capture_var_clash$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -100,7 +100,7 @@ method global$fun_capture_var_clash$fun_take$T_Int$return$T_Int(local$x: Ref)
   label label$ret$0
 }
 
-/inlining_captured.kt:(574,598): info: Generated Viper text for capture_and_shadow_clash:
+/inlining_captured.kt:(593,617): info: Generated Viper text for capture_and_shadow_clash:
 method global$fun_capture_and_shadow_clash$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -129,7 +129,7 @@ method global$fun_capture_and_shadow_clash$fun_take$T_Int$return$T_Int(local$x: 
   label label$ret$0
 }
 
-/inlining_captured.kt:(708,731): info: Generated Viper text for nested_lambda_shadowing:
+/inlining_captured.kt:(727,750): info: Generated Viper text for nested_lambda_shadowing:
 method global$fun_nested_lambda_shadowing$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -174,7 +174,7 @@ method global$fun_nested_lambda_shadowing$fun_take$T_Int$return$T_Int(local$x: R
   label label$ret$0
 }
 
-/inlining_captured.kt:(1006,1024): info: Generated Viper text for call_double_invoke:
+/inlining_captured.kt:(1025,1043): info: Generated Viper text for call_double_invoke:
 method global$fun_call_double_invoke$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())

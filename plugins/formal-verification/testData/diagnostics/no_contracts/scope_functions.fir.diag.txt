@@ -1,4 +1,4 @@
-/scope_functions.kt:(4,11): info: Generated Viper text for use_run:
+/scope_functions.kt:(23,30): info: Generated Viper text for use_run:
 method global$fun_use_run$fun_take$$return$T_Unit() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {

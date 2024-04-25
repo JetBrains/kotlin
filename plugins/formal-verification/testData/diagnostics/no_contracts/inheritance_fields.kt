@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 open class FieldA
 open class FieldB : FieldA()
 class C

@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>smart_cast<!>(x: Int?): Int {
     if (x == null) {
         return 0

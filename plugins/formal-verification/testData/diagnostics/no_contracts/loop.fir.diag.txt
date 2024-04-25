@@ -1,4 +1,4 @@
-/loop.kt:(4,14): info: Generated Viper text for while_loop:
+/loop.kt:(23,33): info: Generated Viper text for while_loop:
 method global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(local$b: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
@@ -22,7 +22,7 @@ method global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(local$b: Ref)
   label label$ret$0
 }
 
-/loop.kt:(120,144): info: Generated Viper text for while_function_condition:
+/loop.kt:(139,163): info: Generated Viper text for while_function_condition:
 method global$fun_while_function_condition$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())

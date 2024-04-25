@@ -1,4 +1,4 @@
-/comparison.kt:(4,8): info: Generated Viper text for less:
+/comparison.kt:(23,27): info: Generated Viper text for less:
 method global$fun_less$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref, local$y: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
@@ -10,7 +10,7 @@ method global$fun_less$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref, local
   label label$ret$0
 }
 
-/comparison.kt:(60,70): info: Generated Viper text for less_equal:
+/comparison.kt:(79,89): info: Generated Viper text for less_equal:
 method global$fun_less_equal$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
   local$y: Ref)
   returns (ret$0: Ref)
@@ -23,7 +23,7 @@ method global$fun_less_equal$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
   label label$ret$0
 }
 
-/comparison.kt:(123,130): info: Generated Viper text for greater:
+/comparison.kt:(142,149): info: Generated Viper text for greater:
 method global$fun_greater$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
   local$y: Ref)
   returns (ret$0: Ref)
@@ -36,7 +36,7 @@ method global$fun_greater$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
   label label$ret$0
 }
 
-/comparison.kt:(182,195): info: Generated Viper text for greater_equal:
+/comparison.kt:(201,214): info: Generated Viper text for greater_equal:
 method global$fun_greater_equal$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
   local$y: Ref)
   returns (ret$0: Ref)

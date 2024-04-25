@@ -1,4 +1,4 @@
-/any.kt:(4,23): info: Generated Viper text for any_argument_return:
+/any.kt:(23,42): info: Generated Viper text for any_argument_return:
 method global$fun_any_argument_return$fun_take$T_Any$return$T_Any(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$anyType())
@@ -9,7 +9,7 @@ method global$fun_any_argument_return$fun_take$T_Any$return$T_Any(local$x: Ref)
   label label$ret$0
 }
 
-/any.kt:(59,67): info: Generated Viper text for any_cast:
+/any.kt:(78,86): info: Generated Viper text for any_cast:
 method global$fun_any_cast$fun_take$T_Int$return$T_Any(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$anyType())

@@ -1,4 +1,4 @@
-/function_call.kt:(99,112): info: Generated Viper text for function_call:
+/function_call.kt:(118,131): info: Generated Viper text for function_call:
 method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
@@ -16,7 +16,7 @@ method global$fun_function_call$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/function_call.kt:(142,162): info: Generated Viper text for function_call_nested:
+/function_call.kt:(161,181): info: Generated Viper text for function_call_nested:
 method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())

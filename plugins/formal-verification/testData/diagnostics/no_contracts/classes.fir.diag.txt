@@ -1,4 +1,4 @@
-/classes.kt:(39,48): info: Generated Viper text for createFoo:
+/classes.kt:(58,67): info: Generated Viper text for createFoo:
 field class_Foo$member_a: Ref
 
 field class_Foo$member_b: Ref
@@ -31,7 +31,7 @@ method global$fun_createFoo$fun_take$$return$T_class_global$class_Foo()
   label label$ret$0
 }
 
-/classes.kt:(165,174): info: Generated Viper text for createBar:
+/classes.kt:(184,193): info: Generated Viper text for createBar:
 field class_Bar$member_a: Ref
 
 method class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_global$class_Bar(local$a: Ref)
@@ -54,7 +54,7 @@ method global$fun_createBar$fun_take$$return$T_Unit() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/classes.kt:(254,263): info: Generated Viper text for createBaz:
+/classes.kt:(273,282): info: Generated Viper text for createBaz:
 field class_Baz$member_a: Ref
 
 field class_Baz$member_c: Ref

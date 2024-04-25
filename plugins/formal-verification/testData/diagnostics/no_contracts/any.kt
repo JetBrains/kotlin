@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>any_argument_return<!>(x: Any): Any {
     return x
 }

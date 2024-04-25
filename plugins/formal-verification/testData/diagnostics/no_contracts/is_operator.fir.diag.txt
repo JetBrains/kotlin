@@ -1,4 +1,4 @@
-/is_operator.kt:(4,19): info: Generated Viper text for is_non_nullable:
+/is_operator.kt:(23,38): info: Generated Viper text for is_non_nullable:
 method global$fun_is_non_nullable$fun_take$NT_Int$return$T_Boolean(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
@@ -10,7 +10,7 @@ method global$fun_is_non_nullable$fun_take$NT_Int$return$T_Boolean(local$x: Ref)
   label label$ret$0
 }
 
-/is_operator.kt:(67,82): info: Generated Viper text for not_is_nullable:
+/is_operator.kt:(86,101): info: Generated Viper text for not_is_nullable:
 method global$fun_not_is_nullable$fun_take$NT_Int$return$T_Boolean(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
@@ -22,7 +22,7 @@ method global$fun_not_is_nullable$fun_take$NT_Int$return$T_Boolean(local$x: Ref)
   label label$ret$0
 }
 
-/is_operator.kt:(135,145): info: Generated Viper text for smart_cast:
+/is_operator.kt:(154,164): info: Generated Viper text for smart_cast:
 method global$fun_smart_cast$fun_take$NT_Any$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())

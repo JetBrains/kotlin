@@ -1,4 +1,4 @@
-/extension_function.kt:(8,11): info: Generated Viper text for inc:
+/extension_function.kt:(27,30): info: Generated Viper text for inc:
 method global$fun_inc$fun_take$T_Int$return$T_Int(this: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -9,7 +9,7 @@ method global$fun_inc$fun_take$T_Int$return$T_Int(this: Ref)
   label label$ret$0
 }
 
-/extension_function.kt:(35,56): info: Generated Viper text for extension_method_call:
+/extension_function.kt:(54,75): info: Generated Viper text for extension_method_call:
 method global$fun_extension_method_call$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())

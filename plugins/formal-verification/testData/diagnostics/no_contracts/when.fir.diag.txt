@@ -1,4 +1,4 @@
-/when.kt:(4,15): info: Generated Viper text for return_when:
+/when.kt:(23,34): info: Generated Viper text for return_when:
 method global$fun_return_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
   local$b: Ref, local$c: Ref)
   returns (ret$0: Ref)
@@ -19,7 +19,7 @@ method global$fun_return_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_In
   label label$ret$0
 }
 
-/when.kt:(153,164): info: Generated Viper text for when_return:
+/when.kt:(172,183): info: Generated Viper text for when_return:
 method global$fun_when_return$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
   local$b: Ref, local$c: Ref)
   returns (ret$0: Ref)
@@ -44,7 +44,7 @@ method global$fun_when_return$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_In
   label label$ret$0
 }
 
-/when.kt:(323,341): info: Generated Viper text for single_branch_when:
+/when.kt:(342,360): info: Generated Viper text for single_branch_when:
 method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -60,7 +60,7 @@ method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Re
   label label$ret$0
 }
 
-/when.kt:(431,443): info: Generated Viper text for no_else_when:
+/when.kt:(450,462): info: Generated Viper text for no_else_when:
 method global$fun_no_else_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
   local$b: Ref, local$c: Ref)
   returns (ret$0: Ref)
@@ -83,7 +83,7 @@ method global$fun_no_else_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_I
   label label$ret$0
 }
 
-/when.kt:(595,616): info: Generated Viper text for when_with_subject_var:
+/when.kt:(614,635): info: Generated Viper text for when_with_subject_var:
 method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -101,7 +101,7 @@ method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Ref
   label label$ret$0
 }
 
-/when.kt:(716,738): info: Generated Viper text for when_with_subject_call:
+/when.kt:(735,757): info: Generated Viper text for when_with_subject_call:
 method global$fun_when_with_subject_call$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -132,7 +132,7 @@ method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Ref
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-/when.kt:(962,972): info: Generated Viper text for empty_when:
+/when.kt:(981,991): info: Generated Viper text for empty_when:
 method global$fun_empty_when$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -141,7 +141,7 @@ method global$fun_empty_when$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/when.kt:(1015,1028): info: Generated Viper text for unused_result:
+/when.kt:(1034,1047): info: Generated Viper text for unused_result:
 method global$fun_unused_result$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -153,7 +153,7 @@ method global$fun_unused_result$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/when.kt:(1222,1229): info: Generated Viper text for when_is:
+/when.kt:(1241,1248): info: Generated Viper text for when_is:
 method global$fun_when_is$fun_take$T_class_global$class_Foo$return$T_Boolean(local$x: Ref)
   returns (ret$0: Ref)
   requires acc(T_class_global$class_Foo(local$x), wildcard)
@@ -171,7 +171,7 @@ method global$fun_when_is$fun_take$T_class_global$class_Foo$return$T_Boolean(loc
   label label$ret$0
 }
 
-/when.kt:(1303,1319): info: Generated Viper text for when_subject_val:
+/when.kt:(1322,1338): info: Generated Viper text for when_subject_val:
 method global$fun_when_subject_val$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -186,7 +186,7 @@ method global$fun_when_subject_val$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/when.kt:(1396,1419): info: Generated Viper text for when_subject_val_nested:
+/when.kt:(1415,1438): info: Generated Viper text for when_subject_val_nested:
 method global$fun_when_subject_val_nested$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -218,7 +218,7 @@ method global$fun_when_subject_val_nested$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/when.kt:(1681,1707): info: Generated Viper text for when_subject_var_shadowing:
+/when.kt:(1700,1726): info: Generated Viper text for when_subject_var_shadowing:
 method global$fun_when_subject_var_shadowing$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())

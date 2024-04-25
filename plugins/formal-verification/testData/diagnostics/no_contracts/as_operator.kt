@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 open class Foo
 class Bar : Foo()
 

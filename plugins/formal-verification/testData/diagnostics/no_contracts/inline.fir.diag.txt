@@ -1,4 +1,4 @@
-/inline.kt:(211,220): info: Generated Viper text for quadruple:
+/inline.kt:(230,239): info: Generated Viper text for quadruple:
 method global$fun_quadruple$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -25,7 +25,7 @@ method global$fun_quadruple$fun_take$T_Int$return$T_Int(local$x: Ref)
   label label$ret$0
 }
 
-/inline.kt:(450,463): info: Generated Viper text for use_branching:
+/inline.kt:(469,482): info: Generated Viper text for use_branching:
 method global$fun_use_branching$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())

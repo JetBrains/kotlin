@@ -1,4 +1,4 @@
-/classes_getters.kt:(195,205): info: Generated Viper text for testGetter:
+/classes_getters.kt:(214,224): info: Generated Viper text for testGetter:
 field class_IntWrapper$member_n: Ref
 
 method class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(local$n: Ref)
@@ -25,7 +25,7 @@ method global$fun_testGetter$fun_take$$return$T_Unit() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/classes_getters.kt:(278,295): info: Generated Viper text for testCascadeGetter:
+/classes_getters.kt:(297,314): info: Generated Viper text for testCascadeGetter:
 field class_Bar$member_f: Ref
 
 field class_Foo$member_a: Ref
@@ -75,7 +75,7 @@ method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/classes_getters.kt:(401,425): info: Generated Viper text for testCascadeCustomGetters:
+/classes_getters.kt:(420,444): info: Generated Viper text for testCascadeCustomGetters:
 field class_IntWrapper$member_n: Ref
 
 field class_IntWrapperContainer$member_i: Ref

@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>is_non_nullable<!>(x: Int?): Boolean {
     return x is Int
 }

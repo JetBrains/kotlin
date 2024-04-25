@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>return_when<!>(a: Boolean, b: Boolean, c: Boolean): Int {
     return when {
         a -> 0

@@ -1,4 +1,4 @@
-/generics.kt:(33,46): info: Generated Viper text for genericMethod:
+/generics.kt:(52,65): info: Generated Viper text for genericMethod:
 field class_Box$member_t: Ref
 
 method class_Box$fun_genericMethod$fun_take$T_class_global$class_Box$NT_Any$return$NT_Any(this: Ref,
@@ -15,7 +15,7 @@ method class_Box$fun_genericMethod$fun_take$T_class_global$class_Box$NT_Any$retu
   label label$ret$0
 }
 
-/generics.kt:(88,97): info: Generated Viper text for createBox:
+/generics.kt:(107,116): info: Generated Viper text for createBox:
 field class_Box$member_t: Ref
 
 method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: Ref)
@@ -48,7 +48,7 @@ method global$fun_createBox$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/generics.kt:(208,223): info: Generated Viper text for setGenericField:
+/generics.kt:(227,242): info: Generated Viper text for setGenericField:
 field class_Box$member_t: Ref
 
 method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: Ref)
@@ -70,7 +70,7 @@ method global$fun_setGenericField$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/generics.kt:(274,284): info: Generated Viper text for genericFun:
+/generics.kt:(293,303): info: Generated Viper text for genericFun:
 method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
@@ -81,7 +81,7 @@ method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: Ref)
   label label$ret$0
 }
 
-/generics.kt:(303,318): info: Generated Viper text for callGenericFunc:
+/generics.kt:(322,337): info: Generated Viper text for callGenericFunc:
 method global$fun_callGenericFunc$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -99,7 +99,7 @@ method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
 
 
-/generics.kt:(356,376): info: Generated Viper text for genericAsIfCondition:
+/generics.kt:(375,395): info: Generated Viper text for genericAsIfCondition:
 field class_Box$member_t: Ref
 
 method global$fun_genericAsIfCondition$fun_take$T_class_global$class_Box$return$T_Int(local$box: Ref)

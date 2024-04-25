@@ -1,4 +1,4 @@
-/as_operator.kt:(38,44): info: Generated Viper text for testAs:
+/as_operator.kt:(57,63): info: Generated Viper text for testAs:
 method global$fun_testAs$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local$foo: Ref)
   returns (ret$0: Ref)
   requires acc(T_class_global$class_Foo(local$foo), wildcard)
@@ -14,7 +14,7 @@ method global$fun_testAs$fun_take$T_class_global$class_Foo$return$T_class_global
   label label$ret$0
 }
 
-/as_operator.kt:(78,92): info: Generated Viper text for testNullableAs:
+/as_operator.kt:(97,111): info: Generated Viper text for testNullableAs:
 method global$fun_testNullableAs$fun_take$NT_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: Ref)
   returns (ret$0: Ref)
   requires local$foo != dom$RuntimeType$nullValue() ==>
@@ -34,7 +34,7 @@ method global$fun_testNullableAs$fun_take$NT_class_global$class_Foo$return$NT_cl
   label label$ret$0
 }
 
-/as_operator.kt:(129,139): info: Generated Viper text for testSafeAs:
+/as_operator.kt:(148,158): info: Generated Viper text for testSafeAs:
 method global$fun_testSafeAs$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: Ref)
   returns (ret$0: Ref)
   requires acc(T_class_global$class_Foo(local$foo), wildcard)
@@ -55,7 +55,7 @@ method global$fun_testSafeAs$fun_take$T_class_global$class_Foo$return$NT_class_g
   label label$ret$0
 }
 
-/as_operator.kt:(175,193): info: Generated Viper text for testNullableSafeAs:
+/as_operator.kt:(194,212): info: Generated Viper text for testNullableSafeAs:
 method global$fun_testNullableSafeAs$fun_take$NT_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: Ref)
   returns (ret$0: Ref)
   requires local$foo != dom$RuntimeType$nullValue() ==>

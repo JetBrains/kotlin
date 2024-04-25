@@ -1,4 +1,4 @@
-/non-local-returns.kt:(136,149): info: Generated Viper text for simple_return:
+/non-local-returns.kt:(155,168): info: Generated Viper text for simple_return:
 method global$fun_simple_return$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -20,7 +20,7 @@ method global$fun_simple_return$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/non-local-returns.kt:(220,236): info: Generated Viper text for return_at_inline:
+/non-local-returns.kt:(239,255): info: Generated Viper text for return_at_inline:
 method global$fun_return_at_inline$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -42,7 +42,7 @@ method global$fun_return_at_inline$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/non-local-returns.kt:(314,327): info: Generated Viper text for double_invoke:
+/non-local-returns.kt:(333,346): info: Generated Viper text for double_invoke:
 method global$fun_double_invoke$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -76,7 +76,7 @@ method global$fun_double_invoke$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/non-local-returns.kt:(552,558): info: Generated Viper text for nested:
+/non-local-returns.kt:(571,577): info: Generated Viper text for nested:
 method global$fun_nested$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {

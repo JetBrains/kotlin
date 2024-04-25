@@ -1,4 +1,4 @@
-/full_viper_dump.kt:(134,135): info: Generated Viper text for f:
+/full_viper_dump.kt:(172,173): info: Generated Viper text for f:
 domain dom$RuntimeType  {
 
   unique function dom$RuntimeType$intType(): dom$RuntimeType
@@ -315,7 +315,7 @@ method special$invoke_function_object(anonymous$0: Ref)
     anonymous$0.special$function_object_call_counter
 
 
-/full_viper_dump.kt:(134,135): info: Generated ExpEmbedding for global$fun_f$fun_take$$return$T_Unit:
+/full_viper_dump.kt:(172,173): info: Generated ExpEmbedding for global$fun_f$fun_take$$return$T_Unit:
 Function(
     name = global$fun_f$fun_take$$return$T_Unit,
     {

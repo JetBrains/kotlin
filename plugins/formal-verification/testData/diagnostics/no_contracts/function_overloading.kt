@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 class Foo
 class Bar {
     fun <!VIPER_TEXT!>baz<!>(f: Foo) {  }

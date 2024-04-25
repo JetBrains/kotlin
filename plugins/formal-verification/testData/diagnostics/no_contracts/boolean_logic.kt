@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>negation<!>(x: Boolean): Boolean {
     return !x
 }

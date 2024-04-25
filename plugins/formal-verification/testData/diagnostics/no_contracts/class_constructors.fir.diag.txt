@@ -1,4 +1,4 @@
-/class_constructors.kt:(389,411): info: Generated Viper text for onlySecondConstructors:
+/class_constructors.kt:(408,430): info: Generated Viper text for onlySecondConstructors:
 field class_Foo$member_a: Ref
 
 method class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Ref)
@@ -44,7 +44,7 @@ method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/class_constructors.kt:(590,617): info: Generated Viper text for primaryAndSecondConstructor:
+/class_constructors.kt:(609,636): info: Generated Viper text for primaryAndSecondConstructor:
 field class_Bar$member_a: Ref
 
 method class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Ref)

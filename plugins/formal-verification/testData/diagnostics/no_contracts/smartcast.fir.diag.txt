@@ -1,4 +1,4 @@
-/smartcast.kt:(4,19): info: Generated Viper text for smartcastReturn:
+/smartcast.kt:(23,38): info: Generated Viper text for smartcastReturn:
 method global$fun_smartcastReturn$fun_take$NT_Int$return$T_Int(local$n: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -12,7 +12,7 @@ method global$fun_smartcastReturn$fun_take$NT_Int$return$T_Int(local$n: Ref)
   label label$ret$0
 }
 
-/smartcast.kt:(69,87): info: Generated Viper text for isNullOrEmptyWrong:
+/smartcast.kt:(88,106): info: Generated Viper text for isNullOrEmptyWrong:
 method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean(local$seq: Ref)
   returns (ret$0: Ref)
   requires local$seq != dom$RuntimeType$nullValue() ==>
@@ -43,4 +43,3 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
-

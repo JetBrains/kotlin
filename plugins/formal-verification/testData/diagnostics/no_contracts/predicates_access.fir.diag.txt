@@ -1,4 +1,4 @@
-/predicates_access.kt:(209,232): info: Generated Viper text for accessSuperTypeProperty:
+/predicates_access.kt:(249,272): info: Generated Viper text for accessSuperTypeProperty:
 field class_A$member_a: Ref
 
 field class_B$member_b: Ref
@@ -55,7 +55,7 @@ method global$fun_accessSuperTypeProperty$fun_take$T_class_global$class_C$return
   label label$ret$0
 }
 
-/predicates_access.kt:(266,278): info: Generated Viper text for accessNested:
+/predicates_access.kt:(306,318): info: Generated Viper text for accessNested:
 field class_A$member_a: Ref
 
 field class_B$member_b: Ref
@@ -113,7 +113,7 @@ method global$fun_accessNested$fun_take$T_class_global$class_C$return$T_Unit(loc
   label label$ret$0
 }
 
-/predicates_access.kt:(314,328): info: Generated Viper text for accessNullable:
+/predicates_access.kt:(354,368): info: Generated Viper text for accessNullable:
 field class_A$member_a: Ref
 
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
@@ -140,7 +140,7 @@ method global$fun_accessNullable$fun_take$NT_class_global$class_A$return$T_Unit(
   label label$ret$0
 }
 
-/predicates_access.kt:(402,412): info: Generated Viper text for accessCast:
+/predicates_access.kt:(442,452): info: Generated Viper text for accessCast:
 field class_A$member_a: Ref
 
 field class_B$member_b: Ref
@@ -176,7 +176,7 @@ method global$fun_accessCast$fun_take$T_class_global$class_A$return$T_Unit(local
   label label$ret$0
 }
 
-/predicates_access.kt:(461,475): info: Generated Viper text for accessSafeCast:
+/predicates_access.kt:(501,515): info: Generated Viper text for accessSafeCast:
 field class_A$member_a: Ref
 
 field class_B$member_b: Ref
@@ -219,7 +219,7 @@ method global$fun_accessSafeCast$fun_take$T_class_global$class_A$return$T_Unit(l
   label label$ret$0
 }
 
-/predicates_access.kt:(572,587): info: Generated Viper text for accessSmartCast:
+/predicates_access.kt:(612,627): info: Generated Viper text for accessSmartCast:
 field class_A$member_a: Ref
 
 field class_B$member_b: Ref

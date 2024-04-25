@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 open class Foo(val x: Int) {
     val y: Int = 3
     var b = false

@@ -1,4 +1,4 @@
-/recursion.kt:(4,13): info: Generated Viper text for recursive:
+/recursion.kt:(23,32): info: Generated Viper text for recursive:
 method global$fun_recursive$fun_take$$return$T_Unit() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {

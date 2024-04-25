@@ -1,4 +1,4 @@
-/return_break_continue.kt:(4,15): info: Generated Viper text for test_return:
+/return_break_continue.kt:(23,34): info: Generated Viper text for test_return:
 method global$fun_test_return$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -9,7 +9,7 @@ method global$fun_test_return$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/return_break_continue.kt:(58,74): info: Generated Viper text for return_from_loop:
+/return_break_continue.kt:(77,93): info: Generated Viper text for return_from_loop:
 method global$fun_return_from_loop$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -30,7 +30,7 @@ method global$fun_return_from_loop$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/return_break_continue.kt:(146,157): info: Generated Viper text for while_break:
+/return_break_continue.kt:(165,176): info: Generated Viper text for while_break:
 method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -54,7 +54,7 @@ method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Ref)
   label label$ret$0
 }
 
-/return_break_continue.kt:(261,275): info: Generated Viper text for while_continue:
+/return_break_continue.kt:(280,294): info: Generated Viper text for while_continue:
 method global$fun_while_continue$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -76,7 +76,7 @@ method global$fun_while_continue$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/return_break_continue.kt:(361,373): info: Generated Viper text for while_nested:
+/return_break_continue.kt:(380,392): info: Generated Viper text for while_nested:
 method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -117,7 +117,7 @@ method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
   label label$ret$0
 }
 
-/return_break_continue.kt:(543,557): info: Generated Viper text for labelled_break:
+/return_break_continue.kt:(562,576): info: Generated Viper text for labelled_break:
 method global$fun_labelled_break$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -150,7 +150,7 @@ method global$fun_labelled_break$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
   label label$ret$0
 }
 
-/return_break_continue.kt:(742,759): info: Generated Viper text for labelled_continue:
+/return_break_continue.kt:(761,778): info: Generated Viper text for labelled_continue:
 method global$fun_labelled_continue$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -183,7 +183,7 @@ method global$fun_labelled_continue$fun_take$T_Boolean$return$T_Unit(local$b: Re
   label label$ret$0
 }
 
-/return_break_continue.kt:(959,983): info: Generated Viper text for labelled_while_shadowing:
+/return_break_continue.kt:(978,1002): info: Generated Viper text for labelled_while_shadowing:
 method global$fun_labelled_while_shadowing$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())

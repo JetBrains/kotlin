@@ -1,4 +1,4 @@
-/boolean_logic.kt:(4,12): info: Generated Viper text for negation:
+/boolean_logic.kt:(23,31): info: Generated Viper text for negation:
 method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
@@ -9,7 +9,7 @@ method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Ref)
   label label$ret$0
 }
 
-/boolean_logic.kt:(56,67): info: Generated Viper text for conjunction:
+/boolean_logic.kt:(75,86): info: Generated Viper text for conjunction:
 method global$fun_conjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Ref,
   local$y: Ref)
   returns (ret$0: Ref)
@@ -25,7 +25,7 @@ method global$fun_conjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(loca
   label label$ret$0
 }
 
-/boolean_logic.kt:(127,151): info: Generated Viper text for conjunction_side_effects:
+/boolean_logic.kt:(146,170): info: Generated Viper text for conjunction_side_effects:
 method global$fun_conjunction_side_effects$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Ref,
   local$y: Ref)
   returns (ret$0: Ref)
@@ -48,7 +48,7 @@ method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
 
 
-/boolean_logic.kt:(324,335): info: Generated Viper text for disjunction:
+/boolean_logic.kt:(343,354): info: Generated Viper text for disjunction:
 method global$fun_disjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Ref,
   local$y: Ref)
   returns (ret$0: Ref)

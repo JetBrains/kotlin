@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 val Int.succ: Int get() = this + 1
 
 var Int.strange: Int

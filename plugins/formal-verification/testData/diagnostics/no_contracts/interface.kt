@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 interface Foo {
     var varProp: Int
     val valProp: Int

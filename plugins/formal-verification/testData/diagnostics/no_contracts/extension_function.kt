@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun Int.<!VIPER_TEXT!>inc<!>(): Int = this + 1
 
 fun <!VIPER_TEXT!>extension_method_call<!>() {

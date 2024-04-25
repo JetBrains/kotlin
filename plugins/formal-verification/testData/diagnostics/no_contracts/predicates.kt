@@ -1,3 +1,6 @@
+// RENDER_PREDICATES
+// NEVER_VALIDATE
+
 open class Baz()
 
 class Foo(val x: Int, var y: Int)

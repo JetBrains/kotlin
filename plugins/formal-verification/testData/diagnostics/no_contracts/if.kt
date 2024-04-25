@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>simple_if<!>(): Int {
     if (true) {
         return 0

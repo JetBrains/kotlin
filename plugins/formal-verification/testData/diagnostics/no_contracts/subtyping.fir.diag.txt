@@ -1,4 +1,4 @@
-/subtyping.kt:(4,14): info: Generated Viper text for smart_cast:
+/subtyping.kt:(23,33): info: Generated Viper text for smart_cast:
 method global$fun_smart_cast$fun_take$NT_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -14,7 +14,7 @@ method global$fun_smart_cast$fun_take$NT_Int$return$T_Int(local$x: Ref)
   label label$ret$0
 }
 
-/subtyping.kt:(112,128): info: Generated Viper text for return_subtyping:
+/subtyping.kt:(131,147): info: Generated Viper text for return_subtyping:
 method global$fun_return_subtyping$fun_take$$return$NT_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
@@ -24,7 +24,7 @@ method global$fun_return_subtyping$fun_take$$return$NT_Int()
   label label$ret$0
 }
 
-/subtyping.kt:(159,179): info: Generated Viper text for assignment_subtyping:
+/subtyping.kt:(178,198): info: Generated Viper text for assignment_subtyping:
 method global$fun_assignment_subtyping$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -36,7 +36,7 @@ method global$fun_assignment_subtyping$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/subtyping.kt:(232,250): info: Generated Viper text for nullable_parameter:
+/subtyping.kt:(251,269): info: Generated Viper text for nullable_parameter:
 method global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit(local$b: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -46,7 +46,7 @@ method global$fun_nullable_parameter$fun_take$NT_Boolean$return$T_Unit(local$b: 
   label label$ret$0
 }
 
-/subtyping.kt:(272,300): info: Generated Viper text for function_parameter_subtyping:
+/subtyping.kt:(291,319): info: Generated Viper text for function_parameter_subtyping:
 method global$fun_function_parameter_subtyping$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())

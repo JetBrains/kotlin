@@ -1,4 +1,4 @@
-/predicates.kt:(117,123): info: Generated Viper text for useFoo:
+/predicates.kt:(157,163): info: Generated Viper text for useFoo:
 field class_Bar$member_foo: Ref
 
 field class_Foo$member_x: Ref
@@ -49,7 +49,7 @@ method global$fun_useFoo$fun_take$T_class_global$class_Bar$T_class_global$class_
   label label$ret$0
 }
 
-/predicates.kt:(249,271): info: Generated Viper text for three_layers_hierarchy:
+/predicates.kt:(289,311): info: Generated Viper text for three_layers_hierarchy:
 field class_A$member_x: Ref
 
 field class_A$member_y: Ref
@@ -79,7 +79,7 @@ method global$fun_three_layers_hierarchy$fun_take$T_class_global$class_C$return$
   label label$ret$0
 }
 
-/predicates.kt:(287,301): info: Generated Viper text for list_hierarchy:
+/predicates.kt:(327,341): info: Generated Viper text for list_hierarchy:
 field special$size: Ref
 
 predicate T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject: Ref) {

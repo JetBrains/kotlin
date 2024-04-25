@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 class Foo {
     val a: Int
     constructor(n: Int) {

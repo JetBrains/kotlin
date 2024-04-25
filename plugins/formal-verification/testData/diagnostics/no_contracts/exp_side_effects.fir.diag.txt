@@ -1,4 +1,4 @@
-/exp_side_effects.kt:(27,34): info: Generated Viper text for get_foo:
+/exp_side_effects.kt:(46,53): info: Generated Viper text for get_foo:
 field class_Foo$member_x: Ref
 
 method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Ref)
@@ -17,7 +17,7 @@ method global$fun_get_foo$fun_take$$return$T_class_global$class_Foo()
   label label$ret$0
 }
 
-/exp_side_effects.kt:(55,66): info: Generated Viper text for side_effect:
+/exp_side_effects.kt:(74,85): info: Generated Viper text for side_effect:
 method global$fun_side_effect$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -26,7 +26,7 @@ method global$fun_side_effect$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/exp_side_effects.kt:(83,87): info: Generated Viper text for test:
+/exp_side_effects.kt:(102,106): info: Generated Viper text for test:
 field class_Foo$member_x: Ref
 
 method global$fun_get_foo$fun_take$$return$T_class_global$class_Foo()

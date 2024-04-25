@@ -1,4 +1,4 @@
-/interface.kt:(65,80): info: Generated Viper text for test_properties:
+/interface.kt:(84,99): info: Generated Viper text for test_properties:
 method class_Foo$getter_valProp(this: Ref) returns (ret: Ref)
   requires acc(T_class_global$class_Foo(this), wildcard)
   ensures acc(T_class_global$class_Foo(this), wildcard)
@@ -37,7 +37,7 @@ method global$fun_test_properties$fun_take$T_class_global$class_Foo$return$T_Uni
   label label$ret$0
 }
 
-/interface.kt:(330,340): info: Generated Viper text for createImpl:
+/interface.kt:(349,359): info: Generated Viper text for createImpl:
 field class_Impl$member_number: Ref
 
 method class_First$getter_number(this: Ref) returns (ret: Ref)

@@ -1,4 +1,4 @@
-/function_object.kt:(4,17): info: Generated Viper text for unit_function:
+/function_object.kt:(23,36): info: Generated Viper text for unit_function:
 method global$fun_unit_function$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
   returns (ret$0: Ref)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -13,7 +13,7 @@ method global$fun_unit_function$fun_take$fun_take$$return$T_Unit$return$T_Unit(l
   label label$ret$0
 }
 
-/function_object.kt:(72,92): info: Generated Viper text for function_object_call:
+/function_object.kt:(91,111): info: Generated Viper text for function_object_call:
 method global$fun_function_object_call$fun_take$fun_take$T_Boolean$T_Int$return$T_Int$return$T_Int(local$g: Ref)
   returns (ret$0: Ref)
   requires acc(local$g.special$function_object_call_counter, write)
@@ -34,7 +34,7 @@ method global$fun_function_object_call$fun_take$fun_take$T_Boolean$T_Int$return$
   label label$ret$0
 }
 
-/function_object.kt:(155,182): info: Generated Viper text for function_object_nested_call:
+/function_object.kt:(174,201): info: Generated Viper text for function_object_nested_call:
 method global$fun_function_object_nested_call$fun_take$fun_take$T_Int$return$T_Int$fun_take$T_Boolean$return$T_Int$return$T_Int(local$f: Ref,
   local$g: Ref)
   returns (ret$0: Ref)

@@ -1,4 +1,4 @@
-/classes_setters.kt:(408,424): info: Generated Viper text for testCustomSetter:
+/classes_setters.kt:(427,443): info: Generated Viper text for testCustomSetter:
 field class_AlwaysPlusOne$member_b: Ref
 
 field class_AlwaysPlusOne$member_num: Ref
@@ -37,7 +37,7 @@ method global$fun_testCustomSetter$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/classes_setters.kt:(490,500): info: Generated Viper text for testSetter:
+/classes_setters.kt:(509,519): info: Generated Viper text for testSetter:
 field class_Person$member_age: Ref
 
 method class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(local$age: Ref)
@@ -63,7 +63,7 @@ method global$fun_testSetter$fun_take$$return$T_Unit() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/classes_setters.kt:(572,589): info: Generated Viper text for testSetterCascade:
+/classes_setters.kt:(591,608): info: Generated Viper text for testSetterCascade:
 field class_Bar$member_a: Ref
 
 field class_Foo$member_b: Ref
@@ -103,7 +103,7 @@ method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/classes_setters.kt:(641,665): info: Generated Viper text for testSetterNoBackingField:
+/classes_setters.kt:(660,684): info: Generated Viper text for testSetterNoBackingField:
 field class_Baz$member__a: Ref
 
 method class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
@@ -136,7 +136,7 @@ method global$fun_testSetterNoBackingField$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/classes_setters.kt:(805,821): info: Generated Viper text for testSetterLambda:
+/classes_setters.kt:(824,840): info: Generated Viper text for testSetterLambda:
 field class_Bar$member_a: Ref
 
 method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Ref)

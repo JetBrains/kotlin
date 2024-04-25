@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>return_unit<!>() {}
 fun <!VIPER_TEXT!>return_int<!>(): Int { return 0 }
 fun <!VIPER_TEXT!>take_int_return_unit<!>(@Suppress("UNUSED_PARAMETER") x: Int) {}

@@ -1,3 +1,6 @@
+// RENDER_PREDICATES
+// NEVER_VALIDATE
+
 import org.jetbrains.kotlin.formver.plugin.AlwaysVerify
 
 open class A(val a: Int)

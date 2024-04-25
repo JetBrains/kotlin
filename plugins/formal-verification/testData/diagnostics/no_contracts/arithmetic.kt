@@ -1,3 +1,5 @@
+// NEVER_VALIDATE
+
 fun <!VIPER_TEXT!>addition<!>(x: Int) {
     val y = x + x
 }

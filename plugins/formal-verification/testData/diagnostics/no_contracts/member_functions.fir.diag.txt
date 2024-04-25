@@ -1,4 +1,4 @@
-/member_functions.kt:(32,42): info: Generated Viper text for member_fun:
+/member_functions.kt:(51,61): info: Generated Viper text for member_fun:
 field class_Foo$member_x: Ref
 
 method class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
@@ -14,7 +14,7 @@ method class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(t
   label label$ret$0
 }
 
-/member_functions.kt:(84,99): info: Generated Viper text for call_member_fun:
+/member_functions.kt:(103,118): info: Generated Viper text for call_member_fun:
 field class_Foo$member_x: Ref
 
 method class_Foo$fun_call_member_fun$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
@@ -37,7 +37,7 @@ method class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(t
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-/member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
+/member_functions.kt:(159,171): info: Generated Viper text for sibling_call:
 field class_Foo$member_x: Ref
 
 method class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
@@ -64,7 +64,7 @@ method class_Foo$fun_sibling_call$fun_take$T_class_global$class_Foo$T_class_glob
   label label$ret$0
 }
 
-/member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
+/member_functions.kt:(226,247): info: Generated Viper text for outer_member_fun_call:
 field class_Foo$member_x: Ref
 
 method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Ref)

@@ -1,4 +1,4 @@
-/inheritance.kt:(74,78): info: Generated Viper text for getY:
+/inheritance.kt:(93,97): info: Generated Viper text for getY:
 field class_Foo$member_b: Ref
 
 field class_Foo$member_x: Ref
@@ -18,7 +18,7 @@ method class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(this: R
   label label$ret$0
 }
 
-/inheritance.kt:(171,174): info: Generated Viper text for sum:
+/inheritance.kt:(190,193): info: Generated Viper text for sum:
 field class_Bar$member_z: Ref
 
 field class_Foo$member_b: Ref
@@ -46,7 +46,7 @@ method class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(this: Re
   label label$ret$0
 }
 
-/inheritance.kt:(217,232): info: Generated Viper text for callSuperMethod:
+/inheritance.kt:(236,251): info: Generated Viper text for callSuperMethod:
 field class_Bar$member_z: Ref
 
 field class_Foo$member_b: Ref
@@ -74,7 +74,7 @@ method global$fun_callSuperMethod$fun_take$T_class_global$class_Bar$return$T_Int
   label label$ret$0
 }
 
-/inheritance.kt:(279,295): info: Generated Viper text for accessSuperField:
+/inheritance.kt:(298,314): info: Generated Viper text for accessSuperField:
 field class_Bar$member_z: Ref
 
 field class_Foo$member_b: Ref
@@ -98,7 +98,7 @@ method global$fun_accessSuperField$fun_take$T_class_global$class_Bar$return$T_Bo
   label label$ret$0
 }
 
-/inheritance.kt:(341,355): info: Generated Viper text for accessNewField:
+/inheritance.kt:(360,374): info: Generated Viper text for accessNewField:
 field class_Bar$member_z: Ref
 
 field class_Foo$member_b: Ref
@@ -120,7 +120,7 @@ method global$fun_accessNewField$fun_take$T_class_global$class_Bar$return$T_Int(
   label label$ret$0
 }
 
-/inheritance.kt:(397,410): info: Generated Viper text for callNewMethod:
+/inheritance.kt:(416,429): info: Generated Viper text for callNewMethod:
 field class_Bar$member_z: Ref
 
 field class_Foo$member_b: Ref
@@ -148,7 +148,7 @@ method global$fun_callNewMethod$fun_take$T_class_global$class_Bar$return$T_Int(l
   label label$ret$0
 }
 
-/inheritance.kt:(456,469): info: Generated Viper text for setSuperField:
+/inheritance.kt:(475,488): info: Generated Viper text for setSuperField:
 field class_Bar$member_z: Ref
 
 field class_Foo$member_b: Ref
@@ -171,7 +171,7 @@ method global$fun_setSuperField$fun_take$T_class_global$class_Bar$return$T_Unit(
   label label$ret$0
 }
 
-/inheritance.kt:(506,527): info: Generated Viper text for accessSuperSuperField:
+/inheritance.kt:(525,546): info: Generated Viper text for accessSuperSuperField:
 field class_Bar$member_z: Ref
 
 field class_Foo$member_b: Ref

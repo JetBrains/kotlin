@@ -1,4 +1,4 @@
-/inlining_lambdas.kt:(136,148): info: Generated Viper text for explicit_arg:
+/inlining_lambdas.kt:(155,167): info: Generated Viper text for explicit_arg:
 method global$fun_explicit_arg$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -18,7 +18,7 @@ method global$fun_explicit_arg$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/inlining_lambdas.kt:(198,210): info: Generated Viper text for implicit_arg:
+/inlining_lambdas.kt:(217,229): info: Generated Viper text for implicit_arg:
 method global$fun_implicit_arg$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
@@ -38,7 +38,7 @@ method global$fun_implicit_arg$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/inlining_lambdas.kt:(256,265): info: Generated Viper text for lambda_if:
+/inlining_lambdas.kt:(275,284): info: Generated Viper text for lambda_if:
 method global$fun_lambda_if$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -60,7 +60,7 @@ method global$fun_lambda_if$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/inlining_lambdas.kt:(396,417): info: Generated Viper text for return_value_not_used:
+/inlining_lambdas.kt:(415,436): info: Generated Viper text for return_value_not_used:
 method global$fun_return_value_not_used$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -79,7 +79,7 @@ method global$fun_return_value_not_used$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/inlining_lambdas.kt:(453,462): info: Generated Viper text for shadowing:
+/inlining_lambdas.kt:(472,481): info: Generated Viper text for shadowing:
 method global$fun_shadowing$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -104,7 +104,7 @@ method global$fun_shadowing$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/inlining_lambdas.kt:(699,705): info: Generated Viper text for nested:
+/inlining_lambdas.kt:(718,724): info: Generated Viper text for nested:
 method global$fun_nested$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -131,7 +131,7 @@ method global$fun_nested$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/inlining_lambdas.kt:(843,861): info: Generated Viper text for lambda_passthrough:
+/inlining_lambdas.kt:(862,880): info: Generated Viper text for lambda_passthrough:
 method global$fun_lambda_passthrough$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
