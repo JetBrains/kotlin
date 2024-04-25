@@ -1,28 +1,18 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-
 plugins {
     kotlin("multiplatform")
 }
 
-val ComposeSnapshotId = "11751492"
-val ComposeVersion = "1.7.0-SNAPSHOT"
 repositories {
-    maven("https://androidx.dev/snapshots/builds/$ComposeSnapshotId/artifacts/repository")
+    androidxSnapshotRepo()
     google()
 }
 
 optInToObsoleteDescriptorBasedAPI()
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
 
     jvm()
-
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    compilerOptions {
-        languageVersion.set(KotlinVersion.KOTLIN_1_9)
-    }
 
     sourceSets {
         commonTest.dependencies {
@@ -62,9 +52,9 @@ kotlin {
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
 
                 // external deps
-                implementation("androidx.compose.runtime:runtime:$ComposeVersion")
-                implementation("androidx.compose.foundation:foundation:$ComposeVersion")
-                implementation("androidx.compose.ui:ui:$ComposeVersion")
+                implementation(composeRuntime())
+                implementation(composeFoundation())
+                implementation(composeUi())
                 implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
                 implementation("com.google.dagger:dagger:2.40.1")
             }
