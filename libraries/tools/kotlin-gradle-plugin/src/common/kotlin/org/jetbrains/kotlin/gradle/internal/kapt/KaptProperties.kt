@@ -19,6 +19,7 @@ internal object KaptProperties {
             // but it's fine (see https://github.com/JetBrains/kotlin/pull/3942#discussion_r532578690).
             true
         )
+        val KAPT_INFO_AS_WARNINGS = BooleanGradleProperty("kapt.info.as.warnings", false)
     }
 
     fun isKaptVerbose(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
@@ -27,5 +28,9 @@ internal object KaptProperties {
 
     fun isIncrementalKapt(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.property(BooleanProperties.KAPT_INCREMENTAL_APT, project)
+    }
+
+    fun isInfoAsWarnings(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
+        it.property(BooleanProperties.KAPT_INFO_AS_WARNINGS, project)
     }
 }
