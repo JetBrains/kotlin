@@ -46,6 +46,7 @@ val declaredSymbolRemapperType = type(util, "DeclaredSymbolRemapper")
 val referencedSymbolRemapperType = type(util, "ReferencedSymbolRemapper")
 val emptySymbolRemapperType = ClassRef<PositionTypeParameterRef>(TypeKind.Class, util, "SymbolRemapper", "Empty")
 val irImplementationDetailType = type(tree, "IrImplementationDetail", TypeKind.Class)
+val irElementConstructorIndicatorType = type(util, "IrElementConstructorIndicator", TypeKind.Class)
 
 val symbolType = type(symbols, "IrSymbol")
 val packageFragmentSymbolType = type(symbols, "IrPackageFragmentSymbol")

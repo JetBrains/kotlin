@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrBranchImpl internal constructor(
-    @Suppress("UNUSED_PARAMETER")
-    constructorIndicator: IrElementConstructorIndicator?,
+    @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override val startOffset: Int,
     override val endOffset: Int,
     override var condition: IrExpression,

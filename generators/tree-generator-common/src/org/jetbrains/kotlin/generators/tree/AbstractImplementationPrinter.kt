@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
@@ -30,8 +29,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
     protected open fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
     }
 
-    protected open fun ImportCollectingPrinter.printAdditionalConstructorParameters(implementation: Implementation) {
-    }
+    protected open fun additionalConstructorParameters(implementation: Implementation): List<FunctionParameter> = emptyList()
 
     fun printImplementation(implementation: Implementation) {
         printer.run {
@@ -63,7 +61,11 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
             val fieldPrinter = makeFieldPrinter(this)
 
-            if (!isInterface && !isAbstract && implementation.fieldsInConstructor.isNotEmpty()) {
+            val additionalConstructorParameters = additionalConstructorParameters(implementation)
+            if (!isInterface &&
+                !isAbstract &&
+                (implementation.fieldsInConstructor.isNotEmpty() || additionalConstructorParameters.isNotEmpty())
+            ) {
                 var printConstructor = false
                 if (implementation.isPublic && implementation.isConstructorPublic && implementation.putImplementationOptInInConstructor) {
                     print(" @", implementationOptInAnnotation.render())
@@ -80,7 +82,9 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
                 println("(")
                 withIndent {
-                    printAdditionalConstructorParameters(implementation)
+                    for (parameter in additionalConstructorParameters) {
+                        println(parameter.render(this), ",")
+                    }
                     implementation.fieldsInConstructor
                         .reorderFieldsIfNecessary(implementation.constructorParameterOrderOverride)
                         .forEachIndexed { _, field ->

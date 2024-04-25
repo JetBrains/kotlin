@@ -47,9 +47,17 @@ fun AbstractElement<*, *, *>.extendedKDoc(): String = buildString {
     append("Generated from: [${element.propertyName}]")
 }
 
-data class FunctionParameter(val name: String, val type: TypeRef, val defaultValue: String? = null) {
+data class FunctionParameter(
+    val name: String,
+    val type: TypeRef,
+    val defaultValue: String? = null,
+    val markAsUnused: Boolean = false,
+) {
 
     fun render(importCollector: ImportCollecting): String = buildString {
+        if (markAsUnused) {
+            append("@Suppress(\"UNUSED_PARAMETER\") ")
+        }
         append(name, ": ")
         type.renderTo(this, importCollector)
         defaultValue?.let {
