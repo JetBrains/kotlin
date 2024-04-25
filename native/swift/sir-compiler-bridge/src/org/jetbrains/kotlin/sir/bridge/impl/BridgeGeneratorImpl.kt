@@ -100,17 +100,11 @@ private fun BridgeRequest.bridgeParameters() = callable.allParameters
 private fun bridgeType(type: SirType): Bridge {
     require(type is SirNominalType)
 
-    val bridge = when (type) {
+    return when (type) {
         is SirClassType -> Bridge.AsObject(type, KotlinType.Object, CType.UIntPtr)
-        is SirEnumType -> null
         is SirStructType -> bridgeStructType(type)
-        else -> null
-    }
-    if (bridge != null) {
-        return bridge
-    } else {
-        error("Could not generate bridge for $type")
-    }
+        is SirEnumType -> null
+    } ?: error("Could not generate bridge for $type")
 }
 
 private fun bridgeStructType(type: SirStructType): Bridge? {
