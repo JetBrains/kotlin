@@ -26,12 +26,18 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal class PlatformLibrariesGenerator(val project: Project, val konanTarget: KonanTarget) {
+internal class PlatformLibrariesGenerator(
+    val project: Project,
+    val konanTarget: KonanTarget,
+    val konanHome: File,
+) {
 
     private val logger = Logging.getLogger(this::class.java)
 
-    private val distribution =
-        customerDistribution(project.konanHome.absolutePath, konanDataDir = project.konanDataDir)
+    private val distribution = customerDistribution(
+        konanHome.absolutePath,
+        konanDataDir = project.konanDataDir
+    )
 
     private val platformLibsDirectory =
         File(distribution.platformLibs(konanTarget)).absoluteFile
@@ -79,7 +85,7 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         }
 
         val cacheDirectory = CacheBuilder.getRootCacheDirectory(
-            project.konanHome, konanTarget, true, konanCacheKind
+            konanHome, konanTarget, true, konanCacheKind
         )
         return presentDefs.toPlatformLibNames().all {
             cacheDirectory.resolve(CacheBuilder.getCacheFileName(it, konanCacheKind)).listFilesOrEmpty().isNotEmpty()

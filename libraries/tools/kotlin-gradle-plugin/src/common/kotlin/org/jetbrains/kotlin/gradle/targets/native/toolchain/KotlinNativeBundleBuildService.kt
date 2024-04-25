@@ -18,14 +18,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -204,7 +203,11 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
         val distributionType = NativeDistributionTypeProvider(this).getDistributionType()
         if (distributionType.mustGeneratePlatformLibs) {
             konanTargets.forEach { konanTarget ->
-                PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
+                PlatformLibrariesGenerator(
+                    project,
+                    konanTarget,
+                    project.konanHome
+                ).generatePlatformLibsIfNeeded()
             }
         }
     }

@@ -261,6 +261,10 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
 
     val distributionType = NativeDistributionTypeProvider(project).getDistributionType()
     if (distributionType.mustGeneratePlatformLibs) {
-        PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
+        PlatformLibrariesGenerator(
+            project,
+            konanTarget,
+            project.konanHome
+        ).generatePlatformLibsIfNeeded()
     }
 }
