@@ -11,14 +11,8 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 
 internal class KtFirSamResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -28,41 +22,13 @@ internal class KtFirSamResolver(
     override fun getSamConstructor(ktClassLikeSymbol: KtClassLikeSymbol): KtSamConstructorSymbol? {
         val classId = ktClassLikeSymbol.classIdIfNonLocal ?: return null
         val owner = analysisSession.getClassLikeSymbol(classId) as? FirRegularClass ?: return null
-        val resolver = LocalSamResolver(analysisSession, analysisSession.useSiteSession)
+        val firSession = analysisSession.useSiteSession
+        val resolver = FirSamResolver(
+            firSession,
+            analysisSession.getScopeSessionFor(firSession)
+        )
         return resolver.getSamConstructor(owner)?.let {
             analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it.symbol)
-        }
-    }
-
-    private class LocalSamResolver(
-        analysisSession: KtFirAnalysisSession,
-        private val firSession: FirSession,
-    ) {
-        private val scopeSession = analysisSession.getScopeSessionFor(firSession)
-
-
-        // TODO: This transformer is not intended for actual transformations and
-        //  created here only to simplify access to SAM resolver in body resolve components
-        private val stubBodyResolveTransformer = object : FirBodyResolveTransformer(
-            session = firSession,
-            phase = FirResolvePhase.BODY_RESOLVE,
-            implicitTypeOnly = false,
-            scopeSession = scopeSession,
-        ) {}
-
-        private val bodyResolveComponents =
-            FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents(
-                firSession,
-                scopeSession,
-                stubBodyResolveTransformer,
-                stubBodyResolveTransformer.context,
-            )
-
-        // TODO: this doesn't guarantee that the same synthetic function (as a SAM constructor) is created/returned
-        fun getSamConstructor(firClass: FirRegularClass): FirSimpleFunction? {
-            val samConstructor = bodyResolveComponents.samResolver.getSamConstructor(firClass) ?: return null
-            if (samConstructor.origin != FirDeclarationOrigin.SamConstructor) return null
-            return samConstructor
         }
     }
 }
