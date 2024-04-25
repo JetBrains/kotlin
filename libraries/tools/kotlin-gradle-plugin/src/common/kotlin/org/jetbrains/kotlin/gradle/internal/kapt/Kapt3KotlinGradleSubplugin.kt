@@ -103,10 +103,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             return project.configurations.findByName(getKaptConfigurationName(sourceSetName))
         }
 
-        fun Project.isIncrementalKapt(): Boolean {
-            return getBooleanOptionValue(BooleanOption.KAPT_INCREMENTAL_APT)
-        }
-
         fun Project.isInfoAsWarnings(): Boolean {
             return getBooleanOptionValue(BooleanOption.KAPT_INFO_AS_WARNINGS)
         }
@@ -206,10 +202,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             val optionName: String,
             val defaultValue: Boolean
         ) {
-            KAPT_INCREMENTAL_APT(
-                "kapt.incremental.apt",
-                true // Currently doesn't match the default value of KaptFlag.INCREMENTAL_APT, but it's fine (see https://github.com/JetBrains/kotlin/pull/3942#discussion_r532578690).
-            ),
             KAPT_INFO_AS_WARNINGS("kapt.info.as.warnings", false),
             KAPT_INCLUDE_COMPILE_CLASSPATH("kapt.include.compile.classpath", true),
             KAPT_KEEP_KDOC_COMMENTS_IN_STUBS("kapt.keep.kdoc.comments.in.stubs", true),
@@ -392,9 +384,11 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 task.defaultJavaSourceCompatibility.set(javaCompile.map { it.sourceCompatibility })
             }
 
-            if (project.isIncrementalKapt()) {
-                task.incAptCache.value(getKaptIncrementalAnnotationProcessingCache()).disallowChanges()
-            }
+            task.incAptCache.value(
+                KaptProperties.isIncrementalKapt(project).flatMap {
+                    if (it) getKaptIncrementalAnnotationProcessingCache() else project.provider { null }
+                }
+            ).disallowChanges()
 
             task.kaptClasspath.from(kaptClasspathConfiguration).disallowChanges()
             task.kaptExternalClasspath.from(kaptClasspathConfiguration.fileCollection { it is ExternalDependency })

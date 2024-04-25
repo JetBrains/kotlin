@@ -13,9 +13,19 @@ import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
 internal object KaptProperties {
     object BooleanProperties {
         val KAPT_VERBOSE = BooleanGradleProperty("kapt.verbose", false)
+        val KAPT_INCREMENTAL_APT = BooleanGradleProperty(
+            "kapt.incremental.apt",
+            // Currently doesn't match the default value of KaptFlag.INCREMENTAL_APT,
+            // but it's fine (see https://github.com/JetBrains/kotlin/pull/3942#discussion_r532578690).
+            true
+        )
     }
 
     fun isKaptVerbose(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.property(BooleanProperties.KAPT_VERBOSE, project)
+    }
+
+    fun isIncrementalKapt(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
+        it.property(BooleanProperties.KAPT_INCREMENTAL_APT, project)
     }
 }
