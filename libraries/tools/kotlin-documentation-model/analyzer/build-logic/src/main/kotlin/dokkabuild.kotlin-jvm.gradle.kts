@@ -12,9 +12,9 @@ val rootProjectsWithoutDependencyOnDokkaCore = listOf("dokka-integration-tests")
 kotlin {
     explicitApi()
     compilerOptions {
-        allWarningsAsErrors.set(true)
-        languageVersion.set(dokkaBuild.kotlinLanguageLevel)
-        apiVersion.set(dokkaBuild.kotlinLanguageLevel)
+        allWarningsAsErrors = true
+        languageVersion = dokkaBuild.kotlinLanguageLevel
+        apiVersion = dokkaBuild.kotlinLanguageLevel
 
         // These projects know nothing about the `@InternalDokkaApi` annotation, so the Kotlin compiler
         // will complain about an unresolved opt-in requirement marker and fail the build if it's not excluded.
