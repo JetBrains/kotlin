@@ -22,6 +22,7 @@ internal object KaptProperties {
         val KAPT_INFO_AS_WARNINGS = BooleanGradleProperty("kapt.info.as.warnings", false)
         val KAPT_INCLUDE_COMPILE_CLASSPATH = BooleanGradleProperty("kapt.include.compile.classpath", true)
         val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = BooleanGradleProperty("kapt.keep.kdoc.comments.in.stubs", true)
+        val KAPT_USE_K2 = BooleanGradleProperty("kapt.use.k2", false)
     }
 
     fun isKaptVerbose(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
@@ -42,5 +43,9 @@ internal object KaptProperties {
 
     fun isKaptKeepKdocCommentsInStubs(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.property(BooleanProperties.KAPT_KEEP_KDOC_COMMENTS_IN_STUBS, project)
+    }
+
+    fun isUseK2(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
+        it.property(BooleanProperties.KAPT_USE_K2, project)
     }
 }

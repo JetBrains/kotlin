@@ -22,7 +22,6 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isUseK2
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -99,10 +98,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         fun Project.findKaptConfiguration(sourceSetName: String): Configuration? {
             return project.configurations.findByName(getKaptConfigurationName(sourceSetName))
-        }
-
-        fun Project.isUseK2(): Boolean {
-            return getBooleanOptionValue(BooleanOption.KAPT_USE_K2)
         }
 
         fun Project.classLoadersCacheSize(): Int = findPropertySafe(CLASSLOADERS_CACHE_SIZE)?.toString()?.toInt() ?: 0
@@ -188,7 +183,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             val optionName: String,
             val defaultValue: Boolean
         ) {
-            KAPT_USE_K2("kapt.use.k2", false),
         }
     }
 
@@ -507,7 +501,7 @@ internal fun buildKaptSubpluginOptions(
     pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${KaptProperties.isKaptKeepKdocCommentsInStubs(project).get()}")
     pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorStats}")
     pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
-    pluginOptions += SubpluginOption("useK2", "${project.isUseK2()}")
+    pluginOptions += SubpluginOption("useK2", "${KaptProperties.isUseK2(project).get()}")
     pluginOptions += SubpluginOption("infoAsWarnings", "${KaptProperties.isInfoAsWarnings(project).get()}")
     pluginOptions += FilesSubpluginOption("stubs", kaptStubsDir)
 
