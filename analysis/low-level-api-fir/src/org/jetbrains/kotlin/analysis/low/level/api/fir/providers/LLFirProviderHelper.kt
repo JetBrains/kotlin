@@ -129,7 +129,18 @@ internal class LLFirProviderHelper(
         context: Collection<KtFile>?,
     ): List<TYPE> {
         require(context == null || context.all { it.isPhysical })
-        val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return emptyList() }
+
+        val files = if (context != null) {
+            context
+        } else {
+            // we want to use `getTopLevelCallableFiles` instead of
+            // `getTopLevelFunctions/Properties`, because it is highly optimized
+            // to retrieve the files in the IDE mode
+            declarationProvider.getTopLevelCallableFiles(callableId)
+        }
+
+        if (files.isEmpty()) return emptyList()
+
         return buildList {
             files.forEach { ktFile ->
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
