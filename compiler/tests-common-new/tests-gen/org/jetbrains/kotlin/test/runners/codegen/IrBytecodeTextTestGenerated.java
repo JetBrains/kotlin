@@ -6007,6 +6007,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("innerWhenEnumTableSwitch.kt")
+    public void testInnerWhenEnumTableSwitch() {
+      runTest("compiler/testData/codegen/bytecodeText/when/innerWhenEnumTableSwitch.kt");
+    }
+
+    @Test
     @TestMetadata("integralWhenWithNoInlinedConstants.kt")
     public void testIntegralWhenWithNoInlinedConstants() {
       runTest("compiler/testData/codegen/bytecodeText/when/integralWhenWithNoInlinedConstants.kt");
