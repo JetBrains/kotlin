@@ -36,8 +36,8 @@ internal class ImplementationPrinter(
         get() = firImplementationDetailType
 
 
-    override val pureAbstractElementType: ClassRef<*>
-        get() = org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
+    override fun getPureAbstractElementType(implementation: Implementation): ClassRef<*> =
+        pureAbstractElementType
 
     override fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<FieldWithDefault> = ImplementationFieldPrinter(printer)
 
