@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 
 class ProjectIsolationIT : KGPBaseTest() {
 
@@ -62,6 +64,44 @@ class ProjectIsolationIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
+            build("assembleDebug")
+        }
+    }
+
+    @DisplayName("Kapt multi-module project")
+    @OtherGradlePluginTests
+    @TestMetadata("kapt2/javacIsLoadedOnce")
+    @GradleTest
+    fun testProjectIsolationKapt(
+        gradleVersion: GradleVersion
+    ) {
+        project("kapt2/javacIsLoadedOnce", gradleVersion) {
+            build("assemble")
+        }
+    }
+
+    @DisplayName("Kapt with Android multi-module project")
+    @AndroidGradlePluginTests
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_83)
+    @TestMetadata("kapt2/android-databinding")
+    @GradleAndroidTest
+    fun testProjectIsolationAndroidWithKapt(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "kapt2/android-databinding",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            gradleProperties.appendText(
+                """
+                |kotlin.jvm.target.validation.mode=warning
+                """.trimMargin()
+            )
+
             build("assembleDebug")
         }
     }
