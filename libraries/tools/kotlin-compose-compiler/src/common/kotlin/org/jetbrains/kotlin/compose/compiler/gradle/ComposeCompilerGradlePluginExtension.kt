@@ -44,7 +44,9 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
 
     /**
      * Save compose build metrics to this folder.
-     * When specified, the Compose Compiler will dump metrics about the compilation which can be useful when manually optimizing your application's runtime performance.  These metrics include information about which of your composable functions are skippable, which are restartable, which are readonly, etc.
+     * When specified, the Compose Compiler will dump metrics about the current module which can be useful when manually optimizing your
+     * application's runtime performance. The module.json will include the statistics about processed composables and classes, including
+     * number of stable classes/parameters, skippable functions, etc.
      *
      * For more information, see these links:
      *  - [AndroidX compiler metrics](https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/compiler-metrics.md)
@@ -55,8 +57,8 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
     /**
      * Save compose build reports to this folder.
      *
-     * When specified, the Compose Compiler will dump metrics about the compilation which can be useful when manually optimizing
-     * your application's runtime performance. These metrics include information about which of your composable functions are skippable,
+     * When specified, the Compose Compiler will dump reports about the compilation which can be useful when manually optimizing
+     * your application's runtime performance. These reports include information about which of your composable functions are skippable,
      * which are restartable, which are readonly, etc.
      *
      * For more information, see these links:
