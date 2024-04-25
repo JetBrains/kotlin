@@ -16,7 +16,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.classLoadersCacheSize
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.disableClassloaderCacheForProcessors
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
@@ -188,7 +187,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
                 ext.processors.split(',').filter { it.isNotEmpty() }
             })
             task.disableClassloaderCacheForProcessors = project.disableClassloaderCacheForProcessors()
-            task.classLoadersCacheSize = project.classLoadersCacheSize()
+            task.classLoadersCacheSize = KaptProperties.getClassloadersCacheSize(project).get()
             task.javacOptions.set(getJavaOptions(task.defaultJavaSourceCompatibility))
         }
     }

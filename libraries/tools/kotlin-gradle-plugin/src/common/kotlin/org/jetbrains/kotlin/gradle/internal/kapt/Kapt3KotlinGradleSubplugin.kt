@@ -81,8 +81,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         val KAPT_KOTLIN_GENERATED = "kapt.kotlin.generated"
 
-        private val CLASSLOADERS_CACHE_SIZE = "kapt.classloaders.cache.size"
-
         val MAIN_KAPT_CONFIGURATION_NAME = "kapt"
 
         const val KAPT_ARTIFACT_NAME = "kotlin-annotation-processing-gradle"
@@ -99,8 +97,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             return project.configurations.findByName(getKaptConfigurationName(sourceSetName))
         }
 
-        fun Project.classLoadersCacheSize(): Int = findPropertySafe(CLASSLOADERS_CACHE_SIZE)?.toString()?.toInt() ?: 0
-
         fun Project.disableClassloaderCacheForProcessors(): Set<String> {
             return KaptProperties.getClassloadersCacheDisableForProcessors(project).get()
                 .split(",")
@@ -108,17 +104,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 .filter { it.isNotEmpty() }
                 .toSet()
         }
-
-        /**
-         * In case [Project.findProperty] can throw exception, this version catch it and return null
-         */
-        private fun Project.findPropertySafe(propertyName: String): Any? =
-            try {
-                findProperty(propertyName)
-            } catch (ex: Exception) {
-                logger.warn("Error getting property $propertyName", ex)
-                null
-            }
 
         fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(SourceSet.MAIN_SOURCE_SET_NAME)
 
