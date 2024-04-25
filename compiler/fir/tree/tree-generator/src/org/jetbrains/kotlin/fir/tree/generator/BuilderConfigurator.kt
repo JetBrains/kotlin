@@ -370,6 +370,16 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             defaultFalse("isNamed", "isFakeSpread")
         }
 
+        val abstractWhenBranchBuilder by builder {
+            fields from whenBranch without "hasGuard"
+        }
+        builder(whenBranch, type = "FirRegularWhenBranch") {
+            parents += abstractWhenBranchBuilder
+        }
+        builder(whenBranch, type = "FirGuardedWhenBranch") {
+            parents += abstractWhenBranchBuilder
+        }
+
         val abstractResolvedQualifierBuilder by builder {
             fields from resolvedQualifier
         }

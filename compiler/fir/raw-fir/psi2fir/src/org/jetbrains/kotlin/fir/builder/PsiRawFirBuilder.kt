@@ -2574,14 +2574,14 @@ open class PsiRawFirBuilder(
                 source = expression.toFirSourceElement()
 
                 val ktCondition = expression.condition
-                branches += buildWhenBranch {
+                branches += buildRegularWhenBranch {
                     source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
                     condition = ktCondition.toFirExpression("If statement should have condition")
                     result = expression.then.toFirBlock()
                 }
 
                 if (expression.`else` != null) {
-                    branches += buildWhenBranch {
+                    branches += buildRegularWhenBranch {
                         source = expression.elseKeyword?.toKtPsiSourceElement()
                         condition = buildElseIfTrueCondition()
                         result = expression.`else`.toFirBlock()
@@ -2631,21 +2631,22 @@ open class PsiRawFirBuilder(
 
                 for (entry in expression.entries) {
                     val entrySource = entry.toFirSourceElement()
+                    val entryGuard = entry.guard?.let { it.getExpression().toFirExpression("No expression in guard") }
                     val branchBody = entry.expression.toFirBlock()
-                    branches += if (!entry.isElse) {
+                    branches += if (entry.elseKeyword == null) {
                         if (hasSubject) {
-                            buildWhenBranch {
+                            buildWhenBranch(hasGuard = entryGuard != null) {
                                 source = entrySource
                                 condition = entry.conditions.toFirWhenCondition(
                                     ref,
                                     { toFirExpression(it) },
                                     { toFirOrErrorType() },
-                                )
+                                ).guardedBy(entryGuard)
                                 result = branchBody
                             }
                         } else {
                             val ktCondition = entry.conditions.first()
-                            buildWhenBranch {
+                            buildWhenBranch(hasGuard = entryGuard != null) {
                                 source = entrySource
                                 condition =
                                     if (entry.conditions.size == 1 && ktCondition is KtWhenConditionWithExpression) {
@@ -2676,14 +2677,14 @@ open class PsiRawFirBuilder(
                                                 }
                                             }
                                         })
-                                    }
+                                    }.guardedBy(entryGuard)
                                 result = branchBody
                             }
                         }
                     } else {
-                        buildWhenBranch {
+                        buildWhenBranch(hasGuard = entryGuard != null) {
                             source = entrySource
-                            condition = buildElseIfTrueCondition()
+                            condition = entryGuard ?: buildElseIfTrueCondition()
                             result = branchBody
                         }
                     }

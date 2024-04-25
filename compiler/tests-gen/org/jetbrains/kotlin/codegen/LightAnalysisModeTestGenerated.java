@@ -47760,6 +47760,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/when/guard")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Guard extends AbstractLightAnalysisModeTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInGuard() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @TestMetadata("whenWithGuard.kt")
+      public void testWhenWithGuard() {
+        runTest("compiler/testData/codegen/box/when/guard/whenWithGuard.kt");
+      }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

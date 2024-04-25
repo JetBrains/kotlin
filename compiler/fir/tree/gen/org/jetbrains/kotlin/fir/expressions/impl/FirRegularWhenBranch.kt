@@ -17,35 +17,37 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-internal class FirWhenBranchImpl(
+internal class FirRegularWhenBranch(
     override val source: KtSourceElement?,
     override var condition: FirExpression,
     override var result: FirBlock,
 ) : FirWhenBranch() {
+    override val hasGuard: Boolean
+        get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         condition.accept(visitor, data)
         result.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularWhenBranch {
         transformCondition(transformer, data)
         transformResult(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
 
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirRegularWhenBranch {
         condition = condition.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
+    override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirRegularWhenBranch {
         result = result.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirRegularWhenBranch {
         return this
     }
 }

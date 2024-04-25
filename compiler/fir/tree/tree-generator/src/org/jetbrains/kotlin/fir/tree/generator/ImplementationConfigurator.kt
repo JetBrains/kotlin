@@ -346,6 +346,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             additionalImports(standardClassIdsType, constructClassLikeTypeImport)
         }
 
+        impl(whenBranch, "FirRegularWhenBranch") {
+            defaultFalse("hasGuard", withGetter = true)
+        }
+        impl(whenBranch, "FirGuardedWhenBranch") {
+            defaultTrue("hasGuard", withGetter = true)
+        }
+
         impl(resolvedQualifier) {
             isMutable("packageFqName", "relativeClassFqName", "isNullableLHSForCallableReference")
             defaultClassIdFromRelativeClassName()

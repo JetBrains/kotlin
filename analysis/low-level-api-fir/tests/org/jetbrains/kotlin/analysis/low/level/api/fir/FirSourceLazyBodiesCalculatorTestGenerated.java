@@ -832,6 +832,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("whenGuards.kt")
+    public void testWhenGuards() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/whenGuards.kt");
+    }
+
+    @Test
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/while.kt");

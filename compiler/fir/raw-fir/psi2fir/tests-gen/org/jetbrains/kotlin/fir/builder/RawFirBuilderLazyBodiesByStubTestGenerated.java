@@ -754,6 +754,11 @@ public class RawFirBuilderLazyBodiesByStubTestGenerated extends AbstractRawFirBu
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/variables.kt");
     }
 
+    @TestMetadata("whenGuards.kt")
+    public void testWhenGuards() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/whenGuards.kt");
+    }
+
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/while.kt");

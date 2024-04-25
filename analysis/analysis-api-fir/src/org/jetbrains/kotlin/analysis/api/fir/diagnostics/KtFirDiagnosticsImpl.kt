@@ -3699,6 +3699,16 @@ internal class ConfusingBranchConditionWarningImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ConfusingBranchConditionWarning
 
+internal class CommaInWhenConditionWithWhenGuardImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.CommaInWhenConditionWithWhenGuard
+
+internal class WhenGuardWithoutSubjectImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.WhenGuardWithoutSubject
+
 internal class TypeParameterIsNotAnExpressionImpl(
     override val typeParameter: KtTypeParameterSymbol,
     firDiagnostic: KtPsiDiagnostic,

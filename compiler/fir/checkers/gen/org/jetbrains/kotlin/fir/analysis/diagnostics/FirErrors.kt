@@ -775,6 +775,8 @@ object FirErrors {
     val COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.COMMAS)
     val DUPLICATE_BRANCH_CONDITION_IN_WHEN: KtDiagnosticFactory0 by warning0<KtElement>()
     val CONFUSING_BRANCH_CONDITION: KtDiagnosticFactoryForDeprecation0 by deprecationError0<PsiElement>(ProhibitConfusingSyntaxInWhenBranches)
+    val COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.WHEN_GUARD)
+    val WHEN_GUARD_WITHOUT_SUBJECT: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.WHEN_GUARD)
 
     // Context tracking
     val TYPE_PARAMETER_IS_NOT_AN_EXPRESSION: KtDiagnosticFactory1<FirTypeParameterSymbol> by error1<KtSimpleNameExpression, FirTypeParameterSymbol>()

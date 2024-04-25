@@ -900,8 +900,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * whenEntry
      *   // TODO : consider empty after ->
-     *   : whenCondition{","} "->" element SEMI
-     *   : "else" "->" element SEMI
+     *   : whenCondition{","} whenEntryGuard? "->" element SEMI
+     *   : "else" whenEntryGuard? "->" element SEMI
      *   ;
      */
     private void parseWhenEntry() {
@@ -909,6 +909,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         if (at(ELSE_KEYWORD)) {
             advance(); // ELSE_KEYWORD
+
+            if (at(IF_KEYWORD)) {
+                parseWhenEntryGuard();
+            }
 
             if (!at(ARROW)) {
                 errorUntil("Expecting '->'", TokenSet.create(ARROW, LBRACE, RBRACE, EOL_OR_SEMICOLON));
@@ -940,7 +944,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * : whenCondition{","} "->" element SEMI
+     * : whenCondition{","} whenEntryGuard? "->" element SEMI
      */
     private void parseWhenEntryNotElse() {
         while (true) {
@@ -951,6 +955,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             if (at(ARROW)) {
                 break;
             }
+        }
+
+        if (at(IF_KEYWORD)) {
+            parseWhenEntryGuard();
         }
 
         expect(ARROW, "Expecting '->'", WHEN_CONDITION_RECOVERY_SET);
@@ -1014,6 +1022,20 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 break;
         }
         myBuilder.restoreNewlinesState();
+    }
+
+    /*
+     * whenEntryGuard
+     *   : "if" expression
+     *   ;
+     */
+    private void parseWhenEntryGuard() {
+        assert _at(IF_KEYWORD);
+
+        PsiBuilder.Marker guard = mark();
+        advance(); // IF_KEYWORD
+        parseExpression();
+        guard.done(WHEN_ENTRY_GUARD);
     }
 
     /*

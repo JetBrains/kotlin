@@ -808,23 +808,23 @@ class LightTreeRawFirExpressionBuilder(
                 branches += if (!entry.isElse) {
                     if (hasSubject) {
                         val firCondition = entry.toFirWhenCondition()
-                        buildWhenBranch {
+                        buildWhenBranch(hasGuard = entry.guard != null) {
                             source = entrySource
-                            condition = firCondition
+                            condition = firCondition.guardedBy(entry.guard)
                             result = branch
                         }
                     } else {
                         val firCondition = entry.toFirWhenConditionWithoutSubject()
-                        buildWhenBranch {
+                        buildWhenBranch(hasGuard = entry.guard != null) {
                             source = entrySource
-                            condition = firCondition
+                            condition = firCondition.guardedBy(entry.guard)
                             result = branch
                         }
                     }
                 } else {
-                    buildWhenBranch {
+                    buildWhenBranch(hasGuard = entry.guard != null) {
                         source = entrySource
-                        condition = buildElseIfTrueCondition()
+                        condition = entry.guard ?: buildElseIfTrueCondition()
                         result = branch
                     }
                 }
@@ -848,6 +848,7 @@ class LightTreeRawFirExpressionBuilder(
         var isElse = false
         var firBlock: FirBlock = buildEmptyExpressionBlock()
         val conditions = mutableListOf<FirExpression>()
+        var guard: FirExpression? = null
         var shouldBindSubject = false
         whenEntry.forEachChildren {
             when (it.tokenType) {
@@ -862,13 +863,14 @@ class LightTreeRawFirExpressionBuilder(
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
+                WHEN_ENTRY_GUARD -> guard = getAsFirExpression(it.getFirstChildExpressionUnwrapped(), "No expression in guard")
                 ELSE_KEYWORD -> isElse = true
                 BLOCK -> firBlock = declarationBuilder.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationBuilder.convertBlock(it)
             }
         }
 
-        return WhenEntry(conditions, firBlock, whenEntry, isElse, shouldBindSubject)
+        return WhenEntry(conditions, guard, firBlock, whenEntry, isElse, shouldBindSubject)
     }
 
     private fun convertWhenConditionExpression(
@@ -1341,7 +1343,7 @@ class LightTreeRawFirExpressionBuilder(
             source = ifExpression.toFirSourceElement()
             with(parseIfExpression(ifExpression)) {
                 val trueBranch = convertLoopBody(thenBlock)
-                branches += buildWhenBranch {
+                branches += buildRegularWhenBranch {
                     source = firCondition?.source
                     condition = firCondition ?: buildErrorExpression(
                         null,
@@ -1353,7 +1355,7 @@ class LightTreeRawFirExpressionBuilder(
                 if (elseBlock != null) {
                     val elseBranch = convertLoopOrIfBody(elseBlock)
                     if (elseBranch != null) {
-                        branches += buildWhenBranch {
+                        branches += buildRegularWhenBranch {
                             source = elseBlock.toFirSourceElement()
                             condition = buildElseIfTrueCondition()
                             result = elseBranch

@@ -141,6 +141,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_INHERITS_JA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_MISSING
@@ -728,6 +729,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_GUARD_WITHOUT_SUBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_EXTENSION_FUNCTION_TYPE
@@ -2377,6 +2379,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CONFUSING_BRANCH_CONDITION,
             "Logical expression in when-with-subject. The branch will be matched by comparing the result of the logical expression with the subject. To suppress the diagnostic, wrap the expression with parentheses."
+        )
+        map.put(
+            COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD,
+            "Use of comma in 'when' condition with guard statement is not allowed."
+        )
+        map.put(
+            WHEN_GUARD_WITHOUT_SUBJECT,
+            "Guard statements are only allowed in 'when' with subject."
         )
 
         // Context tracking

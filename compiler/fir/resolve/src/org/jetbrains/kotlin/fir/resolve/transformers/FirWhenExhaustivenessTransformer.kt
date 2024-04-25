@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -197,6 +198,10 @@ private sealed class WhenExhaustivenessChecker {
         }
 
         override fun visitWhenBranch(whenBranch: FirWhenBranch, data: D) {
+            // When conditions with guards do not contribute to exhaustiveness.
+            // TODO(KT-63696): enhance exhaustiveness checks to consider guards.
+            if (whenBranch.hasGuard) return
+
             whenBranch.condition.accept(this, data)
         }
 

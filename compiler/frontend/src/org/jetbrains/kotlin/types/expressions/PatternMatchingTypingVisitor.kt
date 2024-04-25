@@ -178,6 +178,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val trace = contextWithExpectedType.trace
         WhenChecker.checkDeprecatedWhenSyntax(trace, expression)
         WhenChecker.checkSealedWhenIsReserved(trace, expression.whenKeyword)
+        checkWhenGuardsAreEnabled(trace, expression)
 
         components.dataFlowAnalyzer.recordExpectedType(trace, expression, contextWithExpectedType.expectedType)
 
@@ -712,5 +713,14 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn))
         }
         return true
+    }
+
+    private fun checkWhenGuardsAreEnabled(trace: BindingTrace, expression: KtWhenExpression) {
+        for (entry in expression.entries) {
+            val guard = entry.guard
+            if (guard != null) {
+                trace.report(UNSUPPORTED_FEATURE.on(guard, Pair(LanguageFeature.WhenGuards, components.languageVersionSettings)))
+            }
+        }
     }
 }

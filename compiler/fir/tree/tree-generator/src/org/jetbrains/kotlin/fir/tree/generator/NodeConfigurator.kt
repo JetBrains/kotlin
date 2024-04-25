@@ -280,6 +280,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         whenBranch.configure {
             +field("condition", expression).withTransform()
             +field("result", block).withTransform()
+            +booleanField("hasGuard")
             needTransformOtherChildren()
         }
 

@@ -42178,6 +42178,22 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/when/guard")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Guard {
+      @Test
+      public void testAllFilesPresentInGuard() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Test
+      @TestMetadata("whenWithGuard.kt")
+      public void testWhenWithGuard() {
+        runTest("compiler/testData/codegen/box/when/guard/whenWithGuard.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
     @TestDataPath("$PROJECT_ROOT")
     public class StringOptimization {

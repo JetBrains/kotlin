@@ -40285,6 +40285,34 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/when/guard")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Guard {
+        @Test
+        public void testAllFilesPresentInGuard() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when/guard"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        }
+
+        @Test
+        @TestMetadata("whenWithGuardDisabled.kt")
+        public void testWhenWithGuardDisabled() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/whenWithGuardDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("whenWithGuardEnabled.kt")
+        public void testWhenWithGuardEnabled() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/whenWithGuardEnabled.kt");
+        }
+
+        @Test
+        @TestMetadata("whenWithGuardSyntax.kt")
+        public void testWhenWithGuardSyntax() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/whenWithGuardSyntax.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable")
       @TestDataPath("$PROJECT_ROOT")
       public class WithSubjectVariable {

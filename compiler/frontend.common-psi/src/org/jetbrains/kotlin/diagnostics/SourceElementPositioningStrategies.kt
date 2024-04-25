@@ -201,6 +201,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.WHEN_EXPRESSION
     )
 
+    val WHEN_GUARD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.WHEN_GUARD,
+        PositioningStrategies.WHEN_GUARD
+    )
+
     val IF_EXPRESSION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.IF_EXPRESSION,
         PositioningStrategies.IF_EXPRESSION

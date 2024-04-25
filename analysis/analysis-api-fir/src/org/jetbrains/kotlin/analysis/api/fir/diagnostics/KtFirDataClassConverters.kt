@@ -4398,6 +4398,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD) { firDiagnostic ->
+        CommaInWhenConditionWithWhenGuardImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.WHEN_GUARD_WITHOUT_SUBJECT) { firDiagnostic ->
+        WhenGuardWithoutSubjectImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
         TypeParameterIsNotAnExpressionImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),

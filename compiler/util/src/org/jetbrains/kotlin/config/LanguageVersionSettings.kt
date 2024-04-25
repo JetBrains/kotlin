@@ -391,6 +391,7 @@ enum class LanguageFeature(
     JavaTypeParameterDefaultRepresentationWithDNN(sinceVersion = null, kind = OTHER), // KT-59138
     ForbidUsingExpressionTypesWithInaccessibleContent(sinceVersion = null, kind = BUG_FIX), // KT-66691
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, kind = OTHER), // KT-56386
+    WhenGuards(sinceVersion = null, kind = OTHER), // KT-13626
     ;
 
     init {

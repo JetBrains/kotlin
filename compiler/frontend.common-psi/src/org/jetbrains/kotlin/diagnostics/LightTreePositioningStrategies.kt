@@ -837,6 +837,17 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val WHEN_GUARD = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.findChildByType(node, KtNodeTypes.WHEN_ENTRY_GUARD) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
+
     val IF_EXPRESSION = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

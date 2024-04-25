@@ -41808,6 +41808,22 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/when/guard")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Guard {
+      @Test
+      public void testAllFilesPresentInGuard() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      }
+
+      @Test
+      @TestMetadata("whenWithGuard.kt")
+      public void testWhenWithGuard() {
+        runTest("compiler/testData/codegen/box/when/guard/whenWithGuard.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
     @TestDataPath("$PROJECT_ROOT")
     public class StringOptimization {

@@ -10,34 +10,16 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
-import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.impl.FirWhenBranchImpl
 
 @FirBuilderDsl
-class FirWhenBranchBuilder {
-    var source: KtSourceElement? = null
-    lateinit var condition: FirExpression
-    lateinit var result: FirBlock
-
-    fun build(): FirWhenBranch {
-        return FirWhenBranchImpl(
-            source,
-            condition,
-            result,
-        )
-    }
-
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildWhenBranch(init: FirWhenBranchBuilder.() -> Unit): FirWhenBranch {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    return FirWhenBranchBuilder().apply(init).build()
+interface FirAbstractWhenBranchBuilder {
+    abstract var source: KtSourceElement?
+    abstract var condition: FirExpression
+    abstract var result: FirBlock
+    fun build(): FirWhenBranch
 }

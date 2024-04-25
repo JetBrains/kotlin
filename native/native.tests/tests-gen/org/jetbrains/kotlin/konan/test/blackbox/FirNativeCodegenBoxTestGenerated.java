@@ -45756,6 +45756,25 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/when/guard")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @UseExtTestCaseGroupProvider()
+      public class Guard {
+        @Test
+        public void testAllFilesPresentInGuard() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("whenWithGuard.kt")
+        public void testWhenWithGuard() {
+          runTest("compiler/testData/codegen/box/when/guard/whenWithGuard.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("frontend-fir")

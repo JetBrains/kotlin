@@ -3071,6 +3071,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConfusingBranchConditionWarning::class
     }
 
+    interface CommaInWhenConditionWithWhenGuard : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CommaInWhenConditionWithWhenGuard::class
+    }
+
+    interface WhenGuardWithoutSubject : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WhenGuardWithoutSubject::class
+    }
+
     interface TypeParameterIsNotAnExpression : KtFirDiagnostic<KtSimpleNameExpression> {
         override val diagnosticClass get() = TypeParameterIsNotAnExpression::class
         val typeParameter: KtTypeParameterSymbol

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lightTree.fir
 
 import com.intellij.lang.LighterASTNode
-import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.fir.builder.buildBalancedOrExpressionTree
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
 
 data class WhenEntry(
     val conditions: List<FirExpression>,
+    val guard: FirExpression?,
     val firBlock: FirBlock,
     val node: LighterASTNode,
     val isElse: Boolean = false,

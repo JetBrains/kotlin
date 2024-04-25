@@ -146,7 +146,6 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // and $subj fake source refers to "42" as KtWhenCondition
     object WhenCondition : KtFakeSourceElementKind()
 
-
     // for primary constructor parameter the corresponding class property is generated
     // with a fake sources which refers to this the corresponding parameter
     object PropertyFromParameter : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
