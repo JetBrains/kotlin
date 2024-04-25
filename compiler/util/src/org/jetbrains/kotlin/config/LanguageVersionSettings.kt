@@ -324,6 +324,7 @@ enum class LanguageFeature(
     ProhibitTypealiasAsCallableQualifierInImport(KOTLIN_2_1, kind = BUG_FIX), // KT-64350
     ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection(KOTLIN_2_1, kind = BUG_FIX), // KT-60305
     JsExternalPropertyParameters(KOTLIN_2_1), // KT-65965
+    ImprovedCapturedTypeApproximationInInference(KOTLIN_2_1, kind = OTHER), // KT-64515
 
     // End of 2.* language features --------------------------------------------------
 

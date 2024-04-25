@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.extractTypeForGivenRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -22,10 +24,9 @@ class ResultTypeResolver(
     val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
-    interface Context : TypeSystemInferenceExtensionContext {
+    interface Context : TypeSystemInferenceExtensionContext, ConstraintSystemBuilder {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
         val outerSystemVariablesPrefixSize: Int
-        fun isProperType(type: KotlinTypeMarker): Boolean
         fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker
         fun isReified(variable: TypeVariableMarker): Boolean
     }
@@ -66,6 +67,28 @@ class ResultTypeResolver(
         return c.getDefaultType(direction, variableWithConstraints.constraints, variableWithConstraints.typeVariable)
     }
 
+    private fun KotlinTypeMarker.approximateToSuperTypeOrSelf(c: Context, superTypeCandidate: KotlinTypeMarker?): KotlinTypeMarker {
+        // In case we have an ILT as the subtype, we approximate it using the upper type as the expected type.
+        // This is more precise than always approximating it to Int or UInt.
+        // Note, we shouldn't have nested ILTs because they can only appear as a constraint on a type variable
+        // that we would have fixed earlier.
+        if (typeConstructor(c).isIntegerLiteralTypeConstructor(c)) {
+            return typeApproximator.approximateToSuperType(
+                this,
+                TypeApproximatorConfiguration.TopLevelIntegerLiteralTypeApproximationWithExpectedType(superTypeCandidate)
+            ) ?: this
+        }
+
+        return typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.InternalTypesApproximation) ?: this
+    }
+
+    private fun KotlinTypeMarker.approximateToSubTypeOrSelf(): KotlinTypeMarker {
+        return typeApproximator.approximateToSubType(this, TypeApproximatorConfiguration.InternalTypesApproximation) ?: this
+    }
+
+    private val useImprovedCapturedTypeApproximation: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.ImprovedCapturedTypeApproximationInInference)
+
     fun findResultTypeOrNull(
         c: Context,
         variableWithConstraints: VariableWithConstraints,
@@ -87,66 +110,18 @@ class ResultTypeResolver(
         val subType = c.findSubType(variableWithConstraints)
         val superType = c.findSuperType(variableWithConstraints)
 
-        val similarCapturedTypesInK2 = with(c) {
-            isK2 && similarOrCloselyBoundCapturedTypes(subType, superType)
+        val (preparedSubType, preparedSuperType) = if (c.isK2 && useImprovedCapturedTypeApproximation) {
+            c.prepareSubAndSuperTypes(subType, superType, variableWithConstraints)
+        } else {
+            c.prepareSubAndSuperTypesLegacy(subType, superType, variableWithConstraints)
         }
-
-        /**
-         * The special logic for handling similar captured types in K2 is needed because of the following.
-         * Currently, it's allowed to squash LOWER(type) and UPPER(type) constraints with the same type
-         * into one EQUALS(type) constraint.
-         * E.g. it's possible for constraints like LOWER(SomeCapturedType!) & UPPER(SomeCapturedTypes!).
-         * In such a situation [ResultTypeResolver] infers a relevant type variable into SomeCapturedType!,
-         * without any approximation.
-         * However, complex handling of DNN/non-DNN types sometimes lead to a situation (see e.g. KT-50134 example)
-         * when we have a pair of LOWER(SomeCapturedType&Any..SomeCapturedType?) and UPPER(SomeCapturedType!).
-         * These constraints use almost the same type, but they cannot be squashed.
-         * Moreover, [ResultTypeResolver] approximates captured from expression types when they came from UPPER or LOWER constraint.
-         * See [AbstractTypeApproximator.approximateToSuperType] and [AbstractTypeApproximator.approximateToSubType] calls below.
-         * As a result, [ResultTypeResolver] infers a relevant type variable to e.g. Any!,
-         * despite the fact the situation is almost the same as in case with matched constraints.
-         * This can produce unexpected NEW_INFERENCE_ERROR because other constraints are unmatched.
-         *
-         * To handle this situation, approximation of captured types for this case with similar constraints is disabled in K2.
-         */
-        // TODO: consider skipping captured types approximation unconditionally (KT-66346)
-        val preparedSubType = when {
-            subType == null -> null
-            similarCapturedTypesInK2 -> subType
-            /**
-             *
-             * fun <T> Array<out T>.intersect(other: Iterable<T>) {
-             *      val set = toMutableSet()
-             *      set.retainAll(other)
-             * }
-             * fun <X> Array<out X>.toMutableSet(): MutableSet<X> = ...
-             * fun <Y> MutableCollection<in Y>.retainAll(elements: Iterable<Y>) {}
-             *
-             * Here, when we solve type system for `toMutableSet` we have the following constrains:
-             * Array<C(out T)> <: Array<out X> => C(out X) <: T.
-             * If we fix it to T = C(out X) then return type of `toMutableSet()` will be `MutableSet<C(out X)>`
-             * and type of variable `set` will be `MutableSet<out T>` and the following line will have contradiction.
-             *
-             * To fix this problem when we fix variable, we will approximate captured types before fixation.
-             *
-             */
-            else -> typeApproximator.approximateToSuperType(subType, TypeApproximatorConfiguration.InternalTypesApproximation) ?: subType
-        }
-
-        // TODO: consider skipping captured types approximation unconditionally (KT-66346)
-        val preparedSuperType = when {
-            superType == null -> null
-            similarCapturedTypesInK2 -> superType
-            c.isK2 && c.hasRecursiveTypeParametersWithGivenSelfType(superType.typeConstructor(c)) -> superType
-            else -> typeApproximator.approximateToSubType(superType, TypeApproximatorConfiguration.InternalTypesApproximation) ?: superType
-            // Super type should be the most flexible, sub type should be the least one
-        }.makeFlexibleIfNecessary(c, variableWithConstraints.constraints)
 
         val resultTypeFromDirection = if (direction == ResolveDirection.TO_SUBTYPE || direction == ResolveDirection.UNKNOWN) {
             c.resultType(preparedSubType, preparedSuperType, variableWithConstraints)
         } else {
             c.resultType(preparedSuperType, preparedSubType, variableWithConstraints)
         }
+
         // In the general case, we can have here two types, one from EQUAL constraint which must be ILT-based,
         // and the second one from UPPER/LOWER constraints (subType/superType based)
         // The logic of choice here is:
@@ -163,30 +138,108 @@ class ResultTypeResolver(
     }
 
     /**
-     * This function is used to determine if a resulting captured type should be approximated before returning it as a result type.
+     * The general approach to approximation of resulting types (in K2) is to
+     * - always approximate ILTs
+     * - always approximate captured types unless this leads to a contradiction.
+     * A contradiction can appear if we have some captured type C = CapturedType(*) in the subtype and in the supertype.
      *
-     * In general, it's good not to approximate resulting captured types at all (see KT-66346).
-     * Strictly speaking, such an approximation can build a type which is out of given constraints at all, e.g. (see KT-67221):
+     * Example: A<C> <: T <: A<C>
      *
-     * Given CapturedType(out Generic<CapturedType(*)>) <: T <: Generic<CapturedType(*)>,
-     * we can produce just Generic<out Any> and break the constraint system.
+     * If we were to approximate the result type, we would end up with a contradiction
+     * A<*> </: A<C>
      *
-     * However, avoiding approximation can also have drawbacks.
-     * In cases like CapturedType(out String) <: T <: String (constraint system from KT-54077),
-     * we can approximate the result to String safely, and if we keep CapturedType(out String) instead,
-     * we get type mismatch error later. Also, extra captured types can break diagnostics like REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.
+     * In comparison, types from equality constraints are never approximated because it would always lead to a contradiction.
+     * We evaluated a never-approximate approach but found it to be infeasible as it introduces many new errors
+     * (type mismatches, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR, etc.).
+     */
+    private fun Context.prepareSubAndSuperTypes(
+        subType: KotlinTypeMarker?,
+        superType: KotlinTypeMarker?,
+        variableWithConstraints: VariableWithConstraints,
+    ): Pair<KotlinTypeMarker?, KotlinTypeMarker?> {
+        val approximatedSubType = subType?.approximateToSuperTypeOrSelf(this, superType)
+        val approximatedSuperType = superType?.approximateToSubTypeOrSelf()
+
+        val preparedSubType = when {
+            approximatedSubType == null -> null
+            shouldBeUsedWithoutApproximation(subType, approximatedSubType, variableWithConstraints, this) -> subType
+            else -> approximatedSubType
+        }
+
+        val preparedSuperType = when {
+            approximatedSuperType == null -> null
+            shouldBeUsedWithoutApproximation(superType, approximatedSuperType, variableWithConstraints, this) -> superType
+            hasRecursiveTypeParametersWithGivenSelfType(superType.typeConstructor(this)) -> superType
+            else -> approximatedSuperType
+            // Super type should be the most flexible, sub type should be the least one
+        }.makeFlexibleIfNecessary(this, variableWithConstraints.constraints)
+
+        return preparedSubType to preparedSuperType
+    }
+
+    /**
+     * Returns `true` if using [approximatedResultType] as result type leads to a contradiction.
      *
-     * So currently (before full KT-66346 implementation), we are doing something intermediate
-     * and this function should return true if approximation is not needed.
+     * If [resultType] and [approximatedResultType] are referentially equal, it means there is nothing to approximate in the first place.
+     * Therefore `false` is returned.
      *
-     * Currently, it does so for "similar captured types": it's a pair of captured-type based types like
-     * CapturedType&Any..CapturedType? and CapturedType..CapturedType?.
-     * Type constructors of lower/upper bound of both types should be the same captured types, to get true result here.
+     * Only used when [LanguageFeature.ImprovedCapturedTypeApproximationInInference] is enabled.
+     */
+    private fun shouldBeUsedWithoutApproximation(
+        resultType: KotlinTypeMarker,
+        approximatedResultType: KotlinTypeMarker,
+        variableWithConstraints: VariableWithConstraints,
+        c: Context,
+    ): Boolean {
+        if (resultType === approximatedResultType || c.hasContradiction) return false
+
+        // TODO(related to KT-64802) This if shouldn't be necessary but removing it breaks
+        // compiler/testData/diagnostics/tests/unsignedTypes/conversions/inferenceForSignedAndUnsignedTypes.kt
+        if (resultType.typeConstructor(c).isIntegerLiteralTypeConstructor(c)) return false
+
+        var createsContradiction = false
+        c.runTransaction {
+            addEqualityConstraint(
+                approximatedResultType,
+                variableWithConstraints.typeVariable.defaultType(c),
+                SimpleConstraintSystemConstraintPosition
+            )
+            createsContradiction = hasContradiction
+            false
+        }
+        return createsContradiction
+    }
+
+    private fun Context.prepareSubAndSuperTypesLegacy(
+        subType: KotlinTypeMarker?,
+        superType: KotlinTypeMarker?,
+        variableWithConstraints: VariableWithConstraints,
+    ): Pair<KotlinTypeMarker?, KotlinTypeMarker?> {
+        val similarCapturedTypesInK2 = with(this) {
+            isK2 && similarOrCloselyBoundCapturedTypes(subType, superType)
+        }
+
+        val preparedSubType = when {
+            subType == null -> null
+            similarCapturedTypesInK2 -> subType
+            else -> typeApproximator.approximateToSuperType(subType, TypeApproximatorConfiguration.InternalTypesApproximation) ?: subType
+        }
+
+        val preparedSuperType = when {
+            superType == null -> null
+            similarCapturedTypesInK2 -> superType
+            isK2 && hasRecursiveTypeParametersWithGivenSelfType(superType.typeConstructor(this)) -> superType
+            else -> typeApproximator.approximateToSubType(superType, TypeApproximatorConfiguration.InternalTypesApproximation) ?: superType
+            // Super type should be the most flexible, sub type should be the least one
+        }.makeFlexibleIfNecessary(this, variableWithConstraints.constraints)
+
+        return preparedSubType to preparedSuperType
+    }
+
+    /**
+     * Old heuristic used to determine when result types from lower/upper constraints should be approximated or not.
      *
-     * Also, true is returned for "closely bound captured types":
-     * in this case a captured [subType] is inherited from a captured-containing [superType].
-     *
-     * @return true for similar or closely bound [subType] and [superType] captured types, which aren't approximated after that.
+     * Becomes obsolete after [LanguageFeature.ImprovedCapturedTypeApproximationInInference] is enabled.
      */
     private fun Context.similarOrCloselyBoundCapturedTypes(subType: KotlinTypeMarker?, superType: KotlinTypeMarker?): Boolean {
         if (subType == null) return false
@@ -194,10 +247,6 @@ class ResultTypeResolver(
         val subTypeLowerConstructor = subType.lowerBoundIfFlexible().typeConstructor()
         if (!subTypeLowerConstructor.isCapturedTypeConstructor()) return false
 
-        // If two captured types or captured-containing types are already in subtyping relation,
-        // we shouldn't do approximation, otherwise this subtyping relation becomes broken
-        // E.g. subType = CapturedType(out Generic<CapturedType(*)>), superType = Generic<CapturedType(*)>
-        // Important: both superType/subType contain the same captured type inside -- CapturedType(*) for the case above
         if (superType in subTypeLowerConstructor.supertypes() && superType.contains { it.typeConstructor().isCapturedTypeConstructor() }) {
             return true
         }
@@ -269,6 +318,10 @@ class ResultTypeResolver(
 
     private fun Context.isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
         val filteredConstraints = variableWithConstraints.constraints.filter { isProperTypeForFixation(it.type) }
+
+        // TODO(KT-68213) this loop is only used for checking of incomptible ILT approximations in K1
+        // It shouldn't be necessary in K2
+        // but removing it breaks compiler/fir/analysis-tests/testData/resolve/inference/kt53494.kt
         for (constraint in filteredConstraints) {
             if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
