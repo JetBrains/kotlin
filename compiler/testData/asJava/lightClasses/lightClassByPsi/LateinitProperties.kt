@@ -1,4 +1,4 @@
-// !GENERATE_PROPERTY_ANNOTATIONS_METHODS
+// GENERATE_PROPERTY_ANNOTATIONS_METHODS
 class KotlinClass {
     lateinit var classLateinitVariable: Custom
 
