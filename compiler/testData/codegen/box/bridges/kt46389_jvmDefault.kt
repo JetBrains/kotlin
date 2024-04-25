@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
 
 // The code in this test should be prohibited in the frontend, see KT-36188.

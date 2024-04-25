@@ -1,5 +1,5 @@
 // FIR_BLOCKED: KT-59287
-// !JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: all-compatibility
 // EXPECTED_ERROR: (kotlin:16:5) modifier private not allowed here
 
 interface Foo {

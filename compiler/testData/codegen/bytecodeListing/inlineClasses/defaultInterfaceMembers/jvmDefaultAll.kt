@@ -1,4 +1,4 @@
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // WITH_STDLIB
 // JVM_TARGET: 1.8
 

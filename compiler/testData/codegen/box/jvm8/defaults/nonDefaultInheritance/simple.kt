@@ -3,7 +3,7 @@
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // MODULE: lib
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // FILE: Foo.kt
 
 interface Foo {
@@ -13,7 +13,7 @@ interface Foo {
 }
 
 // MODULE: main(lib)
-// !JVM_DEFAULT_MODE: disable
+// JVM_DEFAULT_MODE: disable
 // FILE: main.kt
 
 interface Derived : Foo {

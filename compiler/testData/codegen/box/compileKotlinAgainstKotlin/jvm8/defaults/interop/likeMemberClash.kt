@@ -1,6 +1,6 @@
 // FULL_JDK
 // MODULE: lib
-// !JVM_DEFAULT_MODE: disable
+// JVM_DEFAULT_MODE: disable
 // FILE: 1.kt
 interface Check {
     fun test(): String {
@@ -18,7 +18,7 @@ interface SubCheck : Check {
 open class CheckClass : Check
 
 // MODULE: main(lib)
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
 // FILE: main.kt
 class SubCheckClass : CheckClass(), SubCheck

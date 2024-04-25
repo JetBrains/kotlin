@@ -2,7 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
-// !JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: all-compatibility
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
 // JVM_TARGET: 1.8
