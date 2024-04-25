@@ -70,6 +70,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("alwaysRenderFullExpansions.kt")
+    public void testAlwaysRenderFullExpansions() {
+      runTest("compiler/testData/diagnostics/tests/alwaysRenderFullExpansions.kt");
+    }
+
+    @Test
     @TestMetadata("ambiguityNamedVararg.kt")
     public void testAmbiguityNamedVararg() {
       runTest("compiler/testData/diagnostics/tests/ambiguityNamedVararg.kt");
