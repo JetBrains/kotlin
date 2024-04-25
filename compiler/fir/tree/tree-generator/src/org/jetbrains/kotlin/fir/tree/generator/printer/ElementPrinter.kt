@@ -55,13 +55,18 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             for (field in allFields) {
                 if (!field.needsSeparateTransform) continue
                 println()
-                transformFunctionDeclaration(field, element, override = field.fromParent && field.parentHasSeparateTransform, kind)
+                transformFunctionDeclaration(
+                    field = field,
+                    returnType = element.withSelfArgs(),
+                    override = field.fromParent && field.parentHasSeparateTransform,
+                    implementationKind = kind
+                )
                 println()
             }
             if (needTransformOtherChildren) {
                 println()
                 transformOtherChildrenFunctionDeclaration(
-                    element,
+                    element.withSelfArgs(),
                     override = element.elementParents.any { it.element.needTransformOtherChildren },
                     kind,
                 )

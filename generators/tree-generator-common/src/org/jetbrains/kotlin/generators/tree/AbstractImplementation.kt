@@ -20,7 +20,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
               Element : AbstractElement<Element, *, Implementation>,
               Field : AbstractField<*> {
 
-    override val allParents: List<ImplementationKindOwner>
+    override val allParents: List<Element>
         get() = listOf(element)
 
     val namePrefix: String

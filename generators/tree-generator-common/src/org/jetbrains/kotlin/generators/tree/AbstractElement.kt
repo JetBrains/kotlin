@@ -90,9 +90,6 @@ abstract class AbstractElement<Element, Field, Implementation>(
     final override fun renderTo(appendable: Appendable, importCollector: ImportCollecting) {
         importCollector.addImport(this)
         appendable.append(typeName)
-        if (params.isNotEmpty()) {
-            params.joinTo(appendable, prefix = "<", postfix = ">") { it.name }
-        }
     }
 
     override val allFields: List<Field> by lazy {
@@ -200,6 +197,8 @@ abstract class AbstractElement<Element, Field, Implementation>(
     override fun substitute(map: TypeParameterSubstitutionMap): Element = this as Element
 
     fun withStarArgs(): ElementRef<Element> = copy(params.associateWith { TypeRef.Star })
+
+    fun withSelfArgs(): ElementRef<Element> = copy(params.associateWith { it })
 
     operator fun TypeVariable.unaryPlus() = apply {
         params.add(this)

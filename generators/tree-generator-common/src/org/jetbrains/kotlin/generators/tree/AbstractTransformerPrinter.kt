@@ -37,7 +37,7 @@ abstract class AbstractTransformerPrinter<Element : AbstractElement<Element, Fie
                 printFunctionWithBlockBody(
                     name = "transform" + element.name,
                     parameters = listOf(
-                        FunctionParameter(elementParameterName, element),
+                        FunctionParameter(elementParameterName, element.withSelfArgs()),
                         FunctionParameter("data", dataTypeVariable)
                     ),
                     returnType = visitMethodReturnType(element),
