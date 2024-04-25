@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
+import org.junit.Ignore
 import org.junit.Test
 
 class LiveLiteralV2TransformTests(useFir: Boolean) : AbstractLiveLiteralTransformTests(useFir) {
@@ -427,6 +428,7 @@ class LiveLiteralV2TransformTests(useFir: Boolean) : AbstractLiveLiteralTransfor
         )
     }
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testComposeIrSkippingWithDefaultsRelease() = verifyGoldenComposeIrTransform(
         """

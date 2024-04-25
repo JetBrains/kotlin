@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.junit.Ignore
 import org.junit.Test
 
 class ComposeCallLoweringTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -84,6 +85,7 @@ class ComposeCallLoweringTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testUnboundSymbolIssue() {
         codegenNoImports(

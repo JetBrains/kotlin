@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.junit.Ignore
 import org.junit.Test
 
 abstract class FunctionBodySkippingTransformTestsBase(
@@ -73,6 +74,7 @@ class FunctionBodySkippingTransformTests(
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testBasicText(): Unit = comparisonPropagation(
         """
@@ -95,6 +97,7 @@ class FunctionBodySkippingTransformTests(
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testArrangement(): Unit = comparisonPropagation(
         """
@@ -1161,6 +1164,7 @@ class FunctionBodySkippingTransformTests(
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testDefaultsIssue(): Unit = comparisonPropagation(
         """

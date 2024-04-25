@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 
 class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
@@ -127,77 +128,92 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
 
     @Test
     fun testDpLiteralsAreStatic() = assertStatic(
-        expression = "Dp(4f)"
+        expression = "Dp(4f)",
+        includeUiImports = true
     )
 
     @Test
     fun testDpArithmeticIsStatic() = assertStatic(
-        expression = "2 * 4.dp"
+        expression = "2 * 4.dp",
+        includeUiImports = true
     )
 
     @Test
     fun testModifierReferenceIsStatic() = assertStatic(
-        expression = "Modifier"
+        expression = "Modifier",
+        includeUiImports = true
     )
 
     @Test
     fun testAlignmentReferenceIsStatic() = assertStatic(
-        expression = "Alignment.Center"
+        expression = "Alignment.Center",
+        includeUiImports = true
     )
 
     @Test
     fun testContentScaleReferenceIsStatic() = assertStatic(
-        expression = "ContentScale.Fit"
+        expression = "ContentScale.Fit",
+        includeUiImports = true
     )
 
     @Test
     fun testDefaultTextStyleReferenceIsStatic() = assertStatic(
-        expression = "TextStyle.Default"
+        expression = "TextStyle.Default",
+        includeUiImports = true
     )
 
     @Test
     fun testTextVisualTransformationNoneReferenceIsStatic() = assertStatic(
-        expression = "VisualTransformation.None"
+        expression = "VisualTransformation.None",
+        includeUiImports = true
     )
 
     @Test
     fun testDefaultKeyboardActionsIsStatic() = assertStatic(
-        expression = "KeyboardActions.Default"
+        expression = "KeyboardActions.Default",
+        includeUiImports = true
     )
 
     @Test
     fun testDefaultKeyboardOptionsIsStatic() = assertStatic(
-        expression = "KeyboardOptions.Default"
+        expression = "KeyboardOptions.Default",
+        includeUiImports = true
     )
 
     @Test
     fun testKeyboardOptionsWithLiteralsIsStatic() = assertStatic(
-        expression = "KeyboardOptions(autoCorrect = false)"
+        expression = "KeyboardOptions(autoCorrect = false)",
+        includeUiImports = true
     )
 
     @Test
     fun testUnspecifiedColorIsStatic() = assertStatic(
-        expression = "Color.Unspecified"
+        expression = "Color.Unspecified",
+        includeUiImports = true
     )
 
     @Test
     fun testUnspecifiedDpIsStatic() = assertStatic(
-        expression = "Dp.Unspecified"
+        expression = "Dp.Unspecified",
+        includeUiImports = true
     )
 
     @Test
     fun testUnspecifiedTextUnitIsStatic() = assertStatic(
-        expression = "TextUnit.Unspecified"
+        expression = "TextUnit.Unspecified",
+        includeUiImports = true
     )
 
     @Test
     fun testPaddingValuesZeroIsStatic() = assertStatic(
-        expression = "PaddingValues()"
+        expression = "PaddingValues()",
+        includeUiImports = true
     )
 
     @Test
     fun testPaddingValuesAllIsStatic() = assertStatic(
-        expression = "PaddingValues(all = 16.dp)"
+        expression = "PaddingValues(all = 16.dp)",
+        includeUiImports = true
     )
 
     @Test
@@ -205,42 +221,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         expression = "EmptyCoroutineContext"
     )
 
-    private fun assertStatic(
-        expression: String,
-        @Language("kotlin")
-        extraSrc: String = ""
-    ) {
-        assertParameterChangeBitsForExpression(
-            message = "Expression `$expression` did not compile with the correct %changed flags",
-            expression = expression,
-            extraSrc = extraSrc,
-            expectedEncodedChangedParameter = ChangedParameterEncoding.Static
-        )
-    }
-
-    private fun assertUncertain(
-        expression: String,
-        @Language("kotlin")
-        extraSrc: String = ""
-    ) {
-        assertParameterChangeBitsForExpression(
-            message = "Expression `$expression` did not compile with the correct %changed flags",
-            expression = expression,
-            extraSrc = extraSrc,
-            expectedEncodedChangedParameter = ChangedParameterEncoding.Uncertain
-        )
-    }
-
-    private fun assertParameterChangeBitsForExpression(
-        message: String,
-        expression: String,
-        expectedEncodedChangedParameter: ChangedParameterEncoding,
-        @Language("kotlin")
-        extraSrc: String = ""
-    ) {
-        @Language("kotlin")
-        val source = """
-            import androidx.compose.runtime.Composable
+    private val uiFoundationImports = """
             import androidx.compose.ui.unit.Dp
             import androidx.compose.ui.unit.dp
             import androidx.compose.ui.unit.TextUnit
@@ -254,6 +235,52 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
             import androidx.compose.foundation.text.KeyboardActions
             import androidx.compose.foundation.text.KeyboardOptions
             import androidx.compose.foundation.layout.PaddingValues
+    """
+
+    private fun assertStatic(
+        expression: String,
+        @Language("kotlin")
+        extraSrc: String = "",
+        includeUiImports: Boolean = false
+    ) {
+        assertParameterChangeBitsForExpression(
+            message = "Expression `$expression` did not compile with the correct %changed flags",
+            expression = expression,
+            extraSrc = extraSrc,
+            expectedEncodedChangedParameter = ChangedParameterEncoding.Static,
+            includeUiImports = includeUiImports
+        )
+    }
+
+    private fun assertUncertain(
+        expression: String,
+        @Language("kotlin")
+        extraSrc: String = "",
+        includeUiImports: Boolean = false
+    ) {
+        assertParameterChangeBitsForExpression(
+            message = "Expression `$expression` did not compile with the correct %changed flags",
+            expression = expression,
+            extraSrc = extraSrc,
+            expectedEncodedChangedParameter = ChangedParameterEncoding.Uncertain,
+            includeUiImports = includeUiImports
+        )
+    }
+
+    private fun assertParameterChangeBitsForExpression(
+        message: String,
+        expression: String,
+        expectedEncodedChangedParameter: ChangedParameterEncoding,
+        @Language("kotlin")
+        extraSrc: String = "",
+        includeUiImports: Boolean = false
+    ) {
+        // todo: ui/foundation dependencies are not supported by Kotlin repo yet
+        assumeFalse(includeUiImports)
+        @Language("kotlin")
+        val source = """
+            import androidx.compose.runtime.Composable
+            ${if (includeUiImports) uiFoundationImports else ""}
             import kotlin.coroutines.EmptyCoroutineContext
 
             @Composable fun Receiver(value: Any?) {}

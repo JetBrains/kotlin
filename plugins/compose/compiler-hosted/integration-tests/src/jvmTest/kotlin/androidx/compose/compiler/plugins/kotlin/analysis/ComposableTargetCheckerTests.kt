@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -373,6 +374,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testUiTextAndInvalid() = check(
         """

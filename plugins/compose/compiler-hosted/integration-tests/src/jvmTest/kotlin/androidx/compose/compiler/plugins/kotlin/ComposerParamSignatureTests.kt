@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Test
 
 /* ktlint-disable max-line-length */
@@ -190,6 +191,7 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testCaptureIssue23() = codegen(
         """
@@ -1610,6 +1612,7 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testComposableColorFunInterfaceExample() = checkApi(
         """

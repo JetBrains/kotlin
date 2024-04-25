@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
+import org.junit.Ignore
 import org.junit.Test
 
 class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformTests(useFir) {
@@ -2108,6 +2109,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testComposeIrSkippingWithDefaultsRelease() = verifyGoldenComposeIrTransform(
         """

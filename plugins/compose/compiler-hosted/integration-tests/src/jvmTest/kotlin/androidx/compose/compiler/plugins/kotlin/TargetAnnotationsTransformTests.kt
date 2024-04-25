@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.junit.Ignore
 import org.junit.Test
 
 @Suppress("SpellCheckingInspection") // Expected strings can have partial words
@@ -221,6 +222,7 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testReceiverScope() = verifyGoldenComposeIrTransform(
         """
@@ -262,6 +264,7 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testCallingLayout() = verifyGoldenComposeIrTransform(
         """

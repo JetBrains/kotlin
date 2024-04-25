@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.junit.Ignore
 import org.junit.Test
 
 class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
@@ -129,6 +130,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """
     )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testLocalFunCaptures3() = verifyGoldenComposeIrTransform(
         """
@@ -460,6 +462,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """
         )
 
+    @Ignore("ui/foundation dependency is not supported for now")
     @Test // Regression validating b/246399235
     fun testB246399235() {
         testCompile(
