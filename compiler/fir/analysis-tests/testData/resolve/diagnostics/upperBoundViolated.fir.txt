@@ -14,7 +14,7 @@ FILE: upperBoundViolated.kt
 
     }
     public final typealias GGG = R|C|
-    public final typealias HHH = R|GGG|
+    public final typealias HHH = R|{GGG=} C|
     public final typealias JJJ = R|B<C>|
     public final fun <T : R|A|> fest(): R|kotlin/Unit| {
     }

@@ -13,7 +13,7 @@ FILE: NestedOfAliasedType.kt
 
     }
     public final typealias TA = R|A|
-    public final class B : R|TA| {
+    public final class B : R|{TA=} A| {
         public constructor(): R|B| {
             super<R|{TA=} A|>()
         }
