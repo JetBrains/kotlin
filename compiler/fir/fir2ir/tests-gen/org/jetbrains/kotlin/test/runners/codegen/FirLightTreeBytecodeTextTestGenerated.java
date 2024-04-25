@@ -3671,6 +3671,12 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
     }
 
     @Test
+    @TestMetadata("syntheticPropertyReference.kt")
+    public void testSyntheticPropertyReference() {
+      runTest("compiler/testData/codegen/bytecodeText/inline/syntheticPropertyReference.kt");
+    }
+
+    @Test
     @TestMetadata("whenMappingOnCallSite.kt")
     public void testWhenMappingOnCallSite() {
       runTest("compiler/testData/codegen/bytecodeText/inline/whenMappingOnCallSite.kt");
