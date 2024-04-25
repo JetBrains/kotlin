@@ -161,7 +161,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
                         """
                     Do not use LANGUAGE_VERSION directive in compiler tests because it's prone to limiting the test
                     to a specific language version, which will become obsolete at some point and the test won't check
-                    things like feature intersection with newer releases. Use `// !LANGUAGE: [+-]FeatureName` directive instead,
+                    things like feature intersection with newer releases. Use `// LANGUAGE: [+-]FeatureName` directive instead,
                     where FeatureName is an entry of the enum `LanguageFeature`
                     
                     """.trimIndent()

@@ -117,7 +117,7 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
     val matcher = LANGUAGE_FEATURE_PATTERN.matcher(directives)
     if (!matcher.find()) {
         Assert.fail(
-                "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +
+                "Wrong syntax in the '// $LANGUAGE_DIRECTIVE: ...' directive:\n" +
                 "found: '$directives'\n" +
                 "Must be '((+|-|warn:)LanguageFeatureName)+'\n" +
                 "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +

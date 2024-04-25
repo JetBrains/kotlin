@@ -150,8 +150,7 @@ internal data class TestData(
             val mainKotlinFile = findMainTestKotlinFile(directory)
             val fileText = mainKotlinFile.readText()
             val jvmFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "JVM_FILE_NAME:") ?: directory.name
-            val additionalCompilerOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// !LANGUAGE: ", "// LANGUAGE: ")
-                .map { "-XXLanguage:$it" }
+            val additionalCompilerOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// LANGUAGE: ").map { "-XXLanguage:$it" }
             return TestData(
                 directory = directory,
                 mainKotlinFile = mainKotlinFile,

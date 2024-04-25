@@ -15,7 +15,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val LANGUAGE by stringDirective(
         description = """
             List of enabled and disabled language features.
-            Usage: // !LANGUAGE: +SomeFeature -OtherFeature warn:FeatureWithEarning
+            Usage: // LANGUAGE: +SomeFeature -OtherFeature warn:FeatureWithEarning
         """.trimIndent()
     )
 
@@ -38,7 +38,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
             which will become obsolete at some point and the test won't check things like feature
             intersection with newer releases.
 
-            For language feature testing, use `// !LANGUAGE: [+-]FeatureName` directive instead,
+            For language feature testing, use `// LANGUAGE: [+-]FeatureName` directive instead,
             where FeatureName is an entry of the enum `LanguageFeature`
         """.trimIndent()
     )

@@ -73,7 +73,7 @@ class LanguageVersionSettingsBuilder {
                         which will become obsolete at some point and the test won't check things like feature
                         intersection with newer releases.
 
-                        For language feature testing, use `// !LANGUAGE: [+-]FeatureName` directive instead,
+                        For language feature testing, use `// LANGUAGE: [+-]FeatureName` directive instead,
                         where FeatureName is an entry of the enum `LanguageFeature`
 
                         If you are really sure you need to pin language versions, use the LANGUAGE_VERSION
@@ -140,7 +140,7 @@ class LanguageVersionSettingsBuilder {
         val matcher = LANGUAGE_FEATURE_PATTERN.matcher(featureString)
         if (!matcher.find()) {
             error(
-                """Wrong syntax in the '// !${LanguageSettingsDirectives.LANGUAGE.name}: ...' directive:
+                """Wrong syntax in the '// ${LanguageSettingsDirectives.LANGUAGE.name}: ...' directive:
                    found: '$featureString'
                    Must be '((+|-|warn:)LanguageFeatureName)+'
                    where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'

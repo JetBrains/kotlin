@@ -435,7 +435,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val matcher = DIAGNOSTICS_PATTERN.matcher(directives)
             if (!matcher.find()) {
                 Assert.fail(
-                    "Wrong syntax in the '// !$DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
+                    "Wrong syntax in the '// $DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
                             "found: '$directives'\n" +
                             "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
                             "where '+' means 'include'\n" +
