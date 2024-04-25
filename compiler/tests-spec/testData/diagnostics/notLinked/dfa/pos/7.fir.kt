@@ -156,7 +156,7 @@ fun case_8(x: TypealiasString) {
 }
 
 // TESTCASE NUMBER: 9
-fun case_9(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>) {
+fun case_9(x: TypealiasNullableString?) {
     if (x === null && <!SENSELESS_COMPARISON!>x === null<!> || <!SENSELESS_COMPARISON!>x === null<!>) {
 
     } else if (<!SENSELESS_COMPARISON!>x === null<!> || <!SENSELESS_COMPARISON!>x === null<!>) {
@@ -195,7 +195,7 @@ fun case_10() {
 }
 
 // TESTCASE NUMBER: 11
-fun case_11(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>, y: TypealiasNullableString) {
+fun case_11(x: TypealiasNullableString?, y: TypealiasNullableString) {
     val t: TypealiasNullableString = null
 
     if (x == null) {

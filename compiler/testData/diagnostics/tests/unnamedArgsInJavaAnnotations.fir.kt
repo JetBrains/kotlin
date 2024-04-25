@@ -1,7 +1,6 @@
 // ISSUE: KT-61309
 // ALLOW_KOTLIN_PACKAGE
-
-// FILE: javacode/Test.java
+// FILE: Test.java
 package javacode;
 
 import java.lang.annotation.ElementType;
@@ -28,7 +27,7 @@ typealias Test = javacode.Test
 import kotlin.test.Test
 import java.io.IOException
 
-@Test(IOException::class)
+@Test(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>IOException::class<!>)
 fun someTest() {}
 
 @Test(expected = IOException::class)

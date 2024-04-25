@@ -19,10 +19,10 @@ fun Foo.xxbar(body: XXBar.() -> Unit) = Bar().body()
 fun test() {
     Foo().foo {
         xbar {
-            <!DSL_SCOPE_VIOLATION!>foo<!> {}
+            foo {}
         }
         xxbar {
-            <!DSL_SCOPE_VIOLATION!>foo<!> {}
+            foo {}
         }
     }
 }
