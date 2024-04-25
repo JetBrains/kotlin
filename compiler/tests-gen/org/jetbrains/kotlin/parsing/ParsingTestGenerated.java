@@ -2893,6 +2893,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/stringTemplates"), Pattern.compile("^(.*)\\.kts?$"), null, true);
       }
 
+      @TestMetadata("MultiDollarInterpolation.kt")
+      public void testMultiDollarInterpolation() {
+        runTest("compiler/testData/psi/stringTemplates/MultiDollarInterpolation.kt");
+      }
+
       @TestMetadata("RawStringsWithManyQuotes.kt")
       public void testRawStringsWithManyQuotes() {
         runTest("compiler/testData/psi/stringTemplates/RawStringsWithManyQuotes.kt");

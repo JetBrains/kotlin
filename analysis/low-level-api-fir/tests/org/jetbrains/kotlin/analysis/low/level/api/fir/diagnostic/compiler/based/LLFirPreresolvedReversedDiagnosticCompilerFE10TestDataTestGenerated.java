@@ -1468,6 +1468,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("StringTemplatesMultiDollarInterpolation.kt")
+    public void testStringTemplatesMultiDollarInterpolation() {
+      runTest("compiler/testData/diagnostics/tests/StringTemplatesMultiDollarInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("superQualifierTypeArgsInDelegatedConstructorCall.kt")
     public void testSuperQualifierTypeArgsInDelegatedConstructorCall() {
       runTest("compiler/testData/diagnostics/tests/superQualifierTypeArgsInDelegatedConstructorCall.kt");

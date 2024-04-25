@@ -107,6 +107,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("diagnosticName")
         }
         val MISSING_CONSTRUCTOR_KEYWORD by error<PsiElement>()
+        val SINGLE_DOLLAR_INTERPOLATION_PREFIX by warning<PsiElement>()
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {

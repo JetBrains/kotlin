@@ -662,6 +662,16 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
+        value = "-Xmulti-dollar-interpolation",
+        description = "Enable experimental multi-dollar interpolation."
+    )
+    var multiDollarInterpolation = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xklib-relative-path-base",
         description = "Provide a base path to compute the source's relative paths in klib (default is empty)."
     )
@@ -854,6 +864,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
             if (whenGuards) {
                 put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
+            }
+
+            if (multiDollarInterpolation) {
+                put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {

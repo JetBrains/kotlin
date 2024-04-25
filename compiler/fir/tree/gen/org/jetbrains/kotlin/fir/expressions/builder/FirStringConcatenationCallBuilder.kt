@@ -26,12 +26,14 @@ class FirStringConcatenationCallBuilder : FirCallBuilder, FirAnnotationContainer
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var argumentList: FirArgumentList
+    lateinit var interpolationPrefix: String
 
     override fun build(): FirStringConcatenationCall {
         return FirStringConcatenationCallImpl(
             source,
             annotations.toMutableOrEmpty(),
             argumentList,
+            interpolationPrefix,
         )
     }
 

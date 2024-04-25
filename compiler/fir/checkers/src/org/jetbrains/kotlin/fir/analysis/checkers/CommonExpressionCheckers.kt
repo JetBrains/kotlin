@@ -190,4 +190,9 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirTypeArgumentsOfQualifierOfCallableReferenceChecker,
             FirCustomEnumEntriesMigrationReferenceChecker,
         )
+
+    override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
+        get() = setOf(
+            FirMultiDollarInterpolationChecker,
+        )
 }

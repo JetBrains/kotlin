@@ -175,6 +175,7 @@ public interface KtTokens {
     int IMPL_KEYWORD_Id = 146;
     int EXPECT_KEYWORD_Id = 147;
     int ACTUAL_KEYWORD_Id = 148;
+    int INTERPOLATION_PREFIX_Id = 149;
 
     KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -192,6 +193,7 @@ public interface KtTokens {
     KtToken FLOAT_LITERAL      = new KtToken("FLOAT_CONSTANT", FLOAT_LITERAL_Id);
     KtToken CHARACTER_LITERAL  = new KtToken("CHARACTER_LITERAL", CHARACTER_LITERAL_Id);
 
+    KtToken INTERPOLATION_PREFIX = new KtToken("INTERPOLATION_PREFIX", INTERPOLATION_PREFIX_Id);
     KtToken CLOSING_QUOTE = new KtToken("CLOSING_QUOTE", CLOSING_QUOTE_Id);
     KtToken OPEN_QUOTE = new KtToken("OPEN_QUOTE", OPEN_QUOTE_Id);
     KtToken REGULAR_STRING_PART = new KtToken("REGULAR_STRING_PART", REGULAR_STRING_PART_Id);

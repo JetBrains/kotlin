@@ -245,6 +245,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MissingConstructorKeyword::class
     }
 
+    interface SingleDollarInterpolationPrefix : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = SingleDollarInterpolationPrefix::class
+    }
+
     interface InvisibleReference : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleReference::class
         val reference: KtSymbol

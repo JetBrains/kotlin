@@ -1,0 +1,44 @@
+FILE: StringTemplatesMultiDollarInterpolation.kt
+    public final fun demo(): R|kotlin/Unit| {
+        local final fun f(x: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        lval abc: R|kotlin/Int| = Int(1)
+        String($)
+        String($abc)
+        <strcat>(R|<local>/abc|)
+        String(this is $abc)
+        <strcat>(String(this is ), R|<local>/abc|)
+        String(this is ${abc})
+        <strcat>(String(this is ), R|<local>/abc|)
+        <strcat>(String(
+), String(    This is a dollar ), String($), String(
+), String(    This is a literal ), String($abc), String(
+), String(    This is a literal ), String(${), String(abc}), String(
+), String(    This is an interpolation ), R|<local>/abc|, String(
+), String(    This is an interpolation ), R|<local>/abc|, String(
+), String(    ))
+        String($def)
+        <strcat>(<Unresolved name: def>#)
+        String(this is $def)
+        <strcat>(String(this is ), <Unresolved name: def>#)
+        String(this is ${def})
+        <strcat>(String(this is ), <Unresolved name: def>#)
+        <strcat>(String(
+), String(    This is a dollar ), String($), String(
+), String(    This is a literal ), String($def), String(
+), String(    This is a literal ), String(${), String(def}), String(
+), String(    This is an interpolation ), <Unresolved name: def>#, String(
+), String(    This is an interpolation ), <Unresolved name: def>#, String(
+), String(    ))
+        String(${f(def)})
+        <strcat>(R|<local>/f|(<Unresolved name: def>#))
+        <strcat>(R|<local>/f|(<strcat>(<Unresolved name: def>#)))
+        <strcat>(R|<local>/f|(String($def)))
+        <strcat>(R|<local>/f|(String($$def)))
+        <strcat>(R|<local>/f|(<strcat>(<Unresolved name: def>#)))
+        <strcat>(String(
+), String(    This is nested interpolation ), R|<local>/f|(<strcat>(<Unresolved name: def>#)), String(
+), String(    And another one ), R|<local>/f|(<strcat>(<Unresolved name: def>#)), String(
+), String(    ))
+    }

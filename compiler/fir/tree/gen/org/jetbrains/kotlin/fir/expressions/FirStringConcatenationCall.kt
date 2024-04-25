@@ -23,6 +23,7 @@ abstract class FirStringConcatenationCall : FirExpression(), FirCall {
     abstract override val argumentList: FirArgumentList
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
+    abstract val interpolationPrefix: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitStringConcatenationCall(this, data)

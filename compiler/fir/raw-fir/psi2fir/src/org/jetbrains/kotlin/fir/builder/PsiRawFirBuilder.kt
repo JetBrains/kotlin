@@ -2523,6 +2523,7 @@ open class PsiRawFirBuilder(
                 convertTemplateEntry = { errorReason ->
                     (this as KtStringTemplateEntryWithExpression).getChildrenOfType<KtExpression>().map { it.toFirExpression(errorReason) }
                 },
+                prefix = { expression.interpolationPrefix?.text ?: "" },
             )
         }
 

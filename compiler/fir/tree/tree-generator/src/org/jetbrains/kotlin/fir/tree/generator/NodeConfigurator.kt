@@ -719,6 +719,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         stringConcatenationCall.configure {
+            +stringField("interpolationPrefix")
         }
 
         throwExpression.configure {

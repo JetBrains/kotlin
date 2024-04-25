@@ -38,7 +38,7 @@
     </target>
 
     <target name="get-idea-flex.skeleton.if.not.exists" depends="check-idea-flex.skeleton.exists" unless="skjeleton.exisits">
-        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
+        <get src="https://raw.githubusercontent.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
              dest="${builddir}/idea-flex.skeleton" usetimestamp="true"/>
     </target>
 

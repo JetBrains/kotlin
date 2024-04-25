@@ -527,6 +527,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         base: T,
         getElementType: (T) -> IElementType = { it.elementType },
         convertTemplateEntry: T?.(String) -> Collection<FirExpression>,
+        prefix: () -> String,
     ): FirExpression {
         return buildStringConcatenationCall {
             val sb = StringBuilder()
@@ -535,7 +536,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 L@ for (entry in this@toInterpolatingCall) {
                     if (entry == null) continue
                     when (getElementType(entry)) {
-                        OPEN_QUOTE, CLOSING_QUOTE -> continue@L
+                        INTERPOLATION_PREFIX, OPEN_QUOTE, CLOSING_QUOTE -> continue@L
                         LITERAL_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.asText)
                             arguments += buildLiteralExpression(
@@ -578,6 +579,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 }
             }
             source = base?.toFirSourceElement()
+            interpolationPrefix = prefix()
             // Fast-pass if there is no errors and non-const string expressions
             if (!hasExpressions && !argumentList.arguments.any { it is FirErrorExpression })
                 return buildLiteralExpression(source, ConstantValueKind.String, sb.toString(), setType = false)
