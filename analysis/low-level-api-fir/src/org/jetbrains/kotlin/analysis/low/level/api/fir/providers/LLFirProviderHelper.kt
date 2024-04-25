@@ -78,6 +78,15 @@ internal class LLFirProviderHelper(
             computeClassifierByClassId(classId, context)
         }
 
+    /**
+     * Locates the [FirClassLikeDeclaration] with the matching [classId].
+     * Uses the passed [context] files to avoid index access if available; falls back to the [declarationProvider] otherwise.
+     *
+     * To work correctly with the [FirCache], this function has to obey the following contract:
+     *
+     * It can be called with some [classId] and a non-null [context] **if and only if** the returned value
+     * is going to be the same for the `null` context.
+     */
     private fun computeClassifierByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeDeclaration? {
         require(context == null || context.isPhysical)
         val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
@@ -106,6 +115,15 @@ internal class LLFirProviderHelper(
             computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context)
         }
 
+    /**
+     * Locates all the callable symbols of required [TYPE] with the matching [callableId] within a specific set of files.
+     * Uses the passed [context] files to avoid index access if available; falls back to the [declarationProvider] otherwise.
+     *
+     * To work correctly with the [FirCache], this function has to obey the following contract:
+     *
+     * It can be called with some [callableId] and a non-null [context] **if and only if** the returned value
+     * is going to be the same for the `null` context.
+     */
     private inline fun <reified TYPE : FirCallableSymbol<*>> computeCallableSymbolsByCallableId(
         callableId: CallableId,
         context: Collection<KtFile>?,
@@ -128,6 +146,13 @@ internal class LLFirProviderHelper(
         )
     )
 
+    /**
+     * [classLikeDeclaration] is a [KtClassLikeDeclaration] which corresponds to the desired class.
+     *
+     * If already known, it can be provided to avoid index accesses.
+     * But it has to be coherent with [KotlinDeclarationProvider.getClassLikeDeclarationByClassId]'s result,
+     * see [computeClassifierByClassId].
+     */
     fun getFirClassifierByFqNameAndDeclaration(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration?,
@@ -142,8 +167,11 @@ internal class LLFirProviderHelper(
     }
 
     /**
-     * [callableFiles] are the [KtFile]s which contain callables of the given package and name. If already known, they can be provided to
-     * avoid index accesses.
+     * [callableFiles] are the [KtFile]s which contain callables of the given package and name.
+     *
+     * If already known, they can be provided to avoid index accesses.
+     * But they have to be coherent with [KotlinDeclarationProvider.getTopLevelCallableFiles] content,
+     * see [computeCallableSymbolsByCallableId].
      */
     fun getTopLevelCallableSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirCallableSymbol<*>> {
         if (!allowKotlinPackage && callableId.packageName.isKotlinPackage()) return emptyList()
@@ -154,6 +182,13 @@ internal class LLFirProviderHelper(
         return getTopLevelFunctionSymbols(CallableId(packageFqName, name), callableFiles = null)
     }
 
+    /**
+     * [callableFiles] are the [KtFile]s which contain functions of the given package and name.
+     *
+     * If already known, they can be provided to avoid index accesses.
+     * But they have to be coherent with [KotlinDeclarationProvider.getTopLevelFunctions] content,
+     * see [computeCallableSymbolsByCallableId].
+     */
     fun getTopLevelFunctionSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirNamedFunctionSymbol> {
         return functionsByCallableId.getValue(callableId, callableFiles)
     }
@@ -162,6 +197,13 @@ internal class LLFirProviderHelper(
         return getTopLevelPropertySymbols(CallableId(packageFqName, name), callableFiles = null)
     }
 
+    /**
+     * [callableFiles] are the [KtFile]s which contain properties of the given package and name.
+     *
+     * If already known, they can be provided to avoid index accesses.
+     * But they have to be coherent with [KotlinDeclarationProvider.getTopLevelProperties] content,
+     * see [computeCallableSymbolsByCallableId].
+     */
     fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirPropertySymbol> {
         return propertiesByCallableId.getValue(callableId, callableFiles)
     }
