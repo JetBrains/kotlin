@@ -1,4 +1,4 @@
-// !INHERIT_MULTIFILE_PARTS
+// INHERIT_MULTIFILE_PARTS
 // FILE: bar.kt
 
 @file:JvmName("Util")
