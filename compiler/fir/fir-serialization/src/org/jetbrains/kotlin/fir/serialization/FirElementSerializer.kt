@@ -884,16 +884,16 @@ class FirElementSerializer private constructor(
         // so it must be expanded twice.
         val useSiteSessionExpandedType = type.fullyExpandedType(session)
         val expandedTypeProto = typeOrTypealiasProto(useSiteSessionExpandedType, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
-        val typealiasType = type.abbreviatedType
+        val typealiasType = type.abbreviatedTypeOrSelf
 
         // `typeOrTypealiasProto()` calls may in turn call `typeProto()`
         // for some other types in such a way that those types share the same
-        // AbbreviatedType attribute (this happens, for example, with suspend
-        // function types).
+        // AbbreviatedType attribute (this happens, for example, with aliases
+        // to suspend function types).
         // So, the abbreviated type may have been set already by an inner call.
-        // Note that in case of `expect typealias`, the second expansion will
+        // Note that in case of an `expect typealias`, the second expansion will
         // erase `AbbreviatedTypeAttribute` of `type`.
-        if (typealiasType != null && !expandedTypeProto.hasAbbreviatedType()) {
+        if (typealiasType != useSiteSessionExpandedType && !expandedTypeProto.hasAbbreviatedType()) {
             val typealiasProto = typeOrTypealiasProto(
                 typealiasType, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
                 preserveOriginalType = true,

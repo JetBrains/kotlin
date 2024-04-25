@@ -6,9 +6,4 @@ MODULE lib
 					K1
 						lib/Inv<lib/A^<T#0>>
 					K2
-						lib/Inv<lib/Inv<T#0>>
-				Property: class.metadata.typeAlias.expandedType
-					K1
 						lib/Inv<lib/Inv<T#0> /* = lib/A^<T#0> */>
-					K2
-						lib/Inv<lib/Inv<T#0>>
