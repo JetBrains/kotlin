@@ -15,7 +15,7 @@ pluginManagement {
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
-    repositoriesMode.set(PREFER_SETTINGS)
+    repositoriesMode = PREFER_SETTINGS
     repositories {
         mavenCentral()
         gradlePluginPortal()

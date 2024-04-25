@@ -13,7 +13,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion.set(dokkaBuild.mainJavaVersion)
+        languageVersion = dokkaBuild.mainJavaVersion
     }
 }
 
@@ -26,9 +26,9 @@ tasks.withType<Test>().configureEach {
         (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
     }
 
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(dokkaBuild.testJavaLauncherVersion)
-    })
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = dokkaBuild.testJavaLauncherVersion
+    }
 }
 
 dependencies {
