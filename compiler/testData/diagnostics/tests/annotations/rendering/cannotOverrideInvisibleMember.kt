@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -INCOMPATIBLE_MODIFIERS
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class A

@@ -1,4 +1,4 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.VALUE_PARAMETER,  AnnotationTarget.PROPERTY)
 annotation class An

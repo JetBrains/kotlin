@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalJsExport
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTICS_MESSAGES
 @file:JsExport
 
 package foo
