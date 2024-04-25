@@ -23,31 +23,31 @@ val inv1: Inv1<Int> = Inv<Int>()
 
 fun inInv_Inv(x: In1<Int>) = x
 fun inInv_In(x: In1<<!REDUNDANT_PROJECTION!>in<!> Int>) = x
-fun inInv_Out(x: In1<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>out<!> Int>) = x
+fun inInv_Out(x: In1<<!CONFLICTING_PROJECTION!>out<!> Int>) = x
 fun inInv_Star(x: In1<*>) = x
 
-fun inIn_Inv(x: In2<Int>) = x
+fun inIn_Inv(x: In2<<!REDUNDANT_PROJECTION!>Int<!>>) = x
 fun inIn_In(x: In2<<!REDUNDANT_PROJECTION!>in<!> Int>) = x
-fun inIn_Out(x: In2<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>out<!> Int>) = x
+fun inIn_Out(x: In2<out Int>) = x
 fun inIn_Star(x: In2<*>) = x
 
-fun inOut_Inv(x: In3<Int>) = x
-fun inOut_In(x: In3<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> Int>) = x
-fun inOut_Out(x: In3<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>out<!> Int>) = x
+fun inOut_Inv(x: In3<<!CONFLICTING_PROJECTION!>Int<!>>) = x
+fun inOut_In(x: In3<in Int>) = x
+fun inOut_Out(x: In3<<!CONFLICTING_PROJECTION!>out<!> Int>) = x
 fun inOut_Star(x: In3<*>) = x
 
 fun outInv_Inv(x: Out1<Int>) = x
-fun outInv_In(x: Out1<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> Int>) = x
+fun outInv_In(x: Out1<<!CONFLICTING_PROJECTION!>in<!> Int>) = x
 fun outInv_Out(x: Out1<<!REDUNDANT_PROJECTION!>out<!> Int>) = x
 fun outInv_Star(x: Out1<*>) = x
 
-fun outIn_Inv(x: Out2<Int>) = x
-fun outIn_In(x: Out2<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> Int>) = x
-fun outIn_Out(x: Out2<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>out<!> Int>) = x
+fun outIn_Inv(x: Out2<<!CONFLICTING_PROJECTION!>Int<!>>) = x
+fun outIn_In(x: Out2<<!CONFLICTING_PROJECTION!>in<!> Int>) = x
+fun outIn_Out(x: Out2<out Int>) = x
 fun outIn_Star(x: Out2<*>) = x
 
-fun outOut_Inv(x: Out3<Int>) = x
-fun outOut_In(x: Out3<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> Int>) = x
+fun outOut_Inv(x: Out3<<!REDUNDANT_PROJECTION!>Int<!>>) = x
+fun outOut_In(x: Out3<in Int>) = x
 fun outOut_Out(x: Out3<<!REDUNDANT_PROJECTION!>out<!> Int>) = x
 fun outOut_Star(x: Out3<*>) = x
 
@@ -58,11 +58,11 @@ fun invInv_Star(x: Inv1<*>) = x
 
 fun invIn_Inv(x: Inv2<Int>) = x
 fun invIn_In(x: Inv2<in Int>) = x
-fun invIn_Out(x: Inv2<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>out<!> Int>) = x
+fun invIn_Out(x: Inv2<out Int>) = x
 fun invIn_Star(x: Inv2<*>) = x
 
 fun invOut_Inv(x: Inv3<Int>) = x
-fun invOut_In(x: Inv3<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> Int>) = x
+fun invOut_In(x: Inv3<in Int>) = x
 fun invOut_Out(x: Inv3<out Int>) = x
 fun invOut_Star(x: Inv3<*>) = x
 

@@ -34,4 +34,4 @@ actual typealias C6<H> = MutableList<H>
 <!ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE!>actual typealias C9<K> = MutableList<in K><!>
 
 typealias Tmp<K> = MutableList<K>
-<!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias C10<L> = Tmp<L><!>
+actual typealias C10<L> = Tmp<L>

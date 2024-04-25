@@ -10,4 +10,4 @@ expect class E02
 typealias MyNullable = String?
 
 <!ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE!>actual typealias E01 = String?<!>
-<!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias E02 = MyNullable<!>
+<!ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE!>actual typealias E02 = MyNullable<!>
