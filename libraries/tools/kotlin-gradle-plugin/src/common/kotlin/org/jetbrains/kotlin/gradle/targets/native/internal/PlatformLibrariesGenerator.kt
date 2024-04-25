@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeLibraryGenerationRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
-import org.jetbrains.kotlin.compilerRunner.konanDataDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.addArg
@@ -30,13 +31,14 @@ internal class PlatformLibrariesGenerator(
     val project: Project,
     val konanTarget: KonanTarget,
     val konanHome: File,
+    private val propertiesProvider: PropertiesProvider
 ) {
 
     private val logger = Logging.getLogger(this::class.java)
 
     private val distribution = customerDistribution(
         konanHome.absolutePath,
-        konanDataDir = project.konanDataDir
+        konanDataDir = propertiesProvider.konanDataDir
     )
 
     private val platformLibsDirectory =
@@ -45,15 +47,15 @@ internal class PlatformLibrariesGenerator(
     private val defDirectory =
         File(distribution.platformDefs(konanTarget)).absoluteFile
 
-    private val konanPropertiesService: KonanPropertiesBuildService
-        get() = KonanPropertiesBuildService.registerIfAbsent(project).get()
+    private val konanPropertiesService: Provider<KonanPropertiesBuildService>
+        get() = KonanPropertiesBuildService.registerIfAbsent(project)
 
     private val konanCacheKind: NativeCacheKind by lazy {
-        project.getKonanCacheKind(konanTarget)
+        propertiesProvider.getKonanCacheKind(konanTarget, konanPropertiesService)
     }
 
     private val shouldBuildCaches: Boolean =
-        konanPropertiesService.cacheWorksFor(konanTarget) && konanCacheKind != NativeCacheKind.NONE
+        konanPropertiesService.get().cacheWorksFor(konanTarget) && konanCacheKind != NativeCacheKind.NONE
 
     private val presentDefs: Set<String> by lazy {
         defDirectory
@@ -125,7 +127,7 @@ internal class PlatformLibrariesGenerator(
                 CacheBuilder.getRootCacheDirectory(konanHome, konanTarget, true, konanCacheKind).absolutePath
             )
             args.addArg("-cache-arg", "-g")
-            val additionalCacheFlags = konanPropertiesService.additionalCacheFlags(konanTarget)
+            val additionalCacheFlags = konanPropertiesService.get().additionalCacheFlags(konanTarget)
             additionalCacheFlags.forEach {
                 args.addArg("-cache-arg", it)
             }

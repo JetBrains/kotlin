@@ -264,7 +264,8 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
         PlatformLibrariesGenerator(
             project,
             konanTarget,
-            project.konanHome
+            project.konanHome,
+            project.kotlinPropertiesProvider,
         ).generatePlatformLibsIfNeeded()
     }
 }
