@@ -74,6 +74,6 @@ import api.*
 fun use() {
     <!OPT_IN_USAGE!>function<!>()
     <!OPT_IN_USAGE!>property<!>
-    val s: <!OPT_IN_USAGE!>Typealias<!> = ""
-    <!OPT_IN_USAGE!>s<!>.hashCode()
+    val s: Typealias = ""
+    s.hashCode()
 }
