@@ -133,7 +133,7 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
         /** this source is used for implicit returns from empty lambdas {}
          * fake source refers to the lambda expression
          */
-        object LambdaCoercion : ImplicitUnit()
+        object ForEmptyLambda : ImplicitUnit()
 
         /** this source is used for 'return' without given value converted to 'return Unit'
          * fake source refers to the return statement

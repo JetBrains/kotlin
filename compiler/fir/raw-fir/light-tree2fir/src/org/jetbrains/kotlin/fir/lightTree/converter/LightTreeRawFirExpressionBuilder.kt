@@ -235,7 +235,7 @@ class LightTreeRawFirExpressionBuilder(
                                     source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
                                     this.target = target
                                     result = buildUnitExpression {
-                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.LambdaCoercion)
+                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda)
                                     }
                                 }
                             )
