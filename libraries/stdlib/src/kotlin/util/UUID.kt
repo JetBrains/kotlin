@@ -17,47 +17,48 @@ import kotlin.internal.InlineOnly
  * The standard textual representation of a UUID is "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", where each 'x'
  * is a hexadecimal digit. This class facilitates the creation, parsing, and management of UUIDs.
  */
-public class UUID internal constructor(internal val msb: Long, internal val lsb: Long) {
-
-    /** Returns the most significant 64 bits of this UUID. */
-    public val mostSignificantBits: Long
-        get() = msb
-
-    /** Returns the least significant 64 bits of this UUID. */
-    public val leastSignificantBits: Long
-        get() = lsb
+public class UUID internal constructor(
+    @PublishedApi internal val mostSignificantBits: Long,
+    @PublishedApi internal val leastSignificantBits: Long
+) {
 
     /**
      * Executes a specified block of code, providing access to the UUID's bits.
      * This function is intended for use when one needs to perform bitwise operations with the UUID.
      *
-     * The [block] will receive two [Long] arguments:
+     * The [action] will receive two [Long] arguments:
      *   - `mostSignificantBits`: The most significant 64 bits of this UUID.
      *   - `leastSignificantBits`: The least significant 64 bits of this UUID.
      *
-     * @param block A function that takes two [Long] arguments (mostSignificantBits, leastSignificantBits).
-     *   This block is guaranteed to be called exactly once.
+     * @param action A function that takes two [Long] arguments (mostSignificantBits, leastSignificantBits).
+     *   This function is guaranteed to be called exactly once.
      */
-    // Perhaps should be removed in favour of most/leastSignificantBits properties
     @InlineOnly
-    public inline fun toLongs(block: (mostSignificantBits: Long, leastSignificantBits: Long) -> Unit) {
+    public inline fun <T> toLongs(action: (mostSignificantBits: Long, leastSignificantBits: Long) -> T): T {
         contract {
-            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+            callsInPlace(action, InvocationKind.EXACTLY_ONCE)
         }
-        block(mostSignificantBits, leastSignificantBits)
+        return action(mostSignificantBits, leastSignificantBits)
     }
 
-    /** Indicates whether this UUID is of the IETF variant (variant 2). */
-    public val isIETFVariant: Boolean
-        get() = (lsb ushr 62).toInt() == 2
-
     /**
-     * Returns the version number of this UUID.
+     * Executes a specified block of code, providing access to the UUID's bits.
+     * This function is intended for use when one needs to perform bitwise operations with the UUID.
      *
-     * The version number describes the algorithm used for generating the UUID.
+     * The [action] will receive two [ULong] arguments:
+     *   - `mostSignificantBits`: The most significant 64 bits of this UUID.
+     *   - `leastSignificantBits`: The least significant 64 bits of this UUID.
+     *
+     * @param action A function that takes two [ULong] arguments (mostSignificantBits, leastSignificantBits).
+     *   This function is guaranteed to be called exactly once.
      */
-    public val version: Int
-        get() = uuidVersion(this)
+    @InlineOnly
+    public inline fun <T> toULongs(action: (mostSignificantBits: ULong, leastSignificantBits: ULong) -> T): T {
+        contract {
+            callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+        }
+        return action(mostSignificantBits.toULong(), leastSignificantBits.toULong())
+    }
 
     /**
      * Returns the string representation of this UUID in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -85,15 +86,8 @@ public class UUID internal constructor(internal val msb: Long, internal val lsb:
     }
 
     public companion object {
-        // TODO: UUIDs are not comparable. Thus, makes sense to rename to ALL_ZERO, or similar.
-        //   Or use the standard name NIL.
-        /** The minimum possible UUID (all bits set to zero). */
-        public val MIN_VALUE: UUID = UUID(0, 0)
-
-        // TODO: UUIDs are not comparable. Thus, makes sense to rename to ALL_ONE, or similar.
-        //   Or use the standard name MAX.
-        /** The maximum possible UUID (all bits set to one). */
-        public val MAX_VALUE: UUID = UUID(-1, -1)
+        /** The UUID with all bits set to zero. */
+        public val NIL: UUID = UUID(0, 0)
 
         /** The number of bytes used to represent an instance of UUID in a binary form. */
         public const val SIZE_BYTES: Int = 16
@@ -171,25 +165,6 @@ public class UUID internal constructor(internal val msb: Long, internal val lsb:
 //        public fun timeOrderedUUIDv7(): UUID {
 //
 //        }
-
-        // TODO: Should we allow comparing timestamps of different versions?
-        //   * v1 and v6
-        //   * v1 and v7 (they have different starting points and granularity)
-        // TODO: Name
-        //   * public object UUIDTimestampComparator
-        //   * public val UUID.Companion.TimestampOrder
-        //   * public val UUID.Companion.TIMESTAMP_COMPARATOR
-        //   * public val UUID.Companion.TimestampComparator
-        // TODO: What if in the future a new UUID version with timestamp gets introduced?
-        //   * Perhaps we should document which versions can be compared with timestamp
-        // TODO: If the timestamp value is equal
-        //   * should the clock sequence be compared in v1 and v6?
-        //     * Probably not, clock sequence could be [re]generated randomly
-        //   * in v7 the subsequent bits could be used for sub-millisecond granularity
-        //     * Bitwise comparison could be used to account for those bits
-        //   * this comparator should only check the timestamp bits as specified by standard, as the comparator name indicates
-        public val TIMESTAMP_ORDER: Comparator<UUID>
-            get() = UUID_TIMESTAMP_ORDER
 
         // TODO: Name
         //   * BIG_ENDIAN_BITWISE_ORDER

@@ -24,8 +24,9 @@ public inline fun java.util.UUID.toKotlinUUID(): UUID =
 
 /** Converts this [kotlin.UUID] value to [java.util.UUID] value. */
 @InlineOnly
-public inline fun UUID.toJavaUUID(): java.util.UUID =
+public inline fun UUID.toJavaUUID(): java.util.UUID = toLongs { mostSignificantBits, leastSignificantBits ->
     java.util.UUID(mostSignificantBits, leastSignificantBits)
+}
 
 // TODO: ByteBuffer could be configured to have a LITTLE_ENDIAN byte order.
 /**
@@ -59,5 +60,7 @@ public inline fun ByteBuffer.getUUID(): UUID =
  * @throws ReadOnlyBufferException If this buffer is read-only.
  */
 @InlineOnly
-public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer =
-    putLong(uuid.mostSignificantBits).putLong(uuid.leastSignificantBits)
+public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer = uuid.toLongs { mostSignificantBits, leastSignificantBits ->
+    putLong(mostSignificantBits)
+    putLong(leastSignificantBits)
+}

@@ -18,6 +18,12 @@ class UUIDTest {
     private val uuidString = "550e8400-e29b-41d4-a716-446655440000"
     private val uuidHexString = "550e8400e29b41d4a716446655440000"
 
+    private val UUID.isIETFVariant: Boolean
+        get() = toLongs { _, leastSignificantBits -> (leastSignificantBits ushr 62).toInt() == 2 }
+
+    private val UUID.version: Int
+        get() = toLongs { mostSignificantBits, _ -> ((mostSignificantBits shr 12) and 0xF).toInt() }
+
     @Test
     fun fromLongs() {
         val a = UUID.fromLongs(mostSignificantBits.toLong(), leastSignificantBits.toLong())
@@ -89,38 +95,6 @@ class UUIDTest {
             assertEquals(this.mostSignificantBits.toLong(), mostSignificantBits)
             assertEquals(this.leastSignificantBits.toLong(), leastSignificantBits)
         }
-    }
-
-    @Test
-    fun isIETFVariant() {
-        // bits at 64..65 are 0b10
-        assertTrue(uuid.isIETFVariant)
-
-        // bits at 64..65 are 0b01
-        val b = UUID.fromULongs(mostSignificantBits, leastSignificantBits xor (0x3uL shl 62))
-        assertFalse(b.isIETFVariant)
-
-        // bits at 64..65 are 0b00
-        val c = UUID.fromULongs(mostSignificantBits, leastSignificantBits xor (0x2uL shl 62))
-        assertFalse(c.isIETFVariant)
-
-        // bits at 64..65 are 0b11
-        val d = UUID.fromULongs(mostSignificantBits, leastSignificantBits xor (0x1uL shl 62))
-        assertFalse(d.isIETFVariant)
-    }
-
-    @Test
-    fun version() {
-        // bits at 48..51 are 0b0100
-        assertEquals(4, uuid.version)
-
-        // bits at 48..51 are 0b0000
-        val b = UUID.fromULongs(mostSignificantBits xor (0x4uL shl 12), leastSignificantBits)
-        assertEquals(0, b.version)
-
-        // bits at 48..51 are 0b1111
-        val c = UUID.fromULongs(mostSignificantBits xor (0xBuL shl 12), leastSignificantBits)
-        assertEquals(15, c.version)
     }
 
     @Test

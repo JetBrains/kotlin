@@ -512,8 +512,6 @@ public final class kotlin/UUID {
 	public static final field SIZE_BYTES I
 	public final fun getLeastSignificantBits ()J
 	public final fun getMostSignificantBits ()J
-	public final fun getVersion ()I
-	public final fun isIETFVariant ()Z
 	public final fun toByteArray ()[B
 	public final fun toHexString ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
@@ -524,9 +522,7 @@ public final class kotlin/UUID$Companion {
 	public final fun fromLongs (JJ)Lkotlin/UUID;
 	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/UUID;
 	public final fun getBITWISE_ORDER ()Ljava/util/Comparator;
-	public final fun getMAX_VALUE ()Lkotlin/UUID;
-	public final fun getMIN_VALUE ()Lkotlin/UUID;
-	public final fun getTIMESTAMP_ORDER ()Ljava/util/Comparator;
+	public final fun getNIL ()Lkotlin/UUID;
 	public final fun parse (Ljava/lang/String;)Lkotlin/UUID;
 	public final fun parseHex (Ljava/lang/String;)Lkotlin/UUID;
 	public final fun randomUUIDv4 ()Lkotlin/UUID;

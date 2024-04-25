@@ -34,12 +34,12 @@ internal fun uuidFromRandomBytes(randomBytes: ByteArray): UUID {
 }
 
 internal fun uuidToString(uuid: UUID): String = with(uuid) {
-    val part1 = (msb shr 32).toInt().toHexString()
-    val part2 = (msb shr 16).toShort().toHexString()
-    val part3 = msb.toShort().toHexString()
-    val part4 = (lsb shr 48).toShort().toHexString()
-    val part5a = (lsb shr 32).toShort().toHexString()
-    val part5b = lsb.toInt().toHexString()
+    val part1 = (mostSignificantBits shr 32).toInt().toHexString()
+    val part2 = (mostSignificantBits shr 16).toShort().toHexString()
+    val part3 = mostSignificantBits.toShort().toHexString()
+    val part4 = (leastSignificantBits shr 48).toShort().toHexString()
+    val part5a = (leastSignificantBits shr 32).toShort().toHexString()
+    val part5b = leastSignificantBits.toInt().toHexString()
 
     "$part1-$part2-$part3-$part4-$part5a$part5b"
 }
@@ -67,7 +67,7 @@ private fun String.checkHyphenAt(index: Int) {
 }
 
 internal fun uuidToHexString(uuid: UUID): String = with(uuid) {
-    msb.toHexString() + lsb.toHexString()
+    mostSignificantBits.toHexString() + leastSignificantBits.toHexString()
 }
 
 internal fun uuidFromHexString(hexString: String): UUID {
@@ -75,11 +75,6 @@ internal fun uuidFromHexString(hexString: String): UUID {
     val msb = hexString.hexToLong(startIndex = 0, endIndex = 16)
     val lsb = hexString.hexToLong(startIndex = 16, endIndex = 32)
     return UUID(msb, lsb)
-}
-
-internal fun uuidVersion(uuid: UUID): Int {
-    if (!uuid.isIETFVariant) throw UnsupportedOperationException("Version is defined only for IETF variant")
-    with(uuid) { return ((msb shr 12) and 0xF).toInt() }
 }
 
 private fun Long.toByteArray(bytes: ByteArray, startIndex: Int) {
@@ -91,21 +86,15 @@ private fun Long.toByteArray(bytes: ByteArray, startIndex: Int) {
 internal fun uuidToByteArray(uuid: UUID): ByteArray {
     with(uuid) {
         val bytes = ByteArray(UUID.SIZE_BYTES)
-        msb.toByteArray(bytes, 0)
-        lsb.toByteArray(bytes, 8)
+        mostSignificantBits.toByteArray(bytes, 0)
+        leastSignificantBits.toByteArray(bytes, 8)
         return bytes
     }
 }
 
-internal val UUID_TIMESTAMP_ORDER = Comparator<UUID> { a, b ->
-    require(a.version == b.version) { "Different UUID versions" }
-    require(a.version != 1 && a.version != 6 && a.version != 7) { "Only UUID versions 1, 6 and 7 can be compared with their timestamp" }
-    throw NotImplementedError()
-}
-
 internal val UUID_BITWISE_ORDER = Comparator<UUID> { a, b ->
-    if (a.msb != b.msb)
-        a.msb.toULong().compareTo(b.msb.toULong())
+    if (a.mostSignificantBits != b.mostSignificantBits)
+        a.mostSignificantBits.toULong().compareTo(b.mostSignificantBits.toULong())
     else
-        a.lsb.toULong().compareTo(b.lsb.toULong())
+        a.leastSignificantBits.toULong().compareTo(b.leastSignificantBits.toULong())
 }
