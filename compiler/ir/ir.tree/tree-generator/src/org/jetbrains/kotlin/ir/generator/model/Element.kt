@@ -91,6 +91,4 @@ class Element(
     var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
 
     var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
-
-    override fun toString() = name
 }

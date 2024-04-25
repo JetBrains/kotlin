@@ -211,4 +211,6 @@ abstract class AbstractElement<Element, Field, Implementation>(
     operator fun Field.unaryPlus() = apply {
         fields.add(this)
     }
+
+    override fun toString(): String = buildString { renderTo(this, ImportCollecting.Empty) }
 }
