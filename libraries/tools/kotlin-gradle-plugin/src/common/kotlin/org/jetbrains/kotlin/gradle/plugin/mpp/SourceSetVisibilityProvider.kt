@@ -192,11 +192,74 @@ internal class SourceSetVisibilityProvider(
                 }.toMap()
             }
 
-        return SourceSetVisibilityResult(
+        /**
+         * Sort from more to less target specific source sets.
+         * So that actuals will be first in the library path.
+         * e.g. linuxMain, nativeMain, commonMain.
+         */
+        val sortedVisibleSourceSets = sortSourceSetsByDependsOnRelation(
             visibleSourceSetNames,
+            dependencyProjectStructureMetadata.sourceSetsDependsOnRelation
+        )
+
+        return SourceSetVisibilityResult(
+            sortedVisibleSourceSets.toSet(),
             hostSpecificArtifactBySourceSet
         )
     }
+}
+
+/**
+ * Sorts the source sets based on the dependsOn relation from [KotlinProjectStructureMetadata]
+ *
+ * @param sourceSetsDependsOnRelation should contain direct dependsOn edges.
+ *
+ * For example, given this "dependsOn" closure: linuxMain -> nativeMain -> commonMain
+ * [sourceSetsDependsOnRelation] would have the following values:
+ *
+ * ```kotlin
+ * mapOf(
+ *   linuxMain to setOf(nativeMain),
+ *   nativeMain to setOf(commonMain),
+ *   commonMain to emptySet()
+ * )
+ * ```
+ *
+ * Then calling [sortSourceSetsByDependsOnRelation] with [sourceSets] as listOf(nativeMain, commonMain, linuxMain) should
+ * result to listOf(linuxMain, nativeMain, commonMain)
+ *
+ * And for [sortSourceSetsByDependsOnRelation] with this structure: jvmAndJs -> commonMain; linuxMain -> nativeMain -> commonMain;
+ * the result can be one of the following lists:
+ * * linuxMain, nativeMain, jvmAndJs, commonMain
+ * * linuxMain, jvmAndJs, nativeMain, commonMain
+ * * jvmAndJs, linuxMain, nativeMain, commonMain
+ *
+ * Because jvmAndJs has no dependsOn relation with linuxMain and nativeMain they can be treated equally.
+ *
+ * Implementation uses an algorithm for Topological Sorting with DFS.
+ */
+internal fun sortSourceSetsByDependsOnRelation(
+    sourceSets: Set<String>,
+    sourceSetsDependsOnRelation: Map<String, Set<String>>,
+): List<String> {
+    val visited = mutableSetOf<String>()
+    val result = mutableListOf<String>()
+    for (sourceSet in sourceSets) {
+        if (!visited.add(sourceSet)) continue
+
+        fun dfs(sourceSet: String) {
+            val children = sourceSetsDependsOnRelation[sourceSet].orEmpty()
+            for (child in children) {
+                if (!visited.add(child)) continue
+                dfs(child)
+            }
+            // We're only interested in input source sets
+            if (sourceSet in sourceSets) result.add(sourceSet)
+        }
+        dfs(sourceSet)
+    }
+
+    return result.reversed()
 }
 
 internal fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
