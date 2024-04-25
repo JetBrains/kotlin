@@ -1,4 +1,4 @@
-// !API_VERSION: LATEST_STABLE
+// API_VERSION: LATEST_STABLE
 // WITH_STDLIB
 // FILE: test.kt
 fun test() {

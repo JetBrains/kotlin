@@ -1,4 +1,4 @@
-// !API_VERSION: 1.5
+// API_VERSION: 1.5
 // LANGUAGE: +JvmRecordSupport
 // JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW

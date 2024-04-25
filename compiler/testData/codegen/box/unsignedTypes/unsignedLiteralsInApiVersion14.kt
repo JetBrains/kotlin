@@ -1,4 +1,4 @@
-// !API_VERSION: 1.4
+// API_VERSION: 1.4
 // WITH_STDLIB
 
 val x = 0u

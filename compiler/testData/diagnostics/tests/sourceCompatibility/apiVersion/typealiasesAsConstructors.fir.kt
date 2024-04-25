@@ -1,4 +1,4 @@
-// !API_VERSION: 1.0
+// API_VERSION: 1.0
 
 @SinceKotlin("1.1")
 open class C1
