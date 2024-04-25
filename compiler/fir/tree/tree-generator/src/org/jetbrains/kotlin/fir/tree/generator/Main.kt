@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.printer.*
-import org.jetbrains.kotlin.generators.tree.printer.generateTree
+import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
@@ -22,22 +22,23 @@ fun main(args: Array<String>) {
         ?: File("../../tree/gen").canonicalFile
     NodeConfigurator.configureFields()
     val model = Model(FirTreeBuilder.elements, AbstractFirTreeBuilder.baseFirElement)
-    generateTree(
-        generationPath,
-        "compiler/fir/tree/tree-generator/Readme.md",
-        model,
-        pureAbstractElementType,
-        ::ElementPrinter,
-        listOf(
-            firVisitorType to ::VisitorPrinter.bind(false),
-            firDefaultVisitorType to ::VisitorPrinter.bind(true),
-            firVisitorVoidType to ::VisitorVoidPrinter,
-            firDefaultVisitorVoidType to ::DefaultVisitorVoidPrinter,
-            firTransformerType to ::TransformerPrinter.bind(model.rootElement),
-        ),
-        ImplementationConfigurator,
-        BuilderConfigurator,
-        ::ImplementationPrinter,
-        ::BuilderPrinter,
-    )
+
+    TreeGenerator(generationPath, "compiler/fir/tree/tree-generator/Readme.md").run {
+        generateTree(
+            model,
+            pureAbstractElementType,
+            ::ElementPrinter,
+            listOf(
+                firVisitorType to ::VisitorPrinter.bind(false),
+                firDefaultVisitorType to ::VisitorPrinter.bind(true),
+                firVisitorVoidType to ::VisitorVoidPrinter,
+                firDefaultVisitorVoidType to ::DefaultVisitorVoidPrinter,
+                firTransformerType to ::TransformerPrinter.bind(model.rootElement),
+            ),
+            ImplementationConfigurator,
+            BuilderConfigurator,
+            ::ImplementationPrinter,
+            ::BuilderPrinter,
+        )
+    }
 }
