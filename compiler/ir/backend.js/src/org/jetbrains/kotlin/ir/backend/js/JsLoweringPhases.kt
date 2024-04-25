@@ -141,17 +141,10 @@ private val jsCodeOutliningPhase = makeIrModulePhase(
     description = "Outline js() calls where JS code references Kotlin locals"
 )
 
-private val arrayConstructorReferencePhase = makeIrModulePhase(
-    ::ArrayConstructorReferenceLowering,
-    name = "ArrayConstructorReference",
-    description = "Transform `::Array` into a lambda"
-)
-
 private val arrayConstructorPhase = makeIrModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
     description = "Transform `Array(size) { index -> value }` into a loop",
-    prerequisite = setOf(arrayConstructorReferencePhase)
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
@@ -794,8 +787,6 @@ val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>
 val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
-    arrayConstructorReferencePhase,
-    arrayConstructorPhase,
     lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
@@ -803,8 +794,9 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     localClassesInInlineLambdasPhase,
     localClassesInInlineFunctionsPhase,
     localClassesExtractionFromInlineFunctionsPhase,
-    syntheticAccessorLoweringPhase,
     inlineCallableReferenceToLambdaPhase,
+    arrayConstructorPhase,
+    syntheticAccessorLoweringPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
     saveInlineFunctionsBeforeInlining,
     functionInliningPhase,
