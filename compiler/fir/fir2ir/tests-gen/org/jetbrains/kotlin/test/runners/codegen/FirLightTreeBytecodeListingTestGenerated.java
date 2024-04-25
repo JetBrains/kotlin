@@ -248,6 +248,12 @@ public class FirLightTreeBytecodeListingTestGenerated extends AbstractFirLightTr
   }
 
   @Test
+  @TestMetadata("nullabilityAnnotationInInnerClasses.kt")
+  public void testNullabilityAnnotationInInnerClasses() {
+    runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotationInInnerClasses.kt");
+  }
+
+  @Test
   @TestMetadata("overrideWithPrimitiveUpperBound.kt")
   public void testOverrideWithPrimitiveUpperBound() {
     runTest("compiler/testData/codegen/bytecodeListing/overrideWithPrimitiveUpperBound.kt");
