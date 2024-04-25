@@ -12,7 +12,7 @@ typealias TC<T1, T2> = TColl<T1, T2>
 fun test1(x: NA<Int>) {}
 fun test2(x: NA<<!UPPER_BOUND_VIOLATED!>Any<!>>) {}
 fun test3(x: NL<Int>) {}
-fun test4(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>NL<Any><!>) {}
+fun test4(x: NL<<!UPPER_BOUND_VIOLATED!>Any<!>>) {}
 
 val test5 = NA<Int>()
 val test6 = NA<<!UPPER_BOUND_VIOLATED!>Any<!>>()
