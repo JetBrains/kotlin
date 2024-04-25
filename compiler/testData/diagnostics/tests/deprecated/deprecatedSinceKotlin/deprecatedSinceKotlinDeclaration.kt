@@ -1,4 +1,4 @@
-// !SKIP_JAVAC
+// SKIP_JAVAC
 package kotlin.sub
 
 @Deprecated("", ReplaceWith(""))

@@ -1,4 +1,4 @@
-// !SKIP_JAVAC
+// SKIP_JAVAC
 // SKIP_TXT
 // LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // FILE: JavaInterface.java

@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // ^KT-67115
 // LL_FIR_DIVERGENCE
-// !SKIP_JAVAC
+// SKIP_JAVAC
 package kotlin.sub
 
 @Deprecated("", ReplaceWith(""))

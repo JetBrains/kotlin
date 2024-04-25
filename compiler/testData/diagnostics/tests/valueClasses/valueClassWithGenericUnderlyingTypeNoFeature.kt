@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !SKIP_JAVAC
+// SKIP_JAVAC
 // SKIP_TXT
 // LANGUAGE: +InlineClasses, -GenericInlineClassParameter
 // ALLOW_KOTLIN_PACKAGE

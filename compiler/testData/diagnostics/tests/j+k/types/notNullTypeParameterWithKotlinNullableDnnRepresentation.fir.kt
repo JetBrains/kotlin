@@ -1,4 +1,4 @@
-// !SKIP_JAVAC
+// SKIP_JAVAC
 // LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated +JavaTypeParameterDefaultRepresentationWithDNN
 // FILE: SLRUMap.java
 

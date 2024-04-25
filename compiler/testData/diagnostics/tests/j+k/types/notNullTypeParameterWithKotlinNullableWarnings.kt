@@ -1,4 +1,4 @@
-// !SKIP_JAVAC
+// SKIP_JAVAC
 // LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // !RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
