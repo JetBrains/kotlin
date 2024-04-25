@@ -14,8 +14,8 @@ typealias C_1_1_Alias = C
 
 fun test1(x: <!API_NOT_AVAILABLE!>Since_1_1_Alias<!>) = x
 
-fun test2(x: <!API_NOT_AVAILABLE!>C_1_1_Alias<!>) = x
+fun test2(x: C_1_1_Alias) = x
 
-fun test3(x: List<<!API_NOT_AVAILABLE!>C_1_1_Alias<!>>) = x
+fun test3(x: List<C_1_1_Alias>) = x
 
-fun test4(x: <!API_NOT_AVAILABLE!>L<!>) = x
+fun test4(x: L) = x

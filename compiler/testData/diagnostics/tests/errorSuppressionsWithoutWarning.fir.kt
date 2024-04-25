@@ -15,7 +15,7 @@ fun test(
     @Suppress("DEPRECATION_ERROR")
     dc: DeprecatedClass,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
-    adc: AliasOfDeprecated,
+    adc: <!DEPRECATION_ERROR!>AliasOfDeprecated<!>,
     @Suppress("OPT_IN_USAGE_ERROR")
     oi: OptInClass,
     @Suppress("OPT_IN_USAGE_ERROR")

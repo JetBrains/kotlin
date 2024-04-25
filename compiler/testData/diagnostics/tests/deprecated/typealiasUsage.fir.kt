@@ -11,8 +11,8 @@ typealias Obsolete = Base
 @Deprecated("Obsolete")
 typealias IObsolete = IFoo
 
-fun test1(x: <!DEPRECATION!>Obsolete<!>) = x
-fun test1a(x: List<<!DEPRECATION!>Obsolete<!>>) = x
+fun test1(x: Obsolete) = x
+fun test1a(x: List<Obsolete>) = x
 
 val test2 = <!DEPRECATION!>Obsolete<!>()
 
