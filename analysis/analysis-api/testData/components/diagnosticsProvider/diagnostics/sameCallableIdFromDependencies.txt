@@ -1,7 +1,1 @@
 Diagnostics from elements:
-  for PSI element of type KtNameReferenceExpression at (33,7-12)
-    FUNCTION_CALL_EXPECTED      text ranges: [(167,172)]
-      PSI: KtNameReferenceExpression at (33,7-12)
-  for PSI element of type KtNameReferenceExpression at (36,7-13)
-    FUNCTION_EXPECTED      text ranges: [(193,199)]
-      PSI: KtNameReferenceExpression at (36,7-13)

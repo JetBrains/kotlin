@@ -93,16 +93,29 @@ internal class LLFirProviderHelper(
 
     private val callablesByCallableId: FirCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> =
         firSession.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId(callableId, context)
+            computeCallableSymbolsByCallableId<FirCallableSymbol<*>>(callableId, context)
         }
 
-    private fun computeCallableSymbolsByCallableId(callableId: CallableId, context: Collection<KtFile>?): List<FirCallableSymbol<*>> {
+    private val functionsByCallableId: FirCache<CallableId, List<FirNamedFunctionSymbol>, Collection<KtFile>?> =
+        firSession.firCachesFactory.createCache { callableId, context ->
+            computeCallableSymbolsByCallableId<FirNamedFunctionSymbol>(callableId, context)
+        }
+
+    private val propertiesByCallableId: FirCache<CallableId, List<FirPropertySymbol>, Collection<KtFile>?> =
+        firSession.firCachesFactory.createCache { callableId, context ->
+            computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context)
+        }
+
+    private inline fun <reified TYPE : FirCallableSymbol<*>> computeCallableSymbolsByCallableId(
+        callableId: CallableId,
+        context: Collection<KtFile>?,
+    ): List<TYPE> {
         require(context == null || context.all { it.isPhysical })
         val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return emptyList() }
         return buildList {
             files.forEach { ktFile ->
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                firFile.collectCallableDeclarationsTo(this, callableId.callableName)
+                firFile.collectCallableSymbolsOfTypeTo<TYPE>(this, callableId.callableName)
             }
         }
     }
@@ -142,7 +155,7 @@ internal class LLFirProviderHelper(
     }
 
     fun getTopLevelFunctionSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirNamedFunctionSymbol> {
-        return getTopLevelCallableSymbols(callableId, callableFiles).filterIsInstance<FirNamedFunctionSymbol>()
+        return functionsByCallableId.getValue(callableId, callableFiles)
     }
 
     fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
@@ -150,13 +163,13 @@ internal class LLFirProviderHelper(
     }
 
     fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirPropertySymbol> {
-        return getTopLevelCallableSymbols(callableId, callableFiles).filterIsInstance<FirPropertySymbol>()
+        return propertiesByCallableId.getValue(callableId, callableFiles)
     }
 
-    private fun FirFile.collectCallableDeclarationsTo(list: MutableList<FirCallableSymbol<*>>, name: Name) {
+    private inline fun <reified TYPE : FirCallableSymbol<*>> FirFile.collectCallableSymbolsOfTypeTo(list: MutableList<TYPE>, name: Name) {
         declarations.mapNotNullTo(list) { declaration ->
             if (declaration is FirCallableDeclaration && declaration.symbol.callableId.callableName == name) {
-                declaration.symbol
+                declaration.symbol as? TYPE
             } else null
         }
     }
