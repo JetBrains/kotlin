@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
+import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
@@ -341,9 +342,9 @@ class ConeUnresolvedParentInImport(val parentClassId: ClassId) : ConeDiagnostic 
 class ConeDeprecated(
     val source: KtSourceElement?,
     override val symbol: FirBasedSymbol<*>,
-    val deprecationInfo: DeprecationInfo
+    val deprecationInfo: FirDeprecationInfo
 ) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
-    override val reason: String get() = "Deprecated: ${deprecationInfo.message}"
+    override val reason: String get() = "Deprecated: ${deprecationInfo.deprecationLevel}"
 }
 
 class ConeLocalVariableNoTypeOrInitializer(val variable: FirVariable) : ConeDiagnostic {

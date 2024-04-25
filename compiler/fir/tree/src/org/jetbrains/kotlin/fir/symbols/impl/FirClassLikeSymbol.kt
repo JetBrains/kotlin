@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -29,10 +30,10 @@ sealed class FirClassLikeSymbol<out D : FirClassLikeDeclaration>(
 
     val name get() = classId.shortClassName
 
-    fun getOwnDeprecation(session: FirSession): DeprecationsPerUseSite? {
+    fun getOwnDeprecation(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
         if (annotations.isEmpty() && fir.versionRequirements.isNullOrEmpty()) return null
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-        return fir.deprecationsProvider.getDeprecationsInfo(session)
+        return fir.deprecationsProvider.getDeprecationsInfo(languageVersionSettings)
     }
 
     val rawStatus: FirDeclarationStatus

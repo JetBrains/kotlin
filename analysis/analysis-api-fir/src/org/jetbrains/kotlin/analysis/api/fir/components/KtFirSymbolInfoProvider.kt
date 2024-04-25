@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 
 internal class KtFirSymbolInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -54,7 +54,7 @@ internal class KtFirSymbolInfoProvider(
             else -> {
                 firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession)
             }
-        }
+        }?.toDeprecationInfo()
     }
 
     private fun KtFirPsiJavaClassSymbol.mayHaveDeprecation(): Boolean {
@@ -73,8 +73,7 @@ internal class KtFirSymbolInfoProvider(
             symbol.firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession, annotationUseSiteTarget)
         } else {
             symbol.firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession)
-        }
-
+        }?.toDeprecationInfo()
     }
 
     override fun getGetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
@@ -83,7 +82,7 @@ internal class KtFirSymbolInfoProvider(
             analysisSession.useSiteSession,
             AnnotationUseSiteTarget.PROPERTY_GETTER,
             AnnotationUseSiteTarget.PROPERTY,
-        )
+        )?.toDeprecationInfo()
 
     }
 
@@ -93,7 +92,14 @@ internal class KtFirSymbolInfoProvider(
             analysisSession.useSiteSession,
             AnnotationUseSiteTarget.PROPERTY_SETTER,
             AnnotationUseSiteTarget.PROPERTY,
-        )
+        )?.toDeprecationInfo()
+    }
+
+    private fun FirDeprecationInfo.toDeprecationInfo(): DeprecationInfo {
+        // We pass null as the message, otherwise we can trigger a contract violation
+        // as getMessage will call lazyResolveToPhase(ANNOTATION_ARGUMENTS)
+        // TODO(KT-67823) stop exposing compiler internals, as the message isn't actually required by the callers.
+        return SimpleDeprecationInfo(deprecationLevel, propagatesToOverrides, null)
     }
 
     override fun getJavaGetterName(symbol: KtPropertySymbol): Name {

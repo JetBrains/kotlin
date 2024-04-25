@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -121,7 +122,6 @@ import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.MismatchOrIncompatible
@@ -297,7 +297,7 @@ object FirErrors {
     val DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val OVERRIDE_DEPRECATION: KtDiagnosticFactory2<FirBasedSymbol<*>, DeprecationInfo> by warning2<KtNamedDeclaration, FirBasedSymbol<*>, DeprecationInfo>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val OVERRIDE_DEPRECATION: KtDiagnosticFactory2<FirBasedSymbol<*>, FirDeprecationInfo> by warning2<KtNamedDeclaration, FirBasedSymbol<*>, FirDeprecationInfo>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val REDUNDANT_ANNOTATION: KtDiagnosticFactory1<ClassId> by warning1<KtAnnotationEntry, ClassId>()
     val ANNOTATION_ON_SUPERCLASS: KtDiagnosticFactoryForDeprecation0 by deprecationError0<KtAnnotationEntry>(ProhibitUseSiteTargetAnnotationsOnSuperTypes)
     val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION: KtDiagnosticFactoryForDeprecation0 by deprecationError0<PsiElement>(RestrictRetentionForExpressionAnnotations)

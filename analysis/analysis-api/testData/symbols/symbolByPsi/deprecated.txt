@@ -78,11 +78,11 @@ KtKotlinPropertySymbol:
   getContainingFileSymbol: KtFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
-  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
   javaGetterName: getI
   javaSetterName: null
-  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
 KtKotlinPropertySymbol:
   annotationsList: []
@@ -165,7 +165,7 @@ KtKotlinPropertySymbol:
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i2)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
   javaGetterName: getI2
   javaSetterName: null
   setterDeprecationStatus: null
@@ -327,7 +327,7 @@ KtKotlinPropertySymbol:
   getterDeprecationStatus: null
   javaGetterName: getI3
   javaSetterName: setI3
-  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i3)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
 KtKotlinPropertySymbol:
   annotationsList: []
@@ -486,10 +486,10 @@ KtKotlinPropertySymbol:
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
   javaGetterName: getI4
   javaSetterName: setI4
-  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use setter of i4)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
 KtFunctionSymbol:
   annotationsList: [
@@ -527,7 +527,7 @@ KtFunctionSymbol:
   getContainingFileSymbol: KtFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
 KtNamedClassOrObjectSymbol:
   annotationsList: [
@@ -560,7 +560,7 @@ KtNamedClassOrObjectSymbol:
   getContainingFileSymbol: KtFileSymbol(deprecated.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use MyClass)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
 KtKotlinPropertySymbol:
   annotationsList: [
@@ -650,11 +650,11 @@ KtKotlinPropertySymbol:
   getContainingFileSymbol: KtFileSymbol(deprecated.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
-  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
   javaGetterName: getI2
   javaSetterName: null
-  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
 KtFunctionSymbol:
   annotationsList: [
@@ -696,7 +696,7 @@ KtFunctionSymbol:
   getContainingFileSymbol: KtFileSymbol(deprecated.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f2)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
@@ -808,11 +808,11 @@ KtKotlinPropertySymbol:
   getContainingFileSymbol: KtFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
-  getterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
+  deprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
   javaGetterName: getJ
   javaSetterName: null
-  setterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
 
 KtKotlinPropertySymbol:
   annotationsList: [
@@ -894,11 +894,11 @@ KtKotlinPropertySymbol:
   getContainingFileSymbol: KtFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
-  getterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
+  deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
   javaGetterName: getJ2
   javaSetterName: null
-  setterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
 
 KtKotlinPropertySymbol:
   annotationsList: []

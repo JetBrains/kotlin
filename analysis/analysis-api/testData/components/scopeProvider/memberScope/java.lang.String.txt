@@ -889,7 +889,7 @@ KtFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KtSdkModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
 KtFunctionSymbol:
   annotationsList: []
@@ -4572,7 +4572,7 @@ KtConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KtSdkModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
 KtConstructorSymbol:
   annotationsList: [
@@ -4648,7 +4648,7 @@ KtConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KtSdkModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
 KtConstructorSymbol:
   annotationsList: []
@@ -5449,4 +5449,4 @@ KtConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KtSdkModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

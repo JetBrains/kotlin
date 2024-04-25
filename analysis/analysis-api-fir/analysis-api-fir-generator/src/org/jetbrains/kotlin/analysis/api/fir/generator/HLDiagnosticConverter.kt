@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
@@ -375,7 +374,7 @@ internal object FirToKtConversionCreator {
         ExpectActualCompatibility::class,
         ExpectActualCompatibility.MismatchOrIncompatible::class,
         ExpectActualAnnotationsIncompatibilityType::class,
-        DeprecationInfo::class,
+        FirDeprecationInfo::class,
         ApiVersion::class,
         CallableId::class,
         ClassKind::class,
