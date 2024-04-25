@@ -430,7 +430,7 @@ internal class ReflectiveAccessLowering(
 
     private fun shouldUseAccessor(accessor: IrSimpleFunction): Boolean {
         return (context.generatorExtensions as StubGeneratorExtensions).isAccessorWithExplicitImplementation(accessor)
-                || accessor.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                || accessor.correspondingPropertySymbol?.owner?.isDelegated == true
     }
 
     // Returns a pair of the _type_ containing the field and the _instance_ on
@@ -460,7 +460,7 @@ internal class ReflectiveAccessLowering(
         if (shouldUseAccessor(getter)) {
             return generateReflectiveMethodInvocation(
                 getter.parentAsClass.defaultType,
-                JvmAbi.getterName(propertyName = property.name.asString()),
+                context.defaultMethodSignatureMapper.mapFunctionName(getter),
                 getter.extensionReceiverParameter?.let { listOf(it.type) } ?: listOf(),
                 call.dispatchReceiver,
                 listOfNotNull(call.extensionReceiver),
