@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun foo(x: Int, list: List<Int>?) {
     when (x) {

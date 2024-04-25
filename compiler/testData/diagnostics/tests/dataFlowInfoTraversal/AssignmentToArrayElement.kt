@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun arrayAccessRHS(a: Int?, b: Array<Int>) {
     b[0] = a!!

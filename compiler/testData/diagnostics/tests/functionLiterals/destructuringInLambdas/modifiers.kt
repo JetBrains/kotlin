@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 data class A(val x: Int, val y: String)
 

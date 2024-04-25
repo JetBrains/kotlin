@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun <T> magic(): T = null!!
 

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class ann(val name: String)

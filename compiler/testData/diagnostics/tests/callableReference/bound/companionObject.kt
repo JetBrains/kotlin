@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_EXPRESSION
 
 package test

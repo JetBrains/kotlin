@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // SKIP_TXT
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun <R> bar(f: () -> R): R = TODO()
 

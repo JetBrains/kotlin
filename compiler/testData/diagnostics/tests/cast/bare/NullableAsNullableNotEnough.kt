@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 interface Tr
 interface G<T>

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// CHECK_TYPE
 interface A<T : A<T?>?> {
     fun foo(): T?
 }

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: p/J.java
 
 package p;

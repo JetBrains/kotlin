@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun <T> foo(a: Array<T>): Array<Array<T>> = throw Exception()
 

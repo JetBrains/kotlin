@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: EventListener.java
 public interface EventListener<E> {
     E handle(String x);

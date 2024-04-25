@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: EventListener.java
 public interface EventListener<E> {
     void handle(E e);

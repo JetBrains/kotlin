@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun foo(arr: Array<out Number>): Int {
     @Suppress("UNCHECKED_CAST")

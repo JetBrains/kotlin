@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> = throw Exception()
 

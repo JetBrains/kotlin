@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 package a
 
 import checkType

@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 public fun foo(x: String?): Int {
     var y: Any

@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 object Outer {
     private var x
         get() = object : CharSequence {

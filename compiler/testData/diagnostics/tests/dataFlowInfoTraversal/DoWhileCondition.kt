@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun simpleDoWhile(x: Int?, y0: Int) {
     var y = y0

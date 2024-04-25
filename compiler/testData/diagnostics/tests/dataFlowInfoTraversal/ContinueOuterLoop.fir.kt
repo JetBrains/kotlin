@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun whileLoop(x: Int?) {
     outer@ while (x != 0) {

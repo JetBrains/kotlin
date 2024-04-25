@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // ISSUE: KT-37070
 
 class KotlinClass(private val name: String) : Comparable<KotlinClass> {

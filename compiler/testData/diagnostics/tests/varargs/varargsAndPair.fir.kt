@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun <T: Any> foo(vararg ts: T): T? = null
 

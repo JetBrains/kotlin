@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun <T: Any> bar(a: Array<T>): Array<T?> =  null!!
 

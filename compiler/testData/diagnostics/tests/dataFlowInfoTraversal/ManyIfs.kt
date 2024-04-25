@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun noUselessDataFlowInfoCreation(x: Number) {
     if (x is Int) { if (<!USELESS_IS_CHECK!>x is Int<!>) { if (<!USELESS_IS_CHECK!>x is Int<!>) { if (<!USELESS_IS_CHECK!>x is Int<!>) { if (<!USELESS_IS_CHECK!>x is Int<!>) {

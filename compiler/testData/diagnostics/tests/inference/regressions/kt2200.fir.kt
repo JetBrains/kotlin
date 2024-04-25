@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-2200 array(array()) breaks compiler
 package n

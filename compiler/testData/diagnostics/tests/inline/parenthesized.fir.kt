@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {
     (s)(11)

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 public class A {

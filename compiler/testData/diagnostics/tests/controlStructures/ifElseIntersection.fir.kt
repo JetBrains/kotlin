@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // See also KT-10896: Wrong inference of if / else result type
 
 interface Option<T>

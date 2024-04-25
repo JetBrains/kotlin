@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 interface Either<out A, out B>
 interface Left<out A>: Either<A, Nothing>

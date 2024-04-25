@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.*

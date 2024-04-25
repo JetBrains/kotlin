@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 
 @kotlin.internal.<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>InlineOnly<!>

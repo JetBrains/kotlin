@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 interface Common {
     fun foo(): CharSequence?

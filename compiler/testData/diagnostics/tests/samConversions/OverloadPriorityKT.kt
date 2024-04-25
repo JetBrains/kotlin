@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces +SamConversionForKotlinFunctions +SamConversionPerArgument
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {
     R apply(T t);

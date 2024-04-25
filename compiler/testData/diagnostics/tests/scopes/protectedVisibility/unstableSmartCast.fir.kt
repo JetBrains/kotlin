@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 open class BaseOuter {
     protected fun foo() = 1
     protected fun bar() { }

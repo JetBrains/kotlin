@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// CHECK_TYPE
 // SKIP_TXT
 
 import kotlin.coroutines.*

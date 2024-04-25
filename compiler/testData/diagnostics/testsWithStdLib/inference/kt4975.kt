@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun <T> bar(f: () -> T) : T = f()
 

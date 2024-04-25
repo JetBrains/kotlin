@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun <T> foo(l: MutableList<T>): MutableList<T> = l

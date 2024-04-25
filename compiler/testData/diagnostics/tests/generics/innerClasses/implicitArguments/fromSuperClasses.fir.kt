@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
-// !CHECK_TYPE
+// CHECK_TYPE
 open class Outer<X, Y> {
     inner class Inner<Z>
     typealias Alias<W> = Map<W, X>

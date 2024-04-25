@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_EXPRESSION
-// !CHECK_TYPE
+// CHECK_TYPE
 // Issue: KT-30406
 
 interface Option<out T> {

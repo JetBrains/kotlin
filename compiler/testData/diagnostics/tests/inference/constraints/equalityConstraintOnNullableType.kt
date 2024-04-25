@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 interface A<T>
 
 fun <T> foo(a: A<T>, aN: A<T?>): T = throw Exception("$a $aN")

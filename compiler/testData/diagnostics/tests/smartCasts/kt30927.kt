@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_EXPRESSION
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun case_0() {
     val z: Any? = 10

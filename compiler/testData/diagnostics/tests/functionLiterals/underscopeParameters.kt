@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun foo(block: (Int, String) -> Unit) { }
 fun foobar(block: (Double) -> Unit) { }

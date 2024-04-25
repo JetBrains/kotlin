@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun foo1(x: Number, cond: Boolean): Boolean {
     val result = cond && ((x as Int) == 42)

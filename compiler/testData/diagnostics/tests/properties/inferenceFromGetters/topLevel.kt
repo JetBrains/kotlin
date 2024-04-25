@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 val x get() = 1
 val y get() = id(1)
 val y2 get() = id(id(2))
