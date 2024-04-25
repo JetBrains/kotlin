@@ -76,29 +76,37 @@ internal class LLFirProviderHelper(
 
     private val classifierByClassId: FirCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> =
         firSession.firCachesFactory.createCache { classId, context ->
-            require(context == null || context.isPhysical)
-            val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return@createCache null
-
-            if (ktClass.getClassId() == null) return@createCache null
-            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
-            FirElementFinder.findClassifierWithClassId(firFile, classId)
-                ?: errorWithAttachment("Classifier was found in KtFile but was not found in FirFile") {
-                    withEntry("classifierClassId", classId) { it.asString() }
-                    withVirtualFileEntry("virtualFile", ktClass.containingKtFile.virtualFile)
-                }
+            computeClassifierByClassId(classId, context)
         }
+
+    private fun computeClassifierByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeDeclaration? {
+        require(context == null || context.isPhysical)
+        val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
+
+        if (ktClass.getClassId() == null) return null
+        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
+        return FirElementFinder.findClassifierWithClassId(firFile, classId)
+            ?: errorWithAttachment("Classifier was found in KtFile but was not found in FirFile") {
+                withEntry("classifierClassId", classId) { it.asString() }
+                withVirtualFileEntry("virtualFile", ktClass.containingKtFile.virtualFile)
+            }
+    }
 
     private val callablesByCallableId: FirCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> =
         firSession.firCachesFactory.createCache { callableId, context ->
-            require(context == null || context.all { it.isPhysical })
-            val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
-            buildList {
-                files.forEach { ktFile ->
-                    val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                    firFile.collectCallableDeclarationsTo(this, callableId.callableName)
-                }
+            computeCallableSymbolsByCallableId(callableId, context)
+        }
+
+    private fun computeCallableSymbolsByCallableId(callableId: CallableId, context: Collection<KtFile>?): List<FirCallableSymbol<*>> {
+        require(context == null || context.all { it.isPhysical })
+        val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return emptyList() }
+        return buildList {
+            files.forEach { ktFile ->
+                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
+                firFile.collectCallableDeclarationsTo(this, callableId.callableName)
             }
         }
+    }
 
     val symbolNameCache = FirCompositeCachedSymbolNamesProvider.create(
         firSession,
