@@ -6,29 +6,9 @@ plugins {
     kotlin("multiplatform")
 }
 
-val composeVersion = "1.7.0-alpha07"
 repositories {
-    google {
-        content {
-            includeGroup("androidx.collection")
-            includeVersion("androidx.compose.runtime", "runtime", composeVersion)
-            includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
-            includeVersion("androidx.compose.foundation", "foundation-layout", composeVersion)
-            includeVersion("androidx.compose.foundation", "foundation-layout-desktop", composeVersion)
-            includeVersion("androidx.compose.foundation", "foundation", composeVersion)
-            includeVersion("androidx.compose.foundation", "foundation-desktop", composeVersion)
-            includeVersion("androidx.compose.animation", "animation", composeVersion)
-            includeVersion("androidx.compose.animation", "animation-desktop", composeVersion)
-            includeVersion("androidx.compose.ui", "ui", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-desktop", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-graphics", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-graphics-desktop", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-text", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-text-desktop", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-unit", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-unit-desktop", composeVersion)
-        }
-    }
+    composeGoogleMaven(libs.versions.compose.stable.get())
+    androidxSnapshotRepo(libs.versions.compose.snapshot.id.get())
 }
 
 fun KotlinDependencyHandler.implementationArtifactOnly(dependency: String) {
@@ -86,16 +66,24 @@ kotlin {
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
 
-                // external deps
-                implementation("androidx.compose.runtime:runtime:$composeVersion")
-                implementationArtifactOnly("androidx.compose.foundation:foundation:$composeVersion")
-                implementationArtifactOnly("androidx.compose.foundation:foundation-layout:$composeVersion")
-                implementationArtifactOnly("androidx.compose.animation:animation:$composeVersion")
-                implementationArtifactOnly("androidx.compose.ui:ui:$composeVersion")
-                implementationArtifactOnly("androidx.compose.ui:ui-graphics:$composeVersion")
-                implementationArtifactOnly("androidx.compose.ui:ui-text:$composeVersion")
-                implementationArtifactOnly("androidx.compose.ui:ui-unit:$composeVersion")
-                implementationArtifactOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
+                // coroutines for runtime tests
+                implementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-test-jvm"))
+
+                // runtime tests
+                implementation(composeRuntime())
+                implementation(composeRuntimeTestUtils())
+
+                // other compose
+                implementationArtifactOnly(compose("foundation", "foundation"))
+                implementationArtifactOnly(compose("foundation", "foundation-layout"))
+                implementationArtifactOnly(compose("animation", "animation"))
+                implementationArtifactOnly(compose("ui", "ui"))
+                implementationArtifactOnly(compose("ui", "ui-graphics"))
+                implementationArtifactOnly(compose("ui", "ui-text"))
+                implementationArtifactOnly(compose("ui", "ui-unit"))
+
+                // external
+                implementationArtifactOnly(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
                 implementationArtifactOnly("com.google.dagger:dagger:2.40.1")
             }
         }
@@ -108,4 +96,6 @@ tasks.withType(Test::class.java).configureEach {
     this.jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
     // ensure that debugger tests don't launch a separate window
     this.systemProperty("java.awt.headless", "true")
+    // runtime tests are executed in this module with compiler built from source (see androidx.compose.compiler.plugins.kotlin.RuntimeTests)
+    this.inputs.dir(File(rootDir, "plugins/compose/compiler-hosted/runtime-tests/src")).withPathSensitivity(PathSensitivity.RELATIVE)
 }

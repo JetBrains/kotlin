@@ -26,10 +26,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.setMain
+import org.junit.BeforeClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CompositionTests {
+    companion object {
+        @OptIn(ExperimentalCoroutinesApi::class)
+        @BeforeClass
+        @JvmStatic
+        fun setupMainDispatcher() {
+            Dispatchers.setMain(StandardTestDispatcher())
+        }
+    }
+
     @Test
     fun composableInAnonymousObjectDeclaration() = compositionTest {
         val list = listOf("a", "b")

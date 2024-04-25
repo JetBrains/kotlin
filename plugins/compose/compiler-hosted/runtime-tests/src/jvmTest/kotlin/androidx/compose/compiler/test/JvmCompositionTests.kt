@@ -22,10 +22,24 @@ import androidx.compose.runtime.mock.compositionTest
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.setMain
+import org.junit.BeforeClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class JvmCompositionTests {
+    companion object {
+        @OptIn(ExperimentalCoroutinesApi::class)
+        @BeforeClass
+        @JvmStatic
+        fun setupMainDispatcher() {
+            Dispatchers.setMain(StandardTestDispatcher())
+        }
+    }
+
     private class TestReference(val invokeCount: Int = 0) : () -> Int {
         override fun invoke(): Int = invokeCount
 
