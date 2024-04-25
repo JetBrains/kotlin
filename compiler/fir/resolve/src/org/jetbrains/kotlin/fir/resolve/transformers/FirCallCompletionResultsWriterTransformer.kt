@@ -1023,7 +1023,6 @@ class FirCallCompletionResultsWriterTransformer(
         literalExpression: FirLiteralExpression,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        if (data == ExpectedArgumentType.NoApproximation) return literalExpression
         val expectedType = data?.getExpectedType(literalExpression)
         if (expectedType is ConeIntegerConstantOperatorType) {
             return literalExpression
@@ -1035,7 +1034,6 @@ class FirCallCompletionResultsWriterTransformer(
         integerLiteralOperatorCall: FirIntegerLiteralOperatorCall,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        if (data == ExpectedArgumentType.NoApproximation) return integerLiteralOperatorCall
         val expectedType = data?.getExpectedType(integerLiteralOperatorCall)
         if (expectedType is ConeIntegerConstantOperatorType) {
             return integerLiteralOperatorCall
@@ -1109,13 +1107,11 @@ sealed class ExpectedArgumentType {
     ) : ExpectedArgumentType()
 
     class ExpectedType(val type: ConeKotlinType) : ExpectedArgumentType()
-    object NoApproximation : ExpectedArgumentType()
 }
 
 private fun ExpectedArgumentType.getExpectedType(argument: FirElement): ConeKotlinType? = when (this) {
     is ExpectedArgumentType.ArgumentsMap -> map[argument]
     is ExpectedArgumentType.ExpectedType -> type
-    ExpectedArgumentType.NoApproximation -> null
 }
 
 fun ConeKotlinType.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ExpectedType(this)
