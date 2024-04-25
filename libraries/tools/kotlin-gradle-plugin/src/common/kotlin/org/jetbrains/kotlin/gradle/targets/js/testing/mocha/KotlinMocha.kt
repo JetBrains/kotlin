@@ -92,9 +92,6 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
             } else {
                 addAll(cliArg(TIMEOUT_ARG, timeout))
             }
-            if (platformType == KotlinPlatformType.wasm) {
-                addAll(cliArg("-n", "experimental-wasm-typed-funcref,experimental-wasm-gc,experimental-wasm-eh"))
-            }
         }
 
         val dryRunArgs = if (platformType == KotlinPlatformType.wasm)
