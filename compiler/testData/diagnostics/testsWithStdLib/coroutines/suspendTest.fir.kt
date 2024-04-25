@@ -14,8 +14,8 @@ import kotlin.test.Test
 
 class A {
     @Test
-    <!UNSUPPORTED_SUSPEND_TEST!>suspend<!> fun test() {}
+    suspend fun test() {}
 }
 
 @Test
-<!UNSUPPORTED_SUSPEND_TEST!>suspend<!> fun test() {}
+suspend fun test() {}
