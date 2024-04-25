@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.internal.properties
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -48,6 +49,7 @@ internal abstract class PropertiesBuildService @Inject constructor(
 
     private val configurationTimePropertiesAccessor by lazy { parameters.configurationTimePropertiesAccessor.get() }
     private val localProperties by lazy { parameters.localProperties.get() }
+    private val logger = Logging.getLogger(this::class.java)
 
     /**
      * Returns a [Provider] of the value of the property with the given [propertyName] either from project [extraPropertiesExtension],
@@ -83,6 +85,38 @@ internal abstract class PropertiesBuildService @Inject constructor(
         project: Project,
     ) = property(propertyName, project.path, project.extraProperties)
 
+    fun <T : Any, PROP : GradleProperty<T>> property(
+        property: PROP,
+        project: Project
+    ): Provider<T> {
+        return property(property.name, project.path, project.extraProperties)
+            .map {
+                val result = when (property) {
+                    is BooleanGradleProperty -> property.toBooleanFromString(it)
+                    is StringGradleProperty -> it
+                    else -> throw IllegalStateException("Unknown Gradle property type $property")
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                result as T
+            }
+            .orElse(property.defaultValue)
+    }
+
+    private fun BooleanGradleProperty.toBooleanFromString(value: String?, ): Boolean {
+        return when {
+            value.equals("true", ignoreCase = true) -> true
+            value.equals("false", ignoreCase = true) -> false
+            else -> {
+                logger.warn(
+                    "Boolean option '$name' was set to an invalid value: `$value`." +
+                            " Using default value '$defaultValue' instead."
+                )
+                defaultValue
+            }
+        }
+    }
+
     /** Returns the value of the property with the given [propertyName] in the given [project]. */
     fun get(propertyName: String, project: Project): String? {
         return property(propertyName, project).orNull
@@ -101,6 +135,21 @@ internal abstract class PropertiesBuildService @Inject constructor(
         private val value: T? by lazy { valueResolver.call() }
         override fun call(): T? = value
     }
+
+    internal sealed interface GradleProperty<T : Any> {
+        val name: String
+        val defaultValue: T
+    }
+
+    internal class BooleanGradleProperty(
+        override val name: String,
+        override val defaultValue: Boolean
+    ) : GradleProperty<Boolean>
+
+    internal class StringGradleProperty(
+        override val name: String,
+        override val defaultValue: String
+    ) : GradleProperty<String>
 }
 
 internal val Project.propertiesService: Provider<PropertiesBuildService>
