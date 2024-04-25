@@ -23,6 +23,10 @@ internal object KaptProperties {
         val KAPT_INCLUDE_COMPILE_CLASSPATH = BooleanGradleProperty("kapt.include.compile.classpath", true)
         val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = BooleanGradleProperty("kapt.keep.kdoc.comments.in.stubs", true)
         val KAPT_USE_K2 = BooleanGradleProperty("kapt.use.k2", false)
+        val KAPT_DONT_WARN_ANNOTATION_PROCESSOR_DEPENDENCIES = BooleanGradleProperty(
+            "kapt.dont.warn.annotationProcessor.dependencies",
+            false
+        )
     }
 
     object StringProperties {
@@ -55,6 +59,10 @@ internal object KaptProperties {
 
     fun isUseK2(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.property(BooleanProperties.KAPT_USE_K2, project)
+    }
+
+    fun isKaptDontWarnAnnotationProcessorDependencies(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
+        it.property(BooleanProperties.KAPT_DONT_WARN_ANNOTATION_PROCESSOR_DEPENDENCIES, project)
     }
 
     fun getClassloadersCacheDisableForProcessors(project: Project): Provider<String> = project.propertiesService.flatMap {

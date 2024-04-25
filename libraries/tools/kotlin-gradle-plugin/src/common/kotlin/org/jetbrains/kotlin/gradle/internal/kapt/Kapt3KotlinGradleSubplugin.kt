@@ -528,7 +528,7 @@ private val ANNOTATION_PROCESSOR_CAP = ANNOTATION_PROCESSOR.capitalizeAsciiOnly(
 
 internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
     project.whenKaptEnabled {
-        if (project.hasProperty("kapt.dont.warn.annotationProcessor.dependencies")) {
+        if (KaptProperties.isKaptDontWarnAnnotationProcessorDependencies(project).get()) {
             return@whenKaptEnabled
         }
 
