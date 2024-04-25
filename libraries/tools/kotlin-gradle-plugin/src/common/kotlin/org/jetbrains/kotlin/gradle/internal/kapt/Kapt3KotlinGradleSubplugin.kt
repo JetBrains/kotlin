@@ -145,45 +145,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         fun isEnabled(project: Project) =
             project.plugins.any { it is Kapt3GradleSubplugin }
-
-        private fun Project.getBooleanOptionValue(
-            booleanOption: BooleanOption
-        ): Boolean {
-            val value = findProperty(booleanOption.optionName)
-            return when (value) {
-                is Boolean -> value
-                is String -> when {
-                    value.equals("true", ignoreCase = true) -> true
-                    value.equals("false", ignoreCase = true) -> false
-                    else -> {
-                        project.logger.warn(
-                            "Boolean option `${booleanOption.optionName}` was set to an invalid value: `$value`." +
-                                    " Using default value `${booleanOption.defaultValue}` instead."
-                        )
-                        booleanOption.defaultValue
-                    }
-                }
-                null -> booleanOption.defaultValue
-                else -> {
-                    project.logger.warn(
-                        "Boolean option `${booleanOption.optionName}` was set to an invalid value: `$value`." +
-                                " Using default value `${booleanOption.defaultValue}` instead."
-                    )
-                    booleanOption.defaultValue
-                }
-            }
-        }
-
-        /**
-         * Kapt option that expects a Boolean value. It has a default value to be used when its value is not set.
-         *
-         * IMPORTANT: The default value should typically match those defined in org.jetbrains.kotlin.kapt3.base.KaptFlag.
-         */
-        private enum class BooleanOption(
-            val optionName: String,
-            val defaultValue: Boolean
-        ) {
-        }
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) =
