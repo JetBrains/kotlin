@@ -1,0 +1,8 @@
+MODULE main
+	CLASS Kt940Kt$box$w$1.class
+		CLASS METADATA
+			Property: class.metadata.superTypes
+				K1
+					[java/util/Comparator<kotlin/String?> /* = kotlin/Comparator^<kotlin/String?> */]
+				K2
+					[java/util/Comparator<kotlin/String?>]

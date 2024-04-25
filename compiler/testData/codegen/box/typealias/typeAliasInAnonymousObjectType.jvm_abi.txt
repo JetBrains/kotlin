@@ -7,3 +7,10 @@ MODULE main
 						Foo<kotlin/String> /* = FooStr^ */
 					K2
 						Foo<kotlin/String>
+	CLASS TypeAliasInAnonymousObjectTypeKt$test$1.class
+		CLASS METADATA
+			Property: class.metadata.superTypes
+				K1
+					[Foo<kotlin/String> /* = FooStr^ */]
+				K2
+					[Foo<kotlin/String>]
