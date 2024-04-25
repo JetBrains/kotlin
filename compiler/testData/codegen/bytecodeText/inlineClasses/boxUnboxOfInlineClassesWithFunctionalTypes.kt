@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 inline class UInt(val value: Int)
 inline class ULong(val value: Long)

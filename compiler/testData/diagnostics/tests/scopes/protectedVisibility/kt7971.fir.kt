@@ -1,5 +1,5 @@
 // !CHECK_TYPE
-// !LANGUAGE: -ProhibitProtectedCallFromInline
+// LANGUAGE: -ProhibitProtectedCallFromInline
 // FILE: module1/AbstractModule.java
 package module1;
 

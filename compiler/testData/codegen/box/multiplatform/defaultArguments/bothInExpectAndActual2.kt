@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND_K2: ANY

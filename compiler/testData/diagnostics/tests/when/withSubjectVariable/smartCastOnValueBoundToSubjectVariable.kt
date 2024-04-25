@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +VariableDeclarationInWhenSubject
+// LANGUAGE: +VariableDeclarationInWhenSubject
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 
 fun foo(s1: Int, s2: Int) = s1 + s2

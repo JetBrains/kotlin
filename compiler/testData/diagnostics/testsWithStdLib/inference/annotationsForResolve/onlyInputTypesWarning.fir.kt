@@ -1,4 +1,4 @@
-// !LANGUAGE: -StrictOnlyInputTypesChecks
+// LANGUAGE: -StrictOnlyInputTypesChecks
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)

@@ -1,4 +1,4 @@
-// !LANGUAGE: -ConsiderExtensionReceiverFromConstrainsInLambda
+// LANGUAGE: -ConsiderExtensionReceiverFromConstrainsInLambda
 // SKIP_TXT
 
 typealias A = CharSequence.(Int) -> Unit

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-//!LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 // TARGET_BACKEND: JVM
 
 // FILE: A.java

@@ -4,7 +4,7 @@ KtFile: diagnosticTags_ERR.kt
   IMPORT_LIST
     <empty list>
   TYPEALIAS
-    PsiComment(EOL_COMMENT)('// !LANGUAGE: -SuspendFunctionAsSupertype')
+    PsiComment(EOL_COMMENT)('// LANGUAGE: -SuspendFunctionAsSupertype')
     PsiWhiteSpace('\n')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')

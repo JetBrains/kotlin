@@ -1,4 +1,4 @@
-// !LANGUAGE: -GenerateJvmOverloadsAsFinal
+// LANGUAGE: -GenerateJvmOverloadsAsFinal
 // WITH_STDLIB
 
 open class Foo {

@@ -13,7 +13,7 @@ enum E {
 // MODULE: main(cinterop)
 // FILE: main.kt
 
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import cenums.*

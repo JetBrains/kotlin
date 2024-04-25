@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun useSuspendVararg(vararg sfn: suspend () -> Unit) {}

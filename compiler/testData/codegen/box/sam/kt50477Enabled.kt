@@ -1,4 +1,4 @@
-// !LANGUAGE: +SuspendOnlySamConversions
+// LANGUAGE: +SuspendOnlySamConversions
 // TARGET_BACKEND: JVM_IR
 
 fun interface FI {

@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitProtectedCallFromInline
+// LANGUAGE: -ProhibitProtectedCallFromInline
 // DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 // FILE: JavaClass.java

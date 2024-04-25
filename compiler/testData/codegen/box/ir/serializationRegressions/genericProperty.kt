@@ -1,4 +1,4 @@
-// !LANGUAGE: -ForbidUsingExtensionPropertyTypeParameterInDelegate
+// LANGUAGE: -ForbidUsingExtensionPropertyTypeParameterInDelegate
 //For KT-6020
 // KT-24643: language version in K2 is >= 1.8
 

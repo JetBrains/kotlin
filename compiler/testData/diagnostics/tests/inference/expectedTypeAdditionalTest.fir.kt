@@ -1,4 +1,4 @@
-// !LANGUAGE: +ExpectedTypeFromCast
+// LANGUAGE: +ExpectedTypeFromCast
 
 fun foo() = 1
 

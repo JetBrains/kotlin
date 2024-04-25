@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitProtectedCallFromInline
+// LANGUAGE: -ProhibitProtectedCallFromInline
 // TARGET_BACKEND: JVM
 
 // FILE: JavaClass.java

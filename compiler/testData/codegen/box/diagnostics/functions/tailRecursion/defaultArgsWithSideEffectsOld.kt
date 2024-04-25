@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProperComputationOrderOfTailrecDefaultParameters
+// LANGUAGE: -ProperComputationOrderOfTailrecDefaultParameters
 // TARGET_BACKEND: JVM
 // IGNORE_FIR_DIAGNOSTICS_DIFF
 

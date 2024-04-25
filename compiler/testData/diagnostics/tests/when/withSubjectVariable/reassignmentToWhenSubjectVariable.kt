@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +VariableDeclarationInWhenSubject
+// LANGUAGE: +VariableDeclarationInWhenSubject
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_VALUE
 
 fun foo(): Any = 42

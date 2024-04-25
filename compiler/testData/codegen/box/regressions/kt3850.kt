@@ -1,4 +1,4 @@
-// !LANGUAGE: -PrivateInFileEffectiveVisibility
+// LANGUAGE: -PrivateInFileEffectiveVisibility
 // IGNORE_BACKEND_K2: ANY
 // Reason: unsupported language feature switch OFF
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: -AdaptedCallableReferenceAgainstReflectiveType -DisableCompatibilityModeForNewInference
+// LANGUAGE: -AdaptedCallableReferenceAgainstReflectiveType -DisableCompatibilityModeForNewInference
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KFunction1

@@ -1,4 +1,4 @@
-// !LANGUAGE: +UnitConversionsOnArbitraryExpressions +SuspendConversion
+// LANGUAGE: +UnitConversionsOnArbitraryExpressions +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun foo(f: suspend () -> Unit) {}

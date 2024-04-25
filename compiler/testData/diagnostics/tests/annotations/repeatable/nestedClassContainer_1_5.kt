@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -RepeatableAnnotations -RepeatableAnnotationContainerConstraints
+// LANGUAGE: -RepeatableAnnotations -RepeatableAnnotationContainerConstraints
 // FULL_JDK
 
 <!REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_WARNING!>@Repeatable<!>

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +PreferJavaFieldOverload
+// LANGUAGE: +PreferJavaFieldOverload
 // !CHECK_TYPE
 
 // FILE: CompressionType.java

@@ -1,4 +1,4 @@
-// !LANGUAGE: -TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: -TypeEnhancementImprovementsInStrictMode
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // SKIP_TXT
 // MUTE_FOR_PSI_CLASS_FILES_READING

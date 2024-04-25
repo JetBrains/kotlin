@@ -1,4 +1,4 @@
-//!LANGUAGE: -ProperComputationOrderOfTailrecDefaultParameters
+// LANGUAGE: -ProperComputationOrderOfTailrecDefaultParameters
 
 import kotlin.reflect.KClass
 

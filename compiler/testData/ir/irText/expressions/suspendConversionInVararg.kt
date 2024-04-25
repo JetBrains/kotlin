@@ -1,6 +1,6 @@
 // SKIP_KT_DUMP
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 
 fun useSuspendVararg(vararg sfn: suspend () -> Unit) {}
 

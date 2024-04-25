@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitUseSiteTargetAnnotationsOnSuperTypes
+// LANGUAGE: -ProhibitUseSiteTargetAnnotationsOnSuperTypes
 
 interface Foo
 

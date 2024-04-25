@@ -1,4 +1,4 @@
-// !LANGUAGE: -FunctionTypesWithBigArity
+// LANGUAGE: -FunctionTypesWithBigArity
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
+// LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // ISSUE: KT-8325
 
 fun foo() {

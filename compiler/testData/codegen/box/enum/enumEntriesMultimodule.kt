@@ -3,14 +3,14 @@
 // WITH_STDLIB
 
 // MODULE: lib
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries
 // FILE: MyEnum.kt
 enum class MyEnum {
     Nope, OK
 }
 
 // MODULE: caller(lib)
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 // FILE: Box.kt
 @OptIn(ExperimentalStdlibApi::class)
 fun box(): String {

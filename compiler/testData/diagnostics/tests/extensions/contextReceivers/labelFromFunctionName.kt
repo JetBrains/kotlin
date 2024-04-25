@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 
 fun testLabels(source: Collection<String>) {

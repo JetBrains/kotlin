@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +VariableDeclarationInWhenSubject
+// LANGUAGE: +VariableDeclarationInWhenSubject
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 sealed class Either

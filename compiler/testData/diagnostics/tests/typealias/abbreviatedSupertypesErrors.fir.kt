@@ -1,5 +1,5 @@
 // SKIP_TXT
-// !LANGUAGE: +ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes
+// LANGUAGE: +ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes
 
 interface I
 open class TK<T : I, K : I>

@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitDataClassesOverridingCopy
+// LANGUAGE: +ProhibitDataClassesOverridingCopy
 
 interface WithCopy<T> {
     fun copy(str: T): WithCopy<T>

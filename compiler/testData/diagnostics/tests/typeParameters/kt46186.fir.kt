@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -FINAL_UPPER_BOUND -CAST_NEVER_SUCCEEDS
-// !LANGUAGE: -AllowEmptyIntersectionsInResultTypeResolver
+// LANGUAGE: -AllowEmptyIntersectionsInResultTypeResolver
 
 interface I
 

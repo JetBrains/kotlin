@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !SKIP_JAVAC
-// !LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
+// LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
 // ALLOW_KOTLIN_PACKAGE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 

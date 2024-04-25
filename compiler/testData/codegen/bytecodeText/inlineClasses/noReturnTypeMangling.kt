@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses
+// LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses
 
 inline class S(val x: String)
 

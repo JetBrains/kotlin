@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 

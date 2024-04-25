@@ -1,4 +1,4 @@
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // FULL_JDK

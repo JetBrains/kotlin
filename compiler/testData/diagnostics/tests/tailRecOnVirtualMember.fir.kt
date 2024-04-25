@@ -1,4 +1,4 @@
-//!LANGUAGE: -ProhibitTailrecOnVirtualMember
+// LANGUAGE: -ProhibitTailrecOnVirtualMember
 
 open class A {
     <!TAILREC_ON_VIRTUAL_MEMBER_ERROR!>tailrec<!> open fun foo(x: Int) {

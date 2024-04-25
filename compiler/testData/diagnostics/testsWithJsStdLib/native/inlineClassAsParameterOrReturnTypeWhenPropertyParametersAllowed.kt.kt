@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, -JsAllowValueClassesInExternals, +JsExternalPropertyParameters
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses, -JsAllowValueClassesInExternals, +JsExternalPropertyParameters
 // DIAGNOSTICS: -OPT_IN_USAGE
 
 // FILE: uint.kt

@@ -1,4 +1,4 @@
-// !LANGUAGE:+ProhibitAccessToInvisibleSetterFromDerivedClass
+// LANGUAGE:+ProhibitAccessToInvisibleSetterFromDerivedClass
 
 // MODULE: m1
 // FILE: base.kt

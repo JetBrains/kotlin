@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperFinally
+// LANGUAGE: +ProperFinally
 var result = ""
 
 fun test() {

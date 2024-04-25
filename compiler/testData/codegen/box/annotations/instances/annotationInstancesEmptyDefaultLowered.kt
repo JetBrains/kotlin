@@ -3,7 +3,7 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 /**
  * This test checks if annotation instantiation works correctly, when annotation class is lowered before instantiation point.

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionPerArgument
+// LANGUAGE: +SamConversionPerArgument
 // !CHECK_TYPE
 // FILE: J.java
 public interface J<T> {

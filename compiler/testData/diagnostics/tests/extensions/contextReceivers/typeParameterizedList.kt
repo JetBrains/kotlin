@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> listOf(vararg e: T): List<T> = null!!

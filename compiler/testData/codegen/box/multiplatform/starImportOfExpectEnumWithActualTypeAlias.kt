@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND_K1: JS_IR
 // IGNORE_BACKEND_K1: JS_IR_ES6

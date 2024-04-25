@@ -1,5 +1,5 @@
 // IGNORE_BACKEND_K2: ANY
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // FIR status: outdated code (expect and actual in the same module)
 
 // FILE: common.kt

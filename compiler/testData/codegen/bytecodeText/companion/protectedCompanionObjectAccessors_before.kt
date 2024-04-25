@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProperVisibilityForCompanionObjectInstanceField
+// LANGUAGE: -ProperVisibilityForCompanionObjectInstanceField
 
 // FILE: Base.kt
 package a

@@ -1,5 +1,5 @@
 // ISSUE: KT-54978
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 // Case 1: Parameters and local variables
 fun f1(x: Int) {

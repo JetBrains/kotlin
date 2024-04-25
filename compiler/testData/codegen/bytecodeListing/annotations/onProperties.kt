@@ -1,4 +1,4 @@
-// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
+// LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // JVM_ABI_K1_K2_DIFF: KT-63843, KT-63984
 
 import kotlin.reflect.KProperty

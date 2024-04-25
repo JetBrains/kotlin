@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
 // IGNORE_BACKEND: JVM_IR
 
 fun equals3(a: Short?, b: Short?) = a != null && b != null && a == b

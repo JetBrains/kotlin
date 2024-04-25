@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-59012
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
 interface I1<G : I1<G>> {
     fun <T : G> foo() : T

@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +ReadDeserializedContracts
+// LANGUAGE: +AllowContractsForCustomFunctions +ReadDeserializedContracts
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 

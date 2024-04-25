@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
+// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 annotation class Ann1(vararg val a: String = [])
 annotation class Ann2(vararg val a: Int = [1, 2])

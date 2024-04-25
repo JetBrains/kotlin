@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +Coroutines
+// LANGUAGE: +Coroutines
 // DIAGNOSTICS: -USELESS_IS_CHECK
 // SKIP_TXT
 

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +UnrestrictedBuilderInference
+// LANGUAGE: +UnrestrictedBuilderInference
 // !OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 

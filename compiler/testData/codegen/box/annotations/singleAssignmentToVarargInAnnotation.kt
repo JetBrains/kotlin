@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: don't support legacy feature
-// !LANGUAGE: -ProhibitAssigningSingleElementsToVarargsInNamedForm
+// LANGUAGE: -ProhibitAssigningSingleElementsToVarargsInNamedForm
 // TARGET_BACKEND: JVM
 
 // WITH_STDLIB

@@ -1,4 +1,4 @@
-// !LANGUAGE: -JvmStaticInInterface
+// LANGUAGE: -JvmStaticInInterface
 // DIAGNOSTICS: -UNUSED_VARIABLE
 interface B {
     companion object {

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !RENDER_IR_DIAGNOSTICS_FULL_TEXT
-// !LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE: +IntrinsicConstEvaluation
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 

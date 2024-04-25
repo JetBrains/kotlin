@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +UnrestrictedBuilderInference
+// LANGUAGE: +UnrestrictedBuilderInference
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Builder<T> {

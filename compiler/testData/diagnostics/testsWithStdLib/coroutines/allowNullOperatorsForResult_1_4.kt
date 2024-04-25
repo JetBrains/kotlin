@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +AllowNullOperatorsForResult
+// LANGUAGE: +AllowNullOperatorsForResult
 // DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun test(r: Result<Int>?) {

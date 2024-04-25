@@ -1,4 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +JvmInlineValueClasses
+// LANGUAGE: +JvmInlineValueClasses
 
 <!INLINE_CLASS_DEPRECATED!>inline<!> class IC(val i: Int)

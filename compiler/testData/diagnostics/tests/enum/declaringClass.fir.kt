@@ -1,6 +1,6 @@
 // FULL_JDK
 // WITH_STDLIB
-// !LANGUAGE: -ProhibitEnumDeclaringClass
+// LANGUAGE: -ProhibitEnumDeclaringClass
 
 import java.util.*
 

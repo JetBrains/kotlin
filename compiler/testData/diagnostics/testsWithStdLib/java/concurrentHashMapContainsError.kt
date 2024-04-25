@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitConcurrentHashMapContains
+// LANGUAGE: +ProhibitConcurrentHashMapContains
 // FULL_JDK
 
 class A : java.util.concurrent.ConcurrentHashMap<String, Int>() {

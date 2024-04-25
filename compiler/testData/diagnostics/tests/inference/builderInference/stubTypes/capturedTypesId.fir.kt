@@ -1,4 +1,4 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
+// LANGUAGE: +UnrestrictedBuilderInference
 // DIAGNOSTICS: -DEPRECATION -UNCHECKED_CAST -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
 // ISSUE: KT-63996

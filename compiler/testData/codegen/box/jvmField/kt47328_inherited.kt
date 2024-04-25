@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
+// LANGUAGE: -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 

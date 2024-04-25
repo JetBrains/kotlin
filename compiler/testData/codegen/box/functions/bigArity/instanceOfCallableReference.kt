@@ -1,4 +1,4 @@
-// !LANGUAGE: +FunctionTypesWithBigArity
+// LANGUAGE: +FunctionTypesWithBigArity
 // IGNORE_BACKEND: JS_IR, JS
 // IGNORE_BACKEND: JS_IR_ES6
 

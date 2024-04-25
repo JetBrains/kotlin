@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
+// LANGUAGE: +RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Fancy

@@ -1,4 +1,4 @@
-// !LANGUAGE: +NestedClassesInAnnotations
+// LANGUAGE: +NestedClassesInAnnotations
 // !OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: api.kt

@@ -1,6 +1,6 @@
 // !SKIP_JAVAC
-// !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: +DefinitelyNonNullableTypes
 // !RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 

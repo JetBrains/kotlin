@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 interface A<T> {
     fun foo(x: T): T

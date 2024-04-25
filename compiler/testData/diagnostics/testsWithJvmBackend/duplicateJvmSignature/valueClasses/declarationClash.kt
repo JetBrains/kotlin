@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ValueClasses
+// LANGUAGE: +ValueClasses
 // WITH_STDLIB
 
 @JvmInline

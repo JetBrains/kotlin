@@ -1,4 +1,4 @@
-// !LANGUAGE: -CorrectSourceMappingSyntax
+// LANGUAGE: -CorrectSourceMappingSyntax
 // FILE: 1.kt
 package test
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProperTypeInferenceConstraintsProcessing
+// LANGUAGE: -ProperTypeInferenceConstraintsProcessing
 sealed class Subtype<A1, B1> {
     abstract fun cast(value: A1): B1
     class Trivial<A2 : B2, B2> : Subtype<A2, B2>() {

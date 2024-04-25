@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
-// !LANGUAGE: +NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
+// LANGUAGE: +NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // FILE: stdlibInternal.kt
 
 package kotlin.internal

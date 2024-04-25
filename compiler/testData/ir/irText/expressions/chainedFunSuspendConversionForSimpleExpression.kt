@@ -1,4 +1,4 @@
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 // SKIP_KT_DUMP
 // FIR_IDENTICAL
 

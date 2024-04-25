@@ -1,4 +1,4 @@
-// !LANGUAGE: -ValueClassesSecondaryConstructorWithBody
+// LANGUAGE: -ValueClassesSecondaryConstructorWithBody
 // WITH_STDLIB
 
 @JvmInline

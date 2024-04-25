@@ -1,4 +1,4 @@
-// !LANGUAGE: +ExpectedTypeFromCast
+// LANGUAGE: +ExpectedTypeFromCast
 // DIAGNOSTICS: -UNUSED_VARIABLE -DEBUG_INFO_LEAKING_THIS
 
 // FILE: a/View.java

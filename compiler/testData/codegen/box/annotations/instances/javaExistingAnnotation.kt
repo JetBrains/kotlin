@@ -2,7 +2,7 @@
 // IGNORE_BACKEND_K1: JVM_IR
 // IGNORE_DEXING
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // MODULE: lib
 // FILE: LibAnnotation.java

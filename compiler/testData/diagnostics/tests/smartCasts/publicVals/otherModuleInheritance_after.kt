@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitSmartcastsOnPropertyFromAlienBaseClass
+// LANGUAGE: +ProhibitSmartcastsOnPropertyFromAlienBaseClass
 // MODULE: m1
 // FILE: A.kt
 

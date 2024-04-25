@@ -1,4 +1,4 @@
-// !LANGUAGE: +InnerClassInEnumEntryClass +NestedClassesInEnumEntryShouldBeInner
+// LANGUAGE: +InnerClassInEnumEntryClass +NestedClassesInEnumEntryShouldBeInner
 
 enum class Enum {
     ENTRY_WITH_CLASS {

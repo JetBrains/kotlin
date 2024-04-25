@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +ReferencesToSyntheticJavaProperties
+// LANGUAGE: +ReferencesToSyntheticJavaProperties
 
 // FILE: Generic.java
 public class Generic<T> {

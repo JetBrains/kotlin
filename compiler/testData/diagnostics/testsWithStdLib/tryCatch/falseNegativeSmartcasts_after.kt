@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewDataFlowForTryExpressions
+// LANGUAGE: +NewDataFlowForTryExpressions
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // Related issue: KT-28370
 

@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +JvmStaticInInterface
+// LANGUAGE: +JvmStaticInInterface
 // !JVM_TARGET: 1.8
 
 interface I {

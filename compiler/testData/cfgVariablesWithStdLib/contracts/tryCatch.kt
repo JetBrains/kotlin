@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*

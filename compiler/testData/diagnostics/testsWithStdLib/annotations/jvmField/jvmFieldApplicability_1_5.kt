@@ -1,4 +1,4 @@
-// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
+// LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>

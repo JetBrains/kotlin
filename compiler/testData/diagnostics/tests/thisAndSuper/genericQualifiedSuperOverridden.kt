@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
 interface IBase<T> {
     fun foo() {}
     fun bar() {}

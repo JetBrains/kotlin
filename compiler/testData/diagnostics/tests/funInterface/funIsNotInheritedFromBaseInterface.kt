@@ -1,4 +1,4 @@
-// !LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
+// LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface Base {

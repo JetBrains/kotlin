@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +RangeUntilOperator
+// LANGUAGE: +RangeUntilOperator
 
 fun foo() {
     val a: dynamic = Any()

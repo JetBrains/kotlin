@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // SKIP_TXT
 // IGNORE_BACKEND: JS
-// !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 private fun ` .private `(): String = TODO("")
 

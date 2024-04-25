@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperArrayConventionSetterWithDefaultCalls
+// LANGUAGE: +ProperArrayConventionSetterWithDefaultCalls
 var inc: String = ""
 
 class X {

@@ -1,4 +1,4 @@
-// !LANGUAGE: -InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: -InlineClasses, -JvmInlineValueClasses
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline class Foo(val x: Int)

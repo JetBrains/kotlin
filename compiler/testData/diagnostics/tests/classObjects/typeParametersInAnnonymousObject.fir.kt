@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitTypeParametersInAnonymousObjects
+// LANGUAGE: -ProhibitTypeParametersInAnonymousObjects
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-28999
 

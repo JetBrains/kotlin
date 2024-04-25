@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -DisableCompatibilityModeForNewInference
+// LANGUAGE: -DisableCompatibilityModeForNewInference
 // SKIP_TXT
 // FULL_JDK
 

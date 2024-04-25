@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitVarargAsArrayAfterSamArgument
+// LANGUAGE: -ProhibitVarargAsArrayAfterSamArgument
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6
 // FIR status: don't support legacy feature
 // TARGET_BACKEND: JVM

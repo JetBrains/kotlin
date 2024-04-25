@@ -1,4 +1,4 @@
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // FULL_JDK
 

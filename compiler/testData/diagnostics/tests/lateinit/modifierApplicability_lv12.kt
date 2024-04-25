@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +LateinitTopLevelProperties +LateinitLocalVariables
+// LANGUAGE: +LateinitTopLevelProperties +LateinitLocalVariables
 import kotlin.reflect.KProperty
 
 class CustomDelegate {

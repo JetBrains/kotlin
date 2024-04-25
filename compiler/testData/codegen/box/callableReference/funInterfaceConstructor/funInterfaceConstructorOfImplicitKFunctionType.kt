@@ -1,4 +1,4 @@
-// !LANGUAGE: +KotlinFunInterfaceConstructorReference
+// LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 // IGNORE_BACKEND: JVM
 //  ^ unsupported in old JVM BE

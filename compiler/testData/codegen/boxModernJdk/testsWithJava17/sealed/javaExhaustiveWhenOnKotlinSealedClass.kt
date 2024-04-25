@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM
-// !LANGUAGE: +JvmPermittedSubclassesAttributeForSealed
+// LANGUAGE: +JvmPermittedSubclassesAttributeForSealed
 // ENABLE_JVM_PREVIEW
 
 // FILE: javaExhaustiveWhenOnKotlinSealedClass.kt

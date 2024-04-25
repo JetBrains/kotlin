@@ -1,4 +1,4 @@
-// !LANGUAGE: +SoundSmartcastForEnumEntries
+// LANGUAGE: +SoundSmartcastForEnumEntries
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // SKIP_TXT
 

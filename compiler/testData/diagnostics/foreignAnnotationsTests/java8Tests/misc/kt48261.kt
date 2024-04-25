@@ -3,7 +3,7 @@
 // JSPECIFY_STATE: warn
 // WITH_STDLIB
 // FULL_JDK
-// !LANGUAGE: +IgnoreNullabilityForErasedValueParameters
+// LANGUAGE: +IgnoreNullabilityForErasedValueParameters
 
 // FILE: MyList.java
 import java.util.List;

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NoAdditionalErrorsInK1DiagnosticReporter
+// LANGUAGE: +NoAdditionalErrorsInK1DiagnosticReporter
 
 fun foo() {
     buildList {

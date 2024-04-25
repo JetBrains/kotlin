@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitSuperCallsFromPublicInline +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// LANGUAGE: -ProhibitSuperCallsFromPublicInline +QualifiedSupertypeMayBeExtendedByOtherSupertype
 // DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 // FILE: main.kt

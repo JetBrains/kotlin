@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ExpectedTypeFromCast
+// LANGUAGE: +ExpectedTypeFromCast
 
 package pp
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 inline class AsNonNullPrimitive(val i: Int)
 inline class AsNonNullReference(val s: String)

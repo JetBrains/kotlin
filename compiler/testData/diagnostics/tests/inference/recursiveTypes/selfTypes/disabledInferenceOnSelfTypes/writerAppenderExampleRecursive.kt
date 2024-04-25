@@ -1,4 +1,4 @@
-// !LANGUAGE: -TypeInferenceOnCallsWithSelfTypes
+// LANGUAGE: -TypeInferenceOnCallsWithSelfTypes
 
 fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newBuilder<!>()<!>

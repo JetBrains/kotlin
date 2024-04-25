@@ -1,4 +1,4 @@
-// !LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
+// LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
 // FIR_DUMP
 
 class Foo<T : Any> {

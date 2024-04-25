@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NestedClassesInAnnotations
+// LANGUAGE: +NestedClassesInAnnotations
 
 annotation class Foo {
     class Nested

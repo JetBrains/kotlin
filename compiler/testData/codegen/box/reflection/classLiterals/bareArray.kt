@@ -1,4 +1,4 @@
-// !LANGUAGE: +BareArrayClassLiteral
+// LANGUAGE: +BareArrayClassLiteral
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 

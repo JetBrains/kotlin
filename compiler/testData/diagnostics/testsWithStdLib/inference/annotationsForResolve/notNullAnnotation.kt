@@ -1,4 +1,4 @@
-// !LANGUAGE: -TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: -TypeEnhancementImprovementsInStrictMode
 
 // FILE: SmartFMap.java
 

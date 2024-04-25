@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitTypeParametersInClassLiteralsInAnnotationArguments
+// LANGUAGE: -ProhibitTypeParametersInClassLiteralsInAnnotationArguments
 
 import kotlin.reflect.KClass
 

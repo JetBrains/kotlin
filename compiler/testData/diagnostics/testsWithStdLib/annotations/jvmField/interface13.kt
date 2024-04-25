@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +JvmFieldInInterface
+// LANGUAGE: +JvmFieldInInterface
 
 interface A {
 

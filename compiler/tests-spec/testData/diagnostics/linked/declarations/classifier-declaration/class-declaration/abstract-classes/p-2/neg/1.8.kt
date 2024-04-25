@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
+// LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
 // DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 // FULL_JDK

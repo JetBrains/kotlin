@@ -1,4 +1,4 @@
-// !LANGUAGE: -RefineTypeCheckingOnAssignmentsToJavaFields
+// LANGUAGE: -RefineTypeCheckingOnAssignmentsToJavaFields
 // WITH_STDLIB
 
 // FILE: Foo.java

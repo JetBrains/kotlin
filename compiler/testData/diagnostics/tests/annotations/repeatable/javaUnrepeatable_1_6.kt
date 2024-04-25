@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 // FULL_JDK
 // FILE: Runtime.java
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: +ForbidRecursiveDelegateExpressions
+// LANGUAGE: +ForbidRecursiveDelegateExpressions
 // WITH_STDLIB
 
 import kotlin.properties.ReadWriteProperty

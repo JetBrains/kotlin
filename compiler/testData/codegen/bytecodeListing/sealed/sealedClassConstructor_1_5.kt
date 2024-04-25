@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
+// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 sealed class TestNoSubclasses(val x: Int)
 

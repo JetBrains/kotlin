@@ -1,4 +1,4 @@
-// !LANGUAGE: -MixedNamedArgumentsInTheirOwnPosition
+// LANGUAGE: -MixedNamedArgumentsInTheirOwnPosition
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 

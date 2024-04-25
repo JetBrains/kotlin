@@ -1,4 +1,4 @@
-// !LANGUAGE: -IntrinsicConstEvaluation
+// LANGUAGE: -IntrinsicConstEvaluation
 
 const val equalsBoolean1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>true.equals(true)<!>
 const val equalsBoolean2 = false != true

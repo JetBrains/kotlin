@@ -1,4 +1,4 @@
-// !LANGUAGE: -NestedClassesInEnumEntryShouldBeInner
+// LANGUAGE: -NestedClassesInEnumEntryShouldBeInner
 
 enum class E {
     FIRST,

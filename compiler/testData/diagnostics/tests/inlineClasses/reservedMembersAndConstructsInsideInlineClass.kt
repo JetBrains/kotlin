@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !LANGUAGE: +CustomEqualsInValueClasses
+// LANGUAGE: +CustomEqualsInValueClasses
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 @JvmInline

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +DisableCompatibilityModeForNewInference
+// LANGUAGE: +DisableCompatibilityModeForNewInference
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun bar(): Int = 0

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+// LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *

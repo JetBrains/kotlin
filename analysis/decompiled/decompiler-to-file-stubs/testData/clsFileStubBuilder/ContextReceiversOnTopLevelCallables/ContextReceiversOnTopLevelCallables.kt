@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // JVM_FILE_NAME: ContextReceiversOnTopLevelCallablesKt
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 context(A, B)
 private fun Int.function(): Int = valueA + valueB

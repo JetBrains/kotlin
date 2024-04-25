@@ -1,4 +1,4 @@
-// !LANGUAGE: +UnitConversionsOnArbitraryExpressions
+// LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface KRunnable {

@@ -1,5 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // FILE: inline.kt
 
 inline class IC(val value: String) {

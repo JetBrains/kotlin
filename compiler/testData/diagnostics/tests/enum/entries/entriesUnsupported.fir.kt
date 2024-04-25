@@ -1,4 +1,4 @@
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries
 // WITH_STDLIB
 // ISSUE: KT-55251
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 // IGNORE_BACKEND: JS
 // KJS_WITH_FULL_RUNTIME
 // KT-61957

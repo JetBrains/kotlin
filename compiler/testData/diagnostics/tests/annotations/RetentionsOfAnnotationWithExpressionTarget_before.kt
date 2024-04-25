@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -RestrictRetentionForExpressionAnnotations
+// LANGUAGE: -RestrictRetentionForExpressionAnnotations
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)

@@ -1,4 +1,4 @@
-// !LANGUAGE: +WarningOnMainUnusedParameter
+// LANGUAGE: +WarningOnMainUnusedParameter
 // DIAGNOSTICS: +UNUSED_PARAMETER
 
 // FILE: a.kt

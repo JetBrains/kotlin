@@ -1,4 +1,4 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
+// LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
 
 interface A {

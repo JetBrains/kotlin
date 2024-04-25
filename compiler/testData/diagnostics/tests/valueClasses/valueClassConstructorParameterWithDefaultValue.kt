@@ -2,7 +2,7 @@
 // ALLOW_KOTLIN_PACKAGE
 // !SKIP_JAVAC
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 package kotlin.jvm
 

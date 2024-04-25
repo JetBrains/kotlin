@@ -1,4 +1,4 @@
-// !LANGUAGE: -ReferencesToSyntheticJavaProperties
+// LANGUAGE: -ReferencesToSyntheticJavaProperties
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // FIR_IDENTICAL
 

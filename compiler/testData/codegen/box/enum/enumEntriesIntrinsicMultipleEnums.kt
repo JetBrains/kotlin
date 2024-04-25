@@ -5,7 +5,7 @@
 // ^ Check that there's only one $EntriesIntrinsicMappings class, with three fields (entries$0, entries$1, entries$2).
 
 // MODULE: lib
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries
 // FILE: X.kt
 
 enum class X {
@@ -25,7 +25,7 @@ public enum Z {
 }
 
 // MODULE: box(lib)
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 // !OPT_IN: kotlin.ExperimentalStdlibApi
 // FILE: box.kt
 

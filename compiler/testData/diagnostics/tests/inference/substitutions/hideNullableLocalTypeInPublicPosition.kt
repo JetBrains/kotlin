@@ -1,6 +1,6 @@
 // ISSUE: KT-30054
 // FIR_IDENTICAL
-// !LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
+// LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
 interface I {
     fun foo(): String
 }

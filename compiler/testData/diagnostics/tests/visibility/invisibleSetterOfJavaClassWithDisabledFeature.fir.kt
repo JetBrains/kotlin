@@ -1,4 +1,4 @@
-// !LANGUAGE: -ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass
+// LANGUAGE: -ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass
 
 // FILE: abc/Foo.java
 package abc;

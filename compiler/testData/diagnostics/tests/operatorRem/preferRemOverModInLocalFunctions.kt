@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitOperatorMod
+// LANGUAGE: -ProhibitOperatorMod
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 object B

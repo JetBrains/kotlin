@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WITH_STDLIB
-// !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
+// LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR
 // IGNORE_BACKEND: JS_IR_ES6

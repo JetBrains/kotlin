@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperTypeInferenceConstraintsProcessing
+// LANGUAGE: +ProperTypeInferenceConstraintsProcessing
 // WITH_STDLIB
 // DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 

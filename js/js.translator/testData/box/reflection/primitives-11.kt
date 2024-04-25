@@ -1,5 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1432
-// !LANGUAGE: -ProhibitGenericArrayClassLiteral
+// LANGUAGE: -ProhibitGenericArrayClassLiteral
 import kotlin.reflect.KClass
 
 fun box(): String {

@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +ForbidExtensionFunctionTypeOnNonFunctionTypes
+// LANGUAGE: +ForbidExtensionFunctionTypeOnNonFunctionTypes
 // This test checks that annotations on extension function types are preserved. See the corresponding .txt file
 
 @Target(AnnotationTarget.TYPE)

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +DisableCheckingChangedProgressionsResolve
+// LANGUAGE: +DisableCheckingChangedProgressionsResolve
 // WITH_STDLIB
 
 fun <E> SmartList(x: E) {}

@@ -1,4 +1,4 @@
-// !LANGUAGE: -PrivateInFileEffectiveVisibility
+// LANGUAGE: -PrivateInFileEffectiveVisibility
 // JVM_ABI_K1_K2_DIFF
 // Reason: ^ unsupported language feature switch OFF
 package p

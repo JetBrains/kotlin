@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendFunctionAsSupertype
+// LANGUAGE: +SuspendFunctionAsSupertype
 // SKIP_TXT
 // FIR_IDENTICAL
 

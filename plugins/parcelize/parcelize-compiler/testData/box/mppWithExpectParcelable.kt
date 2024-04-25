@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 
 // Metadata compilations do not see through the expect/actuals and therefore,

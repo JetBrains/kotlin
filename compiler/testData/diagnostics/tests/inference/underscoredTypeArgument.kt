@@ -1,4 +1,4 @@
-// !LANGUAGE: -PartiallySpecifiedTypeArguments
+// LANGUAGE: -PartiallySpecifiedTypeArguments
 // DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: +ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
+// LANGUAGE: +ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION
 // FULL_JDK
 

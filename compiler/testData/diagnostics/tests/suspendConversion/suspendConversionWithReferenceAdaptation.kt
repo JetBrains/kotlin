@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun unitCoercion(f: suspend () -> Unit) {}

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -JvmStaticInInterface
+// LANGUAGE: -JvmStaticInInterface
 // DIAGNOSTICS: -UNUSED_VARIABLE
 class A {
     companion object {

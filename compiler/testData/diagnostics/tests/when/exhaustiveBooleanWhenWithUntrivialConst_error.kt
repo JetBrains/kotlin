@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+// LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // ISSUE: KT-39883
 
 // Should always work

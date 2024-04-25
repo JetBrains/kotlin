@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
+// LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, WASM
 // IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR JVM_IR_SERIALIZE

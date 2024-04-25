@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers, +ValueClasses
+// LANGUAGE: +ContextReceivers, +ValueClasses
 // WITH_STDLIB
 // SKIP_TXT
 // WORKS_WHEN_VALUE_CLASS

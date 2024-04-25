@@ -3,7 +3,7 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 annotation class AnnotationWithSignedArray(val array: IntArray)
 annotation class AnnotationWithUnsignedArray(val array: UIntArray)

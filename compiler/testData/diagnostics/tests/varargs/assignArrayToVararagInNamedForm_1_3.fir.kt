@@ -1,4 +1,4 @@
-// !LANGUAGE: -AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+// LANGUAGE: -AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Retention(AnnotationRetention.SOURCE)

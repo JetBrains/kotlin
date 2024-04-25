@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-61937
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 class Ctx
 

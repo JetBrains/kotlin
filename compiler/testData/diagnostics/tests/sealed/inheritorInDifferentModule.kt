@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-20423
-// !LANGUAGE: +SealedInterfaces +AllowSealedInheritorsInDifferentFilesOfSamePackage
+// LANGUAGE: +SealedInterfaces +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // MODULE: m1
 // FILE: a.kt

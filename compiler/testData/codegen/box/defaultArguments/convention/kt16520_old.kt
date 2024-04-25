@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProperArrayConventionSetterWithDefaultCalls
+// LANGUAGE: -ProperArrayConventionSetterWithDefaultCalls
 // IGNORE_BACKEND: JVM_IR
 // FIR status: don't support legacy feature
 // TARGET_BACKEND: JVM

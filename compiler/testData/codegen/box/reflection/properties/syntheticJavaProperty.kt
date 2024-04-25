@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +ReferencesToSyntheticJavaProperties
+// LANGUAGE: +ReferencesToSyntheticJavaProperties
 // WITH_REFLECT
 
 // FILE: J.java

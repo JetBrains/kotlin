@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitComparisonOfIncompatibleEnums
+// LANGUAGE: +ProhibitComparisonOfIncompatibleEnums
 
 enum class E1 {
     A, B

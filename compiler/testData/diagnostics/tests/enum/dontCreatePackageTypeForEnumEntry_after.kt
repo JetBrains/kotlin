@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
+// LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
 
 enum class E {
     FIRST,

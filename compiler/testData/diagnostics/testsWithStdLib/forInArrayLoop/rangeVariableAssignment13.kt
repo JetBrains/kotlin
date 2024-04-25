@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProperForInArrayLoopRangeVariableAssignmentSemantic
+// LANGUAGE: +ProperForInArrayLoopRangeVariableAssignmentSemantic
 // DIAGNOSTICS: -UNUSED_VALUE
 // SKIP_TXT
 

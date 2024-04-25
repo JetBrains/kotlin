@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 inline class A(val value: String)
 

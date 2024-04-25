@@ -2,7 +2,7 @@
 // IGNORE_BACKEND_K1: JVM_IR
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // FILE: A.java
 public @interface A {

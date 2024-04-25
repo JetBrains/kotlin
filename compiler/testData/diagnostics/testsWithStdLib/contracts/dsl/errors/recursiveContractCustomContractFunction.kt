@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !LANGUAGE: +UseReturnsEffect
+// LANGUAGE: +UseReturnsEffect
 // Issue: KT-26386
 
 fun myRun(block: () -> Unit) {

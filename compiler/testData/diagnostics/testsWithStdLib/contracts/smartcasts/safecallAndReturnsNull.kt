@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*

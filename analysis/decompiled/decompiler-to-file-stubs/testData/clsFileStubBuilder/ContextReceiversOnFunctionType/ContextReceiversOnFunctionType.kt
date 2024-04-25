@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // JVM_FILE_NAME: ContextReceiversOnFunctionTypeKt
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 /* KTIJ-28885 */
 // KNM_K2_IGNORE
 

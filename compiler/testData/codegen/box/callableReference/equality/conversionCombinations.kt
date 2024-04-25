@@ -1,4 +1,4 @@
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 // WITH_STDLIB
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: FAILS_IN_JS_IR

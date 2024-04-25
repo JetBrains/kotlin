@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +SuspendFunctionAsSupertype
+// LANGUAGE: +SuspendFunctionAsSupertype
 // IGNORE_BACKEND: JS
 
 import kotlin.coroutines.*

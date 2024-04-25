@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperComputationOrderOfTailrecDefaultParameters
+// LANGUAGE: +ProperComputationOrderOfTailrecDefaultParameters
 // DONT_RUN_GENERATED_CODE: JS
 
 var counter = 0

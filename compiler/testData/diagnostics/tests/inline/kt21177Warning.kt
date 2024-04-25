@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: -ProhibitProtectedConstructorCallFromPublicInline
+// LANGUAGE: -ProhibitProtectedConstructorCallFromPublicInline
 
 class SomeContainer {
     protected class Limit

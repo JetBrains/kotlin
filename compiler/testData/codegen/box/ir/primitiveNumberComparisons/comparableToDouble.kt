@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
 
 fun ltDD(x: Comparable<Double>, y: Double) =
     x is Double && x < y

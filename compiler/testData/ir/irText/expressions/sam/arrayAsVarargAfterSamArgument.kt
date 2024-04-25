@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K2: JVM_IR
 // TARGET_BACKEND: JVM
-// !LANGUAGE: -ProhibitVarargAsArrayAfterSamArgument
+// LANGUAGE: -ProhibitVarargAsArrayAfterSamArgument
 // WITH_JDK
 
 // FILE: arrayAsVarargAfterSamArgument.kt

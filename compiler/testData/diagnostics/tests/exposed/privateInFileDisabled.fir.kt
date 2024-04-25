@@ -1,4 +1,4 @@
-// !LANGUAGE: -PrivateInFileEffectiveVisibility
+// LANGUAGE: -PrivateInFileEffectiveVisibility
 
 class Public {
     private open class NestedPrivate

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-13495
-// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
+// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 // FILE: base.kt

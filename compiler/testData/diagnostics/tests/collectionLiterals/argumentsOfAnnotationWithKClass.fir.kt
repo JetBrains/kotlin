@@ -1,4 +1,4 @@
-// !LANGUAGE: +BareArrayClassLiteral
+// LANGUAGE: +BareArrayClassLiteral
 
 import kotlin.reflect.KClass
 

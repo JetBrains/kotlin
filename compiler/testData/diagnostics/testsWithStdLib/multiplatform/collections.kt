@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // FILE: common.kt

@@ -1,4 +1,4 @@
-// !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
+// LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 fun <T : <!FINAL_UPPER_BOUND!>String<!>> g(): T? = null
 
 fun <R> f(block: () -> R?): R? = block()

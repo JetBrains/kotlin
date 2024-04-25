@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
+// LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
 // FILE: JavaEnumA.java
 
 public enum JavaEnumA {}

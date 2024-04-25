@@ -1,5 +1,5 @@
 // ISSUE: KT-59012
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 // FILE: I.java
 public interface I<G extends I<G>> {
     <T extends G> T foo();

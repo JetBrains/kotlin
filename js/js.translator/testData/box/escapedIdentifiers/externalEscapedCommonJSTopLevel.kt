@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JS
 // MODULE_KIND: COMMON_JS
-// !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // FILE: lib.kt
 @file:JsModule("lib")

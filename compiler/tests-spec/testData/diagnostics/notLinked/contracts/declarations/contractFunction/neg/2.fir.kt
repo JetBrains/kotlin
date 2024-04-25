@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
+// LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
