@@ -5,6 +5,7 @@
 package translators
 
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.modifiers
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
@@ -12,6 +13,7 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
+import utils.OnlyDescriptors
 import utils.text
 import kotlin.test.*
 
@@ -1073,6 +1075,38 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                 val modifiers = dataObject.modifiers().values.flatten()
                 assertEquals(1, modifiers.size)
                 assertEquals(ExtraModifiers.KotlinOnlyModifiers.Data, modifiers[0])
+            }
+        }
+    }
+
+    @Test
+    @OnlyDescriptors("In K2 the types of recursive typealias is resolved")
+    fun `a translator should not fail for a recursive typealias A = A #3565`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    name = "androidJvm"
+                    analysisPlatform = Platform.common.key // an androidJvm source set has a common platform
+                    sourceRoots = listOf("src/main/kotlin")
+                    classpath = listOf(commonStdlibPath!!)
+                }
+            }
+        }
+        // `java.io.File` is unavailable in a common platform
+        // so `typealias File = File` is recursive
+        testInline(
+            """
+            |/src/main/kotlin/test/typealias.jvmAndAndroid.kt
+            |package test
+            |
+            |import java.io.File
+            |typealias File = File
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val ta = module.dfs { it.name == "File" } as DTypeAlias
+                assertTrue { ta.type is UnresolvedBound }
             }
         }
     }
