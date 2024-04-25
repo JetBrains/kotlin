@@ -113,13 +113,6 @@ enum class Color4 {
 var topLevelProperty = "Global var"
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlin.native.concurrent
-
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
-annotation class ThreadLocal
-
 // FILE: platform.kt
 
 actual typealias MyThreadLocal = kotlin.native.concurrent.ThreadLocal

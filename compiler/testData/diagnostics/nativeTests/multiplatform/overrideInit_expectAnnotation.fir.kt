@@ -30,16 +30,6 @@ class OverridesOverriden : NSString {
 }
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlinx.cinterop
-
-@BetaInteropApi
-abstract class ObjCObjectBase protected constructor() : ObjCObject {
-    @Target(AnnotationTarget.CONSTRUCTOR)
-    @Retention(AnnotationRetention.SOURCE)
-    annotation class OverrideInit
-}
-
 // FILE: platform.kt
 @OptIn(kotlinx.cinterop.BetaInteropApi::class)
 actual typealias MyOverrideInit = kotlinx.cinterop.ObjCObjectBase.OverrideInit

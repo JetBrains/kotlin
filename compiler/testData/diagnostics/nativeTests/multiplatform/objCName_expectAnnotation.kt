@@ -3,45 +3,35 @@
 
 // MODULE: common
 // FILE: common.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
 
 expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyObjcName<!>(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
 
-@MyObjcName("ObjCClass", "SwiftClass")
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("ObjCClass", "SwiftClass")
 open class KotlinClass {
-    @MyObjcName("objCProperty")
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("objCProperty")
     open var kotlinProperty: Int = 0
-    @MyObjcName(swiftName = "swiftFunction")
-    open fun @receiver:MyObjcName("objCReceiver") Int.kotlinFunction(
-        @MyObjcName("objCParam") kotlinParam: Int
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>(swiftName = "swiftFunction")
+    open fun @receiver:<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("objCReceiver") Int.kotlinFunction(
+        @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("objCParam") kotlinParam: Int
     ): Int = this + kotlinParam
 }
 
-@MyObjcName("ObjCSubClass", "SwiftSubClass")
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("ObjCSubClass", "SwiftSubClass")
 class KotlinSubClass: KotlinClass() {
-    <!INAPPLICABLE_OBJC_NAME{NATIVE}!>@MyObjcName("objCProperty")<!>
+    <!INAPPLICABLE_OBJC_NAME{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("objCProperty")<!>
     override var kotlinProperty: Int = 1
-    <!INAPPLICABLE_OBJC_NAME{NATIVE}!>@MyObjcName(swiftName = "swiftFunction")<!>
-    override fun <!INAPPLICABLE_OBJC_NAME{NATIVE}!>@receiver:MyObjcName("objCReceiver")<!> Int.kotlinFunction(
-    <!INAPPLICABLE_OBJC_NAME{NATIVE}!>@MyObjcName("objCParam")<!> kotlinParam: Int
+    <!INAPPLICABLE_OBJC_NAME{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>(swiftName = "swiftFunction")<!>
+    override fun <!INAPPLICABLE_OBJC_NAME{NATIVE}!>@receiver:<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("objCReceiver")<!> Int.kotlinFunction(
+        <!INAPPLICABLE_OBJC_NAME{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("objCParam")<!> kotlinParam: Int
     ): Int = this + kotlinParam * 2
 }
 
-<!INVALID_OBJC_NAME{NATIVE}!>@MyObjcName()<!>
+<!INVALID_OBJC_NAME{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>()<!>
 val invalidObjCName: Int = 0
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlin.native
-
-@Target(
-    AnnotationTarget.CLASS,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.FUNCTION
-)
-@Retention(AnnotationRetention.BINARY)
-@MustBeDocumented
-public annotation class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
-
 // FILE: platform.kt
-actual typealias MyObjcName = kotlin.native.ObjCName
+@file:OptIn(kotlin.experimental.ExperimentalObjCName::class)
+
+actual typealias <!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE, ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE, ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>MyObjcName<!> = kotlin.native.ObjCName

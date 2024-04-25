@@ -36,14 +36,6 @@ class TestClass : NSAssertionHandler() {
 }
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlinx.cinterop
-
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.SOURCE)
-@BetaInteropApi
-public annotation class ObjCAction
-
 // FILE: platform.kt
 @OptIn(kotlinx.cinterop.BetaInteropApi::class)
 actual typealias MyObjcAction = kotlinx.cinterop.ObjCAction

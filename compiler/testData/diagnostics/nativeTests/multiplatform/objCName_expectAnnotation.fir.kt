@@ -3,6 +3,7 @@
 
 // MODULE: common
 // FILE: common.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
 
 expect annotation class MyObjcName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
 
@@ -22,7 +23,7 @@ class KotlinSubClass: KotlinClass() {
     override var kotlinProperty: Int = 1
     <!INAPPLICABLE_OBJC_NAME!>@MyObjcName(swiftName = "swiftFunction")<!>
     override fun <!INAPPLICABLE_OBJC_NAME!>@receiver:MyObjcName("objCReceiver")<!> Int.kotlinFunction(
-    <!INAPPLICABLE_OBJC_NAME!>@MyObjcName("objCParam")<!> kotlinParam: Int
+        <!INAPPLICABLE_OBJC_NAME!>@MyObjcName("objCParam")<!> kotlinParam: Int
     ): Int = this + kotlinParam * 2
 }
 
@@ -30,18 +31,7 @@ class KotlinSubClass: KotlinClass() {
 val invalidObjCName: Int = 0
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlin.native
-
-@Target(
-    AnnotationTarget.CLASS,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.FUNCTION
-)
-@Retention(AnnotationRetention.BINARY)
-@MustBeDocumented
-public annotation class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
-
 // FILE: platform.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCName::class)
+
 actual typealias MyObjcName = kotlin.native.ObjCName

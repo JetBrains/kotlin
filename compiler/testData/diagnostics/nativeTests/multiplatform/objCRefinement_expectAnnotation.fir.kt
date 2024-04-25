@@ -3,24 +3,29 @@
 
 // MODULE: common
 // FILE: common.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
+@kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class MyHidesFromObjC()
 
 @MyHidesFromObjC
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
+@kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class MyHiddenFromObjC()
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
+@kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class MyRefinesInSwift()
 
 @MyRefinesInSwift
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
+@kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class MyShouldRefineInSwift()
 
 <!INVALID_REFINES_IN_SWIFT_TARGETS!>@MyRefinesInSwift<!>
@@ -29,6 +34,8 @@ expect annotation class MyShouldRefineInSwift()
 expect annotation class MyWrongShouldRefineInSwift()
 
 // FILE: plugin.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
 @MyHidesFromObjC
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
@@ -40,6 +47,8 @@ annotation class PluginMyHiddenFromObjC
 annotation class PluginMyShouldRefineInSwift
 
 // FILE: main.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
 @MyHidesFromObjC
 <!REDUNDANT_SWIFT_REFINEMENT!>@MyRefinesInSwift<!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
@@ -200,29 +209,8 @@ enum class MyHiddenNonTrivialEnum {
 
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlin.native
-
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.BINARY)
-@MustBeDocumented
-annotation class HidesFromObjC
-
-@HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
-annotation class HiddenFromObjC
-
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.BINARY)
-annotation class RefinesInSwift
-
-@RefinesInSwift
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.BINARY)
-public annotation class ShouldRefineInSwift
-
 // FILE: platform.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
 
 actual typealias MyHidesFromObjC = kotlin.native.HidesFromObjC
 actual typealias MyHiddenFromObjC = kotlin.native.HiddenFromObjC

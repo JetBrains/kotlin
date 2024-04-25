@@ -3,59 +3,68 @@
 
 // MODULE: common
 // FILE: common.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
+@kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyHidesFromObjC<!>()
 
 @MyHidesFromObjC
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
+@kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyHiddenFromObjC<!>()
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
+@kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyRefinesInSwift<!>()
 
 @MyRefinesInSwift
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
+@kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyShouldRefineInSwift<!>()
 
-<!INVALID_REFINES_IN_SWIFT_TARGETS{NATIVE}!>@MyRefinesInSwift<!>
+<!INVALID_REFINES_IN_SWIFT_TARGETS{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyRefinesInSwift<!><!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 expect annotation class <!NO_ACTUAL_FOR_EXPECT, NO_ACTUAL_FOR_EXPECT{NATIVE}!>MyWrongShouldRefineInSwift<!>()
 
 // FILE: plugin.kt
-@MyHidesFromObjC
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHidesFromObjC<!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 annotation class PluginMyHiddenFromObjC
 
-@MyRefinesInSwift
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyRefinesInSwift<!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 annotation class PluginMyShouldRefineInSwift
 
 // FILE: main.kt
-@MyHidesFromObjC
-<!REDUNDANT_SWIFT_REFINEMENT{NATIVE}!>@MyRefinesInSwift<!>
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHidesFromObjC<!>
+<!REDUNDANT_SWIFT_REFINEMENT{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyRefinesInSwift<!><!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationA
 
-<!INVALID_OBJC_HIDES_TARGETS{NATIVE}!>@MyHidesFromObjC<!>
+<!INVALID_OBJC_HIDES_TARGETS{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHidesFromObjC<!><!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationB
 
-<!INVALID_REFINES_IN_SWIFT_TARGETS{NATIVE}!>@MyRefinesInSwift<!>
+<!INVALID_REFINES_IN_SWIFT_TARGETS{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyRefinesInSwift<!><!>
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationC
 
-@MyRefinesInSwift
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyRefinesInSwift<!>
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationD
@@ -70,17 +79,17 @@ var refinedProperty: Int = 0
 <!REDUNDANT_SWIFT_REFINEMENT{NATIVE}!>@PluginMyShouldRefineInSwift<!>
 fun pluginRefinedFunction() { }
 
-@MyHiddenFromObjC
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
 @PluginMyHiddenFromObjC
 fun multipleObjCRefinementsFunction() { }
 
-@MyShouldRefineInSwift
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyShouldRefineInSwift<!>
 @PluginMyShouldRefineInSwift
 fun multipleSwiftRefinementsFunction() { }
 
-@MyHiddenFromObjC
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
 @PluginMyHiddenFromObjC
-<!REDUNDANT_SWIFT_REFINEMENT{NATIVE}!>@MyShouldRefineInSwift<!>
+<!REDUNDANT_SWIFT_REFINEMENT{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyShouldRefineInSwift<!><!>
 <!REDUNDANT_SWIFT_REFINEMENT{NATIVE}!>@PluginMyShouldRefineInSwift<!>
 fun multipleMixedRefinementsFunction() { }
 
@@ -88,7 +97,7 @@ interface InterfaceA {
     val barA: Int
     val barB: Int
     fun fooA()
-    @MyHiddenFromObjC
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
     fun fooB()
 }
 
@@ -96,9 +105,9 @@ interface InterfaceB {
     val barA: Int
     @MyShouldRefineInSwift
     val barB: Int
-    @HFOC
+    @<!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR{NATIVE}!>HFOC<!>
     fun fooA()
-    @MyHiddenFromObjC
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
     fun fooB()
 }
 
@@ -109,19 +118,19 @@ open class ClassA: InterfaceA, InterfaceB {
     override val barB: Int = 0
     <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE{NATIVE}!>override fun fooA() { }<!>
     override fun fooB() { }
-    @MyHiddenFromObjC
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
     open fun fooC() { }
 }
 
 class ClassB: ClassA() {
-    @MyHiddenFromObjC
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
     override fun fooB() { }
-    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE{NATIVE}!>@MyShouldRefineInSwift<!>
+    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyShouldRefineInSwift<!><!>
     override fun fooC() { }
 }
 
 open class Base {
-    @MyHiddenFromObjC
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
     open fun foo() {}
 }
 
@@ -135,12 +144,12 @@ open class Derived2 : Derived() {
     override fun foo() {}
 }
 
-@MyHiddenFromObjC
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
 open class OpenHiddenClass
 
 <!SUBTYPE_OF_HIDDEN_FROM_OBJC{NATIVE}!>class InheritsFromOpenHiddenClass : OpenHiddenClass()<!>
 
-@MyHiddenFromObjC
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
 interface HiddenInterface
 
 interface NotHiddenInterface
@@ -149,7 +158,7 @@ interface NotHiddenInterface
 
 <!SUBTYPE_OF_HIDDEN_FROM_OBJC{NATIVE}!>class InheritsFromOpenHiddenClass2 : NotHiddenInterface, OpenHiddenClass()<!>
 
-@MyHiddenFromObjC
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
 class OuterHidden {
     class Nested {
         open class Nested
@@ -166,24 +175,24 @@ fun produceInstanceOfHidden(): OuterHidden.Nested.Nested {
     return object : OuterHidden.Nested.Nested() {}
 }
 
-@MyHiddenFromObjC
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
 enum class MyHiddenEnum {
     A,
     B,
     C
 }
 
-@MyHiddenFromObjC
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
 object MyHiddenObject
 
 sealed class MySealedClass {
-    @MyHiddenFromObjC
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
     class MyHiddenSealedVariant : MySealedClass()
 
     class MyPublicVariant : MySealedClass()
 }
 
-@MyHiddenFromObjC
+@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
 enum class MyHiddenNonTrivialEnum {
     A,
     B,
@@ -200,29 +209,8 @@ enum class MyHiddenNonTrivialEnum {
 
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlin.native
-
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.BINARY)
-@MustBeDocumented
-annotation class HidesFromObjC
-
-@HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
-annotation class HiddenFromObjC
-
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.BINARY)
-annotation class RefinesInSwift
-
-@RefinesInSwift
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.BINARY)
-public annotation class ShouldRefineInSwift
-
 // FILE: platform.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
 
 actual typealias MyHidesFromObjC = kotlin.native.HidesFromObjC
 actual typealias MyHiddenFromObjC = kotlin.native.HiddenFromObjC

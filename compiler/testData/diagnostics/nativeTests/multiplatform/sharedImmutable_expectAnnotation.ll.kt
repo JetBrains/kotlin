@@ -2,7 +2,7 @@
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
 // LANGUAGE: +MultiPlatformProjects
-// DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION
 // WITH_STDLIB
 
 // MODULE: common
@@ -146,17 +146,6 @@ val someValue: Int
 val someValueWithDelegate by Delegate()
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlin.native.concurrent
-
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.BINARY)
-annotation class SharedImmutable
-
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
-annotation class ThreadLocal
-
 // FILE: platform.kt
 
 actual typealias MySharedImmutable = kotlin.native.concurrent.SharedImmutable

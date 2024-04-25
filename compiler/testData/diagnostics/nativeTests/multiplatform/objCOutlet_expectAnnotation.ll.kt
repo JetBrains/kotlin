@@ -42,14 +42,6 @@ class VarProperty : NSAssertionHandler() {
 }
 
 // MODULE: platform()()(common)
-// FILE: kotlin.kt
-package kotlinx.cinterop
-
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.SOURCE)
-@BetaInteropApi
-public annotation class ObjCOutlet
-
 // FILE: platform.kt
 @OptIn(kotlinx.cinterop.BetaInteropApi::class)
 actual typealias MyObjcOutlet = kotlinx.cinterop.ObjCOutlet
