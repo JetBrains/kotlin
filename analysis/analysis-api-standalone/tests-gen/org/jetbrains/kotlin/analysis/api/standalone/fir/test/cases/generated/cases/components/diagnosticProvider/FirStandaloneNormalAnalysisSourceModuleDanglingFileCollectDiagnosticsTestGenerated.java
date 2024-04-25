@@ -179,6 +179,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("sameCallableIdFromDependencies.kt")
+  public void testSameCallableIdFromDependencies() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/sameCallableIdFromDependencies.kt");
+  }
+
+  @Test
   @TestMetadata("typeMismatches.kt")
   public void testTypeMismatches() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/typeMismatches.kt");
