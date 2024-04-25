@@ -18,5 +18,5 @@ abstract class SirClass : SirDeclarationContainer(), SirNamedDeclaration {
     abstract override var parent: SirDeclarationParent
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
-    abstract val superClass: SirType?
+    abstract val superClass: SirClassType?
 }

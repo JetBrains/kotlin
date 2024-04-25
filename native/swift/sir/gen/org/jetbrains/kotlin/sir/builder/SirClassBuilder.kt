@@ -21,7 +21,7 @@ class SirClassBuilder {
     var documentation: String? = null
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
-    var superClass: SirType? = null
+    var superClass: SirClassType? = null
 
     fun build(): SirClass {
         return SirClassImpl(

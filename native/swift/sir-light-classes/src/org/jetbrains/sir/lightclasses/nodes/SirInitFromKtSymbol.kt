@@ -47,7 +47,7 @@ internal class SirInitFromKtSymbol(
     }
 
     override val isOverride: Boolean by lazy {
-        computeIsOverrideForDesignatedInit(parent, parameters)
+        (parent as? SirClass)?.let { computeIsOverrideForDesignatedInit(it, parameters) } ?: false
     }
 
     override var parent: SirDeclarationParent

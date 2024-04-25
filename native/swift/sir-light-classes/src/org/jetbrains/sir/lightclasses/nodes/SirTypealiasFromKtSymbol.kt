@@ -33,7 +33,7 @@ internal class SirTypealiasFromKtSymbol(
     }
     override val type: SirType by lazyWithSessions {
         val typeRequest = SirTypeProvider.TranslationRequest(ktSymbol.expandedType)
-        when (val response = translateType(typeRequest)) {
+        when (val response = translateType(typeRequest, analysisSession)) {
             is SirTypeProvider.TranslationResponse.Success -> {
                 response.updateImportsAndReturnType(ktSymbol)
             }

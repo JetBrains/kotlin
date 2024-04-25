@@ -51,10 +51,10 @@ internal class SirClassFromKtSymbol(
         childDeclarations() + syntheticDeclarations()
     }
 
-    override val superClass: SirType? by lazy {
+    override val superClass: SirClassType? by lazy {
         // For now, we support only `class C : Kotlin.Any()` class declarations, and
         // translate Kotlin.Any to KotlinRuntime.KotlinBase.
-        SirNominalType(KotlinRuntimeModule.kotlinBase)
+        SirClassType(KotlinRuntimeModule.kotlinBase)
     }
 
     private fun childDeclarations(): List<SirDeclaration> = withSessions {

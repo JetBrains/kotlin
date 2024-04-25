@@ -92,7 +92,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(namedDeclaration)
         parent(declarationContainer)
 
-        +field("superClass", typeType, nullable = true)
+        +field("superClass", classType, nullable = true)
     }
 
     val `typealias`: Element by element {

@@ -1,5 +1,5 @@
 public typealias X = KOTLIN_UNKNOWN_TYPE
-public class MyClass {
+public class MyClass : KotlinRuntime.KotlinBase {
     public var x: KOTLIN_UNKNOWN_TYPE {
         get {
             fatalError()
@@ -10,7 +10,7 @@ public class MyClass {
             fatalError()
         }
     }
-    public init() {
+    public override init() {
         fatalError()
     }
     public func method(

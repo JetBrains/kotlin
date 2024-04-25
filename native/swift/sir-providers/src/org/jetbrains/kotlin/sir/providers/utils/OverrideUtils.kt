@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.sir.*
  *
  * For now, the implementation is rather trivial: it just checks that the superclass has an init method with the same list of parameters.
  */
-public fun computeIsOverrideForDesignatedInit(parent: SirDeclarationParent, parameters: List<SirParameter>): Boolean {
-    if (parent !is SirClass) return false
-
+public fun computeIsOverrideForDesignatedInit(parent: SirClass, parameters: List<SirParameter>): Boolean {
+    val superClass = parent.superClass?.declaration ?: return false
     val overridesDesignatedInitFromSuper = superClass.declarations
         .filterIsInstance<SirInit>()
         .filter { it.initKind == SirInitializerKind.ORDINARY }
