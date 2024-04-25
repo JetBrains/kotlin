@@ -1040,6 +1040,65 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
+    @Test
+    fun `KDoc link should lead to java annotation methods`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * [Storage.value]
+            | */
+            |val usage = 0            
+            |/src/example/Storage.java
+            |package example;
+            |@interface Storage {
+            |  String value() default "";
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(DRI("example", "Storage", Callable("value", null, emptyList())), module.getLinkDRIFrom("usage"))
+            }
+        }
+    }
+
+    @Test
+    fun `KDoc link should lead to java synthetic properties`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |/**
+            | * value: [Storage.value] is unresolved
+            | * setValue: [Storage.setValue]
+            | * prop: [Storage.prop]
+            | */
+            |val usage = 0            
+            |/src/example/Storage.java
+            |package example;
+            |class Storage {
+            |    void prop() {}
+            |    void setValue(String value) {}
+            |    String getProp() { return null; }
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "Storage.setValue" to DRI("example", "Storage", Callable("setValue", null, listOf(TypeConstructor("kotlin.String", emptyList())))),
+                        "Storage.prop" to DRI("example", "Storage", Callable("prop", null, emptyList()))
+                    ),
+                    module.getAllLinkDRIFrom("usage"))
+            }
+        }
+    }
+
     private fun DModule.getLinkDRIFrom(name: String): DRI? {
         val link =  this.dfs { it.name == name }?.documentation?.values?.single()?.firstMemberOfTypeOrNull<DocumentationLink>()
         return link?.dri
