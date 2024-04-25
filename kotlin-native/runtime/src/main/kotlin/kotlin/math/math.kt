@@ -1185,6 +1185,7 @@ public actual val Int.absoluteValue: Int
  */
 @SinceKotlin("1.2")
 public actual val Int.sign: Int
+    // implementation note: use a naive implementation here as LLVM is capable of optimizing it later.
     get() = when {
         this < 0 -> -1
         this > 0 -> 1
@@ -1236,6 +1237,7 @@ public actual val Long.absoluteValue: Long
  */
 @SinceKotlin("1.2")
 public actual val Long.sign: Int
+    // implementation note: use a naive implementation here as LLVM is capable of optimizing it later.
     get() = when {
         this < 0 -> -1
         this > 0 -> 1

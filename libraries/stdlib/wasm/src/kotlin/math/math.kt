@@ -1017,12 +1017,7 @@ public actual val Int.absoluteValue: Int get() = abs(this)
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Int.sign: Int
-    get() = when {
-        this < 0 -> -1
-        this > 0 -> 1
-        else -> 0
-    }
+public actual val Int.sign: Int get() = (this shr (Int.SIZE_BITS - 1)) or (-this ushr (Int.SIZE_BITS - 1))
 
 /**
  * Returns the absolute value of the given value [n].
@@ -1065,10 +1060,6 @@ public actual val Long.absoluteValue: Long get() = abs(this)
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Long.sign: Int get() = when {
-    this < 0L -> -1
-    this > 0L -> 1
-    else -> 0
-}
+public actual val Long.sign: Int get() = ((this shr (Long.SIZE_BITS - 1)) or (-this ushr (Long.SIZE_BITS - 1))).toInt()
 
 // endregion
