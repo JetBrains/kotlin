@@ -20947,6 +20947,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("usageIsNotInlinable.kt")
+      public void testUsageIsNotInlinable() {
+        runTest("compiler/testData/diagnostics/tests/inline/usageIsNotInlinable.kt");
+      }
+
+      @Test
       @TestMetadata("valueClasses.kt")
       public void testValueClasses() {
         runTest("compiler/testData/diagnostics/tests/inline/valueClasses.kt");
