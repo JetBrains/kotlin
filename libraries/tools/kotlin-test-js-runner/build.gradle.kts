@@ -26,6 +26,7 @@ node {
     version.set(nodejsVersion)
     download.set(true)
     nodeProjectDir.set(projectDir)
+    npmInstallCommand.set("ci")
 }
 
 dependencies {
@@ -41,6 +42,7 @@ tasks {
         outputs.upToDateWhen {
             nodeModulesDir.isDirectory
         }
+        args.add("--ignore-scripts")
     }
 
     val cleanLib by registering(Delete::class) {
