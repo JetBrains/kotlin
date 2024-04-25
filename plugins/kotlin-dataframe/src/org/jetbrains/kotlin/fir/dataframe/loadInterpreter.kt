@@ -100,6 +100,8 @@ internal inline fun <reified T> String.load(): T {
         "Expr0" -> Expr0()
         "And0" -> And0()
         "Remove0" -> Remove0()
+        "Group0" -> Group0()
+        "Into0" -> Into0()
         else -> error("$this")
     } as T
 }

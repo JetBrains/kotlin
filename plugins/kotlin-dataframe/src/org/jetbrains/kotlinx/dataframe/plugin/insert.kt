@@ -7,7 +7,6 @@ import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.api.toPath
-import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
 import org.jetbrains.kotlinx.dataframe.impl.api.Col
 import org.jetbrains.kotlinx.dataframe.impl.api.ColumnToInsert1
 import org.jetbrains.kotlinx.dataframe.impl.api.DataFrameLikeContainer
@@ -64,7 +63,7 @@ internal class Under0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(column.path.path.toPath(), receiver.column, anyDataFrame)
+        return receiver.df.insertImpl(listOf(ColumnToInsert1(column.path.path.toPath(), receiver.column)), anyDataFrame)
     }
 }
 
@@ -73,7 +72,7 @@ internal class Under1 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(columnPath.path.toPath(), receiver.column, anyRow)
+        return receiver.df.insertImpl(listOf(ColumnToInsert1(columnPath.path.toPath(), receiver.column)), anyRow)
     }
 }
 
@@ -82,7 +81,7 @@ internal class Under2 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(pathOf(column.name), receiver.column, anyRow)
+        return receiver.df.insertImpl(listOf(ColumnToInsert1(pathOf(column.name), receiver.column)), anyRow)
     }
 }
 
@@ -91,7 +90,7 @@ internal class Under3 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(pathOf(column.name), receiver.column, anyRow)
+        return receiver.df.insertImpl(listOf(ColumnToInsert1(pathOf(column.name), receiver.column)), anyRow)
     }
 }
 
@@ -100,7 +99,7 @@ internal class Under4 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(pathOf(column), receiver.column, anyRow)
+        return receiver.df.insertImpl(listOf(ColumnToInsert1(pathOf(column), receiver.column)), anyRow)
     }
 }
 
@@ -258,9 +257,10 @@ public class SimpleColumnGroup(
 }
 
 @PublishedApi
-internal fun PluginDataFrameSchema.insertImpl(path: ColumnPath, column: SimpleCol, columnGroupType: TypeApproximation): PluginDataFrameSchema {
-    val columns = listOf(ColumnToInsert1(path, column))
-
+internal fun PluginDataFrameSchema.insertImpl(
+    columns: List<ColumnToInsert1<SimpleCol>>,
+    columnGroupType: TypeApproximation
+): PluginDataFrameSchema {
     return insertImplGenericContainer<PluginDataFrameSchema, SimpleCol, MyColumnGroup<SimpleCol>>(
         this,
         columns,
