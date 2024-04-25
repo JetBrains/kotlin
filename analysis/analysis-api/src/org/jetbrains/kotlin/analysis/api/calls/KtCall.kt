@@ -75,9 +75,11 @@ public fun KtCallInfo.successfulConstructorCallOrNull(): KtFunctionCall<KtConstr
  * A candidate considered for a call. I.e., one of the overload candidates in scope at the call site.
  */
 public sealed class KtCallCandidateInfo(
-    private val backingCandidate: KtCall,
+    candidate: KtCall,
     isInBestCandidates: Boolean,
 ) : KtLifetimeOwner {
+    private val backingCandidate: KtCall = candidate
+
     override val token: KtLifetimeToken get() = backingCandidate.token
     public val candidate: KtCall get() = withValidityAssertion { backingCandidate }
 
@@ -168,10 +170,11 @@ public class KtQualifierCall(
  * information is the value arguments for the call.
  */
 public class KtPartiallyAppliedSymbol<out S : KtCallableSymbol, out C : KtCallableSignature<S>>(
-    private val backingSignature: C,
+    signature: C,
     dispatchReceiver: KtReceiverValue?,
     extensionReceiver: KtReceiverValue?,
 ) : KtLifetimeOwner {
+    private val backingSignature: C = signature
 
     override val token: KtLifetimeToken get() = backingSignature.token
 
@@ -242,11 +245,13 @@ public typealias KtPartiallyAppliedFunctionSymbol<S> = KtPartiallyAppliedSymbol<
  * A call to a function.
  */
 public class KtSimpleFunctionCall(
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol>,
+    partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol>,
     argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
     typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>,
     isImplicitInvoke: Boolean,
 ) : KtFunctionCall<KtFunctionLikeSymbol>(argumentMapping) {
+    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol> = partiallyAppliedSymbol
+
     override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     /**
@@ -271,9 +276,11 @@ public class KtSimpleFunctionCall(
  * ```
  */
 public class KtAnnotationCall(
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
+    partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
     argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
 ) : KtFunctionCall<KtConstructorSymbol>(argumentMapping) {
+    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol> = partiallyAppliedSymbol
+
     override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     /**
@@ -296,10 +303,12 @@ public class KtAnnotationCall(
  * ```
  */
 public class KtDelegatedConstructorCall(
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
+    partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
     kind: Kind,
     argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
 ) : KtFunctionCall<KtConstructorSymbol>(argumentMapping) {
+    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol> = partiallyAppliedSymbol
+
     override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     /**
@@ -332,10 +341,11 @@ public typealias KtPartiallyAppliedVariableSymbol<S> = KtPartiallyAppliedSymbol<
  * A simple read or write to a variable or property.
  */
 public class KtSimpleVariableAccessCall(
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
+    partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
     typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>,
     simpleAccess: KtSimpleVariableAccess,
 ) : KtVariableAccessCall() {
+    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> = partiallyAppliedSymbol
 
     override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
@@ -407,10 +417,11 @@ public interface KtCompoundAccessCall {
  * ```
  */
 public class KtCompoundVariableAccessCall(
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
+    partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
     typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>,
     compoundAccess: KtCompoundAccess,
 ) : KtVariableAccessCall(), KtCompoundAccessCall {
+    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> = partiallyAppliedSymbol
     override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     override val partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
@@ -455,11 +466,12 @@ public class KtCompoundVariableAccessCall(
  * `m["a"]`, which is again a simple `KtFunctionCall` to `ThrowingMap.get`.
  */
 public class KtCompoundArrayAccessCall(
-    private val backingCompoundAccess: KtCompoundAccess,
+    compoundAccess: KtCompoundAccess,
     indexArguments: List<KtExpression>,
     getPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
     setPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
 ) : KtCall(), KtCompoundAccessCall {
+    private val backingCompoundAccess: KtCompoundAccess = compoundAccess
 
     override val token: KtLifetimeToken get() = backingCompoundAccess.token
 
@@ -482,8 +494,10 @@ public class KtCompoundArrayAccessCall(
 /**
  * The type of access to a variable or using the array access convention.
  */
-public sealed class KtCompoundAccess(private val backingOperationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>) :
-    KtLifetimeOwner {
+public sealed class KtCompoundAccess(
+    operationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>
+) : KtLifetimeOwner {
+    private val backingOperationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol> = operationPartiallyAppliedSymbol
 
     override val token: KtLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
 
@@ -589,9 +603,11 @@ public class KtExplicitReceiverValue(
  * ```
  */
 public class KtImplicitReceiverValue(
-    private val backingSymbol: KtSymbol,
+    symbol: KtSymbol,
     type: KtType,
 ) : KtReceiverValue() {
+    private val backingSymbol: KtSymbol = symbol
+
     override val token: KtLifetimeToken get() = backingSymbol.token
     public val symbol: KtSymbol get() = withValidityAssertion { backingSymbol }
     override val type: KtType by validityAsserted(type)
@@ -608,9 +624,11 @@ public class KtImplicitReceiverValue(
  * ```
  */
 public class KtSmartCastedReceiverValue(
-    private val backingOriginal: KtReceiverValue,
+    original: KtReceiverValue,
     smartCastType: KtType,
 ) : KtReceiverValue() {
+    private val backingOriginal: KtReceiverValue = original
+
     override val token: KtLifetimeToken get() = backingOriginal.token
     public val original: KtReceiverValue get() = withValidityAssertion { backingOriginal }
     public override val type: KtType by validityAsserted(smartCastType)
