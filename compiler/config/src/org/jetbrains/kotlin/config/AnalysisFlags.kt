@@ -50,6 +50,9 @@ object AnalysisFlags {
     val explicitApiMode by AnalysisFlag.Delegates.ApiModeDisabledByDefault
 
     @JvmStatic
+    val explicitReturnTypes by AnalysisFlag.Delegates.ApiModeDisabledByDefault
+
+    @JvmStatic
     val ideMode by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

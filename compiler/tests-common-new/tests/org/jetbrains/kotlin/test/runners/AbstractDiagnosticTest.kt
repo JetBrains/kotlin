@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_RETURN_TYPES_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives
@@ -96,6 +97,12 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitApi/*") {
             defaultDirectives {
                 EXPLICIT_API_MODE with ExplicitApiMode.STRICT
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/*") {
+            defaultDirectives {
+                EXPLICIT_RETURN_TYPES_MODE with ExplicitApiMode.STRICT
             }
         }
 

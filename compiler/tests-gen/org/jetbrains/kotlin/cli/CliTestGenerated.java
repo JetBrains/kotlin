@@ -548,6 +548,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/experimentalUnresolvedK1.args");
     }
 
+    @TestMetadata("explicitApiAndExplicitReturnTypesAtTheSameTime.args")
+    public void testExplicitApiAndExplicitReturnTypesAtTheSameTime() {
+      runTest("compiler/testData/cli/jvm/explicitApiAndExplicitReturnTypesAtTheSameTime.args");
+    }
+
+    @TestMetadata("explicitReturnTypesEnabled.args")
+    public void testExplicitReturnTypesEnabled() {
+      runTest("compiler/testData/cli/jvm/explicitReturnTypesEnabled.args");
+    }
+
     @TestMetadata("explicitlyDisableSamConversionsWithOldFlag.args")
     public void testExplicitlyDisableSamConversionsWithOldFlag() {
       runTest("compiler/testData/cli/jvm/explicitlyDisableSamConversionsWithOldFlag.args");

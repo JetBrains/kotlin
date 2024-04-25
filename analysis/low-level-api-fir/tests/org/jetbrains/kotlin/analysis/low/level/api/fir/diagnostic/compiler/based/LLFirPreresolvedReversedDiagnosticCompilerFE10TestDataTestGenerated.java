@@ -39654,6 +39654,58 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithExplicitReturnTypes {
+      @Test
+      public void testAllFilesPresentInTestsWithExplicitReturnTypes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("classes.kt")
+      public void testClasses() {
+        runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/classes.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaces.kt")
+      public void testInterfaces() {
+        runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/interfaces.kt");
+      }
+
+      @Test
+      @TestMetadata("kt56505.kt")
+      public void testKt56505() {
+        runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/kt56505.kt");
+      }
+
+      @Test
+      @TestMetadata("mustBeEffectivelyPublic.kt")
+      public void testMustBeEffectivelyPublic() {
+        runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/mustBeEffectivelyPublic.kt");
+      }
+
+      @Test
+      @TestMetadata("noErrorsForMemebersInsideInternalDeclaration.kt")
+      public void testNoErrorsForMemebersInsideInternalDeclaration() {
+        runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/noErrorsForMemebersInsideInternalDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("publishedApi.kt")
+      public void testPublishedApi() {
+        runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/publishedApi.kt");
+      }
+
+      @Test
+      @TestMetadata("toplevel.kt")
+      public void testToplevel() {
+        runTest("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/toplevel.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava17")
     @TestDataPath("$PROJECT_ROOT")
     public class TestsWithJava17 {

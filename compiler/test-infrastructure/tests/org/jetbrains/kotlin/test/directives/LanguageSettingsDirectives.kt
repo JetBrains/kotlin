@@ -59,6 +59,11 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         additionalParser = ExplicitApiMode.Companion::fromString
     )
 
+    val EXPLICIT_RETURN_TYPES_MODE by enumDirective(
+        "Configures explicit API mode (AnalysisFlags.explicitReturnTypes)",
+        additionalParser = ExplicitApiMode.Companion::fromString
+    )
+
     val ALLOW_KOTLIN_PACKAGE by directive(
         description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info (AnalysisFlags.allowKotlinPackage)"
     )

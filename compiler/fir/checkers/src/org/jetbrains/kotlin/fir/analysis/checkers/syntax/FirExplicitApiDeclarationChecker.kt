@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -42,8 +43,14 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         ) {
             return
         }
-        val state = context.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
-        if (state == ExplicitApiMode.DISABLED) return
+
+        fun extractState(flag: AnalysisFlag<ExplicitApiMode>): ExplicitApiMode? {
+            return context.languageVersionSettings.getFlag(flag).takeUnless { it == ExplicitApiMode.DISABLED }
+        }
+
+        val explicitApiState = extractState(AnalysisFlags.explicitApiMode)
+        val explicitReturnTypesState = extractState(AnalysisFlags.explicitReturnTypes)
+        if (explicitApiState == null && explicitReturnTypesState == null) return
         // Enum entries do not have visibilities
         if (element is FirEnumEntry) return
         if (!element.effectiveVisibility.publicApi && element.publishedApiEffectiveVisibility == null) return
@@ -52,8 +59,11 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
             return
         }
 
-        checkVisibilityModifier(state, element, source, context, reporter)
-        checkExplicitReturnType(state, element, source, context, reporter)
+        if (explicitApiState != null) {
+            checkVisibilityModifier(explicitApiState, element, source, context, reporter)
+        }
+
+        checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, element, source, context, reporter)
     }
 
     private fun checkVisibilityModifier(
