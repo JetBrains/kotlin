@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCom
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
+import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
@@ -209,6 +210,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
                     konanTarget,
                     project.konanHome,
                     project.kotlinPropertiesProvider,
+                    project.konanPropertiesBuildService,
                 ).generatePlatformLibsIfNeeded()
             }
         }

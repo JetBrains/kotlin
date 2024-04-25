@@ -29,6 +29,9 @@ internal interface UsesKonanPropertiesBuildService : Task {
     val konanPropertiesService: Property<KonanPropertiesBuildService>
 }
 
+internal val Project.konanPropertiesBuildService
+    get() = KonanPropertiesBuildService.registerIfAbsent(this)
+
 abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildService.Parameters> {
 
     internal interface Parameters : BuildServiceParameters {

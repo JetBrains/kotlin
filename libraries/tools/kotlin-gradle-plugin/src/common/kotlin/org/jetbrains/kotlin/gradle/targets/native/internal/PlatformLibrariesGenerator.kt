@@ -31,7 +31,8 @@ internal class PlatformLibrariesGenerator(
     val project: Project,
     val konanTarget: KonanTarget,
     val konanHome: File,
-    private val propertiesProvider: PropertiesProvider
+    private val propertiesProvider: PropertiesProvider,
+    private val konanPropertiesService: Provider<KonanPropertiesBuildService>
 ) {
 
     private val logger = Logging.getLogger(this::class.java)
@@ -47,15 +48,13 @@ internal class PlatformLibrariesGenerator(
     private val defDirectory =
         File(distribution.platformDefs(konanTarget)).absoluteFile
 
-    private val konanPropertiesService: Provider<KonanPropertiesBuildService>
-        get() = KonanPropertiesBuildService.registerIfAbsent(project)
-
     private val konanCacheKind: NativeCacheKind by lazy {
         propertiesProvider.getKonanCacheKind(konanTarget, konanPropertiesService)
     }
 
-    private val shouldBuildCaches: Boolean =
-        konanPropertiesService.get().cacheWorksFor(konanTarget) && konanCacheKind != NativeCacheKind.NONE
+    private val shouldBuildCaches: Boolean
+        get() = konanPropertiesService.get().cacheWorksFor(konanTarget) &&
+                konanCacheKind != NativeCacheKind.NONE
 
     private val presentDefs: Set<String> by lazy {
         defDirectory

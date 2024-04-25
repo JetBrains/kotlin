@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAc
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
+import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -266,6 +267,7 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
             konanTarget,
             project.konanHome,
             project.kotlinPropertiesProvider,
+            project.konanPropertiesBuildService,
         ).generatePlatformLibsIfNeeded()
     }
 }
