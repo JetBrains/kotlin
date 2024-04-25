@@ -28,6 +28,7 @@ android-tools = "30.3.1"
 gradle-node = "7.0.1"
 commons-text="1.10.0"
 lincheck="2.28.1"
+xerces = "2.12.2"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -77,6 +78,8 @@ android-gradle-plugin-gradle = { module = "com.android.tools.build:gradle", vers
 android-gradle-plugin-builder = { module = "com.android.tools.build:builder", version.ref = "android-gradle-plugin" }
 android-gradle-plugin-builder-model = { module = "com.android.tools.build:builder-model", version.ref = "android-gradle-plugin" }
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
+
+xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }

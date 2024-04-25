@@ -15,7 +15,7 @@ repositories {
 dependencies {
     testApi(intellijCore())
 
-    testRuntimeOnly("xerces:xercesImpl:2.12.0")
+    testRuntimeOnly(libs.xerces)
     testRuntimeOnly(commonDependency("commons-lang:commons-lang"))
 
     testImplementation(libs.junit4)
