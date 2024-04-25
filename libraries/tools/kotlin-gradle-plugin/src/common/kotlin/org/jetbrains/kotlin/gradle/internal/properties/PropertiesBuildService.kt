@@ -94,6 +94,7 @@ internal abstract class PropertiesBuildService @Inject constructor(
                 val result = when (property) {
                     is BooleanGradleProperty -> property.toBooleanFromString(it)
                     is StringGradleProperty -> it
+                    is IntGradleProperty -> property.toIntFromString(it)
                     else -> throw IllegalStateException("Unknown Gradle property type $property")
                 }
 
@@ -103,19 +104,33 @@ internal abstract class PropertiesBuildService @Inject constructor(
             .orElse(property.defaultValue)
     }
 
-    private fun BooleanGradleProperty.toBooleanFromString(value: String?, ): Boolean {
+    private fun BooleanGradleProperty.toBooleanFromString(value: String?): Boolean {
         return when {
             value.equals("true", ignoreCase = true) -> true
             value.equals("false", ignoreCase = true) -> false
             else -> {
-                logger.warn(
-                    "Boolean option '$name' was set to an invalid value: `$value`." +
-                            " Using default value '$defaultValue' instead."
-                )
+                warnInvalidPropertyValue("Boolean", name, value, defaultValue)
                 defaultValue
             }
         }
     }
+
+    private fun IntGradleProperty.toIntFromString(value: String?): Int {
+        return value?.toIntOrNull() ?: run {
+            warnInvalidPropertyValue("Int", name, value, defaultValue)
+            defaultValue
+        }
+    }
+
+    private fun warnInvalidPropertyValue(
+        propertyType: String,
+        name: String,
+        value: String?,
+        defaultValue: Any,
+    ) = logger.warn(
+        "$propertyType option '$name' was set to an invalid value: `$value`." +
+                " Using default value '$defaultValue' instead."
+    )
 
     /** Returns the value of the property with the given [propertyName] in the given [project]. */
     fun get(propertyName: String, project: Project): String? {
@@ -150,6 +165,11 @@ internal abstract class PropertiesBuildService @Inject constructor(
         override val name: String,
         override val defaultValue: String
     ) : GradleProperty<String>
+
+    internal class IntGradleProperty(
+        override val name: String,
+        override val defaultValue: Int
+    ) : GradleProperty<Int>
 }
 
 internal val Project.propertiesService: Provider<PropertiesBuildService>

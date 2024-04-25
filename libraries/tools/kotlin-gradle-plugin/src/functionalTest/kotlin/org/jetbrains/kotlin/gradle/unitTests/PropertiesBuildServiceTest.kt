@@ -99,6 +99,7 @@ class PropertiesBuildServiceTest {
             when (property) {
                 is PropertiesBuildService.BooleanGradleProperty -> properties.property(property, project).get()
                 is PropertiesBuildService.StringGradleProperty -> properties.property(property, project).get()
+                is PropertiesBuildService.IntGradleProperty -> properties.property(property, project).get()
                 else -> error("Unexpected property type ${property::class}")
             }
         )
@@ -155,6 +156,33 @@ class PropertiesBuildServiceTest {
             "Happy",
             "Happy",
             PropertiesBuildService.StringGradleProperty("some.prop", "Kodee!"),
+        )
+    }
+
+    @Test
+    fun testLoadingIntValue() {
+        testLoadingGradleProperty(
+            "2",
+            2,
+            PropertiesBuildService.IntGradleProperty("some.prop", 10)
+        )
+    }
+
+    @Test
+    fun testLoadingInvalidIntValue() {
+        testLoadingGradleProperty(
+            "Kodee!",
+            10,
+            PropertiesBuildService.IntGradleProperty("some.prop", 10)
+        )
+    }
+
+    @Test
+    fun testLoadingDefaultIntValue() {
+        testLoadingGradleProperty(
+            null,
+            10,
+            PropertiesBuildService.IntGradleProperty("some.prop", 10)
         )
     }
 }
