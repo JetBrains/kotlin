@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.Composi
 import org.jetbrains.kotlin.analysis.providers.impl.packageProviders.CompositeKotlinPackageProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -73,8 +74,8 @@ internal class LLFirProviderHelper(
     val allowKotlinPackage: Boolean = canContainKotlinPackage ||
             firSession.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
-    private val classifierByClassId =
-        firSession.firCachesFactory.createCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> { classId, context ->
+    private val classifierByClassId: FirCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> =
+        firSession.firCachesFactory.createCache { classId, context ->
             require(context == null || context.isPhysical)
             val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return@createCache null
 
@@ -87,8 +88,8 @@ internal class LLFirProviderHelper(
                 }
         }
 
-    private val callablesByCallableId =
-        firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> { callableId, context ->
+    private val callablesByCallableId: FirCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> =
+        firSession.firCachesFactory.createCache { callableId, context ->
             require(context == null || context.all { it.isPhysical })
             val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
             buildList {
