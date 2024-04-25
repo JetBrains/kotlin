@@ -91,6 +91,7 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
             ::IrTypeSystemContextImpl,
             specialAnnotationsProvider = null,
+            extraActualDeclarationExtractorInitializer = { null },
         ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
         }

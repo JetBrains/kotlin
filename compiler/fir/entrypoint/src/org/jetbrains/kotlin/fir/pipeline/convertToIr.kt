@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.pipeline
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
+import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolver
@@ -75,6 +76,7 @@ fun FirResult.convertToIrAndActualize(
     kotlinBuiltIns: KotlinBuiltIns,
     actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
+    extraActualDeclarationExtractorInitializer: (Fir2IrComponents) -> IrExtraActualDeclarationExtractor?,
     irModuleFragmentPostCompute: (IrModuleFragment) -> Unit = { _ -> },
 ): Fir2IrActualizedResult {
     require(outputs.isNotEmpty()) { "No modules found" }
@@ -140,15 +142,13 @@ fun FirResult.convertToIrAndActualize(
     }
 
     val irActualizer = if (dependentIrFragments.isEmpty()) null else IrActualizer(
-        KtDiagnosticReporterWithImplicitIrBasedContext(
-            fir2IrConfiguration.diagnosticReporter,
-            fir2IrConfiguration.languageVersionSettings
-        ),
+        KtDiagnosticReporterWithImplicitIrBasedContext(fir2IrConfiguration.diagnosticReporter, fir2IrConfiguration.languageVersionSettings),
         actualizerTypeContextProvider(mainIrFragment.irBuiltins),
         fir2IrConfiguration.expectActualTracker,
         fir2IrConfiguration.useFirBasedFakeOverrideGenerator,
         mainIrFragment,
         dependentIrFragments,
+        extraActualDeclarationExtractorInitializer(platformComponentsStorage),
     )
 
     if (!fir2IrConfiguration.useFirBasedFakeOverrideGenerator) {
@@ -177,7 +177,6 @@ fun FirResult.convertToIrAndActualize(
     pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
     return Fir2IrActualizedResult(mainIrFragment, platformComponentsStorage, pluginContext, actualizationResult)
 }
-
 
 private fun resolveOverridenSymbolsInLazyClass(
     clazz: Fir2IrLazyClass,
