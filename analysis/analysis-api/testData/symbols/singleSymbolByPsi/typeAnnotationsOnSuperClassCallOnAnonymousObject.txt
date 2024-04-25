@@ -17,7 +17,7 @@ KaAnonymousObjectSymbol:
           psi: KtAnnotationEntry
       ]
       typeArguments: []
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseClass
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseClass
   ]
   symbolKind: LOCAL
   typeParameters: []
