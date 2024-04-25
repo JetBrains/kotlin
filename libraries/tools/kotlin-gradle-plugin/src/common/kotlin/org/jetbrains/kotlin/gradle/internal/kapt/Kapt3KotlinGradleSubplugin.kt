@@ -24,8 +24,8 @@ import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isInfoAsWarnings
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isKaptKeepKdocCommentsInStubs
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isKaptVerbose
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isUseK2
+import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -101,10 +101,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         fun Project.findKaptConfiguration(sourceSetName: String): Configuration? {
             return project.configurations.findByName(getKaptConfigurationName(sourceSetName))
-        }
-
-        fun Project.isKaptVerbose(): Boolean {
-            return getBooleanOptionValue(BooleanOption.KAPT_VERBOSE)
         }
 
         fun Project.isIncrementalKapt(): Boolean {
@@ -210,7 +206,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             val optionName: String,
             val defaultValue: Boolean
         ) {
-            KAPT_VERBOSE("kapt.verbose", false),
             KAPT_INCREMENTAL_APT(
                 "kapt.incremental.apt",
                 true // Currently doesn't match the default value of KaptFlag.INCREMENTAL_APT, but it's fine (see https://github.com/JetBrains/kotlin/pull/3942#discussion_r532578690).
@@ -542,7 +537,7 @@ internal fun buildKaptSubpluginOptions(
     pluginOptions += SubpluginOption("infoAsWarnings", "${project.isInfoAsWarnings()}")
     pluginOptions += FilesSubpluginOption("stubs", kaptStubsDir)
 
-    if (project.isKaptVerbose()) {
+    if (KaptProperties.isKaptVerbose(project).get()) {
         pluginOptions += SubpluginOption("verbose", "true")
     }
 
