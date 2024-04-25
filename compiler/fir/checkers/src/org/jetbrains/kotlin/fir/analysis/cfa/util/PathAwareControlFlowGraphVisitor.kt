@@ -58,7 +58,7 @@ abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any> :
                         }
                     }
                 } else {
-                    val info = data[label] ?: return emptyNormalPathInfo()
+                    val info = data[label] ?: return persistentMapOf()
                     persistentMapOf(NormalPath to info)
                 }
             }
@@ -68,7 +68,7 @@ abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any> :
             // Labeled edge from a jump statement to a `finally` block forks flow. Usually we'd only have
             // NormalPath data here, but technically it's possible (though questionable) to jump from a `finally`
             // (discarding the exception or aborting a previous jump in the process) so merge all data just in case.
-            else -> persistentMapOf(label to data.values.reduce { a, b -> mergeInfo(a, b, to) })
+            else -> if (data.isEmpty()) data else persistentMapOf(label to data.values.reduce { a, b -> mergeInfo(a, b, to) })
         }
     }
 
