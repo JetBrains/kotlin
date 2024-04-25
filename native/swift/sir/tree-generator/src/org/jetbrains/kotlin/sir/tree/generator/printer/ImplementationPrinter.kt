@@ -20,8 +20,8 @@ internal class ImplementationPrinter(
     override val implementationOptInAnnotation: ClassRef<*>
         get() = swiftIrImplementationDetailAnnotation
 
-    override val pureAbstractElementType: ClassRef<*>
-        get() = org.jetbrains.kotlin.sir.tree.generator.pureAbstractElementType
+    override fun getPureAbstractElementType(implementation: Implementation): ClassRef<*> =
+        org.jetbrains.kotlin.sir.tree.generator.pureAbstractElementType
 
     override fun makeFieldPrinter(printer: ImportCollectingPrinter) = object : AbstractFieldPrinter<Field>(printer) {
 

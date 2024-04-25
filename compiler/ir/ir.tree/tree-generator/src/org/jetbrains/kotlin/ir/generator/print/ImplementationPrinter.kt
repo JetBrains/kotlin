@@ -26,8 +26,8 @@ internal class ImplementationPrinter(
         override fun forceMutable(field: Field) = field.isMutable
     }
 
-    override val pureAbstractElementType: ClassRef<*>
-        get() = org.jetbrains.kotlin.ir.generator.elementBaseType
+    override fun getPureAbstractElementType(implementation: Implementation): ClassRef<*> =
+        org.jetbrains.kotlin.ir.generator.elementBaseType
 
     override val implementationOptInAnnotation: ClassRef<*>
         get() = irImplementationDetailType

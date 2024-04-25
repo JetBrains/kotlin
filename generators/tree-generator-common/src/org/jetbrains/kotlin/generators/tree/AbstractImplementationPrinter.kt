@@ -20,7 +20,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
     protected abstract val implementationOptInAnnotation: ClassRef<*>
 
-    protected abstract val pureAbstractElementType: ClassRef<*>
+    protected abstract fun getPureAbstractElementType(implementation: Implementation): ClassRef<*>
 
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
@@ -102,7 +102,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
             print(" : ")
             if (implementation.needPureAbstractElement) {
-                print(pureAbstractElementType.render(), "(), ")
+                print(getPureAbstractElementType(implementation).render(), "(), ")
             }
             print(
                 implementation.allParents.joinToString { parent ->
