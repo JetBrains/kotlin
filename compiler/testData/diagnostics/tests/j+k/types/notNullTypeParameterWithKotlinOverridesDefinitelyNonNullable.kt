@@ -1,7 +1,7 @@
 // SKIP_JAVAC
 // LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // LANGUAGE: +DefinitelyNonNullableTypes
-// !RENDER_DIAGNOSTICS_FULL_TEXT
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;
