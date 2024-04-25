@@ -13,7 +13,7 @@ annotation class BContainer(val value: Array<B>)
 <!REDUNDANT_REPEATABLE_ANNOTATION!>@kotlin.annotation.Repeatable<!>
 <!REPEATED_ANNOTATION!>@kotlin.annotation.Repeatable<!>
 @kotlin.jvm.JvmRepeatable(CContainer::class)
-<!REPEATED_ANNOTATION!>@java.lang.annotation.Repeatable(CContainer::class)<!>
+@java.lang.annotation.Repeatable(CContainer::class)
 annotation class C
 annotation class CContainer(val value: Array<C>)
 
