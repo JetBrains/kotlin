@@ -6,12 +6,12 @@ public abstract interface B /* B*/<T, R>  {
 
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.Nullable()
-  private final @org.jetbrains.annotations.Nullable() kotlin.jvm.functions.Function0<java.lang.Boolean> p;
+  private final @org.jetbrains.annotations.Nullable() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() java.lang.Boolean> p;
 
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() kotlin.jvm.functions.Function0<java.lang.Boolean> getP();//  getP()
+  public final @org.jetbrains.annotations.Nullable() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() java.lang.Boolean> getP();//  getP()
 
-  public  Foo(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.jvm.functions.Function0<java.lang.Boolean>);//  .ctor(@org.jetbrains.annotations.Nullable() kotlin.jvm.functions.Function0<java.lang.Boolean>)
+  public  Foo(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() java.lang.Boolean>);//  .ctor(@org.jetbrains.annotations.Nullable() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() java.lang.Boolean>)
 }
 
 public abstract interface Test /* Test*/ {
