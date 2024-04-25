@@ -19,6 +19,7 @@ gson = { strictly = "2.8.9" } # should be in sync with version.properties
 jetbrains-ideaExt = "1.0.1"
 jackson = "2.15.2"
 jgit = "6.6.0.202305301015-r"
+jsoup = "1.17.2"
 junit4 = "4.13.2"
 junit5 = "5.10.1"
 junit-platform = "1.10.0"
@@ -60,6 +61,7 @@ guava = { module = "com.google.guava:guava", version.ref = "guava" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom2" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }

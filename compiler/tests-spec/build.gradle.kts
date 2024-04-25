@@ -12,7 +12,7 @@ dependencies {
     testApi(commonDependency("com.google.code.gson:gson"))
     testApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
 
-    api("org.jsoup:jsoup:1.14.2")
+    api(libs.jsoup)
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
