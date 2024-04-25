@@ -82,7 +82,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val KAPT_KOTLIN_GENERATED = "kapt.kotlin.generated"
 
         private val CLASSLOADERS_CACHE_SIZE = "kapt.classloaders.cache.size"
-        private val CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS = "kapt.classloaders.cache.disableForProcessors"
 
         val MAIN_KAPT_CONFIGURATION_NAME = "kapt"
 
@@ -103,8 +102,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         fun Project.classLoadersCacheSize(): Int = findPropertySafe(CLASSLOADERS_CACHE_SIZE)?.toString()?.toInt() ?: 0
 
         fun Project.disableClassloaderCacheForProcessors(): Set<String> {
-            val value = findPropertySafe(CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS)?.toString() ?: ""
-            return value
+            return KaptProperties.getClassloadersCacheDisableForProcessors(project).get()
                 .split(",")
                 .map { it.trim() }
                 .filter { it.isNotEmpty() }

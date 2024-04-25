@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.internal.kapt
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService.BooleanGradleProperty
+import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService.*
 import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
 
 internal object KaptProperties {
@@ -23,6 +23,10 @@ internal object KaptProperties {
         val KAPT_INCLUDE_COMPILE_CLASSPATH = BooleanGradleProperty("kapt.include.compile.classpath", true)
         val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = BooleanGradleProperty("kapt.keep.kdoc.comments.in.stubs", true)
         val KAPT_USE_K2 = BooleanGradleProperty("kapt.use.k2", false)
+    }
+
+    object StringProperties {
+        val CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS = StringGradleProperty("kapt.classloaders.cache.disableForProcessors", "")
     }
 
     fun isKaptVerbose(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
@@ -47,5 +51,9 @@ internal object KaptProperties {
 
     fun isUseK2(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.property(BooleanProperties.KAPT_USE_K2, project)
+    }
+
+    fun getClassloadersCacheDisableForProcessors(project: Project): Provider<String> = project.propertiesService.flatMap {
+        it.property(StringProperties.CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS, project)
     }
 }
