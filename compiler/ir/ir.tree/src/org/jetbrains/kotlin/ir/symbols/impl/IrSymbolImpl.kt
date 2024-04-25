@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor>(
-    private val _descriptor: Descriptor?,
+abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner>(
+    descriptor: Descriptor?,
     override val signature: IdSignature?,
 ) : IrSymbol {
+    private val _descriptor: Descriptor? = descriptor
+
     @ObsoleteDescriptorBasedAPI
     @Suppress("UNCHECKED_CAST")
     override val descriptor: Descriptor
@@ -28,22 +30,11 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor>(
     override val hasDescriptor: Boolean
         get() = _descriptor != null
 
-    override fun toString(): String {
-        if (isBound) return owner.render()
-        return if (isPublicApi)
-            "Unbound public symbol ${this::class.java.simpleName}: $signature"
-        else
-            "Unbound private symbol " +
-                    if (_descriptor != null) "${this::class.java.simpleName}: $_descriptor" else super.toString()
-    }
-}
+    private var _owner: Owner? = null
+    override val owner: Owner
+        get() = _owner ?: error("${javaClass.simpleName} is unbound. Signature: $signature")
 
-abstract class IrBindableSymbolBase<out Descriptor, Owner>(
-    descriptor: Descriptor?,
-    signature: IdSignature?,
-) : IrSymbolBase<Descriptor>(descriptor, signature), IrBindableSymbol<Descriptor, Owner>
-        where Descriptor : DeclarationDescriptor,
-              Owner : IrSymbolOwner {
+    override var privateSignature: IdSignature? = null
 
     init {
         assert(descriptor == null || isOriginalDescriptor(descriptor)) {
@@ -62,11 +53,10 @@ abstract class IrBindableSymbolBase<out Descriptor, Owner>(
         descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
                 descriptor == descriptor.original
 
-    private var _owner: Owner? = null
-    override val owner: Owner
-        get() = _owner ?: error("${javaClass.simpleName} is unbound. Signature: $signature")
+    override val isBound: Boolean
+        get() = _owner != null
 
-    override fun bind(owner: Owner) {
+    fun bind(owner: Owner) {
         if (_owner == null) {
             _owner = owner
         } else {
@@ -74,74 +64,78 @@ abstract class IrBindableSymbolBase<out Descriptor, Owner>(
         }
     }
 
-    override val isBound: Boolean
-        get() = _owner != null
-
-    override var privateSignature: IdSignature? = null
+    override fun toString(): String {
+        if (isBound) return owner.render()
+        return if (isPublicApi)
+            "Unbound public symbol ${this::class.java.simpleName}: $signature"
+        else
+            "Unbound private symbol " +
+                    if (_descriptor != null) "${this::class.java.simpleName}: $_descriptor" else super.toString()
+    }
 }
 
 class IrFileSymbolImpl(descriptor: PackageFragmentDescriptor? = null) :
-    IrBindableSymbolBase<PackageFragmentDescriptor, IrFile>(descriptor, signature = null),
+    IrSymbolBase<PackageFragmentDescriptor, IrFile>(descriptor, signature = null),
     IrFileSymbol
 
 class IrExternalPackageFragmentSymbolImpl(descriptor: PackageFragmentDescriptor? = null) :
-    IrBindableSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor, signature = null),
+    IrSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor, signature = null),
     IrExternalPackageFragmentSymbol
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrAnonymousInitializerSymbolImpl(descriptor: ClassDescriptor? = null) :
-    IrBindableSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor, signature = null),
+    IrSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor, signature = null),
     IrAnonymousInitializerSymbol {
     constructor(irClassSymbol: IrClassSymbol) : this(irClassSymbol.descriptor)
 }
 
 class IrClassSymbolImpl(descriptor: ClassDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<ClassDescriptor, IrClass>(descriptor, signature),
+    IrSymbolBase<ClassDescriptor, IrClass>(descriptor, signature),
     IrClassSymbol
 
 class IrEnumEntrySymbolImpl(descriptor: ClassDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor, signature),
+    IrSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor, signature),
     IrEnumEntrySymbol
 
 class IrFieldSymbolImpl(descriptor: PropertyDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<PropertyDescriptor, IrField>(descriptor, signature),
+    IrSymbolBase<PropertyDescriptor, IrField>(descriptor, signature),
     IrFieldSymbol
 
 class IrTypeParameterSymbolImpl(descriptor: TypeParameterDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<TypeParameterDescriptor, IrTypeParameter>(descriptor, signature),
+    IrSymbolBase<TypeParameterDescriptor, IrTypeParameter>(descriptor, signature),
     IrTypeParameterSymbol
 
 class IrValueParameterSymbolImpl(descriptor: ParameterDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<ParameterDescriptor, IrValueParameter>(descriptor, signature),
+    IrSymbolBase<ParameterDescriptor, IrValueParameter>(descriptor, signature),
     IrValueParameterSymbol
 
 class IrVariableSymbolImpl(descriptor: VariableDescriptor? = null) :
-    IrBindableSymbolBase<VariableDescriptor, IrVariable>(descriptor, signature = null),
+    IrSymbolBase<VariableDescriptor, IrVariable>(descriptor, signature = null),
     IrVariableSymbol
 
 class IrSimpleFunctionSymbolImpl(descriptor: FunctionDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor, signature),
+    IrSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor, signature),
     IrSimpleFunctionSymbol
 
 class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor, signature),
+    IrSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor, signature),
     IrConstructorSymbol
 
 class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor? = null) :
-    IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor, signature = null),
+    IrSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor, signature = null),
     IrReturnableBlockSymbol
 
 class IrPropertySymbolImpl(descriptor: PropertyDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<PropertyDescriptor, IrProperty>(descriptor, signature),
+    IrSymbolBase<PropertyDescriptor, IrProperty>(descriptor, signature),
     IrPropertySymbol
 
 class IrLocalDelegatedPropertySymbolImpl(descriptor: VariableDescriptorWithAccessors? = null) :
-    IrBindableSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor, signature = null),
+    IrSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor, signature = null),
     IrLocalDelegatedPropertySymbol
 
 class IrTypeAliasSymbolImpl(descriptor: TypeAliasDescriptor? = null, signature: IdSignature? = null) :
-    IrBindableSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor, signature),
+    IrSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor, signature),
     IrTypeAliasSymbol
 
 class IrScriptSymbolImpl(descriptor: ScriptDescriptor? = null, signature: IdSignature? = null) :
-    IrScriptSymbol, IrBindableSymbolBase<ScriptDescriptor, IrScript>(descriptor, signature)
+    IrScriptSymbol, IrSymbolBase<ScriptDescriptor, IrScript>(descriptor, signature)
