@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.ir.generator
 import org.jetbrains.kotlin.generators.tree.printer.generateTree
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.print.*
+import org.jetbrains.kotlin.ir.generator.print.symbol.DeclaredSymbolRemapperInterfacePrinter
+import org.jetbrains.kotlin.ir.generator.print.symbol.ReferencedSymbolRemapperInterfacePrinter
+import org.jetbrains.kotlin.ir.generator.print.symbol.SymbolRemapperInterfacePrinter
+import org.jetbrains.kotlin.ir.generator.print.symbol.printSymbolRemapper
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
