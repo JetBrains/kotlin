@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeLibraryGenerationRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.compilerRunner.konanDataDir
@@ -26,6 +27,8 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 internal class PlatformLibrariesGenerator(val project: Project, val konanTarget: KonanTarget) {
+
+    private val logger = Logging.getLogger(this::class.java)
 
     private val distribution =
         customerDistribution(project.konanHome.absolutePath, konanDataDir = project.konanDataDir)
@@ -92,7 +95,6 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
             if (!has(GENERATED_LIBS_PROPERTY_NAME)) {
                 set(GENERATED_LIBS_PROPERTY_NAME, PlatformLibsInfo())
             }
-            @Suppress("UNCHECKED_CAST")
             get(GENERATED_LIBS_PROPERTY_NAME) as PlatformLibsInfo
         }
 
@@ -125,7 +127,7 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         KotlinNativeLibraryGenerationRunner.fromProject(this).run(args)
     }
 
-    fun generatePlatformLibsIfNeeded(): Unit = with(project) {
+    fun generatePlatformLibsIfNeeded() {
         if (!HostManager().isEnabled(konanTarget)) {
             // We cannot generate libs on a machine that doesn't support the requested target.
             return
