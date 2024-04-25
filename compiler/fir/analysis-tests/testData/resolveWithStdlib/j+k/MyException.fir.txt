@@ -1,5 +1,5 @@
 FILE: test.kt
-    public final class MyException : R|kotlin/Exception| {
+    public final class MyException : R|{kotlin/Exception=} java/lang/Exception| {
         public constructor(): R|MyException| {
             super<R|{kotlin/Exception=} java/lang/Exception|>()
         }

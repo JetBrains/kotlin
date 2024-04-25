@@ -7,7 +7,7 @@ FILE: topmost.kt
 
     }
     public final typealias Alias = R|org/example/Base|
-    public abstract interface Topmost : R|org/example/Alias| {
+    public abstract interface Topmost : R|{org/example/Alias=} org/example/Base| {
     }
 Module: top
 FILE: top.kt
