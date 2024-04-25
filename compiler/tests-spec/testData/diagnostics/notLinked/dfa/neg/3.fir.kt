@@ -77,7 +77,7 @@ fun case_8(x: Nothing?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(x: Nothing?) {
-    if (!!(<!USELESS_IS_CHECK!>x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!><!>)) else {
+    if (!!(<!USELESS_IS_CHECK!>x !is TypealiasNullableStringIndirect?<!>)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>length<!>
     }
