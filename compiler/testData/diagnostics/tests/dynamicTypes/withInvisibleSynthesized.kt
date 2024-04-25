@@ -1,4 +1,4 @@
-// !MARK_DYNAMIC_CALLS
+// MARK_DYNAMIC_CALLS
 
 // FILE: p/J.java
 

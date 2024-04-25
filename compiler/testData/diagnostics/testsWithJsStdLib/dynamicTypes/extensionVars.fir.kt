@@ -1,4 +1,4 @@
-// !MARK_DYNAMIC_CALLS
+// MARK_DYNAMIC_CALLS
 // DIAGNOSTICS:-USELESS_CAST
 
 fun test(d: dynamic) {

@@ -1,4 +1,4 @@
-// !MARK_DYNAMIC_CALLS
+// MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
