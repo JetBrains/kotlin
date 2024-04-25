@@ -1298,6 +1298,14 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-67042 Metadata Compilation should receive transformed metadata klibs in order where actuals comes first")
+    fun kt67042MetadataKlibShouldBeInOrder(gradleVersion: GradleVersion) {
+        project("kt-67042_metadata_klib_order", gradleVersion) {
+            build(":compileCommonMainKotlinMetadata")
+        }
+    }
+
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
