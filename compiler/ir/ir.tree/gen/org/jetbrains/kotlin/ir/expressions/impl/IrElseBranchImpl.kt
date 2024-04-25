@@ -20,5 +20,4 @@ class IrElseBranchImpl internal constructor(
     override val endOffset: Int,
     override var condition: IrExpression,
     override var result: IrExpression,
-) : IrElseBranch() {
-}
+) : IrElseBranch()

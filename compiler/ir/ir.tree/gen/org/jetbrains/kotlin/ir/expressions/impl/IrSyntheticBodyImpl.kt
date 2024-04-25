@@ -19,5 +19,4 @@ class IrSyntheticBodyImpl internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var kind: IrSyntheticBodyKind,
-) : IrSyntheticBody() {
-}
+) : IrSyntheticBody()

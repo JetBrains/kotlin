@@ -19,5 +19,4 @@ class IrExpressionBodyImpl internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var expression: IrExpression,
-) : IrExpressionBody() {
-}
+) : IrExpressionBody()

@@ -18,5 +18,4 @@ internal class SirModuleImpl(
     override val declarations: MutableList<SirDeclaration>,
     override val name: String,
     override val imports: MutableList<SirImport>,
-) : SirModule() {
-}
+) : SirModule()

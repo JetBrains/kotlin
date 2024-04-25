@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -108,22 +109,34 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
                     "${parent.withSelfArgs().render()}${parent.kind.braces()}"
                 }
             )
-            printBlock {
-                val fields = if (isInterface || isAbstract) implementation.allFields
-                else implementation.fieldsInBody
-                fields.forEachIndexed { index, field ->
-                    if (index > 0 && separateFieldsWithBlankLine) {
-                        println()
+            val printer = SmartPrinter(StringBuilder())
+            withNewPrinter(printer) {
+                val bodyFieldPrinter = makeFieldPrinter(this)
+                withIndent {
+                    val fields = if (isInterface || isAbstract) implementation.allFields
+                    else implementation.fieldsInBody
+                    fields.forEachIndexed { index, field ->
+                        if (index > 0 && separateFieldsWithBlankLine) {
+                            println()
+                        }
+                        bodyFieldPrinter.printField(
+                            field,
+                            inImplementation = true,
+                            override = true,
+                            modality = Modality.ABSTRACT.takeIf { isAbstract }
+                        )
                     }
-                    fieldPrinter.printField(
-                        field,
-                        inImplementation = true,
-                        override = true,
-                        modality = Modality.ABSTRACT.takeIf { isAbstract }
-                    )
-                }
 
-                printAdditionalMethods(implementation)
+                    printAdditionalMethods(implementation)
+                }
+            }
+            val body = printer.toString()
+            if (body.isNotEmpty()) {
+                println(" {")
+                print(body)
+                println("}")
+            } else {
+                println()
             }
             addAllImports(implementation.additionalImports)
         }
