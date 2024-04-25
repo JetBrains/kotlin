@@ -17,7 +17,9 @@ interface ImportCollecting {
 
     fun addImport(importable: Importable)
 
-    fun addStarImport(packageName: String)
+    fun addStarImport(packageName: String) {
+        addImport(ArbitraryImportable(packageName, "*"))
+    }
 
     fun addAllImports(importables: Collection<Importable>) {
         importables.forEach(this::addImport)

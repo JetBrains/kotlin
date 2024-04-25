@@ -64,10 +64,6 @@ internal class ImportCollector(currentPackage: String) : ImportCollecting {
         addImport(importable.packageName, importable.typeName)
     }
 
-    override fun addStarImport(packageName: String) {
-        addImport(packageName, "*")
-    }
-
     /**
      * Prints all the collected imports in alphabetical order.
      *

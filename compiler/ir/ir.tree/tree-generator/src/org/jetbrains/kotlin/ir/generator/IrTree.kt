@@ -148,11 +148,11 @@ object IrTree : AbstractTreeBuilder() {
             kDoc = """
             The arbitrary metadata associated with this IR node.
             
-            @see $typeName
+            @see ${render()}
             """.trimIndent()
         }
         kDoc = """
-        An [${rootElement.typeName}] capable of holding something which backends can use to write
+        An [${rootElement.render()}] capable of holding something which backends can use to write
         as the metadata for the declaration.
         
         Technically, it can even be ± an array of bytes, but right now it's usually the frontend representation of the declaration,
@@ -212,9 +212,8 @@ object IrTree : AbstractTreeBuilder() {
         +field("isCrossinline", boolean)
         +field("isNoinline", boolean)
         +field("isHidden", boolean) {
-            additionalImports.add(idSignatureType)
             kDoc = """
-            If `true`, the value parameter does not participate in [IdSignature] computation.
+            If `true`, the value parameter does not participate in [${idSignatureType.render()}] computation.
 
             This is a workaround that is needed for better support of compiler plugins.
             Suppose you have the following code and some IR plugin that adds a value parameter to functions
@@ -230,7 +229,7 @@ object IrTree : AbstractTreeBuilder() {
             fun foo(defined: Int, ${'$'}extra: String) { /* ... */ }
             ```
 
-            If a compiler plugin adds parameters to an [${function.typeName}],
+            If a compiler plugin adds parameters to an [${function.render()}],
             the representations of the function in the frontend and in the backend may diverge, potentially causing signature mismatch and
             linkage errors (see [KT-40980](https://youtrack.jetbrains.com/issue/KT-40980)).
             We wouldn't want IR plugins to affect the frontend representation, since in an IDE you'd want to be able to see those
@@ -303,7 +302,7 @@ object IrTree : AbstractTreeBuilder() {
             If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
             Otherwise, this is an empty list.
             
-            NOTE: If this [$typeName] was deserialized from a klib, this list will always be empty!
+            NOTE: If this [${render()}] was deserialized from a klib, this list will always be empty!
             See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
             """.trimIndent()
         }
@@ -618,16 +617,16 @@ object IrTree : AbstractTreeBuilder() {
             This is a root parent element for external declarations (meaning those that come from
             another compilation unit/module, not to be confused with [IrPossiblyExternalDeclaration.isExternal]). 
             
-            Each declaration is contained either in some [IrFile], or in some [IrExternalPackageFragment].
-            Declarations coming from dependencies are located in [IrExternalPackageFragment].
+            Each declaration is contained either in some [${file.render()}], or in some [${externalPackageFragment.render()}].
+            Declarations coming from dependencies are located in [${externalPackageFragment.render()}].
             
             It can be used for obtaining a module descriptor, which contains the information about
             the module from which the declaration came. It would be more correct to have a link to some
-            [IrModuleFragment] instead, which would make [IrModuleFragment] the only source of truth about modules,
+            [${moduleFragment.render()}] instead, which would make [${moduleFragment.render()}] the only source of truth about modules,
             but this is how things are now.
             
             Also, it can be used for checking whether some declaration is external (by checking whether its top
-            level parent is an [IrExternalPackageFragment]). But it is not possible
+            level parent is an [${externalPackageFragment.render()}]). But it is not possible
             to get all declarations from a fragment. Also, being in the same or different
             fragment doesn't mean anything. There can be more than one fragment for the same dependency.
         """.trimIndent()
@@ -1062,9 +1061,9 @@ object IrTree : AbstractTreeBuilder() {
         val i = 10
         val template = "i = ${'$'}i"
         ```
-        will be represented by [${typeName}] with the following list of [arguments]:
-        - [${const.typeName}] whose `value` is `"i = "`
-        - [${getValue.typeName}] whose `symbol` will be that of the `i` variable. 
+        will be represented by [${render()}] with the following list of [arguments]:
+        - [${const.render()}] whose `value` is `"i = "`
+        - [${getValue.render()}] whose `symbol` will be that of the `i` variable. 
         """.trimIndent()
 
         +listField("arguments", expression, mutability = MutableList)

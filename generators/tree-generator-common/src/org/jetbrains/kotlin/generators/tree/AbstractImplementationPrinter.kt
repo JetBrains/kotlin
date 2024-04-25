@@ -35,7 +35,6 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
     fun printImplementation(implementation: Implementation) {
         printer.run {
-            addAllImports(implementation.additionalImports)
             printKDoc(implementation.kDoc)
             buildSet {
                 if (implementation.requiresOptIn) {
@@ -122,6 +121,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
                 printAdditionalMethods(implementation)
             }
+            addAllImports(implementation.additionalImports)
         }
     }
 }

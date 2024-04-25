@@ -32,7 +32,6 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
 
     fun printElement(element: Element) {
         printer.run {
-            addAllImports(element.additionalImports)
             val kind = element.kind ?: error("Expected non-null element kind")
 
             printKDoc(element.extendedKDoc())
@@ -77,6 +76,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
                 print("}")
             }
             println()
+            addAllImports(element.additionalImports)
         }
     }
 }

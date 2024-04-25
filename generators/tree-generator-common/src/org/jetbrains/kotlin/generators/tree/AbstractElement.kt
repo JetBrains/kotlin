@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.generators.tree.imports.Importable
  */
 abstract class AbstractElement<Element, Field, Implementation>(
     val name: String,
-) : ElementOrRef<Element>, FieldContainer<Field>, ImplementationKindOwner
+) : ElementOrRef<Element>, FieldContainer<Field>, ImplementationKindOwner, ImportCollecting
         where Element : AbstractElement<Element, Field, Implementation>,
               Field : AbstractField<Field>,
               Implementation : AbstractImplementation<Implementation, Element, *> {
@@ -170,6 +170,10 @@ abstract class AbstractElement<Element, Field, Implementation>(
      * Note that classes referenced in field types will be imported automatically.
      */
     val additionalImports = mutableListOf<Importable>()
+
+    override fun addImport(importable: Importable) {
+        additionalImports.add(importable)
+    }
 
     override var kind: ImplementationKind? = null
 
