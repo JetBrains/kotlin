@@ -7,6 +7,7 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -19,9 +20,7 @@ internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): Si
     val typeRequest = SirTypeProvider.TranslationRequest(ktSymbol.returnType)
     return when (val response = translateType(typeRequest)) {
         is SirTypeProvider.TranslationResponse.Success -> {
-            val sirModule = ktSymbol.getContainingModule().sirModule()
-            sirModule.updateImports(response.requiredModules)
-            response.sirType
+            response.updateImportsAndReturnType(ktSymbol)
         }
         is SirTypeProvider.TranslationResponse.Unknown ->
             error("Return type ${ktSymbol.returnType} in ${ktSymbol.render()} is not found.")
@@ -35,9 +34,7 @@ internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateParameterType(va
     val typeRequest = SirTypeProvider.TranslationRequest(valueParameter.returnType)
     return when (val response = translateType(typeRequest)) {
         is SirTypeProvider.TranslationResponse.Success -> {
-            val sirModule = ktSymbol.getContainingModule().sirModule()
-            sirModule.updateImports(response.requiredModules)
-            response.sirType
+            response.updateImportsAndReturnType(ktSymbol)
         }
         is SirTypeProvider.TranslationResponse.Unknown -> {
             error("Parameter ${valueParameter.render()} in ${ktSymbol.render()} is not found.")
@@ -46,4 +43,17 @@ internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateParameterType(va
             error("Parameter ${valueParameter.render()} in ${ktSymbol.render()} is not supported.")
         }
     }
+}
+
+/**
+ * Unpacks the TranslationResponse.Success object into a SirType, and updates the corresponding module imports.
+ *
+ * @param useSite The KtSymbol where the translation is being used.
+ * @return The unpacked SirType.
+ */
+context(SirSession, KtAnalysisSession)
+public fun SirTypeProvider.TranslationResponse.Success.updateImportsAndReturnType(useSite: KtSymbol): SirType {
+    val sirModule = useSite.getContainingModule().sirModule()
+    sirModule.updateImports(requiredModules)
+    return sirType
 }

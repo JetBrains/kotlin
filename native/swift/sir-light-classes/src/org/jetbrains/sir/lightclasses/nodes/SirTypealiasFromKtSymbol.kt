@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.withSirAnalyse
-import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
-import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
-import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal class SirTypealiasFromKtSymbol(
     override val ktSymbol: KtTypeAliasSymbol,
@@ -51,8 +49,7 @@ internal class SirTypealiasFromKtSymbol(
             val typeRequest = SirTypeProvider.TranslationRequest(ktSymbol.expandedType)
             type = when (val response = translateType(typeRequest)) {
                 is SirTypeProvider.TranslationResponse.Success -> {
-                    ktSymbol.getContainingModule().sirModule().updateImports(response.requiredModules)
-                    response.sirType
+                    response.updateImportsAndReturnType(ktSymbol)
                 }
                 is SirTypeProvider.TranslationResponse.Unknown ->
                     error("Underlying type of typealias ${ktSymbol.render()} is not declared")
