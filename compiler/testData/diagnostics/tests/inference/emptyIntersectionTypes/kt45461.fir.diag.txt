@@ -1,1 +1,1 @@
-/kt45461.kt:(245,252): warning: Type argument for type parameter 'S' cannot be inferred because it has incompatible upper bounds: kotlin.String, kotlin.Int (multiple incompatible classes). This will become an error in a future release.
+/kt45461.kt:(244,251): warning: Type argument for type parameter 'S' cannot be inferred because it has incompatible upper bounds: kotlin.String, kotlin.Int (multiple incompatible classes). This will become an error in a future release.

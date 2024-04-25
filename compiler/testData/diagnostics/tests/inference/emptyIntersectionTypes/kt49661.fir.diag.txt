@@ -1,1 +1,1 @@
-/kt49661.fir.kt:(243,244): warning: Type argument for type parameter 'T' cannot be inferred because it has incompatible upper bounds: Foo, kotlin.Int (multiple incompatible classes). This will become an error in a future release.
+/kt49661.fir.kt:(242,243): warning: Type argument for type parameter 'T' cannot be inferred because it has incompatible upper bounds: Foo, kotlin.Int (multiple incompatible classes). This will become an error in a future release.
