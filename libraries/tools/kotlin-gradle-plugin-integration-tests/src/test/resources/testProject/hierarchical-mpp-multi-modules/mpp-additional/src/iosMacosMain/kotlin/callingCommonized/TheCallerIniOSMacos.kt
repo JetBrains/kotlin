@@ -1,4 +1,4 @@
-// !CHECK_HIGHLIGHTING
+// CHECK_HIGHLIGHTING
 package callingCommonized
 
 import kotlinx.cinterop.NativePtr
