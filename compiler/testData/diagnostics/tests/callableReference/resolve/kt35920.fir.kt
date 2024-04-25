@@ -1,5 +1,5 @@
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: JavaClass.java
 public class JavaClass<R> {
     public static String baz(int x) { return ""; }

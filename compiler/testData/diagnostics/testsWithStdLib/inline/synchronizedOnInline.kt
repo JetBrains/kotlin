@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 <!SYNCHRONIZED_ON_INLINE!>@Synchronized<!>
 inline fun foo(f: () -> Unit): Unit = f()

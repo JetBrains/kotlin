@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun fail1(c: suspend () -> Unit) {}
 

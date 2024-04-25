@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(a: Any, f: ()->Int) = f()
 fun foo(a: Any, f: (Any)->Int) = f(a)

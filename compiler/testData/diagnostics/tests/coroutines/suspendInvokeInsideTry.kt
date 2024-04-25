@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 
 class Foo {
     suspend operator fun <T> invoke(body: () -> T) = null as T

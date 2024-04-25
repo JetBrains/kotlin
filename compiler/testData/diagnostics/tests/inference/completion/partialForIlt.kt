@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun takeByte(ilt: Byte) {}
 fun takeShort(ilt: Short) {}

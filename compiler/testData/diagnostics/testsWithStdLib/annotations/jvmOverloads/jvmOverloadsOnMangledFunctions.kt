@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 inline class Z(val x: Int)

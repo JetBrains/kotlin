@@ -1,5 +1,5 @@
 // !LANGUAGE: +TypeEnhancementImprovementsInStrictMode +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 // MUTE_FOR_PSI_CLASS_FILES_READING
 

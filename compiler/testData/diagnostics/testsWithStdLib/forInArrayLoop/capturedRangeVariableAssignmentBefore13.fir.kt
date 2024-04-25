@@ -1,5 +1,5 @@
 // !LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
-// !DIAGNOSTICS: -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_VALUE
 // SKIP_TXT
 
 fun testArrayCapturedInLocalFun() {

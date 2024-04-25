@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // KT-12286 Strange type is required for generic callable reference
 
 fun <T: Comparable<T>> maxOf(a: T, b: T): T = if (a < b) b else a

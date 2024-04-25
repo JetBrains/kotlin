@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 @Deprecated("alas", level = DeprecationLevel.ERROR)
 fun foo(s: @Foo String) {}
 

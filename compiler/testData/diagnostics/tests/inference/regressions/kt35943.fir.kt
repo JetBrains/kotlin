@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 class Inv<I>
 fun <T> create(): Inv<T> = TODO()

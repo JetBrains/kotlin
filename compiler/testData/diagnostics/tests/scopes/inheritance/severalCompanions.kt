@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 open class A {
     companion object {
         fun foo() = 1

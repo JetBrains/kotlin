@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testArrayAccess1(array: Array<Any>) {
     array<!UNREACHABLE_CODE!>[<!>todo()<!UNREACHABLE_CODE!>]<!>

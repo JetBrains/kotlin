@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 import Host.suspendFromObject
 
 suspend fun suspendHere() = 1

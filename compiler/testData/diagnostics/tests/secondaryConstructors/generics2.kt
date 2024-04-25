@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class B<R1, R2>(x: R1, y: R2)
 
 class A0<T1, T2> {

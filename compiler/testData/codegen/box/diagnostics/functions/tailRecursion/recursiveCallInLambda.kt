@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo() {
     bar {

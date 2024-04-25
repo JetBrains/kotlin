@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 data class <!CONFLICTING_OVERLOADS!>A(val x: Int, val y: String)<!> {
     <!CONFLICTING_OVERLOADS!>fun copy(x: Int, y: String)<!> = x

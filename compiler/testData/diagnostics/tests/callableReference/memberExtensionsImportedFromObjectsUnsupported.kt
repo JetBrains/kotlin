@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 import Obj.ext
 import A.Companion.ext2

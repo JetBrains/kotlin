@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Test<X, T> {
     fun hereIdeaFail(values : List<Int>, others : List<String>): List<Test<out Int, out String>> {

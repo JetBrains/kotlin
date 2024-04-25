@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 class A<T> {
     class Nested<N>

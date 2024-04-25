@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // !LANGUAGE: +SamConversionForKotlinFunctions -ProhibitVarargAsArrayAfterSamArgument -SamConversionPerArgument
 // IGNORE_BACKEND: JS, JS_IR
 // SKIP_TXT

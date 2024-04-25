@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun take(fn: () -> List<String>) {}
 fun <L> inferFromLambda(fn: () -> L): L = TODO()

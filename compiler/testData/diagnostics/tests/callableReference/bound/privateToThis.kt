@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 class Foo<out T>(name: T) {
     private var prop: T = name

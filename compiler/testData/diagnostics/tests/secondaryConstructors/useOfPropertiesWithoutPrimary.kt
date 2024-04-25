@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A {
     val x: Int
     val useUnitialized = <!UNINITIALIZED_VARIABLE, UNINITIALIZED_VARIABLE!>x<!> + // reported on each secondary constructor

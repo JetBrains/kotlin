@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // !CHECK_TYPE
 import java.util.ArrayList
 

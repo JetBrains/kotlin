@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A {
     <!CONFLICTING_JVM_DECLARATIONS!>@kotlin.jvm.JvmOverloads fun foo(s: String = "") {

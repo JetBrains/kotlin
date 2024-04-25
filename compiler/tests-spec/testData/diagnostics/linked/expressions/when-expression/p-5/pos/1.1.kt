@@ -1,5 +1,5 @@
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*

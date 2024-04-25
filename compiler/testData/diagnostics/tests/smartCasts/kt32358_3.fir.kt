@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // no inline modifier
 fun <R> callIt(fn: () -> R): R = TODO()

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNCHECKED_CAST
+// DIAGNOSTICS: -UNCHECKED_CAST
 
 fun <T> Collection<T>.toArray(): Array<T> = this as Array<T>
 fun Collection<String>.toArray2(): Array<String> = this as Array<String>

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
 // Issue: KT-35844
 
 // ---------------------- AssertJ declarations --------------------------

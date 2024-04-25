@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 interface A
 abstract class B
 annotation class C

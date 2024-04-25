@@ -1,5 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun foo(): Any = 42
 fun String.bar(): Any = 42

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // Related issue: KT-28654
 
 fun <K> select(): K = <!RETURN_TYPE_MISMATCH!>run { }<!>

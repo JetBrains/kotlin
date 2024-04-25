@@ -1,5 +1,5 @@
 // !LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 // FILE: J.java
 public class J {

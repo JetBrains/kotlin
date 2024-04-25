@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun <T> foo() {
     val x = arrayOfNulls<<!TYPE_PARAMETER_AS_REIFIED!>T<!>>(5)

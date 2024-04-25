@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // !CHECK_TYPE
 
 fun <T: Any> foo(f: (T) -> Unit): T? = null // T is used only as return type

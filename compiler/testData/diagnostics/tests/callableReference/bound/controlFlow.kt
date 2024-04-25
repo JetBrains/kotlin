@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: +UNUSED_EXPRESSION
+// DIAGNOSTICS: +UNUSED_EXPRESSION
 
 fun unusedExpression(s: String) {
     <!UNUSED_EXPRESSION!>s::hashCode<!>

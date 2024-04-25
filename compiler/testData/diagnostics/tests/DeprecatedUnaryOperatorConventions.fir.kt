@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Example {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(): String = ""

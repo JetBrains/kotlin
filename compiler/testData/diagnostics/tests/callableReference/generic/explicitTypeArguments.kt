@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
 
 fun <T> takeFun(f: (T) -> Unit) {}
 fun <T, R> callFun(f: (T) -> R): R = TODO()

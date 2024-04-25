@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 suspend fun <T> threadSafeSuspendCallback(startAsync: (CompletionLambda<T>) -> CancellationLambda): T = TODO()
 typealias CompletionLambda<T> = (result: Result<T>) -> Unit

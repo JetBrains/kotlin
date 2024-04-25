@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // !OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.reflect.KSuspendFunction0

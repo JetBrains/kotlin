@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> = TODO()
 operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> = TODO()

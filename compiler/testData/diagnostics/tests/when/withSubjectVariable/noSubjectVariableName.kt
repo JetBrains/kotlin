@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 
 fun testNoSubjectVariableName(x: Int?) {

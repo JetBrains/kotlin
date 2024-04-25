@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class Base {
     open fun `foo$default`(d: Derived, i: Int, mask: Int, mh: Any) {}

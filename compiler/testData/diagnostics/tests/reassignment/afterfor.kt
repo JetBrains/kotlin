@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_VALUE
 
 fun foo(k: Int): Int {
     val i: Int

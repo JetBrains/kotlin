@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 val intMaxValue: Int = 0x7fffffff
 val intMinValue: Int = 1 shl 31

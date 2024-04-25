@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 class Num<T : Number>
 class NumColl<T : Collection<Number>>

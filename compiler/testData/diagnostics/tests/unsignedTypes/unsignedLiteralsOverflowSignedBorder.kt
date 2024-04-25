@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 const val u1: UByte = 0xFFu
 const val u2: UShort = 0xFFFFu

@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class Base {
     fun `foo$default`(i: Int, mask: Int, mh: Any) {}

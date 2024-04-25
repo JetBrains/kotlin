@@ -1,4 +1,4 @@
-// !DIAGNOSTICS:-UNUSED_PARAMETER
+// DIAGNOSTICS:-UNUSED_PARAMETER
 
 // KT-9883 prohibit using spread operator for nullable value
 

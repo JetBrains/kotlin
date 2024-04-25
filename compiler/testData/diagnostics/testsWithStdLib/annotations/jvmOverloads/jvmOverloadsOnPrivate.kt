@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class C {
     <!OVERLOADS_PRIVATE!>@kotlin.jvm.JvmOverloads<!> private fun foo(s: String = "OK") {
     }

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNREACHABLE_CODE
 // unreachable code suppressed due to KT-9586
 
 external val baz: Int

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // FULL_JDK
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // LANGUAGE: -SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced
 
 // FILE: ElementTypesAreNonnullByDefault.java

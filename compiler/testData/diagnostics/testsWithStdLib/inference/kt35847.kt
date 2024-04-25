@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KFunction1

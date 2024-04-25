@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction2

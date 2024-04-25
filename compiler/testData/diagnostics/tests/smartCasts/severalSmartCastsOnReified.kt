@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun <reified T : CharSequence?> foo(y: Any?) {
     if (y is T?) {

@@ -1,5 +1,5 @@
 // !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Out<out X>
 class In<in Y>

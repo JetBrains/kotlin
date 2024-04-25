@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_VALUE
 
 fun foo(f: Boolean): Int {
     val i: Int

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 // !CHECK_TYPE
 
 // Here we mostly trying to fix behaviour in order to track changes in inference rules for unsigned types later

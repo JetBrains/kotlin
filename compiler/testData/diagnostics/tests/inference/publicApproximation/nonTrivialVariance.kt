@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test(first: First, second: Second) {
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Inv<Bound1>>")!>test1(first, second)<!>

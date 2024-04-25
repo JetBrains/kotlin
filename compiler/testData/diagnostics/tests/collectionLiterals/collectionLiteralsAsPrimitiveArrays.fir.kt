@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
 
 fun basicTypes() {
     val a: IntArray = [1]

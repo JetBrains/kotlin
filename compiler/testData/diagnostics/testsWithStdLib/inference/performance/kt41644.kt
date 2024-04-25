@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-//!DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 
 sealed class DataType<T> {
     sealed class NotNull<T> : DataType<T>() {

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 fun test(condition: Boolean) {
     val list1 =

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -DEBUG_INFO_MISSING_UNRESOLVED
+// DIAGNOSTICS: -DEBUG_INFO_MISSING_UNRESOLVED
 
 external open class Base(x: Int) {
     constructor(x: String) : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>this<!>(23)

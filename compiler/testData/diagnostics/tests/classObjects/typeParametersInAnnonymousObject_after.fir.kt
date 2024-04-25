@@ -1,5 +1,5 @@
 // !LANGUAGE: +ProhibitTypeParametersInAnonymousObjects
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-28999
 
 fun case_1() {

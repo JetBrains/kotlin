@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun bar(y: (Int) -> Int) = 1
 fun foo(x: Float) = 10f

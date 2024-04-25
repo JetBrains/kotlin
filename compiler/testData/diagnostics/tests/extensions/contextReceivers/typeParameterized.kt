@@ -1,5 +1,5 @@
 // !LANGUAGE: +ContextReceivers
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A
 class B<X>(val x: X)

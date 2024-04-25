@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun ubyte(vararg a: UByte) {}
 fun ushort(vararg a: UShort) {}

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -FINAL_UPPER_BOUND
+// DIAGNOSTICS: -FINAL_UPPER_BOUND
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*

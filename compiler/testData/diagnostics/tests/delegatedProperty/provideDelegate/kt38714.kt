@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty
 

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 
 fun getArray(): Array<Int> = throw Exception()
 fun getList(): MutableList<Int> = throw Exception()

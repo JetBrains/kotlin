@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-32462
 
 fun <K> select(x: K, y: K): K = x

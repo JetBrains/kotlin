@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun stringVararg(vararg args: String) {}
 fun intVararg(vararg args: Int) {}

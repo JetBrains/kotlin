@@ -1,4 +1,4 @@
-//!DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> foo(i: Int, t: T) {}
 fun <T> foo(s: String, t: T) {}

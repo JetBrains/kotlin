@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !LANGUAGE: -ExperimentalBuilderInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Base
 

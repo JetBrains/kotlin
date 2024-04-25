@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun test(boolean: Boolean) {
     val expectedLong: Long = if (boolean) {

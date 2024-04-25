@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun foo() {
     val text: List<Any> = null!!

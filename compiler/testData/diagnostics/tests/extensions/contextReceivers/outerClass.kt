@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Outer {
     val x: Int = 1

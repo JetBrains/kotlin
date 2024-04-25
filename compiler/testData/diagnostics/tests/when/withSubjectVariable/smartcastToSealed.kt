@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 sealed class Either
 class Left : Either()

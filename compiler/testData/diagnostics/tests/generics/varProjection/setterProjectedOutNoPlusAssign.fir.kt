@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNREACHABLE_CODE
 interface Tr<T> {
     var v: T
 }

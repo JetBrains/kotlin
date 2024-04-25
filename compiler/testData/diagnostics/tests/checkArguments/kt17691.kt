@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // WITH_STDLIB
 

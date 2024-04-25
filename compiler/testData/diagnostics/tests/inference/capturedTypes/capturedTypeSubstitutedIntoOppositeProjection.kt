@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 
 fun <T> foo1(a1: Array<in T>, a2: Array<T>): T = null!!

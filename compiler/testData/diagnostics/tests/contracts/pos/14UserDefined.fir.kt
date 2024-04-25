@@ -1,6 +1,6 @@
 // KT-60004: Ensure diagnostics for `kotlin.contracts.contract()` are not raised for user-defined fun `contract()`
 
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*

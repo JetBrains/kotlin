@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
 
 fun <T : CharSequence?> T.bar1() {}
 fun CharSequence?.bar2() {}
