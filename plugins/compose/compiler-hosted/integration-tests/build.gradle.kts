@@ -8,8 +8,44 @@ plugins {
 val composeSnapshotId = "11751492"
 val composeVersion = "1.7.0-SNAPSHOT"
 repositories {
-    maven("https://androidx.dev/snapshots/builds/$composeSnapshotId/artifacts/repository")
-    google()
+    maven("https://androidx.dev/snapshots/builds/$composeSnapshotId/artifacts/repository") {
+        content {
+            includeVersion("androidx.compose.animation", "animation", composeVersion)
+            includeVersion("androidx.compose.animation", "animation-core", composeVersion)
+            includeVersion("androidx.compose.animation", "animation-core-desktop", composeVersion)
+            includeVersion("androidx.compose.animation", "animation-desktop", composeVersion)
+            includeVersion("androidx.compose.foundation", "foundation", composeVersion)
+            includeVersion("androidx.compose.foundation", "foundation-desktop", composeVersion)
+            includeVersion("androidx.compose.foundation", "foundation-layout", composeVersion)
+            includeVersion("androidx.compose.foundation", "foundation-layout-desktop", composeVersion)
+            includeVersion("androidx.compose.runtime", "runtime", composeVersion)
+            includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
+            includeVersion("androidx.compose.runtime", "runtime-saveable", composeVersion)
+            includeVersion("androidx.compose.runtime", "runtime-saveable-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-geometry", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-geometry-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-graphics", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-graphics-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-text", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-text-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-unit", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-unit-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-util", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-util-desktop", composeVersion)
+        }
+    }
+    google {
+        content {
+            includeGroup("androidx.collection")
+
+            // Required by androidx.compose.foundation:foundation:1.7.0-SNAPSHOT
+            includeVersion("androidx.compose.foundation", "foundation", "1.6.0")
+            includeVersion("androidx.compose.foundation", "foundation-layout", "1.6.0")
+            includeVersion("androidx.compose.foundation", "foundation-layout-desktop", "1.6.0")
+        }
+    }
 }
 
 optInToObsoleteDescriptorBasedAPI()
