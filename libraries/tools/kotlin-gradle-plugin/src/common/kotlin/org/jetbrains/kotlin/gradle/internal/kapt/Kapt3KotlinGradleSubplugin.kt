@@ -102,10 +102,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             return project.configurations.findByName(getKaptConfigurationName(sourceSetName))
         }
 
-        fun Project.isIncludeCompileClasspath(): Boolean {
-            return getBooleanOptionValue(BooleanOption.KAPT_INCLUDE_COMPILE_CLASSPATH)
-        }
-
         fun Project.isKaptKeepKdocCommentsInStubs(): Boolean {
             return getBooleanOptionValue(BooleanOption.KAPT_KEEP_KDOC_COMMENTS_IN_STUBS)
         }
@@ -197,7 +193,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             val optionName: String,
             val defaultValue: Boolean
         ) {
-            KAPT_INCLUDE_COMPILE_CLASSPATH("kapt.include.compile.classpath", true),
             KAPT_KEEP_KDOC_COMMENTS_IN_STUBS("kapt.keep.kdoc.comments.in.stubs", true),
             KAPT_USE_K2("kapt.use.k2", false),
         }
@@ -228,9 +223,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val sourcesOutputDir = project.getKaptGeneratedSourcesDirectory(sourceSetName)
         val kotlinSourcesOutputDir = project.getKaptGeneratedKotlinSourcesDirectory(sourceSetName)
         val classesOutputDir = project.getKaptGeneratedClassesDirectory(sourceSetName)
-        val includeCompileClasspath =
-            kaptExtension.includeCompileClasspath
-                ?: project.isIncludeCompileClasspath()
 
         @Suppress("UNCHECKED_CAST")
         val kotlinCompile: TaskProvider<KotlinCompile>

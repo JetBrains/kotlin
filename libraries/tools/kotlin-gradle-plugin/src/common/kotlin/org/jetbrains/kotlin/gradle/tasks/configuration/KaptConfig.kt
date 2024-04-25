@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.classLoadersCacheSize
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.disableClassloaderCacheForProcessors
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
@@ -45,7 +44,9 @@ internal open class KaptConfig<TASK : KaptTask>(
                 task.isIncremental = KaptProperties.isIncrementalKapt(project).get()
                 task.useBuildCache = ext.useBuildCache
 
-                task.includeCompileClasspath.set(ext.includeCompileClasspath ?: project.isIncludeCompileClasspath())
+                task.includeCompileClasspath.set(
+                    project.provider { ext.includeCompileClasspath }.orElse(KaptProperties.isIncludeCompileClasspath(project))
+                )
                 task.classpathStructure.from(kaptClasspathSnapshot)
 
                 task.localStateDirectories.from({ task.incAptCache.orNull })

@@ -20,6 +20,7 @@ internal object KaptProperties {
             true
         )
         val KAPT_INFO_AS_WARNINGS = BooleanGradleProperty("kapt.info.as.warnings", false)
+        val KAPT_INCLUDE_COMPILE_CLASSPATH = BooleanGradleProperty("kapt.include.compile.classpath", true)
     }
 
     fun isKaptVerbose(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
@@ -32,5 +33,9 @@ internal object KaptProperties {
 
     fun isInfoAsWarnings(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.property(BooleanProperties.KAPT_INFO_AS_WARNINGS, project)
+    }
+
+    fun isIncludeCompileClasspath(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
+        it.property(BooleanProperties.KAPT_INCLUDE_COMPILE_CLASSPATH, project)
     }
 }
