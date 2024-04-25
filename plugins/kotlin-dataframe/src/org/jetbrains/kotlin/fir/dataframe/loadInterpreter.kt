@@ -102,6 +102,7 @@ internal inline fun <reified T> String.load(): T {
         "Remove0" -> Remove0()
         "Group0" -> Group0()
         "Into0" -> Into0()
+        "Ungroup0" -> Ungroup0()
         else -> error("$this")
     } as T
 }

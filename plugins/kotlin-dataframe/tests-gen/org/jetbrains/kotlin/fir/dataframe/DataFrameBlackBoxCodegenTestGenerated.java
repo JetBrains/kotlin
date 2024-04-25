@@ -206,4 +206,10 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   public void testTransformReplaceFunctionCall() {
     runTest("testData/box/transformReplaceFunctionCall.kt");
   }
+
+  @Test
+  @TestMetadata("ungroup.kt")
+  public void testUngroup() {
+    runTest("testData/box/ungroup.kt");
+  }
 }
