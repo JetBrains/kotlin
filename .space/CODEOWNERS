@@ -240,6 +240,7 @@
 /dependencies/ "Kotlin Build Infrastructure"
 
 # UNKNOWN: /docs/
+/docs/analysis/ "Kotlin IDE Analysis Core"
 /docs/code_authoring_and_core_review.md Vsevolod.Tolstopyato Simon.Ogorodnik
 
 /generators/analysis-api-generator/ "Kotlin IDE Analysis Core"
