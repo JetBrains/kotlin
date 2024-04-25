@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
@@ -120,51 +119,6 @@ public class KtInapplicableCallCandidateInfo(
 public sealed class KtCall : KtLifetimeOwner
 
 /**
- * A special call for type qualifiers with generic parameters, which, from the PSI perspective, are [KtCallExpression]-s.
- *
- * Examples:
- *
- * ```
- * fun test() {
- *   Collection<*>::isEmpty
- *
- *   kotlin.List<Int>::size
- * }
- * ```
- *
- * Both `Collection<*>` and `List<Int>` are [KtCallExpression]-s, so we need to be able to successfully resolve them to something
- * sensible - that's why we need [KtGenericTypeQualifier].
- */
-public class KtGenericTypeQualifier(
-    override val token: KtLifetimeToken,
-    qualifier: KtExpression,
-) : KtCall() {
-
-    /**
-     * The full qualifier - either a [KtCallExpression] or a [org.jetbrains.kotlin.psi.KtDotQualifiedExpression].
-     */
-    public val qualifier: KtExpression by validityAsserted(qualifier)
-}
-
-/**
- * A special call for type qualifiers with generic parameters which represent [KtCallExpression] in incomplete code.
- *
- * Example:
- *
- * ```
- * fun test() {
- *   List<String>
- * }
- * ```
- */
-public class KtQualifierCall(
-    override val token: KtLifetimeToken,
-    qualifier: KtCallExpression,
-) : KtCall() {
-    public val qualifier: KtCallExpression by validityAsserted(qualifier)
-}
-
-/**
  * A callable symbol partially applied with receivers and type arguments. Essentially, this is a call that misses some information. For
  * properties, the missing information is the type of access (read, write, or compound access) to this property. For functions, the missing
  * information is the value arguments for the call.
@@ -195,21 +149,6 @@ public class KtPartiallyAppliedSymbol<out S : KtCallableSymbol, out C : KtCallab
 }
 
 public val <S : KtCallableSymbol, C : KtCallableSignature<S>> KtPartiallyAppliedSymbol<S, C>.symbol: S get() = signature.symbol
-
-/**
- * A synthetic call to assert an expression is not null. For example
- * ```
- * fun test(s: String?) {
- *   s!!.length // Here the receiver is a `KtCheckNotNullCall` with base expression `s`.
- * }
- * ```
- */
-public class KtCheckNotNullCall(
-    override val token: KtLifetimeToken,
-    baseExpression: KtExpression,
-) : KtCall() {
-    public val baseExpression: KtExpression by validityAsserted(baseExpression)
-}
 
 /**
  * A call to a function, or a simple/compound access to a property.

@@ -1,0 +1,30 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.Unit>
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.Unit>?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+    typeArgumentsMapping = {
+      <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Function0<kotlin.Unit>)
+    }
+    argumentMapping = {
+      a -> (KtVariableLikeSignature:
+        name = baseExpr
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.Unit>?
+        symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+        callableIdIfNonLocal = null)
+    }

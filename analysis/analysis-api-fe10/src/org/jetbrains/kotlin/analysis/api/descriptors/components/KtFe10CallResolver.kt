@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by  the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
@@ -21,19 +21,17 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe1
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
-import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -176,12 +174,10 @@ internal class KtFe10CallResolver(
             }
             is KtUnaryExpression -> {
                 handleAsIncOrDecOperator(this, unwrappedPsi)?.let { return@with it }
-                handleAsCheckNotNullCall(unwrappedPsi)?.let { return@with it }
                 handleAsFunctionCall(this, unwrappedPsi)
             }
             else -> handleAsFunctionCall(this, unwrappedPsi)
                 ?: handleAsPropertyRead(this, unwrappedPsi)
-                ?: handleAsGenericTypeQualifier(unwrappedPsi)
         } ?: handleResolveErrors(this, psi)
     }
 
@@ -197,10 +193,8 @@ internal class KtFe10CallResolver(
 
             val unwrappedPsi = KtPsiUtil.deparenthesize(psi as? KtExpression) ?: psi
 
-            if (unwrappedPsi is KtUnaryExpression) {
-                // TODO: Handle ++ or -- operator
-                handleAsCheckNotNullCall(unwrappedPsi)?.let { return@with it.toKtCallCandidateInfos() }
-            }
+            // TODO: Handle ++ or -- operator for KtUnaryExpression
+
             if (unwrappedPsi is KtBinaryExpression &&
                 (unwrappedPsi.operationToken in OperatorConventions.COMPARISON_OPERATIONS ||
                         unwrappedPsi.operationToken in OperatorConventions.EQUALS_OPERATIONS)
@@ -382,14 +376,6 @@ internal class KtFe10CallResolver(
         )
     }
 
-    private fun handleAsCheckNotNullCall(unaryExpression: KtUnaryExpression): KtCallInfo? {
-        if (unaryExpression.operationToken == KtTokens.EXCLEXCL) {
-            val baseExpression = unaryExpression.baseExpression ?: return null
-            return KtSuccessCallInfo(KtCheckNotNullCall(token, baseExpression))
-        }
-        return null
-    }
-
     private fun handleAsFunctionCall(context: BindingContext, element: KtElement): KtCallInfo? {
         return element.getResolvedCall(context)?.let { handleAsFunctionCall(context, element, it) }
     }
@@ -417,23 +403,6 @@ internal class KtFe10CallResolver(
     private fun handleAsPropertyRead(context: BindingContext, element: KtElement): KtCallInfo? {
         val call = element.getResolvedCall(context) ?: return null
         return call.toPropertyRead(context)?.let { createCallInfo(context, element, it, listOf(call)) }
-    }
-
-    /**
-     * Handles call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo` and `test.Foo<Bar>::foo`.
-     *
-     * ATM does not perform any resolve checks, since it does not seem possible with [BindingContext], so it might give some
-     * false positives.
-     */
-    private fun handleAsGenericTypeQualifier(element: KtElement): KtCallInfo? {
-        if (element !is KtExpression) return null
-
-        val wholeQualifier = element.getQualifiedExpressionForSelector() as? KtDotQualifiedExpression ?: element
-
-        val call = wholeQualifier.getPossiblyQualifiedCallExpression() ?: return null
-        if (call.typeArgumentList == null || call.valueArgumentList != null) return null
-
-        return KtSuccessCallInfo(KtGenericTypeQualifier(token, wholeQualifier))
     }
 
     private fun ResolvedCall<*>.toPropertyRead(context: BindingContext): KtVariableAccessCall? {

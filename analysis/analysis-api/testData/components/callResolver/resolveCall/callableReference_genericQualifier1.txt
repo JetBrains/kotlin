@@ -1,3 +1,19 @@
-KtSuccessCallInfo:
-  call = KtGenericTypeQualifier:
-    qualifier = Test<Bar>
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = test.Test<T>
+          symbol = <constructor>(): test.Test<T>
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {
+        T -> (test.Bar)
+      }
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<null: Inapplicable candidate>

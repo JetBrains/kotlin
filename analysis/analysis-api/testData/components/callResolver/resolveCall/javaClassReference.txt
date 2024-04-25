@@ -1,3 +1,32 @@
-KtSuccessCallInfo:
-  call = KtGenericTypeQualifier:
-    qualifier = Array<String>
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Array<T>
+          symbol = <constructor>(size: kotlin.Int, init: kotlin.Function1<kotlin.Int, T>): kotlin.Array<T>
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = size
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = size: kotlin.Int
+              callableIdIfNonLocal = null,
+            KtVariableLikeSignature:
+              name = init
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, T>
+              symbol = init: kotlin.Function1<kotlin.Int, T>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<null: Inapplicable candidate>

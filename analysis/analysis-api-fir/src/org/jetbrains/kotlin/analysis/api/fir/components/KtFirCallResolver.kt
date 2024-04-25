@@ -152,20 +152,12 @@ internal class KtFirCallResolver(
         resolveCalleeExpressionOfFunctionCall: Boolean,
         resolveFragmentOfCall: Boolean,
     ): KtCallInfo? {
-        if (this is FirCheckNotNullCall)
-            return KtSuccessCallInfo(KtCheckNotNullCall(token, argumentList.arguments.first().psi as KtExpression))
-
-        createGenericTypeQualifierCallIfApplicable(this, psi)?.let { return it }
-
         if (this is FirResolvedQualifier) {
             val callExpression = (psi as? KtExpression)?.getPossiblyQualifiedCallExpression()
             if (callExpression != null) {
                 val constructors = findQualifierConstructors()
                 val calls = toKtCalls(constructors)
-                return when (calls.size) {
-                    0 -> KtErrorCallInfo(listOf(KtQualifierCall(token, callExpression)), inapplicableCandidateDiagnostic(), token)
-                    else -> KtErrorCallInfo(calls, inapplicableCandidateDiagnostic(), token)
-                }
+                return KtErrorCallInfo(calls, inapplicableCandidateDiagnostic(), token)
             }
         }
 
@@ -228,12 +220,7 @@ internal class KtFirCallResolver(
                         // `FirPropertyAccessExpression` (which is `FirResolvable`).
                         is FirCallableSymbol<*> -> {
                             val call = createKtCall(psi, this, calleeReference, null, resolveFragmentOfCall)
-                                ?: errorWithFirSpecificEntries(
-                                    "expect `createKtCall` to succeed for resolvable case with callable symbol",
-                                    fir = this,
-                                    psi = psi
-                                )
-                            KtSuccessCallInfo(call)
+                            call?.let(::KtSuccessCallInfo)
                         }
                         else -> null
                     }
@@ -270,24 +257,6 @@ internal class KtFirCallResolver(
     }
 
     private fun inapplicableCandidateDiagnostic() = KtNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
-
-    /**
-     * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo`, `test.Foo<Bar>::foo` and class literals like `Foo<Bar>`::class.java.
-     *
-     * We have a separate [KtGenericTypeQualifier] type of [KtCall].
-     */
-    private fun createGenericTypeQualifierCallIfApplicable(firElement: FirElement, psiElement: KtElement): KtCallInfo? {
-        if (psiElement !is KtExpression) return null
-        if (firElement !is FirResolvedQualifier) return null
-
-        val call = psiElement.getPossiblyQualifiedCallExpression() ?: return null
-        if (call.typeArgumentList == null || call.valueArgumentList != null) return null
-
-        val parentReferenceExpression = psiElement.parent as? KtDoubleColonExpression ?: return null
-        if (parentReferenceExpression.lhs != psiElement) return null
-
-        return KtSuccessCallInfo(KtGenericTypeQualifier(token, psiElement))
-    }
 
     /**
      * When resolving the calleeExpression of a `KtCallExpression`, we resolve the entire `KtCallExpression` instead. This way, the
@@ -969,13 +938,6 @@ internal class KtFirCallResolver(
         resolveCalleeExpressionOfFunctionCall: Boolean,
         resolveFragmentOfCall: Boolean,
     ): List<KtCallCandidateInfo> {
-        if (this is FirCheckNotNullCall)
-            return listOf(
-                KtApplicableCallCandidateInfo(
-                    KtCheckNotNullCall(token, argumentList.arguments.first().psi as KtExpression),
-                    isInBestCandidates = true
-                )
-            )
         if (resolveCalleeExpressionOfFunctionCall && this is FirImplicitInvokeCall) {
             // For implicit invoke, we resolve the calleeExpression of the CallExpression to the call that creates the receiver of this
             // implicit invoke call. For example,

@@ -1,6 +1,3 @@
 KtErrorCallInfo:
-  candidateCalls = [
-    KtQualifierCall:
-      qualifier = List<String>
-  ]
+  candidateCalls = []
   diagnostic = ERROR<null: Inapplicable candidate>

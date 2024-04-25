@@ -1,3 +1,1 @@
-KtSuccessCallInfo:
-  call = KtCheckNotNullCall:
-    baseExpression = a
+null
