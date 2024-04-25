@@ -70,7 +70,6 @@ internal sealed class WasmVM(val shortName: String) {
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
-                "--experimental-wasm-gc",
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
                 entryMjs,
                 workingDirectory = workingDirectory
