@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -126,9 +125,7 @@ internal class LLFirProviderHelper(
     }
 
     fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        if (!allowKotlinPackage && packageFqName.isKotlinPackage()) return emptyList()
-        val callableId = CallableId(packageFqName, name)
-        return callablesByCallableId.getValue(callableId)
+        return getTopLevelCallableSymbols(CallableId(packageFqName, name), callableFiles = null)
     }
 
     /**
@@ -141,18 +138,18 @@ internal class LLFirProviderHelper(
     }
 
     fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
-        return getTopLevelCallableSymbols(packageFqName, name).filterIsInstance<FirNamedFunctionSymbol>()
+        return getTopLevelFunctionSymbols(CallableId(packageFqName, name), callableFiles = null)
     }
 
-    fun getTopLevelFunctionSymbols(callableId: CallableId, callableFiles: Collection<KtFile>): List<FirNamedFunctionSymbol> {
+    fun getTopLevelFunctionSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirNamedFunctionSymbol> {
         return getTopLevelCallableSymbols(callableId, callableFiles).filterIsInstance<FirNamedFunctionSymbol>()
     }
 
     fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
-        return getTopLevelCallableSymbols(packageFqName, name).filterIsInstance<FirPropertySymbol>()
+        return getTopLevelPropertySymbols(CallableId(packageFqName, name), callableFiles = null)
     }
 
-    fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>): List<FirPropertySymbol> {
+    fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirPropertySymbol> {
         return getTopLevelCallableSymbols(callableId, callableFiles).filterIsInstance<FirPropertySymbol>()
     }
 
