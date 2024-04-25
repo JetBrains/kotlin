@@ -73,13 +73,8 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         when (declaration) {
             is FirFunction -> {
-                if (declaration.isExternal) {
-                    val wrongDeclaration = when (declaration) {
-                        is FirConstructor -> "external constructor"
-                        is FirPropertyAccessor -> if (declaration.isGetter) "external property getter" else "external property setter"
-                        else -> "external function"
-                    }
-                    reportWrongExportedDeclaration(wrongDeclaration)
+                if (declaration.isExternal && context.isTopLevel) {
+                    reportWrongExportedDeclaration("external function")
                     return
                 }
                 for (typeParameter in declaration.typeParameters) {
@@ -121,7 +116,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
-                if (declaration.isExternal) {
+                if (declaration.isExternal && context.isTopLevel) {
                     reportWrongExportedDeclaration("external property")
                     return
                 }
@@ -140,7 +135,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             }
 
             is FirClass -> {
-                if (declaration.isExternal) {
+                if (declaration.isExternal && context.isTopLevel) {
                     val wrongDeclaration = when (declaration.classKind) {
                         ClassKind.CLASS -> "external class"
                         ClassKind.INTERFACE -> null // Exporting external interfaces is allowed. They are used to generate TypeScript definitions.
