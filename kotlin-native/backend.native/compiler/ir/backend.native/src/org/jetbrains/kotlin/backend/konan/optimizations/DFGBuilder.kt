@@ -29,6 +29,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 
+internal inline fun DataFlowIR.FunctionBody.forEachVirtualCall(block: (DataFlowIR.Node.VirtualCall) -> Unit) =
+        forEachNonScopeNode { node ->
+            if (node is DataFlowIR.Node.VirtualCall)
+                block(node)
+        }
+
 internal val STATEMENT_ORIGIN_PRODUCER_INVOCATION = IrStatementOriginImpl("PRODUCER_INVOCATION")
 internal val STATEMENT_ORIGIN_JOB_INVOCATION = IrStatementOriginImpl("JOB_INVOCATION")
 

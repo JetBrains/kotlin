@@ -409,11 +409,13 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     }
     val moduleDFG = runPhase(BuildDFGPhase, module, disable = !optimize)
     // TODO: Do not inline box/unbox yet, and value classes properties accessors
-    // TODO: runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG), disable = !optimize)
+//    val emptyDevirtualizationAnalysisResult = DevirtualizationAnalysis.AnalysisResult(emptyMap(), DevirtualizationAnalysis.DevirtualizationAnalysisImpl.EmptyTypeHierarchy)
+//    runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, emptyDevirtualizationAnalysisResult, inlineBoxUnbox = false),
+//            disable = !optimize || !enableBackendInliner)
     val devirtualizationAnalysisResults = runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
     //val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResults, module), disable = !optimize)
-    runPhase(DevirtualizationPhase, DevirtualizationInput(module, devirtualizationAnalysisResults), disable = !optimize)
+    runPhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     module.files.forEach {
         //runPhase(CoroutinesVarSpillingPhase, it)
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
@@ -424,10 +426,10 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         // depends on redundantCoercionsCleaningPhase
         runPhase(UnboxInlinePhase, it, disable = !optimize || enableBackendInliner)
     }
-    val backendInlinerOutput = runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, devirtualizationAnalysisResults),
+    val backendInlinerOutput = runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, devirtualizationAnalysisResults, inlineBoxUnbox = true),
             disable = !optimize || !enableBackendInliner) // TODO: Can inline box/unbox.
     val rebuiltDevirtualizationAnalysisResults = DevirtualizationAnalysis.AnalysisResult(
-            devirtualizedCallSites = backendInlinerOutput.devirtualizedCallSites.takeIf { it.isNotEmpty() }
+            devirtualizedCallSites = backendInlinerOutput.devirtualizedCallSites.takeIf { it.isNotEmpty() }?.toMutableMap()
                     ?: devirtualizationAnalysisResults.devirtualizedCallSites,
             devirtualizationAnalysisResults.typeHierarchy,
     )

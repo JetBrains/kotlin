@@ -58,7 +58,7 @@ internal val DevirtualizationAnalysisPhase = createSimpleNamedCompilerPhase<Nati
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ ->
             DevirtualizationAnalysis.AnalysisResult(
-                    emptyMap(),
+                    mutableMapOf(),
                     DevirtualizationAnalysis.DevirtualizationAnalysisImpl.EmptyTypeHierarchy
             )
         },
@@ -71,6 +71,7 @@ internal data class BackendInlinerInput(
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
+        val inlineBoxUnbox: Boolean,
 ) : KotlinBackendIrHolder {
     override val kotlinIr: IrElement
         get() = irModule
@@ -90,9 +91,9 @@ internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     context,
                     irModule,
                     moduleDFG,
-                    devirtualizationAnalysisResult,
-                    devirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE, // TODO: Check if this is not too much.
-                    nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE, // TODO: Check if this is not too much.
+                    DevirtualizationAnalysis.AnalysisResult(mutableMapOf(), devirtualizationAnalysisResult.typeHierarchy),
+                    devirtualizedCallSitesUnfoldFactor = 0,
+                    nonDevirtualizedCallSitesUnfoldFactor = 0,
             ).build()
             BackendInlinerOutput(
                     BackendInliner(generationState, moduleDFG, devirtualizationAnalysisResult.devirtualizedCallSites, callGraph).run()
@@ -123,6 +124,7 @@ internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DC
 
 internal data class DevirtualizationInput(
         val irModule: IrModuleFragment,
+        val moduleDFG: ModuleDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult
 ) : KotlinBackendIrHolder {
     override val kotlinIr: IrElement
@@ -135,12 +137,7 @@ internal val DevirtualizationPhase = createSimpleNamedCompilerPhase<NativeGenera
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, input ->
-            val context = generationState.context
-            val devirtualizedCallSites = input.devirtualizationAnalysisResult.devirtualizedCallSites
-                    .asSequence()
-                    .filter { it.key.irCallSite != null }
-                    .associate { it.key.irCallSite!! to it.value }
-            DevirtualizationAnalysis.devirtualize(input.irModule, context, devirtualizedCallSites,
+            DevirtualizationAnalysis.devirtualize(input.irModule, input.moduleDFG, generationState, input.devirtualizationAnalysisResult.devirtualizedCallSites,
                     DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_VTABLE_CALL, DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_ITABLE_CALL)
         }
 )

@@ -57,12 +57,6 @@ internal class BackendInliner(
 
     private val rootSet = callGraph.rootSet
 
-    private inline fun DataFlowIR.FunctionBody.forEachVirtualCall(block: (DataFlowIR.Node.VirtualCall) -> Unit) =
-            forEachNonScopeNode { node ->
-                if (node is DataFlowIR.Node.VirtualCall)
-                    block(node)
-            }
-
     fun run(): Map<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite> {
         val rebuiltDevirtualizedCallSites = mutableMapOf<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
         val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
@@ -142,7 +136,11 @@ internal class BackendInliner(
                         if (!isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
                                 //&& calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
                                 && !calleeIrFunction.hasAnnotation(noInline)
+                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
                                 && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
+                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.let {
+                                    it.parentClassOrNull?.isSingleFieldValueClass == true && it.backingField != null
+                                } != true
                                 && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
                                 && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
                                 /*&& irFunction.fileOrNull?.path?.endsWith("tt.kt") == true*/) {
@@ -170,19 +168,61 @@ internal class BackendInliner(
                     } else {
 
                         /*
-                        100 -
-                        50 +
-                        75 -
-                        63 -
-                        57 -
-                        53 +
-                        55 -
-                        54 +
+                        100 +
+                        1000 -
+                        500 +
+                        750 -
+                        625 +
+                        690 +
+                        720 +
+                        735 -
+                        727 -
+                        723 -
+                        721 -
+
+                        1000 -
+                        500 +
+                        750 +
+                        875 -
+                        810 -
+                        780 +
+                        795 -
+                        787 -
+                        783 +
+                        785 -
+                        784 +
+
+                        1000 -
+                        500 +
+                        750 +
+                        875 -
+                        810 -
+                        780 -
+                        765 -
+                        757 +
+                        761 -
+                        759 +
+                        760 -
+
+                        1000 -
+                        500 +
+                        750 +
+                        875 -
+                        810 -
+                        780 -
+                        765 +
+                        772 -
+                        768 +
+                        770 -
+                        769 +
                          */
 //                        ++count
-//                        if (count == 55)
-//                            println("ZZZ: ${irFunction.render()}")
-//                        if (count > 55)
+//                        if (count == 769) {
+//                            println("ZZZ: ${irFunction.fileOrNull?.path} ${irFunction.render()}")
+//                            functionsToInline.forEach { println("    ${it.render()}") }
+//                            //println(irFunction.dump())
+//                        }
+//                        if (count > 769)
 //                            continue
 
 //                        if (irFunction is IrConstructor && irFunction.constructedClass.name.asString() == "ArrayList" && irFunction.valueParameters.size == 6)
@@ -321,13 +361,13 @@ internal class FunctionInlining(
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression) = when (expression.symbol) {
-        initInstance -> {
+        initInstance -> { // Comes from the interop lowering - skip inlining.
             val instance = expression.getValueArgument(0)!!
             val constructorCall = expression.getValueArgument(1) as IrConstructorCall
             instance.transformChildrenVoid()
             constructorCall.transformChildrenVoid()
-            tryInline(constructorCall, instance)
-            //expression
+            //tryInline(constructorCall, instance)
+            expression
         }
         else -> {
             expression.transformChildrenVoid()

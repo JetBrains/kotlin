@@ -14,6 +14,7 @@ class A(var a: Int)
 
 class Wrapper(val ref: WorkerBoundReference<A>)
 
+@NoInline
 fun getOwnerAndWeaks(initial: Int): Triple<AtomicReference<WorkerBoundReference<A>?>, WeakReference<WorkerBoundReference<A>>, WeakReference<A>> {
     val ref = WorkerBoundReference(A(initial))
     val refOwner: AtomicReference<WorkerBoundReference<A>?> = AtomicReference(ref)
@@ -35,6 +36,7 @@ fun testCollect() {
     assertNull(refValueWeak.value)
 }
 
+@NoInline
 fun getOwnerAndWeaksFrozen(initial: Int): Triple<AtomicReference<WorkerBoundReference<A>?>, WeakReference<WorkerBoundReference<A>>, WeakReference<A>> {
     val ref = WorkerBoundReference(A(initial)).freeze()
     val refOwner: AtomicReference<WorkerBoundReference<A>?> = AtomicReference(ref)
@@ -134,6 +136,7 @@ class B1 {
 
 data class B2(val b1: WorkerBoundReference<B1>)
 
+@NoInline
 fun createCyclicGarbage(): Triple<AtomicReference<WorkerBoundReference<B1>?>, WeakReference<B1>, WeakReference<B2>> {
     val ref1 = WorkerBoundReference(B1())
     val ref1Owner: AtomicReference<WorkerBoundReference<B1>?> = AtomicReference(ref1)
@@ -230,6 +233,7 @@ class C1 {
 
 data class C2(val c1: AtomicReference<WorkerBoundReference<C1>>)
 
+@NoInline
 fun createCyclicGarbageWithAtomicsFrozen(): Triple<AtomicReference<WorkerBoundReference<C1>?>, WeakReference<C1>, WeakReference<C2>> {
     val ref1 = WorkerBoundReference(C1()).freeze()
     val ref1Weak = WeakReference(ref1.value)
@@ -242,6 +246,7 @@ fun createCyclicGarbageWithAtomicsFrozen(): Triple<AtomicReference<WorkerBoundRe
     return Triple(AtomicReference(ref1), ref1Weak, ref2Weak)
 }
 
+@NoInline
 fun dispose(refOwner: AtomicReference<WorkerBoundReference<C1>?>) {
     refOwner.value!!.value.dispose()
     refOwner.value = null
@@ -276,6 +281,7 @@ fun collectCyclicGarbageWithAtomicsFrozen() {
     assertNull(ref2Weak.value)
 }
 
+@NoInline
 fun createCrossThreadCyclicGarbageWithAtomicsFrozen(
         worker: Worker
 ): Triple<AtomicReference<WorkerBoundReference<C1>?>, WeakReference<C1>, WeakReference<C2>> {

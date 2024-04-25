@@ -82,7 +82,7 @@ public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 public annotation class EagerInitialization
 
 @ExperimentalNativeApi
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 public annotation class NoInline
 
 /**

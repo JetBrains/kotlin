@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
@@ -685,7 +686,7 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
-            return AnalysisResult(result.asSequence().associateBy({ it.key }, { it.value.first }), typeHierarchy)
+            return AnalysisResult(result.asSequence().associateBy({ it.key }, { it.value.first }).toMutableMap(), typeHierarchy)
         }
 
         /*
@@ -1342,15 +1343,20 @@ internal object DevirtualizationAnalysis {
 
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
-    class AnalysisResult(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>,
+    class AnalysisResult(val devirtualizedCallSites: MutableMap<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>,
                          val typeHierarchy: DevirtualizationAnalysisImpl.TypeHierarchy)
 
     fun run(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG) =
             DevirtualizationAnalysisImpl(context, irModule, moduleDFG).analyze()
 
-    fun devirtualize(irModule: IrModuleFragment, context: Context,
-                     devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>,
+    fun devirtualize(irModule: IrModuleFragment, moduleDFG: ModuleDFG, generationState: NativeGenerationState,
+                     devirtualizedCallSites: MutableMap<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>,
                      maxVTableUnfoldFactor: Int, maxITableUnfoldFactor: Int) {
+        val devirtualizedIrCallSites = devirtualizedCallSites
+                .asSequence()
+                .filter { it.key.irCallSite != null }
+                .associate { it.key.irCallSite!! to it.value }
+        val context = generationState.context
         val symbols = context.ir.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val isSubtype = symbols.isSubtype
@@ -1459,6 +1465,7 @@ internal object DevirtualizationAnalysis {
             }
         }
 
+        val changedDeclarations = mutableSetOf<IrDeclaration>()
         var callSitesCount = 0
         var devirtualizedCallSitesCount = 0
         var actuallyDevirtualizedCallSitesCount = 0
@@ -1471,7 +1478,7 @@ internal object DevirtualizationAnalysis {
 
                 if (expression.superQualifierSymbol == null && expression.symbol.owner.isOverridable)
                     ++callSitesCount
-                val devirtualizedCallSite = devirtualizedCallSites[expression] ?: return expression
+                val devirtualizedCallSite = devirtualizedIrCallSites[expression] ?: return expression
                 val possibleCallees = devirtualizedCallSite.possibleCallees
                         .groupBy { it.callee }
                         .entries.map { entry -> entry.key to entry.value.map { it.receiverType }.distinct() }
@@ -1487,12 +1494,12 @@ internal object DevirtualizationAnalysis {
                     return expression
                 }
                 ++actuallyDevirtualizedCallSitesCount
+                changedDeclarations.add(caller as IrDeclaration)
 
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
-                val function = expression.symbol.owner
-                val type = function.returnType
-                val irBuilder = context.createIrBuilder((caller as IrDeclaration).symbol, startOffset, endOffset)
+                val type = callee.returnType
+                val irBuilder = context.createIrBuilder(caller.symbol, startOffset, endOffset)
                 irBuilder.run {
                     val dispatchReceiver = expression.dispatchReceiver!!
                     return when {
@@ -1643,6 +1650,37 @@ internal object DevirtualizationAnalysis {
                 }
             }
         }, null)
+
+        for (declaration in changedDeclarations) {
+            val functionSymbol = moduleDFG.symbolTable.mapFunction(declaration)
+            val function = moduleDFG.functions[functionSymbol]!!
+            val devirtualizedCallSitesFromFunction = mutableMapOf<IrCall, DevirtualizedCallSite>()
+            function.body.forEachVirtualCall { node ->
+                val devirtualizedCallSite = devirtualizedCallSites[node]
+                if (devirtualizedCallSite != null) {
+                    devirtualizedCallSitesFromFunction[node.irCallSite!!] = devirtualizedCallSite
+                    devirtualizedCallSites.remove(node)
+                }
+            }
+
+            val irBody = when (declaration) {
+                is IrFunction -> declaration.body!!
+                is IrField -> with(declaration) {
+                    IrSetFieldImpl(startOffset, endOffset, symbol, null,
+                            initializer!!.expression, context.irBuiltIns.unitType)
+                }
+                else -> error("Unknown declaration: $declaration")
+            }
+            val rebuiltFunction = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(declaration, irBody)
+            moduleDFG.functions[functionSymbol] = rebuiltFunction
+            rebuiltFunction.body.forEachVirtualCall { node ->
+                val irCallSite = node.irCallSite!!
+                val devirtualizedCallSite = devirtualizedCallSitesFromFunction[irCallSite]
+                if (devirtualizedCallSite != null)
+                    devirtualizedCallSites[node] = devirtualizedCallSite
+            }
+        }
+
         context.logMultiple {
             +"Devirtualized: ${devirtualizedCallSitesCount * 100.0 / callSitesCount}%"
             +"Actually devirtualized: ${actuallyDevirtualizedCallSitesCount * 100.0 / callSitesCount}%"
