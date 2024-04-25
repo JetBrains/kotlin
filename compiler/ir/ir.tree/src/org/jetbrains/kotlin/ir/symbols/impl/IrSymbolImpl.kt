@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.ir.util.render
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner>(
     descriptor: Descriptor?,
-    override val signature: IdSignature?,
 ) : IrSymbol {
     private val _descriptor: Descriptor? = descriptor
 
     @ObsoleteDescriptorBasedAPI
     @Suppress("UNCHECKED_CAST")
-    override val descriptor: Descriptor
+    final override val descriptor: Descriptor
         get() = _descriptor ?: (owner as IrDeclaration).toIrBasedDescriptor() as Descriptor
 
     @ObsoleteDescriptorBasedAPI
@@ -31,10 +30,13 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSy
         get() = _descriptor != null
 
     private var _owner: Owner? = null
-    override val owner: Owner
+    final override val owner: Owner
         get() = _owner ?: error("${javaClass.simpleName} is unbound. Signature: $signature")
 
-    override var privateSignature: IdSignature? = null
+    override val signature: IdSignature?
+        get() = null
+
+    final override var privateSignature: IdSignature? = null
 
     init {
         assert(descriptor == null || isOriginalDescriptor(descriptor)) {
@@ -53,7 +55,7 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSy
         descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
                 descriptor == descriptor.original
 
-    override val isBound: Boolean
+    final override val isBound: Boolean
         get() = _owner != null
 
     fun bind(owner: Owner) {
@@ -74,68 +76,74 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSy
     }
 }
 
+abstract class IrSymbolWithSignature<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner>(
+    descriptor: Descriptor?,
+    override val signature: IdSignature?,
+) : IrSymbolBase<Descriptor, Owner>(descriptor)
+
+
 class IrFileSymbolImpl(descriptor: PackageFragmentDescriptor? = null) :
-    IrSymbolBase<PackageFragmentDescriptor, IrFile>(descriptor, signature = null),
+    IrSymbolBase<PackageFragmentDescriptor, IrFile>(descriptor),
     IrFileSymbol
 
 class IrExternalPackageFragmentSymbolImpl(descriptor: PackageFragmentDescriptor? = null) :
-    IrSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor, signature = null),
+    IrSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor),
     IrExternalPackageFragmentSymbol
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrAnonymousInitializerSymbolImpl(descriptor: ClassDescriptor? = null) :
-    IrSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor, signature = null),
+    IrSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor),
     IrAnonymousInitializerSymbol {
     constructor(irClassSymbol: IrClassSymbol) : this(irClassSymbol.descriptor)
 }
 
 class IrClassSymbolImpl(descriptor: ClassDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<ClassDescriptor, IrClass>(descriptor, signature),
+    IrSymbolWithSignature<ClassDescriptor, IrClass>(descriptor, signature),
     IrClassSymbol
 
 class IrEnumEntrySymbolImpl(descriptor: ClassDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor, signature),
+    IrSymbolWithSignature<ClassDescriptor, IrEnumEntry>(descriptor, signature),
     IrEnumEntrySymbol
 
 class IrFieldSymbolImpl(descriptor: PropertyDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<PropertyDescriptor, IrField>(descriptor, signature),
+    IrSymbolWithSignature<PropertyDescriptor, IrField>(descriptor, signature),
     IrFieldSymbol
 
 class IrTypeParameterSymbolImpl(descriptor: TypeParameterDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<TypeParameterDescriptor, IrTypeParameter>(descriptor, signature),
+    IrSymbolWithSignature<TypeParameterDescriptor, IrTypeParameter>(descriptor, signature),
     IrTypeParameterSymbol
 
 class IrValueParameterSymbolImpl(descriptor: ParameterDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<ParameterDescriptor, IrValueParameter>(descriptor, signature),
+    IrSymbolWithSignature<ParameterDescriptor, IrValueParameter>(descriptor, signature),
     IrValueParameterSymbol
 
 class IrVariableSymbolImpl(descriptor: VariableDescriptor? = null) :
-    IrSymbolBase<VariableDescriptor, IrVariable>(descriptor, signature = null),
+    IrSymbolBase<VariableDescriptor, IrVariable>(descriptor),
     IrVariableSymbol
 
 class IrSimpleFunctionSymbolImpl(descriptor: FunctionDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor, signature),
+    IrSymbolWithSignature<FunctionDescriptor, IrSimpleFunction>(descriptor, signature),
     IrSimpleFunctionSymbol
 
 class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor, signature),
+    IrSymbolWithSignature<ClassConstructorDescriptor, IrConstructor>(descriptor, signature),
     IrConstructorSymbol
 
 class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor? = null) :
-    IrSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor, signature = null),
+    IrSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor),
     IrReturnableBlockSymbol
 
 class IrPropertySymbolImpl(descriptor: PropertyDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<PropertyDescriptor, IrProperty>(descriptor, signature),
+    IrSymbolWithSignature<PropertyDescriptor, IrProperty>(descriptor, signature),
     IrPropertySymbol
 
 class IrLocalDelegatedPropertySymbolImpl(descriptor: VariableDescriptorWithAccessors? = null) :
-    IrSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor, signature = null),
+    IrSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor),
     IrLocalDelegatedPropertySymbol
 
 class IrTypeAliasSymbolImpl(descriptor: TypeAliasDescriptor? = null, signature: IdSignature? = null) :
-    IrSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor, signature),
+    IrSymbolWithSignature<TypeAliasDescriptor, IrTypeAlias>(descriptor, signature),
     IrTypeAliasSymbol
 
 class IrScriptSymbolImpl(descriptor: ScriptDescriptor? = null, signature: IdSignature? = null) :
-    IrScriptSymbol, IrSymbolBase<ScriptDescriptor, IrScript>(descriptor, signature)
+    IrScriptSymbol, IrSymbolWithSignature<ScriptDescriptor, IrScript>(descriptor, signature)
