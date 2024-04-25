@@ -1,4 +1,4 @@
-// !JDK_KIND: MODIFIED_MOCK_JDK
+// JDK_KIND: MODIFIED_MOCK_JDK
 
 fun foo(jalw: java.util.ListWithSomethingOverridden<String>, jal: java.util.ArrayList<String>, l: List<String>) {
     // java.util.ListWithSomethingOverridden contains getSomethingNonExisting() explicit override

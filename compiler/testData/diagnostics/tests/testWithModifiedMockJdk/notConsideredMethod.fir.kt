@@ -1,4 +1,4 @@
-// !JDK_KIND: MODIFIED_MOCK_JDK
+// JDK_KIND: MODIFIED_MOCK_JDK
 // CHECK_TYPE
 
 interface A : MutableCollection<String> {
