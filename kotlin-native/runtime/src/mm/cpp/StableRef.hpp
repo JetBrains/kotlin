@@ -36,16 +36,7 @@ public:
 
     // Dispose stable reference.
     void dispose() && noexcept {
-        auto node = std::move(*this).disposeImpl();
-        tryToDeleteImmediately(std::move(node));
-    }
-
-    // Dispose stable reference using `thread` for opportunistic deletion.
-    // Note: `thread` should still be the current thread, and it's used
-    // when the thread is being destroyed and its TLS deallocating.
-    void disposeOn(mm::ThreadData& thread) && noexcept {
-        auto node = std::move(*this).disposeImpl();
-        tryToDeleteImmediately(thread, std::move(node));
+        std::move(*this).disposeImpl();
     }
 
     // Get the underlying object.
@@ -70,9 +61,6 @@ private:
         node->dispose();
         return node;
     }
-
-    static void tryToDeleteImmediately(raw_ptr<SpecialRefRegistry::Node> node) noexcept;
-    static void tryToDeleteImmediately(mm::ThreadData& thread, raw_ptr<SpecialRefRegistry::Node> node) noexcept;
 
     raw_ptr<SpecialRefRegistry::Node> node_;
 };

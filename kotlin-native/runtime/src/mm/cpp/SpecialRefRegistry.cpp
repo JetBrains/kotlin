@@ -27,17 +27,6 @@ mm::ObjCBackRef mm::SpecialRefRegistry::ThreadQueue::createObjCBackRef(ObjHeader
     return mm::ObjCBackRef(registerNode(object, 1, false).asRaw());
 }
 
-void mm::SpecialRefRegistry::ThreadQueue::deleteNodeIfLocal(Node& node) noexcept {
-    // This is a very weird optimization.
-    // * We're saving some time during root scanning and some memory by
-    //   deleting some short-lived nodes without ever publishing them.
-    // * But in order to do that we have to be in a runnable state, so
-    //   we potentially force a native state thread to go wait for the GC.
-    if (node.owner_ == this) {
-        queue_.erase(node.position_);
-    }
-}
-
 // static
 mm::SpecialRefRegistry& mm::SpecialRefRegistry::instance() noexcept {
     return GlobalData::Instance().specialRefRegistry();
@@ -123,11 +112,11 @@ void mm::SpecialRefRegistry::insertIntoRootsHead(Node& node) noexcept {
             // * `node` is already in the roots list
             // * some other thread is inserting it in the roots list
             // * GC thread may be removing it from the roots list, but
-            //   will recheck rc afterwards and insert it back if needed
+            //   will recheck rc afterward and insert it back if needed
             // In either case, do not touch anything anymore here.
             return;
         }
-        // CAS was successfull, so we need to update the expected value of node.nextRoot_
+        // CAS was successful, so we need to update the expected value of node.nextRoot_
         nodeExpectedNext = next;
     } while (!rootsHead_.nextRoot_.compare_exchange_weak(next, &node, std::memory_order_release, std::memory_order_acquire));
 }
@@ -139,7 +128,7 @@ std::list<mm::SpecialRefRegistry::Node>::iterator mm::SpecialRefRegistry::findAl
         std::atomic_thread_fence(std::memory_order_acquire);
         // Removing disposed nodes.
         if (it->nextRoot_.load(std::memory_order_relaxed) != nullptr) {
-            // Wait, it's in the roots list. Lets wait until the next GC
+            // Wait, it's in the roots list. Let's wait until the next GC
             // for it to get cleaned up from there.
             ++it;
             continue;

@@ -335,9 +335,6 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) RUNTIME_NOTHROW;
 void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
 // Disposes a stable pointer to the object.
 void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
-// Disposes a stable pointer to the object.
-// Accepts a MemoryState, thus can be called from deinitiliazation methods, when TLS is already deallocated.
-void DisposeStablePointerFor(MemoryState* memoryState, void* pointer) RUNTIME_NOTHROW;
 // Translate stable pointer to object reference.
 OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 // Move stable pointer ownership.

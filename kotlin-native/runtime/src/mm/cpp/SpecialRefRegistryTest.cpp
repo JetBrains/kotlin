@@ -87,7 +87,7 @@ TEST_F(SpecialRefRegistryTest, RegisterStableRefWithoutPublish) {
         ObjHolder holder(obj);
         auto ref = mm::StableRef::create(obj);
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
         EXPECT_THAT(*ref, obj);
 
@@ -109,7 +109,7 @@ TEST_F(SpecialRefRegistryTest, RegisterStableRef) {
         ObjHolder holder(obj);
         auto ref = mm::StableRef::create(obj);
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
         EXPECT_THAT(*ref, obj);
 
@@ -177,7 +177,7 @@ TEST_F(SpecialRefRegistryTest, RegisterObjCRefWithoutPublish) {
         ObjHolder holder(obj);
         auto ref = mm::ObjCBackRef::create(obj);
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
         EXPECT_THAT(*ref, obj);
 
@@ -205,7 +205,7 @@ TEST_F(SpecialRefRegistryTest, RegisterObjCRef) {
         ObjHolder holder(obj);
         auto ref = mm::ObjCBackRef::create(obj);
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
         EXPECT_THAT(*ref, obj);
 
@@ -236,7 +236,7 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefsWithoutPublish) {
         auto ref2 = mm::WeakRef::create(obj);
         auto ref3 = mm::ObjCBackRef::create(obj);
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
 
         std::move(ref1).dispose();
@@ -262,7 +262,7 @@ TEST_F(SpecialRefRegistryTest, RegisterAllRefs) {
         auto ref2 = mm::WeakRef::create(obj);
         auto ref3 = mm::ObjCBackRef::create(obj);
 
-        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
+        EXPECT_THAT(roots(), testing::UnorderedElementsAre(obj, obj));
         EXPECT_THAT(all(), testing::UnorderedElementsAre());
 
         publish();

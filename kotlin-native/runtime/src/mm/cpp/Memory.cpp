@@ -515,14 +515,6 @@ extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
     mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)).dispose();
 }
 
-extern "C" RUNTIME_NOTHROW void DisposeStablePointerFor(MemoryState* memoryState, void* pointer) {
-    if (!pointer)
-        return;
-
-    // Can be safely called in any thread state.
-    mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)).disposeOn(*mm::FromMemoryState(memoryState)->Get());
-}
-
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
     if (!pointer)
         RETURN_OBJ(nullptr);

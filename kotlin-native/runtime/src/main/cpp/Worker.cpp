@@ -842,12 +842,12 @@ Worker::~Worker() {
   for (auto job : queue_) {
       switch (job.kind) {
           case JOB_REGULAR:
-              DisposeStablePointerFor(memoryState_, job.regularJob.argument);
+              DisposeStablePointer(job.regularJob.argument);
               job.regularJob.future->cancelUnlocked(memoryState_);
               break;
           case JOB_EXECUTE_AFTER: {
               // TODO: what do we do here? Shall we execute them?
-              DisposeStablePointerFor(memoryState_, job.executeAfter.operation);
+              DisposeStablePointer(job.executeAfter.operation);
               break;
           }
           case JOB_TERMINATE: {
@@ -864,11 +864,11 @@ Worker::~Worker() {
 
   for (auto job : delayed_) {
       RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
-      DisposeStablePointerFor(memoryState_, job.executeAfter.operation);
+      DisposeStablePointer(job.executeAfter.operation);
   }
 
   if (name_ != nullptr) {
-      DisposeStablePointerFor(memoryState_, name_);
+      DisposeStablePointer(name_);
   }
 
   kotlin::ThreadStateGuard guard(memoryState_, ThreadState::kNative);
