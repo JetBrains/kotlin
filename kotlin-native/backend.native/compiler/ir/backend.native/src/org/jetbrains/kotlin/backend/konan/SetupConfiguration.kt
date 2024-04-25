@@ -75,6 +75,10 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
     put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.toList())
 
+    if (arguments.optimization && arguments.debug) {
+        report(WARNING, "Unsupported combination of flags: -opt and -g. Please pick one.")
+    }
+
     put(LIST_TARGETS, arguments.listTargets)
     put(OPTIMIZATION, arguments.optimization)
     put(DEBUG, arguments.debug)

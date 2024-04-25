@@ -153,10 +153,8 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testOverrideKonanProperties() {
-        Assumptions.assumeFalse(HostManager.hostIsMingw &&
-                                        testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
-                                        testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
-        ) // KT-65963
+        // Only test with -opt enabled
+        Assumptions.assumeTrue(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
         // No need to test with different GC schedulers
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
@@ -166,7 +164,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             settings = testRunSettings,
             freeCompilerArgs = TestCompilerArgs(
                 listOf(
-                    "-opt",
                     "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
                     if (HostManager.hostIsMingw)
                         "-Xoverride-konan-properties=\"llvmInlineThreshold=76\""
