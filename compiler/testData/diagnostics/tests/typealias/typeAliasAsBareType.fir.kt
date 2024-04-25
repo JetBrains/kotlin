@@ -22,10 +22,10 @@ typealias Dictionary<T> = MutableMap<String, T>
 typealias WriteableMap<K, V> = MutableMap<in K, V>
 typealias ReadableList<T> = MutableList<out T>
 
-fun testWrong1(x: Map<Any, Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>MMTT<!>
-fun testWrong2(x: Map<Any, Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>Dictionary<!>
-fun testWrong3(x: Map<Any, Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>WriteableMap<!>
-fun testWrong4(x: List<Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>ReadableList<!>
+fun testWrong1(x: Map<Any, Any>) = x is MMTT
+fun testWrong2(x: Map<Any, Any>) = x is Dictionary
+fun testWrong3(x: Map<Any, Any>) = x is WriteableMap
+fun testWrong4(x: List<Any>) = x is ReadableList
 
 fun <T> testLocal(x: Any) {
     class C
