@@ -36,52 +36,17 @@ dependencies {
 }
 
 tasks {
-    npmInstall {
+    named("npmInstall") {
         val nodeModulesDir = projectDir.resolve("node_modules")
         outputs.upToDateWhen {
             nodeModulesDir.isDirectory
         }
     }
 
-    val cleanLib by registering(Delete::class) {
+    register<NpxTask>("npmBuild") {
         group = "build"
 
-        delete = setOf(
-            "lib",
-        )
-    }
-
-    val fromStaticToLib by registering(Copy::class) {
-        group = "build"
-
-        dependsOn(cleanLib)
-
-        from(projectDir.resolve("static"))
-        into("lib/static")
-    }
-
-    val cleanNpm by registering(Delete::class) {
-        group = "build"
-
-        dependsOn(cleanLib)
-
-        delete = setOf(
-            "node_modules",
-        )
-    }
-
-    val test by registering(NpxTask::class) {
-        group = "verification"
-
-        dependsOn(npmInstall)
-
-        command.set("mocha")
-    }
-
-    val npmBuild by registering(NpxTask::class) {
-        group = "build"
-
-        dependsOn(npmInstall, cleanLib, fromStaticToLib)
+        dependsOn("npmInstall", "cleanLib", "fromStaticToLib")
 
         command.set("rollup")
         workingDir.set(projectDir)
@@ -97,7 +62,6 @@ tasks {
             "karma-kotlin-debug-plugin.js",
             "karma-debug-runner.js",
             "karma-debug-framework.js",
-            "karma-webpack-output.js",
             "mocha-kotlin-reporter.js",
             "tc-log-appender.js",
             "tc-log-error-webpack.js",
@@ -110,22 +74,45 @@ tasks {
         outputs.dir("lib")
     }
 
-    check {
-        dependsOn(test)
+    register<Copy>("fromStaticToLib") {
+        group = "build"
+
+        dependsOn("cleanLib")
+
+        from(projectDir.resolve("static"))
+        into("lib/static")
     }
 
-    clean {
-        dependsOn(cleanNpm)
+    register<Delete>("cleanLib") {
+        group = "build"
+
+        delete = setOf(
+            "lib",
+        )
     }
 
-    val jar by registering(Jar::class) {
-        dependsOn(npmBuild)
-        from(projectDir.resolve("lib"))
-        from(projectDir.resolve("package.json"))
+    register<Delete>("cleanNpm") {
+        group = "build"
+
+        dependsOn("cleanLib")
+
+        delete = setOf(
+            "node_modules",
+        )
     }
 
-    artifacts {
-        add(configurations.archives.name, jar)
-        add(configurations.publishedRuntime.name, jar)
+    named("clean") {
+        dependsOn("cleanNpm")
     }
+}
+
+val jar by tasks.creating(Jar::class) {
+    dependsOn(tasks.named("npmBuild"))
+    from(projectDir.resolve("lib"))
+    from(projectDir.resolve("package.json"))
+}
+
+artifacts {
+    add(configurations.archives.name, jar)
+    add(configurations.publishedRuntime.name, jar)
 }

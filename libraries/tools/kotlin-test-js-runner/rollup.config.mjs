@@ -97,13 +97,6 @@ export default [
             file: 'lib/mocha-kotlin-reporter.js',
             format: 'cjs'
         }
-    },
-    {
-        input: './karma-webpack-output.js',
-        output: {
-            file: 'lib/karma-webpack-output.js',
-            format: 'cjs'
-        }
     }
 ]
 
