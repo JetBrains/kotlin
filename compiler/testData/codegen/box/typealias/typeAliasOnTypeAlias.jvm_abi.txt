@@ -7,8 +7,3 @@ MODULE main
 						OtherA^
 					K2
 						A /* = OtherA^ */
-				Property: class.metadata.typeAlias.expandedType
-					K1
-						A /* = OtherA^ */
-					K2
-						A

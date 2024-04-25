@@ -1,12 +1,4 @@
 MODULE main
-	CLASS TestClass.class
-		CLASS METADATA
-			PROPERTY getF()Ljava/lang/StringBuilder;
-				Property: class.metadata.property.returnType
-					K1
-						java/lang/StringBuilder /* = kotlin/text/StringBuilder^ */
-					K2
-						java/lang/StringBuilder
 	CLASS Initialization1Kt.class
 		PACKAGE METADATA
 			PROPERTY getSb()Ljava/lang/StringBuilder;
