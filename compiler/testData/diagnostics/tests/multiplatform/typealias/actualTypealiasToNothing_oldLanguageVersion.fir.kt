@@ -11,4 +11,4 @@ expect class E02
 typealias MyNothing = Nothing
 
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E01<!> = Nothing
-<!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E02<!> = MyNothing<!>
+actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E02<!> = MyNothing
