@@ -56,4 +56,10 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestWithAnalysisAnd
   public void testConstExprLateInitializer() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/bugsFromRealComposeApps/constExprLateInitializer.kt");
   }
+
+  @Test
+  @TestMetadata("lazyPropertyBackingField.kt")
+  public void testLazyPropertyBackingField() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/bugsFromRealComposeApps/lazyPropertyBackingField.kt");
+  }
 }

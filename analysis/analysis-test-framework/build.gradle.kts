@@ -24,6 +24,7 @@ dependencies {
     testApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testImplementation(project(":analysis:analysis-api-impl-barebone"))
     testImplementation(project(":analysis:analysis-api-impl-base"))
+    testImplementation(projectTests(":plugins:fir-plugin-prototype"))
 }
 
 sourceSets {

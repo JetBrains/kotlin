@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
@@ -43,5 +44,9 @@ abstract class TestModuleCompiler : TestService {
     object Directives : SimpleDirectivesContainer() {
         val COMPILER_ARGUMENTS by stringDirective("List of additional compiler arguments")
         val COMPILATION_ERRORS by directive("Is compilation errors expected in the file")
+        val WITH_COMPOSE_COMPILER_PLUGIN by directive(
+            description = "Configure compose compiler plugin",
+            applicability = DirectiveApplicability.Global
+        )
     }
 }

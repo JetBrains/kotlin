@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.fir.plugin.services.createFilter
+import org.jetbrains.kotlin.fir.plugin.services.findLibByPath
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -99,6 +101,10 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         }
 
         addAll(module.directives[Directives.COMPILER_ARGUMENTS])
+
+        if (Directives.WITH_COMPOSE_COMPILER_PLUGIN in module.directives) {
+            findLibByPath(COMPOSE_COMPILER_JAR_DIR, COMPOSE_COMPILER_JAR_FILTER)?.let { add("-Xplugin=${it.absolutePath}") }
+        }
     }
 
     private fun addFileToJar(path: String, text: String, jarOutputStream: JarOutputStream) {
@@ -107,6 +113,9 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         jarOutputStream.closeEntry()
     }
 }
+
+private const val COMPOSE_COMPILER_JAR_DIR = "plugins/compose/compiler-hosted/build/libs/"
+private val COMPOSE_COMPILER_JAR_FILTER = createFilter("compiler", ".jar")
 
 class JvmJarTestModuleCompiler : CliTestModuleCompiler() {
     override val compilerKind = CompilerExecutor.CompilerKind.JVM

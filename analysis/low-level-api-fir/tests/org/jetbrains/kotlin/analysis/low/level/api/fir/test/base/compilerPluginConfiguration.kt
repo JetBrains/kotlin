@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.AnalysisFlag
@@ -29,10 +30,6 @@ private object CompilerPluginsDirectives : SimpleDirectivesContainer() {
         description = "Configure test compiler plugin from :plugins:fir-plugin-prototype module",
         applicability = DirectiveApplicability.Global
     )
-    val WITH_COMPOSE_COMPILER_PLUGIN by directive(
-        description = "Configure compose compiler plugin",
-        applicability = DirectiveApplicability.Global
-    )
 }
 
 fun TestConfigurationBuilder.configureOptionalTestCompilerPlugin() {
@@ -41,8 +38,8 @@ fun TestConfigurationBuilder.configureOptionalTestCompilerPlugin() {
     useConfigurators(
         ::PluginAnnotationsProvider.enabledByDirective(CompilerPluginsDirectives.WITH_FIR_TEST_COMPILER_PLUGIN),
         ::ExtensionRegistrarConfigurator.enabledByDirective(CompilerPluginsDirectives.WITH_FIR_TEST_COMPILER_PLUGIN),
-        ::ComposePluginAnnotationsProvider.enabledByDirective(CompilerPluginsDirectives.WITH_COMPOSE_COMPILER_PLUGIN),
-        ::ComposeExtensionRegistrarConfigurator.enabledByDirective(CompilerPluginsDirectives.WITH_COMPOSE_COMPILER_PLUGIN),
+        ::ComposePluginAnnotationsProvider.enabledByDirective(TestModuleCompiler.Directives.WITH_COMPOSE_COMPILER_PLUGIN),
+        ::ComposeExtensionRegistrarConfigurator.enabledByDirective(TestModuleCompiler.Directives.WITH_COMPOSE_COMPILER_PLUGIN),
     )
 }
 

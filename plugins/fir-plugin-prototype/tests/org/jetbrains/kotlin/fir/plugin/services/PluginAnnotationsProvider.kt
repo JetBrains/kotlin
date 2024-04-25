@@ -61,16 +61,16 @@ private fun findJsLib(): File {
 @Suppress("warnings") // TODO
 private fun findLib(platform: String, extension: String, filter: FilenameFilter): File {
     return findLibFromProperty(platform, extension)
-        ?: findLibByPath(filter)
+        ?: findLibByPath(ANNOTATIONS_JAR_DIR, filter)
         ?: error("Lib with annotations does not exist. Please run :plugins:fir-plugin-prototype:plugin-annotations:distAnnotations or specify firPluginAnnotations.path system property")
 }
 
-private fun createFilter(pattern: String, extension: String): FilenameFilter {
+fun createFilter(pattern: String, extension: String): FilenameFilter {
     return FilenameFilter { _, name -> name.startsWith(pattern) && name.endsWith(extension) }
 }
 
-private fun findLibByPath(filter: FilenameFilter): File? {
-    val libDir = File(ANNOTATIONS_JAR_DIR)
+fun findLibByPath(directoryPath: String, filter: FilenameFilter): File? {
+    val libDir = File(directoryPath)
     if (!libDir.exists() || !libDir.isDirectory) return null
     return libDir.listFiles(filter)?.firstOrNull()
 }
