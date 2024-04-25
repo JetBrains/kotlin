@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 interface I
 interface S : I {
     fun foo()

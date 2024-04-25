@@ -1,5 +1,5 @@
 // ISSUE: KT-39005
-// !DUMP_CFG
+// DUMP_CFG
 
 fun test() {
     val list: MutableList<(String) -> String> = null!!

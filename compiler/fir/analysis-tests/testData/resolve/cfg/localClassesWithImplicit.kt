@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 inline fun <T> myRun(block: () -> T) = block()
 
 fun test(a: Any, b: Any) {

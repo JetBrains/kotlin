@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 import kotlin.contracts.*
 
 fun <T> n(): T? = null

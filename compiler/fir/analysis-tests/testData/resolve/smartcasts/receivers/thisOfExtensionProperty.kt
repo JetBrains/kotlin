@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 interface A
 
 interface B {

@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun String.foo(b: Boolean): String = ""
 
 fun String.let(block: () -> Unit) {}

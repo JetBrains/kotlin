@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun getNothing(): Nothing = throw Exception()
 fun getNullableNothing(): Nothing? = null
 

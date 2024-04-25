@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 
 interface FirBase
 interface FirFunctionCall : FirBase

@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 import kotlin.contracts.*
 
 fun bar(x: () -> Unit) {

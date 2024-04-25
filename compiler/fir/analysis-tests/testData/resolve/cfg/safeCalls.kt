@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 interface A {
     fun foo(): A
     fun bar(x: String): A
