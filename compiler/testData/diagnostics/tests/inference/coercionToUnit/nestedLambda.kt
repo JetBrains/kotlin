@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !SKIP_TXT
+// SKIP_TXT
 interface Context<T> {
     fun proceed(): T
 }

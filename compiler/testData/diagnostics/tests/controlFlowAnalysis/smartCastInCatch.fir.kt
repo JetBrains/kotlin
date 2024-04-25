@@ -1,4 +1,4 @@
-// !SKIP_TXT
+// SKIP_TXT
 // DUMP_CFG
 
 import kotlin.reflect.KClass
