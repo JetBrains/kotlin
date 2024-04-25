@@ -480,9 +480,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return withAttributes(ConeAttributes.create(newCustomAttributes + attributesToKeep))
     }
 
-    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
-        require(this is ConeIntegerLiteralType)
-        return this.getApproximatedType()
+    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker {
+        require(this is ConeIntegerLiteralType && expectedType is ConeKotlinType?)
+        return this.getApproximatedType(expectedType)
     }
 
     override fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean {

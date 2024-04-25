@@ -693,7 +693,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return ErrorUtils.isError(declarationDescriptor)
     }
 
-    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
+    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker {
         require(this is IntegerLiteralTypeConstructor, this::errorMessage)
         return this.getApproximatedType().unwrap()
     }

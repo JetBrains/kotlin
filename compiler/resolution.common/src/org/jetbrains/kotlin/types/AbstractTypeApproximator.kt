@@ -504,13 +504,21 @@ abstract class AbstractTypeApproximator(
 
         if (typeConstructor.isIntegerLiteralConstantTypeConstructor()) {
             return runIf(conf.integerLiteralConstantType) {
-                typeConstructor.getApproximatedIntegerLiteralType().withNullability(type.isMarkedNullable())
+                // We ensure that expectedTypeForIntegerLiteralType is only used for top-level and possibly flexible ILTs.
+                // Otherwise, we can accidentally approximate nested ILTs to wrong types.
+                check(conf.expectedTypeForIntegerLiteralType == null || depth <= 0)
+                typeConstructor.getApproximatedIntegerLiteralType(conf.expectedTypeForIntegerLiteralType)
+                    .withNullability(type.isMarkedNullable())
             }
         }
 
         if (typeConstructor.isIntegerConstantOperatorTypeConstructor()) {
             return runIf(conf.integerConstantOperatorType) {
-                typeConstructor.getApproximatedIntegerLiteralType().withNullability(type.isMarkedNullable())
+                // We ensure that expectedTypeForIntegerLiteralType is only used for top-level and possibly flexible ILTs.
+                // Otherwise, we can accidentally approximate nested ILTs to wrong types.
+                check(conf.expectedTypeForIntegerLiteralType == null || depth <= 0)
+                typeConstructor.getApproximatedIntegerLiteralType(conf.expectedTypeForIntegerLiteralType)
+                    .withNullability(type.isMarkedNullable())
             }
         }
 

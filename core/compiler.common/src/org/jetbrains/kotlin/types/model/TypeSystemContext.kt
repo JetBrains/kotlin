@@ -156,7 +156,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean
 
-    fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker
+    fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker
 
     fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean
 
