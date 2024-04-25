@@ -818,5 +818,11 @@ public class FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes extends Ab
     public void testAllFilesPresentInTestsWithJava21() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
+
+    @Test
+    @TestMetadata("EnumsWithNonNullaryConstructors.kt")
+    public void testEnumsWithNonNullaryConstructors() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/EnumsWithNonNullaryConstructors.kt");
+    }
   }
 }
