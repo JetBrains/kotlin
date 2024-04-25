@@ -1,5 +1,4 @@
 // FULL_JDK
-// JVM_ABI_K1_K2_DIFF: KT-63864
 
 // IMPORTANT!
 // Please, when your changes cause failures in bytecodeText tests for 'for' loops,
