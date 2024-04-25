@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-60305
 
 open class C<T>
