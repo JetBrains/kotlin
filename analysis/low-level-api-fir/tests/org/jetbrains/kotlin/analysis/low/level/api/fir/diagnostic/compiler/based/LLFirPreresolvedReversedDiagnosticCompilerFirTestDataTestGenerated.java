@@ -543,6 +543,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     }
 
     @Test
+    @TestMetadata("privateSubclassAsTypeArgInParentClass.kt")
+    public void testPrivateSubclassAsTypeArgInParentClass() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/privateSubclassAsTypeArgInParentClass.kt");
+    }
+
+    @Test
     @TestMetadata("problems2.kt")
     public void testProblems2() {
       runTest("compiler/fir/analysis-tests/testData/resolve/problems2.kt");

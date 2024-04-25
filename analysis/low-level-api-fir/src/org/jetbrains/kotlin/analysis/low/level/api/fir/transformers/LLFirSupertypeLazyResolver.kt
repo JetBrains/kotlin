@@ -95,8 +95,8 @@ private class LLFirSuperTypeTargetResolver(
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
+        doResolveWithoutLock(firClass)
         supertypeResolver.withClass(firClass) {
-            doResolveWithoutLock(firClass)
             action()
         }
     }
@@ -113,7 +113,11 @@ private class LLFirSuperTypeTargetResolver(
                     // to avoid [ConcurrentModificationException] during another thread publication
                     ArrayList(target.superTypeRefs)
                 },
-                resolver = { supertypeResolver.resolveSpecificClassLikeSupertypes(target, it) },
+                resolver = {
+                    supertypeResolver.withClass(target) {
+                        supertypeResolver.resolveSpecificClassLikeSupertypes(target, it)
+                    }
+                },
                 superTypeUpdater = {
                     target.replaceSuperTypeRefs(it)
                     resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, resolveTargetScopeSession)

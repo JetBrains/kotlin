@@ -423,9 +423,9 @@ open class FirSupertypeResolverVisitor(
         declaration.acceptChildren(this, data)
     }
 
-    inline fun <T> withClass(firClass: FirClass, body: () -> T) {
+    inline fun <T> withClass(firClass: FirClass, body: () -> T): T {
         @OptIn(PrivateForInline::class)
-        withClassDeclarationCleanup(classDeclarationsStack, firClass) {
+        return withClassDeclarationCleanup(classDeclarationsStack, firClass) {
             body()
         }
     }
