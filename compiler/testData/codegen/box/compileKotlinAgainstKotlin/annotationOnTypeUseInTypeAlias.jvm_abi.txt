@@ -1,18 +1,3 @@
-MODULE lib
-	CLASS AKt.class
-		PACKAGE METADATA
-			TYPE ALIAS MyCMaybeFoo
-				Property: class.metadata.typeAlias.underlyingType
-					K1
-						C<@Anno(value = "OK") MyMaybeFoo^>
-					K2
-						C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyMaybeFoo^ */>
-			TYPE ALIAS MyCMyFoo
-				Property: class.metadata.typeAlias.underlyingType
-					K1
-						C<@Anno(value = "OK") MyFoo^?>
-					K2
-						C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyFoo^? */>
 MODULE main
 	CLASS BKt.class
 		PACKAGE METADATA

@@ -1,9 +1,0 @@
-MODULE main
-	CLASS TypeAliasOnTypeAliasKt.class
-		PACKAGE METADATA
-			TYPE ALIAS OtherOtherA
-				Property: class.metadata.typeAlias.underlyingType
-					K1
-						OtherA^
-					K2
-						A /* = OtherA^ */
