@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.providers.SirSession
 
-internal interface SirFromKtSymbol<T: KtDeclarationSymbol> {
+internal interface SirFromKtSymbol<T : KtDeclarationSymbol> {
     val ktSymbol: T
     val ktModule: KtModule
     val sirSession: SirSession

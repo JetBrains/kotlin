@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.sir.util.updateImports
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.nio.file.Path
 
 public data class SwiftExportConfig(
@@ -132,8 +134,16 @@ public fun runSwiftExport(
         )
         DEFAULT_BRIDGE_MODULE_NAME
     }
-    val swiftModule = buildSwiftModule(input, config.distribution, bridgeModuleName)
+    val swiftModule = buildSwiftModule(
+        input,
+        config.distribution,
+        config.unsupportedTypeStrategy.toInternalType(),
+        config.unknownTypeStrategy.toInternalType(),
+    )
     val bridgeRequests = buildBridgeRequests(swiftModule)
+    bridgeRequests.ifNotEmpty {
+        swiftModule.updateImports(listOf(bridgeModuleName))
+    }
     swiftModule.dumpResultToFiles(
         bridgeRequests, output,
         stableDeclarationsOrder = stableDeclarationsOrder,

@@ -37,12 +37,12 @@ internal class SirFunctionFromKtSymbol(
     override val parameters: MutableList<SirParameter> by lazyWithSessions {
         mutableListOf<SirParameter>().apply {
             ktSymbol.valueParameters.mapTo(this) {
-                SirParameter(argumentName = it.name.asString(), type = it.returnType.translateType(analysisSession))
+                SirParameter(argumentName = it.name.asString(), type = translateParameterType(it))
             }
         }
     }
     override val returnType: SirType by lazyWithSessions {
-        this@SirFunctionFromKtSymbol.translateReturnType(analysisSession)
+        this@SirFunctionFromKtSymbol.translateReturnType()
     }
     override val documentation: String? by lazyWithSessions {
         ktSymbol.documentation()

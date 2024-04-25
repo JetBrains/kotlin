@@ -26,26 +26,8 @@ internal class StandaloneSirSession(
             sirSession = sirSession,
         )
     )
-    override val parentProvider = SirParentProviderImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
-    override val typeProvider = SirTypeProviderImpl(
-        unknownTypeStrategy = unknownTypeStrategy,
-        unsupportedTypeStrategy = unsupportedTypeStrategy,
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
-    override val visibilityChecker = SirVisibilityCheckerImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
-    override val childrenProvider = SirDeclarationChildrenProviderImpl(
-        ktAnalysisSession = ktAnalysisSession,
-        sirSession = sirSession,
-    )
     override val parentProvider = SirParentProviderImpl(sirSession)
-    override val typeProvider = SirTypeProviderImpl(sirSession)
+    override val typeProvider = SirTypeProviderImpl(unsupportedTypeStrategy, unknownTypeStrategy, sirSession)
     override val visibilityChecker = SirVisibilityCheckerImpl()
     override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
 }

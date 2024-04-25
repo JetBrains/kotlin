@@ -56,8 +56,8 @@ public interface SirSession :
 
     override fun KtModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
 
-    override fun translateType(request: SirTypeProvider.TranslationRequest): SirTypeProvider.TranslationResponse =
-        with(typeProvider) { translateType(request) }
+    override fun translateType(request: SirTypeProvider.TranslationRequest, ktAnalysisSession: KtAnalysisSession): SirTypeProvider.TranslationResponse =
+        with(typeProvider) { translateType(request, ktAnalysisSession) }
 
     override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
@@ -114,7 +114,7 @@ public interface SirChildrenProvider {
 
 public interface SirTypeProvider {
 
-    public fun translateType(request: TranslationRequest): TranslationResponse
+    public fun translateType(request: TranslationRequest, ktAnalysisSession: KtAnalysisSession): TranslationResponse
 
     // For now, this request contains only a type.
     // In the future, we will likely need more information to get a proper Swift type:

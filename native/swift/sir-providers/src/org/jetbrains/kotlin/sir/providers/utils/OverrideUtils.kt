@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.sir.*
  */
 public fun computeIsOverrideForDesignatedInit(parent: SirDeclarationParent, parameters: List<SirParameter>): Boolean {
     if (parent !is SirClass) return false
-    val superClass = (parent.superClass as? SirNominalType)?.type
-        ?: return false
-    require(superClass is SirClass)
+
     val overridesDesignatedInitFromSuper = superClass.declarations
         .filterIsInstance<SirInit>()
         .filter { it.initKind == SirInitializerKind.ORDINARY }

@@ -18,7 +18,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 context(SirSession, KtAnalysisSession)
 internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
     val typeRequest = SirTypeProvider.TranslationRequest(ktSymbol.returnType)
-    return when (val response = translateType(typeRequest)) {
+    return when (val response = translateType(typeRequest, analysisSession)) {
         is SirTypeProvider.TranslationResponse.Success -> {
             response.updateImportsAndReturnType(ktSymbol)
         }
@@ -32,7 +32,7 @@ internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): Si
 context(SirSession, KtAnalysisSession)
 internal fun <T : KtCallableSymbol> SirFromKtSymbol<T>.translateParameterType(valueParameter: KtValueParameterSymbol): SirType {
     val typeRequest = SirTypeProvider.TranslationRequest(valueParameter.returnType)
-    return when (val response = translateType(typeRequest)) {
+    return when (val response = translateType(typeRequest, analysisSession)) {
         is SirTypeProvider.TranslationResponse.Success -> {
             response.updateImportsAndReturnType(ktSymbol)
         }
