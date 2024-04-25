@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !RENDER_ALL_DIAGNOSTICS_FULL_TEXT
+// RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 
 inline fun inlineFun1(crossinline p: () -> Unit) {
     object {
