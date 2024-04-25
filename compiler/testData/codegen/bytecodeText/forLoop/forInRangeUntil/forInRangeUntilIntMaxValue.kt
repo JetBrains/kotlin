@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// OPT_IN: kotlin.ExperimentalStdlibApi
 // IGNORE_BACKEND: JVM
 
 // IMPORTANT!

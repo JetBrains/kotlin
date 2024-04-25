@@ -1,5 +1,5 @@
 // LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !OPT_IN: kotlin.internal.ContractsDsl
+// OPT_IN: kotlin.internal.ContractsDsl
 
 import kotlin.contracts.*
 

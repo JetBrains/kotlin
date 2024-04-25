@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // ISSUE: KT-43260
 
 import kotlin.contracts.ExperimentalContracts

@@ -26,7 +26,7 @@ public enum Z {
 
 // MODULE: box(lib)
 // LANGUAGE: +EnumEntries
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// OPT_IN: kotlin.ExperimentalStdlibApi
 // FILE: box.kt
 
 import kotlin.enums.enumEntries

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 
 @OptIn(ExperimentalStdlibApi::class)
 val list: List<String> = buildList {

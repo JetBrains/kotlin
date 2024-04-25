@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-38667
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 import kotlin.experimental.ExperimentalTypeInference

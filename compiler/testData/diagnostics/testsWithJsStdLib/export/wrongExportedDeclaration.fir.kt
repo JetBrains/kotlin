@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport
+// OPT_IN: kotlin.js.ExperimentalJsExport
 // !RENDER_DIAGNOSTICS_MESSAGES
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 

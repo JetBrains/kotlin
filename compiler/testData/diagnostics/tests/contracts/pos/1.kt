@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * ADDITION TO `KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)`

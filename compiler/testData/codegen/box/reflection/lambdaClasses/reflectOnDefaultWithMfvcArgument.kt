@@ -1,5 +1,5 @@
 // LAMBDAS: CLASS
-// !OPT_IN: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
+// OPT_IN: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 // TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
 // LANGUAGE: +ValueClasses

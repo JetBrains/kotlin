@@ -1,5 +1,5 @@
 // LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowReifiedGenericsInContracts
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE
 
 import kotlin.contracts.*

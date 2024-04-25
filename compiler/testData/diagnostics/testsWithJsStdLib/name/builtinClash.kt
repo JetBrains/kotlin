@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.js.ExperimentalJsExport
+// OPT_IN: kotlin.js.ExperimentalJsExport
 // FILE: f0.kt
 class C {
     class <!JS_BUILTIN_NAME_CLASH!>prototype<!>

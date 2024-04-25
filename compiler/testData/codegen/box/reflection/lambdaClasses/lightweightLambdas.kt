@@ -1,5 +1,5 @@
 // LANGUAGE: +LightweightLambdas
-// !OPT_IN: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
+// OPT_IN: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // WITH_REFLECT

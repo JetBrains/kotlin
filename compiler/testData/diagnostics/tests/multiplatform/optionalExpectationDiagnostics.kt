@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !OPT_IN: kotlin.ExperimentalMultiplatform
+// OPT_IN: kotlin.ExperimentalMultiplatform
 
 // MODULE: common
 // TARGET_PLATFORM: Common
