@@ -45,10 +45,10 @@ abstract class AbstractFirTreeBuilder {
     private fun createElement(name: String, propertyName: String, kind: Element.Kind, vararg dependencies: Element): Element =
         Element(name, propertyName, kind).also {
             if (dependencies.isEmpty()) {
-                it.elementParents.add(ElementRef(baseFirElement))
+                it.addParent(ElementRef(baseFirElement))
             }
             for (dependency in dependencies) {
-                it.elementParents.add(ElementRef(dependency))
+                it.addParent(ElementRef(dependency))
             }
             elements += it
         }

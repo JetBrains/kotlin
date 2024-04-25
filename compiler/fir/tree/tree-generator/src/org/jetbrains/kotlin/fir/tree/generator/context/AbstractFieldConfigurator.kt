@@ -45,15 +45,7 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
 
         @JvmName("parentArgs2")
         private fun parentArgs(parent: Element, arguments: List<Pair<NamedTypeParameterRef, TypeRef>>) {
-            val parentIndex = element.elementParents.indexOfFirst { it.element == parent }
-            require(parentIndex >= 0) {
-                "$parent is not parent of $element"
-            }
-            val parentRef = element.elementParents[parentIndex]
-            require(parentRef.args.isEmpty()) {
-                "Parent $parent of element $element already has type arguments: $parentRef"
-            }
-            element.elementParents[parentIndex] = parentRef.copy(arguments.toMap())
+            element.replaceParent(parent, parent.copy(arguments.toMap()))
         }
 
         fun needTransformOtherChildren() {
