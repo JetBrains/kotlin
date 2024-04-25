@@ -77,6 +77,7 @@ public class Usage {
         Argument argument = field.getAnnotation(Argument.class);
         if (argument == null) return;
 
+        if (ParseCommandLineArgumentsKt.isInternal(argument)) return;
         if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return;
 
         int startLength = sb.length();

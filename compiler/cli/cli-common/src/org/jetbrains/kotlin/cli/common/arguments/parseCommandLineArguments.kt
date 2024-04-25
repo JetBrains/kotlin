@@ -49,7 +49,14 @@ annotation class Argument(
 }
 
 val Argument.isAdvanced: Boolean
-    get() = value.startsWith(ADVANCED_ARGUMENT_PREFIX) && value.length > ADVANCED_ARGUMENT_PREFIX.length
+    get() = isSpecial(ADVANCED_ARGUMENT_PREFIX)
+
+val Argument.isInternal: Boolean
+    get() = isSpecial(INTERNAL_ARGUMENT_PREFIX)
+
+private fun Argument.isSpecial(prefix: String): Boolean {
+    return value.startsWith(prefix) && value.length > prefix.length
+}
 
 @OptIn(Argument.RawDelimiter::class)
 val Argument.resolvedDelimiter: String?
@@ -60,6 +67,7 @@ val Argument.resolvedDelimiter: String?
     }
 
 private const val ADVANCED_ARGUMENT_PREFIX = "-X"
+internal const val INTERNAL_ARGUMENT_PREFIX = "-XX"
 private const val FREE_ARGS_DELIMITER = "--"
 
 data class ArgumentParseErrors(
@@ -163,31 +171,30 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
-        if (arg.startsWith(InternalArgumentParser.INTERNAL_ARGUMENT_PREFIX)) {
-            val matchingParsers = InternalArgumentParser.PARSERS.filter { it.canParse(arg) }
-            assert(matchingParsers.size <= 1) { "Internal error: internal argument $arg can be ambiguously parsed by parsers ${matchingParsers.joinToString()}" }
-
-            val parser = matchingParsers.firstOrNull()
-
-            if (parser == null) {
-                errors.value.unknownExtraFlags += arg
-            } else {
-                val newInternalArgument = parser.parseInternalArgument(arg, errors.value) ?: continue
-                // Manual language feature setting overrides the previous value of the same feature setting, if it exists.
-                internalArguments.removeIf {
-                    (it as? ManualLanguageFeatureSetting)?.languageFeature ==
-                            (newInternalArgument as? ManualLanguageFeatureSetting)?.languageFeature
-                }
-                internalArguments.add(newInternalArgument)
-            }
-
-            continue
-        }
-
         val key = arg.substringBefore('=')
         val argumentField = properties[key]
         if (argumentField == null) {
             when {
+                // Unknown -XX argument
+                arg.startsWith(INTERNAL_ARGUMENT_PREFIX) -> {
+                    val matchingParsers = InternalArgumentParser.PARSERS.filter { it.canParse(arg) }
+                    assert(matchingParsers.size <= 1) { "Internal error: internal argument $arg can be ambiguously parsed by parsers ${matchingParsers.joinToString()}" }
+
+                    val parser = matchingParsers.firstOrNull()
+
+                    if (parser == null) {
+                        errors.value.unknownExtraFlags += arg
+                    } else {
+                        val newInternalArgument = parser.parseInternalArgument(arg, errors.value) ?: continue
+                        // Manual language feature setting overrides the previous value of the same feature setting, if it exists.
+                        internalArguments.removeIf {
+                            (it as? ManualLanguageFeatureSetting)?.languageFeature ==
+                                    (newInternalArgument as? ManualLanguageFeatureSetting)?.languageFeature
+                        }
+                        internalArguments.add(newInternalArgument)
+                    }
+                }
+                // Unknown -X argument
                 arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.value.unknownExtraFlags.add(arg)
                 arg.startsWith("-") -> errors.value.unknownArgs.add(arg)
                 else -> freeArgs.add(arg)

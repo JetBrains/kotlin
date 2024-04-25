@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.arguments.InternalArgumentParser.Companion.INTERNAL_ARGUMENT_PREFIX
 import org.jetbrains.kotlin.config.LanguageFeature
 
 /**
@@ -26,8 +25,6 @@ interface InternalArgumentParser<A : InternalArgument> {
     fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): A?
 
     companion object {
-        internal const val INTERNAL_ARGUMENT_PREFIX = "-XX"
-
         internal val PARSERS: List<InternalArgumentParser<*>> = listOf(
             LanguageSettingsParser()
         )
