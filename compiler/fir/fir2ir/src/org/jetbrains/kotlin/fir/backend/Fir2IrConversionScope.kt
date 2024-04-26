@@ -250,4 +250,19 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
         return@any clazz.typeParameters.any { it.symbol === typeParameterSymbol }
     }
+
+    @PublishedApi
+    @PrivateForInline
+    internal val _initBlocksStack = mutableListOf<IrAnonymousInitializer>()
+    internal val initBlocksStack: List<IrAnonymousInitializer>
+        get() = _initBlocksStack
+
+    inline fun <T> withInitBlock(initializer: IrAnonymousInitializer, f: () -> T): T {
+        _initBlocksStack += initializer
+        try {
+            return f()
+        } finally {
+            _initBlocksStack.removeAt(_initBlocksStack.size - 1)
+        }
+    }
 }
