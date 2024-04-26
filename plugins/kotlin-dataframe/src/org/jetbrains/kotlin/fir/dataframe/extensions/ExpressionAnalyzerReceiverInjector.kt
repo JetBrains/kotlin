@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.fir.dataframe.extensions
 
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
+import org.jetbrains.kotlin.fir.dataframe.api.CreateDataFrameConfiguration
+import org.jetbrains.kotlin.fir.dataframe.api.TraverseConfiguration
 import org.jetbrains.kotlin.fir.dataframe.api.toDataFrame
 import org.jetbrains.kotlin.fir.dataframe.interpret
 import org.jetbrains.kotlin.fir.dataframe.interpreterName
 import org.jetbrains.kotlin.fir.dataframe.load
+import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -48,6 +52,26 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
 
     val dataFrameSchema: PluginDataFrameSchema = call.interpreterName(session)?.let {
         when (it) {
+            "toDataFrameDsl" -> {
+                val list = call.argumentList as FirResolvedArgumentList
+                val lambda = (list.arguments.singleOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
+                val statements = lambda?.body?.statements
+                if (statements != null) {
+                    val receiver = CreateDataFrameConfiguration()
+                    statements.filterIsInstance<FirFunctionCall>().forEach { call ->
+                        val schemaProcessor = call.loadInterpreter() ?: return@forEach
+                        interpret(
+                            call,
+                            schemaProcessor,
+                            mapOf("dsl" to Interpreter.Success(receiver)),
+                            reporter
+                        )
+                    }
+                    toDataFrame(receiver.maxDepth, call, receiver.traverseConfiguration)
+                } else {
+                    PluginDataFrameSchema(emptyList())
+                }
+            }
             "toDataFrame" -> {
                 val list = call.argumentList as FirResolvedArgumentList
                 val argument = list.mapping.entries.firstOrNull { it.value.name == Name.identifier("maxDepth") }?.key
@@ -56,11 +80,11 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
                     is FirLiteralExpression<*> -> (argument.value as Number).toInt()
                     else -> TODO(argument::class.toString())
                 }
-                toDataFrame(maxDepth, call)
+                toDataFrame(maxDepth, call, TraverseConfiguration())
             }
             "toDataFrameDefault" -> {
                 val maxDepth = 0
-                toDataFrame(maxDepth, call)
+                toDataFrame(maxDepth, call, TraverseConfiguration())
             }
             else -> it.load<Interpreter<*>>().let { processor ->
                 val dataFrameSchema = interpret(call, processor, reporter = reporter)

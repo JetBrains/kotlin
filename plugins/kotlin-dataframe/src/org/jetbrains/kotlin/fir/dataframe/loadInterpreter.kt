@@ -7,6 +7,11 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names.INTERPRETABLE_FQNAME
+import org.jetbrains.kotlin.fir.dataframe.api.Exclude0
+import org.jetbrains.kotlin.fir.dataframe.api.Exclude1
+import org.jetbrains.kotlin.fir.dataframe.api.Preserve0
+import org.jetbrains.kotlin.fir.dataframe.api.Preserve1
+import org.jetbrains.kotlin.fir.dataframe.api.Properties0
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -104,6 +109,11 @@ internal inline fun <reified T> String.load(): T {
         "Into0" -> Into0()
         "Ungroup0" -> Ungroup0()
         "DropNulls0" -> DropNulls0()
+        "Properties0" -> Properties0()
+        "Preserve0" -> Preserve0()
+        "Preserve1" -> Preserve1()
+        "Exclude0" -> Exclude0()
+        "Exclude1" -> Exclude1()
         else -> error("$this")
     } as T
 }
