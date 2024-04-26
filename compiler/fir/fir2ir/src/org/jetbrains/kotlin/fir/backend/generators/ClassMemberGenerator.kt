@@ -126,7 +126,7 @@ internal class ClassMemberGenerator(
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
-            if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect) {
+            if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect && !irFunction.isExternal) {
                 val body = factory.createBlockBody(startOffset, endOffset)
                 val delegatedConstructor = firFunction.delegatedConstructor
                 val irClass = parent as IrClass
