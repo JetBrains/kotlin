@@ -59,24 +59,151 @@ class MetadataCompatibilityDebugForK2Test {
     }
 
 
-    val location = "/Users/Andrei.Tyrin/IdeaProjects/_jb/kotlinx-datetime/core"
+
 
     @Test
-    fun testK2diffClassFolder() {
-        fun path(ver: String) = "$location/build$ver/classes/kotlin"
-        assertClassesFoldersEqual(
-            k1ClassedFolderPath = path("19"),
-            k2ClassedFolderPath = path("20"),
-        )
-        fun jsPath(ver: String) = File("$location/build$ver/libs/").listFiles()?.filter { it.extension == "klib" }
-        val klibs19 = jsPath("19")
-        val klibs20 = jsPath("20")
-        if(!klibs19.isNullOrEmpty() && !klibs20.isNullOrEmpty()) {
-            assertLibrariesAreEqual(
-                k1LibraryFiles = klibs19,
-                k2LibraryFiles = klibs20
-            )
+    fun flysto() {
+        val dirs = File(location).listFiles()
+        dirs?.forEach {
+            val buildDir = it.listFiles().filter { it.name == "build19" }.firstOrNull()
+            if (buildDir == null) {
+                val newDirs = it.listFiles()
+                newDirs?.forEach { new ->
+                    println("Working on nested $new")
+                    val newBuildDir = new.listFiles()?.filter { it.name == "build19" }?.firstOrNull()
+                    if (newBuildDir != null) {
+                        println("it has build dir")
+                        fun jsPath(ver: String) = File("$new/build$ver/libs/").listFiles()
+                            ?.filter { it.extension == "klib" }
+                            ?.filterNot { it.name.contains("wasm") }
+
+                        val klibs19 = jsPath("19")
+                        val klibs20 = jsPath("20")
+                        if (!klibs19.isNullOrEmpty() && !klibs20.isNullOrEmpty()) {
+                            assertLibrariesAreEqual(
+                                k1LibraryFiles = klibs19,
+                                k2LibraryFiles = klibs20
+                            )
+                        }
+                    }
+                }
+            } else {
+                println("Working on $buildDir")
+                if (it.name !in arrayOf(
+//                        "log-details",
+                        "aircraft",
+//                        "admin",
+//                        "browser",
+//                        "components",
+//                        "common",
+//                        "action", "table", "commands", "columns", "fleet-insights",
+//                        "log-core",
+                    )
+                ) return@forEach
+
+                fun jsPath(ver: String) = File("$it/build$ver/libs/").listFiles()
+                    ?.filter { it.extension == "klib" }
+                    ?.filterNot { it.name.contains("wasm") }
+
+                val klibs19 = jsPath("19")
+                val klibs20 = jsPath("20")
+                if (!klibs19.isNullOrEmpty() && !klibs20.isNullOrEmpty()) {
+                    assertLibrariesAreEqual(
+                        k1LibraryFiles = klibs19,
+                        k2LibraryFiles = klibs20
+                    )
+                }
+            }
         }
+    }
+
+
+    @Test
+    fun ktor_prep() {
+//        val ktorLocation = "/Users/Andrei.Tyrin/IdeaProjects/_jb/ktor"
+//        val ktorLocation = "/Users/Andrei.Tyrin/IdeaProjects/_jb/ktor/ktor-client"
+        val ktorLocation = "/Users/Andrei.Tyrin/IdeaProjects/_jb/ktor/ktor-client/ktor-client-plugins"
+        val suffix = "19"
+        val dirs = File(ktorLocation).listFiles().filter { it.name.startsWith("ktor-") }
+        for (it in dirs) {
+            val buildDir = it.listFiles().filter { it.name == "build" }.firstOrNull()
+            if (buildDir != null) {
+                buildDir.renameTo(File(buildDir.absolutePath + suffix))
+                continue
+            }
+
+            val newDirs = it.listFiles().filter { it.name.startsWith("ktor-") }
+            for (new in newDirs) {
+                println("Working on nested $new")
+                val newstedBuildDir = it.listFiles().filter { it.name == "build" }.firstOrNull()
+                if (newstedBuildDir != null) {
+                    newstedBuildDir.renameTo(File(newstedBuildDir.absolutePath + suffix))
+                    continue
+                }
+            }
+        }
+    }
+
+    @Test
+    fun ktor_compare() {
+//        val ktorLocation = "/Users/Andrei.Tyrin/IdeaProjects/_jb/ktor"
+//        val ktorLocation = "/Users/Andrei.Tyrin/IdeaProjects/_jb/ktor/ktor-client"
+        val ktorLocation = "/Users/Andrei.Tyrin/IdeaProjects/_jb/ktor/ktor-client/ktor-client-plugins"
+        val suffix = "20"
+        val modulesToSkip = setOf(
+            "ktor-network",
+            "ktor-utils",
+            "ktor-io",
+            "ktor-client-core",
+            "ktor-client-tests",
+        )
+        val dirs = File(ktorLocation).listFiles().filter { it.name.startsWith("ktor-") }
+        for (it in dirs) {
+            println("Working on $it")
+            if(it.name in modulesToSkip) continue
+            val buildDir = it.listFiles().filter { it.name == "build$suffix" }.firstOrNull()
+            if (buildDir != null) {
+                println("Working on build $it")
+                testByLocation(it.absolutePath)
+                continue
+            }
+
+            val newDirs = it.listFiles().filter { it.name.startsWith("ktor-") }
+            for (new in newDirs) {
+                println("Working on build nested $new")
+                val newstedBuildDir = it.listFiles().filter { it.name == "build$suffix" }.firstOrNull()
+                if (newstedBuildDir != null) {
+                    testByLocation(newstedBuildDir.absolutePath)
+                    continue
+                }
+            }
+        }
+    }
+
+    val location = "/Users/Andrei.Tyrin/IdeaProjects/_jb/space/app/app-web"
+    @Test
+    fun testK2diffClassFolder() {
+        testByLocation(location)
+    }
+}
+
+private fun testByLocation(location: String){
+    fun path(ver: String) = "$location/build$ver/classes/kotlin"
+    assertClassesFoldersEqual(
+        k1ClassedFolderPath = path("19"),
+        k2ClassedFolderPath = path("20"),
+    )
+    fun jsPath(ver: String) = File("$location/build$ver/libs/").listFiles()
+        ?.filter { it.extension == "klib" }
+        ?.filterNot { it.name.contains("wasm") }
+
+    val klibs19 = jsPath("19")
+    val klibs20 = jsPath("20")
+    if (!klibs19.isNullOrEmpty() && !klibs20.isNullOrEmpty()) {
+        assertLibrariesAreEqual(
+            k1LibraryFiles = klibs19,
+            k2LibraryFiles = klibs20
+        )
     }
 }
 
@@ -99,7 +226,7 @@ private fun assertClassesFoldersEqual(
 }
 
 private fun String.toKlibMap() = File(this).listFiles()!!
-    .filter { it.name !in setOf("jvm", "commonizer", "wasmJs","wasmWasi", "native", "metadata", "js", "jsIr") }
+    .filter { it.name !in setOf("jvm", "commonizer", "wasmJs", "wasmWasi", "native", "metadata", "js", "jsIr") }
     .associate { Pair(it.name, File(it.absolutePath + "/main/klib").listFiles()!!.first()) }
 
 private fun findLibraries(baseDir: File): Pair<List<File>, List<File>> {
@@ -134,6 +261,7 @@ private fun assertLibrariesAreEqual(
     k1LibraryFiles: List<File>,
     k2LibraryFiles: List<File>,
 ) {
+    println("compare: $k1LibraryFiles and $k2LibraryFiles")
     val k1LibraryPaths = k1LibraryFiles.map { it.canonicalPath }
     val k2LibraryPaths = k2LibraryFiles.map { it.canonicalPath }
 
@@ -255,6 +383,11 @@ private class MismatchesFilter(
                     /* see KT-65631 */ it.isDifferentStateOfIsNotDefaultAndIsInlineFlagsOfInlinePropertyInConstructor() -> false
                     /* see KT-65575 */ it.isDifferentStateOfIsNotDefaultAndIsExternalFlagsOfExternalMemberProperty() -> false
                     it.isSpecialKotlinNativeAnnotationRecordedAsTypeAlias() -> false
+//                    it.isSerializerMissHasAnnotation() -> false
+//                    it.isMissedDeclaresDefaultValue() -> false
+//                    it.isMissedParameterName() -> false
+//                    it.isMissedDeprecated() -> false
+//                    it.isMissedGetterAnnotationJsExportIgnore() -> false
                     else -> true
                 }
             }
@@ -273,7 +406,8 @@ private class MismatchesFilter(
                     else -> true
                 }
             }
-            /* TODO: KT-65588 (scheduled to 2.0.0-Beta5) */.dropPairedFunctionsWithDifferentlyRecordedPrimitiveArraysInVarargParameterPositionInK1AndK2()
+            /* TODO: KT-65588 (scheduled to 2.0.0-Beta5) */
+            .dropPairedFunctionsWithDifferentlyRecordedPrimitiveArraysInVarargParameterPositionInK1AndK2()
     }
 
     /* --- MISMATCHES THAT ARE OK --- */
@@ -284,6 +418,36 @@ private class MismatchesFilter(
                 && kind == EntityKind.Class
                 && missingInB
                 && (existentValue as KmClass).kind == ClassKind.ENUM_ENTRY
+
+
+    private fun Mismatch.isSerializerMissHasAnnotation(): Boolean =
+        this is Mismatch.DifferentValues
+                && kind == EntityKind.FlagKind.GETTER
+                && name == "hasAnnotations"
+                && valueA == true && valueB == false
+
+    private fun Mismatch.isMissedDeclaresDefaultValue(): Boolean =
+        this is Mismatch.DifferentValues
+                && kind == EntityKind.FlagKind.REGULAR
+                && name == "declaresDefaultValue"
+                && valueA == true && valueB == false
+
+    private fun Mismatch.isMissedParameterName(): Boolean =
+        this is Mismatch.MissingEntity
+                && kind == EntityKind.AnnotationKind.REGULAR
+                && name == "kotlin/ParameterName"
+
+    private fun Mismatch.isMissedDeprecated(): Boolean =
+        this is Mismatch.MissingEntity
+                && kind == EntityKind.AnnotationKind.REGULAR
+                && name == "kotlin/Deprecated"
+                && missingInA == true
+
+    private fun Mismatch.isMissedGetterAnnotationJsExportIgnore(): Boolean =
+        this is Mismatch.MissingEntity
+                && kind == EntityKind.AnnotationKind.GETTER
+                && name == "kotlin/js/JsExport.Ignore"
+                && missingInB == true
 
     // That's OK. Types in underlying type of TA are written short-circuited. No harm at all.
     private fun Mismatch.isShortCircuitedTypeRecordedInK2TypeAliasUnderlyingType(): Boolean {
@@ -404,6 +568,13 @@ private class MismatchesFilter(
                 is PathElement.Class -> {
                     val annotationsInK1 = lastPathElement.clazzA.annotations
                     val annotationsInK2 = lastPathElement.clazzB.annotations
+
+                    annotationsInK1.isNotEmpty() to annotationsInK2.isNotEmpty()
+                }
+
+                is PathElement.Constructor -> {
+                    val annotationsInK1 = lastPathElement.constructorA.annotations
+                    val annotationsInK2 = lastPathElement.constructorB.annotations
 
                     annotationsInK1.isNotEmpty() to annotationsInK2.isNotEmpty()
                 }
@@ -658,6 +829,7 @@ private class MismatchesFilter(
                 is PathElement.Property -> lastPathElement.propertyA.annotations to lastPathElement.propertyB.annotations
                 is PathElement.Class -> lastPathElement.clazzA.annotations to lastPathElement.clazzB.annotations
                 is PathElement.Type -> lastPathElement.typeA.annotations to lastPathElement.typeB.annotations
+                is PathElement.Constructor -> lastPathElement.constructorA.annotations to lastPathElement.constructorB.annotations
                 else -> error("Not yet supported: ${lastPathElement::class.java}")
             }
 
