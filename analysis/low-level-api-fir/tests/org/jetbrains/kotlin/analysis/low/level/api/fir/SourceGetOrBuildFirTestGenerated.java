@@ -1088,6 +1088,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public void testSecondaryConstructor() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/secondaryConstructor.kt");
     }
+
+    @Test
+    @TestMetadata("setterWithoutBodyValueParameterType.kt")
+    public void testSetterWithoutBodyValueParameterType() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/setterWithoutBodyValueParameterType.kt");
+    }
   }
 
   @Nested

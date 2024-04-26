@@ -1,0 +1,12 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/CharSequence|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] setterWithoutBodyValueParameterType.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var prop: R|kotlin/String| = String()
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/CharSequence|): R|kotlin/Unit|

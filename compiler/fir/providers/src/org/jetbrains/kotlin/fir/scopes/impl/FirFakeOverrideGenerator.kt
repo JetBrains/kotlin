@@ -513,6 +513,7 @@ object FirFakeOverrideGenerator {
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
+            parameterSource = valueParameters.first().source
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }

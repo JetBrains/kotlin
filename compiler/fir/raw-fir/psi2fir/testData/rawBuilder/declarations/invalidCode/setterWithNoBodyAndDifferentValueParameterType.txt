@@ -1,0 +1,4 @@
+FILE: setterWithNoBodyAndDifferentValueParameterType.kt
+    public? final? var prop: String = String()
+        public? get(): String
+        public? set(value: CharSequence): R|kotlin/Unit|

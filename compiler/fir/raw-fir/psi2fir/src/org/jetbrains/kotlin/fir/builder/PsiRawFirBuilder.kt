@@ -548,6 +548,8 @@ open class PsiRawFirBuilder(
                     // Default getter for val/var properties, and default setter for var properties.
                     val propertySource =
                         this?.toFirSourceElement() ?: property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor)
+                    val valueParameter = this?.valueParameters?.firstOrNull()
+
                     FirDefaultPropertyAccessor
                         .createGetterOrSetter(
                             propertySource,
@@ -557,7 +559,8 @@ open class PsiRawFirBuilder(
                             accessorVisibility,
                             propertySymbol,
                             isGetter,
-                            parameterAnnotations = parameterAnnotationsFromProperty
+                            parameterAnnotations = parameterAnnotationsFromProperty,
+                            parameterSource = valueParameter?.toKtPsiSourceElement(),
                         )
                         .also {
                             if (this != null) {
@@ -566,6 +569,10 @@ open class PsiRawFirBuilder(
                             it.replaceAnnotations(it.annotations.smartPlus(accessorAnnotationsFromProperty))
                             it.status = status
                             it.initContainingClassAttr()
+
+                            valueParameter?.typeReference?.toFirType()?.let { type ->
+                                it.valueParameters.firstOrNull()?.replaceReturnTypeRef(type)
+                            }
                         }
                 }
                 else -> {

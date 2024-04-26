@@ -1587,12 +1587,14 @@ class LightTreeRawFirDeclarationBuilder(
                     propertyTypeRefToUse,
                     accessorVisibility,
                     propertySymbol,
-                    isGetter
+                    isGetter,
+                    parameterSource = firValueParameters.source,
                 )
                 .also { accessor ->
                     accessor.replaceAnnotations(accessorAnnotations + accessorAdditionalAnnotations)
                     accessor.status = status
                     accessor.initContainingClassAttr()
+                    accessor.valueParameters.firstOrNull()?.replaceReturnTypeRef(firValueParameters.returnTypeRef)
                 }
         }
         val target = FirFunctionTarget(labelName = null, isLambda = false)
