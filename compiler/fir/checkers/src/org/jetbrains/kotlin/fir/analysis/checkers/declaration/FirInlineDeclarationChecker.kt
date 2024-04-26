@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -171,7 +172,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 if (valueParameterOfOriginalInlineFunction != null) {
                     val factory = when {
                         calledFunctionSymbol.isInline -> when {
-                            valueParameter.isNoinline || !valueParameter.returnTypeRef.coneType.isSomeFunctionType(context.session) -> {
+                            !valueParameter.isInlinable(context.session) -> {
                                 FirErrors.USAGE_IS_NOT_INLINABLE
                             }
                             !valueParameterOfOriginalInlineFunction.isCrossinline &&
@@ -387,7 +388,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         reporter: DiagnosticReporter
     ) {
         for (param in function.valueParameters) {
-            val coneType = param.returnTypeRef.coneType
+            val coneType = param.returnTypeRef.coneType.fullyExpandedType(context.session)
             val functionKind = coneType.functionTypeKind(context.session)
             val isFunctionalType = functionKind != null
             val isSuspendFunctionType = functionKind?.isSuspendOrKSuspendFunction == true
@@ -453,12 +454,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         if (function.isExpect || function.isSuspend) return
         if (function.typeParameters.any { it.symbol.isReified }) return
         val session = context.session
-        val hasInlinableParameters =
-            function.valueParameters.any { param ->
-                val type = param.returnTypeRef.coneType
-                !param.isNoinline && !type.isNullable
-                        && type.isNonKFunctionType(session)
-            }
+        val hasInlinableParameters = function.valueParameters.any { it.isInlinable(context.session) }
         if (hasInlinableParameters) return
         if (function.isInlineOnly(session)) return
         if (function.returnTypeRef.needsMultiFieldValueClassFlattening(session)) return
@@ -560,12 +556,14 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     }
 }
 
+private fun FirValueParameter.isInlinable(session: FirSession): Boolean {
+    if (isNoinline) return false
+    val fullyExpandedType = returnTypeRef.coneType.fullyExpandedType(session)
+    return fullyExpandedType.isNonKFunctionType(session) && !fullyExpandedType.isNullable
+}
+
 fun createInlineFunctionBodyContext(function: FirFunction, session: FirSession): FirInlineDeclarationChecker.InlineFunctionBodyContext {
-    val inlineableParameters = function.valueParameters.filter {
-        if (it.isNoinline) return@filter false
-        val type = it.returnTypeRef.coneType
-        !type.isMarkedNullable && type.isNonReflectFunctionType(session)
-    }.map { it.symbol }
+    val inlineableParameters = function.valueParameters.mapNotNull { p -> p.takeIf { it.isInlinable(session) }?.symbol }
 
     return FirInlineDeclarationChecker.InlineFunctionBodyContext(
         function,
