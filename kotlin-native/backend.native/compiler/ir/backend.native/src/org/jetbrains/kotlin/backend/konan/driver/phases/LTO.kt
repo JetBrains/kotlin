@@ -71,21 +71,18 @@ internal data class BackendInlinerInput(
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
-        val inlineBoxUnbox: Boolean,
+        val options: BackendInlinerOptions,
 ) : KotlinBackendIrHolder {
     override val kotlinIr: IrElement
         get() = irModule
 }
 
-internal data class BackendInlinerOutput(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite>)
-
-internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerationState, BackendInlinerInput, BackendInlinerOutput>(
+internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerationState, BackendInlinerInput>(
         name = "BackendInliner",
         description = "Backend inliner",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
-        outputIfNotEnabled = { _, _, _, _ -> BackendInlinerOutput(emptyMap()) },
-        op = { generationState, (irModule, moduleDFG, devirtualizationAnalysisResult) ->
+        op = { generationState, (irModule, moduleDFG, devirtualizationAnalysisResult, options) ->
             val context = generationState.context
             val callGraph = CallGraphBuilder(
                     context,
@@ -95,9 +92,7 @@ internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     devirtualizedCallSitesUnfoldFactor = 0,
                     nonDevirtualizedCallSitesUnfoldFactor = 0,
             ).build()
-            BackendInlinerOutput(
-                    BackendInliner(generationState, moduleDFG, devirtualizationAnalysisResult.devirtualizedCallSites, callGraph).run()
-            )
+            BackendInliner(generationState, moduleDFG, devirtualizationAnalysisResult.devirtualizedCallSites, callGraph, options).run()
         }
 )
 

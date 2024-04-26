@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isArray
@@ -42,11 +43,14 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
+internal class BackendInlinerOptions(val inlineBoxUnbox: Boolean)
+
 internal class BackendInliner(
         val generationState: NativeGenerationState,
         val moduleDFG: ModuleDFG,
-        val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
+        val devirtualizedCallSites: MutableMap<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite>,
         val callGraph: CallGraph,
+        val options: BackendInlinerOptions,
 ) {
     private val context = generationState.context
     private val symbols = context.ir.symbols
@@ -57,8 +61,7 @@ internal class BackendInliner(
 
     private val rootSet = callGraph.rootSet
 
-    fun run(): Map<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite> {
-        val rebuiltDevirtualizedCallSites = mutableMapOf<DataFlowIR.Node.VirtualCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
+    fun run() {
         val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
         val stack = rootSet.toMutableList()
         for (root in stack)
@@ -134,7 +137,7 @@ internal class BackendInliner(
 //                        println("        $isALoop $calleeSize")
                         val threshold = if (calleeIrFunction is IrSimpleFunction) 33 else 33
                         if (!isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
-                                //&& calleeIrFunction is IrSimpleFunction // TODO: Support constructors.
+                                && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION || options.inlineBoxUnbox)
                                 && !calleeIrFunction.hasAnnotation(noInline)
                                 && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
                                 && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
@@ -160,11 +163,11 @@ internal class BackendInliner(
 
                     if (functionsToInline.isEmpty()) {
 //                        println("Nothing to inline to ${irFunction.render()}")
-                        function.body.forEachVirtualCall { node ->
-                            val devirtualizedCallSite = devirtualizedCallSites[node]
-                            if (devirtualizedCallSite != null)
-                                rebuiltDevirtualizedCallSites[node] = devirtualizedCallSite
-                        }
+//                        function.body.forEachVirtualCall { node ->
+//                            val devirtualizedCallSite = devirtualizedCallSites[node]
+//                            if (devirtualizedCallSite != null)
+//                                rebuiltDevirtualizedCallSites[node] = devirtualizedCallSite
+//                        }
                     } else {
 
                         /*
@@ -258,8 +261,10 @@ internal class BackendInliner(
                         val devirtualizedCallSitesFromFunction = mutableMapOf<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
                         function.body.forEachVirtualCall { node ->
                             val devirtualizedCallSite = devirtualizedCallSites[node]
-                            if (devirtualizedCallSite != null)
+                            if (devirtualizedCallSite != null) {
                                 devirtualizedCallSitesFromFunction[node.irCallSite!!] = devirtualizedCallSite
+                                devirtualizedCallSites.remove(node)
+                            }
                         }
 
                         val rebuiltFunction = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(irFunction, irBody)
@@ -269,7 +274,7 @@ internal class BackendInliner(
                             val devirtualizedCallSite = devirtualizedCallSitesFromInlinedFunctions[irCallSite]
                                     ?: devirtualizedCallSitesFromFunction[irCallSite]
                             if (devirtualizedCallSite != null)
-                                rebuiltDevirtualizedCallSites[node] = devirtualizedCallSite
+                                devirtualizedCallSites[node] = devirtualizedCallSite
                         }
 
                         /*
@@ -313,8 +318,6 @@ internal class BackendInliner(
                 }
             }
         }
-
-        return rebuiltDevirtualizedCallSites
     }
 
     private enum class ComputationState {

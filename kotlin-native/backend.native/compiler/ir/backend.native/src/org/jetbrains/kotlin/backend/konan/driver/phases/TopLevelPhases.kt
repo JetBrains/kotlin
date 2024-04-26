@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.optimizations.BackendInlinerOptions
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -426,14 +427,10 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         // depends on redundantCoercionsCleaningPhase
         runPhase(UnboxInlinePhase, it, disable = !optimize || enableBackendInliner)
     }
-    val backendInlinerOutput = runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, devirtualizationAnalysisResults, inlineBoxUnbox = true),
+    runPhase(BackendInlinerPhase,
+            BackendInlinerInput(module, moduleDFG, devirtualizationAnalysisResults, BackendInlinerOptions(inlineBoxUnbox = true)),
             disable = !optimize || !enableBackendInliner) // TODO: Can inline box/unbox.
-    val rebuiltDevirtualizationAnalysisResults = DevirtualizationAnalysis.AnalysisResult(
-            devirtualizedCallSites = backendInlinerOutput.devirtualizedCallSites.takeIf { it.isNotEmpty() }?.toMutableMap()
-                    ?: devirtualizationAnalysisResults.devirtualizedCallSites,
-            devirtualizationAnalysisResults.typeHierarchy,
-    )
-    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, rebuiltDevirtualizationAnalysisResults), disable = true)//!optimize) TODO
+    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = true)//!optimize) TODO
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
     }
@@ -442,7 +439,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runPhase(CreateLLVMDeclarationsPhase, module)
     runPhase(GHAPhase, module, disable = !optimize)
     runPhase(RTTIPhase, RTTIInput(module, dceResult))
-    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, rebuiltDevirtualizationAnalysisResults), disable = !optimize)
+    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     runPhase(CodegenPhase, CodegenInput(module, lifetimes))
 }
 
