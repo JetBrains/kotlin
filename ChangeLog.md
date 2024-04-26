@@ -1,3 +1,166 @@
+## 2.0.0-RC2
+
+### Backend. Wasm
+
+- [`KT-66515`](https://youtrack.jetbrains.com/issue/KT-66515) Wasm: "call param types must match" during the build
+- [`KT-67435`](https://youtrack.jetbrains.com/issue/KT-67435) K/Wasm: import.meta.url transforming into absolute local path in webpack
+- [`KT-66905`](https://youtrack.jetbrains.com/issue/KT-66905) K/Wasm: support new version of exception handling proposal
+
+### Compiler
+
+#### New Features
+
+- [`KT-59688`](https://youtrack.jetbrains.com/issue/KT-59688) K2: consider removing smartcasts only from the only visibile property with specific name, not from all of them
+
+#### Performance Improvements
+
+- [`KT-67388`](https://youtrack.jetbrains.com/issue/KT-67388) FP intellij: performance degradation in build 611
+- [`KT-67507`](https://youtrack.jetbrains.com/issue/KT-67507) K2: Slow compilation times when a class has a lot of possibly conflicting declarations
+
+#### Fixes
+
+- [`KT-57678`](https://youtrack.jetbrains.com/issue/KT-57678) K2: Inconsistency in how K2 analyzes unresolved code for loops and changing closures
+- [`KT-66976`](https://youtrack.jetbrains.com/issue/KT-66976) Some value class diagnostics are missed
+- [`KT-54920`](https://youtrack.jetbrains.com/issue/KT-54920) K2: `when` with a single branch stops being exhaustive the second time it's done
+- [`KT-67307`](https://youtrack.jetbrains.com/issue/KT-67307) K2: "Cannot find cached type parameter by FIR symbol" in JpaRepository.saveAll
+- [`KT-65771`](https://youtrack.jetbrains.com/issue/KT-65771) K2: "IndexOutOfBoundsException: Cannot pop operand off an empty stack" when calling method imported using typealias as callable qualifier
+- [`KT-67502`](https://youtrack.jetbrains.com/issue/KT-67502) K2: "property must be initialized or be abstract" with try-finally in secondary constructor
+- [`KT-67456`](https://youtrack.jetbrains.com/issue/KT-67456) K2: "property must be initialized or be abstract" depending on constructor declaration order
+- [`KT-67628`](https://youtrack.jetbrains.com/issue/KT-67628) K2: "IllegalArgumentException: Expected nullable type" — alias of nullable type analyzed as non-nullable in type parameter
+- [`KT-67625`](https://youtrack.jetbrains.com/issue/KT-67625) K2: Array aliases can't be used as vararg values
+- [`KT-67624`](https://youtrack.jetbrains.com/issue/KT-67624) K2: False negative "The feature "break continue in inline lambdas" is experimental and should be enabled explicitly" in elvis operator
+- [`KT-60271`](https://youtrack.jetbrains.com/issue/KT-60271) K2: origins are not set on compare operators
+- [`KT-44557`](https://youtrack.jetbrains.com/issue/KT-44557) Implement main function detection to FIR
+- [`KT-67593`](https://youtrack.jetbrains.com/issue/KT-67593) K2: false negative SUPER_CALL_WITH_DEFAULT_PARAMETERS
+- [`KT-67484`](https://youtrack.jetbrains.com/issue/KT-67484) K2: FIR2IR generates incorrect access to f/o of lateinit internal var
+- [`KT-67486`](https://youtrack.jetbrains.com/issue/KT-67486) K2: Calling method from a Java (implementing a Kotlin class) with named parameters is no longer possible if Java method has different parameter names
+- [`KT-47382`](https://youtrack.jetbrains.com/issue/KT-47382) JVM / IR: "AssertionError: Unbound private symbol IrFieldSymbolImpl" caused by string template in constructor and extension property
+- [`KT-67581`](https://youtrack.jetbrains.com/issue/KT-67581) K2: Compiler fails on actualizing abstract class with sealed Java class via type alias
+- [`KT-67014`](https://youtrack.jetbrains.com/issue/KT-67014) K1/K2 handle when expression as annotation target differently
+- [`KT-67254`](https://youtrack.jetbrains.com/issue/KT-67254) K1/K2 both allow annotations on loops, assignments, array sets
+- [`KT-67224`](https://youtrack.jetbrains.com/issue/KT-67224) K2/Native: Member overrides different '`@Throws`' filter from separate module
+- [`KT-66960`](https://youtrack.jetbrains.com/issue/KT-66960) K2. KMP. False negative ` 'when' expression must be exhaustive` without sealed class inheritor from common source-set
+- [`KT-63466`](https://youtrack.jetbrains.com/issue/KT-63466) `@NonNull` on a type-variable usage doesn't take precedence over a wildcard type argument
+- [`KT-56134`](https://youtrack.jetbrains.com/issue/KT-56134) K2: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER diagnostic is reported for the wrong symbol
+- [`KT-59872`](https://youtrack.jetbrains.com/issue/KT-59872) K2: Disappeared TYPE_MISMATCH
+- [`KT-67192`](https://youtrack.jetbrains.com/issue/KT-67192) K2: Disappeared TYPE_MISMATCH [3]
+- [`KT-67191`](https://youtrack.jetbrains.com/issue/KT-67191) K2: Disappeared TYPE_MISMATCH [4]
+- [`KT-64860`](https://youtrack.jetbrains.com/issue/KT-64860) K2: Consider using different ConstraintPosition when fixing variables for PCLA
+- [`KT-67189`](https://youtrack.jetbrains.com/issue/KT-67189) K2: Disappeared TYPE_MISMATCH [5]
+- [`KT-67551`](https://youtrack.jetbrains.com/issue/KT-67551) K2: No wrong annotation target error for `for` statement
+- [`KT-67367`](https://youtrack.jetbrains.com/issue/KT-67367) K2: Incorrect resolution to top-level function with less specific signature in presence of SAM constructor on the same tower level
+- [`KT-67374`](https://youtrack.jetbrains.com/issue/KT-67374) K2: Object is not smartcasted to type parameter type
+- [`KT-67264`](https://youtrack.jetbrains.com/issue/KT-67264) K2: "argument type mismatch" with suspend lambda and java wildcard
+- [`KT-67221`](https://youtrack.jetbrains.com/issue/KT-67221) K2: "new inference error [NewConstraintError at Incorporate TypeVariable" for captured type
+- [`KT-67311`](https://youtrack.jetbrains.com/issue/KT-67311) K2: "Argument type mismatch" caused by lambda type when using named arguments
+- [`KT-62043`](https://youtrack.jetbrains.com/issue/KT-62043) K2: Fix FirCompileKotlinAgainstCustomBinariesTest.testRawTypes
+- [`KT-66743`](https://youtrack.jetbrains.com/issue/KT-66743) Lambda receivers and anonymous function parameters of inaccessible types are allowed
+- [`KT-67315`](https://youtrack.jetbrains.com/issue/KT-67315) K2: Some default imports are not excluded
+- [`KT-56126`](https://youtrack.jetbrains.com/issue/KT-56126) Avoid using descriptors at JvmPlatformAnalyzerServices::computePlatformSpecificDefaultImports
+- [`KT-66513`](https://youtrack.jetbrains.com/issue/KT-66513) K2: Suppressing OPT_IN_USAGE_ERROR is now a warning in K2, preventing safe code gen compatible with -Werror
+- [`KT-67314`](https://youtrack.jetbrains.com/issue/KT-67314) PCLA works inconsistently with smart-cast related CS forks
+- [`KT-67144`](https://youtrack.jetbrains.com/issue/KT-67144) K2: potential NPE when assigning to unstable vars
+- [`KT-66971`](https://youtrack.jetbrains.com/issue/KT-66971) K2: missing SMARTCAST_IMPOSSIBLE on open val declared in another module
+- [`KT-66904`](https://youtrack.jetbrains.com/issue/KT-66904) K2: possible NPE when reassigning captured variables
+- [`KT-67212`](https://youtrack.jetbrains.com/issue/KT-67212) K2: "Failed to find functional supertype for class org.jetbrains.kotlin.fir.types.ConeCapturedType"
+- [`KT-67283`](https://youtrack.jetbrains.com/issue/KT-67283) K2: No SAM conversion for fun interface with abstract toString
+- [`KT-66768`](https://youtrack.jetbrains.com/issue/KT-66768) K1: False positive UNRESOLVED_REFERENCE in super.getFirst/getLast call
+- [`KT-67318`](https://youtrack.jetbrains.com/issue/KT-67318) Compiler fails with OutOfMemoryError on combination of PCLA+smart cast
+- [`KT-65812`](https://youtrack.jetbrains.com/issue/KT-65812) K2: "OutOfMemoryError: Java heap space" in kotlin.utils.SmartList.add
+- [`KT-66956`](https://youtrack.jetbrains.com/issue/KT-66956) K2: false negative CONST_VAL_WITH_NON_CONST_INITIALIZER for inc/dec operators
+- [`KT-67205`](https://youtrack.jetbrains.com/issue/KT-67205) K2: can't deserialize annotation with local class as argument
+- [`KT-65449`](https://youtrack.jetbrains.com/issue/KT-65449) K2: build KAPT user project and pass it to CI
+- [`KT-67142`](https://youtrack.jetbrains.com/issue/KT-67142) K2: IrFakeOverrideBuilder: AbstractMethodError on raw type argument in a Java superclass
+- [`KT-62570`](https://youtrack.jetbrains.com/issue/KT-62570) IncompatibleClassChangeError due to overriding final method
+- [`KT-67190`](https://youtrack.jetbrains.com/issue/KT-67190) K2: Disappeared TYPE_MISMATCH [2]
+- [`KT-67188`](https://youtrack.jetbrains.com/issue/KT-67188) K2: Disappeared TYPE_MISMATCH [6]
+- [`KT-67187`](https://youtrack.jetbrains.com/issue/KT-67187) K2: Disappeared TYPE_MISMATCH [1]
+- [`KT-63381`](https://youtrack.jetbrains.com/issue/KT-63381) IrFakeOverrideBuilder: PublishedApi affects overridability of internal members
+- [`KT-59856`](https://youtrack.jetbrains.com/issue/KT-59856) K2: Check ConeDiagnostics that are not mapped to KtDiagnostics
+- [`KT-57502`](https://youtrack.jetbrains.com/issue/KT-57502) K2: Smart casts should be forbidden if variable that remembers the smart cast is declared by delegation
+- [`KT-63967`](https://youtrack.jetbrains.com/issue/KT-63967) K2: Missing getterSignature in metadata for script variables
+- [`KT-59372`](https://youtrack.jetbrains.com/issue/KT-59372) K2: Missing SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR
+- [`KT-60526`](https://youtrack.jetbrains.com/issue/KT-60526) K2: Fix the TODO in `convertToIr.kt`
+- [`KT-67027`](https://youtrack.jetbrains.com/issue/KT-67027) K2: Review all use-sites of annotation arguments utilities
+- [`KT-66953`](https://youtrack.jetbrains.com/issue/KT-66953) K2: toByte() call on Char leads to ClassCastException for klib backends
+- [`KT-65415`](https://youtrack.jetbrains.com/issue/KT-65415) K2:  Stdlib K2 build error: IrConstructorSymbolImpl is already bound
+
+### IR. Actualizer
+
+- [`KT-67488`](https://youtrack.jetbrains.com/issue/KT-67488) K2: AssertionError No such value argument slot in IrConstructorCallImpl: 0 (total=0
+
+### JavaScript
+
+- [`KT-66922`](https://youtrack.jetbrains.com/issue/KT-66922) K2 JS: Intrinsic Float/Double toString producing wrong numbers
+- [`KT-63038`](https://youtrack.jetbrains.com/issue/KT-63038) Compilation of suspend functions into ES2015 generators
+- [`KT-8373`](https://youtrack.jetbrains.com/issue/KT-8373) JS: support ES6 as compilation target
+- [`KT-64951`](https://youtrack.jetbrains.com/issue/KT-64951) Kotlin-Multiplatform does not allow JSExport of expect
+
+### Klibs
+
+- [`KT-67401`](https://youtrack.jetbrains.com/issue/KT-67401) KLib ABI dump: write plain targets in the manifest
+
+### Native. Testing
+
+- [`KT-67501`](https://youtrack.jetbrains.com/issue/KT-67501) Mute flaky driver tests on macOS agents
+
+### Tools. CLI
+
+- [`KT-67417`](https://youtrack.jetbrains.com/issue/KT-67417) CLI: Remove option -Xrepeat
+- [`KT-65451`](https://youtrack.jetbrains.com/issue/KT-65451) K2: CLI: false positive warning "scripts are not yet supported with K2 in LightTree mode" on irrelevant files in source directory
+
+### Tools. Compiler Plugins
+
+- [`KT-67489`](https://youtrack.jetbrains.com/issue/KT-67489) JsPlainObjects Plugin: Method not found when consuming
+- [`KT-67523`](https://youtrack.jetbrains.com/issue/KT-67523) [K2] Actualizer cannot reconcile mismatched parameter names from java supertypes
+- [`KT-67354`](https://youtrack.jetbrains.com/issue/KT-67354) K2 Parcelize: support efficient Parcel serializer for parcelables in the same module
+- [`KT-64454`](https://youtrack.jetbrains.com/issue/KT-64454) K2: Implement ParcelizeIrBytecodeListingTestGenerated for K2
+- [`KT-67353`](https://youtrack.jetbrains.com/issue/KT-67353) K2 Parcelize: support parcelableCreator intrinsic
+
+### Tools. Gradle
+
+#### New Features
+
+- [`KT-67253`](https://youtrack.jetbrains.com/issue/KT-67253) Support per-target configuration in compose-compiler-gradle-plugin
+
+#### Fixes
+
+- [`KT-64115`](https://youtrack.jetbrains.com/issue/KT-64115) KGP + JVM/JS/WASM: The same library can be passed twice to the compiler
+- [`KT-64567`](https://youtrack.jetbrains.com/issue/KT-64567) [FUS] Add boolean flag into kotlin.gradle.performance collector
+- [`KT-67685`](https://youtrack.jetbrains.com/issue/KT-67685) KotlinBaseApiPlugin regression with Gradle's Configuration Cache in 2.0.0-RC1
+- [`KT-67515`](https://youtrack.jetbrains.com/issue/KT-67515) Remove 'experimental' from compose strong skipping mode
+- [`KT-67441`](https://youtrack.jetbrains.com/issue/KT-67441) Gradle remote cache misses in the compose plugin
+- [`KT-67602`](https://youtrack.jetbrains.com/issue/KT-67602) Compose gradle plugin: a deprecated plugin option 'experimentalStrongSkipping' is added by default that causes a warning
+- [`KT-67200`](https://youtrack.jetbrains.com/issue/KT-67200) Compose gradle plugin: 'suppressKotlinVersionCompatibilityCheck' option is duplicated if added as a kotlin option for the KotlinCompile task and kapt is used
+- [`KT-67216`](https://youtrack.jetbrains.com/issue/KT-67216) Compose compiler plugin: false-positive versions incompatibility is reported
+- [`KT-66459`](https://youtrack.jetbrains.com/issue/KT-66459) PowerAssert: Improve design of excludedSourceSets extension property
+- [`KT-61913`](https://youtrack.jetbrains.com/issue/KT-61913) Validate LanguageSettings KDoc
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-57141`](https://youtrack.jetbrains.com/issue/KT-57141) K2: KotlinCompile task input named 'multiplatformStructure.fragments.$0.sources' is tracked in a pure JVM kotlin project together with changes of sources
+- [`KT-65480`](https://youtrack.jetbrains.com/issue/KT-65480) MissingNativeStdlibChecker checks existence of konanDistribution.stdlib during configuration phase
+- [`KT-67127`](https://youtrack.jetbrains.com/issue/KT-67127) KMP: IDE Dependency Resolver for CInterops reports errors on linux and windows machines
+- [`KT-63536`](https://youtrack.jetbrains.com/issue/KT-63536) KMP: MetadataDependencyTransformationTask is not Thread Safe
+
+### Tools. Gradle. Native
+
+- [`KT-67522`](https://youtrack.jetbrains.com/issue/KT-67522) K/N toolchain: unclear compilation error if path specified as a value for the kotlin.native.home doesn't provide the kotlin native compiler downloaded
+- [`KT-67521`](https://youtrack.jetbrains.com/issue/KT-67521) K/N warning checking existence of the standard library isn't displayed when the native toolchain enabled and the kotlin native home dir doesn't contain stdlib
+
+### Tools. Kapt
+
+- [`KT-66541`](https://youtrack.jetbrains.com/issue/KT-66541) K2 KAPT: KotlinIllegalArgumentExceptionWithAttachments: Expected expression 'FirPropertyAccessExpressionImpl' to be resolved
+
+### Tools. Scripts
+
+- [`KT-66395`](https://youtrack.jetbrains.com/issue/KT-66395) K2: Scripting test testHelloSerialization fails on K2
+
+### Tools. Wasm
+
+- [`KT-65864`](https://youtrack.jetbrains.com/issue/KT-65864) K/Wasm: update Node.js to 22.x
+
+
 ## 2.0.0-RC1
 
 ### Analysis. API
