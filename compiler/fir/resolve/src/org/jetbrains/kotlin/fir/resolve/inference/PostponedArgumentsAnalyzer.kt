@@ -223,7 +223,7 @@ class PostponedArgumentsAnalyzer(
                 candidate.resolveArgumentExpression(
                     builder,
                     it,
-                    returnTypeRef.type,
+                    substituteAlreadyFixedVariables(lambda.returnType),
                     checkerSink,
                     context = resolutionContext,
                     isReceiver = false,
