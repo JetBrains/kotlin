@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
+import javax.inject.Inject
 
 internal fun ObjectFactory.KotlinNativeCommonizerToolRunner(
     settings: KotlinNativeCommonizerToolRunner.Settings,
     metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
 ): KotlinNativeCommonizerToolRunner = newInstance(settings, metricsReporter)
 
-internal abstract class KotlinNativeCommonizerToolRunner(
+internal abstract class KotlinNativeCommonizerToolRunner @Inject constructor(
     private val settings: Settings,
     metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     objectFactory: ObjectFactory,

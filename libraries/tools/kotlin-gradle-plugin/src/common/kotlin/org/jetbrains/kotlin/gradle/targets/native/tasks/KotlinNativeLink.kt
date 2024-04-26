@@ -403,7 +403,6 @@ constructor(
             val output = outputFile.get()
             output.parentFile.mkdirs()
 
-            val executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
             val additionalOptions = mutableListOf<String>().apply {
                 addAll(externalDependenciesArgs)
                 when (cacheSettings.orchestration) {
@@ -426,12 +425,11 @@ constructor(
                     }
                     NativeCacheOrchestration.Gradle -> {
                         if (cacheSettings.icEnabled) {
-                            executionContext.logger.warn(
+                            logger.warn(
                                 "K/N incremental compilation only works in conjunction with kotlin.native.cacheOrchestration=compiler"
                             )
                         }
                         val cacheBuilder = CacheBuilder(
-                            executionContext = executionContext,
                             objectFactory = objectFactory,
                             settings = cacheBuilderSettings,
                             konanPropertiesService = konanPropertiesService.get(),

@@ -6,14 +6,9 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
-import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
-import org.gradle.process.ExecResult
-import org.gradle.process.JavaExecSpec
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -24,7 +19,6 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
-// Note: this class is public because it is used in the K/N build infrastructure.
 abstract class KotlinToolRunner @Inject constructor(
     private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     private val objectFactory: ObjectFactory,
@@ -32,44 +26,6 @@ abstract class KotlinToolRunner @Inject constructor(
 ) {
 
     private val logger = Logging.getLogger(this::class.java)
-
-    /**
-     * Context Services that are required for [KotlinToolRunner] during Gradle Task Execution Phase
-     */
-    class GradleExecutionContext(
-        val filesProvider: (Any) -> ConfigurableFileCollection,
-        val javaexec: ((JavaExecSpec) -> Unit) -> ExecResult,
-        val logger: Logger,
-    ) {
-        companion object {
-            /**
-             * Executing [KotlinToolRunner] during Gradle Configuration Phase is undesired behaviour.
-             * Currently only [KotlinNativeLibraryGenerationRunner] used in this way.
-             * It should be fixed as part of KT-51255
-             */
-            @Deprecated(
-                "Building execution context from Project object isn't compatible with Gradle Configuration Cache",
-                ReplaceWith("fromTaskContext()"),
-                DeprecationLevel.WARNING
-            )
-            fun fromProject(project: Project) = GradleExecutionContext(
-                filesProvider = project::files,
-                javaexec = { spec -> project.javaexec(spec) }, // project::javaexec won't work due to different Classloaders
-                logger = project.logger
-            )
-
-            /** Gradle Configuration Cache friendly context, should be used inside Task Execution Phase */
-            fun fromTaskContext(
-                objectFactory: ObjectFactory,
-                execOperations: ExecOperations,
-                logger: Logger,
-            ) = GradleExecutionContext(
-                filesProvider = objectFactory.fileCollection()::from,
-                javaexec = { spec -> execOperations.javaexec(spec) }, // execOperations::javaexec won't work due to different Classloaders
-                logger = logger
-            )
-        }
-    }
 
     // name that will be used in logs
     abstract val displayName: String

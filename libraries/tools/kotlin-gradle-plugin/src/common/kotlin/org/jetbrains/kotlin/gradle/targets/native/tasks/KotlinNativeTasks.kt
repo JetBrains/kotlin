@@ -14,12 +14,12 @@ import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.*
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.*
@@ -718,7 +718,6 @@ internal class ExternalDependenciesBuilder(
 }
 
 internal class CacheBuilder(
-    private val executionContext: KotlinToolRunner.GradleExecutionContext,
     private val objectFactory: ObjectFactory,
     private val settings: Settings,
     private val konanPropertiesService: KonanPropertiesBuildService,
@@ -769,6 +768,7 @@ internal class CacheBuilder(
         }
     }
 
+    private val logger = Logging.getLogger(this::class.java)
 
     private val nativeSingleFileResolveStrategy: SingleFileKlibResolveStrategy
         get() = CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
@@ -849,7 +849,7 @@ internal class CacheBuilder(
             .map {
                 resolveSingleFileKlib(
                     KFile(it.file.absolutePath),
-                    logger = GradleLoggerAdapter(executionContext.logger),
+                    logger = GradleLoggerAdapter(logger),
                     strategy = nativeSingleFileResolveStrategy
                 )
             }
@@ -877,7 +877,7 @@ internal class CacheBuilder(
         for (library in sortedLibraries) {
             if (File(cacheDirectory, library.uniqueName.cachedName).listFilesOrEmpty().isNotEmpty())
                 continue
-            executionContext.logger.info("Compiling ${library.uniqueName} to cache")
+            logger.info("Compiling ${library.uniqueName} to cache")
             val args = mutableListOf(
                 "-p", konanCacheKind.produce!!,
                 "-target", target
@@ -927,12 +927,12 @@ internal class CacheBuilder(
             return
         val unresolvedDependencies = resolveSingleFileKlib(
             KFile(platformLib.absolutePath),
-            logger = GradleLoggerAdapter(executionContext.logger),
+            logger = GradleLoggerAdapter(logger),
             strategy = nativeSingleFileResolveStrategy
         ).unresolvedDependencies
         for (dependency in unresolvedDependencies)
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
-        executionContext.logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
+        logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
         val args = mutableListOf(
             "-p", konanCacheKind.produce!!,
             "-target", target
@@ -1013,7 +1013,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     ) {
         internal open class Services @Inject constructor(
             val objectFactory: ObjectFactory,
-            val execOperations: ExecOperations,
         )
     }
 
