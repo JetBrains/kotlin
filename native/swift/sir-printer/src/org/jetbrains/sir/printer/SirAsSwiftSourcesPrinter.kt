@@ -19,19 +19,30 @@ public class SirAsSwiftSourcesPrinter(
 
     public companion object {
         public fun print(module: SirModule, stableDeclarationsOrder: Boolean, renderDocComments: Boolean): String {
-            val printer = SirAsSwiftSourcesPrinter(
+            val childrenPrinter = SirAsSwiftSourcesPrinter(
                 SmartPrinter(StringBuilder()),
                 stableDeclarationsOrder = stableDeclarationsOrder,
                 renderDocComments = renderDocComments,
             )
-            with(printer) { module.print() }
-            return printer.toString().trimIndent()
+            val declarationsString = with(childrenPrinter) {
+                module.printChildren()
+                toString().trimIndent()
+            }
+            val importsString = if (module.imports.isNotEmpty()) {
+                // We print imports after module declarations as they might lazily add new imports.
+                val importsPrinter = SirAsSwiftSourcesPrinter(
+                    SmartPrinter(StringBuilder()),
+                    stableDeclarationsOrder = stableDeclarationsOrder,
+                    renderDocComments = renderDocComments,
+                )
+                with(importsPrinter) {
+                    module.printImports()
+                    println()
+                    toString().trimIndent()
+                }
+            } else ""
+            return importsString + declarationsString
         }
-    }
-
-    public fun SirModule.print() {
-        printImports()
-        printChildren()
     }
 
     private fun SirModule.printImports() {

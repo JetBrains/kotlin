@@ -1,5 +1,4 @@
 import KotlinBridges
-import KotlinRuntime
 
 public func foo(
     p: Swift.Int32,

@@ -65,8 +65,9 @@ public interface SirSession :
         ktAnalysisSession: KtAnalysisSession,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
+        processTypeImports: (List<SirImport>) -> Unit,
     ): SirType =
-        with(typeProvider) { this@translateType.translateType(ktAnalysisSession, reportErrorType, reportUnsupportedType) }
+        with(typeProvider) { this@translateType.translateType(ktAnalysisSession, reportErrorType, reportUnsupportedType, processTypeImports) }
 
     override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
@@ -134,11 +135,14 @@ public interface SirTypeProvider {
      * Translates the given [KtType] to [SirType].
      * Calls [reportErrorType] / [reportUnsupportedType] if error/unsupported type
      * is encountered and [errorTypeStrategy] / [unsupportedTypeStrategy] instructs to fail.
+     *
+     * [processTypeImports] is called with the imports required to use the resulting type properly.
      */
     public fun KtType.translateType(
         ktAnalysisSession: KtAnalysisSession,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
+        processTypeImports: (List<SirImport>) -> Unit,
     ): SirType
 }
 

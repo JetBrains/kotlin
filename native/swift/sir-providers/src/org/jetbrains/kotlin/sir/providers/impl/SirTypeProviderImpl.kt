@@ -11,20 +11,24 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public class SirTypeProviderImpl(
     private val sirSession: SirSession,
     override val errorTypeStrategy: ErrorTypeStrategy,
-    override val unsupportedTypeStrategy: ErrorTypeStrategy
+    override val unsupportedTypeStrategy: ErrorTypeStrategy,
 ) : SirTypeProvider {
 
     override fun KtType.translateType(
         ktAnalysisSession: KtAnalysisSession,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
+        processTypeImports: (List<SirImport>) -> Unit,
     ): SirType =
-        buildSirNominalType(this@translateType, ktAnalysisSession).handleTranslationResult(reportErrorType, reportUnsupportedType)
+        buildSirNominalType(this@translateType, ktAnalysisSession)
+            .handleErrors(reportErrorType, reportUnsupportedType)
+            .handleImports(ktAnalysisSession, processTypeImports)
 
     private fun buildSirNominalType(ktType: KtType, ktAnalysisSession: KtAnalysisSession): SirType {
         with(ktAnalysisSession) {
@@ -62,7 +66,7 @@ public class SirTypeProviderImpl(
         }
     }
 
-    private fun SirType.handleTranslationResult(
+    private fun SirType.handleErrors(
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
     ): SirType {
@@ -71,6 +75,27 @@ public class SirTypeProviderImpl(
         }
         if (this is SirUnsupportedType && sirSession.unsupportedTypeStrategy == ErrorTypeStrategy.Fail) {
             reportUnsupportedType()
+        }
+        return this
+    }
+
+    private fun SirType.handleImports(
+        ktAnalysisSession: KtAnalysisSession,
+        processTypeImports: (List<SirImport>) -> Unit,
+    ): SirType {
+        if (this is SirNominalType) {
+            when (val origin = type.origin) {
+                is KotlinSource -> {
+                    val ktModule = with(ktAnalysisSession) {
+                        origin.symbol.getContainingModule()
+                    }
+                    val sirModule = with(sirSession) {
+                        ktModule.sirModule()
+                    }
+                    processTypeImports(listOf(SirImport(sirModule.name)))
+                }
+                else -> {}
+            }
         }
         return this
     }

@@ -24,7 +24,6 @@ public class SirSingleModuleProvider(
             name = swiftModuleName
             // imports should be reworked - KT-66727
             imports += SirImport(bridgeModuleName)
-            imports += SirImport("KotlinRuntime")
         }
     }
 

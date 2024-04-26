@@ -1,5 +1,4 @@
 import KotlinBridges
-import KotlinRuntime
 
 public func foo() -> Swift.Int32 {
     return __root___foo()
