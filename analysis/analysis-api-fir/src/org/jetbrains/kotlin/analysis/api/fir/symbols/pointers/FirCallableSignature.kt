@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.AbbreviatedTypeAttribute
 import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -108,11 +109,14 @@ private fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): Str
     packageDirectiveRenderer = null,
     propertyAccessorRenderer = null,
     resolvePhaseRenderer = null,
-    typeRenderer = ConeTypeRenderer(attributeRenderer = EmptyConeTypeAttributeRenderer),
+    typeRenderer = ConeTypeRenderer(attributeRenderer = MinimalConeTypeAttributeRenderer),
     valueParameterRenderer = null,
     errorExpressionRenderer = null,
 ).renderElementAsString(this)
 
-private object EmptyConeTypeAttributeRenderer : ConeAttributeRenderer() {
-    override fun render(attributes: Iterable<ConeAttribute<*>>): String = ""
+private object MinimalConeTypeAttributeRenderer : ConeAttributeRenderer() {
+    override fun render(attributes: Iterable<ConeAttribute<*>>): String =
+        attributes.filter { it.isImportant }.let(ToString::render)
+
+    private val ConeAttribute<*>.isImportant get() = this is AbbreviatedTypeAttribute
 }

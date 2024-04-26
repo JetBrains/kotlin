@@ -92,7 +92,7 @@ KtFunctionSymbol:
       returnType: KtUsualClassType:
         annotationsList: []
         ownTypeArguments: []
-        type: {TypeAlias=} A
+        type: TypeAlias
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
