@@ -1532,6 +1532,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       }
 
       @Test
+      @TestMetadata("errorsBasedOnEnhancedBasedType.kt")
+      public void testErrorsBasedOnEnhancedBasedType() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/errorsBasedOnEnhancedBasedType.kt");
+      }
+
+      @Test
       @TestMetadata("kt48261.kt")
       public void testKt48261() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/kt48261.kt");
@@ -1580,12 +1586,6 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       }
 
       @Test
-      @TestMetadata("returnTypeWithWarnings.kt")
-      public void testReturnTypeWithWarnings() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/returnTypeWithWarnings.kt");
-      }
-
-      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/simple.kt");
@@ -1601,18 +1601,6 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
       @TestMetadata("valueParameter.kt")
       public void testValueParameter() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameter.kt");
-      }
-
-      @Test
-      @TestMetadata("valueParameterWithWarnings.kt")
-      public void testValueParameterWithWarnings() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/valueParameterWithWarnings.kt");
-      }
-
-      @Test
-      @TestMetadata("warningsBasedOnEnhancedBasedType.kt")
-      public void testWarningsBasedOnEnhancedBasedType() {
-        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/warningsBasedOnEnhancedBasedType.kt");
       }
     }
   }

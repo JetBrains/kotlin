@@ -26,23 +26,21 @@ abstract class ReversibleSourceFilePreprocessor(testServices: TestServices) : So
 }
 
 abstract class SourceFileProvider : TestService {
+    abstract val preprocessors: List<SourceFilePreprocessor>
+
     abstract val kotlinSourceDirectory: File
     abstract val javaSourceDirectory: File
-    abstract val javaBinaryDirectory: File
     abstract val additionalFilesDirectory: File
 
     abstract fun getContentOfSourceFile(testFile: TestFile): String
     abstract fun getRealFileForSourceFile(testFile: TestFile): File
-    abstract fun getRealFileForBinaryFile(testFile: TestFile): File
-    abstract val preprocessors: List<SourceFilePreprocessor>
 }
 
 val TestServices.sourceFileProvider: SourceFileProvider by TestServices.testServiceAccessor()
 
 class SourceFileProviderImpl(val testServices: TestServices, override val preprocessors: List<SourceFilePreprocessor>) : SourceFileProvider() {
-    override val kotlinSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("kotlin-files") }
-    override val javaSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-files") }
-    override val javaBinaryDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-binary-files") }
+    override val kotlinSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("kotlin-sources") }
+    override val javaSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-sources") }
     override val additionalFilesDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("additional-files") }
 
     private val contentOfFiles = mutableMapOf<TestFile, String>()
@@ -50,7 +48,9 @@ class SourceFileProviderImpl(val testServices: TestServices, override val prepro
 
     override fun getContentOfSourceFile(testFile: TestFile): String {
         return contentOfFiles.getOrPut(testFile) {
-            generateFinalContent(testFile)
+            preprocessors.fold(testFile.originalContent) { content, preprocessor ->
+                preprocessor.process(testFile, content)
+            }
         }
     }
 
@@ -65,25 +65,6 @@ class SourceFileProviderImpl(val testServices: TestServices, override val prepro
                 it.parentFile.mkdirs()
                 it.writeText(getContentOfSourceFile(testFile))
             }
-        }
-    }
-
-    override fun getRealFileForBinaryFile(testFile: TestFile): File {
-        return realFileMap.getOrPut(testFile) {
-            val directory = when {
-                testFile.isJavaFile -> javaBinaryDirectory
-                else -> error("Unknown file type: ${testFile.name}")
-            }
-            directory.resolve(testFile.relativePath).also {
-                it.parentFile.mkdirs()
-                it.writeText(getContentOfSourceFile(testFile))
-            }
-        }
-    }
-
-    private fun generateFinalContent(testFile: TestFile): String {
-        return preprocessors.fold(testFile.originalContent) { content, preprocessor ->
-            preprocessor.process(testFile, content)
         }
     }
 }

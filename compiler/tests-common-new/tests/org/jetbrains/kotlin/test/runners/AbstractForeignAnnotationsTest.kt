@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.SKIP_TXT
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ANNOTATIONS_PATH
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_TO_BINARIES_USING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS
@@ -48,7 +48,7 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
         defaultDirectives {
             +WITH_FOREIGN_ANNOTATIONS
             if (kind.compiledJava) {
-                +ALL_JAVA_AS_BINARY
+                +PROVIDE_JAVA_AS_BINARIES
                 +SKIP_TXT
             }
             if (kind.psiClassLoading) {
@@ -98,7 +98,7 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
             defaultDirectives {
                 ANNOTATIONS_PATH with JavaForeignAnnotationType.Java9Annotations
                 JDK_KIND with TestJdkKind.FULL_JDK_11
-                COMPILE_JAVA_USING with TestJavacVersion.JAVAC_11
+                COMPILE_JAVA_TO_BINARIES_USING with TestJavacVersion.JAVAC_11
             }
         }
     }

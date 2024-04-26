@@ -1,9 +1,8 @@
 // FIR_IDENTICAL
-// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 // ALLOW_KOTLIN_PACKAGE
 
-// FILE: sandbox/test/module-info.java
+// FILE: sandbox/module-info.java
 import org.jspecify.nullness.NullMarked;
 
 @NullMarked

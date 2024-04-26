@@ -81,16 +81,15 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
-        val javaVersionToCompile = registeredDirectives[JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING].singleOrNull()
-        val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
+
         val annotationPath = registeredDirectives[ForeignAnnotationsDirectives.ANNOTATIONS_PATH].singleOrNull()
             ?: JavaForeignAnnotationType.Java8Annotations
         val javaFilesDir = createTempDirectory().toFile().also {
             File(annotationPath.path).copyRecursively(it)
         }
-
         val jsr305JarFile = createJsr305Jar(configuration)
-
+        val javaVersionToCompile = registeredDirectives[JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_TO_BINARIES_USING].singleOrNull()
+        val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
         val foreignAnnotationsJar = MockLibraryUtil.compileJavaFilesLibraryToJar(
             javaFilesDir.path,
             "foreign-annotations",

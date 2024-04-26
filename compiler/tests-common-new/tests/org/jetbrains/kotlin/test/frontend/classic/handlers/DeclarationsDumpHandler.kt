@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.NI_EXPECTED_FILE
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.SKIP_TXT
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_PACKAGE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JAVAC_EXPECTED_FILE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_JAVAC
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isJavaFile
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -46,23 +49,21 @@ class DeclarationsDumpHandler(
         private val JAVA_PACKAGE_PATTERN = Pattern.compile("^\\s*package [.\\w\\d]*", Pattern.MULTILINE)
     }
 
-    override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(DiagnosticsDirectives)
-
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
+
+    private val TestModuleStructure.shouldNewInferenceBeDumped: Boolean
+        get() = NI_EXPECTED_FILE in allDirectives && modules.any { it.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) }
+
+    private val TestModuleStructure.shouldJavacDescriptorsBeDumped: Boolean
+        get() = JAVAC_EXPECTED_FILE in allDirectives && USE_JAVAC in allDirectives
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (dumper.isEmpty()) return
         val resultDump = dumper.generateResultingDump()
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val allDirectives = testServices.moduleStructure.allDirectives
         val prefix = when {
-            DiagnosticsDirectives.NI_EXPECTED_FILE in allDirectives &&
-                    testServices.moduleStructure.modules.any { it.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) } -> ".ni"
-
-            JvmEnvironmentConfigurationDirectives.USE_JAVAC in allDirectives
-                    && DiagnosticsDirectives.JAVAC_EXPECTED_FILE in allDirectives -> ".javac"
-
+            testServices.moduleStructure.shouldNewInferenceBeDumped -> ".ni"
+            testServices.moduleStructure.shouldJavacDescriptorsBeDumped -> ".javac"
             else -> ""
         }
         val expectedFileName = "${testDataFile.nameWithoutExtension}$prefix.txt"
@@ -72,14 +73,14 @@ class DeclarationsDumpHandler(
     }
 
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
-        if (DiagnosticsDirectives.SKIP_TXT in module.directives) return
+        if (SKIP_TXT in module.directives) return
         val moduleDescriptor = info.analysisResult.moduleDescriptor
         val checkTypeEnabled = AdditionalFilesDirectives.CHECK_TYPE in module.directives
         val comparator = RecursiveDescriptorComparator(
             createdAffectedPackagesConfiguration(module.files, info.ktFiles, moduleDescriptor, checkTypeEnabled)
         )
         val packages = buildList {
-            module.directives[DiagnosticsDirectives.RENDER_PACKAGE].forEach {
+            module.directives[RENDER_PACKAGE].forEach {
                 add(FqName(it))
             }
             add(FqName.ROOT)

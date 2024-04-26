@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_JAVAC
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ConstantValuesHandler
 
@@ -37,14 +36,6 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
 
     val NI_EXPECTED_FILE by directive(
         description = "Create separate .ni.txt file for declarations dump with new inference enabled"
-    )
-
-    val SKIP_JAVAC by directive(
-        description = "Skip this test if $USE_JAVAC enabled"
-    )
-
-    val JAVAC_EXPECTED_FILE by directive(
-        description = "Dump descriptors to .javac.txt file if $USE_JAVAC enabled"
     )
 
     val MARK_DYNAMIC_CALLS by directive(
