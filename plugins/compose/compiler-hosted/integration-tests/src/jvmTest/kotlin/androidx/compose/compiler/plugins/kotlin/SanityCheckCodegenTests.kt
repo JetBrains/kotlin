@@ -98,7 +98,6 @@ class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     }
 
     // Regression test for KT-52843
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testParameterInlineCaptureLambda() {
         testCompile(

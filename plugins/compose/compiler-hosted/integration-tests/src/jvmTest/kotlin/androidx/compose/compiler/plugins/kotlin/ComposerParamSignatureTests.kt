@@ -146,7 +146,6 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
         """
     )
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testCaptureIssue23() = codegen(
         """
@@ -853,7 +852,6 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
         """
     )
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testComposableColorFunInterfaceExample() = checkApi(
         """

@@ -74,7 +74,6 @@ class FunctionBodySkippingTransformTests(
         """
     )
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testBasicText(): Unit = comparisonPropagation(
         """
@@ -97,7 +96,6 @@ class FunctionBodySkippingTransformTests(
         """
     )
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testArrangement(): Unit = comparisonPropagation(
         """
@@ -1164,7 +1162,6 @@ class FunctionBodySkippingTransformTests(
         """
     )
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testDefaultsIssue(): Unit = comparisonPropagation(
         """

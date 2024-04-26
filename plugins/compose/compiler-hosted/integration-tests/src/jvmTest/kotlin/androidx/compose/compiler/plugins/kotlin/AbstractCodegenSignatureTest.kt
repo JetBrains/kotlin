@@ -18,8 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.OutputFile
-import org.junit.Assert.assertEquals
-import org.junit.Assume.assumeFalse
 import org.junit.Rule
 
 abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTest(useFir) {

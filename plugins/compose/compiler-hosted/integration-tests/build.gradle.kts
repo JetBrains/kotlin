@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
     kotlin("multiplatform")
@@ -12,7 +13,27 @@ repositories {
             includeGroup("androidx.collection")
             includeVersion("androidx.compose.runtime", "runtime", composeVersion)
             includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
+            includeVersion("androidx.compose.foundation", "foundation-layout", composeVersion)
+            includeVersion("androidx.compose.foundation", "foundation-layout-desktop", composeVersion)
+            includeVersion("androidx.compose.foundation", "foundation", composeVersion)
+            includeVersion("androidx.compose.foundation", "foundation-desktop", composeVersion)
+            includeVersion("androidx.compose.animation", "animation", composeVersion)
+            includeVersion("androidx.compose.animation", "animation-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-graphics", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-graphics-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-text", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-text-desktop", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-unit", composeVersion)
+            includeVersion("androidx.compose.ui", "ui-unit-desktop", composeVersion)
         }
+    }
+}
+
+fun KotlinDependencyHandler.implementationArtifactOnly(dependency: String) {
+    implementation(dependency) {
+        isTransitive = false
     }
 }
 
@@ -34,7 +55,7 @@ kotlin {
             implementation(kotlinTest("junit"))
         }
 
-        @Suppress("unused") val jvmTest by getting {
+        jvmTest.configure {
             dependsOn(commonTest.get())
 
             dependencies {
@@ -67,8 +88,15 @@ kotlin {
 
                 // external deps
                 implementation("androidx.compose.runtime:runtime:$composeVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
-                implementation("com.google.dagger:dagger:2.40.1")
+                implementationArtifactOnly("androidx.compose.foundation:foundation:$composeVersion")
+                implementationArtifactOnly("androidx.compose.foundation:foundation-layout:$composeVersion")
+                implementationArtifactOnly("androidx.compose.animation:animation:$composeVersion")
+                implementationArtifactOnly("androidx.compose.ui:ui:$composeVersion")
+                implementationArtifactOnly("androidx.compose.ui:ui-graphics:$composeVersion")
+                implementationArtifactOnly("androidx.compose.ui:ui-text:$composeVersion")
+                implementationArtifactOnly("androidx.compose.ui:ui-unit:$composeVersion")
+                implementationArtifactOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
+                implementationArtifactOnly("com.google.dagger:dagger:2.40.1")
             }
         }
     }

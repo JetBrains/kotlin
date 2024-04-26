@@ -428,7 +428,6 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
         )
     }
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testComposeIrSkippingWithDefaultsRelease() = verifyGoldenComposeIrTransform(
         """

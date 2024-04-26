@@ -2109,14 +2109,11 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
         """
     )
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testComposeIrSkippingWithDefaultsRelease() = verifyGoldenComposeIrTransform(
         """
-            import androidx.compose.ui.text.input.TextFieldValue
             import androidx.compose.runtime.*
             import androidx.compose.foundation.layout.*
-            import androidx.compose.foundation.text.KeyboardActions
 
             object Ui {}
 
@@ -2132,7 +2129,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                     Text("${'$'}keyboardActions2")
                 }
             }
-        """.trimIndent(),
+        """,
         extra = """
             import androidx.compose.runtime.Composable
 
@@ -2143,7 +2140,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 maxLines: Int = Int.MAX_VALUE,
                 minLines: Int = 1,
             ) {}
-        """.trimIndent()
+        """
     )
 
     @Test
