@@ -17,6 +17,7 @@ val enumCaseType = type(BASE_PACKAGE, "SirEnumCase", TypeKind.Class)
 val functionBodyType = type(BASE_PACKAGE, "SirFunctionBody", TypeKind.Class)
 val callableKind = type(BASE_PACKAGE, "SirCallableKind", TypeKind.Class)
 val initKind = type(BASE_PACKAGE, "SirInitializerKind", TypeKind.Class)
+val importType = type(BASE_PACKAGE, "SirImport", TypeKind.Class)
 
 val swiftIrImplementationDetailAnnotation = type(BASE_PACKAGE, "SirImplementationDetail", TypeKind.Class)
 val swiftIrBuilderDslAnnotation = type(BASE_PACKAGE, "SirBuilderDsl", TypeKind.Class)

@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.sir.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.sir.SirBuilderDsl
 import org.jetbrains.kotlin.sir.SirDeclaration
+import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.impl.SirModuleImpl
 
@@ -20,11 +21,13 @@ import org.jetbrains.kotlin.sir.impl.SirModuleImpl
 class SirModuleBuilder {
     val declarations: MutableList<SirDeclaration> = mutableListOf()
     lateinit var name: String
+    val imports: MutableList<SirImport> = mutableListOf()
 
     fun build(): SirModule {
         return SirModuleImpl(
             declarations,
             name,
+            imports,
         )
     }
 }
@@ -45,5 +48,6 @@ inline fun buildModuleCopy(original: SirModule, init: SirModuleBuilder.() -> Uni
     val copyBuilder = SirModuleBuilder()
     copyBuilder.declarations.addAll(original.declarations)
     copyBuilder.name = original.name
+    copyBuilder.imports.addAll(original.imports)
     return copyBuilder.apply(init).build()
 }

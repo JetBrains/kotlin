@@ -41,6 +41,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = rootElement
         parent(mutableDeclarationContainer)
         parent(named)
+        +listField("imports", importType, isMutableList = true)
     }
 
     val declaration by sealedElement {
@@ -155,12 +156,5 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
         +field("getter", getter)
         +field("setter", setter, nullable = true)
-    }
-
-    val import by element {
-        customParentInVisitor = declaration
-        parent(declaration)
-
-        +field("moduleName", string)
     }
 }

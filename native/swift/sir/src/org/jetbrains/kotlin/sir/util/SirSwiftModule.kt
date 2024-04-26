@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.sir.builder.buildStruct
  * A module representing the swift standard library
  */
 object SirSwiftModule : SirModule() {
+    override val imports: MutableList<SirImport> = mutableListOf()
+
     override val name: String get() = "Swift"
 
     val bool = primitive("Bool")

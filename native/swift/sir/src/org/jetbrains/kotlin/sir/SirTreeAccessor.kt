@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.sir
 
-public fun SirModule.allImports(): Sequence<SirImport> =
-    declarations.asSequence().filterIsInstance<SirImport>()
-
 public fun SirDeclarationContainer.allCallables(): Sequence<SirCallable> =
     declarations.asSequence().filterIsInstance<SirCallable>()
 

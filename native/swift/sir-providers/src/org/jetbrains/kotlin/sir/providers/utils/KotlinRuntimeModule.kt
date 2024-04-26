@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
  */
 public object KotlinRuntimeModule : SirModule() {
 
+    override val imports: MutableList<SirImport> = mutableListOf()
+
     override val name: String = "KotlinRuntime"
 
     override val declarations: MutableList<SirDeclaration> by lazy {

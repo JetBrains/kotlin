@@ -35,7 +35,6 @@ public class SirAsSwiftSourcesPrinter(
     }
 
     private fun SirModule.printImports() {
-        val imports = allImports()
         val lastImport = imports.lastOrNull()
         imports.forEach {
             it.print()

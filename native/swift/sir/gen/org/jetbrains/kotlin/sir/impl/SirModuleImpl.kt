@@ -11,10 +11,12 @@
 package org.jetbrains.kotlin.sir.impl
 
 import org.jetbrains.kotlin.sir.SirDeclaration
+import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
 
 internal class SirModuleImpl(
     override val declarations: MutableList<SirDeclaration>,
     override val name: String,
+    override val imports: MutableList<SirImport>,
 ) : SirModule() {
 }
