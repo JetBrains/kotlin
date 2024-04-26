@@ -84,7 +84,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                 symbol = symbol,
                 kind = regularClass.classKind,
                 modality = modality,
-                isExternal = regularClass.isExternal,
+                isExternal = isEffectivelyExternal(regularClass, parent),
                 isCompanion = regularClass.isCompanion,
                 isInner = regularClass.isInner,
                 isData = regularClass.isData,

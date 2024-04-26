@@ -1,7 +1,7 @@
 FILE fqName:foo fileName:/nativeNativeKotlin.kt
   CLASS CLASS name:A modality:OPEN visibility:public [external] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.A
-    CONSTRUCTOR visibility:public <> () returnType:foo.A [primary]
+    CONSTRUCTOR visibility:public <> () returnType:foo.A [external,primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:OPEN visibility:public [external] superTypes:[kotlin.Any]'
@@ -18,11 +18,11 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:foo visibility:public modality:FINAL <> ($this:foo.A) returnType:kotlin.String
+    FUN name:foo visibility:public modality:FINAL <> ($this:foo.A) returnType:kotlin.String [external]
       $this: VALUE_PARAMETER name:<this> type:foo.A
   CLASS CLASS name:B modality:OPEN visibility:public [external] superTypes:[foo.A]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.B
-    CONSTRUCTOR visibility:public <> () returnType:foo.B [primary]
+    CONSTRUCTOR visibility:public <> () returnType:foo.B [external,primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:OPEN visibility:public [external] superTypes:[foo.A]'
@@ -43,7 +43,7 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
       overridden:
         public open fun toString (): kotlin.String declared in foo.A
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:bar visibility:public modality:FINAL <> ($this:foo.B) returnType:kotlin.String
+    FUN name:bar visibility:public modality:FINAL <> ($this:foo.B) returnType:kotlin.String [external]
       $this: VALUE_PARAMETER name:<this> type:foo.B
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[foo.B]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.C

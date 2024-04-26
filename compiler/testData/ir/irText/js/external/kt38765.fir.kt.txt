@@ -1,12 +1,12 @@
 package events
 
 open external class internal {
-  var property: Int
-    get
-    set
+  external var property: Int
+    external get
+    external set
 
-  open class EventEmitterP : internal {
-    constructor() /* primary */ {
+  open external class EventEmitterP : internal {
+    external constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -14,8 +14,8 @@ open external class internal {
 
   }
 
-  open class EventEmitterS : internal {
-    constructor(a: Any) {
+  open external class EventEmitterS : internal {
+    external constructor(a: Any) {
       super/*internal*/()
       /* <init>() */
 
@@ -23,31 +23,31 @@ open external class internal {
 
   }
 
-  enum class NestedExternalEnum : Enum<NestedExternalEnum> {
+  external enum class NestedExternalEnum : Enum<NestedExternalEnum> {
     A = NestedExternalEnum()
 
     B = NestedExternalEnum()
 
-    private constructor() /* primary */ {
+    private external constructor() /* primary */ {
       super/*Enum*/<NestedExternalEnum>()
       /* <init>() */
 
     }
 
-    fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
+    external fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
 
-    fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
+    external fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
 
-    val entries: EnumEntries<NestedExternalEnum>
-      get(): EnumEntries<NestedExternalEnum> /* Synthetic body for ENUM_ENTRIES */
+    external val entries: EnumEntries<NestedExternalEnum>
+      external get(): EnumEntries<NestedExternalEnum> /* Synthetic body for ENUM_ENTRIES */
 
   }
 
-  interface NestedExternalInterface {
+  external interface NestedExternalInterface {
   }
 
-  object NestedExternalObject : internal {
-    private constructor() /* primary */ {
+  external object NestedExternalObject : internal {
+    private external constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -55,19 +55,19 @@ open external class internal {
 
   }
 
-  constructor() /* primary */ {
+  external constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  fun function(): String
+  external fun function(): String
 
 }
 
 external interface A {
-  companion object Companion {
-    private constructor() /* primary */ {
+  external companion object Companion {
+    private external constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 

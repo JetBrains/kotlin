@@ -1,24 +1,24 @@
 package foo
 
 open external class A {
-  constructor() /* primary */ {
+  external constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  fun foo(): String
+  externalfun foo(): String
 
 }
 
 open external class B : A {
-  constructor() /* primary */ {
+  external constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  fun bar(): String
+  external fun bar(): String
 
 }
 
