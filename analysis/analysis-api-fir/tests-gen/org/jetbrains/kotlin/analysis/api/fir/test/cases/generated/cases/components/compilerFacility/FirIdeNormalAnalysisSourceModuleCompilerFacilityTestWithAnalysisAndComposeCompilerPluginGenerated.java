@@ -62,4 +62,10 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestWithAnalysisAnd
   public void testLazyPropertyBackingField() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/bugsFromRealComposeApps/lazyPropertyBackingField.kt");
   }
+
+  @Test
+  @TestMetadata("propertyWithDelegateBackingField.kt")
+  public void testPropertyWithDelegateBackingField() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/bugsFromRealComposeApps/propertyWithDelegateBackingField.kt");
+  }
 }

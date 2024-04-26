@@ -31,6 +31,13 @@ fun rememberDominantColorState(defaultOnColor: Color = Color(0, 0, 0)): Dominant
     DominantColorState(defaultColor)
 }
 
+@Composable
+fun DynamicThemePrimaryColorsFromImage(
+    dominantColorState: DominantColorState = rememberDominantColorState(),
+    content: @Composable () -> Unit
+) {
+}
+
 @Stable
 class DominantColorState(private val defaultOnColor: Color) {
     var color by mutableStateOf(defaultColor)
@@ -42,11 +49,14 @@ package home
 
 import androidx.compose.runtime.Composable
 import compose.ui.Column
+import util.DynamicThemePrimaryColorsFromImage
 import util.rememberDominantColorState
 
 @Composable
 fun Home() {
     Column {
         val dominantColorState = rememberDominantColorState()
+        DynamicThemePrimaryColorsFromImage(dominantColorState) {
+        }
     }
 }

@@ -151,6 +151,7 @@ class Fir2IrLazyProperty(
             }
         }
         fir.delegate != null -> {
+            fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             callablesGenerator.createBackingField(
                 this@Fir2IrLazyProperty,
                 fir,
