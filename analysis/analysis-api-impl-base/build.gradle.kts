@@ -12,6 +12,7 @@ dependencies {
     api(project(":analysis:kt-references"))
     api(project(":compiler:resolution.common.jvm"))
     implementation(project(":compiler:backend-common"))
+    implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
 

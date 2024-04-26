@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaAllowanceManager
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
+import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
 import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.FileBasedKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -377,5 +377,5 @@ public var VirtualFile.navigationTargetsProvider: KaResolveExtensionNavigationTa
         by UserDataProperty(Key.create("KT_RESOLVE_EXTENSION_NAVIGATION_TARGETS_PROVIDER"))
 
 private inline fun <R> forbidAnalysis(action: () -> R): R {
-    return KaAllowanceManager.forbidAnalysisInside(KaResolveExtensionProvider::class.java.simpleName, action)
+    return forbidAnalysis(KaResolveExtensionProvider::class.java.simpleName, action)
 }

@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.impl.NoWriteActionInAnalyseCallChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
@@ -23,41 +22,75 @@ import org.jetbrains.kotlin.psi.KtElement
  */
 @OptIn(KaAnalysisApiInternals::class)
 public abstract class KaSessionProvider(public val project: Project) : Disposable {
-    @Suppress("LeakingThis")
-    public val noWriteActionInAnalyseCallChecker: NoWriteActionInAnalyseCallChecker = NoWriteActionInAnalyseCallChecker(this)
     public abstract val tokenFactory: KaLifetimeTokenFactory
 
     public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KaSession
 
     public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession
 
+    // The `analyse` functions affect binary compatibility as they are inlined with every `analyze` call. To avoid breaking binary
+    // compatibility, their implementations should not be changed unless absolutely necessary. It should be possible to put most
+    // functionality into `beforeEnteringAnalysis` and/or `afterLeavingAnalysis`.
+
     public inline fun <R> analyse(
         useSiteKtElement: KtElement,
         action: KaSession.() -> R,
     ): R {
-        return analyse(getAnalysisSession(useSiteKtElement), action)
+        val analysisSession = getAnalysisSession(useSiteKtElement)
+
+        beforeEnteringAnalysis(analysisSession, useSiteKtElement)
+        return try {
+            analysisSession.action()
+        } finally {
+            afterLeavingAnalysis(analysisSession, useSiteKtElement)
+        }
     }
 
     public inline fun <R> analyze(
         useSiteKtModule: KtModule,
         action: KaSession.() -> R,
     ): R {
-        return analyse(getAnalysisSessionByUseSiteKtModule(useSiteKtModule), action)
-    }
+        val analysisSession = getAnalysisSessionByUseSiteKtModule(useSiteKtModule)
 
-    public inline fun <R> analyse(
-        analysisSession: KaSession,
-        action: KaSession.() -> R,
-    ): R {
-        noWriteActionInAnalyseCallChecker.beforeEnteringAnalysisContext()
-        tokenFactory.beforeEnteringAnalysisContext(analysisSession.token)
+        beforeEnteringAnalysis(analysisSession, useSiteKtModule)
         return try {
             analysisSession.action()
         } finally {
-            tokenFactory.afterLeavingAnalysisContext(analysisSession.token)
-            noWriteActionInAnalyseCallChecker.afterLeavingAnalysisContext()
+            afterLeavingAnalysis(analysisSession, useSiteKtModule)
         }
     }
+
+    /**
+     * [beforeEnteringAnalysis] hooks into analysis *before* [analyse]'s action is executed.
+     *
+     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyse] is inlined.
+     */
+    @KaAnalysisApiInternals
+    public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement)
+
+    /**
+     * [beforeEnteringAnalysis] hooks into analysis *before* [analyse]'s action is executed.
+     *
+     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyse] is inlined.
+     */
+    @KaAnalysisApiInternals
+    public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KtModule)
+
+    /**
+     * [afterLeavingAnalysis] hooks into analysis *after* [analyse]'s action has been executed.
+     *
+     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyse] is inlined.
+     */
+    @KaAnalysisApiInternals
+    public abstract fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement)
+
+    /**
+     * [afterLeavingAnalysis] hooks into analysis *after* [analyse]'s action has been executed.
+     *
+     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyse] is inlined.
+     */
+    @KaAnalysisApiInternals
+    public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KtModule)
 
     @TestOnly
     public abstract fun clearCaches()

@@ -12,6 +12,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
@@ -88,8 +89,8 @@ internal class KaFirSessionProvider(project: Project) : KaBaseAnalysisSessionPro
 }
 
 private fun KClass<out KaLifetimeToken>.flushPendingChanges(project: Project) {
-    if (this == KaReadActionConfinementLifetimeToken::class &&
-        KaReadActionConfinementLifetimeToken.allowFromWriteAction.get() &&
+    if (this == KtReadActionConfinementLifetimeToken::class &&
+        KaAnalysisPermissionRegistry.getInstance().isAnalysisAllowedInWriteAction &&
         ApplicationManager.getApplication().isWriteAccessAllowed
     ) {
         // We must flush modifications to publish local modifications into FIR tree

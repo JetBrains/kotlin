@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
-import org.jetbrains.kotlin.analysis.api.standalone.base.services.LLStandaloneFirElementByPsiElementChooser
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -23,13 +19,6 @@ import org.jetbrains.kotlin.test.services.TestServices
  */
 @OptIn(KaAnalysisApiInternals::class)
 object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
-        project.apply {
-            registerService(LLFirLibrarySymbolProviderFactory::class.java, LLFirStandaloneLibrarySymbolProviderFactory::class.java)
-            registerService(LLFirElementByPsiElementChooser::class.java, LLStandaloneFirElementByPsiElementChooser::class.java)
-        }
-    }
-
     override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         project.apply {
             registerService(

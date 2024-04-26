@@ -16,7 +16,7 @@ public class KtAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
-    override val factory: KaLifetimeTokenFactory = KtAlwaysAccessibleLifetimeTokenFactory
+    override val factory: KaLifetimeTokenFactory get() = KtAlwaysAccessibleLifetimeTokenFactory
 
     override fun isValid(): Boolean {
         return onCreatedTimeStamp == modificationTracker.modificationCount
@@ -34,8 +34,6 @@ public class KtAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken
     override fun getInaccessibilityReason(): String {
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
-
-    override val factory: KaLifetimeTokenFactory = KtAlwaysAccessibleLifetimeTokenFactory
 }
 
 public object KtAlwaysAccessibleLifetimeTokenFactory : KaLifetimeTokenFactory() {

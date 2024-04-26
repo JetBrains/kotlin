@@ -24,15 +24,3 @@ public annotation class KaAnalysisNonPublicApi
 
 @Suppress("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN")
 public typealias KtAnalysisNonPublicApi = KaAnalysisNonPublicApi
-
-@RequiresOptIn("Analysis should not be allowed to be ran from EDT thread, otherwise it may cause IDE freezes")
-public annotation class KaAllowAnalysisOnEdt
-
-@Suppress("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN")
-public typealias KtAllowAnalysisOnEdt = KaAllowAnalysisOnEdt
-
-@RequiresOptIn("Analysis should not be allowed to be ran from write action, otherwise it may cause IDE freezes and incorrect behavior in some cases")
-public annotation class KaAllowAnalysisFromWriteAction
-
-@Suppress("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN")
-public typealias KtAllowAnalysisFromWriteAction = KaAllowAnalysisFromWriteAction

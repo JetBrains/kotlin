@@ -26,6 +26,21 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.providers.impl.KotlinProjectMessageBusProvider"
     />
 
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionRegistry"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionChecker"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.providers.lifetime.KaLifetimeTracker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker"
+    />
+
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
   </extensions>
 </idea-plugin>

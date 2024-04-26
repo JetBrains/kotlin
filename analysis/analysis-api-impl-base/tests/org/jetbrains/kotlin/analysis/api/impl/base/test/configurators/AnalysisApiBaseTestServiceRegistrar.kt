@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
 import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.providers.lifetime.KtReadActionConfinementLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.providers.permissions.KotlinAnalysisPermissionOptions
+import org.jetbrains.kotlin.analysis.providers.permissions.KotlinDefaultAnalysisPermissionOptions
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.libraryIndexingConfiguration
@@ -143,5 +145,9 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
         testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, METADATA_FILE_EXTENSION)
         testServices.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, KLIB_METADATA_FILE_EXTENSION)
+
+        application.apply {
+            registerService(KotlinAnalysisPermissionOptions::class.java, KotlinDefaultAnalysisPermissionOptions::class.java)
+        }
     }
 }

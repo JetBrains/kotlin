@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneSessionServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
@@ -26,7 +27,7 @@ object StandaloneModeConfigurator : StandaloneModeConfiguratorBase() {
     private val sourceConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = sourceConfigurator.serviceRegistrars + listOf(StandaloneModeTestServiceRegistrar)
+        get() = sourceConfigurator.serviceRegistrars + listOf(StandaloneSessionServiceRegistrar, StandaloneModeTestServiceRegistrar)
 
     override fun createModules(
         moduleStructure: TestModuleStructure,

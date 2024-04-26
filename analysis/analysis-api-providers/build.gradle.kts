@@ -12,7 +12,6 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":analysis:decompiled:decompiler-native"))
-    implementation(kotlinxCollectionsImmutable())
     implementation(intellijCore())
 }
 

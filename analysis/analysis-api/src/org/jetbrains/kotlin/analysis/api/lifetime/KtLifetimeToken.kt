@@ -25,9 +25,6 @@ public abstract class KaLifetimeTokenFactory {
     public abstract val identifier: KClass<out KaLifetimeToken>
 
     public abstract fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken
-
-    public open fun beforeEnteringAnalysisContext(token: KaLifetimeToken) {}
-    public open fun afterLeavingAnalysisContext(token: KaLifetimeToken) {}
 }
 
 public typealias KtLifetimeTokenFactory = KaLifetimeTokenFactory
