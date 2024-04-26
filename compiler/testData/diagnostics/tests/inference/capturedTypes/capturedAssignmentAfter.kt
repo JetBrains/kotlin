@@ -1,5 +1,5 @@
 // ISSUE: KT-67221
-// LANGUAGE: -ImprovedCapturedTypeApproximationInInference
+// LANGUAGE: +ImprovedCapturedTypeApproximationInInference
 // FILE: simple.kt
 package simple
 
