@@ -933,6 +933,9 @@ class Debugger(private val requestEvaluator: CDPRequestEvaluator) {
         @SerialName("XHR")
         XHR,
 
+        @SerialName("step")
+        STEP,
+
         @SerialName("Break on start")
         BREAK_ON_START,
     }
