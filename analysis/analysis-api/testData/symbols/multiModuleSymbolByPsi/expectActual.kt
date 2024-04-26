@@ -23,7 +23,7 @@ expect fun baz()
 
 expect var m: Int
 
-// MODULE: androidMain(commonMain)
+// MODULE: androidMain()()(commonMain)
 // FILE: JvmAndroid.kt
 
 package sample
