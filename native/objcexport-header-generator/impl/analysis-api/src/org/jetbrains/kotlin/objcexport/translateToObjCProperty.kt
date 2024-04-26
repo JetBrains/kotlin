@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCIdType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
+import org.jetbrains.kotlin.backend.konan.objcexport.isInstance
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getPropertyMethodBridge
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.bridgeReceiverType
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -26,31 +28,27 @@ context(KtAnalysisSession, KtObjCExportSession)
 fun KtPropertySymbol.buildProperty(): ObjCProperty {
     val propertyName = getObjCPropertyName()
     val name = propertyName.objCName
-    val bridge = getPropertyMethodBridge()
-    val type = getter?.mapReturnType(bridge.returnBridge)
+    val getterBridge = getter?.getFunctionMethodBridge() ?: error("KtPropertySymbol.getter is undefined")
+    val type = getter?.mapReturnType(getterBridge.returnBridge)
     val attributes = mutableListOf<String>()
     val setterName: String?
 
-    if (!bridge.isInstance) {
-        attributes += "class"
-    }
+    if (!bridgeReceiverType.isInstance) attributes += "class"
 
     val propertySetter = setter
     // Note: the condition below is similar to "toObjCMethods" logic in [ObjCExportedInterface.createCodeSpec].
     val shouldBeSetterExposed = true //TODO: mapper.shouldBeExposed
 
     if (propertySetter != null && shouldBeSetterExposed) {
-        val setterSelector = propertySetter.getSelector(bridge)
-        setterName = if (setterSelector != "set" + name.replaceFirstChar(Char::uppercaseChar) + ":") setterSelector else null
+        val setterSelector = propertySetter.getSelector(propertySetter.getFunctionMethodBridge())
+        setterName = if (setterSelector == name.asSetterSelector) null else setterSelector
     } else {
         attributes += "readonly"
         setterName = null
     }
 
-
-    val getterSelector = getter?.getSelector(bridge)
+    val getterSelector = getter?.getSelector(getterBridge)
     val getterName: String? = if (getterSelector != name && getterSelector?.isNotBlank() == true) getterSelector else null
-
     val declarationAttributes = mutableListOf(getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
 
     //TODO: implement and use [org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver]
@@ -67,3 +65,6 @@ fun KtPropertySymbol.buildProperty(): ObjCProperty {
         declarationAttributes = declarationAttributes
     )
 }
+
+private val String.asSetterSelector: String
+    get() = "set" + replaceFirstChar(Char::uppercase) + ":"

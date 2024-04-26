@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 context(KtAnalysisSession)
 fun KtVariableLikeSymbol.getObjCPropertyName(): ObjCExportPropertyName {
     val resolveObjCNameAnnotation = resolveObjCNameAnnotation()
+    val stringName = name.asString()
+    val propertyName = if (stringName.isReservedPropertyName) stringName.mangleReservedObjCName() else stringName
 
     return ObjCExportPropertyName(
-        objCName = resolveObjCNameAnnotation?.objCName ?: name.asString(),
-        swiftName = resolveObjCNameAnnotation?.swiftName ?: name.asString()
+        objCName = resolveObjCNameAnnotation?.objCName ?: propertyName,
+        swiftName = resolveObjCNameAnnotation?.swiftName ?: propertyName
     )
 }

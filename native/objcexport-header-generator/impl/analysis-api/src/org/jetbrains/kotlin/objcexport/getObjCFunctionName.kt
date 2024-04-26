@@ -7,21 +7,20 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getPropertySymbol
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
-    val resolvedObjCNameAnnotation = resolveObjCNameAnnotation()
+    val annotationName =
+        if (this is KtPropertyAccessorSymbol) this.getContainingSymbol()?.resolveObjCNameAnnotation()
+        else resolveObjCNameAnnotation()
     return ObjCExportFunctionName(
-        swiftName = getSwiftName(resolvedObjCNameAnnotation),
-        objCName = getObjCName(resolvedObjCNameAnnotation)
+        swiftName = getObjCFunctionName(annotationName?.swiftName),
+        objCName = getObjCFunctionName(annotationName?.objCName)
     )
 }
 
 context(KtAnalysisSession)
-private fun KtFunctionLikeSymbol.getObjCName(resolvedNameAnnotation: KtResolvedObjCNameAnnotation?): String {
-    return resolvedNameAnnotation?.objCName ?: translationName
-}
-
-context(KtAnalysisSession)
-private fun KtFunctionLikeSymbol.getSwiftName(resolvedNameAnnotation: KtResolvedObjCNameAnnotation?): String {
-    return resolvedNameAnnotation?.swiftName ?: translationName
+private fun KtFunctionLikeSymbol.getObjCFunctionName(annotationName: String?): String {
+    return if (annotationName != null) {
+        if (this is KtPropertyAccessorSymbol) formatPropertyName(annotationName) else annotationName
+    } else translationName
 }
 
 context(KtAnalysisSession)
@@ -30,25 +29,19 @@ private val KtFunctionLikeSymbol.translationName: String
         return when (this) {
             is KtFunctionSymbol -> name.asString()
             is KtConstructorSymbol -> "init"
-            is KtPropertyAccessorSymbol -> this.objCPropertyName
+            is KtPropertyAccessorSymbol -> formatPropertyName()
             is KtAnonymousFunctionSymbol -> ""
             is KtSamConstructorSymbol -> ""
         }
     }
 
 context(KtAnalysisSession)
-private val KtPropertyAccessorSymbol.objCPropertyName: String
-    get() {
-        return if (!this.getPropertySymbol().isObjCProperty) {
-            val containingSymbol = getContainingSymbol()
-            when (this) {
-                is KtPropertyGetterSymbol -> {
-                    (containingSymbol as KtPropertySymbol).name.asString()
-                }
-                is KtPropertySetterSymbol -> {
-                    "set" + ((containingSymbol as KtPropertySymbol).name.asString()).replaceFirstChar(kotlin.Char::uppercaseChar)
-                }
-                else -> ""
-            }
-        } else ""
+private fun KtPropertyAccessorSymbol.formatPropertyName(annotationName: String? = null): String {
+    val propertySymbol = this.getPropertySymbol()
+    val name = annotationName ?: propertySymbol.name.asString()
+    return when (this) {
+        is KtPropertyGetterSymbol -> name
+        is KtPropertySetterSymbol -> "set" + name.replaceFirstChar(kotlin.Char::uppercaseChar)
+        else -> ""
     }
+}

@@ -32,22 +32,13 @@ internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 
     return MethodBridge(
         bridgeReturnType(),
-        receiverType,
+        bridgeReceiverType,
         valueParameters
     )
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtVariableLikeSymbol.getPropertyMethodBridge(): MethodBridge {
-    return MethodBridge(
-        bridgeReturnType(),
-        receiverType,
-        emptyList()
-    )
-}
-
 context(KtAnalysisSession)
-private val KtCallableSymbol.receiverType: MethodBridgeReceiver
+internal val KtCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
     get() {
         val isProperty = getContainingSymbol() as? KtPropertySymbol != null
         return if (isArrayConstructor) {
