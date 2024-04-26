@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
+import org.jetbrains.kotlin.fir.smartPlus
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -99,11 +100,6 @@ internal class LLFirProviderHelper(
                 withVirtualFileEntry("virtualFile", ktClass.containingKtFile.virtualFile)
             }
     }
-
-    private val callablesByCallableId: FirCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> =
-        firSession.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId<FirCallableSymbol<*>>(callableId, context)
-        }
 
     private val functionsByCallableId: FirCache<CallableId, List<FirNamedFunctionSymbol>, Collection<KtFile>?> =
         firSession.firCachesFactory.createCache { callableId, context ->
@@ -186,7 +182,11 @@ internal class LLFirProviderHelper(
      */
     fun getTopLevelCallableSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirCallableSymbol<*>> {
         if (!allowKotlinPackage && callableId.packageName.isKotlinPackage()) return emptyList()
-        return callablesByCallableId.getValue(callableId, callableFiles)
+
+        val functions = getTopLevelFunctionSymbols(callableId, callableFiles)
+        val properties = getTopLevelPropertySymbols(callableId, callableFiles)
+
+        return functions.smartPlus(properties)
     }
 
     fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
