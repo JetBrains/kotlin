@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(SUPER_TYPES)] typealias ON3<[ResolvedTo(SUPER_TYPES)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(SUPER_TYPES)] typealias ON3<[ResolvedTo(SUPER_TYPES)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(TYPES)] typealias ON3<[ResolvedTo(TYPES)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(TYPES)] typealias ON3<[ResolvedTo(TYPES)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(STATUS)] typealias ON3<[ResolvedTo(STATUS)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(STATUS)] typealias ON3<[ResolvedTo(STATUS)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias ON3<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias ON3<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(CONTRACTS)] typealias ON3<[ResolvedTo(CONTRACTS)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(CONTRACTS)] typealias ON3<[ResolvedTo(CONTRACTS)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias ON3<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias ON3<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] typealias ON3<[ResolvedTo(CONSTANT_EVALUATION)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(CONSTANT_EVALUATION)] typealias ON3<[ResolvedTo(CONSTANT_EVALUATION)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
@@ -224,7 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias ON3<[ResolvedTo(ANNOTATION_ARGUMENTS)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias ON3<[ResolvedTo(ANNOTATION_ARGUMENTS)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] typealias ON3<[ResolvedTo(BODY_RESOLVE)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias ON3<[ResolvedTo(BODY_RESOLVE)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] nestedTypeAlias2.kt
@@ -262,4 +262,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedTypeAlias2.kt
         public final [ResolvedTo(BODY_RESOLVE)] typealias NestedType<[ResolvedTo(BODY_RESOLVE)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] typealias ON3<[ResolvedTo(BODY_RESOLVE)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias ON3<[ResolvedTo(BODY_RESOLVE)] T2> = R|{OuterClass.NestedType<T2>=} OuterClass.NestedClass<T2>|
