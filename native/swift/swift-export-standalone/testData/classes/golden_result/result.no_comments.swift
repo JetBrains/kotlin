@@ -1,5 +1,5 @@
-import KotlinBridges
 import KotlinRuntime
+import KotlinBridges
 
 public class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
     public override init() {

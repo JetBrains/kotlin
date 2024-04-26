@@ -1,4 +1,3 @@
-import KotlinBridges
 import KotlinRuntime
 
 public typealias X = ERROR_TYPE

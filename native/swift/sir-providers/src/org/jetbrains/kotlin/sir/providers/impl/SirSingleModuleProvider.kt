@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
@@ -16,14 +15,11 @@ import org.jetbrains.kotlin.sir.providers.SirModuleProvider
  */
 public class SirSingleModuleProvider(
     private val swiftModuleName: String,
-    private val bridgeModuleName: String,
 ) : SirModuleProvider {
 
     private val theModule by lazy {
         buildModule {
             name = swiftModuleName
-            // imports should be reworked - KT-66727
-            imports += SirImport(bridgeModuleName)
         }
     }
 

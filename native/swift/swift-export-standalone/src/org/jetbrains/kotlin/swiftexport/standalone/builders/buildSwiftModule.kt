@@ -33,7 +33,6 @@ import kotlin.io.path.Path
 internal fun buildSwiftModule(
     input: InputModule,
     config: SwiftExportConfig,
-    bridgeModuleName: String,
 ): SirModule {
     val (module, scopeProvider) = when (input) {
         is InputModule.Source -> createModuleWithScopeProviderFromSources(config.distribution, input)
@@ -45,7 +44,7 @@ internal fun buildSwiftModule(
             module,
             errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
             unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
-            moduleProviderBuilder = { SirSingleModuleProvider(swiftModuleName = input.name, bridgeModuleName = bridgeModuleName) }
+            moduleProviderBuilder = { SirSingleModuleProvider(swiftModuleName = input.name) }
         )
         with(sirSession) {
             module.sirModule().also {

@@ -1,4 +1,3 @@
-import KotlinBridges
 import KotlinRuntime
 
 public typealias RegularInteger = Swift.Int32

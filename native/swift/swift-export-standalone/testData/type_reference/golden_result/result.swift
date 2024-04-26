@@ -1,4 +1,3 @@
-import KotlinBridges
 import KotlinRuntime
 
 public class Class_without_package : KotlinRuntime.KotlinBase {

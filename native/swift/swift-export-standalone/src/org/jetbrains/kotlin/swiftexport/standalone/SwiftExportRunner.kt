@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
+import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
@@ -121,8 +123,11 @@ public fun runSwiftExport(
         )
         DEFAULT_BRIDGE_MODULE_NAME
     }
-    val swiftModule = buildSwiftModule(input, config, bridgeModuleName)
+    val swiftModule = buildSwiftModule(input, config)
     val bridgeRequests = buildBridgeRequests(swiftModule)
+    if (bridgeRequests.isNotEmpty()) {
+        swiftModule.updateImports(listOf(SirImport(bridgeModuleName)))
+    }
     swiftModule.dumpResultToFiles(
         bridgeRequests, output,
         stableDeclarationsOrder = stableDeclarationsOrder,
