@@ -1,5 +1,5 @@
 // ISSUE: KT-67221
-// LANGUAGE: -ImprovedCapturedTypeApproximationInInference
+// LANGUAGE: +ImprovedCapturedTypeApproximationInInference
 // FILE: simple.kt
 package simple
 
@@ -27,5 +27,5 @@ class Widget<B : DataSub<C>, C>(val data: B)
 class WidgetWrapper<D : Data<E>, E>(val data: D)
 
 fun foo(w: Widget<*, *>) {
-    <!TYPE_MISMATCH!>WidgetWrapper<!>(data = w.data)
+    WidgetWrapper(data = w.data)
 }

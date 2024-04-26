@@ -18348,6 +18348,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("capturedAssignmentAfter.kt")
+        public void testCapturedAssignmentAfter() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedAssignmentAfter.kt");
+        }
+
+        @Test
         @TestMetadata("capturedFlexibleIntersectionTypesWithDifferentBounds.kt")
         public void testCapturedFlexibleIntersectionTypesWithDifferentBounds() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedFlexibleIntersectionTypesWithDifferentBounds.kt");

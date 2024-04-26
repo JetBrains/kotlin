@@ -18342,6 +18342,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("capturedAssignmentAfter.kt")
+        public void testCapturedAssignmentAfter() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedAssignmentAfter.kt");
+        }
+
+        @Test
         @TestMetadata("capturedFlexibleIntersectionTypesWithDifferentBounds.kt")
         public void testCapturedFlexibleIntersectionTypesWithDifferentBounds() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedFlexibleIntersectionTypesWithDifferentBounds.kt");
