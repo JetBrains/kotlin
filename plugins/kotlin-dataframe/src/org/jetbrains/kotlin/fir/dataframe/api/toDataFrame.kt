@@ -6,7 +6,10 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
@@ -40,6 +43,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter
+import org.jetbrains.kotlinx.dataframe.annotations.Arguments
+import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
@@ -47,10 +53,70 @@ import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 import java.util.Locale
 
+class Properties0 : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: CreateDataFrameConfiguration by arg()
+    val Arguments.maxDepth: Int by arg()
+    val Arguments.body: (Any) -> Unit by arg(lens = Interpreter.Dsl)
+
+    override fun Arguments.interpret() {
+        dsl.maxDepth = maxDepth
+        body(dsl.traverseConfiguration)
+    }
+}
+
+class CreateDataFrameConfiguration {
+    var maxDepth = 0
+    var traverseConfiguration: TraverseConfiguration = TraverseConfiguration()
+}
+
+class TraverseConfiguration {
+    val excludeProperties = mutableSetOf<FirCallableReferenceAccess>()
+    val excludeClasses = mutableSetOf<FirGetClassCall>()
+    val preserveClasses = mutableSetOf<FirGetClassCall>()
+    val preserveProperties = mutableSetOf<FirCallableReferenceAccess>()
+}
+
+class Preserve0 : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: TraverseConfiguration by arg()
+    val Arguments.classes: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
+
+    override fun Arguments.interpret() {
+        dsl.preserveClasses.addAll(classes.arguments.filterIsInstance<FirGetClassCall>())
+    }
+}
+
+class Preserve1 : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: TraverseConfiguration by arg()
+    val Arguments.properties: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
+
+    override fun Arguments.interpret() {
+        dsl.preserveProperties.addAll(properties.arguments.filterIsInstance<FirCallableReferenceAccess>())
+    }
+}
+
+class Exclude0 : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: TraverseConfiguration by arg()
+    val Arguments.classes: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
+
+    override fun Arguments.interpret() {
+        dsl.excludeClasses.addAll(classes.arguments.filterIsInstance<FirGetClassCall>())
+    }
+}
+
+class Exclude1 : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: TraverseConfiguration by arg()
+    val Arguments.properties: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
+
+    override fun Arguments.interpret() {
+        dsl.excludeProperties.addAll(properties.arguments.filterIsInstance<FirCallableReferenceAccess>())
+    }
+}
+
 @OptIn(SymbolInternals::class)
 internal fun KotlinTypeFacade.toDataFrame(
     maxDepth: Int,
-    call: FirFunctionCall
+    call: FirFunctionCall,
+    traverseConfiguration: TraverseConfiguration
 ): PluginDataFrameSchema {
     fun ConeKotlinType.isValueType() =
         this.isArrayTypeOrNullableArrayType ||

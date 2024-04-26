@@ -208,6 +208,10 @@ fun <T> KotlinTypeFacade.interpret(
                     Interpreter.Success(schema)
                 }
             }
+
+            is Interpreter.Id -> {
+                Interpreter.Success(it.expression)
+            }
         }
         value?.let { value1 -> it.name.identifier to value1 }
     }

@@ -27,6 +27,8 @@ public interface Interpreter<T> {
 
     public object Schema : Lens
 
+    public object  Id : Lens
+
     // required to compute whether resulting schema should be inheritor of previous class or a new class
     public fun startingSchema(arguments: Map<String, Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): PluginDataFrameSchema?
 

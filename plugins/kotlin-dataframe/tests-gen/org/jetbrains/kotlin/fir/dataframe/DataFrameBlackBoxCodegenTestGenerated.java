@@ -196,6 +196,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("toDataFrame_dsl.kt")
+  public void testToDataFrame_dsl() {
+    runTest("testData/box/toDataFrame_dsl.kt");
+  }
+
+  @Test
   @TestMetadata("toDataFrame_superType.kt")
   public void testToDataFrame_superType() {
     runTest("testData/box/toDataFrame_superType.kt");
