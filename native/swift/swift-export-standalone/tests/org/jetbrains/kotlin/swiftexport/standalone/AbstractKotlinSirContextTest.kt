@@ -18,6 +18,7 @@ import java.nio.file.Path
 import java.util.Properties
 import kotlin.io.path.*
 import kotlin.streams.asSequence
+import kotlin.test.assertSame
 
 enum class InputModuleKind {
     Source, Binary
@@ -54,12 +55,6 @@ abstract class AbstractSwiftRunnerTestBase(
         val expectedCHeader = expectedFiles / "result.h"
         val expectedKotlinBridge = expectedFiles / "result.kt"
 
-        val output = SwiftExportOutput(
-            swiftApi = tmpdir.resolve("result.swift").toPath(),
-            kotlinBridges = tmpdir.resolve("result.kt").toPath(),
-            cHeaderBridges = tmpdir.resolve("result.c").toPath()
-        )
-
         val inputModule = when (inputModuleKind) {
             InputModuleKind.Source -> {
                 InputModule.Source(
@@ -89,19 +84,24 @@ abstract class AbstractSwiftRunnerTestBase(
 
         val config = defaultConfig + discoveredConfig
 
-        runSwiftExport(
+        val output = runSwiftExport(
             input = inputModule,
-            output = output,
             config = SwiftExportConfig(
                 settings = config,
                 logger = createDummyLogger(),
                 distribution = Distribution(KonanHome.konanHomePath),
+                outputPath = tmpdir.toPath(),
             )
         )
 
-        KotlinTestUtils.assertEqualsToFile(expectedSwift, output.swiftApi.readText())
-        KotlinTestUtils.assertEqualsToFile(expectedCHeader, output.cHeaderBridges.readText())
-        KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, output.kotlinBridges.readText())
+        assertSame(1, output.getOrThrow().count(), "should produce single leaf module")
+        assertSame(0, output.getOrThrow().first().dependencies.count(), "should produce module without children")
+
+        val result = output.getOrThrow().first().files
+
+        KotlinTestUtils.assertEqualsToFile(expectedSwift, result.swiftApi.readText())
+        KotlinTestUtils.assertEqualsToFile(expectedCHeader, result.cHeaderBridges.readText())
+        KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, result.kotlinBridges.readText())
     }
 }
 

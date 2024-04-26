@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
@@ -36,7 +35,7 @@ import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("swiftexport")
-abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
+abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
 
     private val testCompilationFactory = TestCompilationFactory()
     private val testSuiteDir = File("native/native.tests/testData/framework")
@@ -73,26 +72,26 @@ abstract class AbstractNativeSwiftExportTest() : AbstractNativeSimpleTest() {
     private fun runSwiftExport(
         moduleName: String,
         testPathFull: File
-    ): SwiftExportOutput {
+    ): SwiftExportFiles {
         val swiftExportInput = InputModule.Source(
             name = moduleName,
             path = testPathFull.toPath(),
         )
         val exportResultsPath = buildDir.toPath().resolve("swift_export_results")
-        val swiftExportOutput = SwiftExportOutput(
-            swiftApi = exportResultsPath.resolve("result.swift"),
-            kotlinBridges = exportResultsPath.resolve("result.kt"),
-            cHeaderBridges = exportResultsPath.resolve("result.h"),
-        )
+
         val swiftExportConfig = SwiftExportConfig(
             settings = mapOf(
                 SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
                 SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
             ),
-            logger = createDummyLogger()
+            logger = createDummyLogger(),
+            outputPath = exportResultsPath
         )
-        runSwiftExport(swiftExportInput, swiftExportConfig, swiftExportOutput)
-        return swiftExportOutput
+
+        return runSwiftExport(
+            swiftExportInput,
+            swiftExportConfig
+        ).getOrThrow().first().files
     }
 
     private fun compileSwiftModule(

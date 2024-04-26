@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.sir.bridge.BridgeRequest
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.bridge.createCBridgePrinter
 import org.jetbrains.kotlin.sir.bridge.createKotlinBridgePrinter
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportOutput
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportFiles
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.File
 
 
 internal fun SirModule.dumpResultToFiles(
     requests: List<BridgeRequest>,
-    output: SwiftExportOutput,
+    output: SwiftExportFiles,
     stableDeclarationsOrder: Boolean,
     renderDocComments: Boolean,
 ) {
