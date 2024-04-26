@@ -1,6 +1,10 @@
 package events
 
 open external class internal {
+  var property: Int
+    get
+    set
+
   open class EventEmitterP : internal {
     constructor() /* primary */ {
       super/*Any*/()
@@ -54,6 +58,20 @@ open external class internal {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
+
+  }
+
+  fun function(): String
+
+}
+
+external interface A {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
 
   }
 

@@ -5,6 +5,22 @@ package events
 //   Public signature: events/internal|null[0]
 open external class internal {
   // CHECK:
+  //   Mangled name: events.internal{}property
+  //   Public signature: events/internal.property|4634558160746314112[0]
+  //   Public signature debug description: {}property
+  external var property: Int
+    // CHECK:
+    //   Mangled name: events.internal#<get-property>(){}
+    //   Public signature: events/internal.property.<get-property>|4838831487146901942[0]
+    //   Public signature debug description: <get-property>(){}
+    external get
+    // CHECK:
+    //   Mangled name: events.internal#<set-property>(kotlin.Int){}
+    //   Public signature: events/internal.property.<set-property>|3280781157459312365[0]
+    //   Public signature debug description: <set-property>(kotlin.Int){}
+    external set
+
+  // CHECK:
   //   Mangled name: events.internal.EventEmitterP
   //   Public signature: events/internal.EventEmitterP|null[0]
   open external class EventEmitterP : internal {
@@ -13,6 +29,28 @@ open external class internal {
     //   Public signature: events/internal.EventEmitterP.<init>|-5645683436151566731[0]
     //   Public signature debug description: <init>(){}
     external constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: events.internal.EventEmitterP#function(){}
+    //   Public signature: events/internal.EventEmitterP.function|-3322893411126713785[0]
+    //   Public signature debug description: function(){}
+    external /* fake */ override fun function(): String
+
+    // CHECK:
+    //   Mangled name: events.internal.EventEmitterP{}property
+    //   Public signature: events/internal.EventEmitterP.property|4634558160746314112[0]
+    //   Public signature debug description: {}property
+    external /* fake */ override var property: Int
+      // CHECK:
+      //   Mangled name: events.internal.EventEmitterP#<get-property>(){}
+      //   Public signature: events/internal.EventEmitterP.property.<get-property>|4838831487146901942[0]
+      //   Public signature debug description: <get-property>(){}
+      external /* fake */ override get(): Int
+      // CHECK:
+      //   Mangled name: events.internal.EventEmitterP#<set-property>(kotlin.Int){}
+      //   Public signature: events/internal.EventEmitterP.property.<set-property>|3280781157459312365[0]
+      //   Public signature debug description: <set-property>(kotlin.Int){}
+      external /* fake */ override set(<set-?>: Int): Unit
 
   }
 
@@ -25,6 +63,28 @@ open external class internal {
     //   Public signature: events/internal.EventEmitterS.<init>|4518179880532599055[0]
     //   Public signature debug description: <init>(kotlin.Any){}
     external constructor(a: Any)
+
+    // CHECK:
+    //   Mangled name: events.internal.EventEmitterS#function(){}
+    //   Public signature: events/internal.EventEmitterS.function|-3322893411126713785[0]
+    //   Public signature debug description: function(){}
+    external /* fake */ override fun function(): String
+
+    // CHECK:
+    //   Mangled name: events.internal.EventEmitterS{}property
+    //   Public signature: events/internal.EventEmitterS.property|4634558160746314112[0]
+    //   Public signature debug description: {}property
+    external /* fake */ override var property: Int
+      // CHECK:
+      //   Mangled name: events.internal.EventEmitterS#<get-property>(){}
+      //   Public signature: events/internal.EventEmitterS.property.<get-property>|4838831487146901942[0]
+      //   Public signature debug description: <get-property>(){}
+      external /* fake */ override get(): Int
+      // CHECK:
+      //   Mangled name: events.internal.EventEmitterS#<set-property>(kotlin.Int){}
+      //   Public signature: events/internal.EventEmitterS.property.<set-property>|3280781157459312365[0]
+      //   Public signature debug description: <set-property>(kotlin.Int){}
+      external /* fake */ override set(<set-?>: Int): Unit
 
   }
 
@@ -48,37 +108,37 @@ open external class internal {
     //   Public signature debug description: <init>(){}
     private external constructor() /* primary */
 
-    // CHECK JS_IR NATIVE:
+    // CHECK:
     //   Mangled name: events.internal.NestedExternalEnum#valueOf#static(kotlin.String){}
     //   Public signature: events/internal.NestedExternalEnum.valueOf|-4683474617854611729[0]
     //   Public signature debug description: valueOf#static(kotlin.String){}
     external fun valueOf(value: String): NestedExternalEnum
 
-    // CHECK JS_IR NATIVE:
+    // CHECK:
     //   Mangled name: events.internal.NestedExternalEnum#values#static(){}
     //   Public signature: events/internal.NestedExternalEnum.values|-8715569000920726747[0]
     //   Public signature debug description: values#static(){}
     external fun values(): Array<NestedExternalEnum>
 
-    // CHECK JS_IR NATIVE:
+    // CHECK:
     //   Mangled name: events.internal.NestedExternalEnum#compareTo(events.internal.NestedExternalEnum){}
     //   Public signature: events/internal.NestedExternalEnum.compareTo|-4902667871773591290[0]
     //   Public signature debug description: compareTo(events.internal.NestedExternalEnum){}
     external /* fake */ override operator fun compareTo(other: NestedExternalEnum): Int
 
-    // CHECK JS_IR NATIVE:
+    // CHECK:
     //   Mangled name: events.internal.NestedExternalEnum#equals(kotlin.Any?){}
     //   Public signature: events/internal.NestedExternalEnum.equals|4638265728071529943[0]
     //   Public signature debug description: equals(kotlin.Any?){}
     external /* fake */ override operator fun equals(other: Any?): Boolean
 
-    // CHECK JS_IR NATIVE:
+    // CHECK:
     //   Mangled name: events.internal.NestedExternalEnum#hashCode(){}
     //   Public signature: events/internal.NestedExternalEnum.hashCode|3409210261493131192[0]
     //   Public signature debug description: hashCode(){}
     external /* fake */ override fun hashCode(): Int
 
-    // CHECK JS_IR NATIVE:
+    // CHECK:
     //   Mangled name: events.internal.NestedExternalEnum#toString(){}
     //   Public signature: events/internal.NestedExternalEnum.toString|-1522858123163872138[0]
     //   Public signature debug description: toString(){}
@@ -89,7 +149,7 @@ open external class internal {
     //   Public signature: events/internal.NestedExternalEnum.entries|-5134227801081826149[0]
     //   Public signature debug description: #static{}entries
     external val entries: EnumEntries<NestedExternalEnum>
-      // CHECK JS_IR NATIVE:
+      // CHECK:
       //   Mangled name: events.internal.NestedExternalEnum#<get-entries>#static(){}
       //   Public signature: events/internal.NestedExternalEnum.entries.<get-entries>|-6068527377476727729[0]
       //   Public signature debug description: <get-entries>#static(){}
@@ -100,7 +160,7 @@ open external class internal {
     //   Public signature: events/internal.NestedExternalEnum.name|4231860309499509769[0]
     //   Public signature debug description: {}name
     external /* fake */ override val name: String
-      // CHECK JS_IR NATIVE:
+      // CHECK:
       //   Mangled name: events.internal.NestedExternalEnum#<get-name>(){}
       //   Public signature: events/internal.NestedExternalEnum.name.<get-name>|5879344792307730109[0]
       //   Public signature debug description: <get-name>(){}
@@ -111,7 +171,7 @@ open external class internal {
     //   Public signature: events/internal.NestedExternalEnum.ordinal|1912745122988592376[0]
     //   Public signature debug description: {}ordinal
     external /* fake */ override val ordinal: Int
-      // CHECK JS_IR NATIVE:
+      // CHECK:
       //   Mangled name: events.internal.NestedExternalEnum#<get-ordinal>(){}
       //   Public signature: events/internal.NestedExternalEnum.ordinal.<get-ordinal>|8409904226035914023[0]
       //   Public signature debug description: <get-ordinal>(){}
@@ -135,6 +195,28 @@ open external class internal {
     //   Public signature debug description: <init>(){}
     private external constructor() /* primary */
 
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalObject#function(){}
+    //   Public signature: events/internal.NestedExternalObject.function|-3322893411126713785[0]
+    //   Public signature debug description: function(){}
+    external /* fake */ override fun function(): String
+
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalObject{}property
+    //   Public signature: events/internal.NestedExternalObject.property|4634558160746314112[0]
+    //   Public signature debug description: {}property
+    external /* fake */ override var property: Int
+      // CHECK:
+      //   Mangled name: events.internal.NestedExternalObject#<get-property>(){}
+      //   Public signature: events/internal.NestedExternalObject.property.<get-property>|4838831487146901942[0]
+      //   Public signature debug description: <get-property>(){}
+      external /* fake */ override get(): Int
+      // CHECK:
+      //   Mangled name: events.internal.NestedExternalObject#<set-property>(kotlin.Int){}
+      //   Public signature: events/internal.NestedExternalObject.property.<set-property>|3280781157459312365[0]
+      //   Public signature debug description: <set-property>(kotlin.Int){}
+      external /* fake */ override set(<set-?>: Int): Unit
+
   }
 
   // CHECK:
@@ -143,4 +225,29 @@ open external class internal {
   //   Public signature debug description: <init>(){}
   external constructor() /* primary */
 
+  // CHECK:
+  //   Mangled name: events.internal#function(){}
+  //   Public signature: events/internal.function|-3322893411126713785[0]
+  //   Public signature debug description: function(){}
+  external fun function(): String
+
 }
+
+// CHECK:
+//   Mangled name: events.A
+//   Public signature: events/A|null[0]
+external interface A {
+  // CHECK:
+  //   Mangled name: events.A.Companion
+  //   Public signature: events/A.Companion|null[0]
+  external companion object Companion {
+    // CHECK:
+    //   Mangled name: events.A.Companion#<init>(){}
+    //   Public signature: events/A.Companion.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    private external constructor() /* primary */
+
+  }
+
+}
+

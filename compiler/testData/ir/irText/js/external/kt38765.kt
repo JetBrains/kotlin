@@ -3,6 +3,9 @@
 package events
 
 external open class internal {
+    fun function(): String
+    var property: Int
+
     open class EventEmitterP : internal {
     }
 
@@ -17,4 +20,9 @@ external open class internal {
     }
 
     interface NestedExternalInterface {}
+}
+
+external interface A {
+    companion object {
+    }
 }
