@@ -220,7 +220,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             annotations += c.annotationDeserializer.loadTypeAliasAnnotations(proto, local.nameResolver)
             this.symbol = symbol
-            expandedTypeRef = proto.underlyingType(c.typeTable).toTypeRef(local)
+            expandedTypeRef = proto.expandedType(c.typeTable).toTypeRef(local)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false, versionRequirements)
