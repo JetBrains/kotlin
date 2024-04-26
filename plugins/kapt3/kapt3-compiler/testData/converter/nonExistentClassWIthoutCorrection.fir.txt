@@ -50,35 +50,35 @@ public final class NonExistentClassWIthoutCorrectionKt {
  *   // field: coocoo:Lerror/NonExistentClass;
  *   // getter: getCoocoo()Lerror/NonExistentClass;
  *   // setter: setCoocoo(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo: error/NonExistentClass (* = Coocoo^ *)
+ *   public final lateinit var coocoo: error/NonExistentClass
  *     public final get
  *     public final set
  *
  *   // field: coocoo2:Lerror/NonExistentClass;
  *   // getter: getCoocoo2()Lerror/NonExistentClass;
  *   // setter: setCoocoo2(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo2: error/NonExistentClass (* = Coocoo2^<kotlin/String> *)
+ *   public final lateinit var coocoo2: error/NonExistentClass
  *     public final get
  *     public final set
  *
  *   // field: coocoo21:Lerror/NonExistentClass;
  *   // getter: getCoocoo21()Lerror/NonExistentClass;
  *   // setter: setCoocoo21(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo21: error/NonExistentClass (* = Coocoo2^<error/NonExistentClass (* = Coocoo^ *)> *)
+ *   public final lateinit var coocoo21: error/NonExistentClass
  *     public final get
  *     public final set
  *
  *   // field: coocoo3:Lerror/NonExistentClass;
  *   // getter: getCoocoo3()Lerror/NonExistentClass;
  *   // setter: setCoocoo3(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo3: error/NonExistentClass (* = Coocoo3^<kotlin/String> *)
+ *   public final lateinit var coocoo3: error/NonExistentClass
  *     public final get
  *     public final set
  *
  *   // field: coocoo31:Lerror/NonExistentClass;
  *   // getter: getCoocoo31()Lerror/NonExistentClass;
  *   // setter: setCoocoo31(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo31: error/NonExistentClass (* = Coocoo3^<error/NonExistentClass (* = Coocoo2^<error/NonExistentClass (* = Coocoo^ *)> *)> *)
+ *   public final lateinit var coocoo31: error/NonExistentClass
  *     public final get
  *     public final set
  *
