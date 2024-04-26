@@ -374,9 +374,7 @@ internal class ScopeTowerLevel(
                             (implicitReceiverValue.type as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag == lookupTag
                         }
                     }
-                    else -> {
-                        bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver()
-                    }
+                    else -> null
                 }
             }
             candidate.isStatic -> {
