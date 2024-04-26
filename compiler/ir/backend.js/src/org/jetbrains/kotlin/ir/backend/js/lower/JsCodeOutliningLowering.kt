@@ -52,12 +52,14 @@ private fun IrElement.containsCallsTo(symbol: IrFunctionSymbol): Boolean {
     var result = false
     acceptChildrenVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
+            if (result) return
             element.acceptChildrenVoid(this)
         }
 
         override fun visitCall(expression: IrCall) {
             if (expression.symbol == symbol) {
                 result = true
+                return
             }
             super.visitCall(expression)
         }
@@ -70,8 +72,8 @@ private class JsCodeOutlineTransformer(
     val backendContext: JsIrBackendContext,
     val container: IrDeclaration,
 ) : IrElementTransformerVoidWithContext() {
-    val localScopes: MutableList<MutableMap<String, IrValueDeclaration>> =
-        mutableListOf(mutableMapOf())
+    val localScopes: MutableList<HashMap<String, IrValueDeclaration>> =
+        mutableListOf(hashMapOf())
 
     init {
         if (container is IrFunction) {
@@ -82,7 +84,7 @@ private class JsCodeOutlineTransformer(
     }
 
     inline fun <T> withLocalScope(body: () -> T): T {
-        localScopes.push(mutableMapOf())
+        localScopes.push(hashMapOf())
         val res = body()
         localScopes.pop()
         return res
