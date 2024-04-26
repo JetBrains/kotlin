@@ -432,6 +432,7 @@ constructor(
                         }
                         val cacheBuilder = CacheBuilder(
                             executionContext = executionContext,
+                            objectFactory = objectFactory,
                             settings = cacheBuilderSettings,
                             konanPropertiesService = konanPropertiesService.get(),
                             metricsReporter = metricsReporter
@@ -444,11 +445,9 @@ constructor(
             val arguments = createCompilerArguments()
             val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments) + additionalOptions
 
-            KotlinNativeCompilerRunner(
+            objectFactory.KotlinNativeCompilerRunner(
                 settings = runnerSettings,
-                executionContext = executionContext,
                 metricsReporter = metricsReporter
-
             ).run(buildArguments)
         }
     }

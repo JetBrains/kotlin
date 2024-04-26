@@ -5,17 +5,26 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 
-internal class KotlinNativeCommonizerToolRunner(
-    context: GradleExecutionContext,
+internal fun ObjectFactory.KotlinNativeCommonizerToolRunner(
+    settings: KotlinNativeCommonizerToolRunner.Settings,
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+): KotlinNativeCommonizerToolRunner = newInstance(settings, metricsReporter)
+
+internal abstract class KotlinNativeCommonizerToolRunner(
     private val settings: Settings,
-    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
-) : KotlinToolRunner(context, metricsReporter) {
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    objectFactory: ObjectFactory,
+    execOperations: ExecOperations,
+) : KotlinToolRunner(metricsReporter, objectFactory, execOperations) {
 
     class Settings(
         val kotlinPluginVersion: String,

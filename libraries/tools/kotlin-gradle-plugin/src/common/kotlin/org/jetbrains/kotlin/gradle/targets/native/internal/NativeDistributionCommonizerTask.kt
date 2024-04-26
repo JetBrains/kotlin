@@ -14,7 +14,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
@@ -43,7 +42,6 @@ import javax.inject.Inject
 internal abstract class NativeDistributionCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations,
 ) : DefaultTask(), UsesBuildMetricsService, UsesKotlinNativeBundleBuildService {
 
     private val konanHome = project.file(project.konanHome)
@@ -120,8 +118,7 @@ internal abstract class NativeDistributionCommonizerTask
                 customJvmArgs.get(),
                 kotlinCompilerArgumentsLogLevel,
             )
-            val commonizerRunner = KotlinNativeCommonizerToolRunner(
-                context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
+            val commonizerRunner = objectFactory.KotlinNativeCommonizerToolRunner(
                 settings = runnerSettings,
                 metricsReporter = metricsReporter,
             )

@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
@@ -21,12 +22,17 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
 // Note: this class is public because it is used in the K/N build infrastructure.
-abstract class KotlinToolRunner(
-    private val executionContext: GradleExecutionContext,
-    private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
+abstract class KotlinToolRunner @Inject constructor(
+    private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val objectFactory: ObjectFactory,
+    private val execOperations: ExecOperations,
 ) {
+
+    private val logger = Logging.getLogger(this::class.java)
+
     /**
      * Context Services that are required for [KotlinToolRunner] during Gradle Task Execution Phase
      */
@@ -139,7 +145,7 @@ abstract class KotlinToolRunner(
     private fun runViaExec(args: List<String>, metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>) {
         metricsReporter.measure(GradleBuildTime.NATIVE_IN_EXECUTOR) {
             val transformedArgs = transformArgs(args)
-            val classpath = executionContext.filesProvider(classpath)
+            val classpath = objectFactory.fileCollection().from(classpath)
             val systemProperties = System.getProperties()
                 /* Capture 'System.getProperties()' current state to avoid potential 'ConcurrentModificationException' */
                 .snapshot()
@@ -150,7 +156,7 @@ abstract class KotlinToolRunner(
                 .toMap() + execSystemProperties
 
 
-            executionContext.logger.log(
+            logger.log(
                 compilerArgumentsLogLevel.gradleLogLevel,
                 """|Run "$displayName" tool in a separate JVM process
                    |Main class = $mainClass
@@ -164,7 +170,7 @@ abstract class KotlinToolRunner(
                 """.trimMargin()
             )
 
-            executionContext.javaexec { spec ->
+            execOperations.javaexec { spec ->
                 spec.mainClass.set(mainClass)
                 spec.classpath = classpath
                 spec.jvmArgs(jvmArgs)
@@ -181,7 +187,7 @@ abstract class KotlinToolRunner(
             val transformedArgs = transformArgs(args)
             val isolatedClassLoader = getIsolatedClassLoader()
 
-            executionContext.logger.log(
+            logger.log(
                 compilerArgumentsLogLevel.gradleLogLevel,
                 """|Run in-process tool "$displayName"
                    |Entry point method = $mainClass.$daemonEntryPoint

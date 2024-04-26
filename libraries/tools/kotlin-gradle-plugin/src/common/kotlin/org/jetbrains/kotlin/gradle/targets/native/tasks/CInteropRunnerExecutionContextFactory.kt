@@ -10,24 +10,20 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 
 internal fun KotlinNativeCInteropRunner.Companion.createExecutionContext(
     task: CInteropProcess,
     isInIdeaSync: Boolean,
     runnerSettings: KotlinNativeToolRunner.Settings,
-    gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
     metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ): KotlinNativeCInteropRunner.ExecutionContext {
-    return if (isInIdeaSync) IdeaSyncKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext, task, metricsReporter)
-    else DefaultKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext, task, metricsReporter)
+    return if (isInIdeaSync) IdeaSyncKotlinNativeCInteropRunnerExecutionContext(runnerSettings, task, metricsReporter)
+    else DefaultKotlinNativeCInteropRunnerExecutionContext(runnerSettings, task, metricsReporter)
 }
 
 private class DefaultKotlinNativeCInteropRunnerExecutionContext(
     override val runnerSettings: KotlinNativeToolRunner.Settings,
-    override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
     private val task: CInteropProcess,
     override val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ) : KotlinNativeCInteropRunner.ExecutionContext {
@@ -39,7 +35,6 @@ private class DefaultKotlinNativeCInteropRunnerExecutionContext(
 
 private class IdeaSyncKotlinNativeCInteropRunnerExecutionContext(
     override val runnerSettings: KotlinNativeToolRunner.Settings,
-    override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
     private val task: CInteropProcess,
     override val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ) : KotlinNativeCInteropRunner.ExecutionContext {

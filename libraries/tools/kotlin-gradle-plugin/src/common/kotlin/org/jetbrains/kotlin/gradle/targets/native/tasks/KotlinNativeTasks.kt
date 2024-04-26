@@ -279,7 +279,6 @@ internal constructor(
     override val compilerOptions: KotlinNativeCompilerOptions,
     private val objectFactory: ObjectFactory,
     providerFactory: ProviderFactory,
-    private val execOperations: ExecOperations,
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory),
     KotlinNativeCompileTask,
     K2MultiplatformCompilationTask,
@@ -535,9 +534,8 @@ internal constructor(
                 ArgumentUtils.convertArgumentsToStringList(arguments)
             }
 
-            KotlinNativeCompilerRunner(
+            objectFactory.KotlinNativeCompilerRunner(
                 settings = runnerSettings,
-                executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
                 metricsReporter = buildMetrics
             ).run(buildArguments)
         }
@@ -563,9 +561,6 @@ internal class ExternalDependenciesBuilder(
 
     private val sourceCodeModuleId: KResolvedDependencyId =
         intermediateLibraryName?.let { KResolvedDependencyId(it) } ?: KResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID
-
-    private val konanPropertiesService: KonanPropertiesBuildService
-        get() = KonanPropertiesBuildService.registerIfAbsent(project).get()
 
     fun buildCompilerArgs(): List<String> {
         val dependenciesFile = writeDependenciesFile(buildDependencies(), deleteOnExit = true)
@@ -724,6 +719,7 @@ internal class ExternalDependenciesBuilder(
 
 internal class CacheBuilder(
     private val executionContext: KotlinToolRunner.GradleExecutionContext,
+    private val objectFactory: ObjectFactory,
     private val settings: Settings,
     private val konanPropertiesService: KonanPropertiesBuildService,
     private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
@@ -911,7 +907,7 @@ internal class CacheBuilder(
                     args += "-l"
                     args += it.libraryFile.absolutePath
                 }
-            KotlinNativeCompilerRunner(settings.runnerSettings, executionContext, GradleBuildMetricsReporter()).run(args)
+            objectFactory.KotlinNativeCompilerRunner(settings.runnerSettings, GradleBuildMetricsReporter()).run(args)
         }
     }
 
@@ -952,7 +948,7 @@ internal class CacheBuilder(
         }
         args += "-Xadd-cache=${platformLib.absolutePath}"
         args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
-        KotlinNativeCompilerRunner(settings.runnerSettings, executionContext, metricsReporter).run(args)
+        objectFactory.KotlinNativeCompilerRunner(settings.runnerSettings, metricsReporter).run(args)
     }
 
     private fun ensureCompilerProvidedLibsPrecached() {
@@ -1022,8 +1018,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     }
 
     private val objectFactory: ObjectFactory = params.services.objectFactory
-
-    private val execOperations: ExecOperations = params.services.execOperations
 
     @get:Internal
     internal val targetName: String = params.targetName
@@ -1212,9 +1206,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 task = this,
                 isInIdeaSync = isInIdeaSync,
                 runnerSettings = runnerSettings,
-                gradleExecutionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
                 metricsReporter = buildMetrics
-            ).run(args)
+            ).run(objectFactory, args)
         }
     }
 

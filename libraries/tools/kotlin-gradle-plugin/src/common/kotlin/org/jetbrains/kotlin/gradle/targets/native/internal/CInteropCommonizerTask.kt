@@ -14,7 +14,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
@@ -42,7 +41,6 @@ private typealias GroupedCommonizerDependencies = Map<CInteropCommonizerGroup, L
 internal abstract class CInteropCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout,
 ) : AbstractCInteropCommonizerTask() {
 
@@ -203,8 +201,7 @@ internal abstract class CInteropCommonizerTask
             compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel
         )
 
-        val commonizerRunner = KotlinNativeCommonizerToolRunner(
-            context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
+        val commonizerRunner = objectFactory.KotlinNativeCommonizerToolRunner(
             settings = runnerSettings,
             metricsReporter = metrics.get(),
         )
