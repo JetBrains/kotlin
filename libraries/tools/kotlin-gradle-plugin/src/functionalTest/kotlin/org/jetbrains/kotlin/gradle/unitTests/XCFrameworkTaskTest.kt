@@ -149,8 +149,8 @@ class XCFrameworkTaskTest {
 
         assertEquals(
             setOf(
-                project.multiplatformExtension.iosSimulatorArm64().binaries.getFramework(NativeBuildType.RELEASE).linkTask,
-                project.multiplatformExtension.iosX64().binaries.getFramework(NativeBuildType.RELEASE).linkTask,
+                project.multiplatformExtension.iosSimulatorArm64().binaries.getFramework(NativeBuildType.RELEASE).linkTaskProvider.get(),
+                project.multiplatformExtension.iosX64().binaries.getFramework(NativeBuildType.RELEASE).linkTaskProvider.get(),
             ),
             iosUniversalFrameworkTask.taskDependencies.getDependencies(null)
         )

@@ -92,6 +92,7 @@ sealed class NativeBinary(
     val linkTaskName: String
         get() = lowerCamelCaseName("link", name, target.targetName)
 
+    @Deprecated("Use 'linkTaskProvider' instead", ReplaceWith("linkTaskProvider"))
     val linkTask: KotlinNativeLink
         get() = linkTaskProvider.get()
 
@@ -110,7 +111,7 @@ sealed class NativeBinary(
     }
 
     val outputFile: File
-        get() = linkTask.outputFile.get()
+        get() = linkTaskProvider.get().outputFile.get()
 
     // Named implementation.
     override fun getName(): String = name

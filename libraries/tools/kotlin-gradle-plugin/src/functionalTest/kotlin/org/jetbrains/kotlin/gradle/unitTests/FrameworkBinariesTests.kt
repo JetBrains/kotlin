@@ -20,7 +20,7 @@ class FrameworkBinariesTests {
                     binaries.framework {
                         assertEquals(
                             "test.framework",
-                            linkTask.outputFile.get().name,
+                            linkTaskProvider.get().outputFile.get().name,
                         )
                         assertEquals(
                             "test.framework",
@@ -31,7 +31,7 @@ class FrameworkBinariesTests {
 
                         assertEquals(
                             "foo.framework",
-                            linkTask.outputFile.get().name,
+                            linkTaskProvider.get().outputFile.get().name,
                         )
                         assertEquals(
                             "foo.framework",

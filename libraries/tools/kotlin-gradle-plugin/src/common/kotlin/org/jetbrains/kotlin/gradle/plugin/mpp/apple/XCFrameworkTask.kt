@@ -218,7 +218,7 @@ internal constructor(
             require(framework.konanTarget.family.isAppleFamily) {
                 "XCFramework supports Apple frameworks only"
             }
-            dependsOn(framework.linkTask)
+            dependsOn(framework.linkTaskProvider)
         }
         fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
     }

@@ -144,7 +144,7 @@ class FatFrameworksTest {
                     iosSimulatorArm64(),
                 ).forEach {
                     it.binaries.framework(listOf(NativeBuildType.DEBUG)) {
-                        linkTasks.add(linkTask)
+                        linkTasks.add(linkTaskProvider.get())
                         // 2. Depend on a framework
                         eagerlyCreatedTask?.from(this)
                         // 3. Redefine framework's baseName

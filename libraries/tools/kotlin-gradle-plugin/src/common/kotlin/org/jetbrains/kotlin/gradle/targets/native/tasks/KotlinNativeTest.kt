@@ -105,7 +105,7 @@ abstract class KotlinNativeTest : KotlinTest() {
     }
 
     fun executable(provider: Provider<File>) {
-        executableProperty.set(provider.map { project.files(it) })
+        executableProperty.set(project.files(provider))
     }
 
     fun executable(provider: Closure<File>) {
