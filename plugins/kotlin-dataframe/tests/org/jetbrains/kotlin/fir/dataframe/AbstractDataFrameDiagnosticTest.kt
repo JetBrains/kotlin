@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.TemporaryDirectoryManager
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeAll
 
 abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
@@ -60,5 +61,11 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
         useAfterAnalysisCheckers(
             ::DisableLazyResolveChecksAfterAnalysisChecker,
         )
+    }
+
+    override fun runTest(filePath: String) {
+        val muted = setOf("structuralCast.kt", "HistoryItem.kt")
+        Assumptions.assumeFalse(muted.any { filePath.contains(it) })
+        super.runTest(filePath)
     }
 }

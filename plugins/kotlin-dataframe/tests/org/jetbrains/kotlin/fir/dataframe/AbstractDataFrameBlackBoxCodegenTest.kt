@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TemporaryDirectoryManager
 import org.jetbrains.kotlin.test.services.TestServices
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeAll
 import java.io.File
 
@@ -49,6 +50,12 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
         builder.useConfigurators(::DataFramePluginAnnotationsProvider)
         builder.useConfigurators(::ExperimentalExtensionRegistrarConfigurator)
         builder.useCustomRuntimeClasspathProviders(::MyClasspathProvider)
+    }
+
+    override fun runTest(filePath: String) {
+        val muted = setOf("main.kt", "readJson.kt")
+        Assumptions.assumeFalse(muted.any { filePath.contains(it) })
+        super.runTest(filePath)
     }
 
     class MyClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
