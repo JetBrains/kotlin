@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-63596
 
 fun e(block: () -> String): String = ""

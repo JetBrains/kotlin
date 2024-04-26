@@ -47,13 +47,6 @@ fun extractLambdaInfoFromFunctionType(
             FunctionTypeKind.Function
         }
 
-    val singleStatement = argument.body?.statements?.singleOrNull() as? FirReturnExpression
-    if (argument.returnType == null && singleStatement != null &&
-        singleStatement.target.labeledElement == argument && singleStatement.result is FirUnitExpression
-    ) {
-        // Simply { }, i.e., function literals without body. Raw FIR added an implicit return with an implicit unit type ref.
-        argument.replaceReturnTypeRef(session.builtinTypes.unitType)
-    }
     val returnType = argument.returnType ?: expectedType.returnType(session)
 
     // `fun (x: T) = ...` and `fun T.() = ...` are both instances of `T.() -> V` and `(T) -> V`; `fun () = ...` is not.
