@@ -27,14 +27,6 @@ abstract class KotlinToolRunner(
     private val executionContext: GradleExecutionContext,
     private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
 ) {
-    @Deprecated(
-        "Using Project object is not compatible with Gradle Configuration Cache",
-        ReplaceWith("KotlinToolRunner(GradleExecutionContext.fromTaskContext())"),
-        DeprecationLevel.WARNING
-    )
-    @Suppress("DEPRECATION") // we have KT-64427 to remove this constructor
-    constructor(project: Project) : this(GradleExecutionContext.fromProject(project))
-
     /**
      * Context Services that are required for [KotlinToolRunner] during Gradle Task Execution Phase
      */
