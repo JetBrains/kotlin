@@ -25,24 +25,28 @@ import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
 import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
 
 internal fun buildSwiftModule(
     input: InputModule,
-    kotlinDistribution: Distribution,
+    config: SwiftExportConfig,
     bridgeModuleName: String,
 ): SirModule {
     val (module, scopeProvider) = when (input) {
-        is InputModule.Source -> createModuleWithScopeProviderFromSources(kotlinDistribution, input)
-        is InputModule.Binary -> createModuleWithScopeProviderFromBinary(kotlinDistribution, input)
+        is InputModule.Source -> createModuleWithScopeProviderFromSources(config.distribution, input)
+        is InputModule.Binary -> createModuleWithScopeProviderFromBinary(config.distribution, input)
     }
 
     return analyze(module) {
-        val sirSession = StandaloneSirSession(module) {
-            SirSingleModuleProvider(swiftModuleName = input.name, bridgeModuleName = bridgeModuleName)
-        }
+        val sirSession = StandaloneSirSession(
+            module,
+            errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
+            unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
+            moduleProviderBuilder = { SirSingleModuleProvider(swiftModuleName = input.name, bridgeModuleName = bridgeModuleName) }
+        )
         with(sirSession) {
             module.sirModule().also {
                 scopeProvider(this@analyze).flatMap { scope ->

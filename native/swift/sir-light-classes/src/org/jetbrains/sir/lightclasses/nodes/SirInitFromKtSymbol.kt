@@ -15,6 +15,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.translateParameters
 
 internal class SirInitFromKtSymbol(
     override val ktSymbol: KtConstructorSymbol,
@@ -32,12 +33,8 @@ internal class SirInitFromKtSymbol(
     override val kind: SirCallableKind by lazy {
         SirCallableKind.CLASS_METHOD
     }
-    override val parameters: MutableList<SirParameter> by lazyWithSessions {
-        mutableListOf<SirParameter>().apply {
-            ktSymbol.valueParameters.mapTo(this) {
-                SirParameter(argumentName = it.name.asString(), type = it.returnType.translateType(analysisSession))
-            }
-        }
+    override val parameters: List<SirParameter> by lazy {
+        translateParameters()
     }
     override val documentation: String? by lazyWithSessions {
         ktSymbol.documentation()

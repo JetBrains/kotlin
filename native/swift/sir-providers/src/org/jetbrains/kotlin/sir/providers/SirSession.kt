@@ -45,6 +45,11 @@ public interface SirSession :
     public val visibilityChecker: SirVisibilityChecker
     public val childrenProvider: SirChildrenProvider
 
+    override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy
+        get() = typeProvider.errorTypeStrategy
+    override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy
+        get() = typeProvider.unsupportedTypeStrategy
+
     override fun FqName.sirPackageEnum(module: SirModule): SirEnum = with(enumGenerator) { this@sirPackageEnum.sirPackageEnum(module) }
 
     override fun KtDeclarationSymbol.sirDeclarationName(): String = with(declarationNamer) { this@sirDeclarationName.sirDeclarationName() }
@@ -56,8 +61,12 @@ public interface SirSession :
 
     override fun KtModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
 
-    override fun KtType.translateType(ktAnalysisSession: KtAnalysisSession): SirType =
-        with(typeProvider) { this@translateType.translateType(ktAnalysisSession) }
+    override fun KtType.translateType(
+        ktAnalysisSession: KtAnalysisSession,
+        reportErrorType: (String) -> Nothing,
+        reportUnsupportedType: () -> Nothing,
+    ): SirType =
+        with(typeProvider) { this@translateType.translateType(ktAnalysisSession, reportErrorType, reportUnsupportedType) }
 
     override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
@@ -114,10 +123,23 @@ public interface SirChildrenProvider {
 
 public interface SirTypeProvider {
 
+    public val errorTypeStrategy: ErrorTypeStrategy
+    public val unsupportedTypeStrategy: ErrorTypeStrategy
+
+    public enum class ErrorTypeStrategy {
+        Fail, ErrorType
+    }
+
     /**
      * Translates the given [KtType] to [SirType].
+     * Calls [reportErrorType] / [reportUnsupportedType] if error/unsupported type
+     * is encountered and [errorTypeStrategy] / [unsupportedTypeStrategy] instructs to fail.
      */
-    public fun KtType.translateType(ktAnalysisSession: KtAnalysisSession): SirType
+    public fun KtType.translateType(
+        ktAnalysisSession: KtAnalysisSession,
+        reportErrorType: (String) -> Nothing,
+        reportUnsupportedType: () -> Nothing,
+    ): SirType
 }
 
 public interface SirVisibilityChecker {

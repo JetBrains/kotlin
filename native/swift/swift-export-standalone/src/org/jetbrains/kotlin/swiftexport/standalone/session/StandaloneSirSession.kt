@@ -12,7 +12,9 @@ import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 internal class StandaloneSirSession(
     useSiteModule: KtModule,
-    moduleProviderBuilder: () -> SirModuleProvider
+    override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
+    override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
+    moduleProviderBuilder: () -> SirModuleProvider,
 ) : SirSession {
 
     override val declarationNamer = SirDeclarationNamerImpl()
@@ -25,7 +27,11 @@ internal class StandaloneSirSession(
         )
     )
     override val parentProvider = SirParentProviderImpl(sirSession)
-    override val typeProvider = SirTypeProviderImpl(sirSession)
+    override val typeProvider = SirTypeProviderImpl(
+        sirSession,
+        errorTypeStrategy = errorTypeStrategy,
+        unsupportedTypeStrategy = unsupportedTypeStrategy
+    )
     override val visibilityChecker = SirVisibilityCheckerImpl()
     override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
 }

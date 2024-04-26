@@ -278,6 +278,8 @@ private val SirType.swift
     get(): String = when (this) {
         is SirExistentialType -> "Any"
         is SirNominalType -> type.swiftFqName
+        is SirErrorType -> "ERROR_TYPE"
+        is SirUnsupportedType -> "UNSUPPORTED_TYPE"
     }
 
 private val SirNamedDeclaration.swiftFqName: String

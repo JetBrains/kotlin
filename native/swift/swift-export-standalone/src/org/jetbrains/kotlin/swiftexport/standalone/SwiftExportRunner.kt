@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
@@ -21,7 +22,9 @@ public data class SwiftExportConfig(
     val settings: Map<String, String> = emptyMap(),
     val outputPath: Path,
     val logger: SwiftExportLogger = createDummyLogger(),
-    val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath)
+    val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
+    val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
+    val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
 ) {
     public companion object {
         /**
@@ -40,6 +43,16 @@ public data class SwiftExportConfig(
         public const val RENDER_DOC_COMMENTS: String = "RENDER_DOC_COMMENTS"
 
         public const val ROOT_PACKAGE: String = "rootPackage"
+    }
+}
+
+public enum class ErrorTypeStrategy {
+    Fail,
+    SpecialType;
+
+    internal fun toInternalType(): SirTypeProvider.ErrorTypeStrategy = when (this) {
+        Fail -> SirTypeProvider.ErrorTypeStrategy.Fail
+        SpecialType -> SirTypeProvider.ErrorTypeStrategy.ErrorType
     }
 }
 
@@ -108,7 +121,7 @@ public fun runSwiftExport(
         )
         DEFAULT_BRIDGE_MODULE_NAME
     }
-    val swiftModule = buildSwiftModule(input, config.distribution, bridgeModuleName)
+    val swiftModule = buildSwiftModule(input, config, bridgeModuleName)
     val bridgeRequests = buildBridgeRequests(swiftModule)
     swiftModule.dumpResultToFiles(
         bridgeRequests, output,

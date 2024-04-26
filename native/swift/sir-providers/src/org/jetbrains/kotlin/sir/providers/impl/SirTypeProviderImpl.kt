@@ -7,58 +7,71 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.sir.SirNamedDeclaration
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
+import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
-public class SirTypeProviderImpl(private val sirSession: SirSession) : SirTypeProvider {
+public class SirTypeProviderImpl(
+    private val sirSession: SirSession,
+    override val errorTypeStrategy: ErrorTypeStrategy,
+    override val unsupportedTypeStrategy: ErrorTypeStrategy
+) : SirTypeProvider {
 
-    override fun KtType.translateType(ktAnalysisSession: KtAnalysisSession): SirType =
-        buildSirNominalType(this@translateType, ktAnalysisSession)
+    override fun KtType.translateType(
+        ktAnalysisSession: KtAnalysisSession,
+        reportErrorType: (String) -> Nothing,
+        reportUnsupportedType: () -> Nothing,
+    ): SirType =
+        buildSirNominalType(this@translateType, ktAnalysisSession).handleTranslationResult(reportErrorType, reportUnsupportedType)
 
-    private fun buildSirNominalType(it: KtType, ktAnalysisSession: KtAnalysisSession): SirType =
+    private fun buildSirNominalType(ktType: KtType, ktAnalysisSession: KtAnalysisSession): SirType {
         with(ktAnalysisSession) {
-            return SirNominalType(
-                when {
-                    it.isUnit -> SirSwiftModule.void
+            when {
+                ktType.isUnit -> SirSwiftModule.void
 
-                    it.isByte -> SirSwiftModule.int8
-                    it.isShort -> SirSwiftModule.int16
-                    it.isInt -> SirSwiftModule.int32
-                    it.isLong -> SirSwiftModule.int64
+                ktType.isByte -> SirSwiftModule.int8
+                ktType.isShort -> SirSwiftModule.int16
+                ktType.isInt -> SirSwiftModule.int32
+                ktType.isLong -> SirSwiftModule.int64
 
-                    it.isUByte -> SirSwiftModule.uint8
-                    it.isUShort -> SirSwiftModule.uint16
-                    it.isUInt -> SirSwiftModule.uint32
-                    it.isULong -> SirSwiftModule.uint64
+                ktType.isUByte -> SirSwiftModule.uint8
+                ktType.isUShort -> SirSwiftModule.uint16
+                ktType.isUInt -> SirSwiftModule.uint32
+                ktType.isULong -> SirSwiftModule.uint64
 
-                    it.isBoolean -> SirSwiftModule.bool
+                ktType.isBoolean -> SirSwiftModule.bool
 
-                    it.isDouble -> SirSwiftModule.double
-                    it.isFloat -> SirSwiftModule.float
-
-                    else -> when (it) {
-                        is KtUsualClassType -> {
-                            with(sirSession) {
-                                it.classSymbol.sirDeclaration() as SirNamedDeclaration
-                            }
-                        }
-                        is KtCapturedType,
-                        is KtClassErrorType,
-                        is KtFunctionalType,
-                        is KtDefinitelyNotNullType,
-                        is KtDynamicType,
-                        is KtTypeErrorType,
-                        is KtFlexibleType,
-                        is KtIntegerLiteralType,
-                        is KtIntersectionType,
-                        is KtTypeParameterType,
-                        -> error("Swift Export does not support argument type: $it")
-                    }
+                ktType.isDouble -> SirSwiftModule.double
+                ktType.isFloat -> SirSwiftModule.float
+                else -> null
+            }?.let { primitiveType ->
+                return SirNominalType(primitiveType)
+            }
+            return when (ktType) {
+                is KtUsualClassType -> with(sirSession) {
+                    SirNominalType(ktType.classSymbol.sirDeclaration() as SirNamedDeclaration)
                 }
-            )
+                is KtFunctionalType,
+                is KtTypeParameterType,
+                -> SirUnsupportedType()
+                is KtErrorType -> SirErrorType(ktType.errorMessage)
+                else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
+            }
         }
+    }
+
+    private fun SirType.handleTranslationResult(
+        reportErrorType: (String) -> Nothing,
+        reportUnsupportedType: () -> Nothing,
+    ): SirType {
+        if (this is SirErrorType && sirSession.errorTypeStrategy == ErrorTypeStrategy.Fail) {
+            reportErrorType(this.reason)
+        }
+        if (this is SirUnsupportedType && sirSession.unsupportedTypeStrategy == ErrorTypeStrategy.Fail) {
+            reportUnsupportedType()
+        }
+        return this
+    }
 }
