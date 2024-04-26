@@ -26,7 +26,7 @@ internal class SirClassFromKtSymbol(
     override val ktSymbol: KtNamedClassOrObjectSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirClass(), SirFromKtSymbol {
+) : SirClass(), SirFromKtSymbol<KtNamedClassOrObjectSymbol> {
 
     override val origin: SirOrigin by lazy {
         KotlinSource(ktSymbol)

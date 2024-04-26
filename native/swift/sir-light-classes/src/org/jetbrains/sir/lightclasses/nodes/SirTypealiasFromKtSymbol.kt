@@ -19,7 +19,7 @@ internal class SirTypealiasFromKtSymbol(
     override val ktSymbol: KtTypeAliasSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirTypealias(), SirFromKtSymbol {
+) : SirTypealias(), SirFromKtSymbol<KtTypeAliasSymbol> {
 
     override val origin: SirOrigin = KotlinSource(ktSymbol)
     override val visibility: SirVisibility = SirVisibility.PUBLIC

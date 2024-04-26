@@ -22,7 +22,7 @@ internal class SirVariableFromKtSymbol(
     override val ktSymbol: KtVariableSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirVariable(), SirFromKtSymbol {
+) : SirVariable(), SirFromKtSymbol<KtVariableSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
 

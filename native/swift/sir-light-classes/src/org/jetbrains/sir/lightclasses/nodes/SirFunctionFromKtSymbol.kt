@@ -20,7 +20,7 @@ internal class SirFunctionFromKtSymbol(
     override val ktSymbol: KtFunctionLikeSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirFunction(), SirFromKtSymbol {
+) : SirFunction(), SirFromKtSymbol<KtFunctionLikeSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val origin: SirOrigin by lazy {

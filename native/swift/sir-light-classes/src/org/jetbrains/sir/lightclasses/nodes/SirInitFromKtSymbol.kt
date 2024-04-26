@@ -20,7 +20,7 @@ internal class SirInitFromKtSymbol(
     override val ktSymbol: KtConstructorSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirInit(), SirFromKtSymbol {
+) : SirInit(), SirFromKtSymbol<KtConstructorSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val isFailable: Boolean = false
