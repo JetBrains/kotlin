@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.buil
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KaAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
@@ -36,8 +34,6 @@ abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDispo
     ) {
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = targetPlatform
                 val stdlib = addModule(

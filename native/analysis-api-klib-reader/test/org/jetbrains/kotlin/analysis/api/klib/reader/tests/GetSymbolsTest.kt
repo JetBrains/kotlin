@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader.tests
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -197,9 +194,6 @@ class GetSymbolsTest {
         val session = buildStandaloneAnalysisAPISession {
             val currentArchitectureTarget = HostManager.host
             val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
-
-            @OptIn(KtAnalysisApiInternals::class)
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
             buildKtModuleProvider {
                 platform = nativePlatform

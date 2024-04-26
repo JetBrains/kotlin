@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.builders
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -96,8 +94,6 @@ private fun createModuleWithScopeProviderFromSources(
     input: InputModule.Source,
 ): ModuleWithScopeProvider {
     val analysisAPISession = buildStandaloneAnalysisAPISession {
-        registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform
 
@@ -136,8 +132,6 @@ private fun createModuleWithScopeProviderFromBinary(
     lateinit var binaryModule: KtLibraryModule
     lateinit var fakeSourceModule: KtSourceModule
     buildStandaloneAnalysisAPISession {
-        registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform
 

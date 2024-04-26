@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
+import org.jetbrains.kotlin.analysis.providers.lifetime.KtAlwaysAccessibleLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
@@ -122,6 +124,10 @@ public class StandaloneAnalysisAPISessionBuilder(
             FirStandaloneServiceRegistrar.registerProjectServices(project)
             FirStandaloneServiceRegistrar.registerProjectExtensionPoints(project)
             FirStandaloneServiceRegistrar.registerProjectModelServices(project, kotlinCoreProjectEnvironment.parentDisposable)
+
+            // We need to register the lifetime token provider here instead of in the XML because Analysis API tests sometimes rely on a
+            // read action confinement lifetime token.
+            registerService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider::class.java)
 
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
             registerService(KotlinGlobalModificationService::class.java, KotlinStaticGlobalModificationService::class.java)

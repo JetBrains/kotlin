@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.swiftexport.standalone
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.analysis.api.getAllLibraryModules
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -111,7 +108,6 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
         val klib = compileToNativeKLib(sources)
         lateinit var module: KtLibraryModule
         val session = buildStandaloneAnalysisAPISession {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
             val nativePlatform = NativePlatforms.unspecifiedNativePlatform
             buildKtModuleProvider {
                 platform = nativePlatform

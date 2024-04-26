@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.calls.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.calls.successfulFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.calls.symbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KaAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -47,8 +45,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     fun testJdkSessionBuilder() {
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 val sdk = addModule(
@@ -86,8 +82,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val root = "jvmInlineOnCommon"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val stdlib = addModule(
@@ -150,8 +144,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val root = "resolveAgainstCommonKLib"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
@@ -184,8 +176,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         lateinit var commonModule: KtSourceModule
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
@@ -230,8 +220,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val root = "otherModuleUsage"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 val main = addModule(
@@ -264,8 +252,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val root = "otherModuleUsage"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 val dep = addModule(
@@ -307,8 +293,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
         lateinit var contextModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 contextModule = addModule(
@@ -347,8 +331,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
         lateinit var contextModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 contextModule = addModule(
