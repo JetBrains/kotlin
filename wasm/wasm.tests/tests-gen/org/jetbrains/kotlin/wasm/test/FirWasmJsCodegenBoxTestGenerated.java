@@ -39628,9 +39628,9 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
-    @TestMetadata("helloWorldDOM.kt")
-    public void testHelloWorldDOM() {
-      runTest("compiler/testData/codegen/box/size/helloWorldDOM.kt");
+    @TestMetadata("helloWorldPromise.kt")
+    public void testHelloWorldPromise() {
+      runTest("compiler/testData/codegen/box/size/helloWorldPromise.kt");
     }
 
     @Test

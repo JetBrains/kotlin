@@ -13788,10 +13788,6 @@ open annotation class kotlin.js/JsQualifier : kotlin/Annotation { // kotlin.js/J
 final val kotlin.js/definedExternally // kotlin.js/definedExternally|{}definedExternally[0]
     final fun <get-definedExternally>(): kotlin/Nothing // kotlin.js/definedExternally.<get-definedExternally>|<get-definedExternally>(){}[0]
 
-// Targets: [js, wasmJs]
-final val kotlin.js/undefined // kotlin.js/undefined|{}undefined[0]
-    final fun <get-undefined>(): kotlin/Nothing? // kotlin.js/undefined.<get-undefined>|<get-undefined>(){}[0]
-
 // Targets: [wasmJs, wasmWasi]
 open annotation class kotlin.wasm.unsafe/UnsafeWasmMemoryApi : kotlin/Annotation { // kotlin.wasm.unsafe/UnsafeWasmMemoryApi|null[0]
     constructor <init>() // kotlin.wasm.unsafe/UnsafeWasmMemoryApi.<init>|<init>(){}[0]
@@ -14432,6 +14428,10 @@ final val kotlin.js/kotlin // kotlin.js/kotlin|@kotlin.js.JsClass<0:0>{0§<kotli
 // Targets: [js]
 final val kotlin.js/noImpl // kotlin.js/noImpl|{}noImpl[0]
     final fun <get-noImpl>(): kotlin/Nothing // kotlin.js/noImpl.<get-noImpl>|<get-noImpl>(){}[0]
+
+// Targets: [js]
+final val kotlin.js/undefined // kotlin.js/undefined|{}undefined[0]
+    final fun <get-undefined>(): kotlin/Nothing? // kotlin.js/undefined.<get-undefined>|<get-undefined>(){}[0]
 
 // Targets: [js]
 final fun (dynamic).kotlin.js/iterator(): kotlin.collections/Iterator<dynamic> // kotlin.js/iterator|iterator@<dynamic>(){}[0]
