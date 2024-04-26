@@ -1,0 +1,16 @@
+PODS:
+  - embedAndSign (1.0)
+
+DEPENDENCIES:
+  - embedAndSign (from `..`)
+
+EXTERNAL SOURCES:
+  embedAndSign:
+    :path: ".."
+
+SPEC CHECKSUMS:
+  embedAndSign: 90204d50d52fff5cd10d58b70c6b87b4c2b6d768
+
+PODFILE CHECKSUM: e84f4cf6230400af26d6f72f9f7e167c91a7c09b
+
+COCOAPODS: 1.14.3

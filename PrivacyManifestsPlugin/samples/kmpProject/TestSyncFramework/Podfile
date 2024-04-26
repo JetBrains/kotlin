@@ -1,0 +1,8 @@
+# platform :ios, '9.0'
+
+target 'TestSyncFramework' do
+  use_frameworks!
+
+  pod 'embedAndSign', :path => '..'
+
+end
