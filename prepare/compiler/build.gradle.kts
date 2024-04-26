@@ -423,6 +423,9 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
         from(compilerPluginsCompatFiles) {
             rename { it.removePrefix("kotlin-") }
         }
+        filePermissions {
+            unix("rw-r--r--")
+        }
     }
 }
 
