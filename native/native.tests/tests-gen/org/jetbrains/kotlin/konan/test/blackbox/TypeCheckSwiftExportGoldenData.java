@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class TypeCheckSwiftExportGoldenData extends SwiftTypeCheckBaseTest {
   @Test
   public void testAllFilesPresentInTestData() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^_](.+))$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^_](.+))$"), null, false, "source_based_only");
   }
 
   @Test

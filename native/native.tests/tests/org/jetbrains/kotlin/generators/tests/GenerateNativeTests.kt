@@ -516,7 +516,7 @@ fun main() {
             testClass<SwiftTypeCheckBaseTest>(
                 suiteTestClassName = "TypeCheckSwiftExportGoldenData"
             ) {
-                model("", pattern = "^([^_](.+))\$", recursive = false)
+                model("", pattern = "^([^_](.+))\$", recursive = false, excludeDirs = listOf("source_based_only"))
             }
         }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {

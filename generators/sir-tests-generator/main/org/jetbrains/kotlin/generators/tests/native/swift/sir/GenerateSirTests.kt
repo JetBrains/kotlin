@@ -36,7 +36,7 @@ fun main() {
             testClass<AbstractKlibBasedSwiftRunnerTest>(
                 suiteTestClassName = "KlibBasedSwiftExportRunnerTest"
             ) {
-                model("", extension = null, recursive = false)
+                model("", extension = null, recursive = false, excludeDirs = listOf("source_based_only"))
             }
         }
     }
