@@ -35,7 +35,6 @@ public inline fun <R> analyze(
  * The project will be analyzed from the perspective of the given [useSiteKtModule].
  *
  * @see KaSession
- * @see KaLifetimeTokenFactory
  */
 public inline fun <R> analyze(
     useSiteKtModule: KtModule,

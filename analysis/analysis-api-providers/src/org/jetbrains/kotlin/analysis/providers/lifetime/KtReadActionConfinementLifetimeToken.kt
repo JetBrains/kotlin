@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:OptIn(KaAnalysisApiInternals::class, KaAllowProhibitedAnalyzeFromWriteAction::class)
 
-package org.jetbrains.kotlin.analysis.api.lifetime
+package org.jetbrains.kotlin.analysis.providers.lifetime
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -13,10 +13,14 @@ import com.intellij.openapi.util.ModificationTracker
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import kotlin.reflect.KClass
 
 public class KaReadActionConfinementLifetimeToken(private val modificationTracker: ModificationTracker) : KaLifetimeToken() {
     private val onCreatedTimeStamp = modificationTracker.modificationCount
+
+    public override val factory: KaLifetimeTokenFactory = KtReadActionConfinementLifetimeTokenFactory
 
     override fun isValid(): Boolean {
         return onCreatedTimeStamp == modificationTracker.modificationCount
@@ -61,8 +65,6 @@ public class KaReadActionConfinementLifetimeToken(private val modificationTracke
         @KaAllowProhibitedAnalyzeFromWriteAction
         public val allowFromWriteAction: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
     }
-
-    public override val factory: KaLifetimeTokenFactory = KaReadActionConfinementLifetimeTokenFactory
 }
 
 public typealias KtReadActionConfinementLifetimeToken = KaReadActionConfinementLifetimeToken

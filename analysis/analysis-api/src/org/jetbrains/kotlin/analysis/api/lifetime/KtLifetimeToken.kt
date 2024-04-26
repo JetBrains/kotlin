@@ -10,13 +10,13 @@ import com.intellij.openapi.util.ModificationTracker
 import kotlin.reflect.KClass
 
 public abstract class KaLifetimeToken {
+    public abstract val factory: KaLifetimeTokenFactory
+
     public abstract fun isValid(): Boolean
     public abstract fun getInvalidationReason(): String
 
     public abstract fun isAccessible(): Boolean
     public abstract fun getInaccessibilityReason(): String
-
-    public abstract val factory: KaLifetimeTokenFactory
 }
 
 public typealias KtLifetimeToken = KaLifetimeToken

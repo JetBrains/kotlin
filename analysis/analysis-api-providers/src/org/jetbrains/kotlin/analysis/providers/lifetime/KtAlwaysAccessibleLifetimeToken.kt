@@ -1,18 +1,22 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.lifetime
+package org.jetbrains.kotlin.analysis.providers.lifetime
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
-public class KaAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken() {
+public class KtAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
+
+    override val factory: KaLifetimeTokenFactory = KtAlwaysAccessibleLifetimeTokenFactory
 
     override fun isValid(): Boolean {
         return onCreatedTimeStamp == modificationTracker.modificationCount
@@ -31,16 +35,12 @@ public class KaAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
-    override val factory: KaLifetimeTokenFactory = KaAlwaysAccessibleLifetimeTokenFactory
+    override val factory: KaLifetimeTokenFactory = KtAlwaysAccessibleLifetimeTokenFactory
 }
 
-public typealias KtAlwaysAccessibleLifetimeToken = KaAlwaysAccessibleLifetimeToken
-
-public object KaAlwaysAccessibleLifetimeTokenFactory : KaLifetimeTokenFactory() {
-    override val identifier: KClass<out KaLifetimeToken> = KaAlwaysAccessibleLifetimeToken::class
+public object KtAlwaysAccessibleLifetimeTokenFactory : KaLifetimeTokenFactory() {
+    override val identifier: KClass<out KaLifetimeToken> = KtAlwaysAccessibleLifetimeToken::class
 
     override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =
-        KaAlwaysAccessibleLifetimeToken(project)
+        KtAlwaysAccessibleLifetimeToken(project)
 }
-
-public typealias KtAlwaysAccessibleLifetimeTokenFactory = KaAlwaysAccessibleLifetimeTokenFactory

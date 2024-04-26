@@ -11,8 +11,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KaReadActionConfinementLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
@@ -23,6 +21,8 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
+import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.providers.lifetime.KtReadActionConfinementLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.libraryIndexingConfiguration
@@ -48,7 +48,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
             registerService(KotlinGlobalModificationService::class.java, KotlinStaticGlobalModificationService::class.java)
 
-            registerService(KaLifetimeTokenProvider::class.java, KaReadActionConfinementLifetimeTokenProvider::class.java)
+            registerService(KtLifetimeTokenProvider::class.java, KtReadActionConfinementLifetimeTokenProvider::class.java)
 
             //KotlinClassFileDecompiler is registered as application service so it's available for the tests run in parallel as well
             //when the decompiler is registered, for compiled class KtClsFile is created instead of ClsFileImpl

@@ -11,7 +11,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.impl.NoWriteActionInAnalyseCallChecker
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
@@ -24,13 +23,9 @@ import org.jetbrains.kotlin.psi.KtElement
  */
 @OptIn(KaAnalysisApiInternals::class)
 public abstract class KaSessionProvider(public val project: Project) : Disposable {
-    @KaAnalysisApiInternals
-    public val tokenFactory: KaLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KaLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
-    }
-
     @Suppress("LeakingThis")
     public val noWriteActionInAnalyseCallChecker: NoWriteActionInAnalyseCallChecker = NoWriteActionInAnalyseCallChecker(this)
+    public abstract val tokenFactory: KaLifetimeTokenFactory
 
     public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KaSession
 

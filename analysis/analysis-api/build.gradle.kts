@@ -10,7 +10,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(kotlinxCollectionsImmutable())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     compileOnly(project(":compiler:psi"))
@@ -19,7 +18,6 @@ dependencies {
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":core:compiler.common.js"))
     implementation(project(":analysis:analysis-internal-utils"))
-    implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:kt-references"))
     api(project(":analysis:project-structure"))
 
