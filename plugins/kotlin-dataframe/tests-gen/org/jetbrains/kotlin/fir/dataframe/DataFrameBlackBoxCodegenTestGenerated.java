@@ -52,6 +52,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("dropNulls.kt")
+  public void testDropNulls() {
+    runTest("testData/box/dropNulls.kt");
+  }
+
+  @Test
   @TestMetadata("duplicatedSignature.kt")
   public void testDuplicatedSignature() {
     runTest("testData/box/duplicatedSignature.kt");
