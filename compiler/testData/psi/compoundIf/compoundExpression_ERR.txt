@@ -1,0 +1,90 @@
+KtFile: compoundExpression_ERR.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      COMPOUND_EXPRESSION
+        COMPOUND_EXPRESSION
+          BLOCK
+            IF
+              PsiElement(if)('if')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              PROPERTY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('y')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('5')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(MUL)('*')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('2')
+              PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace(' ')
+              CONDITION
+                BINARY_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('y')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(EQEQ)('==')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('10')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              THEN
+                RETURN
+                  PsiElement(return)('return')
+              PsiWhiteSpace(' ')
+              PsiElement(else)('else')
+              PsiWhiteSpace(' ')
+              ELSE
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n    ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('dfsd')
+                  PsiWhiteSpace('\n    ')
+                  PsiErrorElement:Expecting an element
+                    PsiElement(RPAR)(')')
+                  PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+                    PsiElement(DOUBLE_SEMICOLON)(';;')
+                  PsiErrorElement:Expecting an element
+                    PsiElement(SEMICOLON)(';')
+                  PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+                    PsiElement(RPAR)(')')
+                    PsiElement(DOUBLE_SEMICOLON)(';;')
+                  PsiErrorElement:Expecting an element
+                    PsiElement(SEMICOLON)(';')
+                  PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+                    PsiElement(BAD_CHARACTER)('~')
+                    PsiElement(DOUBLE_SEMICOLON)(';;')
+                  PsiErrorElement:Expecting an element
+                    PsiElement(SEMICOLON)(';')
+                  PsiWhiteSpace('\n    ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('srgsdfg')
+                  PsiWhiteSpace('\n\n    ')
+                  PsiErrorElement:Expecting an element
+                    PsiElement(BAD_CHARACTER)('~')
+                  PsiWhiteSpace('\n\n    ')
+                  PsiErrorElement:Expecting an element
+                    PsiElement(RBRACKET)(']')
+                  PsiWhiteSpace('\n')
+                  PsiElement(RBRACE)('}')

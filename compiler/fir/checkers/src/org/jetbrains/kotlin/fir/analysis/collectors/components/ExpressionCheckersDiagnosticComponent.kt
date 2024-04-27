@@ -40,7 +40,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitExpression(expression: FirExpression, data: CheckerContext) {
-        println("checker: $expression")
+       // println("checker: $expression")
         checkers.allBasicExpressionCheckers.check(expression, data)
     }
 
@@ -73,7 +73,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: CheckerContext) {
-        println("visitFunctionCall: ${functionCall.source.text}")
+        //println("visitFunctionCall: ${functionCall.source.text}")
         checkers.allFunctionCallCheckers.check(functionCall, data)
     }
 
@@ -113,7 +113,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: CheckerContext) {
-        println("visitWhenExpressions: $whenExpression")
+        //println("visitWhenExpressions: $whenExpression")
         checkers.allWhenExpressionCheckers.check(whenExpression, data)
     }
 

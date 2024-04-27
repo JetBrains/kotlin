@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
@@ -44,7 +42,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.sourceKindForIncOrDec
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -437,6 +434,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         callResolutionMode: CallResolutionMode,
     ): FirStatement =
         whileAnalysing(session, functionCall) {
+
             val calleeReference = functionCall.calleeReference
             if (
                 (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
@@ -501,6 +499,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             if (enableArrayOfCallTransformation) {
                 return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
+            println(result.source.text)
+            println(result.resolvedType)
             return result
         }
 
@@ -1392,7 +1392,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 vararg arguments: FirExpression
             ): FirFunctionCall = buildFunctionCall {
 
-                println("function call")
+                //println("function call")
                 this.source = source
                 explicitReceiver = receiver
                 argumentList = when (arguments.size) {

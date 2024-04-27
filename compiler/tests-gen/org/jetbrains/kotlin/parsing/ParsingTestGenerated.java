@@ -1323,6 +1323,112 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       }
     }
 
+    @TestMetadata("compiler/testData/psi/compoundIf")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CompoundIf extends AbstractParsingTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInCompoundIf() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/compoundIf"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+      }
+
+      @TestMetadata("compoundCommentsBindingInStatementBlock.kt")
+      public void testCompoundCommentsBindingInStatementBlock() {
+        runTest("compiler/testData/psi/compoundIf/compoundCommentsBindingInStatementBlock.kt");
+      }
+
+      @TestMetadata("compoundComparison.kt")
+      public void testCompoundComparison() {
+        runTest("compiler/testData/psi/compoundIf/compoundComparison.kt");
+      }
+
+      @TestMetadata("compoundComplicateLTGTE.kt")
+      public void testCompoundComplicateLTGTE() {
+        runTest("compiler/testData/psi/compoundIf/compoundComplicateLTGTE.kt");
+      }
+
+      @TestMetadata("compoundExpressionJustAtTyped.kt")
+      public void testCompoundExpressionJustAtTyped() {
+        runTest("compiler/testData/psi/compoundIf/compoundExpressionJustAtTyped.kt");
+      }
+
+      @TestMetadata("compoundExpression_ERR.kt")
+      public void testCompoundExpression_ERR() {
+        runTest("compiler/testData/psi/compoundIf/compoundExpression_ERR.kt");
+      }
+
+      @TestMetadata("compoundIfWithLinkedList.kt")
+      public void testCompoundIfWithLinkedList() {
+        runTest("compiler/testData/psi/compoundIf/compoundIfWithLinkedList.kt");
+      }
+
+      @TestMetadata("compoundIfWithProperty.kt")
+      public void testCompoundIfWithProperty() {
+        runTest("compiler/testData/psi/compoundIf/compoundIfWithProperty.kt");
+      }
+
+      @TestMetadata("compoundSemicolonAfterIf.kt")
+      public void testCompoundSemicolonAfterIf() {
+        runTest("compiler/testData/psi/compoundIf/compoundSemicolonAfterIf.kt");
+      }
+
+      @TestMetadata("compoundValidExpressions.kt")
+      public void testCompoundValidExpressions() {
+        runTest("compiler/testData/psi/compoundIf/compoundValidExpressions.kt");
+      }
+    }
+
+    @TestMetadata("compiler/testData/psi/compoundWhen")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CompoundWhen extends AbstractParsingTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInCompoundWhen() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/compoundWhen"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+      }
+
+      @TestMetadata("callsInWhenCompound.kt")
+      public void testCallsInWhenCompound() {
+        runTest("compiler/testData/psi/compoundWhen/callsInWhenCompound.kt");
+      }
+
+      @TestMetadata("CompoudNoArrowInWhen.kt")
+      public void testCompoudNoArrowInWhen() {
+        runTest("compiler/testData/psi/compoundWhen/CompoudNoArrowInWhen.kt");
+      }
+
+      @TestMetadata("compoundKt21055.kt")
+      public void testCompoundKt21055() {
+        runTest("compiler/testData/psi/compoundWhen/compoundKt21055.kt");
+      }
+
+      @TestMetadata("compoundNewlinesInParentheses.kt")
+      public void testCompoundNewlinesInParentheses() {
+        runTest("compiler/testData/psi/compoundWhen/compoundNewlinesInParentheses.kt");
+      }
+
+      @TestMetadata("compoundWhen.kt")
+      public void testCompoundWhen() {
+        runTest("compiler/testData/psi/compoundWhen/compoundWhen.kt");
+      }
+
+      @TestMetadata("compoundWhenWithSubjectVariable.kt")
+      public void testCompoundWhenWithSubjectVariable() {
+        runTest("compiler/testData/psi/compoundWhen/compoundWhenWithSubjectVariable.kt");
+      }
+
+      @TestMetadata("compoundWhen_ERR.kt")
+      public void testCompoundWhen_ERR() {
+        runTest("compiler/testData/psi/compoundWhen/compoundWhen_ERR.kt");
+      }
+    }
+
     @TestMetadata("compiler/testData/psi/contracts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

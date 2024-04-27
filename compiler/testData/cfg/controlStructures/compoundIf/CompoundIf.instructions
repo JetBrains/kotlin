@@ -1,0 +1,99 @@
+== t1 ==
+fun t1(b: Boolean) {
+    var u: String
+    if (val  x = "s"; b) {
+        u = x
+    }
+    doSmth(u)
+
+    var r: String
+    if (val x = "s"; b) {
+        r = x
+    }
+    else {
+        r = x
+    }
+    doSmth(r)
+}
+---------------------
+L0:
+  1 <START>
+    v(b: Boolean)
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+    w(b|<v0>)
+  2 mark({ var u: String if (val x = "s"; b) { u = x } doSmth(u) var r: String if (val x = "s"; b) { r = x } else { r = x } doSmth(r) })
+    v(var u: String)
+    magic[UNSUPPORTED_ELEMENT](if (val x = "s"; b) { u = x }) -> <v1>
+    mark(if (val x = "s"; b) { u = x })
+    magic[UNRESOLVED_CALL](if (val x = "s"; b) { u = x }|<v1>) -> <v2>
+    r(u) -> <v3>
+    mark(doSmth(u))
+    call(doSmth(u), doSmth|<v3>) -> <v4>
+    v(var r: String)
+    magic[UNSUPPORTED_ELEMENT](if (val x = "s"; b) { r = x } else { r = x }) -> <v5>
+    mark(if (val x = "s"; b) { r = x } else { r = x })
+    magic[UNRESOLVED_CALL](if (val x = "s"; b) { r = x } else { r = x }|<v5>) -> <v6>
+    r(r) -> <v7>
+    mark(doSmth(r))
+    call(doSmth(r), doSmth|<v7>) -> <v8>
+L1:
+  1 <END>                                                                                                                                   NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                                                 PREV:[]
+sink:
+    <SINK>                                                                                                                                  PREV:[<ERROR>, <END>]
+=====================
+== t2 ==
+fun t2(b: Boolean) {
+    val i = 3
+    if (val x = "s"; b) {
+        return;
+    }
+    doSmth(i)
+    if (val y = "e"; i is Int) {
+        return;
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(b: Boolean)
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+    w(b|<v0>)
+  2 mark({ val i = 3 if (val x = "s"; b) { return; } doSmth(i) if (val y = "e"; i is Int) { return; } })
+    v(val i = 3)
+    r(3) -> <v1>
+    w(i|<v1>)
+    magic[UNSUPPORTED_ELEMENT](if (val x = "s"; b) { return; }) -> <v2>
+    mark(if (val x = "s"; b) { return; })
+    magic[UNRESOLVED_CALL](if (val x = "s"; b) { return; }|<v2>) -> <v3>
+    r(i) -> <v4>
+    mark(doSmth(i))
+    call(doSmth(i), doSmth|<v4>) -> <v5>
+    magic[UNSUPPORTED_ELEMENT](if (val y = "e"; i is Int) { return; }) -> <v6>
+    mark(if (val y = "e"; i is Int) { return; })
+    magic[UNRESOLVED_CALL](if (val y = "e"; i is Int) { return; }|<v6>) -> <v7>
+L1:
+  1 <END>                                                                                                   NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                 PREV:[]
+sink:
+    <SINK>                                                                                                  PREV:[<ERROR>, <END>]
+=====================
+== doSmth ==
+fun doSmth(s: String) {}
+---------------------
+L0:
+  1 <START>
+    v(s: String)
+    magic[FAKE_INITIALIZER](s: String) -> <v0>
+    w(s|<v0>)
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                       PREV:[]
+sink:
+    <SINK>                                        PREV:[<ERROR>, <END>]
+=====================

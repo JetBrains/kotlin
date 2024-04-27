@@ -57,6 +57,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- When expressions -------------------------------
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: ResolutionMode): FirStatement {
+        println("tranformWhenExpression")
         if (whenExpression.calleeReference is FirResolvedNamedReference && whenExpression.isResolved) {
             return whenExpression
         }
@@ -114,6 +115,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     )
                     whenExpression = completionResult
                 }
+                println("whenExpression.resolvedType: ${whenExpression.resolvedType}")
                 dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
                 whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
                 whenExpression

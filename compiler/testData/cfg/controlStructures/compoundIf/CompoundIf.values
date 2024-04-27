@@ -1,0 +1,56 @@
+== t1 ==
+fun t1(b: Boolean) {
+    var u: String
+    if (val  x = "s"; b) {
+        u = x
+    }
+    doSmth(u)
+
+    var r: String
+    if (val x = "s"; b) {
+        r = x
+    }
+    else {
+        r = x
+    }
+    doSmth(r)
+}
+---------------------
+                                                                                                                                 <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+if (val x = "s"; b) { u = x }                                                                                                    <v1>: *         NEW: magic[UNSUPPORTED_ELEMENT](if (val x = "s"; b) { u = x }) -> <v1>
+if (val x = "s"; b) { u = x }                                                                                                    <v2>: *         NEW: magic[UNRESOLVED_CALL](if (val x = "s"; b) { u = x }|<v1>) -> <v2>
+u                                                                                                                                <v3>: String    NEW: r(u) -> <v3>
+doSmth(u)                                                                                                                        <v4>: *         NEW: call(doSmth(u), doSmth|<v3>) -> <v4>
+if (val x = "s"; b) { r = x } else { r = x }                                                                                     <v5>: *         NEW: magic[UNSUPPORTED_ELEMENT](if (val x = "s"; b) { r = x } else { r = x }) -> <v5>
+if (val x = "s"; b) { r = x } else { r = x }                                                                                     <v6>: *         NEW: magic[UNRESOLVED_CALL](if (val x = "s"; b) { r = x } else { r = x }|<v5>) -> <v6>
+r                                                                                                                                <v7>: String    NEW: r(r) -> <v7>
+doSmth(r)                                                                                                                        <v8>: *         NEW: call(doSmth(r), doSmth|<v7>) -> <v8>
+{ var u: String if (val x = "s"; b) { u = x } doSmth(u) var r: String if (val x = "s"; b) { r = x } else { r = x } doSmth(r) }   <v8>: *         COPY
+=====================
+== t2 ==
+fun t2(b: Boolean) {
+    val i = 3
+    if (val x = "s"; b) {
+        return;
+    }
+    doSmth(i)
+    if (val y = "e"; i is Int) {
+        return;
+    }
+}
+---------------------
+                                                                                                 <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+3                                                                                                <v1>: Int       NEW: r(3) -> <v1>
+if (val x = "s"; b) { return; }                                                                  <v2>: *         NEW: magic[UNSUPPORTED_ELEMENT](if (val x = "s"; b) { return; }) -> <v2>
+if (val x = "s"; b) { return; }                                                                  <v3>: *         NEW: magic[UNRESOLVED_CALL](if (val x = "s"; b) { return; }|<v2>) -> <v3>
+i                                                                                                <v4>: String    NEW: r(i) -> <v4>
+doSmth(i)                                                                                        <v5>: *         NEW: call(doSmth(i), doSmth|<v4>) -> <v5>
+if (val y = "e"; i is Int) { return; }                                                           <v6>: *         NEW: magic[UNSUPPORTED_ELEMENT](if (val y = "e"; i is Int) { return; }) -> <v6>
+if (val y = "e"; i is Int) { return; }                                                           <v7>: *         NEW: magic[UNRESOLVED_CALL](if (val y = "e"; i is Int) { return; }|<v6>) -> <v7>
+{ val i = 3 if (val x = "s"; b) { return; } doSmth(i) if (val y = "e"; i is Int) { return; } }   <v7>: *         COPY
+=====================
+== doSmth ==
+fun doSmth(s: String) {}
+---------------------
+    <v0>: String   NEW: magic[FAKE_INITIALIZER](s: String) -> <v0>
+=====================

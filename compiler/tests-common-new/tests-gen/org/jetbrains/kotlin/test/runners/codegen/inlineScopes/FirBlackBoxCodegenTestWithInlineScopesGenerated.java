@@ -144,6 +144,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("compoundNoTypeUseIfFlagIsSpecified.kt")
+    public void testCompoundNoTypeUseIfFlagIsSpecified() {
+      runTest("compiler/testData/codegen/box/annotations/compoundNoTypeUseIfFlagIsSpecified.kt");
+    }
+
+    @Test
     @TestMetadata("constValInAnnotation.kt")
     public void testConstValInAnnotation() {
       runTest("compiler/testData/codegen/box/annotations/constValInAnnotation.kt");
@@ -10534,6 +10540,18 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("compoundKt1742.kt")
+    public void testCompoundKt1742() {
+      runTest("compiler/testData/codegen/box/controlStructures/compoundKt1742.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundKt42455.kt")
+    public void testCompoundKt42455() {
+      runTest("compiler/testData/codegen/box/controlStructures/compoundKt42455.kt");
+    }
+
+    @Test
     @TestMetadata("conditionOfEmptyIf.kt")
     public void testConditionOfEmptyIf() {
       runTest("compiler/testData/codegen/box/controlStructures/conditionOfEmptyIf.kt");
@@ -13320,6 +13338,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       @TestMetadata("ifStatement.kt")
       public void testIfStatement() {
         runTest("compiler/testData/codegen/box/coroutines/controlFlow/ifStatement.kt");
+      }
+
+      @Test
+      @TestMetadata("ifStatementCompound.kt")
+      public void testIfStatementCompound() {
+        runTest("compiler/testData/codegen/box/coroutines/controlFlow/ifStatementCompound.kt");
       }
 
       @Test
@@ -16624,6 +16648,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       @TestMetadata("checkIfConstructorIsSynthetic.kt")
       public void testCheckIfConstructorIsSynthetic() {
         runTest("compiler/testData/codegen/box/defaultArguments/constructor/checkIfConstructorIsSynthetic.kt");
+      }
+
+      @Test
+      @TestMetadata("checkIfConstructorIsSyntheticCompound.kt")
+      public void testCheckIfConstructorIsSyntheticCompound() {
+        runTest("compiler/testData/codegen/box/defaultArguments/constructor/checkIfConstructorIsSyntheticCompound.kt");
       }
 
       @Test
@@ -20201,6 +20231,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     @TestMetadata("classMethodCallExtensionSuper.kt")
     public void testClassMethodCallExtensionSuper() {
       runTest("compiler/testData/codegen/box/extensionFunctions/classMethodCallExtensionSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundWhenFail.kt")
+    public void testCompoundWhenFail() {
+      runTest("compiler/testData/codegen/box/extensionFunctions/compoundWhenFail.kt");
     }
 
     @Test
@@ -34409,6 +34445,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     @TestMetadata("removeIf.kt")
     public void testRemoveIf() {
       runTest("compiler/testData/codegen/box/jdk/removeIf.kt");
+    }
+
+    @Test
+    @TestMetadata("removeIfCompound.kt")
+    public void testRemoveIfCompound() {
+      runTest("compiler/testData/codegen/box/jdk/removeIfCompound.kt");
     }
 
     @Test
@@ -57909,6 +57951,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     @TestMetadata("callProperty.kt")
     public void testCallProperty() {
       runTest("compiler/testData/codegen/box/when/callProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("callPropertyCompound.kt")
+    public void testCallPropertyCompound() {
+      runTest("compiler/testData/codegen/box/when/callPropertyCompound.kt");
     }
 
     @Test

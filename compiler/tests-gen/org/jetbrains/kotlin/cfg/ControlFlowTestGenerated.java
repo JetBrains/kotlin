@@ -276,6 +276,24 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
       public void testWhenExhaustive() {
         runTest("compiler/testData/cfg/controlStructures/whenExhaustive.kt");
       }
+
+      @TestMetadata("compiler/testData/cfg/controlStructures/compoundIf")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class CompoundIf extends AbstractControlFlowTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCompoundIf() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cfg/controlStructures/compoundIf"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("CompoundIf.kt")
+        public void testCompoundIf() {
+          runTest("compiler/testData/cfg/controlStructures/compoundIf/CompoundIf.kt");
+        }
+      }
     }
 
     @TestMetadata("compiler/testData/cfg/conventions")

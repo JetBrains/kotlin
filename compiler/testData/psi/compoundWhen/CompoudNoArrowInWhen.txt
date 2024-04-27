@@ -1,0 +1,55 @@
+KtFile: CompoudNoArrowInWhen.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        COMPOUND_EXPRESSION
+          COMPOUND_EXPRESSION
+            BLOCK
+              WHEN
+                PsiElement(when)('when')
+                PsiElement(LPAR)('(')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('element')
+                PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('element')
+                PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n        ')
+                WHEN_ENTRY
+                  WHEN_CONDITION_IS_PATTERN
+                    PsiElement(is)('is')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('JetProperty')
+                  PsiWhiteSpace(' ')
+                  PsiErrorElement:Expecting '->'
+                    PsiElement(when)('when')
+                  PsiWhiteSpace(' ')
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace(' ')
+                    PsiElement(RBRACE)('}')
+                PsiWhiteSpace('\n    ')
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -1,0 +1,116 @@
+KtFile: compoundIfWithProperty.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      COMPOUND_EXPRESSION
+        COMPOUND_EXPRESSION
+          BLOCK
+            IF
+              PsiElement(if)('if')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              PROPERTY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('processed')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+              PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace(' ')
+              CONDITION
+                BINARY_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  OPERATION_REFERENCE
+                    PsiElement(EXCLEQ)('!=')
+                  NULL
+                    PsiElement(null)('null')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              THEN
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace(' ')
+                  BOOLEAN_CONSTANT
+                    PsiElement(true)('true')
+                  PsiWhiteSpace(' ')
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace(' ')
+              PsiElement(else)('else')
+              PsiWhiteSpace(' ')
+              ELSE
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace(' ')
+                  BOOLEAN_CONSTANT
+                    PsiElement(false)('false')
+                  PsiWhiteSpace(' ')
+                  PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      COMPOUND_EXPRESSION
+        COMPOUND_EXPRESSION
+          BLOCK
+            IF
+              PsiElement(if)('if')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              PROPERTY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('processed')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+              PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace(' ')
+              CONDITION
+                BINARY_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  OPERATION_REFERENCE
+                    PsiElement(EXCLEQ)('!=')
+                  NULL
+                    PsiElement(null)('null')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              THEN
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n    ')
+                  BOOLEAN_CONSTANT
+                    PsiElement(true)('true')
+                  PsiWhiteSpace('\n')
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace(' ')
+              PsiElement(else)('else')
+              PsiWhiteSpace(' ')
+              ELSE
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace(' ')
+                  BOOLEAN_CONSTANT
+                    PsiElement(false)('false')
+                  PsiWhiteSpace(' ')
+                  PsiElement(RBRACE)('}')

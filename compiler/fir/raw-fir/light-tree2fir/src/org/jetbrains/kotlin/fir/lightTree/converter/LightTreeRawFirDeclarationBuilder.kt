@@ -74,7 +74,7 @@ class LightTreeRawFirDeclarationBuilder(
             //TODO throw error
             throw Exception()
         }
-        println("convertFile")
+        //println("convertFile")
         val fileSymbol = FirFileSymbol()
         var fileAnnotations = mutableListOf<FirAnnotation>()
         val importList = mutableListOf<FirImport>()
@@ -109,12 +109,12 @@ class LightTreeRawFirDeclarationBuilder(
         modifierList.forEach {
             firDeclarationList += buildErrorTopLevelDeclarationForDanglingModifierList(it)
         }
-        println("fir file\n$file")
-        println("firDeclarationList\n$firDeclarationList")
+        //println("fir file\n$file")
+        //println("firDeclarationList\n$firDeclarationList")
         return buildFile {
             symbol = fileSymbol
             source = file.toFirSourceElement()
-            println("source: $source")
+            //println("source: $source")
             origin = FirDeclarationOrigin.Source
             moduleData = baseModuleData
             name = sourceFile.name
@@ -131,7 +131,7 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlockExpression
      */
     fun convertBlockExpression(block: LighterASTNode): FirBlock {
-        println("convertBlockExpression")
+        //println("convertBlockExpression")
         return convertBlockExpressionWithoutBuilding(block).build()
     }
 
@@ -142,11 +142,11 @@ class LightTreeRawFirDeclarationBuilder(
             when (node.tokenType) {
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
                 FUN -> {
-                    println("FUN")
+                    //println("FUN")
                     container += convertFunctionDeclaration(node)
                 }
                 KtNodeTypes.PROPERTY -> {
-                    println("PROPERTY")
+                    //println("PROPERTY")
                     container += convertPropertyDeclaration(node) as FirStatement
 
                 }
@@ -154,8 +154,8 @@ class LightTreeRawFirDeclarationBuilder(
                 TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
                 CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
                 else ->{
-                    println(node)
-                    println(node.tokenType)
+                    //println(node)
+                    //println(node.tokenType)
                     if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
                 }
             }
@@ -1951,7 +1951,7 @@ class LightTreeRawFirDeclarationBuilder(
         return when {
             blockNode != null -> {
                 val block = convertBlock(blockNode)
-                println("convertFunctionBody: $blockNode")
+                //println("convertFunctionBody: $blockNode")
                 val contractDescription = runIf(allowLegacyContractDescription) {
                     val blockSource = block.source
                     val diagnostic = when {

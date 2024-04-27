@@ -1,0 +1,220 @@
+KtFile: compoundCommentsBindingInStatementBlock.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        COMPOUND_EXPRESSION
+          COMPOUND_EXPRESSION
+            BLOCK
+              IF
+                PsiElement(if)('if')
+                PsiWhiteSpace(' ')
+                PsiElement(LPAR)('(')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('x')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('10')
+                PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace(' ')
+                CONDITION
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(GT)('>')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('0')
+                PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                THEN
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n        ')
+                    PsiComment(BLOCK_COMMENT)('/*start-end*/')
+                    PsiWhiteSpace('\n    ')
+                    PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n\n    ')
+      CALL_EXPRESSION
+        COMPOUND_EXPRESSION
+          COMPOUND_EXPRESSION
+            BLOCK
+              IF
+                PsiElement(if)('if')
+                PsiWhiteSpace(' ')
+                PsiElement(LPAR)('(')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('y')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('5')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(MUL)('*')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('2')
+                PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace(' ')
+                CONDITION
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('y')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(EQEQ)('==')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('10')
+                PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                THEN
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n        ')
+                    PsiComment(BLOCK_COMMENT)('/*start-end*/')
+                    PsiWhiteSpace('\n    ')
+                    PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n\n    ')
+      CALL_EXPRESSION
+        COMPOUND_EXPRESSION
+          COMPOUND_EXPRESSION
+            BLOCK
+              IF
+                PsiElement(if)('if')
+                PsiWhiteSpace(' ')
+                PsiElement(LPAR)('(')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('z')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('3')
+                PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace(' ')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('w')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('9')
+                PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace(' ')
+                CONDITION
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('z')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(LT)('<')
+                    PsiWhiteSpace(' ')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('w')
+                PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                THEN
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n        ')
+                    PsiComment(BLOCK_COMMENT)('/*start*/')
+                    PsiWhiteSpace('\n        ')
+                    PsiComment(BLOCK_COMMENT)('/*end*/')
+                    PsiWhiteSpace('\n    ')
+                    PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n\n    ')
+      CALL_EXPRESSION
+        COMPOUND_EXPRESSION
+          COMPOUND_EXPRESSION
+            BLOCK
+              IF
+                PsiElement(if)('if')
+                PsiWhiteSpace(' ')
+                PsiElement(LPAR)('(')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('12')
+                PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace(' ')
+                CONDITION
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(GT)('>')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('10')
+                PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                THEN
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n        ')
+                    PsiComment(BLOCK_COMMENT)('/*start*/')
+                    PsiWhiteSpace('\n\n        ')
+                    PROPERTY
+                      KDoc
+                        PsiElement(KDOC_START)('/**')
+                        KDOC_SECTION
+                          PsiElement(KDOC_TEXT)(' doc ')
+                        PsiElement(KDOC_END)('*/')
+                      PsiWhiteSpace('\n        ')
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('b')
+                      PsiWhiteSpace(' ')
+                      PsiElement(EQ)('=')
+                      PsiWhiteSpace(' ')
+                      BINARY_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
+                        PsiWhiteSpace(' ')
+                        OPERATION_REFERENCE
+                          PsiElement(MUL)('*')
+                        PsiWhiteSpace(' ')
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('2')
+                      PsiWhiteSpace('  ')
+                      PsiComment(EOL_COMMENT)('// Using 'a' to calculate a new value')
+                    PsiWhiteSpace('\n\n        ')
+                    PsiComment(BLOCK_COMMENT)('/*end*/')
+                    PsiWhiteSpace('\n    ')
+                    PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
