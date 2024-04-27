@@ -57,7 +57,6 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- When expressions -------------------------------
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: ResolutionMode): FirStatement {
-        println("tranformWhenExpression")
         if (whenExpression.calleeReference is FirResolvedNamedReference && whenExpression.isResolved) {
             return whenExpression
         }
@@ -115,7 +114,6 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     )
                     whenExpression = completionResult
                 }
-                println("whenExpression.resolvedType: ${whenExpression.resolvedType}")
                 dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
                 whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
                 whenExpression
@@ -149,7 +147,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
 
     override fun transformWhenSubjectExpression(
         whenSubjectExpression: FirWhenSubjectExpression,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): FirStatement {
         dataFlowAnalyzer.exitWhenSubjectExpression(whenSubjectExpression)
         return components.transformWhenSubjectExpressionUsingSmartcastInfo(whenSubjectExpression)
@@ -199,7 +197,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
 
     override fun transformReturnExpression(
         returnExpression: FirReturnExpression,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): FirStatement {
         val labeledElement = returnExpression.target.labeledElement
         val expectedTypeRef = labeledElement.returnTypeRef
@@ -231,7 +229,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
 
     override fun transformElvisExpression(
         elvisExpression: FirElvisExpression,
-        data: ResolutionMode
+        data: ResolutionMode,
     ): FirStatement {
         if (elvisExpression.calleeReference is FirResolvedNamedReference) return elvisExpression
         elvisExpression.transformAnnotations(transformer, data)

@@ -454,7 +454,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     private void parsePostfixExpression() {
         PsiBuilder.Marker expression = mark();
-        //System.out.println("parsePostfixExpression");
         boolean firstExpressionParsed = at(COLONCOLON) ? parseDoubleColonSuffix(mark()) : parseAtomicExpression();
 
         while (true) {
@@ -536,7 +535,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      * atomicExpression typeParameters? valueParameters? functionLiteral*
      */
     private void parseSelectorCallExpression() {
-        //System.out.println("parseSelectorCallExpression");
         PsiBuilder.Marker mark = mark();
         parseAtomicExpression();
         if (!myBuilder.newlineBeforeCurrentToken() && parseCallSuffix()) {
@@ -1197,7 +1195,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     public void parseFunctionLiteral(boolean preferBlock, boolean collapse) {
         assert _at(LBRACE);
-        //System.out.println("parseFunctionLiteral");
         PsiBuilder.Marker literalExpression = mark();
 
         PsiBuilder.Marker literal = mark();
@@ -1208,7 +1205,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         boolean paramsFound = false;
 
         IElementType token = tt();
-        //System.out.println(token == ARROW);
         if (token == ARROW) {
             //   { -> ...}
             mark().done(VALUE_PARAMETER_LIST);
@@ -1354,14 +1350,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : SEMI* statement{SEMI+} SEMI*
      */
     public void parseStatements(boolean isScriptTopLevel) {
-        //System.out.println("parseStatements1");
         while (at(SEMICOLON)) advance(); // SEMICOLON
         while (!eof() && !at(RBRACE)) {
             if (!atSet(STATEMENT_FIRST)) {
                 errorAndAdvance("Expecting an element");
             }
             if (atSet(STATEMENT_FIRST)) {
-                //System.out.println("parseIF???");
                 parseStatement(isScriptTopLevel);
             }
             if (at(SEMICOLON)) {
@@ -1381,7 +1375,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 }
             }
         }
-        // System.out.println("parseStatements2");
     }
 
     /*
@@ -1674,7 +1667,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private void parseIf() {
 
         assert _at(IF_KEYWORD);
-        //System.out.println("parse if");
 
 
         //IF_KEYWORD
@@ -1685,7 +1677,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker ifstatement = mark();
         advance();
         myBuilder.disableNewlines();
-        //System.out.println("modified_parse_condition");
         int count = 0;
         if (expect(LPAR, "Expecting a condition in parentheses '(...)'", EXPRESSION_FIRST)) {
             while (true) {
