@@ -410,9 +410,9 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     }
     val moduleDFG = runPhase(BuildDFGPhase, module, disable = !optimize)
     // TODO: Do not inline box/unbox yet, and value classes properties accessors
-//    val emptyDevirtualizationAnalysisResult = DevirtualizationAnalysis.AnalysisResult(emptyMap(), DevirtualizationAnalysis.DevirtualizationAnalysisImpl.EmptyTypeHierarchy)
-//    runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, emptyDevirtualizationAnalysisResult, inlineBoxUnbox = false),
-//            disable = !optimize || !enableBackendInliner)
+    val emptyDevirtualizationAnalysisResult = DevirtualizationAnalysis.AnalysisResult(mutableMapOf(), DevirtualizationAnalysis.DevirtualizationAnalysisImpl.EmptyTypeHierarchy)
+    runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, emptyDevirtualizationAnalysisResult, BackendInlinerOptions(inlineBoxUnbox = false)),
+            disable = !optimize || !enableBackendInliner)
     val devirtualizationAnalysisResults = runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
     //val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResults, module), disable = !optimize)
