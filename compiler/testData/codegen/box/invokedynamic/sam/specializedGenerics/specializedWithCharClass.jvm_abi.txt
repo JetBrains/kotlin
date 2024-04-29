@@ -1,0 +1,10 @@
+MODULE main
+	CLASS SpecializedWithCharClassKt$box$1.class
+		K1
+			---
+		K2
+			invoke(C)Ljava/lang/Object; [public, final]
+		K1
+			invoke(C)V [public, final]
+		K2
+			---

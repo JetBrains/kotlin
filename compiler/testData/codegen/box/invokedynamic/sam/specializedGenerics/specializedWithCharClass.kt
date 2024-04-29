@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: CLASS
+// JVM_ABI_K1_K2_DIFF: Caused by empty lambda handling, will be fixed in the later commit
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES

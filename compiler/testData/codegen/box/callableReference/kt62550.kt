@@ -4,6 +4,7 @@
 // DUMP_IR
 // FIR_IDENTICAL
 // LAMBDAS: CLASS
+// JVM_ABI_K1_K2_DIFF: Caused by empty lambda handling, will be fixed in the later commit
 
 // FILE: Helper.java
 // Using Java to avoid different IR text dumps for K1 and K2

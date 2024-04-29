@@ -13,3 +13,15 @@ MODULE m1
 						@kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<kotlin/Any?>, kotlin/Any?>
 					K2
 						@kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<*>, kotlin/Any?> /* = @kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<*>, kotlin/Any?> */
+	CLASS GivenDSLHandler$1.class
+		Property: class.signature
+			K1
+				Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<LGivenDSL<*>;Lkotlin/coroutines/Continuation<-Lkotlin/Unit;>;Ljava/lang/Object;>;
+			K2
+				Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<LGivenDSL<*>;Lkotlin/coroutines/Continuation<-Ljava/lang/Object;>;Ljava/lang/Object;>;
+		METHOD invoke(LGivenDSL;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+			Property: method.signature
+				K1
+					(LGivenDSL<*>;Lkotlin/coroutines/Continuation<-Lkotlin/Unit;>;)Ljava/lang/Object;
+				K2
+					(LGivenDSL<*>;Lkotlin/coroutines/Continuation<Ljava/lang/Object;>;)Ljava/lang/Object;
