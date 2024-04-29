@@ -141,41 +141,26 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             useLibraryNamesInCliArguments = false
         )
 
-        // Compilation with patched manifest -- should fail.
-        try {
-            modules.compileModules(
-                produceUnpackedKlibs = true,
-                useLibraryNamesInCliArguments = false,
-            ) { module, klib ->
-                when (module.name) {
-                    "liba" -> {
-                        // set the library version = 1.0
-                        patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
-                            properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
-                        }
+        // Compilation with patched manifest -- should finish successfully too.
+        modules.compileModules(
+            produceUnpackedKlibs = true,
+            useLibraryNamesInCliArguments = false,
+        ) { module, klib ->
+            when (module.name) {
+                "liba" -> {
+                    // set the library version = 1.0
+                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                        properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
                     }
-                    "libb" -> {
-                        // pretend it depends on liba v2.0
-                        patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
-                            properties.entries.removeIf { it.key.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }
-                            properties[KLIB_PROPERTY_DEPENDENCY_VERSION + "_liba"] = "2.0"
-                        }
+                }
+                "libb" -> {
+                    // pretend it depends on liba v2.0
+                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                        properties.entries.removeIf { it.key.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }
+                        properties[KLIB_PROPERTY_DEPENDENCY_VERSION + "_liba"] = "2.0"
                     }
                 }
             }
-
-            fail { "Normally unreachable code" }
-        } catch (cte: CompilationToolException) {
-            assertCompilerOutputHasKlibResolverIssue(
-                assertions = JUnit5Assertions,
-                compilerOutput = cte.reason,
-                missingLibrary = "klib-files.unpacked.paths.transformed/liba",
-                baseDir = buildDir,
-                prefixPatterns = listOf(
-                    { "error: KLIB resolver: Could not find \"liba\"" },
-                    { "warning: KLIB resolver: Skipping '<path>/$it'. Library versions don't match." },
-                )
-            )
         }
     }
 
