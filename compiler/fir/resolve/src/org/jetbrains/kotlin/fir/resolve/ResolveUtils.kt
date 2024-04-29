@@ -100,7 +100,7 @@ internal fun FirAnonymousFunction.computeReturnType(
             return unitType
         }
 
-        if (returnExpressions.any { it.isExplicit && it.expression is FirUnitExpression }) {
+        if (returnExpressions.any { it.isExplicitEmptyReturn() }) {
             // If the expected type is not Unit, and we have an explicit expressionless return, don't infer the return type to Unit.
             // For this situation, RETURN_TYPE_MISMATCH will be reported later in FirFunctionReturnTypeMismatchChecker.
             //
@@ -162,6 +162,21 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
                 if (element == lastStatement) returnExpression as E else element
         }, null
     )
+}
+
+/**
+ * This function returns true only for the case of explicitly written empty `return` or `return@label`.
+ * Not explicit Unit as last statement, not an implicit return for Unit-coercion
+ */
+private fun FirAnonymousFunctionReturnExpressionInfo.isExplicitEmptyReturn(): Boolean {
+    // It's just a last statement (not explicit return)
+    if (!isExplicit) return false
+
+    // Currently, if the content of return is FirUnitExpression, it means that initially it was expressionless return
+    // or a synthetic statement for empty lambda
+    if (expression !is FirUnitExpression) return false
+
+    return true
 }
 
 /**
