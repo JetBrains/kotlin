@@ -27,11 +27,15 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.util.DeserializableClass
+import org.jetbrains.kotlin.ir.util.getAllSuperclasses
 import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
 
@@ -192,8 +196,6 @@ class Fir2IrLazyClass(
             }
         }
 
-        val ownerLookupTag = fir.symbol.toLookupTag()
-
         fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
             if (scope == null) return
             for (name in scope.getCallableNames()) {
@@ -210,8 +212,9 @@ class Fir2IrLazyClass(
                 scope.processPropertiesByName(name) { symbol ->
                     when {
                         !shouldBuildStub(symbol.fir) -> {}
-                        symbol is FirFieldSymbol && (symbol.isStatic || symbol.containingClassLookupTag() == ownerLookupTag) -> {
-                            result += declarationStorage.getOrCreateIrField(symbol.fir, this)
+                        symbol is FirFieldSymbol && !isStaticFromSuperInterface(symbol.fir) -> {
+                            val field = declarationStorage.getOrCreateIrField(symbol.fir, this)
+                            result += createFieldOnlyProperty(field)
                         }
                         symbol is FirPropertySymbol -> {
                             // Lazy declarations are created together with their symbol, so it's safe to take the owner here
@@ -233,6 +236,30 @@ class Fir2IrLazyClass(
 
         result
     }
+
+    private fun isStaticFromSuperInterface(field: FirField): Boolean {
+        if (!field.isStatic) return false
+        val containingClassFqName = field.containingClassLookupTag()?.classId?.asSingleFqName() ?: return false
+        return getAllSuperclasses().any { it.isInterface && it.isClassWithFqName(containingClassFqName) }
+    }
+
+    private fun createFieldOnlyProperty(field: IrField): IrProperty =
+        factory.createProperty(
+            field.startOffset,
+            field.endOffset,
+            field.origin,
+            field.name,
+            field.visibility,
+            Modality.FINAL,
+            IrPropertySymbolImpl(),
+            !field.isFinal,
+            field.isStatic && field.isFinal,
+            isLateinit = false,
+            isDelegated = false,
+        ).apply {
+            parent = field.parent
+            backingField = field
+        }
 
     private fun shouldBuildStub(fir: FirDeclaration): Boolean {
         if (fir is FirCallableDeclaration) {
