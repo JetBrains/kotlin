@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -83,7 +84,7 @@ fun FirDeclaration?.computeIrOrigin(
 
 // ----------------------------------- statement origins -----------------------------------
 
-private val nameToOperationConventionOrigin = mutableMapOf(
+private val nameToOperationConventionOrigin: Map<Name, IrStatementOrigin> = mapOf(
     OperatorNameConventions.PLUS to IrStatementOrigin.PLUS,
     OperatorNameConventions.MINUS to IrStatementOrigin.MINUS,
     OperatorNameConventions.TIMES to IrStatementOrigin.MUL,
@@ -188,7 +189,7 @@ private fun FirVariableAssignment.getCallableNameFromIntClassIfAny(): Name? {
     return null
 }
 
-val augmentedAssignSourceKindToIrStatementOrigin = mapOf(
+val augmentedAssignSourceKindToIrStatementOrigin: Map<KtFakeSourceElementKind.DesugaredAugmentedAssign, IrStatementOrigin> = mapOf(
     KtFakeSourceElementKind.DesugaredPlusAssign to IrStatementOrigin.PLUSEQ,
     KtFakeSourceElementKind.DesugaredMinusAssign to IrStatementOrigin.MINUSEQ,
     KtFakeSourceElementKind.DesugaredTimesAssign to IrStatementOrigin.MULTEQ,
@@ -196,7 +197,7 @@ val augmentedAssignSourceKindToIrStatementOrigin = mapOf(
     KtFakeSourceElementKind.DesugaredRemAssign to IrStatementOrigin.PERCEQ
 )
 
-val incOrDeclSourceKindToIrStatementOrigin = mapOf(
+val incOrDeclSourceKindToIrStatementOrigin: Map<KtFakeSourceElementKind, IrStatementOrigin> = mapOf(
     KtFakeSourceElementKind.DesugaredPrefixInc to IrStatementOrigin.PREFIX_INCR,
     KtFakeSourceElementKind.DesugaredPostfixInc to IrStatementOrigin.POSTFIX_INCR,
     KtFakeSourceElementKind.DesugaredPrefixDec to IrStatementOrigin.PREFIX_DECR,

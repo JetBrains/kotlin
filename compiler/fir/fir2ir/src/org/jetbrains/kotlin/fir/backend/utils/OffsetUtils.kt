@@ -34,7 +34,9 @@ internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffse
 }
 
 internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
-    defaultStartOffset: Int, defaultEndOffset: Int, f: (startOffset: Int, endOffset: Int) -> T
+    defaultStartOffset: Int,
+    defaultEndOffset: Int,
+    f: (startOffset: Int, endOffset: Int) -> T
 ): T {
     return if (this == null) return f(defaultStartOffset, defaultEndOffset) else source.convertWithOffsets(f)
 }

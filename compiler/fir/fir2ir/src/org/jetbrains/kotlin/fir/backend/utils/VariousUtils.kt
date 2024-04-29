@@ -56,7 +56,7 @@ fun FirCallableDeclaration.contextReceiversForFunctionOrContainingProperty(): Li
         this.contextReceivers
 
 fun List<IrDeclaration>.extractFirDeclarations(): Set<FirDeclaration> {
-    return this.mapNotNullTo(mutableSetOf()) { ((it as IrMetadataSourceOwner).metadata as FirMetadataSource).fir }
+    return this.mapTo(mutableSetOf()) { ((it as IrMetadataSourceOwner).metadata as FirMetadataSource).fir }
 }
 
 /**
@@ -105,17 +105,17 @@ internal fun implicitCast(original: IrExpression, castType: IrType, typeOperator
     if (original.type == castType) {
         return original
     }
-    if (original !is IrTypeOperatorCall) {
-        return IrTypeOperatorCallImpl(
-            original.startOffset,
-            original.endOffset,
-            castType,
-            typeOperator,
-            castType,
-            original
-        )
+    if (original is IrTypeOperatorCall) {
+        return implicitCast(original.argument, castType, typeOperator)
     }
-    return implicitCast(original.argument, castType, typeOperator)
+    return IrTypeOperatorCallImpl(
+        original.startOffset,
+        original.endOffset,
+        castType,
+        typeOperator,
+        castType,
+        original
+    )
 }
 
 internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(c: Fir2IrComponents): ConeSubstitutor {
