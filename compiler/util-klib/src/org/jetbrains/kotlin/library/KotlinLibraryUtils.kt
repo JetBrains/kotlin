@@ -28,5 +28,5 @@ fun File.unpackZippedKonanLibraryTo(newDir: File) {
 
 val List<String>.toUnresolvedLibraries
     get() = this.map {
-        UnresolvedLibrary(it, null)
+        RequiredUnresolvedLibrary(it)
     }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
@@ -48,7 +48,7 @@ class KonanLibrariesResolveSupport(
     internal val resolvedLibraries = run {
         val additionalLibraryFiles = (includedLibraryFiles + listOfNotNull(libraryToCacheFile)).toSet()
         resolver.resolveWithDependencies(
-                unresolvedLibraries + additionalLibraryFiles.map { UnresolvedLibrary(it.absolutePath, null) },
+                unresolvedLibraries + additionalLibraryFiles.map { RequiredUnresolvedLibrary(it.absolutePath) },
                 noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
                 noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
                 noEndorsedLibs = configuration.getBoolean(KonanConfigKeys.NOENDORSEDLIBS)

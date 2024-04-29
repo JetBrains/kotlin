@@ -118,7 +118,7 @@ val BaseKotlinLibrary.unresolvedDependencies: List<RequiredUnresolvedLibrary>
 
 fun BaseKotlinLibrary.unresolvedDependencies(lenient: Boolean = false): List<UnresolvedLibrary> =
     manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
-        .map { UnresolvedLibrary(it, libraryVersion = null, lenient = lenient) }
+        .map { UnresolvedLibrary(it, lenient = lenient) }
 
 val BaseKotlinLibrary.hasDependencies: Boolean
     get() = !manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS).isNullOrBlank()

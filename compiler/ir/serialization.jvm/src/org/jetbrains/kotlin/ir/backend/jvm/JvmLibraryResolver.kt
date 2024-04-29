@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.jvm
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
+import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -42,7 +43,7 @@ class JvmLibraryResolver(
 
 // TODO: This is a temporary set of library resolver policies for jvm compiler.
 fun jvmResolveLibraries(libraries: List<String>, logger: Logger): KotlinLibraryResolveResult {
-    val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, null) }
+    val unresolvedLibraries = libraries.map { RequiredUnresolvedLibrary(it) }
     val libraryAbsolutePaths = libraries.map { File(it).absolutePath }
     // Configure the resolver to only work with absolute paths for now.
     val libraryResolver = JvmLibraryResolver(

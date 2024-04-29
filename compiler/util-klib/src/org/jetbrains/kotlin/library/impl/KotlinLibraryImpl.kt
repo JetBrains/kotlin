@@ -377,7 +377,7 @@ fun isKotlinLibrary(libraryFile: File): Boolean = try {
         },
         knownIrProviders = emptyList()
     ).resolve(
-        LenientUnresolvedLibrary(libraryPath, libraryVersion = null)
+        LenientUnresolvedLibrary(libraryPath)
     ) != null
 } catch (e: Throwable) {
     false

@@ -284,7 +284,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true
 
-    override fun resolve(givenPath: String) = resolve(UnresolvedLibrary(givenPath, null), false)
+    override fun resolve(givenPath: String) = resolve(RequiredUnresolvedLibrary(givenPath), false)
 
     private val File.klib
         get() = File(this, "klib")
@@ -300,7 +300,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 .filter { it.name.startsWith(prefix) }
                 .filterNot { it.name.startsWith('.') }
                 .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_NATIVE_STDLIB_NAME }
-                .map { UnresolvedLibrary(it.absolutePath, null) }
+                .map { RequiredUnresolvedLibrary(it.absolutePath) }
                 .map { resolve(it, isDefaultLink = true) }
         } else emptySequence()
 
@@ -309,7 +309,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         val result = mutableListOf<L>()
 
         if (!noStdLib) {
-            result.add(resolve(UnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME, null), true))
+            result.add(resolve(RequiredUnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME), true))
         }
 
         // Endorsed libraries in distHead.

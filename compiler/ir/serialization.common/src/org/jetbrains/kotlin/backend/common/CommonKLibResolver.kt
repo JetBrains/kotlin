@@ -39,7 +39,7 @@ object CommonKLibResolver {
         lenient: Boolean = false,
         knownIrProviders: List<String> = listOf(),
     ): KLibResolution {
-        val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, null, lenient) }
+        val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, lenient) }
         val libraryAbsolutePaths = libraries.map { File(it).absolutePath }
         // Configure the resolver to only work with absolute paths for now.
         val libraryResolver = KLibResolverHelper(
