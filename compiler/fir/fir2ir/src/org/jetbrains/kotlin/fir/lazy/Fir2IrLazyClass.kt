@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
+import org.jetbrains.kotlin.fir.backend.utils.computeValueClassRepresentation
+import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
+import org.jetbrains.kotlin.fir.backend.utils.getIrSymbolsForSealedSubclasses
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
