@@ -600,4 +600,24 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 }
             },
         )
+
+    @Test // regression test for 336571300
+    fun test_groupAroundIfComposeCallInIfConditionWithShortCircuit() = testCompile(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                ReceiveValue(if (state && getCondition()) 0 else 1)
+            }
+
+            val state by mutableStateOf(true)
+
+            @Composable
+            fun getCondition() = remember { mutableStateOf(false) }.value
+
+            @Composable
+            fun ReceiveValue(value: Int) { }
+        """
+    )
 }

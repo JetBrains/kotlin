@@ -17,6 +17,7 @@
 package androidx.compose.compiler.test
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mock.Text
 import androidx.compose.runtime.mock.compositionTest
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class CompositionTests {
     @Test
@@ -80,6 +82,37 @@ class CompositionTests {
             DefaultValueClass()
         }
     }
+
+    @Test
+    fun groupAroundIfComposeCallInIfConditionWithShortCircuit() = compositionTest {
+        var state by mutableStateOf(true)
+        compose {
+            ReceiveValue(if (state && getCondition()) 0 else 1)
+
+            ReceiveValue(
+                when {
+                    state -> when {
+                        state -> getCondition()
+                        else -> false
+                    }.let { if (it) 0 else 1 }
+                    else -> 1
+                }
+            )
+        }
+
+        state = false
+        advance()
+    }
+}
+
+@Composable
+fun getCondition() = remember { false }
+
+@NonRestartableComposable
+@Composable
+fun ReceiveValue(value: Int) {
+    val string = remember { "$value" }
+    assertEquals(1, string.length)
 }
 
 class CrossInlineState(content: @Composable () -> Unit = { }) {
