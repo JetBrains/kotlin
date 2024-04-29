@@ -1,33 +1,9 @@
 MODULE main
 	CLASS KRaw.class
 		CLASS METADATA
-			FUNCTION bothRawAndGeneric(Ljava/util/List;Ljava/util/List;)Ljava/util/List;
-				Property: class.metadata.function.valueParameters
-					K1
-						(list1: kotlin/collections/MutableList<kotlin/Any!>..kotlin/collections/List<kotlin/Any!>?, list2: /* raw */ kotlin/collections/MutableList<kotlin/Any?>../* raw */ kotlin/collections/List<*>?)
-					K2
-						(list1: kotlin/collections/MutableList<kotlin/Any!>..kotlin/collections/List<kotlin/Any!>?, list2: kotlin/collections/MutableList<kotlin/Any?>..kotlin/collections/List<*>?)
 			FUNCTION takesRawGenericIn(LGenericIn;)V
 				Property: class.metadata.function.valueParameters
 					K1
 						(g: /* raw */ GenericIn<kotlin/Number>../* raw */ GenericIn<kotlin/Nothing>?)
 					K2
-						(g: GenericIn<kotlin/Number>..GenericIn<*>?)
-			FUNCTION takesRawGenericInv(LGenericInv;)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(g: /* raw */ GenericInv<kotlin/Number>../* raw */ GenericInv<*>?)
-					K2
-						(g: GenericInv<kotlin/Number>..GenericInv<*>?)
-			FUNCTION takesRawGenericOut(LGenericOut;)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(g: /* raw */ GenericOut<kotlin/Number>../* raw */ GenericOut<*>?)
-					K2
-						(g: GenericOut<kotlin/Number>..GenericOut<*>?)
-			FUNCTION takesRawList(Ljava/util/List;)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(list: /* raw */ kotlin/collections/MutableList<kotlin/Any?>../* raw */ kotlin/collections/List<*>?)
-					K2
-						(list: kotlin/collections/MutableList<kotlin/Any?>..kotlin/collections/List<*>?)
+						(g: /* raw */ GenericIn<kotlin/Number>../* raw */ GenericIn<*>?)

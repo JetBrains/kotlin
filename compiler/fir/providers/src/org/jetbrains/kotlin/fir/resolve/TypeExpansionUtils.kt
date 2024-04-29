@@ -63,8 +63,14 @@ fun ConeKotlinType.fullyExpandedType(
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeKotlinType = when (this) {
     is ConeDynamicType -> this
-    is ConeFlexibleType ->
-        ConeFlexibleType(lowerBound.fullyExpandedType(useSiteSession), upperBound.fullyExpandedType(useSiteSession, expandedConeType))
+    is ConeFlexibleType -> {
+        val lower = lowerBound.fullyExpandedType(useSiteSession, expandedConeType)
+        val upper = upperBound.fullyExpandedType(useSiteSession, expandedConeType)
+        when {
+            this is ConeRawType -> ConeRawType.create(lower, upper)
+            else -> ConeFlexibleType(lower, upper)
+        }
+    }
     is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
     else -> this
 }
