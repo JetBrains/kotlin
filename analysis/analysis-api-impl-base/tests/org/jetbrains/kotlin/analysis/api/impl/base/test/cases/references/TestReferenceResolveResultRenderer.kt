@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
@@ -12,10 +15,26 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclarationUtil
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 
 object TestReferenceResolveResultRenderer {
     private const val UNRESOLVED_REFERENCE_RESULT = "Nothing (Unresolved reference)"
+
+    fun PsiElement.renderResolvedPsi(testServices: TestServices): String {
+        val containingFqn = when (this) {
+            is PsiMember -> (containingClass ?: this as? PsiClass)?.qualifiedName
+            is KtNamedDeclaration -> KtNamedDeclarationUtil.getParentFqName(this)
+            else -> testServices.assertions.fail { "Could not get containing class" }
+        }
+        return """
+                Resolved to:
+                    (in ${containingFqn}) (psi: ${text.substringBefore('{')})
+        """.trimIndent()
+    }
 
     /**
      * Empty [symbols] list equals to unresolved reference.

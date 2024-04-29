@@ -246,6 +246,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             }
         }
 
+        group("references") {
+            test<AbstractIsReferenceToTest>(filter = frontendIs(FrontendKind.Fir)) {
+                model(it, "isReferenceTo")
+            }
+        }
+
         group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
             test<AbstractAnalysisApiSubstitutorsTest> {
                 model(it, "typeSubstitution")

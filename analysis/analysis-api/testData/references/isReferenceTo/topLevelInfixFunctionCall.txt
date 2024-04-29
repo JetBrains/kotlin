@@ -1,0 +1,2 @@
+Resolved to:
+    (in <root>) (psi: infix fun Int.customPlus(other: Int) = this + other)
