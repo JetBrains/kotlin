@@ -136,6 +136,7 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
                         .entries
                         .mapNotNull { (key, value) ->
                             val keyStr = key.toString()
+                            @Suppress("DEPRECATION")
                             if (!keyStr.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION)) return@mapNotNull null
 
                             val valueStr = value.toString()

@@ -158,22 +158,16 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                     // pretend it depends on liba v2.0
                     patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
                         // first, check:
-                        val dependencyVersionForLibaPropertyName = KLIB_PROPERTY_DEPENDENCY_VERSION + "_liba"
-
                         val dependencyVersionPropertyNames: Set<String> =
-                            properties.keys.filter { it.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }.toSet()
-                        val otherDependencyVersionPropertyNames = dependencyVersionPropertyNames - dependencyVersionForLibaPropertyName
+                            properties.keys.filter { @Suppress("DEPRECATION") it.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }.toSet()
 
-                        assertTrue(dependencyVersionForLibaPropertyName in dependencyVersionPropertyNames) {
-                            "Property $dependencyVersionForLibaPropertyName is expected in manifest"
-                        }
-                        assertTrue(otherDependencyVersionPropertyNames.isEmpty()) {
-                            "Unexpected properties in manifest: ${otherDependencyVersionPropertyNames.joinToString()}"
+                        assertTrue(dependencyVersionPropertyNames.isEmpty()) {
+                            "Unexpected properties in manifest: ${dependencyVersionPropertyNames.joinToString()}"
                         }
 
                         // then, patch:
-                        properties.remove(dependencyVersionForLibaPropertyName)
-                        properties[dependencyVersionForLibaPropertyName] = "2.0"
+                        @Suppress("DEPRECATION")
+                        properties[KLIB_PROPERTY_DEPENDENCY_VERSION + "_liba"] = "2.0"
                     }
                 }
             }
@@ -208,17 +202,11 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 "libb" -> {
                     // check that dependency version is set
                     patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
-                        val dependencyVersionForLibaPropertyName = KLIB_PROPERTY_DEPENDENCY_VERSION + "_liba"
-
                         val dependencyVersionPropertyNames: Set<String> =
-                            properties.keys.filter { it.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }.toSet()
-                        val otherDependencyVersionPropertyNames = dependencyVersionPropertyNames - dependencyVersionForLibaPropertyName
+                            properties.keys.filter { @Suppress("DEPRECATION") it.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }.toSet()
 
-                        assertTrue(dependencyVersionForLibaPropertyName in dependencyVersionPropertyNames) {
-                            "Property $dependencyVersionForLibaPropertyName is expected in manifest"
-                        }
-                        assertTrue(otherDependencyVersionPropertyNames.isEmpty()) {
-                            "Unexpected properties in manifest: ${otherDependencyVersionPropertyNames.joinToString()}"
+                        assertTrue(dependencyVersionPropertyNames.isEmpty()) {
+                            "Unexpected properties in manifest: ${dependencyVersionPropertyNames.joinToString()}"
                         }
                     }
                 }
