@@ -67,7 +67,7 @@ internal object FirReferenceResolveHelper {
     }
 
     private fun ConeKotlinType.toTargetSymbol(session: FirSession, symbolBuilder: KaSymbolByFirBuilder): KaSymbol? {
-        val type = this as? ConeLookupTagBasedType
+        val type = abbreviatedTypeOrSelf as? ConeLookupTagBasedType
         val resolvedSymbol = type?.lookupTag?.toSymbol(session) as? FirBasedSymbol<*>
 
         val symbol = resolvedSymbol ?: run {

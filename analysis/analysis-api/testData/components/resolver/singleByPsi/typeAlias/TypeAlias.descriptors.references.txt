@@ -1,3 +1,0 @@
-KtNameReferenceExpression(48,50): 'CA'
-  KtSimpleNameReference:
-    (in test) typealias CA = test.C
