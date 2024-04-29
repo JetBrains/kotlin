@@ -6,7 +6,6 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 // WITH_STDLIB
 // WITH_COROUTINES
-// JVM_ABI_K1_K2_DIFF: Caused by empty lambda handling, will be fixed in the later commit
 
 import kotlin.test.*
 

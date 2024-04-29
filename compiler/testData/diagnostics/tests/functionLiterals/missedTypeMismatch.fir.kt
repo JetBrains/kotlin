@@ -36,5 +36,5 @@ fun main() {
     val a18: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun() {}<!>
     val a19: () -> () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun() = fun() {}<!>
     val a20: () -> () -> () -> Unit = fun() = fun() = {}
-    val a21: () -> () -> () -> Int = fun() = fun() = {}
+    val a21: () -> () -> () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun() = fun() = {}<!>
 }

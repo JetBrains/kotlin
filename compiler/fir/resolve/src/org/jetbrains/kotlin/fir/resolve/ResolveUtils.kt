@@ -174,7 +174,7 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
 
 /**
  * This function returns true only for the case of explicitly written empty `return` or `return@label`.
- * Not explicit Unit as last statement, not an implicit return for Unit-coercion
+ * Not explicit Unit as last statement, not an implicit return for Unit-coercion or a synthetic expression for empty lambda
  */
 private fun FirAnonymousFunctionReturnExpressionInfo.isExplicitEmptyReturn(): Boolean {
     // It's just a last statement (not explicit return)
@@ -183,6 +183,9 @@ private fun FirAnonymousFunctionReturnExpressionInfo.isExplicitEmptyReturn(): Bo
     // Currently, if the content of return is FirUnitExpression, it means that initially it was expressionless return
     // or a synthetic statement for empty lambda
     if (expression !is FirUnitExpression) return false
+
+    // For case of empty lambdas, they are not counted as explicit returns, too
+    if (expression.source?.kind == KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda) return false
 
     return true
 }
