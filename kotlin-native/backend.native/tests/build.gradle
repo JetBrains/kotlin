@@ -2814,6 +2814,20 @@ standaloneTest("devirtualization_anonymousObject") {
     source = "codegen/devirtualization/anonymousObject.kt"
 }
 
+standaloneTest("devirtualization_kt67281c") {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    useGoldenData = true
+    flags = ["-opt"]
+    source = "codegen/devirtualization/kt67218c.kt"
+}
+
+standaloneTest("devirtualization_kt67281i") {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    useGoldenData = true
+    flags = ["-opt"]
+    source = "codegen/devirtualization/kt67218i.kt"
+}
+
 tasks.register("interfaceCallsNCasts_conservativeItable", KonanLocalTest) {
     useGoldenData = true
     source = "codegen/interfaceCallsNCasts/conservativeItable.kt"
