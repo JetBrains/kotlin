@@ -1,0 +1,46 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+                FirValueParameterSymbol flag: R|kotlin/Boolean|
+    Element 7
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] receiverInjection_wrongScope.kt
+    public abstract [ResolvedTo(STATUS)] interface Algebra<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun R|T|.plus([ResolvedTo(STATUS)] other: R|T|): R|T|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface B : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> injectAlgebra(): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test_1([ResolvedTo(BODY_RESOLVE)] flag: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] a1: R|A|, [ResolvedTo(BODY_RESOLVE)] a2: R|A|): R|kotlin/Unit| {
+        when () {
+            R|<local>/flag| ->  {
+                R|/injectAlgebra|<R|A|>()
+            }
+        }
+
+        R|kotlin/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/injectAlgebra|<R|A|>()
+        }
+        )
+        R|<local>/a1|.<Unresolved name: plus (+)>#(R|<local>/a2|)
+    }

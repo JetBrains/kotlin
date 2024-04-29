@@ -547,4 +547,80 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromTypeBound.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector.kt")
+    public void testCallShapeBasedInjector() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/callShapeBasedInjector.kt");
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector_asReceiver.kt")
+    public void testCallShapeBasedInjector_asReceiver() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/callShapeBasedInjector_asReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector_delegate.kt")
+    public void testCallShapeBasedInjector_delegate() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/callShapeBasedInjector_delegate.kt");
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector_extraCall.kt")
+    public void testCallShapeBasedInjector_extraCall() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/callShapeBasedInjector_extraCall.kt");
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector_extraSafeCall.kt")
+    public void testCallShapeBasedInjector_extraSafeCall() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/callShapeBasedInjector_extraSafeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector_notNullCheck.kt")
+    public void testCallShapeBasedInjector_notNullCheck() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/callShapeBasedInjector_notNullCheck.kt");
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector_safeCall.kt")
+    public void testCallShapeBasedInjector_safeCall() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/callShapeBasedInjector_safeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("receiverInjection.kt")
+    public void testReceiverInjection() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/receiverInjection.kt");
+    }
+
+    @Test
+    @TestMetadata("receiverInjection_before.kt")
+    public void testReceiverInjection_before() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/receiverInjection_before.kt");
+    }
+
+    @Test
+    @TestMetadata("receiverInjection_extraCall.kt")
+    public void testReceiverInjection_extraCall() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/receiverInjection_extraCall.kt");
+    }
+
+    @Test
+    @TestMetadata("receiverInjection_wrongScope.kt")
+    public void testReceiverInjection_wrongScope() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled/receiverInjection_wrongScope.kt");
+    }
+  }
 }

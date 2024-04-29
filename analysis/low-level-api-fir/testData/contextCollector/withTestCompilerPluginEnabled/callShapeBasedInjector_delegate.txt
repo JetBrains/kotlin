@@ -1,0 +1,50 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval df1: <ERROR TYPE REF: Unresolved name: getValue>
+
+FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_delegate.kt
+    public abstract [ResolvedTo(STATUS)] interface DataFrame<[ResolvedTo(STATUS)] out T> : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Refine : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Refine| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|Refine|[Types]() public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(CONTRACTS)] T, [ResolvedTo(CONTRACTS)] R> R|DataFrame<T>|.add([ResolvedTo(CONTRACTS)] columnName: R|kotlin/String|, [ResolvedTo(CONTRACTS)] expression: R|() -> R|): R|DataFrame<kotlin/Any?>| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test_1([ResolvedTo(BODY_RESOLVE)] df: R|DataFrame<*>?|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval df1: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|DataFrame<<local>/DataFrameType>| <inline=Unknown>  {
+            ^ R|<local>/df|.R|kotlin/let|<R|DataFrame<*>?|, R|DataFrame<<local>/DataFrameType>|>(<L> = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|DataFrame<*>?|): R|DataFrame<<local>/DataFrameType>| <inline=Inline, kind=EXACTLY_ONCE>  {
+                local abstract [ResolvedTo(BODY_RESOLVE)] class Schema1 : R|kotlin/Any| {
+                }
+
+                local abstract [ResolvedTo(BODY_RESOLVE)] class Scope1 : R|kotlin/Any| {
+                }
+
+                local abstract [ResolvedTo(BODY_RESOLVE)] class DataFrameType : R|<local>/Schema1| {
+                }
+
+            }
+            )
+        }
+        )
+        R|<local>/df1|.<Unresolved name: column>#
+    }
