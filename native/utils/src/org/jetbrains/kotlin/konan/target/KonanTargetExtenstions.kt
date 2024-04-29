@@ -19,6 +19,7 @@ fun KonanTarget.binaryFormat() = when (family) {
     Family.ANDROID -> BinaryFormat.ELF
     Family.LINUX -> BinaryFormat.ELF
     Family.MINGW -> BinaryFormat.PE_COFF
+    Family.ZEPHYR -> BinaryFormat.ELF
 }
 
 fun KonanTarget.pointerBits() = when (architecture) {
