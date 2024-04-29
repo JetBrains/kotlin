@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
-import kotlin.collections.set
 import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
@@ -112,7 +111,7 @@ class IrDeclarationDeserializer(
     }
 
     private fun deserializeSimpleType(proto: ProtoSimpleType): IrSimpleType {
-        val symbol = deserializeIrSymbolAndRemap(proto.classifier)
+        val symbol = deserializeIrSymbol(proto.classifier)
             .checkSymbolType<IrClassifierSymbol>(fallbackSymbolKind = /* just the first possible option */ CLASS_SYMBOL)
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
@@ -130,7 +129,7 @@ class IrDeclarationDeserializer(
     }
 
     private fun deserializeLegacySimpleType(proto: ProtoSimpleTypeLegacy): IrSimpleType {
-        val symbol = deserializeIrSymbolAndRemap(proto.classifier)
+        val symbol = deserializeIrSymbol(proto.classifier)
             .checkSymbolType<IrClassifierSymbol>(fallbackSymbolKind = /* just the first possible option */ CLASS_SYMBOL)
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
@@ -149,7 +148,7 @@ class IrDeclarationDeserializer(
 
     private fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
         IrTypeAbbreviationImpl(
-            deserializeIrSymbolAndRemap(proto.typeAlias).checkSymbolType(TYPEALIAS_SYMBOL),
+            deserializeIrSymbol(proto.typeAlias).checkSymbolType(TYPEALIAS_SYMBOL),
             proto.hasQuestionMark,
             proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) },
             deserializeAnnotations(proto.annotationList)
@@ -202,30 +201,8 @@ class IrDeclarationDeserializer(
             }
         }
 
-    // Delegating symbol maps to it's delegate only inside the declaration the symbol belongs to.
-    private val delegatedSymbolMap = hashMapOf<IrSymbol, IrSymbol>()
-
     internal fun deserializeIrSymbol(code: Long): IrSymbol {
         return symbolDeserializer.deserializeIrSymbol(code)
-    }
-
-    internal fun deserializeIrSymbolAndRemap(code: Long): IrSymbol {
-        // TODO: could be simplified
-        return symbolDeserializer.deserializeIrSymbol(code).let {
-            delegatedSymbolMap[it] ?: it
-        }
-    }
-
-    private fun recordDelegatedSymbol(symbol: IrSymbol) {
-        if (symbol is IrDelegatingSymbol<*, *, *>) {
-            delegatedSymbolMap[symbol] = symbol.delegate
-        }
-    }
-
-    private fun eraseDelegatedSymbol(symbol: IrSymbol) {
-        if (symbol is IrDelegatingSymbol<*, *, *>) {
-            delegatedSymbolMap.remove(symbol)
-        }
     }
 
     private var isEffectivelyExternal = false
@@ -247,23 +224,18 @@ class IrDeclarationDeserializer(
     ): T where T : IrDeclaration, T : IrSymbolOwner {
         val (s, uid) = symbolDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        try {
-            recordDelegatedSymbol(s)
-            val result = block(
-                s,
-                uid,
-                coordinates.startOffset, coordinates.endOffset,
-                deserializeIrDeclarationOrigin(proto.originName), proto.flags
-            )
-            // avoid duplicate annotations for local variables
-            result.annotations = deserializeAnnotations(proto.annotationList)
-            if (setParent) {
-                result.parent = currentParent
-            }
-            return result
-        } finally {
-            eraseDelegatedSymbol(s)
+        val result = block(
+            s,
+            uid,
+            coordinates.startOffset, coordinates.endOffset,
+            deserializeIrDeclarationOrigin(proto.originName), proto.flags
+        )
+        // avoid duplicate annotations for local variables
+        result.annotations = deserializeAnnotations(proto.annotationList)
+        if (setParent) {
+            result.parent = currentParent
         }
+        return result
     }
 
     private fun deserializeIrTypeParameter(proto: ProtoTypeParameter, index: Int, isGlobal: Boolean, setParent: Boolean = true):
@@ -614,7 +586,7 @@ class IrDeclarationDeserializer(
                 )
             }.apply {
                 overriddenSymbols =
-                    proto.overriddenList.memoryOptimizedMap { deserializeIrSymbolAndRemap(it).checkSymbolType(FUNCTION_SYMBOL) }
+                    proto.overriddenList.memoryOptimizedMap { deserializeIrSymbol(it).checkSymbolType(FUNCTION_SYMBOL) }
             }
         }
 

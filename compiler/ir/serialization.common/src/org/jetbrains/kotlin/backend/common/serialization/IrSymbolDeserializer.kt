@@ -22,7 +22,6 @@ class IrSymbolDeserializer(
     val libraryFile: IrLibraryFile,
     val fileSymbol: IrFileSymbol,
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
-    val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
     irInterner: IrInterningService,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
@@ -32,9 +31,7 @@ class IrSymbolDeserializer(
 
     fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return deserializedSymbols.getOrPut(idSig) {
-            val symbol = referenceDeserializedSymbol(symbolKind, idSig)
-
-            handleExpectActualMapping(idSig, symbol)
+            referenceDeserializedSymbol(symbolKind, idSig)
         }
     }
 
