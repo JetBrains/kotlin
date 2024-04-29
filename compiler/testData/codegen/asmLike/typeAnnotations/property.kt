@@ -2,9 +2,6 @@
 // RENDER_ANNOTATIONS
 // WITH_STDLIB
 
-// IGNORE_BACKEND_K2: JVM_IR
-// ^ KT-67512 K2: false positive WRONG_GETTER_RETURN_TYPE when getter return type is annotated
-
 // FIR_DIFFERENCE
 // ^ KT-67510 K2: difference in generation of JVM type annotations on property getter's type
 
