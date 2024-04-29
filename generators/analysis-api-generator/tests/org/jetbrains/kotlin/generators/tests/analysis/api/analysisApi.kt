@@ -231,6 +231,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
     }
 
+    test<AbstractIsReferenceToTest>(filter = frontendIs(FrontendKind.Fir)) {
+        model(it, "isReferenceTo")
+    }
+
     group("imports", filter = frontendIs(FrontendKind.Fir)) {
         test<AbstractReferenceImportAliasTest>(
             filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
