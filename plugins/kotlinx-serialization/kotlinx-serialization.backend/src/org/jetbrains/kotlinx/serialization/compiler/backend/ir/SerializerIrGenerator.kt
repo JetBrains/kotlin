@@ -508,7 +508,7 @@ open class SerializerIrGenerator(
 
         val typeArgs = (loadFunc.returnType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
         val deserCtor: IrConstructorSymbol? = serializableIrClass.findSerializableSyntheticConstructor()
-        if (serializableIrClass.isInternalSerializable && deserCtor != null) {
+        if (serializableIrClass.shouldHaveGeneratedMethods() && deserCtor != null) {
             var args: List<IrExpression> = serializableProperties.map { serialPropertiesMap.getValue(it.ir).get() }
             args = bitMasks.map { irGet(it) } + args + irNull()
             +irReturn(irInvoke(null, deserCtor, typeArgs, args))

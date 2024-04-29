@@ -66,6 +66,10 @@ public interface SerializationErrors {
     DiagnosticFactory3<PsiElement, KotlinType, KotlinType, String> EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR = DiagnosticFactory3.create(ERROR);
 
 
+    DiagnosticFactory0<PsiElement> KEEP_SERIALIZER_ANNOTATION_USELESS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC = DiagnosticFactory0.create(ERROR);
+
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

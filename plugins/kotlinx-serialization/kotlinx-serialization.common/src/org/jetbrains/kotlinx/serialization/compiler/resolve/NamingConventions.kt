@@ -27,6 +27,7 @@ object SerializationAnnotations {
     // Otherwise, there it might lead to exceptions from light classes when building them for serializer/serializable classes
     val serializableAnnotationFqName = FqName("kotlinx.serialization.Serializable")
     val serializerAnnotationFqName = FqName("kotlinx.serialization.Serializer")
+    val keepGeneratedSerializerAnnotationFqName = FqName("kotlinx.serialization.KeepGeneratedSerializer")
     val serialNameAnnotationFqName = FqName("kotlinx.serialization.SerialName")
     val requiredAnnotationFqName = FqName("kotlinx.serialization.Required")
     val serialTransientFqName = FqName("kotlinx.serialization.Transient")
@@ -53,6 +54,7 @@ object SerializationAnnotations {
     val serialInfoClassId = ClassId.topLevel(serialInfoFqName)
     val inheritableSerialInfoClassId = ClassId.topLevel(inheritableSerialInfoFqName)
     val metaSerializableAnnotationClassId = ClassId.topLevel(metaSerializableAnnotationFqName)
+    val keepGeneratedSerializerAnnotationClassId = ClassId.topLevel(keepGeneratedSerializerAnnotationFqName)
     val encodeDefaultClassId = ClassId.topLevel(encodeDefaultFqName)
 
     val contextualClassId = ClassId.topLevel(contextualFqName)
@@ -72,6 +74,7 @@ object SerialEntityNames {
 
     const val CACHED_DESCRIPTOR_FIELD = "\$cachedDescriptor"
     const val CACHED_SERIALIZER_PROPERTY = "\$cachedSerializer"
+    const val CACHED_KEEP_SERIALIZER_PROPERTY = "\$cachedKeepSerializer"
     const val CACHED_CHILD_SERIALIZERS_PROPERTY = "\$childSerializers"
 
     // classes
@@ -121,6 +124,7 @@ object SerialEntityNames {
     val TYPE_PARAMS_SERIALIZERS_GETTER = Name.identifier("typeParametersSerializers")
     val WRITE_SELF_NAME = Name.identifier("write\$Self")
     val SERIALIZER_PROVIDER_NAME = Name.identifier("serializer")
+    val GENERATED_SERIALIZER_PROVIDER_NAME = Name.identifier("generatedSerializer")
     val SINGLE_MASK_FIELD_MISSING_FUNC_NAME = Name.identifier("throwMissingFieldException")
     val ARRAY_MASK_FIELD_MISSING_FUNC_NAME = Name.identifier("throwArrayMissingFieldException")
     val ENUM_SERIALIZER_FACTORY_FUNC_NAME = Name.identifier("createSimpleEnumSerializer")
@@ -128,6 +132,7 @@ object SerialEntityNames {
     val SINGLE_MASK_FIELD_MISSING_FUNC_FQ = SerializationPackages.internalPackageFqName.child(SINGLE_MASK_FIELD_MISSING_FUNC_NAME)
     val ARRAY_MASK_FIELD_MISSING_FUNC_FQ = SerializationPackages.internalPackageFqName.child(ARRAY_MASK_FIELD_MISSING_FUNC_NAME)
     val CACHED_SERIALIZER_PROPERTY_NAME = Name.identifier(CACHED_SERIALIZER_PROPERTY)
+    val CACHED_KEEP_SERIALIZER_PROPERTY_NAME = Name.identifier(CACHED_KEEP_SERIALIZER_PROPERTY)
     val CACHED_CHILD_SERIALIZERS_PROPERTY_NAME = Name.identifier(CACHED_CHILD_SERIALIZERS_PROPERTY)
     val CACHED_DESCRIPTOR_FIELD_NAME = Name.identifier(CACHED_DESCRIPTOR_FIELD)
 

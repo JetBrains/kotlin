@@ -53,6 +53,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         checkInheritableSerialInfoNotRepeatable(descriptor, context.trace)
         checkEnum(descriptor, declaration, context.trace)
         checkExternalSerializer(descriptor, declaration, context.trace)
+        checkKeepGeneratedSerializer(descriptor, declaration, context.trace)
 
         if (!canBeSerializedInternally(descriptor, declaration, context.trace)) return
         if (declaration !is KtPureClassOrObject) return
@@ -76,6 +77,25 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (descriptor.classId?.isNestedClass != true) return
         val entry = descriptor.findAnnotationDeclaration(SerializationAnnotations.metaSerializableAnnotationFqName) ?: return
         trace.report(SerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE.on(entry))
+    }
+
+    private fun checkKeepGeneratedSerializer(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
+        if (!descriptor.keepGeneratedSerializer) return
+
+        val entry by lazy {
+            descriptor.findAnnotationDeclaration(SerializationAnnotations.keepGeneratedSerializerAnnotationFqName) ?: declaration
+        }
+
+        if (descriptor.hasSerializableOrMetaAnnotation) {
+            if (descriptor.hasSerializableOrMetaAnnotationWithoutArgs) {
+                trace.report(SerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS.on(entry))
+            }
+            if (descriptor.isAbstractOrSealedOrInterface || descriptor.hasPolymorphicAnnotation) {
+                trace.report(SerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC.on(entry))
+            }
+        } else {
+            trace.report(SerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS.on(entry))
+        }
     }
 
     private fun checkInheritableSerialInfoNotRepeatable(descriptor: ClassDescriptor, trace: BindingTrace) {
@@ -276,7 +296,11 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (!descriptor.hasSerializableOrMetaAnnotationWithoutArgs) {
             // defined custom serializer
             checkClassWithCustomSerializer(descriptor, declaration, trace)
-            return false
+
+            // if KeepGeneratedSerializer is specified then continue checking
+            if (!descriptor.keepGeneratedSerializer) {
+                return false
+            }
         }
 
         if (descriptor.serializableAnnotationIsUseless) {
@@ -287,7 +311,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         // check that we can instantiate supertype
         if (descriptor.kind != ClassKind.ENUM_CLASS) { // enums are inherited from java.lang.Enum and can't be inherited from other classes
             val superClass = descriptor.getSuperClassOrAny()
-            if (!superClass.isInternalSerializable && superClass.constructors.singleOrNull { it.valueParameters.size == 0 } == null) {
+            if (!superClass.shouldHaveInternalSerializer && superClass.constructors.singleOrNull { it.valueParameters.size == 0 } == null) {
                 trace.reportOnSerializableOrMetaAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
                 return false
             }
@@ -403,7 +427,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun buildSerializableProperties(descriptor: ClassDescriptor, trace: BindingTrace): SerializableProperties? {
         if (!descriptor.hasSerializableOrMetaAnnotation) return null
-        if (!descriptor.isInternalSerializable) return null
+        if (!descriptor.shouldHaveInternalSerializer) return null
         if (descriptor.hasCompanionObjectAsSerializer) return null // customized by user
 
         val props = SerializableProperties(descriptor, trace.bindingContext)

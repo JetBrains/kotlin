@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
@@ -215,6 +218,16 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE,
             CommonRenderers.STRING
+        )
+
+        MAP.put(
+            SerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS,
+            "@KeepGeneratedSerializer annotation is useless here, it is acceptable to use it only on classes marked with @Serializable(CustomSerializer::class)"
+        )
+
+        MAP.put(
+            SerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC,
+            "@KeepGeneratedSerializer annotation is not applicable for abstract or sealed classes and interfaces"
         )
     }
 }

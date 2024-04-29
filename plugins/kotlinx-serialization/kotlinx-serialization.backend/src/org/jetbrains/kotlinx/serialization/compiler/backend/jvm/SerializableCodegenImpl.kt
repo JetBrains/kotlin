@@ -43,7 +43,7 @@ class SerializableCodegenImpl(
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {
             val serializableClass = codegen.descriptor
-            if (serializableClass.isInternalSerializable) {
+            if (serializableClass.shouldHaveGeneratedMethods) {
                 SerializableCodegenImpl(codegen).generate()
             } else if (serializableClass.serializableAnnotationIsUseless) {
                 throw CompilationException(
@@ -92,10 +92,10 @@ class SerializableCodegenImpl(
 
         val superClass = serializableDescriptor.getSuperClassOrAny()
         val myPropsStart: Int
-        if (superClass.isInternalSerializable) {
+        if (superClass.shouldHaveGeneratedMethods) {
             myPropsStart = bindingContext!!.serializablePropertiesFor(superClass).serializableProperties.size
             val superTypeArguments =
-                serializableDescriptor.typeConstructor.supertypes.single { it.toClassDescriptor?.isInternalSerializable == true }.arguments
+                serializableDescriptor.typeConstructor.supertypes.single { it.toClassDescriptor?.shouldHaveGeneratedMethods == true }.arguments
             //super.writeSelf(output, serialDesc)
             load(thisI, thisAsmType)
             load(outputI, kOutputType)
@@ -276,7 +276,7 @@ class SerializableCodegenImpl(
 
         load(0, thisAsmType)
 
-        if (!superClass.isInternalSerializable) {
+        if (!superClass.shouldHaveGeneratedMethods) {
             require(superClass.constructors.firstOrNull { it.valueParameters.isEmpty() } != null) {
                 "Non-serializable parent of serializable $serializableDescriptor must have no arg constructor"
             }

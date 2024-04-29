@@ -57,6 +57,9 @@ object FirSerializationErrors {
     val EXTERNAL_CLASS_IN_ANOTHER_MODULE by error2<PsiElement, FirClassSymbol<*>, ConeKotlinType>()
     val EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR by error3<PsiElement, FirClassSymbol<*>, ConeKotlinType, String>()
 
+    val KEEP_SERIALIZER_ANNOTATION_USELESS by error0<PsiElement>()
+    val KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC by error0<PsiElement>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultErrorMessagesSerialization)
     }

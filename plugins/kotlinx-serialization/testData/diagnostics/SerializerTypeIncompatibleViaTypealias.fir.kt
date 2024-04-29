@@ -9,10 +9,22 @@ import java.util.*
 typealias MyDate = java.util.Date
 
 // MODULE: main(lib)
+// FILE: annotation.kt
+package kotlinx.serialization
+
+import kotlin.annotation.*
+
+/*
+  Until the annotation is added to the serialization runtime,
+  we have to create an annotation with that name in the project itself
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class KeepGeneratedSerializer
+
 // FILE: test.kt
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -37,4 +49,17 @@ data class Session(
     // The only difference with FIR is how RENDER_TYPE works:
     @Serializable(MyDateSerializer::class) val s: <!SERIALIZER_TYPE_INCOMPATIBLE("kotlin.String; MyDateSerializer; java.util.Date")!>String<!>,
     val sl: List<<!SERIALIZER_TYPE_INCOMPATIBLE("@Serializable(...) kotlin.String; MyDateSerializer; java.util.Date")!>@Serializable(MyDateSerializer::class) String<!>>
+)
+
+@Serializer(forClass = SessionKept::class)
+object SessionKeptSerializer
+
+@Serializable(SessionKeptSerializer::class)
+@KeepGeneratedSerializer
+data class SessionKept(
+    @Serializable(MyDateSerializer::class) val date: MyDate,
+    @Serializable(MyDateSerializer::class) val alsoDate: java.util.Date,
+    // The only difference with FIR is how RENDER_TYPE works:
+    @Serializable(MyDateSerializer::class) val s: <!SERIALIZER_TYPE_INCOMPATIBLE("kotlin.String; MyDateSerializer; java.util.Date")!>String<!>,
+val sl: List<<!SERIALIZER_TYPE_INCOMPATIBLE("@Serializable(...) kotlin.String; MyDateSerializer; java.util.Date")!>@Serializable(MyDateSerializer::class) String<!>>
 )

@@ -53,11 +53,11 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             it to parameterSymbol.hasDefaultValue
         }.toMap().withDefault { false }
 
-        val isInternalSerializable = classSymbol.isInternalSerializable(session)
+        val shouldHaveGeneratedMethods = classSymbol.shouldHaveGeneratedMethods(session)
 
         fun isPropertySerializable(propertySymbol: FirPropertySymbol): Boolean {
             return when {
-                isInternalSerializable -> !propertySymbol.hasSerialTransient(session)
+                shouldHaveGeneratedMethods -> !propertySymbol.hasSerialTransient(session)
                 propertySymbol.visibility == Visibilities.Private -> false
                 else -> (propertySymbol.isVar && propertySymbol.hasSerialTransient(session)) || propertySymbol in primaryConstructorProperties
             }
@@ -79,7 +79,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .let { (fromConstructor, standalone) ->
                 val superClassSymbol = classSymbol.superClassNotAny(session)
                 buildList {
-                    if (superClassSymbol != null && superClassSymbol.isInternalSerializable(session)) {
+                    if (superClassSymbol != null && superClassSymbol.shouldHaveInternalSerializer(session)) {
                         addAll(getSerializablePropertiesForClass(superClassSymbol).serializableProperties)
                     }
                     addAll(fromConstructor)

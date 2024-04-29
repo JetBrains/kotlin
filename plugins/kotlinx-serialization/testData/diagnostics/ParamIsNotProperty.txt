@@ -29,3 +29,58 @@ package
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+
+@kotlinx.serialization.Serializable(with = TestKeptSerializer::class) @kotlinx.serialization.KeepGeneratedSerializer public final class TestKept {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) internal /*synthesized*/ constructor TestKept(/*0*/ seen1: kotlin.Int, /*1*/ someData: kotlin.String?, /*2*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
+    public constructor TestKept(/*0*/ someData: kotlin.String, /*1*/ cantBeDeserialized: kotlin.Int)
+    public final val someData: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    @kotlin.jvm.JvmStatic internal final /*synthesized*/ fun `write$Self`(/*0*/ self: TestKept, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<TestKept> {
+        private constructor `$serializer`()
+        public open override /*1*/ /*synthesized*/ val descriptor: kotlinx.serialization.descriptors.SerialDescriptor
+        public open override /*1*/ /*synthesized*/ fun childSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
+        public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.encoding.Decoder): TestKept
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.encoding.Encoder, /*1*/ value: TestKept): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun typeParametersSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
+    }
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final /*synthesized*/ fun generatedSerializer(): kotlinx.serialization.KSerializer<TestKept>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final /*synthesized*/ fun serializer(): kotlinx.serialization.KSerializer<TestKept>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public object TestKeptSerializer : kotlinx.serialization.KSerializer<TestKept> {
+    private constructor TestKeptSerializer()
+    public open override /*1*/ val descriptor: kotlinx.serialization.descriptors.SerialDescriptor
+    public open override /*1*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.encoding.Decoder): TestKept
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun serialize(/*0*/ encoder: kotlinx.serialization.encoding.Encoder, /*1*/ value: TestKept): kotlin.Nothing
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package kotlinx {
+
+    package kotlinx.serialization {
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class KeepGeneratedSerializer : kotlin.Annotation {
+            public constructor KeepGeneratedSerializer()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+

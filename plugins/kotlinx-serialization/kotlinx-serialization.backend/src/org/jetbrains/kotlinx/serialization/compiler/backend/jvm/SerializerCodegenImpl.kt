@@ -208,7 +208,7 @@ open class SerializerCodegenImpl(
                         ")" + kOutputType.descriptor
             )
             store(outputVar, kOutputType)
-            if (serializableDescriptor.isInternalSerializable) {
+            if (serializableDescriptor.shouldHaveGeneratedMethods) {
                 val sig = StringBuilder("(${objType.descriptor}${kOutputType.descriptor}${descType.descriptor}")
                 // call obj.write$Self(output, classDesc)
                 load(objVar, objType)
@@ -373,7 +373,7 @@ open class SerializerCodegenImpl(
                 kInputType.internalName, CallingConventions.end,
                 "(" + descType.descriptor + ")V"
             )
-            if (!serializableDescriptor.isInternalSerializable) {
+            if (!serializableDescriptor.shouldHaveGeneratedMethods) {
                 //validate all required (constructor) fields
                 for ((i, property) in properties.serializableConstructorProperties.withIndex()) {
                     if (property.optional || property.transient) {
@@ -395,11 +395,11 @@ open class SerializerCodegenImpl(
             // create object with constructor
             anew(serializableAsmType)
             dup()
-            val constructorDesc = if (serializableDescriptor.isInternalSerializable)
+            val constructorDesc = if (serializableDescriptor.shouldHaveGeneratedMethods)
                 buildInternalConstructorDesc(propsStartVar, bitMaskBase, codegen, properties.serializableProperties)
             else buildExternalConstructorDesc(propsStartVar, bitMaskBase)
             invokespecial(serializableAsmType.internalName, "<init>", constructorDesc, false)
-            if (!serializableDescriptor.isInternalSerializable && !properties.serializableStandaloneProperties.isEmpty()) {
+            if (!serializableDescriptor.shouldHaveGeneratedMethods && !properties.serializableStandaloneProperties.isEmpty()) {
                 // result := ... <created object>
                 store(resultVar, serializableAsmType)
                 // set other properties

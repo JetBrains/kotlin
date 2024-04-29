@@ -41,6 +41,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.kSerializerType
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.stringArrayType
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.stringType
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
@@ -294,14 +295,15 @@ class SerializationJvmIrIntrinsicSupport(
         intrinsicType: IntrinsicType
     ) {
         if (adapter.putReifyMarkerIfNeeded(type, intrinsicType)) return
-        val typeDescriptor: IrClass = type.classOrNull!!.owner
+        val typeIrClass: IrClass = type.classOrNull!!.owner
 
         val support = this@SerializationJvmIrIntrinsicSupport
 
-        val serializerMethod = SerializableCompanionIrGenerator.getSerializerGetterFunction(typeDescriptor)
+        val serializerMethod =
+            SerializableCompanionIrGenerator.getSerializerGetterFunction(typeIrClass, SerialEntityNames.SERIALIZER_PROVIDER_NAME)
         if (serializerMethod != null) {
             // fast path
-            val companionType = if (typeDescriptor.isSerializableObject) typeDescriptor else typeDescriptor.companionObject()!!
+            val companionType = if (typeIrClass.isSerializableObject) typeIrClass else typeIrClass.companionObject()!!
             support.instantiateObject(adapter, companionType.symbol)
             val args = (type as IrSimpleType).arguments.map {
                 it.argumentTypeOrGenerateException(type, adapter) ?: return

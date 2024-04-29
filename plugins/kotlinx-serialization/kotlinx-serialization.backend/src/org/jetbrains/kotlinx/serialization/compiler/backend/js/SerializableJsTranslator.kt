@@ -65,7 +65,7 @@ class SerializableJsTranslator(
             var startPropOffset: Int = 0
             when {
                 KotlinBuiltIns.isAny(superClass) -> { /* no=op */ }
-                superClass.isInternalSerializable -> {
+                superClass.shouldHaveGeneratedMethods -> {
                     startPropOffset = generateSuperSerializableCall(
                         superClass,
                         jsFun.parameters.map { it.name.makeRef() },
@@ -162,7 +162,7 @@ class SerializableJsTranslator(
             serializableClass: ClassDescriptor,
             context: TranslationContext
         ) {
-            if (serializableClass.isInternalSerializable)
+            if (serializableClass.shouldHaveGeneratedMethods)
                 SerializableJsTranslator(declaration, serializableClass, context).generate()
             else if (serializableClass.serializableAnnotationIsUseless) {
                 throw CompilationException(

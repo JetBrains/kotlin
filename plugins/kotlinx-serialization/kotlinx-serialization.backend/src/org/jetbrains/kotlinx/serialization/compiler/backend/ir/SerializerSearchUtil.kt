@@ -125,6 +125,14 @@ fun findTypeSerializer(context: SerializationBaseContext, type: IrType, useTypeA
     return type.classOrNull?.owner.classSerializer(context) // check for serializer defined on the type
 }
 
+fun findKeepSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
+    if (type.isGeneratedSerializableObjectWithKeep()) return context.referenceClassId(objectSerializerId)
+    val enumSer = findEnumTypeSerializer(context, type)
+    if (enumSer != null) return enumSer
+
+    return type.classOrNull?.owner?.generatedSerializer // check for serializer defined on the type
+}
+
 fun findEnumTypeSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
     val classSymbol = type.classOrNull?.owner ?: return null
 
@@ -134,6 +142,15 @@ fun findEnumTypeSerializer(context: SerializationBaseContext, type: IrType): IrC
     val legacySerializer = classSymbol.findEnumLegacySerializer()
     // $serializer for legacy compiled enums, or EnumSerializer for factories
     return legacySerializer?.symbol ?: context.referenceClassId(enumSerializerId)
+}
+
+
+internal fun IrClass?.findSerializerForGeneratedMethods(context: SerializationBaseContext): IrClassSymbol? = this?.let {
+    return if (!hasKeepGeneratedSerializerAnnotation) {
+        classSerializer(context)
+    } else {
+        generatedSerializer
+    }
 }
 
 internal fun IrClass?.classSerializer(context: SerializationBaseContext): IrClassSymbol? = this?.let {
@@ -146,12 +163,16 @@ internal fun IrClass?.classSerializer(context: SerializationBaseContext): IrClas
     // default serializable?
     if (shouldHaveGeneratedSerializer()) {
         // $serializer nested class
-        return this.declarations
-            .filterIsInstance<IrClass>()
-            .singleOrNull { it.name == SerialEntityNames.SERIALIZER_CLASS_NAME }?.symbol
+        return this.generatedSerializer
     }
     return null
 }
+
+internal val IrClass.generatedSerializer: IrClassSymbol?
+    get() = declarations
+        .filterIsInstance<IrClass>()
+        .singleOrNull { it.name == SerialEntityNames.SERIALIZER_CLASS_NAME }?.symbol
+
 
 internal fun IrClass.polymorphicSerializerIfApplicableAutomatically(context: SerializationBaseContext): IrClassSymbol? {
     val serializer = when {

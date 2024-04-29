@@ -112,7 +112,7 @@ internal fun serializablePropertiesForIrBackend(
     }
 
     fun isPropSerializable(it: IrProperty) =
-        if (irClass.isInternalSerializable) !it.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName)
+        if (irClass.shouldHaveGeneratedMethods()) !it.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName)
         else !DescriptorVisibilities.isPrivate(it.visibility) && ((it.isVar && !it.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName)) || primaryParamsAsProps.contains(
             it
         )) && it.getter?.returnType != null // For some reason, some properties from Java (like java.net.URL.hostAddress) do not have getter. Let's ignore them, as they never have worked properly in K1 either.
@@ -142,7 +142,7 @@ internal fun serializablePropertiesForIrBackend(
 
     var serializableProps = run {
         val supers = irClass.getSuperClassNotAny()
-        if (supers == null || !supers.isInternalSerializable) {
+        if (supers == null || !supers.shouldHaveGeneratedMethods()) {
             primaryCtorSerializableProps + bodySerializableProps
         } else {
             val originalToTypeFromFO = typeReplacement ?: buildMap<IrProperty, IrSimpleType> {

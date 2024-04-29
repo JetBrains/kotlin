@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.isJs
@@ -38,7 +39,9 @@ import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySeria
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.inheritableSerialInfoClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.keepGeneratedSerializerAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.metaSerializableAnnotationClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.polymorphicClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialInfoClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialNameAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationJsDependenciesClassIds
@@ -174,6 +177,34 @@ internal fun FirClassSymbol<*>.isInternalSerializable(session: FirSession): Bool
     return hasSerializableOrMetaAnnotationWithoutArgs(session)
 }
 
+/**
+ * Internal serializer is a plugin generated serializer for final/open/abstract/sealed classes or factory serializer for enums.
+ * A plugin generated serializer can be generated as main type serializer or kept serializer.
+ */
+internal fun FirClassSymbol<*>.shouldHaveInternalSerializer(session: FirSession): Boolean {
+    return isInternalSerializable(session) || keepGeneratedSerializer(session)
+}
+internal fun FirClassSymbol<*>.shouldHaveGeneratedMethods(session: FirSession): Boolean {
+    return isInternalSerializable(session)
+            // in the version with the `keepGeneratedSerializer` annotation the enum factory is already present therefore
+            // there is no need to generate additional methods
+            || (keepGeneratedSerializer(session) && !classKind.isEnumClass && !classKind.isObject)
+}
+
+internal fun FirClassSymbol<*>.keepGeneratedSerializer(session: FirSession): Boolean {
+    return annotations.getAnnotationByClassId(
+        keepGeneratedSerializerAnnotationClassId,
+        session
+    ) != null
+}
+
+internal fun FirClassSymbol<*>.hasPolymorphicAnnotation(session: FirSession): Boolean {
+    return annotations.getAnnotationByClassId(
+        polymorphicClassId,
+        session
+    ) != null
+}
+
 fun FirClassSymbol<*>.hasSerializableOrMetaAnnotationWithoutArgs(session: FirSession): Boolean {
     return hasSerializableAnnotationWithoutArgs(session) ||
             (!hasSerializableAnnotation(session) && hasMetaSerializableAnnotation(session))
@@ -201,7 +232,10 @@ fun FirClassSymbol<*>.isEnumWithLegacyGeneratedSerializer(session: FirSession): 
             hasSerializableOrMetaAnnotationWithoutArgs(session)
 
 fun FirClassSymbol<*>.shouldHaveGeneratedSerializer(session: FirSession): Boolean =
-    (isInternalSerializable(session) && isFinalOrOpen()) || isEnumWithLegacyGeneratedSerializer(session)
+    (isInternalSerializable(session) && isFinalOrOpen())
+            || isEnumWithLegacyGeneratedSerializer(session)
+            // enum factory must be used for enums
+            || (keepGeneratedSerializer(session) && !classKind.isEnumClass && !classKind.isObject)
 
 // ---------------------- type utils ----------------------
 

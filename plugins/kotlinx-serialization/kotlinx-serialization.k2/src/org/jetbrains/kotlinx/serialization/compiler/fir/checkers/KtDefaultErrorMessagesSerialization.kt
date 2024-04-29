@@ -205,5 +205,14 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.RENDER_TYPE,
             CommonRenderers.STRING
         )
+
+        put(
+            FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS,
+            "@KeepGeneratedSerializer annotation is useless here, it is acceptable to use it only on classes marked with @Serializable(CustomSerializer::class)"
+        )
+        put(
+            FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC,
+            "@KeepGeneratedSerializer annotation is not applicable for abstract or sealed classes and interfaces"
+        )
     }
 }
