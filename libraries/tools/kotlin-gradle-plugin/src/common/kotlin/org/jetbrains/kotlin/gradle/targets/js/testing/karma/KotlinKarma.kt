@@ -201,7 +201,11 @@ class KotlinKarma(
 
     fun useChromeCanaryHeadless() = useChromeLike("ChromeCanaryHeadless")
 
-    @Deprecated("Chrome supports wasm GC by default, so you can use useChromeHeadless", replaceWith = ReplaceWith("useChromHeadless"))
+    @Deprecated(
+        "Chrome supports wasm GC by default, so you can use useChromeHeadless",
+        replaceWith = ReplaceWith("useChromeHeadless"),
+        level = DeprecationLevel.ERROR
+    )
     fun useChromeHeadlessWasmGc() {
         val chromeCanaryHeadlessWasmGc = "ChromeHeadlessWasmGc"
 
