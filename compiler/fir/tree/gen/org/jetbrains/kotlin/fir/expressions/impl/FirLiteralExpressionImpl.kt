@@ -28,7 +28,7 @@ internal class FirLiteralExpressionImpl<T> (
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var kind: ConstantValueKind<T>,
+    override var kind: ConstantValueKind,
     override val value: T,
 ) : FirLiteralExpression<T>() {
 
@@ -54,7 +54,7 @@ internal class FirLiteralExpressionImpl<T> (
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceKind(newKind: ConstantValueKind<T>) {
+    override fun replaceKind(newKind: ConstantValueKind) {
         kind = newKind
     }
 }

@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.types
 
-sealed class ConstantValueKind<T>(val asString: kotlin.String) {
-    object Null : ConstantValueKind<Nothing?>("Null")
-    object Boolean : ConstantValueKind<kotlin.Boolean>("Boolean")
-    object Char : ConstantValueKind<kotlin.Char>("Char")
+sealed class ConstantValueKind(val asString: kotlin.String) {
+    object Null : ConstantValueKind("Null")
+    object Boolean : ConstantValueKind("Boolean")
+    object Char : ConstantValueKind("Char")
 
-    object Byte : ConstantValueKind<kotlin.Byte>("Byte")
-    object UnsignedByte : ConstantValueKind<kotlin.Byte>("UByte")
-    object Short : ConstantValueKind<kotlin.Short>("Short")
-    object UnsignedShort : ConstantValueKind<kotlin.Short>("UShort")
-    object Int : ConstantValueKind<kotlin.Int>("Int")
-    object UnsignedInt : ConstantValueKind<kotlin.Int>("UInt")
-    object Long : ConstantValueKind<kotlin.Long>("Long")
-    object UnsignedLong : ConstantValueKind<kotlin.Long>("ULong")
+    object Byte : ConstantValueKind("Byte")
+    object UnsignedByte : ConstantValueKind("UByte")
+    object Short : ConstantValueKind("Short")
+    object UnsignedShort : ConstantValueKind("UShort")
+    object Int : ConstantValueKind("Int")
+    object UnsignedInt : ConstantValueKind("UInt")
+    object Long : ConstantValueKind("Long")
+    object UnsignedLong : ConstantValueKind("ULong")
 
-    object String : ConstantValueKind<kotlin.String>("String")
+    object String : ConstantValueKind("String")
 
-    object Float : ConstantValueKind<kotlin.Float>("Float")
-    object Double : ConstantValueKind<kotlin.Double>("Double")
+    object Float : ConstantValueKind("Float")
+    object Double : ConstantValueKind("Double")
 
-    object Error : ConstantValueKind<Nothing>("Error")
+    object Error : ConstantValueKind("Error")
 
-    object IntegerLiteral : ConstantValueKind<kotlin.Long>("IntegerLiteral")
-    object UnsignedIntegerLiteral : ConstantValueKind<kotlin.Long>("UnsignedIntegerLiteral")
+    object IntegerLiteral : ConstantValueKind("IntegerLiteral")
+    object UnsignedIntegerLiteral : ConstantValueKind("UnsignedIntegerLiteral")
 
     override fun toString() = asString
 }

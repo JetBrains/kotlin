@@ -219,7 +219,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             return firSourcePsi?.findDescendantOfType()
         }
 
-    private fun <T> ConstantValueKind<T>.reverseConverted(original: FirLiteralExpression<T>): FirLiteralExpression<T>? {
+    private fun <T> ConstantValueKind.reverseConverted(original: FirLiteralExpression<T>): FirLiteralExpression<T>? {
         val value = original.value as? Number ?: return null
         val convertedValue = when (this) {
             ConstantValueKind.Byte -> value.toByte().unaryMinus()

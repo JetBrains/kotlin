@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 @OptIn(UnresolvedExpressionTypeAccess::class)
 fun <T> buildLiteralExpression(
     source: KtSourceElement?,
-    kind: ConstantValueKind<T>,
+    kind: ConstantValueKind,
     value: T,
     annotations: MutableList<FirAnnotation>? = null,
     setType: Boolean,

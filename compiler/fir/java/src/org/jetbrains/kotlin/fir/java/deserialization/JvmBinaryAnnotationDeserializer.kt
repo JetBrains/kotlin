@@ -222,7 +222,7 @@ class JvmBinaryAnnotationDeserializer(
             firExpr
     }
 
-    private val <T> ConstantValueKind<T>.isSignedNumber: Boolean
+    private val ConstantValueKind.isSignedNumber: Boolean
         get() = this is ConstantValueKind.Byte || this is ConstantValueKind.Short || this is ConstantValueKind.Int || this is ConstantValueKind.Long
 
     private fun computeJvmParameterIndexShift(classProto: ProtoBuf.Class?, message: MessageLite): Int {

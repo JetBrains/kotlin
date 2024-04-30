@@ -23,7 +23,7 @@ abstract class FirLiteralExpression<T> : FirExpression() {
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
-    abstract val kind: ConstantValueKind<T>
+    abstract val kind: ConstantValueKind
     abstract val value: T
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -37,7 +37,7 @@ abstract class FirLiteralExpression<T> : FirExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract fun replaceKind(newKind: ConstantValueKind<T>)
+    abstract fun replaceKind(newKind: ConstantValueKind)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLiteralExpression<T>
 }

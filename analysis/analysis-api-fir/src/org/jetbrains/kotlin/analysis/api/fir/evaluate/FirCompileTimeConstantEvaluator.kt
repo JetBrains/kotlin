@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -208,7 +206,7 @@ internal object FirCompileTimeConstantEvaluator {
         }
     }
 
-    private fun <T> ConstantValueKind<T>.toCompileTimeType(): CompileTimeType {
+    private fun ConstantValueKind.toCompileTimeType(): CompileTimeType {
         return when (this) {
             ConstantValueKind.Byte -> CompileTimeType.BYTE
             ConstantValueKind.Short -> CompileTimeType.SHORT
@@ -301,7 +299,7 @@ internal object FirCompileTimeConstantEvaluator {
 
     ////// KINDS
 
-    private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind<*>? =
+    private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind? =
         when (this) {
             is ConeErrorType -> null
             is ConeLookupTagBasedType -> lookupTag.name.asString().toConstantValueKind()
@@ -312,7 +310,7 @@ internal object FirCompileTimeConstantEvaluator {
             is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> null
         }
 
-    private fun String.toConstantValueKind(): ConstantValueKind<*>? =
+    private fun String.toConstantValueKind(): ConstantValueKind? =
         when (this) {
             "Byte" -> ConstantValueKind.Byte
             "Double" -> ConstantValueKind.Double
@@ -328,7 +326,7 @@ internal object FirCompileTimeConstantEvaluator {
             else -> null
         }
 
-    private fun <T> T.toConstantValueKind(): ConstantValueKind<*> =
+    private fun <T> T.toConstantValueKind(): ConstantValueKind =
         when (this) {
             is Byte -> ConstantValueKind.Byte
             is Double -> ConstantValueKind.Double
@@ -345,7 +343,7 @@ internal object FirCompileTimeConstantEvaluator {
             else -> error("Unknown constant value")
         }
 
-    private fun ConstantValueKind<*>.convertToNumber(value: Any?): Any? {
+    private fun ConstantValueKind.convertToNumber(value: Any?): Any? {
         if (value == null) {
             return null
         }
@@ -368,7 +366,7 @@ internal object FirCompileTimeConstantEvaluator {
         }
     }
 
-    private fun <T> ConstantValueKind<T>.toLiteralExpression(source: KtSourceElement?, value: Any?): FirLiteralExpression<T> =
+    private fun <T> ConstantValueKind.toLiteralExpression(source: KtSourceElement?, value: Any?): FirLiteralExpression<T> =
         @Suppress("UNCHECKED_CAST")
         buildLiteralExpression(source, this, value as T, setType = false)
 

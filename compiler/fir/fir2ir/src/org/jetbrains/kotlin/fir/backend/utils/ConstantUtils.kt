@@ -57,7 +57,7 @@ fun <T> FirLiteralExpression<T>.toIrConst(irType: IrType): IrConst<T> {
     }
 }
 
-private fun ConstantValueKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
+private fun ConstantValueKind.toIrConstKind(): IrConstKind<*> = when (this) {
     ConstantValueKind.Null -> IrConstKind.Null
     ConstantValueKind.Boolean -> IrConstKind.Boolean
     ConstantValueKind.Char -> IrConstKind.Char

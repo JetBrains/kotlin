@@ -189,7 +189,7 @@ class StubBasedAnnotationDeserializer(
     }
 
     private fun <T> const(
-        kind: ConstantValueKind<T>,
+        kind: ConstantValueKind,
         value: T,
         typeRef: FirResolvedTypeRef,
         sourceElement: PsiElement

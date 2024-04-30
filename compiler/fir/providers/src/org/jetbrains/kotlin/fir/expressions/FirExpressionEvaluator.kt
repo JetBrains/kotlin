@@ -376,7 +376,7 @@ object FirExpressionEvaluator {
     }
 }
 
-private fun <T> ConstantValueKind<T>.toCompileTimeType(): CompileTimeType {
+private fun ConstantValueKind.toCompileTimeType(): CompileTimeType {
     return when (this) {
         ConstantValueKind.Byte -> CompileTimeType.BYTE
         ConstantValueKind.Short -> CompileTimeType.SHORT
@@ -464,7 +464,7 @@ private val CallableId.isCharCode: Boolean
 
 ////// KINDS
 
-private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind<*>? =
+private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind? =
     when (this) {
         is ConeErrorType -> null
         is ConeLookupTagBasedType -> (lookupTag as? ConeClassLikeLookupTag)?.classId?.toConstantValueKind()
@@ -475,7 +475,7 @@ private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind<*>? =
         is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> null
     }
 
-private fun ClassId.toConstantValueKind(): ConstantValueKind<*>? =
+private fun ClassId.toConstantValueKind(): ConstantValueKind? =
     when (this) {
         StandardClassIds.Byte -> ConstantValueKind.Byte
         StandardClassIds.Double -> ConstantValueKind.Double
@@ -496,7 +496,7 @@ private fun ClassId.toConstantValueKind(): ConstantValueKind<*>? =
         else -> null
     }
 
-private fun ConstantValueKind<*>.convertToGivenKind(value: Any?): Any? {
+private fun ConstantValueKind.convertToGivenKind(value: Any?): Any? {
     if (value == null) {
         return null
     }
@@ -520,7 +520,7 @@ private fun ConstantValueKind<*>.convertToGivenKind(value: Any?): Any? {
 }
 
 private fun <T> Any?.toConstExpression(
-    kind: ConstantValueKind<T>,
+    kind: ConstantValueKind,
     originalExpression: FirExpression
 ): FirLiteralExpression<T> {
     @Suppress("UNCHECKED_CAST")

@@ -64,8 +64,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         val type = literalExpression.resolvedType as? ConeIntegerLiteralType ?: return literalExpression
         val approximatedType = type.getApproximatedType(data?.fullyExpandedType(session))
         literalExpression.resultType = approximatedType
-        @Suppress("UNCHECKED_CAST")
-        val kind = approximatedType.toConstKind() as ConstantValueKind<T>
+        val kind = approximatedType.toConstKind() as ConstantValueKind
         literalExpression.replaceKind(kind)
         return literalExpression
     }

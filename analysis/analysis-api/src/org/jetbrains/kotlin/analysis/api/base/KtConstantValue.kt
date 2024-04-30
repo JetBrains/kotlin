@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  *
  * For more info about constant values please see [official Kotlin documentation](https://kotlinlang.org/docs/properties.html#compile-time-constants])
  */
-public sealed class KtConstantValue(public val constantValueKind: ConstantValueKind<*>) {
+public sealed class KtConstantValue(public val constantValueKind: ConstantValueKind) {
     /**
      * The constant value. The type of this value is always the type specified in its name, i.e, it is `Boolean` for [KtBooleanConstantValue]
      *

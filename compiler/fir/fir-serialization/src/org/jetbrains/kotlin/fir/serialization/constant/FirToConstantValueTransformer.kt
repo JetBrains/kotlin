@@ -169,7 +169,7 @@ private val constantIntrinsicCalls = OperatorNameConventions.NUMBER_CONVERSIONS 
 
 private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession>() {
     // `null` value is not treated as a const
-    private val supportedConstKinds = setOf<ConstantValueKind<*>>(
+    private val supportedConstKinds = setOf<ConstantValueKind>(
         ConstantValueKind.Boolean, ConstantValueKind.Char, ConstantValueKind.String, ConstantValueKind.Float, ConstantValueKind.Double,
         ConstantValueKind.Byte, ConstantValueKind.UnsignedByte, ConstantValueKind.Short, ConstantValueKind.UnsignedShort,
         ConstantValueKind.Int, ConstantValueKind.UnsignedInt, ConstantValueKind.Long, ConstantValueKind.UnsignedLong,
