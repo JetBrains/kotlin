@@ -3,6 +3,5 @@
 target 'TestSyncFramework' do
   use_frameworks!
 
-  pod 'embedAndSign', :path => '..'
-
+  pod 'kmpProject', :path => '..'
 end

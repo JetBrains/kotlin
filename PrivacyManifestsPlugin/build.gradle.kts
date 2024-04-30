@@ -4,19 +4,20 @@ plugins {
     `maven-publish`
 }
 
-group = "org.kmp_apple_privacy_manifests"
+group = "org.jetbrains.kotlin"
 
 dependencies {
     compileOnly("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:1.9.23")
-    testImplementation("junit:junit:4.13.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation(gradleTestKit())
 }
 
 gradlePlugin {
     plugins {
-        create("kmp_apple_privacy_manifests") {
-            id = "org.kmp_apple_privacy_manifests.publication"
-            implementationClass = "org.kmp_apple_privacy_manifests.PrivacyManifestsPlugin"
+        create("apple-privacy-manifests") {
+            id = "org.jetbrains.kotlin.apple-privacy-manifests"
+            implementationClass = "org.jetbrains.kotlin.PrivacyManifestsPlugin"
         }
     }
 }
@@ -26,12 +27,18 @@ gradlePlugin.testSourceSets(functionalTest)
 
 configurations[functionalTest.implementationConfigurationName].extendsFrom(configurations.testImplementation.get())
 
+val cleanFunctionalTest = tasks.register<Delete>("cleanFunctionalTest") {
+    setDelete(layout.buildDirectory.dir("functionalTest"))
+}
+
 val functionalTestTask = tasks.register<Test>("functionalTest") {
     testClassesDirs = functionalTest.output.classesDirs
     classpath = configurations[functionalTest.runtimeClasspathConfigurationName] + functionalTest.output
     dependsOn(
-        tasks.named("publishAllPublicationsToMavenRepository")
+        tasks.named("publishAllPublicationsToMavenRepository"),
+        cleanFunctionalTest
     )
+    useJUnitPlatform()
 }
 
 publishing {

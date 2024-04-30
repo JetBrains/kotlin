@@ -23,6 +23,7 @@
 		F8D06EE42BDBD6070021B8F7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F8D06EE62BDBD6090021B8F7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F8D06EE92BDBD6090021B8F7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F8D06F522BE10F020021B8F7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +80,7 @@
 				F8D06EE42BDBD6070021B8F7 /* ContentView.swift */,
 				F8D06EE62BDBD6090021B8F7 /* Assets.xcassets */,
 				F8D06EE82BDBD6090021B8F7 /* Preview Content */,
+				F8D06F522BE10F020021B8F7 /* PrivacyInfo.xcprivacy */,
 			);
 			path = TestSyncFramework;
 			sourceTree = "<group>";
@@ -98,6 +100,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F8D06EED2BDBD6090021B8F7 /* Build configuration list for PBXNativeTarget "TestSyncFramework" */;
 			buildPhases = (
+				F8D06F512BE10C9E0021B8F7 /* Kotlin EmbedAndSign */,
 				F802CD104FDAE4F3A6D1E163 /* [CP] Check Pods Manifest.lock */,
 				F8D06EDB2BDBD6070021B8F7 /* Sources */,
 				F8D06EDC2BDBD6070021B8F7 /* Frameworks */,
@@ -215,6 +218,24 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		F8D06F512BE10C9E0021B8F7 /* Kotlin EmbedAndSign */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Kotlin EmbedAndSign";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SRCROOT}/..\"\n./gradlew embedAndSignAppleFrameworkForXcode\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

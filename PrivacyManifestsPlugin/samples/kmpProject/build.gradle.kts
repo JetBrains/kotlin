@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 plugins {
     kotlin("multiplatform") version "1.9.23"
     kotlin("native.cocoapods") version "1.9.23"
-    id("org.kmp_apple_privacy_manifests.publication") version "+"
+    kotlin("apple-privacy-manifests") version "+"
 }
 
 kotlin {
@@ -27,9 +27,9 @@ kotlin {
         summary = "bar"
     }
 
-    privacyManifestConfiguration {
-        embedPrivacyManifest(
-            layout.projectDirectory.file("PrivacyInfo.xcprivacy").asFile
+    privacyManifest {
+        embed(
+            layout.projectDirectory.file("PrivacyInfo.xcprivacy").asFile,
         )
     }
 }

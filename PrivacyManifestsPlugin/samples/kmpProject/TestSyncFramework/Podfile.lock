@@ -1,16 +1,16 @@
 PODS:
-  - embedAndSign (1.0)
+  - kmpProject (1.0)
 
 DEPENDENCIES:
-  - embedAndSign (from `..`)
+  - kmpProject (from `..`)
 
 EXTERNAL SOURCES:
-  embedAndSign:
+  kmpProject:
     :path: ".."
 
 SPEC CHECKSUMS:
-  embedAndSign: 90204d50d52fff5cd10d58b70c6b87b4c2b6d768
+  kmpProject: 1298eeb834dd368e7a620259f11fa39bcc32cc29
 
-PODFILE CHECKSUM: e84f4cf6230400af26d6f72f9f7e167c91a7c09b
+PODFILE CHECKSUM: a1114ce06d7cfe00e331b0d4f3f7e98a9897d73c
 
 COCOAPODS: 1.14.3
