@@ -210,13 +210,9 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     var doPrint = true
 
-    @Suppress("UNCHECKED_CAST")
-    final override fun copy(nullable: Boolean) =
-        ElementRef(this as Element, args, nullable)
+    final override fun copy(nullable: Boolean) = ElementRef(element, args, nullable)
 
-    @Suppress("UNCHECKED_CAST")
-    final override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) =
-        ElementRef(this as Element, args, nullable)
+    final override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(element, args, nullable)
 
     @Suppress("UNCHECKED_CAST")
     override fun substitute(map: TypeParameterSubstitutionMap): Element = this as Element
