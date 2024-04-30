@@ -73,8 +73,17 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * Intrinsic Remember is an optimization mode which improves the runtime performance of your application by inlining `remember`
      * invocations and replacing `.equals` comparison (for keys) with comparisons of the `$changed` meta parameter when possible. This
      * results in fewer slots being used and fewer comparisons being done at runtime.
+     *
+     * It is enabled by default.
+     *
+     * To change the default value, use the following code:
+     * ```
+     * composeCompiler {
+     *     enableIntrinsicRemember.set(false)
+     * }
+     * ```
      */
-    val enableIntrinsicRemember: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    val enableIntrinsicRemember: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * Remove groups around non-skipping composable functions.
