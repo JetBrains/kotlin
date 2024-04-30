@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.SpecTestLinkedType
 import org.jetbrains.kotlin.spec.utils.models.AbstractSpecTest
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
@@ -87,7 +88,9 @@ abstract class AbstractDiagnosticsTestSpec : org.jetbrains.kotlin.checkers.Abstr
             testLinkedType = second
         }
 
-        println(specTest)
+        if (GeneralConfiguration.PRINT_TEST_OUTPUTS_TO_STDOUT) {
+            println(specTest)
+        }
 
         val computeExceptionPoint: (Matcher?) -> Set<Int>? = l@{ matches ->
             if (matches == null) return@l null
@@ -104,7 +107,12 @@ abstract class AbstractDiagnosticsTestSpec : org.jetbrains.kotlin.checkers.Abstr
         }
 
         val exceptionsInCases = specTest.cases.byNumbers.entries.associate { it.key to it.value.exception }
-        TestExceptionsComparator(testDataFile).run(specTest.exception, exceptionsInCases, computeExceptionPoint) {
+        TestExceptionsComparator(testDataFile).run(
+            specTest.exception,
+            exceptionsInCases,
+            computeExceptionPoint,
+            printExceptionsToConsole = GeneralConfiguration.PRINT_TEST_OUTPUTS_TO_STDOUT
+        ) {
             super.analyzeAndCheck(testDataFile, files)
         }
     }
@@ -130,7 +138,9 @@ abstract class AbstractDiagnosticsTestSpec : org.jetbrains.kotlin.checkers.Abstr
         } catch (e: SpecTestValidationException) {
             Assert.fail(e.description)
         } finally {
-            diagnosticValidator.printDiagnosticStatistic()
+            if (GeneralConfiguration.PRINT_TEST_OUTPUTS_TO_STDOUT) {
+                diagnosticValidator.printDiagnosticStatistic()
+            }
         }
     }
 }
