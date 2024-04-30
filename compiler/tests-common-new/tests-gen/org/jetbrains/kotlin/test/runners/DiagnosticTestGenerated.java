@@ -21352,6 +21352,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("enumMemberInAnnotation.kt")
+        public void testEnumMemberInAnnotation() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/enumMemberInAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("inAnnotation.kt")
         public void testInAnnotation() {
           runTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/inAnnotation.kt");
