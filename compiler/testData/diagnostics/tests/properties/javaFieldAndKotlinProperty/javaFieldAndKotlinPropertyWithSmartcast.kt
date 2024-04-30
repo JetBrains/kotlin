@@ -1,8 +1,5 @@
-// TARGET_BACKEND: JVM_IR
-// COMMENTED[LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty] uncomment when KT-56386 is fixed
-// IGNORE_BACKEND_K1: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// Reason: KT-56386 is not fixed yet
+// LANGUAGE: -ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
+// ISSUE: KT-56386
 
 // FILE: Jaba.java
 public class Jaba {
@@ -18,8 +15,8 @@ class My : Jaba() {
 
 fun test(j: Any): String {
     if (j is My) {
-        j.b = "K"
-        return j.a + j.b
+        <!DEBUG_INFO_SMARTCAST!>j<!>.b = "K"
+        return <!DEBUG_INFO_SMARTCAST!>j<!>.a + <!DEBUG_INFO_SMARTCAST!>j<!>.b
     }
     return "NO SMARTCAST"
 }

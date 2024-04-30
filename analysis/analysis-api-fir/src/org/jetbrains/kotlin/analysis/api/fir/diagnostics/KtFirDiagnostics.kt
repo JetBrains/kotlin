@@ -4026,6 +4026,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val functionName: Name
     }
 
+    interface JavaFieldShadowedByKotlinProperty : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaFieldShadowedByKotlinProperty::class
+        val kotlinProperty: KtVariableSymbol
+    }
+
     interface ImplementingFunctionInterface : KtFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = ImplementingFunctionInterface::class
     }

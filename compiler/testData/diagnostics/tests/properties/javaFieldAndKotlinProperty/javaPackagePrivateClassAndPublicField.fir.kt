@@ -1,9 +1,5 @@
-// TARGET_BACKEND: JVM_IR
-// COMMENTED[LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty] uncomment when KT-56386 is fixed
-// IGNORE_BACKEND_K1: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// Reason: KT-56386 is not fixed yet
-// CHECK_BYTECODE_TEXT
+// LANGUAGE: -ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
+// ISSUE: KT-56386
 
 // FILE: a/VeryBase.java
 package a;
@@ -32,6 +28,4 @@ private class Final : Intermediate() {
 }
 
 fun box(): String =
-    Final().foo
-
-// 1 GETFIELD b/Intermediate.foo
+    Final().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>foo<!>

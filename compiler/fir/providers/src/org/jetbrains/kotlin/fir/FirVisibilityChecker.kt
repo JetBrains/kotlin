@@ -564,3 +564,14 @@ val <D, S : FirBasedSymbol<D>> S.firForVisibilityChecker: D
     get() = fir.also {
         lazyResolveToPhase(FirResolvePhase.STATUS)
     }
+
+fun FirVisibilityChecker.isVisible(
+    symbol: FirCallableSymbol<*>,
+    session: FirSession,
+    useSiteFile: FirFile,
+    containingDeclarations: List<FirDeclaration>,
+    dispatchReceiver: FirExpression?,
+): Boolean {
+    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+    return isVisible(symbol.fir, session, useSiteFile, containingDeclarations, dispatchReceiver)
+}
