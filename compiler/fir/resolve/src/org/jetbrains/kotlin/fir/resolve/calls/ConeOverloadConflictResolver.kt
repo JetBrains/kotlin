@@ -387,11 +387,16 @@ class ConeOverloadConflictResolver(
         if (discriminateGenerics) {
             val isGeneric1 = call1.isGeneric
             val isGeneric2 = call2.isGeneric
-            // generic loses to non-generic
-            if (isGeneric1 && !isGeneric2) return false
-            if (!isGeneric1 && isGeneric2) return true
-            // two generics are non-comparable
-            if (isGeneric1 && isGeneric2) return false
+
+            when {
+                // non-generic wins over generic
+                !isGeneric1 && isGeneric2 -> return true
+                // generic loses to non-generic and incomparable with another generic,
+                // thus doesn't matter what is `isGeneric2`
+                isGeneric1 -> return false
+                // !isGeneric1 && !isGeneric2 -> continue as usual
+                else -> {}
+            }
         }
 
         if (call1.contextReceiverCount > call2.contextReceiverCount) return true
