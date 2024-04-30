@@ -55,7 +55,7 @@ public class AbstractStringAssert<SELF extends AbstractStringAssert<SELF>> exten
 // FILE: StringAssert.java
 public class StringAssert extends AbstractStringAssert<StringAssert> {}
 
-// FILE: test/Assertions.java
+// FILE: Assertions.java
 
 import java.util.List;
 

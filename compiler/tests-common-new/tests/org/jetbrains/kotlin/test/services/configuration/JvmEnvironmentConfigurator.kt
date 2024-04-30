@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_JAVAC
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
@@ -247,12 +246,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             if (javaModuleInfoFiles.isNotEmpty()) {
                 configuration.addJavaSourceRootsByJavaModules(javaModuleInfoFiles)
             } else {
-                for (javaFile in javaFiles) {
-                    if (USE_JAVAC !in registeredDirectives) {
-                        configuration.addJavaSourceRoot(testServices.sourceFileProvider.getRealFileForSourceFile(javaFile))
-                    }
-                }
-                configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
+                configuration.addJavaSourceRoot(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module))
             }
 
             // we add this as a part of the classpath only when Java files are being analyzed as sources,
@@ -270,7 +264,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 val additionalClassPath = testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath.orEmpty()
                 configuration.addJvmClasspathRoot(
                     compileJavaFilesLibraryToJar(
-                        testServices.sourceFileProvider.javaSourceDirectory.path,
+                        testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module).path,
                         "${module.name}-$JAVA_BINARIES_JAR_NAME",
                         extraClasspath = jvmClasspathRoots + additionalClassPath,
                         assertions = JUnit5Assertions,

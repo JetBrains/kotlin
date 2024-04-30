@@ -1,10 +1,11 @@
 // ISSUE: KT-55953
 
+// FILE: Invariant.java
+public class Invariant<T> {}
+
 // FILE: Generic.java
 import java.util.ArrayList;
 import java.util.List;
-
-class Invariant<T> {}
 
 public class Generic<T> {
     public Generic raw = new Generic();
@@ -12,6 +13,7 @@ public class Generic<T> {
     public Invariant<String> getStringInvariant() { return new Invariant<>(); }
     public List<String> getListOfStrings() { return new ArrayList<>(); }
 }
+
 // FILE: GenericBox.java
 public class GenericBox<T extends Generic> {
     public T raw = (T) new Generic();

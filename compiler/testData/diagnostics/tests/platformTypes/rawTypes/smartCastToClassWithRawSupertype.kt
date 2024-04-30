@@ -3,12 +3,13 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: Key.java
 public interface Key<E> {}
+
 // FILE: UserDataHolder.java
 public interface UserDataHolder {
     <T> T getUserData(@NotNull Key<T> key);
 }
 
-// FILE: GenericInterface.java
+// FILE: GenericClass.java
 public abstract class GenericClass<E> extends UserDataHolder {}
 
 // FILE: NonGenericClassWithRawSuperType.java

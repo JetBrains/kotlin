@@ -1,7 +1,10 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
+
 // MODULE: m1-common
+
 // FILE: common.kt
+
 @Retention(AnnotationRetention.RUNTIME)
 expect annotation class JavaTypealiasAnnotationAnalogue
 
@@ -9,21 +12,23 @@ expect annotation class JavaTypealiasAnnotationAnalogue
 expect annotation class JavaTypealiasKotlinAnnotation
 
 // MODULE: m1-jvm()()(m1-common)
+
 // FILE: jvm.kt
+
 actual typealias JavaTypealiasAnnotationAnalogue = JavaTypealiasAnnotationAnalogueImpl
 
 actual typealias JavaTypealiasKotlinAnnotation = JavaTypealiasKotlinAnnotationImpl
 
-// FILE: jvmJavaImpls.java
-import kotlin.annotation.AnnotationRetention;
-
+// FILE: JavaTypealiasAnnotationAnalogueImpl.java
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JavaTypealiasAnnotationAnalogueImpl {
-}
+public @interface JavaTypealiasAnnotationAnalogueImpl {}
 
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-public @interface JavaTypealiasKotlinAnnotationImpl {
-}
+// FILE: JavaTypealiasKotlinAnnotationImpl.java
+import kotlin.annotation.Retention;
+import kotlin.annotation.AnnotationRetention;
+
+@Retention(AnnotationRetention.RUNTIME)
+public @interface JavaTypealiasKotlinAnnotationImpl {}

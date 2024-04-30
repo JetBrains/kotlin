@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 
-// FILE: Function42.java
+// FILE: abacaba/kotlin/Function42.java
 
 package abacaba.kotlin;
 

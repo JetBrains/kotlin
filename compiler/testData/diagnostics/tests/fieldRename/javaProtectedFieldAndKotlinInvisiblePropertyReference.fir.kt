@@ -1,4 +1,4 @@
-// FILE: BaseJava.java
+// FILE: base/BaseJava.java
 
 package base;
 
@@ -7,6 +7,10 @@ public class BaseJava {
 
     String b = "";
 }
+
+// FILE: base/DerivedJava.java
+
+package base;
 
 class DerivedJava extends BaseKotlin {
     protected String a = "";

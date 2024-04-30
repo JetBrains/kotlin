@@ -1,11 +1,8 @@
 // TARGET_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
+
 // FILE: IntOpenHashSet.java
 
-import java.util.AbstractCollection;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 public class IntOpenHashSet extends AbstractIntSet {
 	@Override
@@ -21,18 +18,32 @@ public class IntOpenHashSet extends AbstractIntSet {
 	public Iterator<Integer> iterator() { return null; }
 }
 
+// FILE: AbstractIntSet.java
+
 abstract class AbstractIntSet extends AbstractIntCollection implements IntSet {
 	@Override
 	public boolean remove(int k) { return false; }
 }
 
-abstract class AbstractIntCollection extends AbstractCollection<Integer> implements IntCollection {}
+// FILE: IntSet.java
 
-interface IntCollection extends Collection<Integer> {}
+import java.util.Set;
 
 interface IntSet extends IntCollection, Set<Integer> {
 	boolean remove(int k);
 }
+
+// FILE: AbstractIntCollection.java
+
+import java.util.AbstractCollection;
+
+abstract class AbstractIntCollection extends AbstractCollection<Integer> implements IntCollection {}
+
+// FILE: IntCollection.java
+
+import java.util.Collection;
+
+interface IntCollection extends Collection<Integer> {}
 
 // FILE: box.kt
 

@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 
 // MODULE: separate
+
 // FILE: J2.java
 public class J2<T> {
     public T a;
@@ -13,9 +14,9 @@ public class J2<T> {
     };
 }
 
-// MODULE: main
-// FILE: J1.java
+// MODULE: main(separate)
 
+// FILE: J1.java
 public class J1<T> {
     public T a;
 
@@ -32,14 +33,14 @@ class A : J1<Int>()
 
 class B : J2<Int>()
 
-class C: J1<Int>(){
+class C : J1<Int>() {
     override fun bar(): Int {
         return 1
     }
     override fun foo(t: Int?) { }
 }
 
-class D: J2<Int>(){
+class D : J2<Int>() {
     override fun bar(): Int {
         return 1
     }

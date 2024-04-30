@@ -11,6 +11,7 @@ interface TopmostAdditional : <!CYCLIC_INHERITANCE_HIERARCHY!>Topmost<!>
 interface Topmost : <!CYCLIC_INHERITANCE_HIERARCHY!>Base<!>
 
 // MODULE: top(topmost)
+
 // FILE: top.kt
 package org.example
 
@@ -18,19 +19,15 @@ interface Base : TopAdditional {
     fun top()
 }
 
-// FILE: TopAdditional.java
+// FILE: org/example/TopAdditional.java
 package org.example;
 
-public interface TopAdditional extends Top {
+public interface TopAdditional extends Top {}
 
-}
-
-// FILE: Top.java
+// FILE: org/example/Top.java
 package org.example;
 
-public interface Top extends Topmost {
-
-}
+public interface Top extends Topmost {}
 
 // MODULE: middle(top)
 // FILE: middle.kt

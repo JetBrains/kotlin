@@ -1,4 +1,5 @@
 // SKIP_TXT
+
 // FILE: a/A.java
 package a;
 public interface A {
@@ -21,6 +22,9 @@ public class AImpl implements A {
     }
 }
 
+// FILE: a/BImpl.java
+package a;
+
 class BImpl implements B {
     @Override
     public void bar() {}
@@ -42,4 +46,3 @@ fun test2(aImpl: AImpl) {
     (a <!USELESS_CAST!>as A<!>).b().bar() // OK
     a.b().bar() // Works at FE1.0, fails at FIR
 }
-

@@ -30,7 +30,7 @@ abstract class BaseKaptHandler(testServices: TestServices) : AbstractKaptHandler
 
         val kaptStubs = converter.convert()
         val convertedFiles = kaptStubs.mapIndexed { index, stub ->
-            val sourceFile = createTempJavaFile("stub$index.java", stub.file.prettyPrint(kaptContext.context))
+            val sourceFile = module.createTempJavaFile("stub$index.java", stub.file.prettyPrint(kaptContext.context))
             stub.writeMetadataIfNeeded(forSource = sourceFile)
             sourceFile
         }
@@ -59,9 +59,8 @@ abstract class BaseKaptHandler(testServices: TestServices) : AbstractKaptHandler
         }
     }
 
-
-    private fun createTempJavaFile(name: String, text: String): File {
-        return testServices.sourceFileProvider.javaSourceDirectory.resolve(name).also {
+    private fun TestModule.createTempJavaFile(name: String, text: String): File {
+        return testServices.sourceFileProvider.getJavaSourceDirectoryForModule(this).resolve(name).also {
             it.writeText(text)
         }
     }

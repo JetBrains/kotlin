@@ -1,19 +1,37 @@
 // DIAGNOSTICS: -EXPOSED_SUPER_INTERFACE
 
-// FILE: J.java
+// FILE: J1.java
 interface J1 { boolean equals(Object o); }
+
+// FILE: J2.java
 interface J2 { int hashCode(); }
+
+// FILE: J3.java
 interface J3 { String toString(); }
 
+// FILE: KJ1.java
 interface KJ1 extends K1 {}
+
+// FILE: KJ2.java
 interface KJ2 extends K2 {}
+
+// FILE: KJ3.java
 interface KJ3 extends K3 {}
+
+// FILE: KJ4.java
 interface KJ4 extends K4 {}
+
+// FILE: KJ5.java
 interface KJ5 extends K5 {}
+
+// FILE: KJ6.java
 interface KJ6 extends K6 {}
+
+// FILE: KJ7.java
 interface KJ7 extends K7 {}
 
 // FILE: test.kt
+
 fun interface K1 { override fun equals(other: Any?): Boolean }
 fun interface K2 { override fun hashCode(): Int }
 fun interface K3 { fun getClass(): Class<*> }

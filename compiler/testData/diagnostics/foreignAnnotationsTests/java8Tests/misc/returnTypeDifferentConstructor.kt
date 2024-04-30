@@ -1,10 +1,14 @@
 // FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
+
+// FILE: Base.java
+interface Base<T> {}
+
+// FILE: Derived.java
+interface Derived<E> extends Base<E> {}
+
 // FILE: Outer.java
 import org.checkerframework.checker.nullness.qual.*;
-
-interface Base<T> {}
-interface Derived<E> extends Base<E> {}
 
 class Outer {
     class A {

@@ -1,7 +1,7 @@
 // LANGUAGE: -ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
 // ISSUE: KT-56386
 
-// FILE: BaseJava.java
+// FILE: base/BaseJava.java
 package base;
 
 public class BaseJava {

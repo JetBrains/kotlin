@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 
 // MODULE: separate
+
 // FILE: J2.java
 public class J2 {
     public String nullableString = "";
@@ -11,9 +12,9 @@ public class J2 {
     public void foo(String s) {}
 }
 
-// MODULE: main
-// FILE: J1.java
+// MODULE: main(separate)
 
+// FILE: J1.java
 public class J1 {
     public String nullableString = "";
     public String getNullableString() {
@@ -24,18 +25,18 @@ public class J1 {
 
 // FILE: 1.kt
 
-class A : J1()  //Kotlin ← Java
+class A : J1()   // Kotlin ← Java
 
-class B : J2()  //Kotlin ← Java (separate module)
+class B : J2()   // Kotlin ← Java (separate module)
 
-class C : J1() {    //Kotlin ← Java with explicit override
+class C : J1() { // Kotlin ← Java with explicit override
     override fun getNullableString(): String {
         return ""
     }
     override fun foo(s: String?) {}
 }
 
-class D : J2() {    //Kotlin ← Java with explicit override (separate module)
+class D : J2() { // Kotlin ← Java with explicit override (separate module)
     override fun getNullableString(): String {
         return ""
     }

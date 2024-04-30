@@ -4,6 +4,7 @@
 // WITH_STDLIB
 
 // MODULE: separate
+
 // FILE: Java2.java
 import java.util.*
 
@@ -22,8 +23,9 @@ public class Java2<T> {
     public Set<T> bar3() { return c; };
 }
 
-// MODULE: main
-// FILE: J1.java
+// MODULE: main(separate)
+
+// FILE: Java1.java
 import java.util.*;
 
 public class Java1<T> {
@@ -42,29 +44,30 @@ public class Java1<T> {
 }
 
 // FILE: 1.kt
+
 import java.util.*
 
 class A : Java1<Int>()
 
 class B : Java1<String?>()
 
-class C: Java2<Any>()
+class C : Java2<Any>()
 
-class D : Java1<Int>(){
+class D : Java1<Int>() {
     override fun bar(): MutableList<Int> {
         return null!!
     }
     override fun foo(a: MutableList<Int>) { }
 }
 
-class E : Java1<String?>(){
+class E : Java1<String?>() {
     override fun foo3(c: MutableSet<String?>) { }
     override fun bar3(): MutableSet<String> {
         return null!!
     }
 }
 
-class F : Java1<Any>(){
+class F : Java1<Any>() {
     override fun bar2(): Queue<Any> {
         return null!!
     }

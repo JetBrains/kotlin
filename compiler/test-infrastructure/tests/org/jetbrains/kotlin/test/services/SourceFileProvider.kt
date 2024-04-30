@@ -28,9 +28,9 @@ abstract class ReversibleSourceFilePreprocessor(testServices: TestServices) : So
 abstract class SourceFileProvider : TestService {
     abstract val preprocessors: List<SourceFilePreprocessor>
 
-    abstract val kotlinSourceDirectory: File
-    abstract val javaSourceDirectory: File
-    abstract val additionalFilesDirectory: File
+    abstract fun getKotlinSourceDirectoryForModule(module: TestModule): File
+    abstract fun getJavaSourceDirectoryForModule(module: TestModule): File
+    abstract fun getAdditionalFilesDirectoryForModule(module: TestModule): File
 
     abstract fun getContentOfSourceFile(testFile: TestFile): String
     abstract fun getRealFileForSourceFile(testFile: TestFile): File
@@ -39,12 +39,21 @@ abstract class SourceFileProvider : TestService {
 val TestServices.sourceFileProvider: SourceFileProvider by TestServices.testServiceAccessor()
 
 class SourceFileProviderImpl(val testServices: TestServices, override val preprocessors: List<SourceFilePreprocessor>) : SourceFileProvider() {
-    override val kotlinSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("kotlin-sources") }
-    override val javaSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-sources") }
-    override val additionalFilesDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("additional-files") }
+    private val kotlinSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("kotlin-sources") }
+    private val javaSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-sources") }
+    private val additionalFilesDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("additional-files") }
 
     private val contentOfFiles = mutableMapOf<TestFile, String>()
     private val realFileMap = mutableMapOf<TestFile, File>()
+
+    override fun getKotlinSourceDirectoryForModule(module: TestModule): File =
+        kotlinSourceDirectory.resolve(module.name).apply { mkdir() }
+
+    override fun getJavaSourceDirectoryForModule(module: TestModule): File =
+        javaSourceDirectory.resolve(module.name).apply { mkdir() }
+
+    override fun getAdditionalFilesDirectoryForModule(module: TestModule): File =
+        additionalFilesDirectory.resolve(module.name).apply { mkdir() }
 
     override fun getContentOfSourceFile(testFile: TestFile): String {
         return contentOfFiles.getOrPut(testFile) {
@@ -56,10 +65,11 @@ class SourceFileProviderImpl(val testServices: TestServices, override val prepro
 
     override fun getRealFileForSourceFile(testFile: TestFile): File {
         return realFileMap.getOrPut(testFile) {
+            val module = testServices.moduleStructure.modules.single { testFile in it.files }
             val directory = when {
-                testFile.isKtFile -> kotlinSourceDirectory
-                testFile.isJavaFile -> javaSourceDirectory
-                else -> additionalFilesDirectory
+                testFile.isKtFile -> getKotlinSourceDirectoryForModule(module)
+                testFile.isJavaFile -> getJavaSourceDirectoryForModule(module)
+                else -> getAdditionalFilesDirectoryForModule(module)
             }
             directory.resolve(testFile.relativePath).also {
                 it.parentFile.mkdirs()

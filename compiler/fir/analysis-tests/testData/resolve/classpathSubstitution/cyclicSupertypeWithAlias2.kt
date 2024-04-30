@@ -14,6 +14,7 @@ typealias Alias = Base
 interface Topmost : Alias
 
 // MODULE: top(topmost)
+
 // FILE: top.kt
 package org.example
 
@@ -21,19 +22,15 @@ interface Base : <!CYCLIC_INHERITANCE_HIERARCHY!>TopAdditional<!> {
     fun top()
 }
 
-// FILE: TopAdditional.java
+// FILE: org/example/TopAdditional.java
 package org.example;
 
-public interface TopAdditional extends Top {
+public interface TopAdditional extends Top {}
 
-}
-
-// FILE: Top.java
+// FILE: org/example/Top.java
 package org.example;
 
-public interface Top extends Topmost {
-
-}
+public interface Top extends Topmost {}
 
 // MODULE: middle(top)
 // FILE: middle.kt

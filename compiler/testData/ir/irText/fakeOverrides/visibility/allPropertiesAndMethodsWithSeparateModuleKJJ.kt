@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 
 // MODULE: separate
+
 // FILE: JavaSeparate1.java
 public class JavaSeparate1  {
     protected int a = 22;
@@ -21,6 +22,7 @@ public class JavaSeparate3 {
 }
 
 // MODULE: main(separate)
+
 // FILE: Java1.java
 public class Java1 extends JavaSeparate1 {
     public int a = 12;
@@ -44,7 +46,6 @@ public class Java4 extends JavaSeparate2 {
     protected int a = 15;
     protected void foo(){}
 }
-
 
 // FILE: Java5.java
 public class Java5 extends JavaSeparate2 {

@@ -4,6 +4,7 @@
 // WITH_STDLIB
 
 // MODULE: separate
+
 // FILE: Java2.java
 import java.util.*;
 
@@ -30,7 +31,8 @@ public class Java2 {
     public String[] bar5() { return e; };
 }
 
-// MODULE: main
+// MODULE: main(separate)
+
 // FILE: Java1.java
 import java.util.*;
 
@@ -63,11 +65,11 @@ public interface Java3 extends KotlinInterface { }
 // FILE: 1.kt
 import java.util.*
 
-class A: Java1()    //Kotlin ← Java
+class A : Java1()   // Kotlin ← Java
 
-class B: Java2()    //Kotlin ← Java (separate module)
+class B : Java2()   // Kotlin ← Java (separate module)
 
-class C : Java1() { //Kotlin ← Java with explicit override
+class C : Java1() { // Kotlin ← Java with explicit override
     override fun bar(): MutableList<Int> {
         return mutableListOf()
     }

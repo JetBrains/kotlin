@@ -1,6 +1,6 @@
-// IGNORE_LIGHT_ANALYSIS
 // TARGET_BACKEND: JVM
-// FILE: ArrayAnnEnumJava.java
+
+// FILE: light/ann/array/ArrayAnnEnumJava.java
 package light.ann.array;
 
 import static light.ann.array.AnnAuxEnum.ANN_ENUM_VAL_A;

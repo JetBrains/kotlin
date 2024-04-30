@@ -49,7 +49,7 @@ class ExternalAnnotationsEnvironmentConfigurator(testServices: TestServices) : E
             ExternalAnnotationsManagerForTests(
                 // We use additionalFilesDirectory as a root of external annotations because this directory contains all
                 // declared 'annotations.xml' files
-                externalAnnotationsRootPath = testServices.sourceFileProvider.additionalFilesDirectory.path,
+                externalAnnotationsRootPath = testServices.sourceFileProvider.getAdditionalFilesDirectoryForModule(module).path,
                 manager = PsiManager.getInstance(project),
             ),
         )

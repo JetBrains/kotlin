@@ -1,13 +1,13 @@
 // TARGET_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
-// FILE: A.java
 
+// FILE: A.java
 interface A {
     X<? extends A> foo();
 
     interface X<T extends A> {}
 }
 
+// FILE: B.java
 interface B extends A {
     @Override
     Y<? extends B> foo();
@@ -15,6 +15,7 @@ interface B extends A {
     interface Y<U extends B> extends X<U> {}
 }
 
+// FILE: BImpl.java
 class BImpl implements B {
     @Override
     public Y<? extends B> foo() { return null; }
@@ -24,5 +25,4 @@ class BImpl implements B {
 
 private class D : A, BImpl()
 
-fun box(): String =
-    if (D().foo() == null) "OK" else "Fail"
+fun box(): String = if (D().foo() == null) "OK" else "Fail"

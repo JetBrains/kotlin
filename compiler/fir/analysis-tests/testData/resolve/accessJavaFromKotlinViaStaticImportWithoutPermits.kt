@@ -1,13 +1,13 @@
 // FILE: useSite.kt
 
-import C.StaticConfigurationClass.INIT_INSPECTIONS
+import InspectionProfileImpl.StaticConfigurationClass.INIT_INSPECTIONS
 
 fun foo(): Int = 4
 
 // FILE: InspectionProfileImpl.java
 import static Configuration.StaticConfigurationClass
 
-public static final class C extends StaticConfigurationClass {
+public static final class InspectionProfileImpl extends StaticConfigurationClass {
     public abstract sealed class StaticConfigurationClass  {
         public static boolean INIT_INSPECTIONS;
     }

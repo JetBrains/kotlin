@@ -4,7 +4,7 @@
 // WITH_REFLECT
 // FULL_JDK
 
-// FILE: ImplicitReturn.java
+// FILE: TypeAnn.java
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,13 +15,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE_USE)
 @interface TypeAnn {}
 
+// FILE: ImplicitReturn.java
+
 public class ImplicitReturn {
     @TypeAnn
     public String bar() {
         return "OK";
     }
 }
-
 
 // FILE: Kotlin.kt
 
@@ -31,7 +32,6 @@ import kotlin.reflect.jvm.javaField
 import kotlin.test.fail
 
 class Kotlin {
-
     fun foo() = ImplicitReturn().bar()
 
     @JvmField
@@ -39,7 +39,6 @@ class Kotlin {
 }
 
 fun box(): String {
-
     checkTypeAnnotation(
         Kotlin::foo.javaMethod!!.annotatedReturnType,
         "class java.lang.String",
@@ -67,6 +66,5 @@ fun checkTypeAnnotation(
 
     if (annotatedType.type.toString() != type) fail("check $message (2): ${annotatedType.type} != $type")
 }
-
 
 fun AnnotatedType.annotation() = annotations.joinToString()

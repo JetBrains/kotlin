@@ -14,7 +14,7 @@ public interface StringSupplier {
     String get();
 }
 
-// FILE: JavaTestValueProvider.java
+// FILE: TestValueProvider.java
 import org.jetbrains.annotations.Nullable;
 
 public class TestValueProvider {

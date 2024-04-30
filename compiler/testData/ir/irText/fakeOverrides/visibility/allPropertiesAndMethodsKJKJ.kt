@@ -2,10 +2,11 @@
 // TARGET_BACKEND: JVM
 
 // MODULE: separate
+
 // FILE: JavaSeparate1.java
-public class JavaSeparate1  {
+public class JavaSeparate1 {
     protected int a = 22;
-    protected void foo(){}
+    protected void foo() {}
 }
 
 // FILE: JavaSeparate2.java
@@ -14,7 +15,8 @@ public class JavaSeparate2 {
     void foo() {}
 }
 
-// MODULE: main
+// MODULE: main(separate)
+
 // FILE: Java1.java
 public class Java1 {
     public int a = 1;
@@ -27,7 +29,7 @@ public class Java2 extends KotlinClass { }
 // FILE: Java3.java
 public class Java3 {
     protected int a = 3;
-    protected void foo(){}
+    protected void foo() {}
 }
 
 // FILE: Java4.java
