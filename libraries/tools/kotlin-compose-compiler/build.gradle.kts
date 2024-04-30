@@ -13,7 +13,7 @@ gradlePlugin {
     plugins {
         create("kotlinComposeCompilerPlugin") {
             id = "org.jetbrains.kotlin.plugin.compose"
-            displayName = "Kotlin Compose Compiler plugin"
+            displayName = "Compose Compiler Gradle plugin"
             description = displayName
             implementationClass = "org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradleSubplugin"
         }
