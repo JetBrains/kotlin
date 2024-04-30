@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 /**
  * Resolver that filters out equivalent calls, mainly to deduplicate multiples of the same declaration coming from different versions
@@ -24,15 +22,8 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
  * compatibility with K1.
  */
 class ConeEquivalentCallConflictResolver(
-    specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents,
-    transformerComponents: BodyResolveComponents,
-) : AbstractConeCallConflictResolver(
-    specificityComparator,
-    inferenceComponents,
-    transformerComponents,
-    considerMissingArgumentsInSignatures = true,
-) {
+    private val inferenceComponents: InferenceComponents,
+) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean
