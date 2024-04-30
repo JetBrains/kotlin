@@ -51,18 +51,18 @@ private class Checker : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         with(KotlinTypeFacadeImpl(context.session)) {
             analyzeCast(expression, reporter, context)
-            analyzeRefinedCallShape(expression, reporter = object : InterpretationErrorReporter {
-                override var errorReported: Boolean = false
-
-                override fun reportInterpretationError(call: FirFunctionCall, message: String) {
-                    reporter.reportOn(call.source, ERROR, message, context)
-                    errorReported = true
-                }
-
-                override fun doNotReportInterpretationError() {
-                    errorReported = true
-                }
-            })
+//            analyzeRefinedCallShape(expression, reporter = object : InterpretationErrorReporter {
+//                override var errorReported: Boolean = false
+//
+//                override fun reportInterpretationError(call: FirFunctionCall, message: String) {
+//                    reporter.reportOn(call.source, ERROR, message, context)
+//                    errorReported = true
+//                }
+//
+//                override fun doNotReportInterpretationError() {
+//                    errorReported = true
+//                }
+//            })
         }
     }
 
