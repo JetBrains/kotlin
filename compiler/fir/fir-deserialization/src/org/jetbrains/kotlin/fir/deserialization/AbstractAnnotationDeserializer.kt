@@ -294,7 +294,7 @@ abstract class AbstractAnnotationDeserializer(
         }
     }
 
-    private fun <T> const(kind: ConstantValueKind, value: T, typeRef: FirResolvedTypeRef): FirLiteralExpression<T> {
+    private fun const(kind: ConstantValueKind, value: Any?, typeRef: FirResolvedTypeRef): FirLiteralExpression {
         return buildLiteralExpression(null, kind, value, setType = true).apply { this.replaceConeTypeOrNull(typeRef.coneType) }
     }
 }

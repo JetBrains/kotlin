@@ -612,7 +612,7 @@ class FirSignatureEnhancement(
     private fun getPurelyImplementedSupertype(session: FirSession): ConeKotlinType? {
         val purelyImplementedClassIdFromAnnotation = owner.annotations
             .firstOrNull { it.unexpandedClassId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
-            ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression<*>) }
+            ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression) }
             ?.let { it.value as? String }
             ?.takeIf { it.isNotBlank() && isValidJavaFqName(it) }
             ?.let { ClassId.topLevel(FqName(it)) }

@@ -547,11 +547,11 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(tryExpression)
     }
 
-    final override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Nothing?) {
+    final override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?) {
         visitLiteralExpression(literalExpression)
     }
 
-    open fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>) {
+    open fun visitLiteralExpression(literalExpression: FirLiteralExpression) {
         visitElement(literalExpression)
     }
 

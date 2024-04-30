@@ -698,7 +698,7 @@ class FirRenderer(
             print("LAZY_EXPRESSION")
         }
 
-        override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>) {
+        override fun visitLiteralExpression(literalExpression: FirLiteralExpression) {
             annotationRenderer?.render(literalExpression)
             val kind = literalExpression.kind
             val value = literalExpression.value

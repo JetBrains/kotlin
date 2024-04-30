@@ -124,10 +124,10 @@ class Fir2IrLazyProperty(
                 irInitializer
             }
             // Setting initializers to every other class causes some cryptic errors in lowerings
-            initializer is FirLiteralExpression<*> -> {
+            initializer is FirLiteralExpression -> {
                 fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 val constType = fir.initializer?.resolvedType?.toIrType(c) ?: initializer.resolvedType.toIrType(c)
-                factory.createExpressionBody(initializer.toIrConst(constType))
+                factory.createExpressionBody(initializer.toIrConst<Any?>(constType))
             }
             else -> null
         }

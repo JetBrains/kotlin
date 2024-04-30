@@ -276,7 +276,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
             if (equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) {
                 val argument = equalityOperatorCall.arguments[1]
-                if (argument is FirLiteralExpression<*>) {
+                if (argument is FirLiteralExpression) {
                     when (argument.value) {
                         true -> data.containsTrue = true
                         false -> data.containsFalse = true

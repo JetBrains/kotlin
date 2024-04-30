@@ -60,7 +60,7 @@ abstract class AbstractDiagnosticCollector(
                         ?: continue
 
                 for (argumentValue in argumentValues) {
-                    val value = (argumentValue as? FirLiteralExpression<*>)?.value as? String ?: continue
+                    val value = (argumentValue as? FirLiteralExpression)?.value as? String ?: continue
 
                     if (result == null) {
                         result = mutableListOf()

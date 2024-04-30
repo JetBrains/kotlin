@@ -308,9 +308,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 initializer,
                                 typeToUse
                             ).also { field ->
-                                if (initializer is FirLiteralExpression<*>) {
+                                if (initializer is FirLiteralExpression) {
                                     val constType = initializer.resolvedType.toIrType(c)
-                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                                    field.initializer = factory.createExpressionBody(initializer.toIrConst<Any?>(constType))
                                 }
                             }
                         }
@@ -366,7 +366,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     private fun getEffectivePropertyInitializer(property: FirProperty, resolveIfNeeded: Boolean): FirExpression? {
         val initializer = property.backingField?.initializer ?: property.initializer
 
-        if (resolveIfNeeded && initializer is FirLiteralExpression<*>) {
+        if (resolveIfNeeded && initializer is FirLiteralExpression) {
             property.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return getEffectivePropertyInitializer(property, resolveIfNeeded = false)
         }
@@ -557,8 +557,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             ).apply {
                 metadata = FirMetadataSource.Field(field)
                 val initializer = field.unwrapFakeOverrides().initializer
-                if (initializer is FirLiteralExpression<*>) {
-                    this.initializer = factory.createExpressionBody(initializer.toIrConst(irType))
+                if (initializer is FirLiteralExpression) {
+                    this.initializer = factory.createExpressionBody(initializer.toIrConst<Any?>(irType))
                 }
                 /*
                  * fields of regular properties are stored inside IrProperty

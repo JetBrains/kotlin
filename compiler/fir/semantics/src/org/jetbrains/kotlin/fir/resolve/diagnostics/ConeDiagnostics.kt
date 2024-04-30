@@ -200,7 +200,7 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
     }
 
     class IllegalConst(
-        val element: FirLiteralExpression<*>,
+        val element: FirLiteralExpression,
         val onlyNullAllowed: Boolean
     ) : ConeContractDescriptionError() {
         override val reason: String

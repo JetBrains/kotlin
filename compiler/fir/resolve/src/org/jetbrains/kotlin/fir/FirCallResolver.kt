@@ -821,7 +821,7 @@ class FirCallResolver(
 
             candidates.isEmpty() -> {
                 when {
-                    name.asString() == "invoke" && explicitReceiver is FirLiteralExpression<*> ->
+                    name.asString() == "invoke" && explicitReceiver is FirLiteralExpression ->
                         ConeFunctionExpectedError(
                             explicitReceiver.value?.toString() ?: "",
                             explicitReceiver.resolvedType,

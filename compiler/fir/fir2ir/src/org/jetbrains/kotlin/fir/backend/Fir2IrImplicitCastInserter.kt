@@ -55,7 +55,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
 
     override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: IrElement): IrElement = data
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: IrElement): IrElement = data
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: IrElement): IrElement = data
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: IrElement): IrElement = data
 

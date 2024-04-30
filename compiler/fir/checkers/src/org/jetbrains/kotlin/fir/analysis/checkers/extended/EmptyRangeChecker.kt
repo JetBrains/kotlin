@@ -41,12 +41,12 @@ object EmptyRangeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
     private val FirFunctionCall.rangeLeft: Long?
         get() {
-            return (explicitReceiver as? FirLiteralExpression<*>)?.value as? Long
+            return (explicitReceiver as? FirLiteralExpression)?.value as? Long
         }
 
     private val FirFunctionCall.rangeRight: Long?
         get() {
-            val arg = argumentList.arguments.getOrNull(0) as? FirLiteralExpression<*>
+            val arg = argumentList.arguments.getOrNull(0) as? FirLiteralExpression
             return arg?.value as? Long
         }
 }

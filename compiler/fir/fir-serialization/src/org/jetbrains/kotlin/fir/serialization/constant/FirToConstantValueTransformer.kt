@@ -55,7 +55,7 @@ internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
 
 private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeSession): ConstantValue<*>? {
     return when (this) {
-        is FirLiteralExpression<*> -> {
+        is FirLiteralExpression -> {
             val value = this.value
             when (this.kind) {
                 ConstantValueKind.Boolean -> BooleanValue(value as Boolean)
@@ -179,8 +179,8 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
         return false
     }
 
-    override fun <T> visitLiteralExpression(
-        literalExpression: FirLiteralExpression<T>,
+    override fun visitLiteralExpression(
+        literalExpression: FirLiteralExpression,
         data: FirSession
     ): Boolean {
         return literalExpression.kind in supportedConstKinds

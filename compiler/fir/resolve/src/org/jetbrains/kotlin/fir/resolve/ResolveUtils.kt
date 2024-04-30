@@ -671,7 +671,7 @@ fun FirExpression?.isIntegerLiteralOrOperatorCall(): Boolean {
         returns(true) implies (this@isIntegerLiteralOrOperatorCall != null)
     }
     return when (this) {
-        is FirLiteralExpression<*> -> kind == ConstantValueKind.Int
+        is FirLiteralExpression -> kind == ConstantValueKind.Int
                 || kind == ConstantValueKind.IntegerLiteral
                 || kind == ConstantValueKind.UnsignedInt
                 || kind == ConstantValueKind.UnsignedIntegerLiteral

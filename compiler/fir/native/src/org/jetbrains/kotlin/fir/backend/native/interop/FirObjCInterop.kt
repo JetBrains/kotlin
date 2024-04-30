@@ -88,7 +88,7 @@ private fun FirAnnotation.constBooleanArgumentOrNull(argumentName: String): Bool
         constArgument(argumentName) as Boolean?
 
 private fun FirAnnotation.constArgument(argumentName: String) =
-        (argumentMapping.mapping[Name.identifier(argumentName)] as? FirLiteralExpression<*>)?.value
+        (argumentMapping.mapping[Name.identifier(argumentName)] as? FirLiteralExpression)?.value
 
 internal fun FirFunction.hasObjCFactoryAnnotation(session: FirSession) = this.annotations.hasAnnotation(NativeStandardInteropNames.objCFactoryClassId, session)
 

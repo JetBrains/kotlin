@@ -1019,8 +1019,8 @@ class FirCallCompletionResultsWriterTransformer(
         )
     }
 
-    override fun <T> transformLiteralExpression(
-        literalExpression: FirLiteralExpression<T>,
+    override fun transformLiteralExpression(
+        literalExpression: FirLiteralExpression,
         data: ExpectedArgumentType?,
     ): FirStatement {
         if (data == ExpectedArgumentType.NoApproximation) return literalExpression

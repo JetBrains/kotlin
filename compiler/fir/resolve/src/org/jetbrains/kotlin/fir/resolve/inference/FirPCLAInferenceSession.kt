@@ -283,7 +283,7 @@ class FirPCLAInferenceSession(
             is FirSafeCallExpression -> receiver.isTrivialArgument() && (selector as? FirExpression)?.isTrivialArgument() == true
             is FirVarargArgumentsExpression -> arguments.all { it.isTrivialArgument() }
 
-            is FirLiteralExpression<*>, is FirResolvedQualifier, is FirResolvedReifiedParameterReference -> true
+            is FirLiteralExpression, is FirResolvedQualifier, is FirResolvedReifiedParameterReference -> true
 
             // Be default, we consider all the unknown cases as unsafe to resolve independently
             else -> false

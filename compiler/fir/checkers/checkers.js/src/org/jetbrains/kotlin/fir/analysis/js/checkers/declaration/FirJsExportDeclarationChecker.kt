@@ -276,7 +276,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         val jsNameArgument = declaration.symbol.getAnnotationFirstArgument(JsStandardClassIds.Annotations.JsName, context.session)
         val reportTarget = jsNameArgument?.source ?: declaration.source
-        val name = (jsNameArgument as? FirLiteralExpression<*>)?.value as? String ?: declaration.nameOrSpecialName.asString()
+        val name = (jsNameArgument as? FirLiteralExpression)?.value as? String ?: declaration.nameOrSpecialName.asString()
 
         if (name in SPECIAL_KEYWORDS || (name !in RESERVED_KEYWORDS && sanitizeName(name) == name)) {
             return

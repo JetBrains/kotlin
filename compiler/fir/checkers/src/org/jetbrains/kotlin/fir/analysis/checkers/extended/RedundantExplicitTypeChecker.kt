@@ -38,7 +38,7 @@ object RedundantExplicitTypeChecker : FirPropertyChecker(MppCheckerKind.Common) 
         if (typeReference.annotations.isNotEmpty()) return
 
         when (initializer) {
-            is FirLiteralExpression<*> -> {
+            is FirLiteralExpression -> {
                 when (initializer.source?.elementType) {
                     KtNodeTypes.BOOLEAN_CONSTANT -> {
                         if (!type.isSame(StandardClassIds.Boolean)) return

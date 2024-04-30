@@ -48,7 +48,7 @@ internal object FirAnnotationValueConverter {
         )
     }
 
-    private fun <T> FirLiteralExpression<T>.convertConstantExpression(
+    private fun FirLiteralExpression.convertConstantExpression(
         analysisSession: KtAnalysisSession
     ): KtConstantAnnotationValue? {
         val expression = psi as? KtElement
@@ -108,7 +108,7 @@ internal object FirAnnotationValueConverter {
         val sourcePsi = psi as? KtElement
 
         return when (this) {
-            is FirLiteralExpression<*> -> convertConstantExpression(builder.analysisSession)
+            is FirLiteralExpression -> convertConstantExpression(builder.analysisSession)
             is FirNamedArgumentExpression -> {
                 expression.convertConstantExpression(builder)
             }

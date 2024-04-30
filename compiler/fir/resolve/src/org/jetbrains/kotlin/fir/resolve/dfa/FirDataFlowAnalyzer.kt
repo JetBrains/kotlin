@@ -453,8 +453,8 @@ abstract class FirDataFlowAnalyzer(
         val leftConst = when (leftOperand) {
             is FirWhenSubjectExpression -> leftOperand.whenRef.value.subject
             else -> leftOperand
-        } as? FirLiteralExpression<*>
-        val rightConst = rightOperand as? FirLiteralExpression<*>
+        } as? FirLiteralExpression
+        val rightConst = rightOperand as? FirLiteralExpression
         val leftIsNullConst = leftConst?.kind == ConstantValueKind.Null
         val rightIsNullConst = rightConst?.kind == ConstantValueKind.Null
         val leftIsNull = leftIsNullConst || leftOperand.resolvedType.isNullableNothing && !rightIsNullConst
@@ -478,7 +478,7 @@ abstract class FirDataFlowAnalyzer(
         flow: MutableFlow,
         expression: FirEqualityOperatorCall,
         operand: FirExpression,
-        const: FirLiteralExpression<*>,
+        const: FirLiteralExpression,
         isEq: Boolean,
     ) {
         if (const.kind == ConstantValueKind.Null) {
@@ -1048,7 +1048,7 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    fun exitLiteralExpression(literalExpression: FirLiteralExpression<*>) {
+    fun exitLiteralExpression(literalExpression: FirLiteralExpression) {
         if (literalExpression.isResolved) return
         graphBuilder.exitLiteralExpression(literalExpression).mergeIncomingFlow()
     }
@@ -1304,7 +1304,7 @@ abstract class FirDataFlowAnalyzer(
 
             // For any predicate P(x), if P(v) != P(u ?: v) then u != null. In general this requires two levels of
             // implications, but for constant v the logic system can handle some basic cases of P(x).
-            val rhs = (elvisExpression.rhs as? FirLiteralExpression<*>)?.value as? Boolean
+            val rhs = (elvisExpression.rhs as? FirLiteralExpression)?.value as? Boolean
             if (rhs != null) {
                 flow.addAllConditionally(elvisVariable eq !rhs, node.firstPreviousNode.getFlow(path))
             }

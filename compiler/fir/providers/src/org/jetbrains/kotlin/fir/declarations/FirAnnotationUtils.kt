@@ -145,14 +145,14 @@ fun FirAnnotation.getStringArgument(name: Name, session: FirSession): String? = 
 
 private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name, session: FirSession): T? {
     val argument = findArgumentByName(name) ?: return null
-    val literal = argument.evaluateAs<FirLiteralExpression<*>>(session) ?: return null
+    val literal = argument.evaluateAs<FirLiteralExpression>(session) ?: return null
     return literal.value as? T
 }
 
 fun FirAnnotation.getStringArrayArgument(name: Name, session: FirSession): List<String>? {
     val argument = findArgumentByName(name) ?: return null
     val arrayLiteral = argument.evaluateAs<FirArrayLiteral>(session) ?: return null
-    return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression<*>)?.value as? String }
+    return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression)?.value as? String }
 }
 
 fun FirAnnotation.getKClassArgument(name: Name, session: FirSession): ConeKotlinType? {

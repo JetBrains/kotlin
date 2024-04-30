@@ -504,7 +504,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         receiver: FirExpression,
         operationToken: IElementType,
     ): FirExpression? {
-        if (receiver !is FirLiteralExpression<*>) return null
+        if (receiver !is FirLiteralExpression) return null
         if (receiver.kind != ConstantValueKind.IntegerLiteral) return null
         if (operationToken != PLUS && operationToken != MINUS) return null
 

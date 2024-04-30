@@ -36,7 +36,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return
         }
 
-        val value = (name as? FirLiteralExpression<*>)?.value as? String ?: return
+        val value = (name as? FirLiteralExpression)?.value as? String ?: return
 
         if (!Name.isValidIdentifier(value)) {
             reporter.reportOn(jvmName.source, FirJvmErrors.ILLEGAL_JVM_NAME, context)

@@ -218,7 +218,7 @@ abstract class FirVisitor<out R, in D> {
     open fun visitTryExpression(tryExpression: FirTryExpression, data: D): R =
         visitElement(tryExpression, data)
 
-    open fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: D): R =
+    open fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): R =
         visitElement(literalExpression, data)
 
     open fun visitTypeProjection(typeProjection: FirTypeProjection, data: D): R =

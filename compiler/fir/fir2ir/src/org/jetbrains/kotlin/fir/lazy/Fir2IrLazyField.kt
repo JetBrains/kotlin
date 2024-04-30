@@ -72,7 +72,7 @@ class Fir2IrLazyField(
 
     override var initializer: IrExpressionBody? by lazyVar(lock) {
         when (val initializer = fir.unwrapFakeOverrides().initializer) {
-            is FirLiteralExpression<*> -> factory.createExpressionBody(initializer.toIrConst(type))
+            is FirLiteralExpression -> factory.createExpressionBody(initializer.toIrConst<Any?>(type))
             else -> null
         }
     }

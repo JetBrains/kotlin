@@ -216,7 +216,7 @@ class JvmBinaryAnnotationDeserializer(
     ): FirExpression? {
         val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_GETTER) ?: return null
         val firExpr = annotationInfo.annotationMethodsDefaultValues[signature]
-        return if (firExpr is FirLiteralExpression<*> && expectedPropertyType.coneType.isUnsignedType && firExpr.kind.isSignedNumber)
+        return if (firExpr is FirLiteralExpression && expectedPropertyType.coneType.isUnsignedType && firExpr.kind.isSignedNumber)
             firExpr.value.createConstantIfAny(session, unsigned = true)
         else
             firExpr

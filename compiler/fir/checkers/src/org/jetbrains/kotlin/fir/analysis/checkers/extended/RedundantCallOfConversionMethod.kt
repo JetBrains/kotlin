@@ -38,7 +38,7 @@ object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker(Mpp
     }
 
     private fun FirExpression.isRedundant(qualifiedClassId: ClassId, session: FirSession): Boolean {
-        val thisType = if (this is FirLiteralExpression<*>) {
+        val thisType = if (this is FirLiteralExpression) {
             this.resolvedType.classId
         } else {
             when {

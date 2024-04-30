@@ -101,7 +101,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitContinueExpression(continueExpression: FirContinueExpression, data: D): R =
         visitLoopJump(continueExpression, data)
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: D): R =
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): R =
         visitExpression(literalExpression, data)
 
     override fun visitStarProjection(starProjection: FirStarProjection, data: D): R =

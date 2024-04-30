@@ -1151,7 +1151,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirStatement = whileAnalysing(session, getClassCall) {
         getClassCall.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val arg = getClassCall.argument
-        val dataForLhs = if (arg is FirLiteralExpression<*>) {
+        val dataForLhs = if (arg is FirLiteralExpression) {
             withExpectedType(arg.kind.expectedConeType(session).toFirResolvedTypeRef())
         } else {
             ResolutionMode.ContextIndependent
@@ -1219,8 +1219,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return true
     }
 
-    override fun <T> transformLiteralExpression(
-        literalExpression: FirLiteralExpression<T>,
+    override fun transformLiteralExpression(
+        literalExpression: FirLiteralExpression,
         data: ResolutionMode,
     ): FirStatement {
         literalExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
@@ -1260,7 +1260,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             else -> kind.expectedConeType(session)
         }
 
-        dataFlowAnalyzer.exitLiteralExpression(literalExpression as FirLiteralExpression<*>)
+        dataFlowAnalyzer.exitLiteralExpression(literalExpression)
         literalExpression.resultType = type
 
         return when (val resolvedType = literalExpression.resolvedType) {

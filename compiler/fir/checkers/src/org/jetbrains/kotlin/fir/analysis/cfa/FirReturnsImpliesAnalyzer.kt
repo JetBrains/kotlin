@@ -112,7 +112,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         var flow = node.flow
         val operation = effect.value.toOperation()
         if (operation != null) {
-            if (resultExpression is FirLiteralExpression<*>) {
+            if (resultExpression is FirLiteralExpression) {
                 if (!operation.isTrueFor(resultExpression.value)) return false
             } else {
                 if (expressionType != null && !operation.canBeTrueFor(context.session, expressionType)) return false

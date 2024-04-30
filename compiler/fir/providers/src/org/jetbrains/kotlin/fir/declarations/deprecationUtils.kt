@@ -268,7 +268,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
         for ((deprecated, shouldPropagateToOverrides) in annotations) {
             if (deprecated.unexpandedClassId == StandardClassIds.Annotations.SinceKotlin) {
                 val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
-                val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression<*>)?.value as? String)
+                val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression)?.value as? String)
                     ?.let(ApiVersion.Companion::parse) ?: continue
                 val wasExperimental = this@extractDeprecationAnnotationInfoPerUseSite.any {
                     it.unexpandedClassId == StandardClassIds.Annotations.WasExperimental
@@ -453,7 +453,7 @@ class DeprecatedSinceKotlinProvider(
         val argument = deprecatedSinceKotlinAnnotation.findArgumentByName(name, returnFirstWhenNotFound = false)
             ?: (deprecatedSinceKotlinAnnotation as? FirAnnotationCall)?.arguments?.elementAtOrNull(index)
 
-        val version = ((argument as? FirLiteralExpression<*>)?.value as? String)
+        val version = ((argument as? FirLiteralExpression)?.value as? String)
             ?.let { ApiVersion.parse(it) }
             ?: return null
 

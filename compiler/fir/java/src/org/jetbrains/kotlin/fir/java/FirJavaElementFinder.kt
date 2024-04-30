@@ -129,7 +129,7 @@ class FirJavaElementFinder(
     private fun FirFile.jvmName(): String {
         val jvmNameAnnotation = this.findJvmNameAnnotation()
         val jvmName = jvmNameAnnotation?.findArgumentByName(StandardNames.NAME)
-        val jvmNameValue = (jvmName as? FirLiteralExpression<*>)?.value as? String
+        val jvmNameValue = (jvmName as? FirLiteralExpression)?.value as? String
         return jvmNameValue ?: (this.name.removeSuffix(".kt").capitalizeAsciiOnly() + "Kt")
     }
 
@@ -226,7 +226,7 @@ class FirJavaElementFinder(
             // Null result means that the evaluator encountered an error during evaluation.
             // Later on, the compiler should report proper diagnostic.
             fun transformJavaFieldAndGetResultAsString(firProperty: FirProperty): String? {
-                fun FirLiteralExpression<*>.asString(): String {
+                fun FirLiteralExpression.asString(): String {
                     return when (val constVal = value) {
                         is Char -> constVal.code.toString()
                         is String -> "\"$constVal\""
@@ -234,7 +234,7 @@ class FirJavaElementFinder(
                     }
                 }
 
-                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.unwrapOr<FirLiteralExpression<*>> {}?.asString()
+                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.unwrapOr<FirLiteralExpression> {}?.asString()
             }
 
             override fun getName(): String = firProperty.name.identifier

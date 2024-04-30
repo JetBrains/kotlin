@@ -126,7 +126,7 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitLoopJump(continueExpression)
     }
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>) {
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression) {
         visitExpression(literalExpression)
     }
 

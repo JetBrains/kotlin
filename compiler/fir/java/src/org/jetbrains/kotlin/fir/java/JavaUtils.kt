@@ -164,5 +164,5 @@ fun FirDeclaration.findJvmStaticAnnotation(): FirAnnotation? = findAnnotationByC
 
 fun FirDeclaration.findJvmNameValue(): String? =
     findJvmNameAnnotation()?.findArgumentByName(StandardNames.NAME)?.let {
-        (it as? FirLiteralExpression<*>)?.value as? String
+        (it as? FirLiteralExpression)?.value as? String
     }
