@@ -55,7 +55,7 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
     private fun findLombokConfig(module: TestModule): File? {
         return module.files.singleOrNull { it.name == LOMBOK_CONFIG_NAME }?.let {
-            testServices.sourceFileProvider.getRealFileForSourceFile(it)
+            testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it)
         }
     }
 

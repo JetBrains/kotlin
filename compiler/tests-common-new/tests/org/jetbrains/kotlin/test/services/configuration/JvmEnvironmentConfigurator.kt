@@ -239,7 +239,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
 
         val javaFiles = module.javaFiles.ifEmpty { return }
-        javaFiles.forEach { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
+        javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
         val javaModuleInfoFiles = javaFiles.filter { it.name == MODULE_INFO_FILE }
 
         if (PROVIDE_JAVA_AS_BINARIES !in registeredDirectives) {
@@ -279,7 +279,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         javaModuleInfoFiles: List<TestFile>
     ) {
         for (javaModuleInfoFile in javaModuleInfoFiles) {
-            val javaModuleDir = testServices.sourceFileProvider.getRealFileForSourceFile(javaModuleInfoFile).parentFile
+            val javaModuleDir = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(javaModuleInfoFile).parentFile
             addJavaSourceRoot(javaModuleDir)
         }
     }
@@ -296,7 +296,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             }
         }
         for (javaModuleInfoFile in javaModuleInfoFiles) {
-            val javaModuleDir = testServices.sourceFileProvider.getRealFileForSourceFile(javaModuleInfoFile).parentFile
+            val javaModuleDir = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(javaModuleInfoFile).parentFile
             val javaModuleName = javaModuleInfoFile.relativePath.substringBefore('/')
             val javaModuleBinary = compileJavaFilesLibraryToJar(
                 javaModuleDir.path,

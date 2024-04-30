@@ -37,7 +37,7 @@ class ExternalAnnotationsEnvironmentConfigurator(testServices: TestServices) : E
             if (file.name != ExternalAnnotationsManager.ANNOTATIONS_XML) continue
 
             // This call is required to copy files into the project to be able to read those xml files from the manager
-            testServices.sourceFileProvider.getRealFileForSourceFile(file)
+            testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(file)
             hasAnnotationFile = true
         }
 

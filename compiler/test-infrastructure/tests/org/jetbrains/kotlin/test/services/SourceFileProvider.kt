@@ -33,7 +33,7 @@ abstract class SourceFileProvider : TestService {
     abstract fun getAdditionalFilesDirectoryForModule(module: TestModule): File
 
     abstract fun getContentOfSourceFile(testFile: TestFile): String
-    abstract fun getRealFileForSourceFile(testFile: TestFile): File
+    abstract fun getOrCreateRealFileForSourceFile(testFile: TestFile): File
 }
 
 val TestServices.sourceFileProvider: SourceFileProvider by TestServices.testServiceAccessor()
@@ -63,7 +63,7 @@ class SourceFileProviderImpl(val testServices: TestServices, override val prepro
         }
     }
 
-    override fun getRealFileForSourceFile(testFile: TestFile): File {
+    override fun getOrCreateRealFileForSourceFile(testFile: TestFile): File {
         return realFileMap.getOrPut(testFile) {
             val module = testServices.moduleStructure.modules.single { testFile in it.files }
             val directory = when {
@@ -81,7 +81,7 @@ class SourceFileProviderImpl(val testServices: TestServices, override val prepro
 
 fun SourceFileProvider.getKtFileForSourceFile(testFile: TestFile, project: Project, findViaVfs: Boolean = false): KtFile {
     if (findViaVfs) {
-        val realFile = getRealFileForSourceFile(testFile)
+        val realFile = getOrCreateRealFileForSourceFile(testFile)
         StandardFileSystems.local().findFileByPath(realFile.path)
             ?.let { PsiManager.getInstance(project).findFile(it) as? KtFile }
             ?.let { return it }
@@ -135,5 +135,5 @@ val TestFile.isExternalAnnotation: Boolean
     get() = name == ExternalAnnotationsManager.ANNOTATIONS_XML
 
 fun SourceFileProvider.getRealJavaFiles(module: TestModule): List<File> {
-    return module.javaFiles.map { getRealFileForSourceFile(it) }
+    return module.javaFiles.map { getOrCreateRealFileForSourceFile(it) }
 }

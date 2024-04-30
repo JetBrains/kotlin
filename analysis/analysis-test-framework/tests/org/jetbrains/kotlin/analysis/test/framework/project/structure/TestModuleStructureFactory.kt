@@ -228,7 +228,7 @@ object TestModuleStructureFactory {
                 }
 
                 testFile.isJavaFile || testFile.isExternalAnnotation -> {
-                    val filePath = testServices.sourceFileProvider.getRealFileForSourceFile(testFile)
+                    val filePath = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile)
                     val virtualFile =
                         testServices.environmentManager.getApplicationEnvironment().localFileSystem.findFileByIoFile(filePath)
                             ?: error("Virtual file not found for $filePath")
