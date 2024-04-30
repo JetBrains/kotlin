@@ -96,6 +96,7 @@ class FirDataFrameExtensionRegistrar(
         }
         +::TokenGenerator
         +::DataRowSchemaSupertype
+        +::ExpressionAnalysisAdditionalChecker
     }
 }
 
