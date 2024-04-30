@@ -545,7 +545,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     private fun <K, V> Map<K, V>.asMutableMap(): MutableMap<K, V> = this as MutableMap
 
-    override val checkClassScopesForAnnotationCompatibility = true
+    override val checkClassScopesForAnnotationCompatibility: Boolean = true
 
     override fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean {
         return (actualMember.asSymbol().fir as? FirMemberDeclaration)?.isActual == true

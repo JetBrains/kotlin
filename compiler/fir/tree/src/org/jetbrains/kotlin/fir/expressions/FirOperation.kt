@@ -52,7 +52,7 @@ object FirOperationNameConventions {
             FirOperation.REM_ASSIGN to OperatorNameConventions.REM_ASSIGN
         )
     )
-    val ASSIGNMENT_NAMES = ASSIGNMENTS.map { (k, v) -> v to k }.toMap()
+    val ASSIGNMENT_NAMES: Map<Name, FirOperation> = ASSIGNMENTS.map { (k, v) -> v to k }.toMap()
 
     val ASSIGNMENTS_TO_SIMPLE_OPERATOR: Map<FirOperation, Name> = EnumMap(
         mapOf(

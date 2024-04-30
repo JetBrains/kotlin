@@ -27,7 +27,7 @@ class Context<T> {
     lateinit var packageFqName: FqName
     var className: FqName = FqName.ROOT
     var inLocalContext: Boolean = false
-    val currentClassId
+    val currentClassId: ClassId
         get() = when {
             inLocalContext -> ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, className, isLocal = true)
             else -> ClassId(packageFqName, className, isLocal = false)
@@ -35,11 +35,11 @@ class Context<T> {
 
     var classNameBeforeLocalContext: FqName = FqName.ROOT
 
-    val firFunctionTargets = mutableListOf<FirFunctionTarget>()
-    val calleeNamesForLambda = mutableListOf<Name?>()
+    val firFunctionTargets: MutableList<FirFunctionTarget> = mutableListOf()
+    val calleeNamesForLambda: MutableList<Name?> = mutableListOf()
 
     @PrivateForInline
-    val _firLabels = mutableListOf<FirLabel>()
+    val _firLabels: MutableList<FirLabel> = mutableListOf()
 
     @OptIn(PrivateForInline::class)
     val firLabels: List<FirLabel>
@@ -50,11 +50,11 @@ class Context<T> {
      */
     @PrivateForInline
     var firLabelUserNode: Any? = null
-    val firLoopTargets = mutableListOf<FirLoopTarget>()
-    val capturedTypeParameters = mutableListOf<StatusFirTypeParameterSymbolList>()
-    val arraySetArgument = mutableMapOf<T, FirExpression>()
+    val firLoopTargets: MutableList<FirLoopTarget> = mutableListOf()
+    val capturedTypeParameters: MutableList<StatusFirTypeParameterSymbolList> = mutableListOf()
+    val arraySetArgument: MutableMap<T, FirExpression> = mutableMapOf()
 
-    val dispatchReceiverTypesStack = mutableListOf<ConeClassLikeType>()
+    val dispatchReceiverTypesStack: MutableList<ConeClassLikeType> = mutableListOf()
     var containerIsExpect: Boolean = false
 
     fun pushFirTypeParameters(isInnerOrLocal: Boolean, parameters: List<FirTypeParameterRef>) {
@@ -111,7 +111,7 @@ class Context<T> {
      * @see popContainerSymbol
      */
     val containerSymbol: FirBasedSymbol<*> get() = _containerSymbolStack.last()
-    private val _containerSymbolStack: MutableList<FirBasedSymbol<*>> = mutableListOf<FirBasedSymbol<*>>()
+    private val _containerSymbolStack: MutableList<FirBasedSymbol<*>> = mutableListOf()
 
     /**
      * Add [symbol] to the container symbols stack. Must be paired with [popContainerSymbol].

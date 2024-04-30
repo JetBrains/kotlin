@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
+@Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object FirDiagnosticRenderers {
     @OptIn(SymbolInternals::class)
     val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->

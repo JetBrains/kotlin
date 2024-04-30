@@ -30,7 +30,7 @@ import kotlin.reflect.KClass
  */
 abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("ExistingClassModification")
+        val NAME: FirExtensionPointName = FirExtensionPointName("ExistingClassModification")
     }
 
     final override val name: FirExtensionPointName

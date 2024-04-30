@@ -320,14 +320,18 @@ open class FirJvmSerializerExtension(
         bindings.get(slice, key) ?: globalBindings.get(slice, key)
 
     companion object {
-        val METHOD_FOR_FIR_FUNCTION = JvmSerializationBindings.SerializationMappingSlice.create<FirFunction, Method>()
-        val FIELD_FOR_PROPERTY = JvmSerializationBindings.SerializationMappingSlice.create<FirProperty, Pair<Type, String>>()
-        val SYNTHETIC_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable, Method>()
-        val DELEGATE_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable, Method>()
+        val METHOD_FOR_FIR_FUNCTION: JvmSerializationBindings.SerializationMappingSlice<FirFunction, Method> =
+            JvmSerializationBindings.SerializationMappingSlice.create()
+        val FIELD_FOR_PROPERTY: JvmSerializationBindings.SerializationMappingSlice<FirProperty, Pair<Type, String>> =
+            JvmSerializationBindings.SerializationMappingSlice.create()
+        val SYNTHETIC_METHOD_FOR_FIR_VARIABLE: JvmSerializationBindings.SerializationMappingSlice<FirVariable, Method> =
+            JvmSerializationBindings.SerializationMappingSlice.create()
+        val DELEGATE_METHOD_FOR_FIR_VARIABLE: JvmSerializationBindings.SerializationMappingSlice<FirVariable, Method> =
+            JvmSerializationBindings.SerializationMappingSlice.create()
         private val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
         private val JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithCompatibility")
-        private val JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID = ClassId.topLevel(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
-        private val JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID = ClassId.topLevel(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME)
+        private val JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID: ClassId = ClassId.topLevel(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
+        private val JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID: ClassId = ClassId.topLevel(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME)
     }
 }
 

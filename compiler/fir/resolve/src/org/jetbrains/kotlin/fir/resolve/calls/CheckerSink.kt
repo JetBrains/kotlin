@@ -39,9 +39,11 @@ class CheckerSinkImpl(
     }
 
     @PrivateForInline
-    override suspend fun yield() = kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn<Unit> {
-        continuation = it
-        kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+    override suspend fun yield() {
+        kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn {
+            continuation = it
+            kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+        }
     }
 
     override val needYielding: Boolean

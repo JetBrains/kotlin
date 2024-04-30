@@ -45,7 +45,8 @@ class FirImplicitTypeBodyResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
-    override val transformer = FirImplicitTypeBodyResolveTransformerAdapter(session, scopeSession)
+    override val transformer: FirImplicitTypeBodyResolveTransformerAdapter =
+        FirImplicitTypeBodyResolveTransformerAdapter(session, scopeSession)
 }
 
 @AdapterForResolveProcessor

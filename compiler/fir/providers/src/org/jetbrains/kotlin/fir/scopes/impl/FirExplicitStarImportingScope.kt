@@ -17,7 +17,7 @@ open class FirExplicitStarImportingScope(
     scopeSession: ScopeSession,
     excludedImportNames: Set<FqName>
 ) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir = true, excludedImportNames) {
-    override val starImports = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder }
+    override val starImports: List<FirResolvedImport> = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder }
 
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         starImports.mapTo(LinkedHashSet()) { it.packageFqName.asString() }.toList()

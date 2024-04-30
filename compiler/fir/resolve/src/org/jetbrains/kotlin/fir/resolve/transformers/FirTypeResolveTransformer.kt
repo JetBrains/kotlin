@@ -41,7 +41,7 @@ class FirTypeResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.TYPES) {
-    override val transformer = FirTypeResolveTransformer(session, scopeSession)
+    override val transformer: FirTypeResolveTransformer = FirTypeResolveTransformer(session, scopeSession)
 }
 
 fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
@@ -74,13 +74,13 @@ open class FirTypeResolveTransformer(
      * All current scopes sorted from outermost to innermost.
      */
     @PrivateForInline
-    var scopes = initialScopes.asReversed().toPersistentList()
+    var scopes: PersistentList<FirScope> = initialScopes.asReversed().toPersistentList()
 
     /**
      * Scopes that are accessible statically, i.e. [scopes] minus type parameter scopes.
      */
     @PrivateForInline
-    var staticScopes = scopes
+    var staticScopes: PersistentList<FirScope> = scopes
 
     @set:PrivateForInline
     var scopesBefore: PersistentList<FirScope>? = null
@@ -176,7 +176,7 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Any?) =
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Any?): FirConstructor =
         transformConstructor(errorPrimaryConstructor, data)
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias = whileAnalysing(session, typeAlias) {

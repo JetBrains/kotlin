@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
@@ -123,7 +124,7 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
     abstract val annotationTransformer: AbstractFirSpecificAnnotationResolveTransformer
     private val importTransformer = FirPartialImportResolveTransformer(session, computationSession)
 
-    val extensionService = session.extensionService
+    val extensionService: FirExtensionService = session.extensionService
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         throw IllegalStateException("Should not be here")
     }

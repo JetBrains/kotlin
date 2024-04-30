@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.model.typeConstructor
 
-val SAM_LOOKUP_NAME = Name.special("<SAM-CONSTRUCTOR>")
+val SAM_LOOKUP_NAME: Name = Name.special("<SAM-CONSTRUCTOR>")
 
 fun Candidate.resolveArgumentExpression(
     csBuilder: ConstraintSystemBuilder,

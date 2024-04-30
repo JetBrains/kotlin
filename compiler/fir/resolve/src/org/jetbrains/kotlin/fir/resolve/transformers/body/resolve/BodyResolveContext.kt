@@ -51,11 +51,11 @@ class BodyResolveContext(
     lateinit var file: FirFile
 
     @PrivateForInline
-    var regularTowerDataContexts = FirRegularTowerDataContexts(regular = FirTowerDataContext())
+    var regularTowerDataContexts: FirRegularTowerDataContexts = FirRegularTowerDataContexts(regular = FirTowerDataContext())
 
     // TODO: Rename to postponed
     @PrivateForInline
-    val specialTowerDataContexts = FirSpecialTowerDataContexts()
+    val specialTowerDataContexts: FirSpecialTowerDataContexts = FirSpecialTowerDataContexts()
 
     @OptIn(PrivateForInline::class)
     val towerDataContext: FirTowerDataContext

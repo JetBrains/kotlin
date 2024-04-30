@@ -38,7 +38,7 @@ abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker 
         _fir = e
     }
 
-    val isBound get() = _fir != null
+    val isBound: Boolean get() = _fir != null
 
     val origin: FirDeclarationOrigin
         get() = fir.origin

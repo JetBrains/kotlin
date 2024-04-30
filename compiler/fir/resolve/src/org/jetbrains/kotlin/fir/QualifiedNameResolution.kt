@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE = "_root_ide_package_"
+const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE: String = "_root_ide_package_"
 
 fun BodyResolveComponents.resolveRootPartOfQualifier(
     namedReference: FirSimpleNamedReference,

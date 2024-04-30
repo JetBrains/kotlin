@@ -88,7 +88,8 @@ class FirDeserializationContext(
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
-    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, isLocal = false).defaultType(allTypeParameters) }
+    val dispatchReceiver: ConeClassLikeType? =
+        relativeClassName?.let { ClassId(packageFqName, it, isLocal = false).defaultType(allTypeParameters) }
 
     companion object {
         fun createForPackage(

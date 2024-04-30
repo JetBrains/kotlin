@@ -49,10 +49,10 @@ class ResolvedLambdaAtom(
     val coerceFirstParameterToExtensionReceiver: Boolean
 ) : PostponedResolvedAtom() {
 
-    var typeVariableForLambdaReturnType = typeVariableForLambdaReturnType
+    var typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType? = typeVariableForLambdaReturnType
         private set
 
-    override var expectedType = expectedType
+    override var expectedType: ConeKotlinType? = expectedType
         private set
 
     lateinit var returnStatements: Collection<FirExpression>
@@ -132,7 +132,7 @@ class ResolvedCallableReferenceAtom(
     var hasBeenResolvedOnce: Boolean = false
     var hasBeenPostponed: Boolean = false
 
-    val mightNeedAdditionalResolution get() = !hasBeenResolvedOnce || hasBeenPostponed
+    val mightNeedAdditionalResolution: Boolean get() = !hasBeenResolvedOnce || hasBeenPostponed
 
     var resultingReference: FirNamedReference? = null
     var resultingTypeForCallableReference: ConeKotlinType? = null

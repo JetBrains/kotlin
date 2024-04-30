@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 
 abstract class FirAdditionalCheckersExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("ExtensionCheckers")
+        val NAME: FirExtensionPointName = FirExtensionPointName("ExtensionCheckers")
     }
 
     open val declarationCheckers: DeclarationCheckers = DeclarationCheckers.EMPTY

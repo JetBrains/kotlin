@@ -48,7 +48,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
     companion object {
-        val NON_EXISTENT_ID = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
+        val NON_EXISTENT_ID: ClassId = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
         private val typeForNonExistentClass = NON_EXISTENT_ID.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
     }
 

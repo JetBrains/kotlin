@@ -63,7 +63,7 @@ abstract class FirJavaFacade(
     private val classFinder: JavaClassFinder
 ) {
     companion object {
-        val VALUE_METHOD_NAME = Name.identifier("value")
+        val VALUE_METHOD_NAME: Name = Name.identifier("value")
         private const val PACKAGE_INFO_CLASS_NAME = "package-info"
     }
 

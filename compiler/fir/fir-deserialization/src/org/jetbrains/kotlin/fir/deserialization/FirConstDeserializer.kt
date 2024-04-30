@@ -21,7 +21,7 @@ open class FirConstDeserializer(
     val session: FirSession,
     private val protocol: SerializerExtensionProtocol
 ) {
-    protected val constantCache = mutableMapOf<CallableId, FirExpression>()
+    protected val constantCache: MutableMap<CallableId, FirExpression> = mutableMapOf()
 
     open fun loadConstant(
         propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver, isUnsigned: Boolean,

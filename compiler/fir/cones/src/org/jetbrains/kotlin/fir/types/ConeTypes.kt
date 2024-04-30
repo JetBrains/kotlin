@@ -56,7 +56,7 @@ class ConeErrorType(
             if (diagnostic.isNullable) ConeNullability.NULLABLE else ConeNullability.NOT_NULL
         } else ConeNullability.UNKNOWN
 
-    override fun equals(other: Any?) = this === other
+    override fun equals(other: Any?): Boolean = this === other
     override fun hashCode(): Int = System.identityHashCode(this)
 }
 

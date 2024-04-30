@@ -52,7 +52,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
-    var enableArrayOfCallTransformation = false
+    var enableArrayOfCallTransformation: Boolean = false
     var containingSafeCallExpression: FirSafeCallExpression? = null
 
     private val expressionResolutionExtensions = session.extensionService.expressionResolutionExtensions.takeIf { it.isNotEmpty() }

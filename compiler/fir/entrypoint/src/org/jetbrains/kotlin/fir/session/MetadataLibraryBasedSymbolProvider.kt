@@ -49,8 +49,9 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
 
     private val annotationDeserializer = KlibBasedAnnotationDeserializer(session)
     private val constDeserializer = FirConstDeserializer(session, KlibMetadataSerializerProtocol)
-    protected val deserializationConfiguration = CompilerDeserializationConfiguration(session.languageVersionSettings)
-    private val cachedFragments = mutableMapOf<L, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>>()
+    protected val deserializationConfiguration: CompilerDeserializationConfiguration =
+        CompilerDeserializationConfiguration(session.languageVersionSettings)
+    private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>> = mutableMapOf()
 
     private fun getPackageFragment(
         resolvedLibrary: L, packageStringName: String, packageMetadataPart: String
@@ -201,7 +202,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         packageFqName: FqName
     ): DeserializedContainerSource?
 
-    override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class) = false
+    override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean = false
 
     override fun getPackage(fqName: FqName): FqName? {
         return if (fqName in knownPackagesInLibraries) {

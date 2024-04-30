@@ -217,8 +217,8 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
 
     companion object {
         // Short-cut
-        val DECLARATIONS = STATUS
-        val ANALYZED_DEPENDENCIES = BODY_RESOLVE
+        val DECLARATIONS: FirResolvePhase = STATUS
+        val ANALYZED_DEPENDENCIES: FirResolvePhase = BODY_RESOLVE
     }
 }
 

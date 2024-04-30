@@ -14,7 +14,7 @@ abstract class FirScriptResolutionConfigurationExtension(
     session: FirSession,
 ) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("FirScriptResolutionConfiguration")
+        val NAME: FirExtensionPointName = FirExtensionPointName("FirScriptResolutionConfiguration")
     }
 
     final override val name: FirExtensionPointName

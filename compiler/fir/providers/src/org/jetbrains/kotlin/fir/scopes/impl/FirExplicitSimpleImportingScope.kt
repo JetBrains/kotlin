@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.name.Name
 
 class FirExplicitSimpleImportingScope(
     imports: List<FirImport>,
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
-    override val simpleImports =
+    override val simpleImports: Map<Name, List<FirResolvedImport>> =
         imports.filterIsInstance<FirResolvedImport>()
             .filter { !it.isAllUnder && it.importedName != null }
             .groupBy { it.aliasName ?: it.importedName!! }

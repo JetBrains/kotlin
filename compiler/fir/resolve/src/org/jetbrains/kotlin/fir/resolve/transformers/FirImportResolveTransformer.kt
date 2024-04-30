@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.FqName
 class FirImportResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
     session, scopeSession, FirResolvePhase.IMPORTS
 ) {
-    override val transformer = FirImportResolveTransformer(session)
+    override val transformer: FirImportResolveTransformer = FirImportResolveTransformer(session)
 }
 
 open class FirImportResolveTransformer protected constructor(

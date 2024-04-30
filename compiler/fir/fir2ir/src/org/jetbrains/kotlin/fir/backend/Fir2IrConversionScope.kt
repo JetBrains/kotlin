@@ -31,15 +31,15 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val scopeStack = mutableListOf<Scope>()
+    internal val scopeStack: MutableList<Scope> = mutableListOf()
 
     @PublishedApi
     @PrivateForInline
-    internal val containingFirClassStack = mutableListOf<FirClass>()
+    internal val containingFirClassStack: MutableList<FirClass> = mutableListOf()
 
     @PublishedApi
     @PrivateForInline
-    internal val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClassSymbol, IrConstructor>()
+    internal val currentlyGeneratedDelegatedConstructors: MutableMap<IrClassSymbol, IrConstructor> = mutableMapOf()
 
     inline fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
         _parentStack += parent
@@ -131,7 +131,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val functionStack = mutableListOf<IrFunction>()
+    internal val functionStack: MutableList<IrFunction> = mutableListOf()
 
     inline fun <T : IrFunction, R> withFunction(function: T, f: T.() -> R): R {
         functionStack += function
@@ -144,7 +144,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val propertyStack = mutableListOf<Pair<IrProperty, FirProperty?>>()
+    internal val propertyStack: MutableList<Pair<IrProperty, FirProperty?>> = mutableListOf()
 
     inline fun <R> withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> R): R {
         propertyStack += (property to firProperty)
@@ -157,7 +157,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val classStack = mutableListOf<IrClass>()
+    internal val classStack: MutableList<IrClass> = mutableListOf()
 
     inline fun <R> withClass(klass: IrClass, f: IrClass.() -> R): R {
         classStack += klass
@@ -170,11 +170,11 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val whenSubjectVariableStack = mutableListOf<IrVariable>()
+    internal val whenSubjectVariableStack: MutableList<IrVariable> = mutableListOf()
 
     @PublishedApi
     @PrivateForInline
-    internal val safeCallSubjectVariableStack = mutableListOf<IrVariable>()
+    internal val safeCallSubjectVariableStack: MutableList<IrVariable> = mutableListOf()
 
     inline fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
         if (subject != null) whenSubjectVariableStack += subject
@@ -256,7 +256,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val _initBlocksStack = mutableListOf<IrAnonymousInitializer>()
+    internal val _initBlocksStack: MutableList<IrAnonymousInitializer> = mutableListOf()
     internal val initBlocksStack: List<IrAnonymousInitializer>
         get() = _initBlocksStack
 

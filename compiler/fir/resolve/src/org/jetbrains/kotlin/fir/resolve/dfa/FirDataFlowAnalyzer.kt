@@ -43,10 +43,10 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class DataFlowAnalyzerContext(session: FirSession) {
-    val graphBuilder = ControlFlowGraphBuilder()
-    internal val variableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
+    val graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
+    internal val variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
 
-    var variableStorage = VariableStorageImpl(session)
+    var variableStorage: VariableStorageImpl = VariableStorageImpl(session)
         private set
 
     private var assignmentCounter = 0

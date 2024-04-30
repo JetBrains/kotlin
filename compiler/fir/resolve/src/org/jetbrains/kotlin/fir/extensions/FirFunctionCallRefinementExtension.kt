@@ -31,7 +31,7 @@ import kotlin.reflect.KClass
 @FirExtensionApiInternals
 abstract class FirFunctionCallRefinementExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("FunctionCallRefinementExtension")
+        val NAME: FirExtensionPointName = FirExtensionPointName("FunctionCallRefinementExtension")
     }
 
     final override val name: FirExtensionPointName

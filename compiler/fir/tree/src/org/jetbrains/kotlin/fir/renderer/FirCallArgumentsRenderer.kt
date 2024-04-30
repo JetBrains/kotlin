@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.name.Name
 
 open class FirCallArgumentsRenderer {
     internal lateinit var components: FirRendererComponents
-    protected val visitor get() = components.visitor
-    protected val printer get() = components.printer
+    protected val visitor: FirRenderer.Visitor get() = components.visitor
+    protected val printer: FirPrinter get() = components.printer
 
     open fun renderArgumentMapping(argumentMapping: FirAnnotationArgumentMapping) {
         printer.print("(")

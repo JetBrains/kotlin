@@ -154,14 +154,16 @@ class FirNameConflictsTracker : FirNameConflictsTrackerComponent() {
         val file: FirFile?,
     )
 
-    val redeclaredClassifiers = HashMap<ClassId, Set<ClassifierWithFile>>()
+    private val _redeclaredClassifiers: MutableMap<ClassId, Set<ClassifierWithFile>> = HashMap()
+    val redeclaredClassifiers: Map<ClassId, Set<ClassifierWithFile>>
+        get() = _redeclaredClassifiers
 
     override fun registerClassifierRedeclaration(
         classId: ClassId,
         newSymbol: FirClassLikeSymbol<*>, newSymbolFile: FirFile,
         prevSymbol: FirClassLikeSymbol<*>, prevSymbolFile: FirFile?,
     ) {
-        redeclaredClassifiers.merge(
+        _redeclaredClassifiers.merge(
             classId, linkedSetOf(ClassifierWithFile(newSymbol, newSymbolFile), ClassifierWithFile(prevSymbol, prevSymbolFile))
         ) { a, b -> a + b }
     }

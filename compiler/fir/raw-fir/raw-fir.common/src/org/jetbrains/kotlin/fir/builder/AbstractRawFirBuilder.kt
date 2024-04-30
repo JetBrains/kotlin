@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.parsing.*
@@ -50,10 +51,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
     abstract fun T.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
 
-    protected val implicitUnitType = baseSession.builtinTypes.unitType
-    protected val implicitAnyType = baseSession.builtinTypes.anyType
-    protected val implicitEnumType = baseSession.builtinTypes.enumType
-    protected val implicitAnnotationType = baseSession.builtinTypes.annotationType
+    protected val implicitUnitType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.unitType
+    protected val implicitAnyType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.anyType
+    protected val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
+    protected val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
 
     abstract val T.elementType: IElementType
     abstract val T.asText: String
@@ -76,7 +77,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         isExpect: Boolean,
         forceLocalContext: Boolean = false,
         l: () -> T,
-    ) = when {
+    ): T = when {
         forceLocalContext -> withForcedLocalContext {
             withChildClassNameRegardlessLocalContext(name, isExpect, l)
         }
@@ -179,7 +180,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         context.pushFirTypeParameters(status, currentFirTypeParameters)
     }
 
-    fun callableIdForName(name: Name) =
+    fun callableIdForName(name: Name): CallableId =
         when {
             context.className.shortNameOrSpecial() == SpecialNames.ANONYMOUS -> CallableId(
                 ClassId(context.packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, isLocal = true), name
@@ -313,7 +314,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
-    fun createErrorConstructorBuilder(diagnostic: ConeDiagnostic) =
+    fun createErrorConstructorBuilder(diagnostic: ConeDiagnostic): FirErrorPrimaryConstructorBuilder =
         FirErrorPrimaryConstructorBuilder().apply { this.diagnostic = diagnostic }
 
     fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget = prepareTarget(context.getLastLabel(firLabelUser))
@@ -1134,7 +1135,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
-    protected fun buildErrorTopLevelDestructuringDeclaration(source: KtSourceElement) = buildErrorProperty {
+    protected fun buildErrorTopLevelDestructuringDeclaration(source: KtSourceElement): FirErrorProperty = buildErrorProperty {
         this.source = source
         moduleData = baseModuleData
         origin = FirDeclarationOrigin.Source

@@ -176,4 +176,4 @@ fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLike
         isNullable = false,
     )
 
-val TYPE_PARAMETER_SCOPE_KEY = scopeSessionKey<FirTypeParameterSymbol, FirTypeScope>()
+val TYPE_PARAMETER_SCOPE_KEY: ScopeSessionKey<FirTypeParameterSymbol, FirTypeScope> = scopeSessionKey()

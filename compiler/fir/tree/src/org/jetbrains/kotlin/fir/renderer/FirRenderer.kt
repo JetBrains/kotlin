@@ -56,8 +56,8 @@ class FirRenderer(
     override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
 ) : FirRendererComponents {
 
-    override val visitor = Visitor()
-    override val printer = FirPrinter(builder)
+    override val visitor: Visitor = Visitor()
+    override val printer: FirPrinter = FirPrinter(builder)
 
     companion object {
         fun noAnnotationBodiesAccessorAndArguments(): FirRenderer = FirRenderer(
@@ -427,7 +427,9 @@ class FirRenderer(
             bodyRenderer?.renderBody(body, listOfNotNull<FirStatement>(delegatedConstructor))
         }
 
-        override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) = visitConstructor(errorPrimaryConstructor)
+        override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) {
+            visitConstructor(errorPrimaryConstructor)
+        }
 
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
             annotationRenderer?.render(propertyAccessor)

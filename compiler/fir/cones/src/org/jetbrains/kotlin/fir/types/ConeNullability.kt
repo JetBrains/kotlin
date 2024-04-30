@@ -13,6 +13,6 @@ enum class ConeNullability(val suffix: String) {
     val isNullable: Boolean get() = this != NOT_NULL
 
     companion object {
-        fun create(isNullable: Boolean) = if (isNullable) NULLABLE else NOT_NULL
+        fun create(isNullable: Boolean): ConeNullability = if (isNullable) NULLABLE else NOT_NULL
     }
 }

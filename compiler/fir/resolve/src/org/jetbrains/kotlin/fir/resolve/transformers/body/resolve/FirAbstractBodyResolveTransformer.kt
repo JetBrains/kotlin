@@ -119,7 +119,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val callResolver: FirCallResolver = FirCallResolver(
             this,
         )
-        val typeResolverTransformer = FirSpecificTypeResolverTransformer(
+        val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
             session
         )
         override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)

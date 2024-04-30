@@ -116,17 +116,17 @@ class Candidate(
     var numDefaults: Int = 0
     var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
-    val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
+    val postponedAtoms: MutableList<PostponedResolvedAtom> = mutableListOf()
 
     // PCLA-related parts
-    val postponedPCLACalls = mutableListOf<FirStatement>()
-    val lambdasAnalyzedWithPCLA = mutableListOf<FirAnonymousFunction>()
+    val postponedPCLACalls: MutableList<FirStatement> = mutableListOf()
+    val lambdasAnalyzedWithPCLA: MutableList<FirAnonymousFunction> = mutableListOf()
 
     // Currently, it's only about completion results writing for property delegation inference info
     // See the call sites of [FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot]
-    val onPCLACompletionResultsWritingCallbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
+    val onPCLACompletionResultsWritingCallbacks: MutableList<(ConeSubstitutor) -> Unit> = mutableListOf()
 
-    var lowestApplicability = CandidateApplicability.RESOLVED
+    var lowestApplicability: CandidateApplicability = CandidateApplicability.RESOLVED
         private set
 
     override var chosenExtensionReceiver: FirExpression? = givenExtensionReceiverOptions.singleOrNull()
@@ -210,7 +210,7 @@ class Candidate(
         }
     }
 
-    var hasVisibleBackingField = false
+    var hasVisibleBackingField: Boolean = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

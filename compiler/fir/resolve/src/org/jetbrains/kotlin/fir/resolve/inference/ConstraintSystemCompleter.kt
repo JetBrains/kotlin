@@ -48,7 +48,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         candidateReturnType: ConeKotlinType,
         context: ResolutionContext,
         analyzer: PostponedAtomAnalyzer,
-    ) = c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, analyzer)
+    ) {
+        c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, analyzer)
+    }
 
     private fun ConstraintSystemCompletionContext.runCompletion(
         completionMode: ConstraintSystemCompletionMode,

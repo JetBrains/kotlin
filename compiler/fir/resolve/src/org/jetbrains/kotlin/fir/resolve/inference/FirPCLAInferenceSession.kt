@@ -34,7 +34,7 @@ class FirPCLAInferenceSession(
     private val returnTypeCalculator: ReturnTypeCalculator,
 ) : FirInferenceSession() {
 
-    var currentCommonSystem = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
+    var currentCommonSystem: NewConstraintSystemImpl = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
         private set
 
     override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {

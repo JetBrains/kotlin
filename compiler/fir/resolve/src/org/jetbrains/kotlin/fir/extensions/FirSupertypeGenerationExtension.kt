@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 
 abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("SupertypeGenerator")
+        val NAME: FirExtensionPointName = FirExtensionPointName("SupertypeGenerator")
     }
 
     final override val name: FirExtensionPointName

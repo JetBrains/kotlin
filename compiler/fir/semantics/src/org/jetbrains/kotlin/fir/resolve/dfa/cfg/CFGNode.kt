@@ -28,7 +28,7 @@ annotation class CfgInternals
 
 sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int) {
     @OptIn(CfgInternals::class)
-    val id = owner.nodeCount++
+    val id: Int = owner.nodeCount++
 
     //   a ---> b ---> d
     //      \-> c -/
@@ -103,8 +103,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         }
     }
 
-    fun edgeFrom(other: CFGNode<*>) = _incomingEdges?.get(other) ?: Edge.Normal_Forward
-    fun edgeTo(other: CFGNode<*>) = other.edgeFrom(this)
+    fun edgeFrom(other: CFGNode<*>): Edge = _incomingEdges?.get(other) ?: Edge.Normal_Forward
+    fun edgeTo(other: CFGNode<*>): Edge = other.edgeFrom(this)
 
     abstract val fir: E
     var isDead: Boolean = false

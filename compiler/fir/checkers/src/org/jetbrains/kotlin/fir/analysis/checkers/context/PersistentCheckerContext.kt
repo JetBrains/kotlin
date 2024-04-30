@@ -146,7 +146,7 @@ class PersistentCheckerContext private constructor(
 
     override fun exitContractBody(): CheckerContextForProvider = toggleContractBody(newValue = false)
 
-    override fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext) =
+    override fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext): PersistentCheckerContext =
         copy(inlineFunctionBodyContext = context)
 
     override fun unsetInlineFunctionBodyContext(): CheckerContextForProvider = copy(inlineFunctionBodyContext = null)

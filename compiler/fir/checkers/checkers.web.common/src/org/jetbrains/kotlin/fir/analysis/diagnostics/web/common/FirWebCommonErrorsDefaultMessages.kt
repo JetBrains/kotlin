@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 
 @Suppress("unused")
 object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         map.put(WRONG_JS_QUALIFIER, "Qualifier contains illegal characters.")
         map.put(NESTED_EXTERNAL_DECLARATION, "Non-top-level 'external' declaration.")
         map.put(WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) cannot be external.", CommonRenderers.STRING)

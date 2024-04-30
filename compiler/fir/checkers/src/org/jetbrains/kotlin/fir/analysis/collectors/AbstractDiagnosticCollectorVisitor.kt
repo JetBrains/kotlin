@@ -30,7 +30,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: CheckerContextForProvider,
 ) : FirDefaultVisitor<Unit, Nothing?>() {
 
-    protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
+    protected open fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean = true
     protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
     protected open fun visitNestedElements(element: FirElement) {
@@ -125,8 +125,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
-    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) =
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) {
         visitConstructor(errorPrimaryConstructor, data)
+    }
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
         visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)

@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 
 abstract class FirSamConversionTransformerExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("SamConversionTransformerExtension")
+        val NAME: FirExtensionPointName = FirExtensionPointName("SamConversionTransformerExtension")
     }
 
     final override val name: FirExtensionPointName

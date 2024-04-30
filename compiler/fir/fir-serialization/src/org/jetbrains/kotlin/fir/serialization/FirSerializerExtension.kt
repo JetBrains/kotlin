@@ -26,7 +26,9 @@ abstract class FirSerializerExtension {
 
     abstract val metadataVersion: BinaryVersion
 
-    val annotationSerializer by lazy { FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider) }
+    val annotationSerializer: FirAnnotationSerializer by lazy {
+        FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider)
+    }
 
     abstract val constValueProvider: ConstValueProvider?
     protected abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?

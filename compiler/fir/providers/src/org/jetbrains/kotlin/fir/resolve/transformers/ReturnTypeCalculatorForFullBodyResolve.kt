@@ -21,11 +21,11 @@ class ReturnTypeCalculatorForFullBodyResolve private constructor(
     companion object {
         // It's actual only for local functions because simple members are being resolved at another phase.
         // Local properties are just unresolved if they are used recursively.
-        val Default = ReturnTypeCalculatorForFullBodyResolve(
+        val Default: ReturnTypeCalculatorForFullBodyResolve = ReturnTypeCalculatorForFullBodyResolve(
             DiagnosticKind.RecursionInImplicitTypes,
             "Recursion with local function"
         )
-        val Contract = ReturnTypeCalculatorForFullBodyResolve(
+        val Contract: ReturnTypeCalculatorForFullBodyResolve = ReturnTypeCalculatorForFullBodyResolve(
             DiagnosticKind.InferenceError,
             "Cannot calculate return type during full-body resolution (local class/object?)"
         )

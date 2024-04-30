@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
     session, scopeSession, FirResolvePhase.SUPER_TYPES
 ) {
-    override val transformer = FirSupertypeResolverTransformer(session, scopeSession)
+    override val transformer: FirSupertypeResolverTransformer = FirSupertypeResolverTransformer(session, scopeSession)
 }
 
 class FirSupertypeResolverTransformer(
@@ -249,7 +249,7 @@ open class FirSupertypeResolverVisitor(
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
 
     @PrivateForInline
-    val classDeclarationsStack = ArrayDeque<FirClass>()
+    val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
 
     init {
         containingDeclarations.forEach {

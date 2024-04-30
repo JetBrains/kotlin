@@ -2237,7 +2237,7 @@ open class PsiRawFirBuilder(
             containingDeclarationSymbol: FirBasedSymbol<*>?,
             allowLazyBody: Boolean = true,
             isLocal: Boolean = false,
-        ) = buildAnonymousInitializer {
+        ): FirAnonymousInitializer = buildAnonymousInitializer {
             withContainerSymbol(symbol, isLocal) {
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData

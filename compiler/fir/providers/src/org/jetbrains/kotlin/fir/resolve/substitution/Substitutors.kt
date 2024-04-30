@@ -284,7 +284,7 @@ class ConeSubstitutorByMap private constructor(
         return true
     }
 
-    override fun hashCode() = hashCode
+    override fun hashCode(): Int = hashCode
 
     override fun toString(): String {
         return substitution.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { (param, type) ->
@@ -341,7 +341,7 @@ class ConeRawScopeSubstitutor(
         }
     }
 
-    override fun equals(other: Any?) = other is ConeRawScopeSubstitutor
+    override fun equals(other: Any?): Boolean = other is ConeRawScopeSubstitutor
 
     override fun hashCode(): Int = 0
 }

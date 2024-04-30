@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
  * See `/docs/fir/k2_kmp.md`
  */
 class Fir2IrCommonMemberStorage(val firSignatureComposer: FirBasedSignatureComposer) {
-    val symbolTable = SymbolTable(signaturer = null, irFactory = IrFactoryImpl)
+    val symbolTable: SymbolTable = SymbolTable(signaturer = null, irFactory = IrFactoryImpl)
 
     val classCache: MutableMap<FirRegularClass, IrClassSymbol> = mutableMapOf()
 

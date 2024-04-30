@@ -52,7 +52,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     "kt",
     KotlinParserDefinition()
 ) {
-    override fun getTestDataPath() = KtTestUtil.getHomeDirectory()
+    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory()
 
     private fun createFile(filePath: String, fileType: IElementType): PsiFile {
         val psiFactory = KtPsiFactory(myProject)

@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 
 abstract class FirAssignExpressionAltererExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("AssignAlterer")
+        val NAME: FirExtensionPointName = FirExtensionPointName("AssignAlterer")
     }
 
     final override val name: FirExtensionPointName

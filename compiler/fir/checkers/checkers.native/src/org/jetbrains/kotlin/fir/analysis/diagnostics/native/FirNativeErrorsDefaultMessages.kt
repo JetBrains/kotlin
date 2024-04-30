@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.TWO_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION
 
 object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         map.put(THROWS_LIST_EMPTY, "Throws must have a non-empty class list.")
         map.put(INCOMPATIBLE_THROWS_OVERRIDE, "Member overrides different ''@Throws'' filter from ''{0}''.", SYMBOL)
         map.put(INCOMPATIBLE_THROWS_INHERITED, "Member inherits different ''@Throws'' filters from:{0}", SYMBOLS_ON_NEXT_LINES)

@@ -89,7 +89,7 @@ class IrBuiltInsOverFir(
     override val anyClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Any) }
 
     override val anyType: IrType get() = anyClass.defaultTypeWithoutArguments
-    override val anyNType by lazy { anyType.makeNullable() }
+    override val anyNType: IrType by lazy { anyType.makeNullable() }
 
     override val numberClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Number) }
     override val numberType: IrType get() = numberClass.defaultTypeWithoutArguments
@@ -250,7 +250,7 @@ class IrBuiltInsOverFir(
     override val functionClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Function) }
     override val kFunctionClass: IrClassSymbol by lazy { loadClass(StandardClassIds.KFunction) }
 
-    override val primitiveTypeToIrType by lazy {
+    override val primitiveTypeToIrType: Map<PrimitiveType, IrType> by lazy {
         mapOf(
             PrimitiveType.BOOLEAN to booleanType,
             PrimitiveType.CHAR to charType,
@@ -263,25 +263,25 @@ class IrBuiltInsOverFir(
         )
     }
 
-    private val primitiveIntegralIrTypes by lazy { listOf(byteType, shortType, intType, longType) }
-    override val primitiveFloatingPointIrTypes by lazy { listOf(floatType, doubleType) }
-    private val primitiveNumericIrTypes by lazy { primitiveIntegralIrTypes + primitiveFloatingPointIrTypes }
-    override val primitiveIrTypesWithComparisons by lazy { listOf(charType) + primitiveNumericIrTypes }
-    override val primitiveIrTypes by lazy { listOf(booleanType) + primitiveIrTypesWithComparisons }
-    private val baseIrTypes by lazy { primitiveIrTypes + stringType }
+    private val primitiveIntegralIrTypes: List<IrType> by lazy { listOf(byteType, shortType, intType, longType) }
+    override val primitiveFloatingPointIrTypes: List<IrType> by lazy { listOf(floatType, doubleType) }
+    private val primitiveNumericIrTypes: List<IrType> by lazy { primitiveIntegralIrTypes + primitiveFloatingPointIrTypes }
+    override val primitiveIrTypesWithComparisons: List<IrType> by lazy { listOf(charType) + primitiveNumericIrTypes }
+    override val primitiveIrTypes: List<IrType> by lazy { listOf(booleanType) + primitiveIrTypesWithComparisons }
+    private val baseIrTypes: List<IrType> by lazy { primitiveIrTypes + stringType }
 
     private fun primitiveIterator(primitiveType: PrimitiveType): IrClassSymbol {
         return loadClass(ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier("${primitiveType.typeName}Iterator")))
     }
 
-    override val booleanIterator by lazy { primitiveIterator(PrimitiveType.BOOLEAN) }
-    override val charIterator by lazy { primitiveIterator(PrimitiveType.CHAR) }
-    override val byteIterator by lazy { primitiveIterator(PrimitiveType.BYTE) }
-    override val shortIterator by lazy { primitiveIterator(PrimitiveType.SHORT) }
-    override val intIterator by lazy { primitiveIterator(PrimitiveType.INT) }
-    override val longIterator by lazy { primitiveIterator(PrimitiveType.LONG) }
-    override val floatIterator by lazy { primitiveIterator(PrimitiveType.FLOAT) }
-    override val doubleIterator by lazy { primitiveIterator(PrimitiveType.DOUBLE) }
+    override val booleanIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.BOOLEAN) }
+    override val charIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.CHAR) }
+    override val byteIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.BYTE) }
+    override val shortIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.SHORT) }
+    override val intIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.INT) }
+    override val longIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.LONG) }
+    override val floatIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.FLOAT) }
+    override val doubleIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.DOUBLE) }
 
     private fun loadPrimitiveArray(primitiveType: PrimitiveType): IrClassSymbol {
         return loadClass(ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("${primitiveType.typeName}Array")))
@@ -309,11 +309,16 @@ class IrBuiltInsOverFir(
         )
     }
 
-    override val primitiveTypesToPrimitiveArrays get() = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
-    override val primitiveArrayElementTypes get() = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
-    override val primitiveArrayForType get() = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
+    override val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
+        get() = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
 
-    private val _ieee754equalsFunByOperandType = mutableMapOf<IrClassifierSymbol, IrSimpleFunctionSymbol>()
+    override val primitiveArrayElementTypes: Map<IrClassSymbol, IrType?>
+        get() = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
+
+    override val primitiveArrayForType: Map<IrType?, IrClassSymbol>
+        get() = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
+
+    private val _ieee754equalsFunByOperandType: MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol> = mutableMapOf()
     override val ieee754equalsFunByOperandType: MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>
         get() = _ieee754equalsFunByOperandType
 
@@ -565,10 +570,10 @@ class IrBuiltInsOverFir(
         )
     }
 
-    private val functionNMap = mutableMapOf<Int, IrClass>()
-    private val kFunctionNMap = mutableMapOf<Int, IrClass>()
-    private val suspendFunctionNMap = mutableMapOf<Int, IrClass>()
-    private val kSuspendFunctionNMap = mutableMapOf<Int, IrClass>()
+    private val functionNMap: MutableMap<Int, IrClass> = mutableMapOf()
+    private val kFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
+    private val suspendFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
+    private val kSuspendFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun functionN(arity: Int): IrClass = functionNMap.getOrPut(arity) {

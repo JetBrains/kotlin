@@ -45,7 +45,8 @@ class JvmFir2IrExtensions(
         get() = listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
 
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
-    override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
+    override val cachedFields: CachedFieldsForObjectInstances =
+        CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 
     private val kotlinIrInternalPackage =
         IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)

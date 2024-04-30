@@ -15,7 +15,7 @@ abstract class FirAbstractPhaseTransformer<D>(
     val baseTransformerPhase: FirResolvePhase
 ) : FirDefaultTransformer<D>() {
 
-    open val transformerPhase get() = baseTransformerPhase
+    open val transformerPhase: FirResolvePhase get() = baseTransformerPhase
 
     abstract val session: FirSession
 

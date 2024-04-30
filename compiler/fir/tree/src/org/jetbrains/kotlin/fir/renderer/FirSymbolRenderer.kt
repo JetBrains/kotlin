@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 open class FirSymbolRenderer {
 
     internal lateinit var components: FirRendererComponents
-    protected val printer get() = components.printer
+    protected val printer: FirPrinter get() = components.printer
 
     open fun printReference(symbol: FirBasedSymbol<*>) {
         printer.print(renderReference(symbol))

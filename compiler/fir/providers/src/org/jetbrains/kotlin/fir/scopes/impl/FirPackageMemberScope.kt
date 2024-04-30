@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
@@ -72,4 +73,4 @@ class FirPackageMemberScope(
     override val scopeOwnerLookupNames: List<String> = SmartList(fqName.asString())
 }
 
-val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
+val PACKAGE_MEMBER: ScopeSessionKey<FqName, FirPackageMemberScope> = scopeSessionKey()

@@ -40,9 +40,9 @@ abstract class AbstractDiagnosticCollector(
     protected abstract fun createVisitor(components: DiagnosticCollectorComponents): CheckerRunningDiagnosticCollectorVisitor
 
     companion object {
-        const val SUPPRESS_ALL_INFOS = "infos"
-        const val SUPPRESS_ALL_WARNINGS = "warnings"
-        const val SUPPRESS_ALL_ERRORS = "errors"
+        const val SUPPRESS_ALL_INFOS: String = "infos"
+        const val SUPPRESS_ALL_WARNINGS: String = "warnings"
+        const val SUPPRESS_ALL_ERRORS: String = "errors"
 
         private fun correctDiagnosticCase(diagnostic: String): String = when (diagnostic) {
             SUPPRESS_ALL_INFOS, SUPPRESS_ALL_WARNINGS, SUPPRESS_ALL_ERRORS -> diagnostic

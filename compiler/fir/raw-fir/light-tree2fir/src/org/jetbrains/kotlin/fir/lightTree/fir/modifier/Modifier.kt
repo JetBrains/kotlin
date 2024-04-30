@@ -114,7 +114,7 @@ open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasConst(): Boolean = hasFlag(ModifierFlag.PARAMETER_CONST)
 
-    protected fun hasFlag(flag: ModifierFlag) = (modifiers and flag.value) == flag.value
+    protected fun hasFlag(flag: ModifierFlag): Boolean = (modifiers and flag.value) == flag.value
 
     protected fun setFlag(flag: ModifierFlag?) {
         if (flag != null) {

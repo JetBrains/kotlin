@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.Name
 
 class FirTypeArgumentListImpl(override val source: KtSourceElement?) : FirTypeArgumentList {
-    override val typeArguments = mutableListOf<FirTypeProjection>()
+    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
 }
 
 class FirQualifierPartImpl(

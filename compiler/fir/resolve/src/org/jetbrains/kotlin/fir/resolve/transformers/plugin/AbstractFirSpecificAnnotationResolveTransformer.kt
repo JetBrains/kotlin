@@ -290,13 +290,13 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     )
 
     @PrivateForInline
-    val argumentsTransformer = FirEnumAnnotationArgumentsTransformerDispatcher()
+    val argumentsTransformer: FirEnumAnnotationArgumentsTransformerDispatcher = FirEnumAnnotationArgumentsTransformerDispatcher()
 
     @PrivateForInline
     var owners: PersistentList<FirDeclaration> = persistentListOf()
 
     @PrivateForInline
-    val classDeclarationsStack = ArrayDeque<FirClass>().apply {
+    val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque<FirClass>().apply {
         for (declaration in containingDeclarations) {
             if (declaration is FirClass) {
                 add(declaration)
@@ -557,7 +557,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         } as FirConstructor
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) =
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?): FirConstructor =
         transformConstructor(errorPrimaryConstructor, data)
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): FirStatement {

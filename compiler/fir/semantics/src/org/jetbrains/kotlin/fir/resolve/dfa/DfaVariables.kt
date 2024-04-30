@@ -76,7 +76,7 @@ class RealVariable(
     variableIndexForDebug: Int,
     stability: PropertyStability,
 ) : DataFlowVariable(variableIndexForDebug) {
-    val dependentVariables = mutableSetOf<RealVariable>()
+    val dependentVariables: MutableSet<RealVariable> = mutableSetOf()
 
     val stability: PropertyStability = stability.combineWithReceiverStability((explicitReceiverVariable as? RealVariable)?.stability)
 

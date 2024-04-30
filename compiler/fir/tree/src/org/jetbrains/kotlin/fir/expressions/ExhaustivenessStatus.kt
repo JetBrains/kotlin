@@ -23,7 +23,7 @@ sealed class ExhaustivenessStatus {
 
     class NotExhaustive(val reasons: List<WhenMissingCase>) : ExhaustivenessStatus() {
         companion object {
-            val NO_ELSE_BRANCH = NotExhaustive(listOf(WhenMissingCase.Unknown))
+            val NO_ELSE_BRANCH: NotExhaustive = NotExhaustive(listOf(WhenMissingCase.Unknown))
         }
     }
 }

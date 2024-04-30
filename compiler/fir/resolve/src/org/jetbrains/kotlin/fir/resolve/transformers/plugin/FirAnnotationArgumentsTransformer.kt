@@ -53,7 +53,7 @@ open class FirAnnotationArgumentsTransformer(
     private val usualDeclarationTransformer = FirDeclarationsResolveTransformer(this)
 
     @PrivateForInline
-    var isInsideAnnotationArgument = false
+    var isInsideAnnotationArgument: Boolean = false
 
     @OptIn(PrivateForInline::class)
     inline fun <R> insideAnnotationArgument(action: () -> R): R {

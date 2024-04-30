@@ -52,7 +52,7 @@ object FirOptInUsageBaseChecker {
     ) {
         enum class Severity { WARNING, ERROR }
         companion object {
-            val DEFAULT_SEVERITY = Severity.ERROR
+            val DEFAULT_SEVERITY: Severity = Severity.ERROR
         }
 
         override fun equals(other: Any?): Boolean {

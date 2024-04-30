@@ -302,7 +302,7 @@ class JvmMappedScope(
     override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirNamedFunctionSymbol,
         processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
-    ) = ProcessorAction.NONE
+    ): ProcessorAction = ProcessorAction.NONE
 
     private val firKotlinClassConstructors by lazy(LazyThreadSafetyMode.PUBLICATION) {
         firKotlinClass.constructors(session)

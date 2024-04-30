@@ -30,4 +30,4 @@ class DeprecationsPerUseSite(
         else "org.jetbrains.kotlin.fir.declarations.DeprecationInfoForUseSites(all=$all, bySpecificSite=$bySpecificSite)"
 }
 
-val EmptyDeprecationsPerUseSite = DeprecationsPerUseSite(null, null)
+val EmptyDeprecationsPerUseSite: DeprecationsPerUseSite = DeprecationsPerUseSite(null, null)

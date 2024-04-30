@@ -48,9 +48,11 @@ abstract class FirAbstractStarImportingScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) =
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         processFunctionsByName(name, starImports, processor)
+    }
 
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) =
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         processPropertiesByName(name, starImports, processor)
+    }
 }

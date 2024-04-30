@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -31,7 +32,7 @@ class FirSingleLevelDefaultStarImportingScope(
     excludedImportNames + session.defaultImportProvider.excludedImports
 ), DefaultStarImportingScopeMarker {
     // TODO: put languageVersionSettings into FirSession?
-    override val starImports = run {
+    override val starImports: List<FirResolvedImport> = run {
         val defaultImportProvider = session.defaultImportProvider
         val allDefaultImports = priority.getAllDefaultImports(defaultImportProvider, LanguageVersionSettingsImpl.DEFAULT)
         allDefaultImports
