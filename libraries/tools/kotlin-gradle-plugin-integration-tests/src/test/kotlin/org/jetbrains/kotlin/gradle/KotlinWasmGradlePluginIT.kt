@@ -75,10 +75,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            projectPath.resolve(".yarnrc").toFile().writeText(
-                "--ignore-engines true"
-            )
-
             build("build") {
                 assertTasksExecuted(":kotlinNodeJsSetup")
                 assertTasksExecuted(":compileKotlinWasmJs")
