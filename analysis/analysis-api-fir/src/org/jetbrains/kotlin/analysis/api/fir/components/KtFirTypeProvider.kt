@@ -198,6 +198,9 @@ internal class KaFirTypeProvider(
                     is FirPropertyAccessExpression -> {
                         explicitReceiver.resolvedType.asKtType()
                     }
+                    is FirFunctionCall -> {
+                        explicitReceiver.resolvedType.asKtType()
+                    }
                     is FirResolvedQualifier -> {
                         explicitReceiver.symbol?.toLookupTag()?.constructType(
                             explicitReceiver.typeArguments.map { it.toConeTypeProjection() }.toTypedArray(),
