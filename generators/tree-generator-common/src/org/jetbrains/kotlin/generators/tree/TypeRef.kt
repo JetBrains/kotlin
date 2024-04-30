@@ -126,6 +126,9 @@ sealed interface ElementOrRef<Element> : ParametrizedTypeRef<ElementOrRef<Elemen
     override fun copy(nullable: Boolean): ElementRef<Element>
 }
 
+fun <Element : AbstractElement<Element, *, *>> ElementOrRef<Element>.toRef(): ElementRef<Element> =
+    ElementRef(element, args, nullable)
+
 data class ElementRef<Element : AbstractElement<Element, *, *>>(
     override val element: Element,
     override val args: Map<NamedTypeParameterRef, TypeRef> = emptyMap(),

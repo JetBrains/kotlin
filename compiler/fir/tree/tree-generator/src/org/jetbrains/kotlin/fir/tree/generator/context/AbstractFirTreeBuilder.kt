@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.ElementRef
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.toRef
 import org.jetbrains.kotlin.utils.DummyDelegate
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -45,10 +45,10 @@ abstract class AbstractFirTreeBuilder {
     private fun createElement(name: String, propertyName: String, kind: Element.Kind, vararg dependencies: Element): Element =
         Element(name, propertyName, kind).also {
             if (dependencies.isEmpty()) {
-                it.addParent(ElementRef(baseFirElement))
+                it.addParent(baseFirElement.toRef())
             }
             for (dependency in dependencies) {
-                it.addParent(ElementRef(dependency))
+                it.addParent(dependency.toRef())
             }
             elements += it
         }
