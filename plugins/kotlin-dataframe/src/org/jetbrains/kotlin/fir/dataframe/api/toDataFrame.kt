@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.fir.dataframe.api
 
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.fir.dataframe.Names
+import org.jetbrains.kotlin.fir.dataframe.classId
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
@@ -135,6 +137,11 @@ internal fun KotlinTypeFacade.toDataFrame(
                 ), session
             )
 
+    val excludes = traverseConfiguration.excludeProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
+    val excludedClasses = traverseConfiguration.excludeClasses.mapTo(mutableSetOf()) { it.argument.resolvedType }
+    val preserveClasses = traverseConfiguration.preserveClasses.mapNotNullTo(mutableSetOf()) { it.classId }
+    val preserveProperties = traverseConfiguration.preserveProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
+
     fun convert(classLike: ConeKotlinType, depth: Int): List<SimpleCol> {
         val symbol = classLike.toRegularClassSymbol(session) ?: return emptyList()
         val scope = symbol.unsubstitutedScope(session, ScopeSession(), false, FirResolvePhase.STATUS)
@@ -170,6 +177,8 @@ internal fun KotlinTypeFacade.toDataFrame(
         }
 
         return declarations
+            .filterNot { excludes.contains(it.first) }
+            .filterNot { excludedClasses.contains(it.first.resolvedReturnType) }
             .filter { it.first.effectiveVisibility == EffectiveVisibility.Public }
             .map { (it, name) ->
                 var resolvedReturnType = it.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
@@ -192,7 +201,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                     }
                 }
 
-                if (depth >= maxDepth || resolvedReturnType.isValueType()) {
+                if (depth >= maxDepth || resolvedReturnType.isValueType() || resolvedReturnType.classId in preserveClasses || it in preserveProperties ) {
                     SimpleCol(name, TypeApproximation(resolvedReturnType))
                 } else if (
                     resolvedReturnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection)), session) ||
@@ -221,7 +230,8 @@ internal fun KotlinTypeFacade.toDataFrame(
         arg.isStarProjection -> PluginDataFrameSchema(emptyList())
         else -> {
             val classLike = arg.type as ConeClassLikeType
-            PluginDataFrameSchema(convert(classLike, 0))
+            val columns = convert(classLike, 0)
+            PluginDataFrameSchema(columns)
         }
     }
 }

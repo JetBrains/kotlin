@@ -1,6 +1,5 @@
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
-import java.time.Year
 
 enum class Switch {
     ON, OFF
@@ -57,16 +56,14 @@ fun box(): String {
         }
     }
     res.str.print()
-    res.s1.print()
-    res.s2.s3.print()
     res.switch.print()
     res.boolean.print()
-    res.instant.print()
-    res.numberI.print()
     res.number.print()
     res.numberFloat.print()
     res.ll.print()
-    res.lld.forEach { it.r.print() }
     res.nullableNumber
+
+    val preservedRecord: DataColumn<PreservedRecord> = res.preservedRecord
+    val anotherRecord: DataColumn<AnotherRecord> = res.s2.preservedProperty
     return "OK"
 }
