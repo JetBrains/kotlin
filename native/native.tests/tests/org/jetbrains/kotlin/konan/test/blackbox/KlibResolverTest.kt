@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompi
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDENCY_VERSION
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_LIBRARY_VERSION
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncompatibleAbiMessages
-import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
+import org.jetbrains.kotlin.test.utils.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -123,6 +124,43 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         } catch (cte: CompilationToolException) {
             if (!cte.reason.contains("The library requires unknown IR provider: UNSUPPORTED"))
                 throw cte
+        }
+    }
+
+    @Test
+    fun testDependencyVersionsAreNotEnforced() {
+        val modules = createModules(
+            Module("liba"),
+            Module("libb", "liba"),
+            Module("libc", "liba", "libb"),
+        )
+
+        // Control compilation -- should finish successfully.
+        modules.compileModules(
+            produceUnpackedKlibs = true,
+            useLibraryNamesInCliArguments = false
+        )
+
+        // Compilation with patched manifest -- should finish successfully too.
+        modules.compileModules(
+            produceUnpackedKlibs = true,
+            useLibraryNamesInCliArguments = false,
+        ) { module, klib ->
+            when (module.name) {
+                "liba" -> {
+                    // set the library version = 1.0
+                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                        properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
+                    }
+                }
+                "libb" -> {
+                    // pretend it depends on liba v2.0
+                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                        properties.entries.removeIf { it.key.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }
+                        properties[KLIB_PROPERTY_DEPENDENCY_VERSION + "_liba"] = "2.0"
+                    }
+                }
+            }
         }
     }
 
