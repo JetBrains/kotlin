@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
 
 // MODULE: separate
 // FILE: J2.java

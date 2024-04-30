@@ -4814,6 +4814,12 @@ internal class SyntheticPropertyWithoutJavaOriginImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.SyntheticPropertyWithoutJavaOrigin
 
+internal class JavaFieldShadowedByKotlinPropertyImpl(
+    override val kotlinProperty: KtVariableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.JavaFieldShadowedByKotlinProperty
+
 internal class ImplementingFunctionInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

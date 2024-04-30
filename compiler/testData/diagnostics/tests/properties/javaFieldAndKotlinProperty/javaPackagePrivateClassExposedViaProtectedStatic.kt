@@ -1,9 +1,5 @@
-// TARGET_BACKEND: JVM_IR
-// COMMENTED[LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty] uncomment when KT-56386 is fixed
-// IGNORE_BACKEND_K1: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// Reason: KT-56386 is not fixed yet
-// CHECK_BYTECODE_TEXT
+// LANGUAGE: -ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
+// ISSUE: KT-56386
 
 // FILE: p/PackagePrivateJavaClass.java
 package p;
@@ -33,5 +29,3 @@ class KotlinWrapper : JavaWrapper() {
 fun box(): String {
     return KotlinWrapper().bar()
 }
-
-// 1 GETFIELD p/JavaWrapper\$JavaDerived.foo
