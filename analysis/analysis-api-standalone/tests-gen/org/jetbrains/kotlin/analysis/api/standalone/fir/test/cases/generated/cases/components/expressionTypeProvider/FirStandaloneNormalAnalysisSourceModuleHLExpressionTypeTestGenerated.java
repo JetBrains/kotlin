@@ -179,6 +179,18 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("methodReference_instance_convertedTo_Runnable.kt")
+  public void testMethodReference_instance_convertedTo_Runnable() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/methodReference_instance_convertedTo_Runnable.kt");
+  }
+
+  @Test
+  @TestMetadata("methodReference_instance_convertedTo_Supplier.kt")
+  public void testMethodReference_instance_convertedTo_Supplier() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/methodReference_instance_convertedTo_Supplier.kt");
+  }
+
+  @Test
   @TestMetadata("nameReference.kt")
   public void testNameReference() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference.kt");
