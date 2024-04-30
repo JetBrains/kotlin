@@ -536,19 +536,6 @@ class ConeOverloadConflictResolver(
                 call.argumentMapping?.mapTo(this) { (_, parameter) ->
                     parameter.toTypeWithConversion(session, call)
                 }
-
-                if (false) {
-                    // When we create signatures for unsuccessful candidates, some parameters might be missing an argument.
-                    // When necessary, we consider those too.
-                    // fun foo(a: String, b: Int)
-                    // fun foo(a: String, c: Boolean)
-                    // foo(a)
-                    // Here, no argument is passed for the parameters b and c, but the signatures will be different.
-                    call.diagnostics.mapNotNullTo(this) {
-                        if (it !is NoValueForParameter) return@mapNotNullTo null
-                        it.valueParameter.toTypeWithConversion(session, call)
-                    }
-                }
             }
         }
     }
