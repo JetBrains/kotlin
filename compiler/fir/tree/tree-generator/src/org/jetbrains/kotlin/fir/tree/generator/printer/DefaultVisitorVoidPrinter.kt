@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import org.jetbrains.kotlin.generators.tree.printer.printBlock
 
 internal class DefaultVisitorVoidPrinter(
     printer: ImportCollectingPrinter,
@@ -38,7 +39,9 @@ internal class DefaultVisitorVoidPrinter(
                 hasDataParameter = false,
                 override = true,
             )
-            println(" = ", parentInVisitor.visitFunctionName, "(", element.visitorParameterName, ")")
+            printBlock {
+                println(parentInVisitor.visitFunctionName, "(", element.visitorParameterName, ")")
+            }
             println()
         }
     }

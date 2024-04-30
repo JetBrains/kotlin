@@ -455,14 +455,18 @@ fun ImportCollectingPrinter.printAcceptVoidMethod(visitorType: ClassRef<*>, tree
     val returnType = StandardTypes.unit
     printKDoc(acceptMethodKDoc(visitorParameter, null, returnType, treeName))
     printFunctionDeclaration("accept", listOf(visitorParameter), returnType)
-    println(" = accept(", visitorParameter.name, ", null)")
+    printBlock {
+        println("accept(", visitorParameter.name, ", null)")
+    }
 }
 
 fun ImportCollectingPrinter.printAcceptChildrenVoidMethod(visitorType: ClassRef<*>) {
     val visitorParameter = FunctionParameter("visitor", visitorType)
     printKDoc(acceptChildrenKDoc(visitorParameter, null))
     printFunctionDeclaration("acceptChildren", listOf(visitorParameter), StandardTypes.unit)
-    println(" = acceptChildren(", visitorParameter.name, ", null)")
+    printBlock {
+        println("acceptChildren(", visitorParameter.name, ", null)")
+    }
 }
 
 fun ImportCollectingPrinter.printTransformVoidMethod(element: AbstractElement<*, *, *>, transformerType: ClassRef<*>, treeName: String) {
