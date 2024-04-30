@@ -166,7 +166,7 @@ class FirDelegatedPropertyInferenceSession(
                 // Reversed here bc we want top-most call to avoid exponential visit
                 val containingCandidateForLambda = notCompletedCalls.asReversed().first {
                     var found = false
-                    it.processAllContainingCallCandidates(processBlocks = true) { subCandidate ->
+                    it.processAllContainingCallCandidates { subCandidate ->
                         if (subCandidate.postponedAtoms.contains(lambdaAtom)) {
                             found = true
                         }
