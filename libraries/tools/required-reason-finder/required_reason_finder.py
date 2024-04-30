@@ -1,6 +1,7 @@
 from subprocess import DEVNULL, PIPE
 from shutil import copyfile
 from pathlib import Path
+from typing import List
 import urllib.request
 import subprocess
 import argparse
@@ -39,10 +40,13 @@ def main():
         download_dist(konan_home, kotlin_version, arch)
 
     libraries = filter(library_filter, retrieve_libraries_from_gradle_project(target, verbose))
+    libraries = list(map(lambda it: it.strip(), libraries))
 
     all_clear = True
-    for it in libraries:
-        all_clear = check_library(konan_home, it.strip(), verbose) and all_clear
+    all_clear = check_for_compose(libraries) and all_clear
+
+    for library in libraries:
+        all_clear = check_library(konan_home, library, verbose) and all_clear
 
     if all_clear:
         print("\n" + green("No usages of required reason APIs found"))
@@ -103,14 +107,12 @@ def run_gradle_with_injected_code(injected_kts: str, injected: str, error: Excep
             args=[str(gradlew_path)] + args,
             cwd=working_dir,
             stdout=None if verbose else DEVNULL,
-            stderr=None if verbose else DEVNULL,
+            stderr=None,
         )
         if result.returncode != 0:
             raise error
     finally:
-        build_gradle.unlink()
-        copyfile(build_gradle_backup, build_gradle)
-        build_gradle_backup.unlink()
+        os.replace(build_gradle_backup, build_gradle)
 
 
 def retrieve_libraries_from_gradle_project(target: str, verbose: bool) -> list[str]:
@@ -123,11 +125,9 @@ def retrieve_libraries_from_gradle_project(target: str, verbose: bool) -> list[s
             val libraries = compileTask.map { it.libraries + it.outputFile.get() }
             val output = file("$name.txt")
             val mimallocWarning = org.jetbrains.kotlin.tooling.core.KotlinToolingVersion(org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion(logger)) < org.jetbrains.kotlin.tooling.core.KotlinToolingVersion("1.9.20")
-            val composeWarning = pluginManager.hasPlugin("org.jetbrains.compose")
             dependsOn(compileTask)
             doFirst {
                 if (mimallocWarning) output.appendText("{{kotlin_mimalloc_warning}}\\n")
-                if (composeWarning) output.appendText("{{compose_warning}}\\n")
                 libraries.get().forEach { output.appendText(it.absolutePath + "\\n") }
             }
         }
@@ -140,11 +140,9 @@ def retrieve_libraries_from_gradle_project(target: str, verbose: bool) -> list[s
         def libraries = _compileTask.map { it.libraries + it.outputFile.get() }
         def output = file("${name}.txt")
         def mimallocWarning = org.jetbrains.kotlin.tooling.core.KotlinToolingVersionKt.KotlinToolingVersion(org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapperKt.getKotlinPluginVersion(logger)) < org.jetbrains.kotlin.tooling.core.KotlinToolingVersionKt.KotlinToolingVersion("1.9.20")
-        def composeWarning = pluginManager.hasPlugin("org.jetbrains.compose")
         dependsOn(_compileTask)
         doFirst {
             if (mimallocWarning) output.append("{{kotlin_mimalloc_warning}}\\n")
-            if (composeWarning) output.append("{{compose_warning}}\\n")
             libraries.get().forEach { output.append(it.absolutePath + "\\n") }
         }
     }
@@ -156,9 +154,9 @@ def retrieve_libraries_from_gradle_project(target: str, verbose: bool) -> list[s
     error = ChildProcessError(f"Gradle invocation failed. Please check that the project can be compiled with '$PROJECT_ROOT/gradlew compileKotlin{target}'")
 
     try:
-        print("Running Gradle to retrieve the list of dependencies... ", end="")
+        print("Running Gradle to retrieve the list of dependencies... ")
         run_gradle_with_injected_code(build_gradle_kts_inject, build_gradle_inject, error, [libraries_task], verbose)
-        print("success!")
+        print("...success!")
 
         with open(libraries_txt, 'r') as file:
             return file.readlines()
@@ -170,10 +168,10 @@ def retrieve_libraries_from_gradle_project(target: str, verbose: bool) -> list[s
 def library_filter(library: str):
     special = library.startswith("{{")
     name = os.path.basename(library).strip()
-    platform = name.startswith("org.jetbrains.kotlin.native.platform.")
+    platform_lib = name.startswith("org.jetbrains.kotlin.native.platform.")
     cinterop = ("-cinterop-" in name)
     klib = name.endswith(".klib")
-    return special or (klib and not platform and not cinterop)
+    return special or (klib and not platform_lib and not cinterop)
 
 
 def dump_imported_platform_signatures(konan_home: Path, library: str, verbose: bool):
@@ -198,14 +196,13 @@ def dump_imported_platform_signatures(konan_home: Path, library: str, verbose: b
 def check_library(konan_home: Path, library: str, verbose: bool) -> bool:
     if library == "{{kotlin_mimalloc_warning}}":
         return print_kotlin_mimalloc_warning()
-    if library == "{{compose_warning}}":
-        return print_compose_warning()
 
     required_reason_symbols = [
         # File timestamp APIs
         "platform.Foundation/NSFileCreationDate",
         "platform.Foundation/NSFileModificationDate",
         "platform.UIKit/UIDocument.fileModificationDate",
+        "platform.Foundation/fileModificationDate",
         "platform.Foundation/NSURLContentModificationDateKey",
         "platform.Foundation/NSURLCreationDateKey",
         "platform.posix/getattrlist",
@@ -241,6 +238,7 @@ def check_library(konan_home: Path, library: str, verbose: bool) -> bool:
 
     used_symbols = []
 
+    library_name = os.path.basename(library)
     signatures = dump_imported_platform_signatures(konan_home, library, verbose)
     for symbol in required_reason_symbols:
         for signature in signatures:
@@ -248,14 +246,12 @@ def check_library(konan_home: Path, library: str, verbose: bool) -> bool:
                 used_symbols.append(symbol)
                 break
 
-    library_name = library if verbose else os.path.basename(library)
-
     if used_symbols:
-        print(f"\nFound usages of required reason API in {yellow(library_name)}:")
+        print(f"\nFound usages of required reason API in {yellow(library_name)} from {library}")
         print("\t" + "\n\t".join(used_symbols))
         return False
     elif verbose:
-        print(f"\nNo usages of required reason API in {green(library_name)}")
+        print(f"\nNo usages of required reason API in {green(library_name)} from {library}")
 
     return True
 
@@ -267,11 +263,14 @@ Kotlin is using {yellow("mach_absolute_time")} from the required reason API list
     return False
 
 
-def print_compose_warning():
-    print(f"""
+def check_for_compose(libraries: List[str]) -> bool:
+    for library in libraries:
+        if os.path.basename(library) == "skiko.klib":
+            print(f"""
 Compose Multiplatform for iOS is using {yellow("stat")} and {yellow("fstat")} from from the required reason API list
 \tSee more details here: https://kotl.in/rx45vh""")
-    return False
+            return False
+    return True
 
 
 def yellow(value: str) -> str:
@@ -286,5 +285,6 @@ class Colors:
     reset = "\u001B[0m"
     green = "\u001B[32m"
     yellow = "\u001B[33m"
+
 
 main()
