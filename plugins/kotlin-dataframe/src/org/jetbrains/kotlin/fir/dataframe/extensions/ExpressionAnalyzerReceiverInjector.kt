@@ -78,9 +78,13 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
                 val maxDepth = when (argument) {
                     null -> 0
                     is FirLiteralExpression<*> -> (argument.value as Number).toInt()
-                    else -> TODO(argument::class.toString())
+                    else -> null
                 }
-                toDataFrame(maxDepth, call, TraverseConfiguration())
+                if (maxDepth != null) {
+                    toDataFrame(maxDepth, call, TraverseConfiguration())
+                } else {
+                    PluginDataFrameSchema(emptyList())
+                }
             }
             "toDataFrameDefault" -> {
                 val maxDepth = 0
