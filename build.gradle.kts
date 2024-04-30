@@ -1,8 +1,6 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 buildscript {
@@ -1118,18 +1116,14 @@ val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        // Node.js with canary v8 that supports recent Wasm GC changes
-        version = "21.0.0-v8-canary20231019bd785be450"
+        version = "22.0.0"
         downloadBaseUrl = if (cacheRedirectorEnabled)
-            "https://cache-redirector.jetbrains.com/nodejs.org/download/v8-canary"
+            "https://cache-redirector.jetbrains.com/nodejs.org/dist"
         else
-            "https://nodejs.org/download/v8-canary"
+            "https://nodejs.org/dist"
 
         npmInstallTaskProvider.configure {
             args += listOf("--network-concurrency", "1", "--mutex", "network")
-            // It's required to pass compatibility checks in some NPM packages while using Node.js with Canary v8.
-            // TODO remove as soon as we switch to release build of Node.js.
-            args += listOf("--ignore-engines")
         }
     }
 }
