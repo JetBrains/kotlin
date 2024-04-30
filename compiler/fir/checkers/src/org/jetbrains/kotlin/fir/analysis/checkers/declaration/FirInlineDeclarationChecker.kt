@@ -258,14 +258,14 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         private fun checkVisibilityAndAccess(
             accessExpression: FirStatement,
-            calledDeclaration: FirCallableSymbol<*>?,
+            calledDeclaration: FirCallableSymbol<*>,
             source: KtSourceElement,
             context: CheckerContext,
             reporter: DiagnosticReporter,
         ) {
-            if (calledDeclaration == null ||
+            if (// Access of backing field (e.g. from getter) is not important, see inline/property/propertyWithBackingField.kt
                 calledDeclaration.callableId.callableName == BACKING_FIELD ||
-                calledDeclaration is FirPropertySymbol && calledDeclaration.isConst &&
+                // Any annotations do not rely to visibility problems
                 context.callsOrAssignments.any { it is FirAnnotationCall }
             ) {
                 return
