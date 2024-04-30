@@ -1,6 +1,0 @@
-framework module embedAndSign {
-    umbrella header "embedAndSign.h"
-
-    export *
-    module * { export * }
-}
