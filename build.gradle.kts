@@ -192,12 +192,13 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:fir2ir" // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
 ).also { extra["firCompilerCoreModules"] = it }
 
-val firAllCompilerModules = firCompilerCoreModules +
-        arrayOf(
+val firAllCompilerModules: Array<String> = (
+        firCompilerCoreModules + arrayOf(
             ":compiler:fir:raw-fir:light-tree2fir",
             ":compiler:fir:analysis-tests",
             ":compiler:fir:analysis-tests:legacy-fir-tests"
         )
+        ).also { extra["firAllCompilerModules"] = it }
 
 val fe10CompilerModules = arrayOf(
     ":compiler",

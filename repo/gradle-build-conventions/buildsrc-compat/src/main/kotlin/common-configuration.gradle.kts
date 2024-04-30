@@ -119,6 +119,13 @@ fun Project.configureJavaBasePlugin() {
 val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
 val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
 
+/**
+ * In all specified modules `-XXexplicit-return-types` flag will be added to warn about
+ *   not specified return types for public declarations
+ */
+@Suppress("UNCHECKED_CAST")
+val modulesWithRequiredExplicitTypes = rootProject.extra["firAllCompilerModules"] as Array<String>
+
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val commonCompilerArgs = listOfNotNull(
@@ -142,6 +149,9 @@ fun Project.configureKotlinCompilationOptions() {
 
                 if (project.path in projectsUsedInIntelliJKotlinPlugin) {
                     apiVersion.set(KotlinVersion.fromVersion(kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin))
+                }
+                if (project.path in modulesWithRequiredExplicitTypes) {
+                    freeCompilerArgs.add("-XXexplicit-return-types=warning")
                 }
             }
 
