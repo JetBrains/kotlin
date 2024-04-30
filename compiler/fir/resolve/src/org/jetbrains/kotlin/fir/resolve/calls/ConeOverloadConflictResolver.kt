@@ -378,7 +378,7 @@ class ConeOverloadConflictResolver(
      * Returns `true` if [call1] is definitely more or equally specific [call2],
      * `false` otherwise.
      */
-    protected fun compareCallsByUsedArguments(
+    private fun compareCallsByUsedArguments(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>,
         discriminateGenerics: Boolean,
@@ -455,7 +455,7 @@ class ConeOverloadConflictResolver(
             }
     }
 
-    protected fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
+    private fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
         return when (val declaration = call.symbol.fir) {
             is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
@@ -468,7 +468,7 @@ class ConeOverloadConflictResolver(
         }
     }
 
-    protected fun createFlatSignature(call: Candidate, variable: FirVariable): FlatSignature<Candidate> {
+    private fun createFlatSignature(call: Candidate, variable: FirVariable): FlatSignature<Candidate> {
         return FlatSignature(
             origin = call,
             typeParameters = (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
@@ -482,7 +482,7 @@ class ConeOverloadConflictResolver(
         )
     }
 
-    protected fun createFlatSignature(call: Candidate, constructor: FirConstructor): FlatSignature<Candidate> {
+    private fun createFlatSignature(call: Candidate, constructor: FirConstructor): FlatSignature<Candidate> {
         return FlatSignature(
             origin = call,
             typeParameters = constructor.typeParameters.map { it.symbol.toLookupTag() },
@@ -497,7 +497,7 @@ class ConeOverloadConflictResolver(
         )
     }
 
-    protected fun createFlatSignature(call: Candidate, function: FirSimpleFunction): FlatSignature<Candidate> {
+    private fun createFlatSignature(call: Candidate, function: FirSimpleFunction): FlatSignature<Candidate> {
         return FlatSignature(
             origin = call,
             typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },
@@ -596,7 +596,7 @@ class ConeOverloadConflictResolver(
 }
 
 class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val session: FirSession) : SimpleConstraintSystem {
-    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker = with(context) {
+    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker {
         val csBuilder = system.getBuilder()
         val substitutionMap = typeParameters.associateBy({ (it as ConeTypeParameterLookupTag).typeParameterSymbol }) {
             require(it is ConeTypeParameterLookupTag)
