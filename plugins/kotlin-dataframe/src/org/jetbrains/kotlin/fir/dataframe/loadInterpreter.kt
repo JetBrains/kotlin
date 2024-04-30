@@ -55,12 +55,12 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
 
 internal val KotlinTypeFacade.loadInterpreter: FirFunctionCall.() -> Interpreter<*>? get() = { this.loadInterpreter(session) }
 
-internal val FirGetClassCall.classId: ClassId
+internal val FirGetClassCall.classId: ClassId?
     get() {
         return when (val argument = argument) {
             is FirResolvedQualifier -> argument.classId!!
-            is FirClassReferenceExpression -> argument.classTypeRef.coneType.classId!!
-            else -> error("")
+            is FirClassReferenceExpression -> argument.classTypeRef.coneType.classId
+            else -> null
         }
     }
 
