@@ -1129,11 +1129,9 @@ val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        version = "22.0.0"
-        downloadBaseUrl = if (cacheRedirectorEnabled)
-            "https://cache-redirector.jetbrains.com/nodejs.org/dist"
-        else
-            "https://nodejs.org/dist"
+        if (cacheRedirectorEnabled) {
+            downloadBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
+        }
 
         npmInstallTaskProvider.configure {
             args += listOf("--network-concurrency", "1", "--mutex", "network")
