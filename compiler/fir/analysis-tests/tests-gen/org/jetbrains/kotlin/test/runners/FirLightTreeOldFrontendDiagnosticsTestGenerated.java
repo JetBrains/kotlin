@@ -19888,6 +19888,24 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("localTypeNullability.kt")
+        public void testLocalTypeNullability() {
+          runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/localTypeNullability.kt");
+        }
+
+        @Test
+        @TestMetadata("localTypeNullability_after.kt")
+        public void testLocalTypeNullability_after() {
+          runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/localTypeNullability_after.kt");
+        }
+
+        @Test
+        @TestMetadata("localTypeNullability_before.kt")
+        public void testLocalTypeNullability_before() {
+          runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/localTypeNullability_before.kt");
+        }
+
+        @Test
         @TestMetadata("nonTrivialVariance.kt")
         public void testNonTrivialVariance() {
           runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/nonTrivialVariance.kt");
@@ -26073,6 +26091,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("unsafeAssignmentOfNullToJavaNotNullable.kt")
+      public void testUnsafeAssignmentOfNullToJavaNotNullable() {
+        runTest("compiler/testData/diagnostics/tests/nullableTypes/unsafeAssignmentOfNullToJavaNotNullable.kt");
+      }
+
+      @Test
       @TestMetadata("unsafeCallOnOperatorRedCode.kt")
       public void testUnsafeCallOnOperatorRedCode() {
         runTest("compiler/testData/diagnostics/tests/nullableTypes/unsafeCallOnOperatorRedCode.kt");
@@ -29162,6 +29186,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("kt57620.kt")
       public void testKt57620() {
         runTest("compiler/testData/diagnostics/tests/rawTypes/kt57620.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideRawTypedJavaMethodWithGenericTyped.kt")
+      public void testOverrideRawTypedJavaMethodWithGenericTyped() {
+        runTest("compiler/testData/diagnostics/tests/rawTypes/overrideRawTypedJavaMethodWithGenericTyped.kt");
       }
 
       @Test
@@ -32767,6 +32797,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("interdependentStarProjections.kt")
         public void testInterdependentStarProjections() {
           runTest("compiler/testData/diagnostics/tests/scopes/variantProjections/interdependentStarProjections.kt");
+        }
+
+        @Test
+        @TestMetadata("irrelevantUnsafeVariance.kt")
+        public void testIrrelevantUnsafeVariance() {
+          runTest("compiler/testData/diagnostics/tests/scopes/variantProjections/irrelevantUnsafeVariance.kt");
         }
 
         @Test
@@ -38922,6 +38958,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("chainedUnitSuspendConversion.kt")
       public void testChainedUnitSuspendConversion() {
         runTest("compiler/testData/diagnostics/tests/unitConversion/chainedUnitSuspendConversion.kt");
+      }
+
+      @Test
+      @TestMetadata("expressionsOnVariablesAndInvokeResolution.kt")
+      public void testExpressionsOnVariablesAndInvokeResolution() {
+        runTest("compiler/testData/diagnostics/tests/unitConversion/expressionsOnVariablesAndInvokeResolution.kt");
       }
 
       @Test
