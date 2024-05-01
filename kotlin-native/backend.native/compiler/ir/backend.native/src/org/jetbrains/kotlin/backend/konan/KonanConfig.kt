@@ -169,6 +169,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: defaultGcMarkSingleThreaded
     }
 
+    private val defaultFixedBlockPageSize: UInt get() = 128u
+
+    val fixedBlockPageSize: UInt
+        get() = configuration.get(BinaryOptions.fixedBlockPageSize) ?: defaultFixedBlockPageSize
+
     val concurrentWeakSweep: Boolean
         get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
 
@@ -528,6 +533,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-disable_mmap${if (disableMmap) "TRUE" else "FALSE"}")
         if (gcMarkSingleThreaded != defaultGcMarkSingleThreaded)
             append("-gc_mark_single_threaded${if (gcMarkSingleThreaded) "TRUE" else "FALSE"}")
+        if (fixedBlockPageSize != defaultFixedBlockPageSize)
+            append("-fixed_block_page_size$fixedBlockPageSize")
     }
 
     private val userCacheFlavorString = buildString {

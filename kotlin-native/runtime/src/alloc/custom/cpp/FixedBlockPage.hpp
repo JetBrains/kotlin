@@ -33,12 +33,14 @@ struct alignas(8) FixedBlockCell {
 
 class alignas(kPageAlignment) FixedBlockPage : public MultiObjectPage<FixedBlockPage> {
 public:
-    static inline constexpr const size_t SIZE = 256 * KiB;
+    static PERFORMANCE_INLINE size_t pageSize() {
+        return compiler::fixedBlockPageSize();
+    }
 
     static inline constexpr const int MAX_BLOCK_SIZE = 128;
 
-    static inline constexpr size_t cellCount() {
-        return (SIZE - sizeof(FixedBlockPage)) / sizeof(FixedBlockCell);
+    static PERFORMANCE_INLINE size_t cellCount() {
+        return (pageSize() - sizeof(FixedBlockPage)) / sizeof(FixedBlockCell);
     }
 
     using GCSweepScope = gc::GCHandle::GCSweepScope;
