@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.keysToMap
 import java.lang.invoke.MethodType
-import kotlin.math.floor
 
 val intrinsicConstEvaluationAnnotation = FqName("kotlin.internal.IntrinsicConstEvaluation")
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
@@ -50,10 +49,9 @@ internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?:
 
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
-@Suppress("UNCHECKED_CAST")
-internal fun <T> IrConst.toPrimitive(): Primitive<T> = when {
-    type.isByte() -> Primitive((value as Number).toByte() as T, type)
-    type.isShort() -> Primitive((value as Number).toShort() as T, type)
+internal fun IrConst.toPrimitive(): Primitive = when {
+    type.isByte() -> Primitive((value as Number).toByte(), type)
+    type.isShort() -> Primitive((value as Number).toShort(), type)
     else -> Primitive(value, type)
 }
 
@@ -110,7 +108,7 @@ fun IrFunction.getLastOverridden(): IrFunction {
     return generateSequence(listOf(this)) { it.firstOrNull()?.overriddenSymbols?.map { it.owner } }.flatten().last()
 }
 
-internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
+internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive {
     return when {
         type.isByteArray() -> Primitive(ByteArray(size) { i -> (this[i] as Number).toByte() }, type)
         type.isCharArray() -> Primitive(CharArray(size) { i -> this[i] as Char }, type)
@@ -120,7 +118,7 @@ internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
         type.isFloatArray() -> Primitive(FloatArray(size) { i -> (this[i] as Number).toFloat() }, type)
         type.isDoubleArray() -> Primitive(DoubleArray(size) { i -> (this[i] as Number).toDouble() }, type)
         type.isBooleanArray() -> Primitive(BooleanArray(size) { i -> (this[i] as Boolean) }, type)
-        else -> Primitive<Array<*>>(this.toTypedArray(), type)
+        else -> Primitive(this.toTypedArray(), type)
     }
 }
 
@@ -180,7 +178,7 @@ internal fun IrFunction?.checkCast(environment: IrInterpreterEnvironment): Boole
     if (expectedType.classifierOrFail is IrTypeParameterSymbol) return true
 
     val actualState = environment.callStack.peekState() ?: return true
-    if (actualState is Primitive<*> && actualState.value == null) return true // this is handled in checkNullability
+    if (actualState is Primitive && actualState.value == null) return true // this is handled in checkNullability
 
     if (!actualState.isSubtypeOf(expectedType)) {
         val convertibleClassName = environment.callStack.popState().irClass.fqName
@@ -325,7 +323,7 @@ internal fun IrFunction.isAccessorOfPropertyWithBackingField(): Boolean {
 }
 
 internal fun State.unsignedToString(): String {
-    return when (val value = (this.fields.values.single() as Primitive<*>).value) {
+    return when (val value = (this.fields.values.single() as Primitive).value) {
         is Byte -> value.toUByte().toString()
         is Short -> value.toUShort().toString()
         is Int -> value.toUInt().toString()

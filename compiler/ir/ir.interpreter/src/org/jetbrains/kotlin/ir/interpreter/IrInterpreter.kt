@@ -526,12 +526,12 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val args = expression.elements.flatMap {
             return@flatMap when (val result = callStack.popState()) {
                 is Wrapper -> listOf(result.value)
-                is Primitive<*> -> when {
+                is Primitive -> when {
                     expression.varargElementType.isArray() || expression.varargElementType.isPrimitiveArray() -> listOf(result)
                     else -> arrayToList(result.value)
                 }
                 is Common -> when {
-                    result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.values.single() as Primitive<*>).value)
+                    result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.values.single() as Primitive).value)
                     else -> listOf(result.asProxy(callInterceptor))
                 }
                 else -> listOf(result)
@@ -544,7 +544,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                 val storageProperty = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "storage" }
                 val primitiveArray = args.map {
                     when (it) {
-                        is Proxy -> (it.state.fields.values.single() as Primitive<*>).value  // is unsigned number
+                        is Proxy -> (it.state.fields.values.single() as Primitive).value  // is unsigned number
                         else -> it                                                                 // is primitive number
                     }
                 }
@@ -579,7 +579,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val result = mutableListOf<String>()
         repeat(expression.arguments.size) {
             result += when (val state = callStack.popState()) {
-                is Primitive<*> -> state.value.toString()
+                is Primitive -> state.value.toString()
                 is Wrapper -> state.value.toString()
                 else -> state.toString()
             }

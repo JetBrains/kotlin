@@ -197,7 +197,7 @@ private fun unfoldEnumConstructorCall(element: IrEnumConstructorCall, environmen
         val constructorCallCopy = element.shallowCopy()
         val enumObject = environment.callStack.loadState(element.getThisReceiver())
         environment.irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().forEachIndexed { index, it ->
-            val field = enumObject.getField(it.symbol) as Primitive<*>
+            val field = enumObject.getField(it.symbol) as Primitive
             constructorCallCopy.putValueArgument(index, field.value.toIrConst(field.type))
         }
         return unfoldValueParameters(constructorCallCopy, environment)
@@ -402,7 +402,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
     // this callback is used to check the need for an explicit toString call
     val explicitToStringCheck = fun() {
         when (val state = callStack.peekState()) {
-            is Primitive<*> -> {
+            is Primitive -> {
                 // This block is not really needed, but this way it is easier to handle `toString` for JS.
                 callStack.popState()
                 val toStringCall = IrCallImpl.fromSymbolOwner(

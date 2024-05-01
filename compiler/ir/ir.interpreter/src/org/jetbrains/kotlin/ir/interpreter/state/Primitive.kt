@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
 
-internal class Primitive<T>(val value: T, val type: IrType) : State {
+internal class Primitive(val value: Any?, val type: IrType) : State {
     override val fields: Fields = mutableMapOf()
     override val irClass: IrClass = type.classOrNull!!.owner
 
@@ -31,7 +31,7 @@ internal class Primitive<T>(val value: T, val type: IrType) : State {
     }
 
     companion object {
-        fun nullStateOfType(irType: IrType): Primitive<*> {
+        fun nullStateOfType(irType: IrType): Primitive {
             return Primitive(null, irType)
         }
     }
