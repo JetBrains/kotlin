@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(22,26): 'java'
+  java
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(22,26): 'java'
+  null
+

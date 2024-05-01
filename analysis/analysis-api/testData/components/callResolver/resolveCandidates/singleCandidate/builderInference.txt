@@ -3,19 +3,7 @@ KtApplicableCallCandidateInfo:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
-          annotationsList: []
-          origin: SOURCE
-          owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
-          type: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: [
-              KtUsualClassType:
-                annotationsList: []
-                ownTypeArguments: []
-                type: kotlin/String
-            ]
-            type: test/Target<kotlin/String>
+        symbol = <extension receiver>: test.Target<kotlin.String>
         type = test.Target<kotlin.String>
       extensionReceiver = null
       signature = KtFunctionLikeSignature:

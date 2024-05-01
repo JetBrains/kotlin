@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(51,60): 'JavaClass'
+  <constructor>(s: kotlin.String): JavaClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(51,60): 'JavaClass'
+  null
+

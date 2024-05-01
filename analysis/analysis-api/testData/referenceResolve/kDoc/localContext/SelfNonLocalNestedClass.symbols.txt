@@ -1,0 +1,2 @@
+KDocReference|KDocName(44,50): 'Nested'
+  /C.Nested

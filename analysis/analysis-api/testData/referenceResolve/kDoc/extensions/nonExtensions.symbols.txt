@@ -1,0 +1,11 @@
+KDocReference|KDocName(78,91): 'Foo.nonExtFun'
+  null
+
+KDocReference|KDocName(97,115): 'test.Foo.nonExtFun'
+  null
+
+KDocReference|KDocName(124,138): 'Foo.nonExtProp'
+  null
+
+KDocReference|KDocName(144,163): 'test.Foo.nonExtProp'
+  null

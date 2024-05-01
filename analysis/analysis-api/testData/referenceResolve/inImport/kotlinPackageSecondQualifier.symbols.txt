@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(14,18): 'text'
+  kotlin.text

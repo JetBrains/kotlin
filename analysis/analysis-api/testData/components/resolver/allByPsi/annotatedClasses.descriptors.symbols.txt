@@ -1,0 +1,231 @@
+KtAnnotationEntry(0,30): '@Target(AnnotationTarget.TYPE)'
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(1,7): 'Target'
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(8,24): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(8,24): 'AnnotationTarget'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(25,29): 'TYPE'
+  kotlin/annotation/AnnotationTarget.TYPE
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(25,29): 'TYPE'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(67,73): 'String'
+  kotlin/String
+
+KtAnnotationEntry(133,162): '@Anno("parameter type $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(134,138): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(156,160): 'prop'
+  val prop: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(156,160): 'prop'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(163,167): 'List'
+  kotlin/collections/List
+
+KtAnnotationEntry(168,204): '@Anno("nested parameter type $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(169,173): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(198,202): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(205,215): 'Collection'
+  kotlin/collections/Collection
+
+KtAnnotationEntry(216,259): '@Anno("nested nested parameter type $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(217,221): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(253,257): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(260,266): 'String'
+  kotlin/String
+
+KtAnnotationEntry(271,298): '@Anno("defaultValue $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(272,276): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(292,296): 'prop'
+  val prop: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(292,296): 'prop'
+  null
+
+KtAnnotationEntry(306,353): '@Anno("anonymousFunction parameter type $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(307,311): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(347,351): 'prop'
+  val prop: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(347,351): 'prop'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(354,357): 'Int'
+  kotlin/Int
+
+KtAnnotationEntry(360,404): '@Anno("anonymousFunction return type $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(361,365): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(398,402): 'prop'
+  val prop: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(398,402): 'prop'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(405,408): 'Int'
+  kotlin/Int
+
+KtConstructorDelegationCall(412,412): ''
+  <constructor>(): kotlin.Any
+
+KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(412,412): ''
+  <constructor>(): kotlin.Any
+
+KtSuperTypeCallEntry(465,603): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  <constructor>(): AbstractClass<T>
+
+KtAnnotationEntry(465,495): '@Anno("super type call $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(466,470): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(489,493): 'prop'
+  val prop: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(489,493): 'prop'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(496,509): 'AbstractClass'
+  <constructor>(): AbstractClass<T>
+
+KtAnnotationEntry(510,546): '@Anno("nested super type ref $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(511,515): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(540,544): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(547,551): 'List'
+  kotlin/collections/List
+
+KtAnnotationEntry(552,595): '@Anno("nested nested super type ref $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(553,557): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(589,593): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(596,599): 'Int'
+  kotlin/Int
+
+KtSuperTypeCallEntry(638,776): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  <constructor>(): AbstractClass<T>
+
+KtAnnotationEntry(638,668): '@Anno("super type call $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(639,643): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(662,666): 'prop'
+  val prop: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(662,666): 'prop'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(669,682): 'AbstractClass'
+  <constructor>(): AbstractClass<T>
+
+KtAnnotationEntry(683,719): '@Anno("nested super type ref $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(684,688): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(713,717): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(720,724): 'List'
+  kotlin/collections/List
+
+KtAnnotationEntry(725,768): '@Anno("nested nested super type ref $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(726,730): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(762,766): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(769,772): 'Int'
+  kotlin/Int
+
+KtAnnotationEntry(825,854): '@Anno("super type ref $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(826,830): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(848,852): 'prop'
+  val prop: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(848,852): 'prop'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(855,859): 'List'
+  kotlin/collections/List
+
+KtAnnotationEntry(860,896): '@Anno("nested super type ref $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(861,865): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(890,894): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(897,901): 'List'
+  kotlin/collections/List
+
+KtAnnotationEntry(902,945): '@Anno("nested nested super type ref $prop")'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(903,907): 'Anno'
+  <constructor>(position: kotlin.String): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(939,943): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(946,947): 'I'
+  /I
+

@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(60,61): 'i'
+  val i: kotlin.Int

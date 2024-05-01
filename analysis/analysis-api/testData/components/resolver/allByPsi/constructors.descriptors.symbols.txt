@@ -1,0 +1,84 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,9): 'r'
+  r
+
+KtSimpleNameReference|KtNameReferenceExpression(57,60): 'Int'
+  kotlin/Int
+
+KtConstructorDelegationCall(61,61): ''
+  <constructor>(): kotlin.Any
+
+KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(61,61): ''
+  <constructor>(): kotlin.Any
+
+KtSimpleNameReference|KtNameReferenceExpression(81,87): 'String'
+  kotlin/String
+
+KtConstructorDelegationCall(88,88): ''
+  <constructor>(): kotlin.Any
+
+KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(88,88): ''
+  <constructor>(): kotlin.Any
+
+KtSimpleNameReference|KtNameReferenceExpression(131,140): 'BaseClass'
+  r/BaseClass
+
+KtSimpleNameReference|KtNameReferenceExpression(163,166): 'Int'
+  kotlin/Int
+
+KtConstructorDelegationCall(170,179): 'super(ci)'
+  <constructor>(i: kotlin.Int): r.BaseClass
+
+KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(170,175): 'super'
+  <constructor>(i: kotlin.Int): r.BaseClass
+
+KtSimpleNameReference|KtNameReferenceExpression(176,178): 'ci'
+  ci: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(176,178): 'ci'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(200,206): 'String'
+  kotlin/String
+
+KtConstructorDelegationCall(210,219): 'super(cs)'
+  <constructor>(s: kotlin.String): r.BaseClass
+
+KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(210,215): 'super'
+  <constructor>(s: kotlin.String): r.BaseClass
+
+KtSimpleNameReference|KtNameReferenceExpression(216,218): 'cs'
+  cs: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(216,218): 'cs'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(245,250): 'super'
+  r/BaseClass
+
+KtCallExpression(251,257): 'call()'
+  r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(251,257): 'call()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(251,255): 'call'
+  r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(251,255): 'call'
+  null
+
+KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
+  <constructor>(i: kotlin.Int): r.BaseClass
+
+KtSimpleNameReference|KtNameReferenceExpression(294,303): 'BaseClass'
+  <constructor>(i: kotlin.Int): r.BaseClass
+
+KtSimpleNameReference|KtNameReferenceExpression(329,335): 'String'
+  kotlin/String
+
+KtConstructorDelegationCall(339,345): 'this()'
+  <constructor>(): r.ChildWithPrimary
+
+KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(339,343): 'this'
+  <constructor>(): r.ChildWithPrimary
+

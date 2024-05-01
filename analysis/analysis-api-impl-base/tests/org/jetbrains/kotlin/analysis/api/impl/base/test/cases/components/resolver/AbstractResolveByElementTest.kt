@@ -20,12 +20,14 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest() {
     }
 
     protected open fun doResolveTest(element: KtElement, testServices: TestServices) {
-        processElement(
-            element = element,
-            testServices = testServices,
-            renderedSymbol = { testServices.assertions.assertEqualsToTestDataFileSibling(it, "symbol.txt") },
-            renderedCall = { testServices.assertions.assertEqualsToTestDataFileSibling(it, "call.txt") },
-            renderedCandidates = { testServices.assertions.assertEqualsToTestDataFileSibling(it, "callCandidates.txt") },
-        )
+        analyseForTest(element) {
+            processElement(
+                element = element,
+                testServices = testServices,
+                renderedSymbol = { testServices.assertions.assertEqualsToTestDataFileSibling(it, "symbol.txt") },
+                renderedCall = { testServices.assertions.assertEqualsToTestDataFileSibling(it, "call.txt") },
+                renderedCandidates = { testServices.assertions.assertEqualsToTestDataFileSibling(it, "callCandidates.txt") },
+            )
+        }
     }
 }

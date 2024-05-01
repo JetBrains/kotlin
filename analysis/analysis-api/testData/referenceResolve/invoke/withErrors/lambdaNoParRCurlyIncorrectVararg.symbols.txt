@@ -1,0 +1,5 @@
+KtInvokeFunctionReference|KtCallExpression(67,71): 'f {}'
+  /Foo.invoke(<dispatch receiver>: Foo, vararg a: kotlin.Any): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(67,71): 'f {}'
+  /Foo.invoke(<dispatch receiver>: Foo, vararg a: kotlin.Any): kotlin.Unit

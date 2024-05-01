@@ -1,0 +1,11 @@
+KDocReference|KDocName(70,82): 'PARAM.anyExt'
+  null
+
+KDocReference|KDocName(88,104): 'PARAM.genericExt'
+  null
+
+KDocReference|KDocName(175,193): 'CLASS_PARAM.anyExt'
+  null
+
+KDocReference|KDocName(203,225): 'CLASS_PARAM.genericExt'
+  null

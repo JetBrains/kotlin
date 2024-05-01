@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(100,103): 'foo'
+  val foo: kotlin.String

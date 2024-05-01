@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(269,278): 'something'
+  var something: kotlin.Int

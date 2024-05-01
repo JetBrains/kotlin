@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(202,210): 'IntArray'
+  ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>

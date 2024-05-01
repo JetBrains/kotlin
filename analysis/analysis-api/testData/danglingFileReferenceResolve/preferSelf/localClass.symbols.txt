@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(103,108): 'Local'
+  <constructor>(): <local>.Local

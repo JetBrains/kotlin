@@ -1,0 +1,29 @@
+KDocReference|KDocName(86,93): 'Foo.ext'
+  test/ext(<extension receiver>: kotlin.Any): kotlin.Unit
+
+KDocReference|KDocName(99,102): 'Foo'
+  null
+
+KDocReference|KDocName(115,131): 'Foo.depExtShared'
+  null
+
+KDocReference|KDocName(137,140): 'Foo'
+  null
+
+KDocReference|KDocName(162,173): 'Foo.depExt1'
+  dep1/depExt1(<extension receiver>: dep1.Foo): kotlin.Unit
+
+KDocReference|KDocName(179,182): 'Foo'
+  dep1/Foo
+
+KDocReference|KDocName(199,210): 'Foo.depExt2'
+  dep2/depExt2(<extension receiver>: dep2.Foo): kotlin.Unit
+
+KDocReference|KDocName(216,219): 'Foo'
+  dep2/Foo
+
+KDocReference|KDocName(236,244): 'dep1.Foo'
+  dep1/Foo
+
+KDocReference|KDocName(254,262): 'dep2.Foo'
+  dep2/Foo

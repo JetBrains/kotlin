@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(99,104): 'coreR'
+  test/pkg/R
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(99,104): 'coreR'
+  null
+

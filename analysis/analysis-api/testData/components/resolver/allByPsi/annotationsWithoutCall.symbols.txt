@@ -1,3 +1,9 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,11): 'one'
+  one
+
 KtAnnotationEntry(36,41): '@Anno'
+  <constructor>(): one.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(37,41): 'Anno'
   <constructor>(): one.Anno
 

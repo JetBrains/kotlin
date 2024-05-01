@@ -1,0 +1,5 @@
+KDocReference|KDocName(25,38): 'Storage.value'
+  val value: kotlin.String
+
+KDocReference|KDocName(44,59): 'Storage2.value2'
+  val value2: kotlin.String

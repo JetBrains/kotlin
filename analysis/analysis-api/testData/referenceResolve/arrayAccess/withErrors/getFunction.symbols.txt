@@ -1,0 +1,2 @@
+KtArrayAccessReference|KtArrayAccessExpression(44,48): '1[2]'
+  /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int

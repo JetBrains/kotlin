@@ -1,0 +1,69 @@
+KtSimpleNameReference|KtNameReferenceExpression(107,116): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(107,116): 'something'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(124,133): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(124,133): 'something'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(144,153): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(144,153): 'something'
+  null
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(144,153): 'something'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(165,174): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(165,174): 'something'
+  null
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(165,174): 'something'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(185,194): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(185,194): 'something'
+  null
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(185,194): 'something'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(200,209): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(200,209): 'something'
+  null
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(200,209): 'something'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(217,226): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(217,226): 'something'
+  null
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(217,226): 'something'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(235,244): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(235,244): 'something'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(257,266): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(257,266): 'something'
+  null
+

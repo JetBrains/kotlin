@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(73,77): 'call'
+  /Foo.call(<dispatch receiver>: Foo): kotlin.Unit

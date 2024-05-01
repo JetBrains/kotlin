@@ -1,6 +1,72 @@
+KtSimpleNameReference|KtNameReferenceExpression(16,27): 'MutableList'
+  kotlin/collections/MutableList
+
+KtSimpleNameReference|KtNameReferenceExpression(28,31): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(40,44): 'list'
+  list: kotlin.collections.MutableList<kotlin.Int>
+
+KtSimpleNameReference|KtNameReferenceExpression(40,44): 'list'
+  list: kotlin.collections.MutableList<kotlin.Int>
+
+KtSimpleNameReference|KtOperationReferenceExpression(45,47): '+='
+  null
+
+KtArrayAccessReference|KtArrayAccessExpression(74,81): 'list[0]'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+
+KtSimpleNameReference|KtNameReferenceExpression(74,78): 'list'
+  list: kotlin.collections.MutableList<kotlin.Int>
+
+KtSimpleNameReference|KtNameReferenceExpression(106,110): 'list'
+  list: kotlin.collections.MutableList<kotlin.Int>
+
 KtCallExpression(111,129): 'get(implicitIndex)'
   kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
 
+KtInvokeFunctionReference|KtCallExpression(111,129): 'get(implicitIndex)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(111,114): 'get'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+
+KtSimpleNameReference|KtNameReferenceExpression(115,128): 'implicitIndex'
+  val implicitIndex: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(144,147): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(155,166): 'MutableList'
+  kotlin/collections/MutableList
+
+KtSimpleNameReference|KtNameReferenceExpression(167,170): 'Int'
+  kotlin/Int
+
 KtCallExpression(179,199): 'foo(--list[i], list)'
   /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(179,199): 'foo(--list[i], list)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(179,182): 'foo'
+  /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+
+KtSimpleNameReference|KtOperationReferenceExpression(183,185): '--'
+  kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+
+KtSimpleNameReference|KtOperationReferenceExpression(183,185): '--'
+  kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+
+KtArrayAccessReference|KtArrayAccessExpression(185,192): 'list[i]'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+
+KtSimpleNameReference|KtNameReferenceExpression(185,189): 'list'
+  list: kotlin.collections.MutableList<kotlin.Int>
+
+KtSimpleNameReference|KtNameReferenceExpression(190,191): 'i'
+  i: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(194,198): 'list'
+  list: kotlin.collections.MutableList<kotlin.Int>
 

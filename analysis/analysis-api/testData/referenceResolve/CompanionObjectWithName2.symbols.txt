@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(58,64): 'sample'
+  my.sample

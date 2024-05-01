@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(99,104): 'coreR'
+  test/pkg/R

@@ -1,0 +1,2 @@
+KDocReference|KDocName(150,157): 'X.YY.ZZ'
+  /C.X.Companion.YY.ZZ

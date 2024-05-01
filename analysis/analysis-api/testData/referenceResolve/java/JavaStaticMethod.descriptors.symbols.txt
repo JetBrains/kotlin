@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(589,592): 'bar'
+  pkg/Foo.bar(): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(589,592): 'bar'
+  null
+

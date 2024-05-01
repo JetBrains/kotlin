@@ -1,0 +1,81 @@
+KtSimpleNameReference|KtOperationReferenceExpression(49,50): '-'
+  kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(50,53): 'one'
+  val one: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(50,53): 'one'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(73,74): '+'
+  kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(74,77): 'one'
+  val one: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(74,77): 'one'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(83,84): '!'
+  /MyClass.not(<dispatch receiver>: MyClass): MyClass
+
+KtSimpleNameReference|KtOperationReferenceExpression(85,86): '+'
+  /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
+
+KtSimpleNameReference|KtOperationReferenceExpression(87,88): '-'
+  /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+
+KtCallExpression(88,97): 'MyClass()'
+  <constructor>(): MyClass
+
+KtInvokeFunctionReference|KtCallExpression(88,97): 'MyClass()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(88,95): 'MyClass'
+  <constructor>(): MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(88,95): 'MyClass'
+  null
+
+KtCallExpression(98,110): 'unaryMinus()'
+  /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+
+KtInvokeFunctionReference|KtCallExpression(98,110): 'unaryMinus()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(98,108): 'unaryMinus'
+  /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(98,108): 'unaryMinus'
+  null
+
+KtCallExpression(111,116): 'not()'
+  /MyClass.not(<dispatch receiver>: MyClass): MyClass
+
+KtInvokeFunctionReference|KtCallExpression(111,116): 'not()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(111,114): 'not'
+  /MyClass.not(<dispatch receiver>: MyClass): MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(111,114): 'not'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(169,176): 'MyClass'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(179,183): 'this'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(214,221): 'MyClass'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(224,228): 'this'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(253,260): 'MyClass'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(263,267): 'this'
+  /MyClass
+

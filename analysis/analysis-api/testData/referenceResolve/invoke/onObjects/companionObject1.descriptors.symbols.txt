@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(116,119): 'Foo'
+  /Foo.Companion
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(116,119): 'Foo'
+  null
+

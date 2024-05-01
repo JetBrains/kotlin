@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(48,57): 'Companion'
+  dependency/C.Companion
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(48,57): 'Companion'
+  null
+

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.KtResolvable
@@ -29,6 +30,7 @@ public interface KaResolverMixIn : KtAnalysisSessionMixIn {
     public fun KtResolvable.resolveSymbol(): KtSymbol? = withValidityAssertion {
         when (this) {
             is KtCallElement -> analysisSession.resolver.resolveCallElementToSymbol(this)
+            is KtReference -> analysisSession.referenceResolveProvider.resolveToSymbols(this).singleOrNull()
             else -> null
         }
     }

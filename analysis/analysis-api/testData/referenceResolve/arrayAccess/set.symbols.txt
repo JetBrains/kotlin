@@ -1,0 +1,8 @@
+KtArrayAccessReference|KtArrayAccessExpression(62,69): 'list[0]'
+  kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+
+KtArrayAccessReference|KtArrayAccessExpression(89,96): 'list[0]'
+  kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+
+KtArrayAccessReference|KtArrayAccessExpression(121,128): 'list[0]'
+  kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E

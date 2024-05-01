@@ -1,0 +1,2 @@
+KDocReference|KDocName(22,26): 'b.BB'
+  b/BB

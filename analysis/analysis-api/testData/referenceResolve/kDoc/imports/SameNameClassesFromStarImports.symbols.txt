@@ -1,0 +1,8 @@
+KDocReference|KDocName(68,71): 'Foo'
+  null
+
+KDocReference|KDocName(80,88): 'dep1.Foo'
+  dep1/Foo
+
+KDocReference|KDocName(94,102): 'dep2.Foo'
+  dep2/Foo

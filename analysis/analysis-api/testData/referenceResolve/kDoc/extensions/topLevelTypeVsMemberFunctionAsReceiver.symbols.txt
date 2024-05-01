@@ -1,0 +1,8 @@
+KDocReference|KDocName(96,103): 'Foo.ext'
+  null
+
+KDocReference|KDocName(113,116): 'Foo'
+  test/WithMember.Foo(<dispatch receiver>: test.WithMember): kotlin.Unit
+
+KDocReference|KDocName(137,140): 'Foo'
+  test/WithMember.Foo(<dispatch receiver>: test.WithMember): kotlin.Unit

@@ -1,0 +1,84 @@
+KtCallExpression(430,435): 'foo()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = TopLevelObject
+        isSafeNavigation = false
+        type = one.two.TopLevelObject
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = one/two/TopLevelObject.foo
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(458,463): 'foo()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.foo(): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = one/two/TopLevelObject.foo
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(687,692): 'baz()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = TopLevelObject.NestedObject
+        isSafeNavigation = false
+        type = one.two.TopLevelObject.NestedObject
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = one/two/TopLevelObject.NestedObject.baz
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(734,739): 'baz()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = NestedObject
+        isSafeNavigation = false
+        type = one.two.TopLevelObject.NestedObject
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = one/two/TopLevelObject.NestedObject.baz
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(762,767): 'baz()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.NestedObject.baz(): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = one/two/TopLevelObject.NestedObject.baz
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+

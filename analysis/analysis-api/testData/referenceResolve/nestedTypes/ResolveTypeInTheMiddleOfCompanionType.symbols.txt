@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(112,114): 'BB'
+  foo/bar/baz/AA.BB

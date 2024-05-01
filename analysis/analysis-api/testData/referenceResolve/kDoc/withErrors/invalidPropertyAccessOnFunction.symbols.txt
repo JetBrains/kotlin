@@ -1,0 +1,2 @@
+KDocReference|KDocName(51,59): 'A.toName'
+  /A.toName(<dispatch receiver>: A): kotlin.String

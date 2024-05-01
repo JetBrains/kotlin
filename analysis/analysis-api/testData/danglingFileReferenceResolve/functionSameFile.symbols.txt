@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(31,34): 'foo'
+  /foo(): kotlin.Unit

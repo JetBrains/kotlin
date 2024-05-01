@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(76,102): 'generatedTopLevelFunction1'
+  generated/generatedTopLevelFunction1(): generated.GeneratedClass2

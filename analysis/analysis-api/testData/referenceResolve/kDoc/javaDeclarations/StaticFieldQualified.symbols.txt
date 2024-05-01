@@ -1,0 +1,2 @@
+KDocReference|KDocName(54,75): 'JavaClass.staticField'
+  val staticField: kotlin.Int

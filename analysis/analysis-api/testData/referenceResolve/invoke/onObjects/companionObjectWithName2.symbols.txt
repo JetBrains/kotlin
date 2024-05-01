@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(123,126): 'Foo'
+  /Foo.Helper

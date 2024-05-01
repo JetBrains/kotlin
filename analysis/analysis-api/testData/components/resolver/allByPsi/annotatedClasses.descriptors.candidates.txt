@@ -225,6 +225,23 @@ KtConstructorDelegationCall(412,412): ''
       argumentMapping = {}
     isInBestCandidates = true
 
+KtSuperTypeCallEntry(465,603): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
 KtAnnotationEntry(465,495): '@Anno("super type call $prop")'
   KtApplicableCallCandidateInfo:
     candidate = KtAnnotationCall:
@@ -315,7 +332,7 @@ KtAnnotationEntry(552,595): '@Anno("nested nested super type ref $prop")'
       }
     isInBestCandidates = true
 
-KtSuperTypeCallEntry(465,603): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+KtSuperTypeCallEntry(638,776): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
   KtApplicableCallCandidateInfo:
     candidate = KtDelegatedConstructorCall:
       kind = SUPER_CALL
@@ -420,23 +437,6 @@ KtAnnotationEntry(725,768): '@Anno("nested nested super type ref $prop")'
           symbol = position: kotlin.String
           callableIdIfNonLocal = null)
       }
-    isInBestCandidates = true
-
-KtSuperTypeCallEntry(638,776): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
-  KtApplicableCallCandidateInfo:
-    candidate = KtDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KtFunctionLikeSignature:
-          receiverType = null
-          returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
-          symbol = <constructor>(): AbstractClass<T>
-          valueParameters = []
-          callableIdIfNonLocal = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtAnnotationEntry(825,854): '@Anno("super type ref $prop")'

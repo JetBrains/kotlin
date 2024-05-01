@@ -1,0 +1,29 @@
+KtCallExpression(78,104): 'print(javaClass.something)'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = message: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/io/print
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      javaClass.something -> (KtVariableLikeSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = message: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+

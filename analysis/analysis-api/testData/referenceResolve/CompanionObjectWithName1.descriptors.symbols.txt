@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(65,70): 'Inner'
+  my/sample/Inner.Inner
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(65,70): 'Inner'
+  null
+

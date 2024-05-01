@@ -1,0 +1,29 @@
+KtSimpleNameReference|KtNameReferenceExpression(109,116): 'MyClass'
+  test/MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(139,146): 'MyClass'
+  test/MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(165,169): 'List'
+  kotlin/collections/List
+
+KtSimpleNameReference|KtNameReferenceExpression(196,207): 'MutableList'
+  kotlin/collections/MutableList
+
+KtSimpleNameReference|KtNameReferenceExpression(240,247): 'MyClass'
+  test/MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(303,310): 'MyClass'
+  test/MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(346,353): 'MyClass'
+  test/MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(385,389): 'List'
+  kotlin/collections/List
+
+KtSimpleNameReference|KtNameReferenceExpression(429,440): 'MutableList'
+  kotlin/collections/MutableList
+
+KtSimpleNameReference|KtNameReferenceExpression(486,493): 'MyClass'
+  test/MyClass

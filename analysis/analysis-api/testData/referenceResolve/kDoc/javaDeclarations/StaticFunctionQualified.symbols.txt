@@ -1,0 +1,2 @@
+KDocReference|KDocName(54,73): 'JavaClass.staticFun'
+  dependency/JavaClass.staticFun(): kotlin.Unit

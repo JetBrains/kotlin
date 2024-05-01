@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(118,127): 'TestClass'
+  null

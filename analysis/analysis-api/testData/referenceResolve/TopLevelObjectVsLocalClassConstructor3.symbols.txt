@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(109,117): 'Conflict'
+  test/Conflict

@@ -94,6 +94,12 @@ public class FirIdeDependentAnalysisSourceModuleResolveByPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("callableReference.kt")
+  public void testCallableReference() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/callableReference.kt");
+  }
+
+  @Test
   @TestMetadata("constructors.kt")
   public void testConstructors() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/constructors.kt");
@@ -115,6 +121,24 @@ public class FirIdeDependentAnalysisSourceModuleResolveByPsiTestGenerated extend
   @TestMetadata("labels.kt")
   public void testLabels() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/labels.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImports.kt")
+  public void testStaticImports() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/staticImports.kt");
+  }
+
+  @Test
+  @TestMetadata("syntheticProperty.kt")
+  public void testSyntheticProperty() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/syntheticProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("this.kt")
+  public void testThis() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/this.kt");
   }
 
   @Test

@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(75,78): 'bar'
+  kotlin/pckg/bar(): kotlin.Unit

@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(65,70): 'Inner'
+  my/sample/Inner.Inner

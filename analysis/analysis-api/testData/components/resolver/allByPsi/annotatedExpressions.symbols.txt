@@ -1,18 +1,66 @@
 KtAnnotationEntry(23,59): '@Target(AnnotationTarget.EXPRESSION)'
   <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
 
+KtSimpleNameReference|KtNameReferenceExpression(24,30): 'Target'
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(31,47): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(48,58): 'EXPRESSION'
+  kotlin/annotation/AnnotationTarget.EXPRESSION
+
 KtAnnotationEntry(60,98): '@Retention(AnnotationRetention.SOURCE)'
   <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+
+KtSimpleNameReference|KtNameReferenceExpression(61,70): 'Retention'
+  <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+
+KtSimpleNameReference|KtNameReferenceExpression(71,90): 'AnnotationRetention'
+  kotlin/annotation/AnnotationRetention
+
+KtSimpleNameReference|KtNameReferenceExpression(91,97): 'SOURCE'
+  kotlin/annotation/AnnotationRetention.SOURCE
+
+KtSimpleNameReference|KtNameReferenceExpression(133,136): 'Int'
+  kotlin/Int
 
 KtAnnotationEntry(157,175): '@Anno(0 + integer)'
   <constructor>(number: kotlin.Int): Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(158,162): 'Anno'
+  <constructor>(number: kotlin.Int): Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(165,166): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(167,174): 'integer'
+  val integer: kotlin.Int
+
 KtAnnotationEntry(177,191): '@Anno(integer)'
   <constructor>(number: kotlin.Int): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(178,182): 'Anno'
+  <constructor>(number: kotlin.Int): Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(183,190): 'integer'
+  val integer: kotlin.Int
 
 KtCallExpression(192,199): 'usage()'
   /usage(): kotlin.Unit
 
+KtInvokeFunctionReference|KtCallExpression(192,199): 'usage()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(192,197): 'usage'
+  /usage(): kotlin.Unit
+
 KtCallExpression(201,211): 'toString()'
+  kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
+
+KtInvokeFunctionReference|KtCallExpression(201,211): 'toString()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(201,209): 'toString'
   kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
 

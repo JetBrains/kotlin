@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(100,109): 'parameter'
+  parameter: kotlin.Any
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(100,109): 'parameter'
+  null
+

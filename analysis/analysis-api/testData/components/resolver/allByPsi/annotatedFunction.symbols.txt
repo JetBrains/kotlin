@@ -1,54 +1,231 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,16): 'lowlevel'
+  lowlevel
+
 KtAnnotationEntry(18,161): '@Target('
   <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(19,25): 'Target'
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(31,47): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(48,62): 'TYPE_PARAMETER'
+  kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
+
+KtSimpleNameReference|KtNameReferenceExpression(68,84): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(85,93): 'FUNCTION'
+  kotlin/annotation/AnnotationTarget.FUNCTION
+
+KtSimpleNameReference|KtNameReferenceExpression(99,115): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(116,131): 'VALUE_PARAMETER'
+  kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
+
+KtSimpleNameReference|KtNameReferenceExpression(137,153): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(154,158): 'TYPE'
+  kotlin/annotation/AnnotationTarget.TYPE
+
+KtSimpleNameReference|KtNameReferenceExpression(198,204): 'String'
+  kotlin/String
 
 KtAnnotationEntry(244,267): '@Anno("function $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(245,249): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(261,265): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(273,302): '@Anno("type parameter $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(274,278): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(296,300): 'prop'
+  val prop: kotlin.String
 
 KtAnnotationEntry(307,332): '@Anno("bound type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(308,312): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(326,330): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(333,337): 'List'
+  kotlin/collections/List
+
 KtAnnotationEntry(338,370): '@Anno("nested bound type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(339,343): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(364,368): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(371,377): 'String'
+  kotlin/String
 
 KtAnnotationEntry(380,412): '@receiver:Anno("receiver $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(390,394): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(406,410): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(413,441): '@Anno("receiver type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(414,418): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(435,439): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(442,446): 'List'
+  kotlin/collections/List
 
 KtAnnotationEntry(447,482): '@Anno("nested receiver type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(448,452): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(476,480): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(483,487): 'List'
+  kotlin/collections/List
+
 KtAnnotationEntry(488,530): '@Anno("nested nested receiver type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(489,493): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(524,528): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(531,534): 'Int'
+  kotlin/Int
 
 KtAnnotationEntry(546,570): '@Anno("parameter $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(547,551): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(564,568): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(578,607): '@Anno("parameter type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(579,583): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(601,605): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(608,618): 'Collection'
+  kotlin/collections/Collection
 
 KtAnnotationEntry(619,655): '@Anno("nested parameter type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(620,624): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(649,653): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(656,660): 'List'
+  kotlin/collections/List
+
 KtAnnotationEntry(661,704): '@Anno("nested nested parameter type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(662,666): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(698,702): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(705,711): 'String'
+  kotlin/String
 
 KtAnnotationEntry(720,746): '@Anno("return type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(721,725): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(740,744): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(747,751): 'List'
+  kotlin/collections/List
+
 KtAnnotationEntry(752,785): '@Anno("nested return type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(753,757): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(779,783): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(786,790): 'List'
+  kotlin/collections/List
 
 KtAnnotationEntry(791,831): '@Anno("nested nested return type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(792,796): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(825,829): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(832,835): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(852,853): 'T'
+  T
+
 KtAnnotationEntry(856,886): '@Anno("constraint type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(857,861): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(880,884): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(887,897): 'Collection'
+  kotlin/collections/Collection
+
 KtAnnotationEntry(898,935): '@Anno("nested constraint type $prop")'
   <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(899,903): 'Anno'
+  <constructor>(position: kotlin.String): lowlevel.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(929,933): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(936,939): 'Int'
+  kotlin/Int
 

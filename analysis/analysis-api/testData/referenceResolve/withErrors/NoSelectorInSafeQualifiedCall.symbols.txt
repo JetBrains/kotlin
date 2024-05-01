@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(108,115): 'makeFoo'
+  testing/makeFoo(): testing.Foo

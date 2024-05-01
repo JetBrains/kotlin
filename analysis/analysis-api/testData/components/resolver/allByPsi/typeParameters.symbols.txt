@@ -1,9 +1,102 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,11): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(12,15): 'two'
+  one.two
+
+KtSimpleNameReference|KtNameReferenceExpression(24,27): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(28,31): 'two'
+  one.two
+
+KtSimpleNameReference|KtNameReferenceExpression(32,36): 'Base'
+  one/two/Base
+
+KtSimpleNameReference|KtNameReferenceExpression(37,48): 'NestedClass'
+  one/two/Base.NestedClass
+
+KtSimpleNameReference|KtNameReferenceExpression(70,74): 'Base'
+  one/two/Base
+
+KtSimpleNameReference|KtNameReferenceExpression(75,86): 'NestedClass'
+  one/two/Base.NestedClass
+
+KtSimpleNameReference|KtNameReferenceExpression(158,161): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(162,165): 'two'
+  one.two
+
+KtSimpleNameReference|KtNameReferenceExpression(166,170): 'Base'
+  one/two/Base
+
+KtSimpleNameReference|KtNameReferenceExpression(171,182): 'NestedClass'
+  one/two/Base.NestedClass
+
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
   <constructor>(): one.two.Base<B>
+
+KtSimpleNameReference|KtNameReferenceExpression(186,190): 'Base'
+  <constructor>(): one.two.Base<B>
+
+KtSimpleNameReference|KtNameReferenceExpression(191,192): 'C'
+  C
+
+KtSimpleNameReference|KtNameReferenceExpression(218,229): 'NestedClass'
+  one/two/Base.NestedClass
+
+KtSimpleNameReference|KtNameReferenceExpression(268,269): 'C'
+  C
+
+KtSimpleNameReference|KtNameReferenceExpression(295,300): 'Child'
+  one/two/Child
+
+KtSimpleNameReference|KtNameReferenceExpression(301,312): 'NestedClass'
+  one/two/Base.NestedClass
+
+KtSimpleNameReference|KtNameReferenceExpression(319,322): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(323,326): 'two'
+  one.two
+
+KtSimpleNameReference|KtNameReferenceExpression(327,332): 'Child'
+  one/two/Child
+
+KtSimpleNameReference|KtNameReferenceExpression(333,336): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(337,340): 'two'
+  one.two
+
+KtSimpleNameReference|KtNameReferenceExpression(341,345): 'Base'
+  one/two/Base
+
+KtSimpleNameReference|KtNameReferenceExpression(346,357): 'NestedClass'
+  one/two/Base.NestedClass
+
+KtSimpleNameReference|KtNameReferenceExpression(378,389): 'NestedClass'
+  one/two/Base.NestedClass
 
 KtCallExpression(392,405): 'NestedClass()'
   <constructor>(): one.two.Base.NestedClass
 
+KtInvokeFunctionReference|KtCallExpression(392,405): 'NestedClass()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(392,403): 'NestedClass'
+  <constructor>(): one.two.Base.NestedClass
+
+KtSimpleNameReference|KtNameReferenceExpression(422,424): 'c1'
+  c1: one.two.Child<one.two.Base.NestedClass>
+
 KtCallExpression(425,432): 'Inner()'
+  <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+
+KtInvokeFunctionReference|KtCallExpression(425,432): 'Inner()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(425,430): 'Inner'
   <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
 

@@ -1,0 +1,8 @@
+KDocReference|KDocName(25,38): 'Storage.value'
+  null
+
+KDocReference|KDocName(44,60): 'Storage.setValue'
+  /Storage.setValue(<dispatch receiver>: Storage, value: kotlin.String!): kotlin.Unit
+
+KDocReference|KDocName(66,78): 'Storage.prop'
+  /Storage.prop(<dispatch receiver>: Storage): kotlin.Unit

@@ -1,0 +1,11 @@
+context.kt
+  KtSimpleNameReference|KtNameReferenceExpression(73,77): 'Unit'
+    kotlin/Unit
+
+contextFragment.kt
+  KtSimpleNameReference|KtNameReferenceExpression(191,195): 'Unit'
+    kotlin/Unit
+
+fragment.kt
+  KtSimpleNameReference|KtNameReferenceExpression(160,163): 'bar'
+    bar(<dispatch receiver>: <anonymous>): kotlin.Unit

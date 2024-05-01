@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(77,81): 'Fake'
+  null

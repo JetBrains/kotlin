@@ -1,0 +1,2 @@
+KDocReference|KDocName(8,33): 'kotlin.collections.listOf'
+  null

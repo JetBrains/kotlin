@@ -1,0 +1,3 @@
+KtSimpleNameReference|KtNameReferenceExpression(43,47): 'this'
+  /Foo.foo(<extension receiver>: kotlin.String<dispatch receiver>: Foo): kotlin.Unit
+

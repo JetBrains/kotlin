@@ -1,0 +1,2 @@
+KDocReference|KDocName(85,106): 'KotlinChild.staticFun'
+  null

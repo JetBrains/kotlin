@@ -1,0 +1,3 @@
+KtSimpleNameReference|KtNameReferenceExpression(56,58): 'CA'
+  <constructor>(): test.C
+

@@ -1,0 +1,2 @@
+KDocReference|KDocName(8,45): 'kotlin.collections.AbstractCollection'
+  kotlin/collections/AbstractCollection

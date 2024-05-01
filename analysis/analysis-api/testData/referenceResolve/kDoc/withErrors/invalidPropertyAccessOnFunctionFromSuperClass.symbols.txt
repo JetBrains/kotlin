@@ -1,0 +1,2 @@
+KDocReference|KDocName(89,97): 'A.toName'
+  /SuperClass.toName(<dispatch receiver>: SuperClass): kotlin.String

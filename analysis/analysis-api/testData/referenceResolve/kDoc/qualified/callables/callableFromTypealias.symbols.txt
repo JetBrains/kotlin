@@ -1,0 +1,5 @@
+KDocReference|KDocName(30,38): 'I.length'
+  null
+
+KDocReference|KDocName(58,71): 'String.length'
+  val length: kotlin.Int

@@ -1,0 +1,2 @@
+KtArrayAccessReference|KtArrayAccessExpression(205,209): 'a[2]'
+  test/B.get(<dispatch receiver>: test.B, i: kotlin.Int): test.B

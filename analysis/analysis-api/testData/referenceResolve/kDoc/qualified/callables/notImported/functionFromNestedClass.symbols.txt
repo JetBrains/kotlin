@@ -1,0 +1,2 @@
+KDocReference|KDocName(48,66): 'foo.Foo.Nested.foo'
+  foo/Foo.Nested.foo(<dispatch receiver>: foo.Foo.Nested): kotlin.Unit

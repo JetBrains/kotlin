@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(159,163): 'test'
+  null
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(159,163): 'test'
+  null
+

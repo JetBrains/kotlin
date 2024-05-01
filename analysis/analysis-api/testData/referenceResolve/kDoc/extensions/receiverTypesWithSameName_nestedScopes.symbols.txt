@@ -1,0 +1,26 @@
+KDocReference|KDocName(88,91): 'Foo'
+  test/Outer.Foo
+
+KDocReference|KDocName(112,121): 'Outer.Foo'
+  test/Outer.Foo
+
+KDocReference|KDocName(135,149): 'test.Outer.Foo'
+  test/Outer.Foo
+
+KDocReference|KDocName(170,178): 'test.Foo'
+  test/Foo
+
+KDocReference|KDocName(275,278): 'Foo'
+  test/Outer.Nested.Foo
+
+KDocReference|KDocName(307,317): 'Nested.Foo'
+  test/Outer.Nested.Foo
+
+KDocReference|KDocName(335,351): 'Outer.Nested.Foo'
+  test/Outer.Nested.Foo
+
+KDocReference|KDocName(369,390): 'test.Outer.Nested.Foo'
+  test/Outer.Nested.Foo
+
+KDocReference|KDocName(419,427): 'test.Foo'
+  test/Foo

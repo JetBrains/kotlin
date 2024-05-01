@@ -4,14 +4,7 @@ KtCallExpression(251,263): 'InnerClass()'
       isImplicitInvoke = false
       partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
         dispatchReceiver = KtImplicitReceiverValue:
-          symbol = KtReceiverParameterSymbol:
-            annotationsList: []
-            origin: SOURCE
-            owningCallableSymbol: KtFunctionSymbol(one/two/foo)
-            type: KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
-              type: one/two/TopLevelClass
+          symbol = <extension receiver>: one.two.TopLevelClass
           type = one.two.TopLevelClass
         extensionReceiver = null
         signature = KtFunctionLikeSignature:

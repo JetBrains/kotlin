@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(64,68): 'this'
+  <extension receiver>: kotlin.String

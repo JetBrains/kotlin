@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(183,194): 'suspendHere'
+  /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR_TYPE): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(183,194): 'suspendHere'
+  null
+

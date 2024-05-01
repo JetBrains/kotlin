@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(77,83): 'invoke'
+  /A.invoke(<dispatch receiver>: A): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(77,83): 'invoke'
+  null
+

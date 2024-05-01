@@ -1,0 +1,11 @@
+KDocReference|KDocName(113,126): 'test.function'
+  null
+
+KDocReference|KDocName(132,140): 'function'
+  null
+
+KDocReference|KDocName(150,163): 'Base.function'
+  null
+
+KDocReference|KDocName(169,187): 'test.Base.function'
+  null

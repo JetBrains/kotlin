@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(55,61): 'values'
+  test/E.values(): kotlin.Array<test.E>

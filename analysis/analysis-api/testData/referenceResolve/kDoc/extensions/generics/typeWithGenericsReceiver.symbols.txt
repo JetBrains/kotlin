@@ -1,0 +1,5 @@
+KDocReference|KDocName(121,140): 'WithGenerics.intExt'
+  test/intExt(<extension receiver>: test.WithGenerics<kotlin.Int>): kotlin.Unit
+
+KDocReference|KDocName(146,168): 'WithGenerics.stringExt'
+  test/stringExt(<extension receiver>: test.WithGenerics<kotlin.String>): kotlin.Unit

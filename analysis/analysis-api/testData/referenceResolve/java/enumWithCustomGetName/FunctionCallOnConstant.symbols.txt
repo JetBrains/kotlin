@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(54,61): 'getName'
+  /JavaEnum.getName(<dispatch receiver>: JavaEnum): kotlin.String!

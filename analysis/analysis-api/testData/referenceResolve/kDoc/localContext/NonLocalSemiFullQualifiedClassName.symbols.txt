@@ -1,0 +1,2 @@
+KDocReference|KDocName(100,104): 'X.YY'
+  /C.X.YY

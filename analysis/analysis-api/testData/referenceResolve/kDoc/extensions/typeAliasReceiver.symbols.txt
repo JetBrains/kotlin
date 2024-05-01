@@ -1,0 +1,14 @@
+KDocReference|KDocName(167,182): 'FooAlias.fooExt'
+  test/fooExt(<extension receiver>: test.Foo): kotlin.Unit
+
+KDocReference|KDocName(191,206): 'Foo.fooAliasExt'
+  test/fooAliasExt(<extension receiver>: test.FooAlias): kotlin.Unit
+
+KDocReference|KDocName(212,232): 'FooAlias.fooAliasExt'
+  test/fooAliasExt(<extension receiver>: test.FooAlias): kotlin.Unit
+
+KDocReference|KDocName(241,256): 'FooAlias.anyExt'
+  test/anyExt(<extension receiver>: kotlin.Any): kotlin.Unit
+
+KDocReference|KDocName(262,279): 'FooAlias.otherExt'
+  null

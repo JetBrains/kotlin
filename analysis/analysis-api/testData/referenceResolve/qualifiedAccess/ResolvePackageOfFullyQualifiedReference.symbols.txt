@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(114,117): 'baz'
+  foo.bar.baz

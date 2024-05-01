@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(32,37): 'value'
+  value: java.lang.annotation.RetentionPolicy

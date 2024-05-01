@@ -13,41 +13,55 @@ import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compareCalls
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.KtResolvable
 import org.jetbrains.kotlin.resolve.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
-    protected fun processElement(
-        element: KtElement,
+    companion object {
+        val Any.asKtElement: KtElement
+            get() = when (this) {
+                is KtElement -> this
+                is KtReference -> element
+                else -> error("Unsupported type: ${this::class.simpleName}")
+            }
+    }
+
+    /**
+     * @param element is [KtElement] or [KtReference]
+     */
+    protected fun KtAnalysisSession.processElement(
+        element: Any,
         testServices: TestServices,
         renderedSymbol: (String) -> Unit,
         renderedCall: (String) -> Unit,
         renderedCandidates: (String) -> Unit,
     ) {
-        analyseForTest(element) {
-            val callInfo = element.resolveCallOld()
-            val expectedSymbol = callInfo?.successfulCallOrNull<KtCallableMemberCall<*, *>>()?.symbol
+        if (element !is KtResolvable) return
 
-            if (element is KtResolvable) {
-                val actualSymbol = element.resolveSymbol()
-                val actual = stringRepresentation(actualSymbol)
-                renderedSymbol(actual)
-                testServices.assertions.assertEquals(expectedSymbol, actualSymbol)
-            }
+        val callInfo = (element as? KtElement)?.resolveCallOld()
+        val expectedSymbol = callInfo?.successfulCallOrNull<KtCallableMemberCall<*, *>>()
+            ?.symbol
+            ?: (element as? KtReference)?.resolveToSymbol()
 
-            if (element is KtResolvableCall) {
-                val attempt = element.attemptResolveCall()
-                val actual = stringRepresentation(attempt)
-                renderedCall(actual)
-                testServices.assertions.assertEquals(expectedSymbol, (attempt as? KtCallableMemberCall<*, *>)?.symbol)
+        val actualSymbol = element.resolveSymbol()
+        val actual = stringRepresentation(actualSymbol)
+        renderedSymbol(actual)
+        testServices.assertions.assertEquals(expectedSymbol, actualSymbol)
 
-                val candidates = element.collectCallCandidates()
-                val candidatesActual = renderCandidates(candidates)
-                renderedCandidates(candidatesActual)
-            }
+        if (element is KtResolvableCall) {
+            val attempt = element.attemptResolveCall()
+            val actual = stringRepresentation(attempt)
+            renderedCall(actual)
+            testServices.assertions.assertEquals(expectedSymbol, (attempt as? KtCallableMemberCall<*, *>)?.symbol)
+
+            val candidates = element.collectCallCandidates()
+            val candidatesActual = renderCandidates(candidates)
+            renderedCandidates(candidatesActual)
         }
     }
 

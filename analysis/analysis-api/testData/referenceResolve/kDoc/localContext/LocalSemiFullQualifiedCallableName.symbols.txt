@@ -1,0 +1,2 @@
+KDocReference|KDocName(100,107): 'X.YY.aa'
+  /C.X.YY.aa(<dispatch receiver>: C.X.YY): kotlin.Unit

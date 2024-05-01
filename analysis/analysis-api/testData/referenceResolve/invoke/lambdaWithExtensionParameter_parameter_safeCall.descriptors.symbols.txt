@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(81,87): 'action'
+  action: kotlin.Function1<test.Foo, kotlin.Unit>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(81,87): 'action'
+  null
+

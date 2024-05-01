@@ -1,0 +1,48 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,11): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(12,15): 'two'
+  one.two
+
+KtSimpleNameReference|KtNameReferenceExpression(24,27): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(28,31): 'two'
+  one.two
+
+KtSimpleNameReference|KtNameReferenceExpression(32,45): 'TopLevelClass'
+  one/two/TopLevelClass
+
+KtSimpleNameReference|KtNameReferenceExpression(46,56): 'InnerClass'
+  one/two/TopLevelClass.InnerClass
+
+KtSimpleNameReference|KtNameReferenceExpression(150,153): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(154,157): 'two'
+  one.two
+
+KtSimpleNameReference|KtNameReferenceExpression(158,171): 'TopLevelClass'
+  one/two/TopLevelClass
+
+KtSimpleNameReference|KtNameReferenceExpression(189,202): 'TopLevelClass'
+  one/two/TopLevelClass
+
+KtSimpleNameReference|KtNameReferenceExpression(203,214): 'NestedClass'
+  one/two/TopLevelClass.NestedClass
+
+KtSimpleNameReference|KtNameReferenceExpression(238,248): 'InnerAlias'
+  one/two/TopLevelClass.InnerClass
+
+KtCallExpression(251,263): 'InnerClass()'
+  <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+
+KtInvokeFunctionReference|KtCallExpression(251,263): 'InnerClass()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(251,261): 'InnerClass'
+  <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(251,261): 'InnerClass'
+  null
+

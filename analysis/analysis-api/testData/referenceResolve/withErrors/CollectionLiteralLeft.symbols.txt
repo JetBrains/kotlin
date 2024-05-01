@@ -1,0 +1,2 @@
+KtCollectionLiteralReference|KtCollectionLiteralExpression(10,19): '[1, 2, 3]'
+  kotlin/arrayOf(vararg elements: T): kotlin.Array<T>

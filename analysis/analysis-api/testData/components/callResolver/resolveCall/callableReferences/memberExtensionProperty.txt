@@ -2,14 +2,7 @@ KtSuccessCallInfo:
   call = KtSimpleVariableAccessCall:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
-          annotationsList: []
-          origin: SOURCE
-          owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
-          type: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
-            type: Foo
+        symbol = <extension receiver>: Foo
         type = Foo
       extensionReceiver = null
       signature = KtVariableLikeSignature:

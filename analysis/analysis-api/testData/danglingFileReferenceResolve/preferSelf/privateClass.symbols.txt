@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(97,100): 'Bar'
+  <constructor>(): Foo.Bar

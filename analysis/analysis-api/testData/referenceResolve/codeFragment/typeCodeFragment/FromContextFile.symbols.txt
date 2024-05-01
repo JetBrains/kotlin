@@ -1,0 +1,7 @@
+context.kt
+  KtSimpleNameReference|KtNameReferenceExpression(84,87): 'Foo'
+    <constructor>(): Foo
+
+fragment.kt
+  KtSimpleNameReference|KtNameReferenceExpression(134,137): 'Foo'
+    /Foo

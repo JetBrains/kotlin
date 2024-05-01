@@ -1,0 +1,279 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,11): 'one'
+  one
+
+KtCallExpression(66,71): 'foo()'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(66,71): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(66,69): 'foo'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(66,69): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(80,84): 'this'
+  one/MyClass
+
+KtCallExpression(85,90): 'foo()'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(85,90): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(85,88): 'foo'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(85,88): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(99,103): 'this'
+  one/MyClass
+
+KtSimpleNameReference|KtLabelReferenceExpression(103,111): '@MyClass'
+  one/MyClass
+
+KtCallExpression(112,117): 'foo()'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(112,117): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(112,115): 'foo'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(112,115): 'foo'
+  null
+
+KtCallExpression(203,208): 'foo()'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(203,208): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(203,206): 'foo'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(203,206): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(221,225): 'this'
+  one/MyClass.InnerOuter
+
+KtCallExpression(226,231): 'foo()'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(226,231): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(226,229): 'foo'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(226,229): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(244,248): 'this'
+  one/MyClass.InnerOuter
+
+KtSimpleNameReference|KtLabelReferenceExpression(248,259): '@InnerOuter'
+  one/MyClass.InnerOuter
+
+KtCallExpression(260,265): 'foo()'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(260,265): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(260,263): 'foo'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(260,263): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(278,282): 'this'
+  one/MyClass
+
+KtSimpleNameReference|KtLabelReferenceExpression(282,290): '@MyClass'
+  one/MyClass
+
+KtCallExpression(291,296): 'foo()'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(291,296): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(291,294): 'foo'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(291,294): 'foo'
+  null
+
+KtCallExpression(403,408): 'foo()'
+  one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(403,408): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(403,406): 'foo'
+  one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(403,406): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(425,429): 'this'
+  one/MyClass.InnerOuter.InnerNested
+
+KtCallExpression(430,435): 'foo()'
+  one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(430,435): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(430,433): 'foo'
+  one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(430,433): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(452,456): 'this'
+  one/MyClass.InnerOuter.InnerNested
+
+KtSimpleNameReference|KtLabelReferenceExpression(456,468): '@InnerNested'
+  one/MyClass.InnerOuter.InnerNested
+
+KtCallExpression(469,474): 'foo()'
+  one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(469,474): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(469,472): 'foo'
+  one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(469,472): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(491,495): 'this'
+  one/MyClass.InnerOuter
+
+KtSimpleNameReference|KtLabelReferenceExpression(495,506): '@InnerOuter'
+  one/MyClass.InnerOuter
+
+KtCallExpression(507,512): 'foo()'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(507,512): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(507,510): 'foo'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(507,510): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(529,533): 'this'
+  one/MyClass
+
+KtSimpleNameReference|KtLabelReferenceExpression(533,541): '@MyClass'
+  one/MyClass
+
+KtCallExpression(542,547): 'foo()'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(542,547): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(542,545): 'foo'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(542,545): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(577,584): 'MyClass'
+  one/MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(589,595): 'String'
+  kotlin/String
+
+KtCallExpression(619,624): 'foo()'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(619,624): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(619,622): 'foo'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(619,622): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(645,649): 'this'
+  <no name provided>(<extension receiver>: one.MyClass, s: kotlin.String): kotlin.Unit
+
+KtCallExpression(650,655): 'foo()'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(650,655): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(650,653): 'foo'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(650,653): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(676,680): 'this'
+  one/MyClass.InnerOuter.InnerNested
+
+KtSimpleNameReference|KtLabelReferenceExpression(680,692): '@InnerNested'
+  one/MyClass.InnerOuter.InnerNested
+
+KtCallExpression(693,698): 'foo()'
+  one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(693,698): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(693,696): 'foo'
+  one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(693,696): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(719,723): 'this'
+  one/MyClass.InnerOuter
+
+KtSimpleNameReference|KtLabelReferenceExpression(723,734): '@InnerOuter'
+  one/MyClass.InnerOuter
+
+KtCallExpression(735,740): 'foo()'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(735,740): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(735,738): 'foo'
+  one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(735,738): 'foo'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(761,765): 'this'
+  one/MyClass
+
+KtSimpleNameReference|KtLabelReferenceExpression(765,773): '@MyClass'
+  one/MyClass
+
+KtCallExpression(774,779): 'foo()'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(774,779): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(774,777): 'foo'
+  one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(774,777): 'foo'
+  null
+

@@ -1,0 +1,5 @@
+KDocReference|KDocName(85,97): 'Receiver.ext'
+  test/Base.ext(<extension receiver>: test.Receiver<dispatch receiver>: test.Base): kotlin.Unit
+
+KDocReference|KDocName(142,154): 'Receiver.ext'
+  test/Base.ext(<extension receiver>: test.Receiver<dispatch receiver>: test.Base): kotlin.Unit

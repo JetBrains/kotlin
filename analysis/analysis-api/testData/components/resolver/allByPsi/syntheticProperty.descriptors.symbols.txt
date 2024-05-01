@@ -1,0 +1,147 @@
+KtSimpleNameReference|KtNameReferenceExpression(36,45): 'JavaClass'
+  /JavaClass
+
+KtSimpleNameReference|KtNameReferenceExpression(61,70): 'JavaClass'
+  /JavaClass
+
+KtCallExpression(78,104): 'print(javaClass.something)'
+  kotlin/io/print(message: kotlin.Int): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(78,104): 'print(javaClass.something)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(78,83): 'print'
+  kotlin/io/print(message: kotlin.Int): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(78,83): 'print'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(84,93): 'javaClass'
+  javaClass: JavaClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(84,93): 'javaClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(94,103): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(94,103): 'something'
+  /JavaClass.getSomething(<dispatch receiver>: JavaClass): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(109,118): 'javaClass'
+  javaClass: JavaClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(109,118): 'javaClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(119,128): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(119,128): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtOperationReferenceExpression(129,130): '='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(137,146): 'javaClass'
+  javaClass: JavaClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(137,146): 'javaClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(147,156): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(147,156): 'something'
+  /JavaClass.getSomething(<dispatch receiver>: JavaClass): kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(147,156): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtOperationReferenceExpression(157,159): '+='
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(166,175): 'javaClass'
+  javaClass: JavaClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(166,175): 'javaClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(176,185): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(176,185): 'something'
+  /JavaClass.getSomething(<dispatch receiver>: JavaClass): kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(176,185): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtOperationReferenceExpression(185,187): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtOperationReferenceExpression(192,194): '--'
+  kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(194,203): 'javaClass'
+  javaClass: JavaClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(194,203): 'javaClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(204,213): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(204,213): 'something'
+  /JavaClass.getSomething(<dispatch receiver>: JavaClass): kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(204,213): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtNameReferenceExpression(219,228): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(219,228): 'something'
+  /JavaClass.getSomething(<dispatch receiver>: JavaClass): kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(219,228): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtOperationReferenceExpression(228,230): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(236,245): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(236,245): 'something'
+  /JavaClass.getSomething(<dispatch receiver>: JavaClass): kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(236,245): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtOperationReferenceExpression(246,248): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(254,263): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(254,263): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtOperationReferenceExpression(265,266): '='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(274,283): 'javaClass'
+  javaClass: JavaClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(274,283): 'javaClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(284,293): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(284,293): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtOperationReferenceExpression(295,296): '='
+  null
+

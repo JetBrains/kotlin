@@ -4,14 +4,7 @@ KtSimpleFunctionCall:
     dispatchReceiver = null
     extensionReceiver = KtSmartCastedReceiverValue:
       original = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
-          annotationsList: []
-          origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/test)
-          type: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
-            type: kotlin/Any
+        symbol = <extension receiver>: kotlin.Any
         type = kotlin.Any
       type = kotlin.String
     signature = KtFunctionLikeSignature:

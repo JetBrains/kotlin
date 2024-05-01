@@ -1,0 +1,2 @@
+KDocReference|KDocName(48,59): 'foo.Foo.foo'
+  null

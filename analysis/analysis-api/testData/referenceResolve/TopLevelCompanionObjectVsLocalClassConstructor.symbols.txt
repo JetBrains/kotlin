@@ -1,0 +1,5 @@
+KtSimpleNameReference|KtNameReferenceExpression(107,115): 'Conflict'
+  test/Conflict.Companion
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(107,115): 'Conflict'
+  null

@@ -1,0 +1,2 @@
+KDocReference|KDocName(47,59): 'bar.A.toName'
+  bar/A.Companion.toName(<dispatch receiver>: bar.A.Companion): kotlin.String

@@ -1,0 +1,196 @@
+dependency.kt
+  KtSimpleNameReference|KtNameReferenceExpression(31,34): 'one'
+    one
+
+  KtSimpleNameReference|KtNameReferenceExpression(35,38): 'two'
+    one.two
+
+main.kt
+  KtSimpleNameReference|KtNameReferenceExpression(39,46): 'another'
+    another
+
+  KtSimpleNameReference|KtNameReferenceExpression(55,58): 'one'
+    one
+
+  KtSimpleNameReference|KtNameReferenceExpression(59,62): 'two'
+    one.two
+
+  KtSimpleNameReference|KtNameReferenceExpression(63,77): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(85,88): 'one'
+    one
+
+  KtSimpleNameReference|KtNameReferenceExpression(89,92): 'two'
+    one.two
+
+  KtSimpleNameReference|KtNameReferenceExpression(93,107): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(108,111): 'foo'
+    one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+
+  KtSimpleNameReference|KtNameReferenceExpression(119,122): 'one'
+    one
+
+  KtSimpleNameReference|KtNameReferenceExpression(123,126): 'two'
+    one.two
+
+  KtSimpleNameReference|KtNameReferenceExpression(127,141): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(142,145): 'bar'
+    val bar: kotlin.Int
+
+  KtSimpleNameReference|KtNameReferenceExpression(153,156): 'one'
+    one
+
+  KtSimpleNameReference|KtNameReferenceExpression(157,160): 'two'
+    one.two
+
+  KtSimpleNameReference|KtNameReferenceExpression(161,175): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(176,188): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(196,199): 'one'
+    one
+
+  KtSimpleNameReference|KtNameReferenceExpression(200,203): 'two'
+    one.two
+
+  KtSimpleNameReference|KtNameReferenceExpression(204,218): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(219,231): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(232,235): 'baz'
+    one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+
+  KtSimpleNameReference|KtNameReferenceExpression(243,246): 'one'
+    one
+
+  KtSimpleNameReference|KtNameReferenceExpression(247,250): 'two'
+    one.two
+
+  KtSimpleNameReference|KtNameReferenceExpression(251,265): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(266,278): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(279,282): 'doo'
+    var doo: kotlin.String
+
+  KtSimpleNameReference|KtNameReferenceExpression(326,329): 'one'
+    one
+
+  KtSimpleNameReference|KtNameReferenceExpression(330,333): 'two'
+    one.two
+
+  KtSimpleNameReference|KtNameReferenceExpression(334,348): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(377,391): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(415,429): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtCallExpression(430,435): 'foo()'
+    one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+
+  KtInvokeFunctionReference|KtCallExpression(430,435): 'foo()'
+    null
+
+  KtSimpleNameReference|KtNameReferenceExpression(430,433): 'foo'
+    one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+
+  KtCallExpression(458,463): 'foo()'
+    one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+
+  KtInvokeFunctionReference|KtCallExpression(458,463): 'foo()'
+    null
+
+  KtSimpleNameReference|KtNameReferenceExpression(458,461): 'foo'
+    one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+
+  KtSimpleNameReference|KtNameReferenceExpression(487,501): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(502,505): 'bar'
+    val bar: kotlin.Int
+
+  KtSimpleNameReference|KtNameReferenceExpression(528,531): 'bar'
+    val bar: kotlin.Int
+
+  KtSimpleNameReference|KtNameReferenceExpression(564,578): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(579,591): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(623,635): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(659,673): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(674,686): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtCallExpression(687,692): 'baz()'
+    one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+
+  KtInvokeFunctionReference|KtCallExpression(687,692): 'baz()'
+    null
+
+  KtSimpleNameReference|KtNameReferenceExpression(687,690): 'baz'
+    one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+
+  KtSimpleNameReference|KtNameReferenceExpression(721,733): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtCallExpression(734,739): 'baz()'
+    one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+
+  KtInvokeFunctionReference|KtCallExpression(734,739): 'baz()'
+    null
+
+  KtSimpleNameReference|KtNameReferenceExpression(734,737): 'baz'
+    one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+
+  KtCallExpression(762,767): 'baz()'
+    one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+
+  KtInvokeFunctionReference|KtCallExpression(762,767): 'baz()'
+    null
+
+  KtSimpleNameReference|KtNameReferenceExpression(762,765): 'baz'
+    one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+
+  KtSimpleNameReference|KtNameReferenceExpression(791,805): 'TopLevelObject'
+    one/two/TopLevelObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(806,818): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(819,822): 'doo'
+    var doo: kotlin.String
+
+  KtSimpleNameReference|KtNameReferenceExpression(851,863): 'NestedObject'
+    one/two/TopLevelObject.NestedObject
+
+  KtSimpleNameReference|KtNameReferenceExpression(864,867): 'doo'
+    var doo: kotlin.String
+
+  KtSimpleNameReference|KtNameReferenceExpression(890,893): 'doo'
+    var doo: kotlin.String
+
+  KtSimpleNameReference|KtNameReferenceExpression(899,902): 'doo'
+    var doo: kotlin.String
+
+  KtSimpleNameReference|KtOperationReferenceExpression(903,904): '='
+    null

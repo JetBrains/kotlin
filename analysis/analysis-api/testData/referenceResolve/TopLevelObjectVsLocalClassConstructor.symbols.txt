@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(71,79): 'Conflict'
+  <constructor>(): <local>.Conflict

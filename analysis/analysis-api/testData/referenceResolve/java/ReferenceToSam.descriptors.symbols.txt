@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(83,94): 'setListener'
+  /JavaTest.SomeJavaClass.setListener(<dispatch receiver>: JavaTest.SomeJavaClass, listener: JavaTest.SAMInterface!): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(83,94): 'setListener'
+  null
+

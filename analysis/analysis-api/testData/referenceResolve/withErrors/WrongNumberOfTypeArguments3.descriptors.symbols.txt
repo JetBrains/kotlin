@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(51,53): 'DD'
+  <constructor>(): foo.DD<T, T2>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(51,53): 'DD'
+  null
+

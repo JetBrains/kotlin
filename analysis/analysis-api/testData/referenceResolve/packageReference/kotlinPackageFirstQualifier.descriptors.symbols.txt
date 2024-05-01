@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(22,28): 'kotlin'
+  kotlin
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(22,28): 'kotlin'
+  null
+

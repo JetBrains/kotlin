@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(100,109): 'parameter'
+  parameter: kotlin.Any

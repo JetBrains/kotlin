@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(22,25): 'sin'
+  java/lang/Math.sin(a: kotlin.Double): kotlin.Double

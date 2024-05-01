@@ -1,0 +1,5 @@
+KDocReference|KDocName(53,57): 'prop'
+  dependency/JavaBase.getProp(<dispatch receiver>: dependency.JavaBase): kotlin.String!
+
+KDocReference|KDocName(63,79): 'KotlinChild.prop'
+  dependency/JavaBase.getProp(<dispatch receiver>: dependency.JavaBase): kotlin.String!

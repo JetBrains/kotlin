@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(18,28): 'Comparator'
+  java/util/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(18,28): 'Comparator'
+  null
+

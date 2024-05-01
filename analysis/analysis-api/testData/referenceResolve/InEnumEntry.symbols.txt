@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(100,109): 'TOP_LEVEL'
+  val TOP_LEVEL: kotlin.Int

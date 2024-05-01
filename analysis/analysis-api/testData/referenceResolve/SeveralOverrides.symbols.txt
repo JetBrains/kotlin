@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(110,113): 'foo'
+  /C.foo(<dispatch receiver>: C): kotlin.Unit

@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(32,37): 'value'
+  value: java.lang.annotation.RetentionPolicy
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(32,37): 'value'
+  null
+

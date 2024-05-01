@@ -1,0 +1,5 @@
+KtSimpleNameReference|KtNameReferenceExpression(135,137): 'BB'
+  foo/bar/baz/AA.BB.Companion
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(135,137): 'BB'
+  null

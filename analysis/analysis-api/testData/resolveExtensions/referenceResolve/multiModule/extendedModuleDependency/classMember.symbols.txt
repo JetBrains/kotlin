@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(140,161): 'generatedClassMember2'
+  generated/GeneratedClass2.generatedClassMember2(<dispatch receiver>: generated.GeneratedClass2): generated.GeneratedClass1

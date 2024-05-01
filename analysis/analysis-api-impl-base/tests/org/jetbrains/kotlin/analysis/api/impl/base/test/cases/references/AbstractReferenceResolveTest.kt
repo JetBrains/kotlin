@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractMultiResolveTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KtPropertyAccessorsRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.CaretMarker
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
+abstract class AbstractReferenceResolveTest : AbstractMultiResolveTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
@@ -49,6 +50,19 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile)
         doTestByFileStructure(mainFile, caretPositions, mainModule, testServices)
+
+        super.doTest(testServices)
+    }
+
+    override val withCalls: Boolean get() = false
+    override fun process(testServices: TestServices, consumer: (Any) -> Unit) {
+        for (ktFile in testServices.ktTestModuleStructure.allMainKtFiles) {
+            val caretPositions = testServices.expressionMarkerProvider.getAllCarets(ktFile)
+            for (caretMarker in caretPositions) {
+                val references = findReferencesAtCaret(ktFile, caretMarker.offset)
+                references.forEach(consumer)
+            }
+        }
     }
 
     protected fun doTestByFileStructure(ktFile: KtFile, carets: List<CaretMarker>, mainModule: KtTestModule, testServices: TestServices) {

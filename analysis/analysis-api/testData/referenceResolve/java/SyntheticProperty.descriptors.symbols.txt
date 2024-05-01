@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(269,278): 'something'
+  var something: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(269,278): 'something'
+  /JavaClass.setSomething(<dispatch receiver>: JavaClass, value: kotlin.Int): kotlin.Unit
+

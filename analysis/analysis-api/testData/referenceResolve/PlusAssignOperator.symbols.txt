@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtOperationReferenceExpression(159,161): '+='
+  test/WithOperator.plusAssign(<dispatch receiver>: test.WithOperator, f: test.Foo): kotlin.Unit

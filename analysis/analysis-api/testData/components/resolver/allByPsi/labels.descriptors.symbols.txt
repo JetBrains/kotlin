@@ -1,0 +1,42 @@
+KtSimpleNameReference|KtNameReferenceExpression(22,26): 'Unit'
+  kotlin/Unit
+
+KtCallExpression(34,42): 'action()'
+  kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+
+KtInvokeFunctionReference|KtCallExpression(34,42): 'action()'
+  kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+
+KtSimpleNameReference|KtNameReferenceExpression(34,40): 'action'
+  action: kotlin.Function0<kotlin.Unit>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(34,40): 'action'
+  null
+
+KtCallExpression(64,102): 'foo label@{'
+  /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(64,102): 'foo label@{'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(64,67): 'foo'
+  /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(64,67): 'foo'
+  null
+
+KtSimpleNameReference|KtLabelReferenceExpression(68,74): 'label@'
+  null
+
+KtSimpleNameReference|KtLabelReferenceExpression(90,96): '@label'
+  <anonymous function>(): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(108,114): 'myFor@'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(126,128): '..'
+  kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+
+KtSimpleNameReference|KtLabelReferenceExpression(149,155): '@myFor'
+  null
+

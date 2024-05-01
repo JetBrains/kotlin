@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(589,592): 'bar'
+  pkg/Foo.bar(): kotlin.Unit

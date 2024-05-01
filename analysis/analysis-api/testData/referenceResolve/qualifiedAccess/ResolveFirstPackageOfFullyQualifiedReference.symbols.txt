@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(106,109): 'foo'
+  foo

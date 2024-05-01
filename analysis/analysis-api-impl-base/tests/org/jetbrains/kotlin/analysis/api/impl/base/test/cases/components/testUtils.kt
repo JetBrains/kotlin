@@ -44,12 +44,13 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
                     is KtConstructorSymbol -> "<constructor>"
                     is KtPropertyGetterSymbol -> callableIdIfNonLocal ?: "<getter>"
                     is KtPropertySetterSymbol -> callableIdIfNonLocal ?: "<setter>"
+                    is KtAnonymousFunctionSymbol -> "<anonymous function>"
                     else -> error("unexpected symbol kind in KtCall: ${this@with::class}")
                 }
             )
             append("(")
             (this@with as? KtFunctionSymbol)?.receiverParameter?.let { receiver ->
-                append("<extension receiver>: ${receiver.type.render()}")
+                append(stringRepresentation(receiver))
                 if (valueParameters.isNotEmpty()) append(", ")
             }
 
@@ -65,6 +66,10 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
         is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         is KtTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
+        is KtClassLikeSymbol -> classIdIfNonLocal?.toString() ?: nameOrAnonymous.asString()
+        is KtPackageSymbol -> fqName.toString()
+        is KtEnumEntrySymbol -> callableIdIfNonLocal?.toString() ?: name.asString()
+        is KtReceiverParameterSymbol -> "<extension receiver>: ${type.render()}"
         is KtSymbol -> DebugSymbolRenderer().render(analysisSession, this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(

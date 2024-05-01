@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtLabelReferenceExpression(47,51): '@foo'
+  /Foo.foo(<extension receiver>: kotlin.String<dispatch receiver>: Foo): kotlin.Unit

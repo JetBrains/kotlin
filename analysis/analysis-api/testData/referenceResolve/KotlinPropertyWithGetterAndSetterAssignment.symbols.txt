@@ -1,0 +1,41 @@
+KtSimpleNameReference|KtNameReferenceExpression(107,116): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(124,133): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(144,153): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(144,153): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(165,174): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(165,174): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(185,194): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(185,194): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(200,209): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(200,209): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(217,226): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(217,226): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(235,244): 'something'
+  var something: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(257,266): 'something'
+  var something: kotlin.Int

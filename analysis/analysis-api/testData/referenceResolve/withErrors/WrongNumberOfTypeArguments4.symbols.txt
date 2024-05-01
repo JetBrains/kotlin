@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(54,56): 'CC'
+  foo/CC

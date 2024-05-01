@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(125,126): 'A'
+  <constructor>(): test.A

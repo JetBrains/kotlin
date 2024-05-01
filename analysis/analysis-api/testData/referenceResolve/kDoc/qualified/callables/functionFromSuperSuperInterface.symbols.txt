@@ -1,0 +1,2 @@
+KDocReference|KDocName(95,102): 'Foo.foo'
+  /Baz.foo(<dispatch receiver>: Baz): kotlin.Unit

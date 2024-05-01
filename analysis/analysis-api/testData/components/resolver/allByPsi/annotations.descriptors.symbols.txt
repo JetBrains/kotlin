@@ -1,0 +1,228 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,11): 'one'
+  one
+
+KtSimpleNameReference|KtNameReferenceExpression(20,26): 'kotlin'
+  kotlin
+
+KtSimpleNameReference|KtNameReferenceExpression(27,34): 'reflect'
+  kotlin.reflect
+
+KtSimpleNameReference|KtNameReferenceExpression(35,41): 'KClass'
+  kotlin/reflect/KClass
+
+KtAnnotationEntry(43,54): '@Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtSimpleNameReference|KtNameReferenceExpression(44,54): 'Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtSimpleNameReference|KtNameReferenceExpression(95,103): 'IntArray'
+  kotlin/IntArray
+
+KtAnnotationEntry(106,117): '@Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtSimpleNameReference|KtNameReferenceExpression(107,117): 'Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtSimpleNameReference|KtNameReferenceExpression(157,163): 'KClass'
+  kotlin/reflect/KClass
+
+KtAnnotationEntry(169,180): '@Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtSimpleNameReference|KtNameReferenceExpression(170,180): 'Repeatable'
+  <constructor>(): kotlin.annotation.Repeatable
+
+KtSimpleNameReference|KtNameReferenceExpression(227,232): 'Array'
+  kotlin/Array
+
+KtSimpleNameReference|KtNameReferenceExpression(233,239): 'KClass'
+  kotlin/reflect/KClass
+
+KtSimpleNameReference|KtNameReferenceExpression(302,307): 'Array'
+  kotlin/Array
+
+KtSimpleNameReference|KtNameReferenceExpression(308,321): 'AnnoWithArray'
+  one/AnnoWithArray
+
+KtSimpleNameReference|KtNameReferenceExpression(366,372): 'String'
+  kotlin/String
+
+KtAnnotationEntry(407,432): '@AnnoWithArray([1, 2, 3])'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtSimpleNameReference|KtNameReferenceExpression(408,421): 'AnnoWithArray'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtCollectionLiteralReference|KtCollectionLiteralExpression(422,431): '[1, 2, 3]'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+KtAnnotationEntry(433,464): '@AnnoWithArray(arr = [4, 5, 6])'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtSimpleNameReference|KtNameReferenceExpression(434,447): 'AnnoWithArray'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtSimpleNameReference|KtNameReferenceExpression(448,451): 'arr'
+  arr: kotlin.IntArray
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(448,451): 'arr'
+  null
+
+KtCollectionLiteralReference|KtCollectionLiteralExpression(454,463): '[4, 5, 6]'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+KtAnnotationEntry(465,500): '@AnnoWithArray(intArrayOf(7, 8, 9))'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtSimpleNameReference|KtNameReferenceExpression(466,479): 'AnnoWithArray'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtCallExpression(480,499): 'intArrayOf(7, 8, 9)'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+KtInvokeFunctionReference|KtCallExpression(480,499): 'intArrayOf(7, 8, 9)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(480,490): 'intArrayOf'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(480,490): 'intArrayOf'
+  null
+
+KtAnnotationEntry(501,539): '@AnnoWithKClass(AnnoWithKClass::class)'
+  <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+
+KtSimpleNameReference|KtNameReferenceExpression(502,516): 'AnnoWithKClass'
+  <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+
+KtSimpleNameReference|KtNameReferenceExpression(517,531): 'AnnoWithKClass'
+  one/AnnoWithKClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(517,531): 'AnnoWithKClass'
+  null
+
+KtAnnotationEntry(542,583): 'AnnoWithKClass(one.AnnoWithKClass::class)'
+  <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+
+KtSimpleNameReference|KtNameReferenceExpression(542,556): 'AnnoWithKClass'
+  <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+
+KtSimpleNameReference|KtNameReferenceExpression(557,560): 'one'
+  one
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(557,560): 'one'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(561,575): 'AnnoWithKClass'
+  one/AnnoWithKClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(561,575): 'AnnoWithKClass'
+  null
+
+KtAnnotationEntry(585,659): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.AnnoWithKClass::class])'
+  <constructor>(a: kotlin.Array<kotlin.reflect.KClass<*>>): one.AnnoWithArrayOfKClass
+
+KtSimpleNameReference|KtNameReferenceExpression(586,607): 'AnnoWithArrayOfKClass'
+  <constructor>(a: kotlin.Array<kotlin.reflect.KClass<*>>): one.AnnoWithArrayOfKClass
+
+KtCollectionLiteralReference|KtCollectionLiteralExpression(608,658): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+
+KtSimpleNameReference|KtNameReferenceExpression(609,623): 'AnnoWithKClass'
+  one/AnnoWithKClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(609,623): 'AnnoWithKClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(632,635): 'one'
+  one
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(632,635): 'one'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(636,650): 'AnnoWithKClass'
+  one/AnnoWithKClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(636,650): 'AnnoWithKClass'
+  null
+
+KtAnnotationEntry(660,767): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
+  <constructor>(another: kotlin.Array<one.AnnoWithArray>): one.AnnoWithAnotherAnnotation
+
+KtSimpleNameReference|KtNameReferenceExpression(661,686): 'AnnoWithAnotherAnnotation'
+  <constructor>(another: kotlin.Array<one.AnnoWithArray>): one.AnnoWithAnotherAnnotation
+
+KtCallExpression(687,766): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
+  kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+
+KtInvokeFunctionReference|KtCallExpression(687,766): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(687,694): 'arrayOf'
+  kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(687,694): 'arrayOf'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(695,698): 'one'
+  one
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(695,698): 'one'
+  null
+
+KtCallExpression(699,726): 'AnnoWithArray([10, 11, 12])'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtInvokeFunctionReference|KtCallExpression(699,726): 'AnnoWithArray([10, 11, 12])'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(699,712): 'AnnoWithArray'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(699,712): 'AnnoWithArray'
+  null
+
+KtCollectionLiteralReference|KtCollectionLiteralExpression(713,725): '[10, 11, 12]'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+KtCallExpression(728,765): 'AnnoWithArray(intArrayOf(13, 14, 15))'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+KtInvokeFunctionReference|KtCallExpression(728,765): 'AnnoWithArray(intArrayOf(13, 14, 15))'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(728,741): 'AnnoWithArray'
+  <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(728,741): 'AnnoWithArray'
+  null
+
+KtCallExpression(742,764): 'intArrayOf(13, 14, 15)'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+KtInvokeFunctionReference|KtCallExpression(742,764): 'intArrayOf(13, 14, 15)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(742,752): 'intArrayOf'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(742,752): 'intArrayOf'
+  null
+
+KtAnnotationEntry(768,810): '@AnnoWithString(stringConstant + " 1.2.3")'
+  <constructor>(str: kotlin.String): one.AnnoWithString
+
+KtSimpleNameReference|KtNameReferenceExpression(769,783): 'AnnoWithString'
+  <constructor>(str: kotlin.String): one.AnnoWithString
+
+KtSimpleNameReference|KtNameReferenceExpression(784,798): 'stringConstant'
+  val stringConstant: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(784,798): 'stringConstant'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(799,800): '+'
+  kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+

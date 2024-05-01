@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(52,55): 'bar'
+  kotlinx/pckg/bar(): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(52,55): 'bar'
+  null
+

@@ -1,0 +1,2 @@
+KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(76,80): 'this'
+  <constructor>(b: kotlin.String): A

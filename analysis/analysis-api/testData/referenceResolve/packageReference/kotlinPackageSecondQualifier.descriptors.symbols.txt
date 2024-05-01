@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(29,33): 'text'
+  kotlin.text
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(29,33): 'text'
+  null
+

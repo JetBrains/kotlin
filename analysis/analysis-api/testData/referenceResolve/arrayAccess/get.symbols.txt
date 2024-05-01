@@ -1,0 +1,2 @@
+KtArrayAccessReference|KtArrayAccessExpression(70,77): 'list[0]'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E

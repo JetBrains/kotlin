@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(16,20): 'call'
+  /call(): kotlin.Unit

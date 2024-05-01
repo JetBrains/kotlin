@@ -1,9 +1,69 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,12): 'util'
+  util
+
+KtSimpleNameReference|KtNameReferenceExpression(45,51): 'String'
+  kotlin/String
+
+KtSimpleNameReference|KtNameReferenceExpression(101,105): 'List'
+  kotlin/collections/List
+
+KtSimpleNameReference|KtNameReferenceExpression(106,110): 'List'
+  kotlin/collections/List
+
+KtSimpleNameReference|KtNameReferenceExpression(111,114): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(125,128): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(140,146): 'MyPair'
+  util/MyPair
+
 KtAnnotationEntry(159,178): '@Anno(0 + constant)'
   null
+
+KtSimpleNameReference|KtNameReferenceExpression(160,164): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(167,168): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(169,177): 'constant'
+  val constant: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(179,183): 'List'
+  kotlin/collections/List
 
 KtAnnotationEntry(184,203): '@Anno(1 + constant)'
   null
 
+KtSimpleNameReference|KtNameReferenceExpression(185,189): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(192,193): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(194,202): 'constant'
+  val constant: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(204,208): 'List'
+  kotlin/collections/List
+
 KtAnnotationEntry(209,228): '@Anno(2 + constant)'
   null
+
+KtSimpleNameReference|KtNameReferenceExpression(210,214): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(217,218): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(219,227): 'constant'
+  val constant: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(229,232): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(245,249): 'pair'
+  val pair: util.MyPair
 

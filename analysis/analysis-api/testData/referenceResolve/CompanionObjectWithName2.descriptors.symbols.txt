@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(58,64): 'sample'
+  my.sample
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(58,64): 'sample'
+  null
+

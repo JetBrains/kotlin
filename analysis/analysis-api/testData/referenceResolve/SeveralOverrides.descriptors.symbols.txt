@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(110,113): 'foo'
+  /C.foo(<dispatch receiver>: A): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(110,113): 'foo'
+  null
+

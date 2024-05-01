@@ -1,0 +1,2 @@
+KDocReference|KDocName(65,87): 'ClassWithCompanion.foo'
+  bar/ClassWithCompanion.Companion.foo(<dispatch receiver>: bar.ClassWithCompanion.Companion): kotlin.Unit

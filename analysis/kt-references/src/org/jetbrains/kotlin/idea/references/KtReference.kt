@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLabeledParent
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.resolve.KtResolvable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 interface KtReference : PsiPolyVariantReference {
@@ -150,6 +151,6 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
         }
 }
 
-abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression)
+abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression), KtResolvable
 
 abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression)

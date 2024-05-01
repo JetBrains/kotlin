@@ -1,0 +1,309 @@
+KtCallExpression(78,104): 'print(javaClass.something)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Any?): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = message: kotlin.Any?
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Boolean' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = message: kotlin.Boolean
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Byte): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = message: kotlin.Byte
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Char' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Char): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Char
+              symbol = message: kotlin.Char
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.CharArray' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.CharArray): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.CharArray
+              symbol = message: kotlin.CharArray
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Double' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Double): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Double
+              symbol = message: kotlin.Double
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Float' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Float): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Float
+              symbol = message: kotlin.Float
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = message: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Long): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = message: kotlin.Long
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Short): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = message: kotlin.Short
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KtVariableLikeSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+

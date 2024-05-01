@@ -1,0 +1,26 @@
+KDocReference|KDocName(31,34): 'one'
+  one
+
+KDocReference|KDocName(43,46): 'one'
+  one
+
+KDocReference|KDocName(56,63): 'one.two'
+  one.two
+
+KDocReference|KDocName(72,75): 'one'
+  one
+
+KDocReference|KDocName(91,98): 'one.two'
+  one.two
+
+KDocReference|KDocName(110,123): 'one.two.three'
+  one.two.three
+
+KDocReference|KDocName(132,135): 'one'
+  one
+
+KDocReference|KDocName(161,168): 'one.two'
+  one.two
+
+KDocReference|KDocName(190,203): 'one.two.three'
+  one.two.three

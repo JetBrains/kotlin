@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(22,28): 'kotlin'
+  kotlin

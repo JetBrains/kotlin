@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(73,108): 'generatedTopLevelExtensionFunction1'
+  generated/generatedTopLevelExtensionFunction1(<extension receiver>: kotlin.String, boolean: kotlin.Boolean): kotlin.Int

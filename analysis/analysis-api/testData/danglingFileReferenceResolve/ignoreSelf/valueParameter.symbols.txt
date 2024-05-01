@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(24,27): 'abc'
+  abc: kotlin.Int

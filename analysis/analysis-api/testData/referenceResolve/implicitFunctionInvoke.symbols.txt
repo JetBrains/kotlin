@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(29,30): 'a'
+  a: kotlin.Function0<kotlin.Unit>

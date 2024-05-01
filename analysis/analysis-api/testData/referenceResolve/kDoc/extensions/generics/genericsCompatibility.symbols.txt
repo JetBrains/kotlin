@@ -1,0 +1,26 @@
+KDocReference|KDocName(149,159): 'Any.anyExt'
+  test/anyExt(<extension receiver>: T): kotlin.Unit
+
+KDocReference|KDocName(165,176): 'Base.anyExt'
+  test/anyExt(<extension receiver>: T): kotlin.Unit
+
+KDocReference|KDocName(182,194): 'Child.anyExt'
+  test/anyExt(<extension receiver>: T): kotlin.Unit
+
+KDocReference|KDocName(203,214): 'Any.baseExt'
+  null
+
+KDocReference|KDocName(220,232): 'Base.baseExt'
+  test/baseExt(<extension receiver>: T): kotlin.Unit
+
+KDocReference|KDocName(238,251): 'Child.baseExt'
+  test/baseExt(<extension receiver>: T): kotlin.Unit
+
+KDocReference|KDocName(260,272): 'Any.childExt'
+  null
+
+KDocReference|KDocName(278,291): 'Base.childExt'
+  null
+
+KDocReference|KDocName(297,311): 'Child.childExt'
+  test/childExt(<extension receiver>: T): kotlin.Unit

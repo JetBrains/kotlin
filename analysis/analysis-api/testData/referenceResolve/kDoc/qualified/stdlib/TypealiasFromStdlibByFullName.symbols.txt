@@ -1,0 +1,2 @@
+KDocReference|KDocName(8,36): 'kotlin.collections.ArrayList'
+  kotlin/collections/ArrayList

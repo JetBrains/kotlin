@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(115,124): 'Companion'
+  foo/bar/baz/AA.BB.Companion

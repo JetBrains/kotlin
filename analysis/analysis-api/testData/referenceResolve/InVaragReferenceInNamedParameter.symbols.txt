@@ -1,0 +1,5 @@
+KtSimpleNameReference|KtNameReferenceExpression(87,88): 'a'
+  vararg a: test.A
+
+KtInvokeFunctionReference|KtCallExpression(82,104): 'some(a = arrayOf(A()))'
+  null

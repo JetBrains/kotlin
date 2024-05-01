@@ -1,42 +1,150 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,12): 'util'
+  util
+
+KtSimpleNameReference|KtNameReferenceExpression(45,51): 'String'
+  kotlin/String
+
 KtAnnotationEntry(101,126): '@Anno("a type $constant")'
   <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(102,106): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(116,124): 'constant'
+  val constant: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(127,131): 'List'
+  kotlin/collections/List
 
 KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
   <constructor>(str: kotlin.String): util.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(133,137): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(154,162): 'constant'
+  val constant: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(165,175): 'Collection'
+  kotlin/collections/Collection
+
 KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
   <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(177,181): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(205,213): 'constant'
+  val constant: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(216,222): 'String'
+  kotlin/String
 
 KtAnnotationEntry(234,259): '@Anno("b type $constant")'
   <constructor>(str: kotlin.String): util.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(235,239): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(249,257): 'constant'
+  val constant: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(260,265): 'Array'
+  kotlin/Array
+
 KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
   <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(267,271): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(288,296): 'constant'
+  val constant: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(299,303): 'List'
+  kotlin/collections/List
 
 KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
   <constructor>(str: kotlin.String): util.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(305,309): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(333,341): 'constant'
+  val constant: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(344,347): 'Int'
+  kotlin/Int
+
 KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
   <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(377,381): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(392,396): 'prop'
+  val prop: kotlin.String
 
 KtAnnotationEntry(404,420): '@Anno("a $prop")'
   <constructor>(str: kotlin.String): util.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(405,409): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(414,418): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(424,440): '@Anno("b $prop")'
   <constructor>(str: kotlin.String): util.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(425,429): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(434,438): 'prop'
+  val prop: kotlin.String
+
 KtCallExpression(446,462): 'Pair(null, null)'
+  <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+
+KtInvokeFunctionReference|KtCallExpression(446,462): 'Pair(null, null)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(446,450): 'Pair'
   <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
 
 KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
   <constructor>(str: kotlin.String): util.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(465,469): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(480,484): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(492,508): '@Anno("c $prop")'
   <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(493,497): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(502,506): 'prop'
+  val prop: kotlin.String
 
 KtAnnotationEntry(512,528): '@Anno("d $prop")'
   <constructor>(str: kotlin.String): util.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(513,517): 'Anno'
+  <constructor>(str: kotlin.String): util.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(522,526): 'prop'
+  val prop: kotlin.String
+
 KtCallExpression(534,550): 'Pair(null, null)'
+  <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+
+KtInvokeFunctionReference|KtCallExpression(534,550): 'Pair(null, null)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(534,538): 'Pair'
   <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
 

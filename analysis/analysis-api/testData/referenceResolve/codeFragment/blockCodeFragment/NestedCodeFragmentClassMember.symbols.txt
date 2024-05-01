@@ -1,0 +1,11 @@
+context.kt
+  KtSimpleNameReference|KtNameReferenceExpression(73,77): 'Unit'
+    kotlin/Unit
+
+contextFragment.kt
+  KtSimpleNameReference|KtNameReferenceExpression(206,211): 'Local'
+    <constructor>(): <local>.Local
+
+fragment.kt
+  KtSimpleNameReference|KtNameReferenceExpression(156,161): 'Local'
+    <constructor>(): <local>.Local

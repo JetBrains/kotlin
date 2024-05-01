@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(94,100): 'action'
+  val action: kotlin.Function0<kotlin.Unit>

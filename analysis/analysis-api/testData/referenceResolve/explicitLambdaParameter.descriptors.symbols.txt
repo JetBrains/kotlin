@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(111,113): 'it'
+  it: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(111,113): 'it'
+  null
+

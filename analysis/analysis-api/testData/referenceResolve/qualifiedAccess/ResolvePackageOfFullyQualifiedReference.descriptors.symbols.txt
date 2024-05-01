@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(114,117): 'baz'
+  foo.bar.baz
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(114,117): 'baz'
+  null
+

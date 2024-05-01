@@ -1,0 +1,2 @@
+KDocReference|KDocName(26,28): 'bb'
+  val bb: kotlin.Int

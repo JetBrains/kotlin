@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(74,75): 'A'
+  testPackage/testOtherPackage/A

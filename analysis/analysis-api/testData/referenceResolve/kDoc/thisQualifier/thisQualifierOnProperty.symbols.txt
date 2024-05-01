@@ -1,0 +1,2 @@
+KDocReference|KDocName(8,12): 'this'
+  <extension receiver>: AAA

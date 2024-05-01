@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(131,167): 'generatedOverloadedExtensionFunction'
+  generated/generatedOverloadedExtensionFunction(<extension receiver>: kotlin.Any): kotlin.Int

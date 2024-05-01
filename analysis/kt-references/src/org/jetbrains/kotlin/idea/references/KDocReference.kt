@@ -9,8 +9,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.KtResolvable
 
-abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element) {
+abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element), KtResolvable {
     override fun getRangeInElement(): TextRange = element.getNameTextRange()
 
     override fun canRename(): Boolean = true

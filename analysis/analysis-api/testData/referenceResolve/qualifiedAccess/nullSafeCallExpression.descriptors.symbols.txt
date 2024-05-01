@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(50,52): 'aa'
+  val aa: A?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(50,52): 'aa'
+  null
+

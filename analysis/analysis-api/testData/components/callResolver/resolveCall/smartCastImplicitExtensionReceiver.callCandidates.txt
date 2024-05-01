@@ -4,14 +4,7 @@ KtApplicableCallCandidateInfo:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
-          annotationsList: []
-          origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/test)
-          type: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
-            type: kotlin/Any
+        symbol = <extension receiver>: kotlin.Any
         type = kotlin.String
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.String

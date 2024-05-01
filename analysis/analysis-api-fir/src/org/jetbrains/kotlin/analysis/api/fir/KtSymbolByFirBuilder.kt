@@ -229,6 +229,10 @@ internal class KtSymbolByFirBuilder(
                 )
             }
 
+            if (firSymbol.origin == FirDeclarationOrigin.ImportedFromObjectOrStatic) {
+                return buildFunctionSymbol(firSymbol.fir.importedFromObjectOrStaticData!!.original.symbol)
+            }
+
             check(firSymbol.origin != FirDeclarationOrigin.SamConstructor)
             return symbolsCache.cache(firSymbol) { KtFirFunctionSymbol(firSymbol, analysisSession) }
         }
@@ -305,6 +309,10 @@ internal class KtSymbolByFirBuilder(
 
             firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let {
                 return buildVariableSymbol(it.symbol)
+            }
+
+            if (firSymbol.origin == FirDeclarationOrigin.ImportedFromObjectOrStatic) {
+                return buildPropertySymbol(firSymbol.fir.importedFromObjectOrStaticData!!.original.symbol)
             }
 
             return symbolsCache.cache(firSymbol) {

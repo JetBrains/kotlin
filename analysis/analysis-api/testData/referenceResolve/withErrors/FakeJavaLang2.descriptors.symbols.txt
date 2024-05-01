@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(33,37): 'Fake'
+  null
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(33,37): 'Fake'
+  null
+

@@ -1,0 +1,8 @@
+KDocReference|KDocName(50,53): 'foo'
+  null
+
+KDocReference|KDocName(62,65): 'foo'
+  foo
+
+KDocReference|KDocName(75,82): 'foo.foo'
+  null

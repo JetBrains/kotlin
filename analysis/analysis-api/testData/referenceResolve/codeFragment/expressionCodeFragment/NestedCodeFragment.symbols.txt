@@ -1,0 +1,11 @@
+context.kt
+  KtSimpleNameReference|KtNameReferenceExpression(73,77): 'Unit'
+    kotlin/Unit
+
+contextFragment.kt
+  KtSimpleNameReference|KtNameReferenceExpression(159,162): 'foo'
+    /foo(): kotlin.Unit
+
+fragment.kt
+  KtSimpleNameReference|KtNameReferenceExpression(157,160): 'bar'
+    /bar(): kotlin.Unit

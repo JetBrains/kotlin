@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(125,129): 'COMP'
+  foo/bar/baz/X.COMP
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(125,129): 'COMP'
+  null
+

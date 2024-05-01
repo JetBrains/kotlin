@@ -2,14 +2,7 @@ KtSuccessCallInfo:
   call = KtSimpleVariableAccessCall:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
-          annotationsList: []
-          origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/call)
-          type: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
-            type: JavaClass
+        symbol = <extension receiver>: JavaClass
         type = JavaClass
       extensionReceiver = null
       signature = KtVariableLikeSignature:

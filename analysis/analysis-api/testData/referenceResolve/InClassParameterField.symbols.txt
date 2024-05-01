@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(41,42): 'A'
+  test/A

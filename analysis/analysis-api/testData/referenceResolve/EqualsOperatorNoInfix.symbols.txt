@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtOperationReferenceExpression(106,108): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean

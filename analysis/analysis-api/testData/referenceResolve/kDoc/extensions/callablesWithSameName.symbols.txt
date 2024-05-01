@@ -1,0 +1,11 @@
+KDocReference|KDocName(80,88): 'test.ext'
+  null
+
+KDocReference|KDocName(94,97): 'ext'
+  null
+
+KDocReference|KDocName(106,113): 'Foo.ext'
+  null
+
+KDocReference|KDocName(119,131): 'test.Foo.ext'
+  null

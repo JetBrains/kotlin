@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(69,76): 'RUNTIME'
+  java/lang/annotation/RetentionPolicy.RUNTIME
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(69,76): 'RUNTIME'
+  null
+

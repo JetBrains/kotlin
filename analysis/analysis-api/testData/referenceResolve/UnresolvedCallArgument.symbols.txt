@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(45,50): 'value'
+  null

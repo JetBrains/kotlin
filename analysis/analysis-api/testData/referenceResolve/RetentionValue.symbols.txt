@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(31,37): 'SOURCE'
+  kotlin/annotation/AnnotationRetention.SOURCE

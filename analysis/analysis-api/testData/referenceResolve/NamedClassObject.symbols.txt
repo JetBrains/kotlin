@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(120,125): 'Named'
+  a/A.Named

@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(100,109): 'asDynamic'
+  kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic

@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(327,331): 'Test'
+  <constructor>(): Test<T>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(327,331): 'Test'
+  null
+

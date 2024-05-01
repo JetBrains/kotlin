@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(174,180): 'stream'
+  kotlin/collections/Collection.stream(<dispatch receiver>: kotlin.collections.Collection<E>): @EnhancedNullability java.util.stream.Stream<@EnhancedNullability E>

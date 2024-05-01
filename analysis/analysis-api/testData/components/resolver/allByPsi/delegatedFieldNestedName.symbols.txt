@@ -1,33 +1,174 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,14): 'second'
+  second
+
 KtAnnotationEntry(16,46): '@Target(AnnotationTarget.TYPE)'
   <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(17,23): 'Target'
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(24,40): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(41,45): 'TYPE'
+  kotlin/annotation/AnnotationTarget.TYPE
+
+KtSimpleNameReference|KtNameReferenceExpression(76,79): 'Int'
+  kotlin/Int
 
 KtAnnotationEntry(210,226): '@Anno(0 + outer)'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(211,215): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(218,219): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(220,225): 'outer'
+  val outer: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(227,231): 'Base'
+  second/Base
+
 KtAnnotationEntry(232,248): '@Anno(1 + outer)'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(233,237): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(240,241): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(242,247): 'outer'
+  val outer: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(249,253): 'Base'
+  second/Base
 
 KtAnnotationEntry(254,270): '@Anno(2 + outer)'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(255,259): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(262,263): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(264,269): 'outer'
+  val outer: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(271,274): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(280,289): 'Companion'
+  second/MyClass.Companion
+
 KtAnnotationEntry(295,311): '@Anno(4 + outer)'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(296,300): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(303,304): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(305,310): 'outer'
+  val outer: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(312,318): 'Second'
+  second/Second
 
 KtAnnotationEntry(319,335): '@Anno(5 + outer)'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(320,324): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(327,328): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(329,334): 'outer'
+  val outer: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(336,342): 'String'
+  kotlin/String
+
+KtSimpleNameReference|KtNameReferenceExpression(347,359): 'NestedObject'
+  second/MyClass.NestedObject
+
 KtAnnotationEntry(385,401): '@Anno(6 + inner)'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(386,390): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(393,394): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(395,400): 'inner'
+  val inner: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(402,406): 'Base'
+  second/Base
 
 KtAnnotationEntry(407,423): '@Anno(7 + inner)'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(408,412): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(415,416): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(417,422): 'inner'
+  val inner: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(424,428): 'Base'
+  second/Base
+
 KtAnnotationEntry(429,445): '@Anno(8 + inner)'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(430,434): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(437,438): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(439,444): 'inner'
+  val inner: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(446,449): 'Int'
+  kotlin/Int
 
 KtAnnotationEntry(544,560): '@Anno(9 + inner)'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(545,549): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(552,553): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(554,559): 'inner'
+  val inner: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(561,567): 'Second'
+  second/Second
+
 KtAnnotationEntry(568,585): '@Anno(10 + inner)'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(569,573): 'Anno'
+  <constructor>(i: kotlin.Int): second.Anno
+
+KtSimpleNameReference|KtOperationReferenceExpression(577,578): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(579,584): 'inner'
+  val inner: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(586,592): 'String'
+  kotlin/String
 

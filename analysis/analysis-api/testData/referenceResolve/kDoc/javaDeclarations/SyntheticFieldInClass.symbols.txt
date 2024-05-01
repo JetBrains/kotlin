@@ -1,0 +1,5 @@
+KDocReference|KDocName(25,38): 'Storage.value'
+  /Storage.getValue(<dispatch receiver>: Storage): kotlin.String!
+
+KDocReference|KDocName(44,60): 'Storage.getValue'
+  /Storage.getValue(<dispatch receiver>: Storage): kotlin.String!

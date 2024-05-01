@@ -1,0 +1,17 @@
+KDocReference|KDocName(54,57): 'one'
+  one
+
+KDocReference|KDocName(71,78): 'one.two'
+  one.two
+
+KDocReference|KDocName(91,94): 'Foo'
+  one/two/Foo
+
+KDocReference|KDocName(104,115): 'one.two.Foo'
+  one/two/Foo
+
+KDocReference|KDocName(128,131): 'one'
+  one
+
+KDocReference|KDocName(149,156): 'one.two'
+  one.two

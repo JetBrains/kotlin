@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(17,24): 'HashMap'
+  java/util/HashMap

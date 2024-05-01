@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtNameReferenceExpression(51,60): 'JavaClass'
+  <constructor>(s: @EnhancedNullability kotlin.String): JavaClass

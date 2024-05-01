@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(27,31): 'util'
+  java.util
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(27,31): 'util'
+  null
+

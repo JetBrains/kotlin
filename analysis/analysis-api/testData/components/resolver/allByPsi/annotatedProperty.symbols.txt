@@ -1,42 +1,195 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,14): 'myPack'
+  myPack
+
 KtAnnotationEntry(16,266): '@Target('
   <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(17,23): 'Target'
+  <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+
+KtSimpleNameReference|KtNameReferenceExpression(29,45): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(46,54): 'PROPERTY'
+  kotlin/annotation/AnnotationTarget.PROPERTY
+
+KtSimpleNameReference|KtNameReferenceExpression(60,76): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(77,91): 'TYPE_PARAMETER'
+  kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
+
+KtSimpleNameReference|KtNameReferenceExpression(97,113): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(114,122): 'FUNCTION'
+  kotlin/annotation/AnnotationTarget.FUNCTION
+
+KtSimpleNameReference|KtNameReferenceExpression(128,144): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(145,160): 'VALUE_PARAMETER'
+  kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
+
+KtSimpleNameReference|KtNameReferenceExpression(166,182): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(183,198): 'PROPERTY_GETTER'
+  kotlin/annotation/AnnotationTarget.PROPERTY_GETTER
+
+KtSimpleNameReference|KtNameReferenceExpression(204,220): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(221,236): 'PROPERTY_SETTER'
+  kotlin/annotation/AnnotationTarget.PROPERTY_SETTER
+
+KtSimpleNameReference|KtNameReferenceExpression(242,258): 'AnnotationTarget'
+  kotlin/annotation/AnnotationTarget
+
+KtSimpleNameReference|KtNameReferenceExpression(259,263): 'TYPE'
+  kotlin/annotation/AnnotationTarget.TYPE
+
+KtSimpleNameReference|KtNameReferenceExpression(303,309): 'String'
+  kotlin/String
 
 KtAnnotationEntry(335,358): '@Anno("property $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(336,340): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(352,356): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(364,393): '@Anno("type parameter $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(365,369): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(387,391): 'prop'
+  val prop: kotlin.String
 
 KtAnnotationEntry(398,418): '@Anno("bound $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(399,403): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(412,416): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(419,423): 'List'
+  kotlin/collections/List
+
 KtAnnotationEntry(424,451): '@Anno("nested bound $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(425,429): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(445,449): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(452,458): 'String'
+  kotlin/String
 
 KtAnnotationEntry(461,493): '@receiver:Anno("receiver $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(471,475): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(487,491): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(494,522): '@Anno("receiver type $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(495,499): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(516,520): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(523,527): 'List'
+  kotlin/collections/List
 
 KtAnnotationEntry(528,563): '@Anno("nested receiver type $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(529,533): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(557,561): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(564,565): 'T'
+  T
+
 KtAnnotationEntry(586,612): '@Anno("return type $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(587,591): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(606,610): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(613,623): 'Collection'
+  kotlin/collections/Collection
 
 KtAnnotationEntry(624,657): '@Anno("nested return type $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(625,629): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(651,655): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(658,662): 'List'
+  kotlin/collections/List
+
 KtAnnotationEntry(663,703): '@Anno("nested nested return type $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(664,668): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(697,701): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(704,707): 'Int'
+  kotlin/Int
 
 KtAnnotationEntry(714,735): '@Anno("getter $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(715,719): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(729,733): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(758,779): '@Anno("setter $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
 
+KtSimpleNameReference|KtNameReferenceExpression(759,763): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(773,777): 'prop'
+  val prop: kotlin.String
+
 KtAnnotationEntry(788,819): '@Anno("setter parameter $prop")'
   <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(789,793): 'Anno'
+  <constructor>(position: kotlin.String): myPack.Anno
+
+KtSimpleNameReference|KtNameReferenceExpression(813,817): 'prop'
+  val prop: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(829,833): 'Unit'
+  kotlin/Unit
 

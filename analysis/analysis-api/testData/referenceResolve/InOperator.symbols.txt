@@ -1,0 +1,2 @@
+KtSimpleNameReference|KtOperationReferenceExpression(69,71): 'in'
+  /Foo.contains(<dispatch receiver>: Foo, v: kotlin.Int): kotlin.Boolean

@@ -1,0 +1,6 @@
+KtSimpleNameReference|KtNameReferenceExpression(32,35): 'foo'
+  /foo(): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(32,35): 'foo'
+  null
+

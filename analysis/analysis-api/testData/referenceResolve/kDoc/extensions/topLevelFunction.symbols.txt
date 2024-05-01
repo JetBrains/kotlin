@@ -1,0 +1,11 @@
+KDocReference|KDocName(54,65): 'test.extFun'
+  test/extFun(<extension receiver>: test.Foo): kotlin.Unit
+
+KDocReference|KDocName(71,77): 'extFun'
+  test/extFun(<extension receiver>: test.Foo): kotlin.Unit
+
+KDocReference|KDocName(86,96): 'Foo.extFun'
+  test/extFun(<extension receiver>: test.Foo): kotlin.Unit
+
+KDocReference|KDocName(102,117): 'test.Foo.extFun'
+  test/extFun(<extension receiver>: test.Foo): kotlin.Unit

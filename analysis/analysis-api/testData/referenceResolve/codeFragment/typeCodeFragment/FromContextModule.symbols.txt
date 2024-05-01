@@ -1,0 +1,7 @@
+context.kt
+  KtSimpleNameReference|KtNameReferenceExpression(73,76): 'Foo'
+    /Foo
+
+fragment.kt
+  KtSimpleNameReference|KtNameReferenceExpression(135,138): 'Foo'
+    /Foo

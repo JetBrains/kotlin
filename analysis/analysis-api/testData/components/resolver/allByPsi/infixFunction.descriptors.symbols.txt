@@ -1,0 +1,87 @@
+KtSimpleNameReference|KtNameReferenceExpression(10,13): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(25,28): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(31,34): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(37,41): 'this'
+  /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtOperationReferenceExpression(42,43): '-'
+  kotlin/Int.minus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(44,45): 'i'
+  i: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(44,45): 'i'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(68,71): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(98,107): 'parameter'
+  parameter: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(98,107): 'parameter'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(108,115): 'myMinus'
+  /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(145,157): 'newParameter'
+  val newParameter: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(145,157): 'newParameter'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(158,159): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtOperationReferenceExpression(162,169): 'myMinus'
+  /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(195,207): 'newParameter'
+  val newParameter: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(195,207): 'newParameter'
+  null
+
+KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtInvokeFunctionReference|KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(208,212): 'plus'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(208,212): 'plus'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(213,222): 'parameter'
+  parameter: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(213,222): 'parameter'
+  null
+
+KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
+  /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+
+KtInvokeFunctionReference|KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(223,230): 'myMinus'
+  /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(223,230): 'myMinus'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(231,247): 'oneMoreParameter'
+  val oneMoreParameter: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(231,247): 'oneMoreParameter'
+  null
+
