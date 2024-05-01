@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+#include <cstddef>
 #include <cstdint>
 #include <random>
 
@@ -46,8 +47,8 @@ TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
         uint8_t* first = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
         for (int i = 1; i < N; ++i) {
             uint8_t* obj = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
-            uint64_t dist = abs(obj - first);
-            EXPECT_TRUE(dist < kotlin::alloc::FixedBlockPage::SIZE);
+            uintptr_t dist = abs(obj - first);
+            EXPECT_TRUE(dist < FixedBlockPage::SIZE());
         }
     }
 }
@@ -87,8 +88,8 @@ TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
         TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
         uint8_t* obj1 = reinterpret_cast<uint8_t*>(ca1.CreateObject(&fakeType));
         uint8_t* obj2 = reinterpret_cast<uint8_t*>(ca2.CreateObject(&fakeType));
-        uint64_t dist = abs(obj2 - obj1);
-        EXPECT_TRUE(dist >= kotlin::alloc::FixedBlockPage::SIZE);
+        uintptr_t dist = abs(obj2 - obj1);
+        EXPECT_GE(dist, FixedBlockPage::SIZE());
     }
 }
 

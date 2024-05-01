@@ -79,6 +79,7 @@ extern const int32_t Kotlin_gcMarkSingleThreaded = 1;
 #else
 extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
 #endif
+extern const int32_t Kotlin_fixedBlockPageSize = 128;
 
 extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
 extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();

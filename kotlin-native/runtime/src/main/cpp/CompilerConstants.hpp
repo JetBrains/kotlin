@@ -28,6 +28,7 @@ extern "C" const int32_t Kotlin_disableMmap;
 extern "C" const int32_t Kotlin_runtimeLogs[];
 extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
+extern "C" const int32_t Kotlin_fixedBlockPageSize;
 
 class SourceInfo;
 
@@ -73,6 +74,10 @@ ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {
 
 ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
     return Kotlin_gcMarkSingleThreaded != 0;
+}
+
+ALWAYS_INLINE inline constexpr int32_t fixedBlockPageSize() noexcept {
+    return Kotlin_fixedBlockPageSize;
 }
 
 bool gcMutatorsCooperate() noexcept;
