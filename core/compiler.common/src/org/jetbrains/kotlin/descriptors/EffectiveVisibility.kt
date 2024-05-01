@@ -285,3 +285,27 @@ private fun TypeCheckerProviderContext.createTypeCheckerContext(): TypeCheckerSt
     errorTypesEqualToAnything = false,
     stubTypesEqualToAnything = true
 )
+
+fun Visibility.toEffectiveVisibilityOrNull(
+    container: TypeConstructorMarker?,
+    forClass: Boolean = false,
+    ownerIsPublishedApi: Boolean = false,
+): EffectiveVisibility? {
+    customEffectiveVisibility()?.let { return it }
+    return when (this.normalize()) {
+        Visibilities.PrivateToThis, Visibilities.InvisibleFake -> EffectiveVisibility.PrivateInClass
+        Visibilities.Private -> if (container == null && forClass) EffectiveVisibility.PrivateInFile else EffectiveVisibility.PrivateInClass
+        Visibilities.Protected -> EffectiveVisibility.Protected(container)
+        Visibilities.Internal -> when (ownerIsPublishedApi) {
+            true -> EffectiveVisibility.Public
+            false -> EffectiveVisibility.Internal
+        }
+        Visibilities.Public -> EffectiveVisibility.Public
+        Visibilities.Local -> EffectiveVisibility.Local
+        // Unknown visibility should not provoke errors,
+        // because they can naturally appear when intersection
+        // overrides' bases have inconsistent forms.
+        Visibilities.Unknown -> EffectiveVisibility.Unknown
+        else -> null
+    }
+}
