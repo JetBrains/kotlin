@@ -546,10 +546,10 @@ public class KotlinTestUtils {
                     String directive = ignoreDirectives[0] + targetBackend.name() + "\n";
 
                     String newText;
-                    if (text.startsWith("// !")) {
+                    if (text.startsWith("// !") || text.startsWith("// ")) {
                         StringBuilder prefixBuilder = new StringBuilder();
                         int l = 0;
-                        while (text.startsWith("// !", l)) {
+                        while (text.startsWith("// !", l) || text.startsWith("// ", l)) {
                             int r = text.indexOf("\n", l) + 1;
                             if (r <= 0) r = text.length();
                             prefixBuilder.append(text.substring(l, r));

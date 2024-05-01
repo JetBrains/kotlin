@@ -120,7 +120,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     }
 
     companion object {
-        private val IGNORE_ERRORS_PATTERN = Regex("""// !IGNORE_ERRORS""")
+        private val IGNORE_ERRORS_PATTERN = Regex("""// [!]?IGNORE_ERRORS""")
 
         internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
             IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())
