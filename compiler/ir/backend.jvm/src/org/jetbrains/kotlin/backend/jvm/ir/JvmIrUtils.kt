@@ -69,7 +69,7 @@ import java.io.File
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
-    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*> ?: return null
+    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst ?: return null
     val value = const.value as? String ?: return null
     return when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> "$value\$default"
@@ -348,8 +348,8 @@ fun IrField.isAssertionsDisabledField(context: JvmBackendContext) =
 fun IrClass.hasAssertionsDisabledField(context: JvmBackendContext) =
     fields.any { it.isAssertionsDisabledField(context) }
 
-fun IrField.constantValue(): IrConst<*>? {
-    val value = initializer?.expression as? IrConst<*> ?: return null
+fun IrField.constantValue(): IrConst? {
+    val value = initializer?.expression as? IrConst ?: return null
 
     // JVM has a ConstantValue attribute which does two things:
     //   1. allows the field to be inlined into other modules;
@@ -409,7 +409,7 @@ fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean, jvmDe
 }
 
 fun IrMemberAccessExpression<*>.getIntConstArgumentOrNull(i: Int) = getValueArgument(i)?.let {
-    if (it is IrConst<*> && it.kind == IrConstKind.Int)
+    if (it is IrConst && it.kind == IrConstKind.Int)
         it.value as Int
     else
         null
@@ -420,7 +420,7 @@ fun IrMemberAccessExpression<*>.getIntConstArgument(i: Int): Int =
 
 fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
     getValueArgument(i)?.let {
-        if (it is IrConst<*> && it.kind == IrConstKind.String)
+        if (it is IrConst && it.kind == IrConstKind.String)
             it.value as String
         else
             null
@@ -428,7 +428,7 @@ fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
 
 fun IrMemberAccessExpression<*>.getBooleanConstArgument(i: Int): Boolean =
     getValueArgument(i)?.let {
-        if (it is IrConst<*> && it.kind == IrConstKind.Boolean)
+        if (it is IrConst && it.kind == IrConstKind.Boolean)
             it.value as Boolean
         else
             null

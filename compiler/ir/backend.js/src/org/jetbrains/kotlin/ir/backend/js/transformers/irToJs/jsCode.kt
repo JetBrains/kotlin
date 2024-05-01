@@ -121,7 +121,7 @@ private fun foldString(expression: IrExpression, context: JsIrBackendContext?): 
             expression.acceptChildrenVoid(this)
         }
 
-        override fun visitConst(expression: IrConst<*>) {
+        override fun visitConst(expression: IrConst) {
             builder.append(expression.value)
         }
 

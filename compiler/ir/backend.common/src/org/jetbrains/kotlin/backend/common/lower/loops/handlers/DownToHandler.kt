@@ -64,7 +64,7 @@ internal class DownToHandler(private val context: CommonBackendContext) : Header
             if (preferJavaLikeCounterLoop || this.constLongValue == 0L) return null
         }
 
-        val irConst = this as? IrConst<*> ?: return null
+        val irConst = this as? IrConst ?: return null
         return when (irConst.kind) {
             IrConstKind.Char -> {
                 val charValue = irConst.value as Char

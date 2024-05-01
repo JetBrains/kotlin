@@ -62,7 +62,7 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
         }
 
         return when (this) {
-            is IrConst<*> -> convertIrConst(this)
+            is IrConst -> convertIrConst(this)
             is IrCall -> convertIrCall(this)
             else -> null
         }
@@ -91,13 +91,13 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
         fun IrCall.dispatchReceiverName() = (dispatchReceiver as? IrCall)?.symbol?.owner?.fqNameWhenAvailable.toString()
 
         return if (irCall.origin == IrStatementOrigin.MINUS
-            && (irCall.getValueArgument(0) as? IrConst<*>)?.value == 1
+            && (irCall.getValueArgument(0) as? IrConst)?.value == 1
             && irCall.dispatchReceiverName() in allowedMethods // to avoid possible underflow
         ) irCall.dispatchReceiver
         else null
     }
 
-    private fun convertIrConst(irConst: IrConst<*>): IrExpression? {
+    private fun convertIrConst(irConst: IrConst): IrExpression? {
         val startOffset = irConst.startOffset
         val endOffset = irConst.endOffset
         val type = irConst.type

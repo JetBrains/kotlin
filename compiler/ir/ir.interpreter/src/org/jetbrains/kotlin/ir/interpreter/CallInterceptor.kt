@@ -130,7 +130,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override fun interceptJavaStaticField(expression: IrGetField) {
         val field = expression.symbol.owner
         verify(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
-        verify(field.initializer?.expression !is IrConst<*>)
+        verify(field.initializer?.expression !is IrConst)
         callStack.pushState(environment.convertToState(Wrapper.getStaticGetter(field).invokeWithArguments(), field.type))
     }
 

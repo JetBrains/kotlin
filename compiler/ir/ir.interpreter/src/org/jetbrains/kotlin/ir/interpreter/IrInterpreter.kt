@@ -106,7 +106,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             is IrGetObjectValue -> interpretGetObjectValue(element)
             is IrGetEnumValue -> interpretGetEnumValue(element)
             is IrEnumEntry -> interpretEnumEntry(element)
-            is IrConst<*> -> interpretConst(element)
+            is IrConst -> interpretConst(element)
             is IrVariable -> interpretVariable(element)
             is IrSetValue -> interpretSetValue(element)
             is IrTypeOperatorCall -> interpretTypeOperatorCall(element)
@@ -287,7 +287,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         interpretConstructorCall(constructorCall)
     }
 
-    private fun interpretConst(expression: IrConst<*>) {
+    private fun interpretConst(expression: IrConst) {
         fun getSignedType(unsignedType: IrType): IrType? = when (unsignedType.getUnsignedType()) {
             UnsignedType.UBYTE -> irBuiltIns.byteType
             UnsignedType.USHORT -> irBuiltIns.shortType
@@ -375,7 +375,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic -> {
                 // for java static variables
                 when (val initializerExpression = field.initializer?.expression) {
-                    is IrConst<*> -> callStack.pushSimpleInstruction(initializerExpression)
+                    is IrConst -> callStack.pushSimpleInstruction(initializerExpression)
                     else -> callInterceptor.interceptJavaStaticField(expression)
                 }
             }
@@ -385,7 +385,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             expression.accessesTopLevelOrObjectField() -> {
                 val propertyOwner = field.property
                 val isConst = propertyOwner.isConst ||
-                        propertyOwner?.backingField?.initializer?.expression is IrConst<*> ||
+                        propertyOwner?.backingField?.initializer?.expression is IrConst ||
                         propertyOwner?.parentClassOrNull?.hasAnnotation(compileTimeAnnotation) == true // check if object is marked as compile time
                 verify(isConst) { "Cannot interpret get method on top level non const properties" }
                 callStack.pushCompoundInstruction(field.initializer?.expression)

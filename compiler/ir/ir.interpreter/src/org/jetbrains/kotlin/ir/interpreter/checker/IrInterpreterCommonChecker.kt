@@ -117,7 +117,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         return body.kind == IrSyntheticBodyKind.ENUM_VALUES || body.kind == IrSyntheticBodyKind.ENUM_VALUEOF
     }
 
-    override fun visitConst(expression: IrConst<*>, data: IrInterpreterCheckerData): Boolean {
+    override fun visitConst(expression: IrConst, data: IrInterpreterCheckerData): Boolean {
         return data.mode.canEvaluateExpression(expression)
     }
 

@@ -186,12 +186,11 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         }
         return when (getIntrinsicType(callSite)) {
             IntrinsicType.IMMUTABLE_BLOB -> {
-                @Suppress("UNCHECKED_CAST")
-                val arg = callSite.getValueArgument(0) as IrConst<String>
+                val arg = callSite.getValueArgument(0) as IrConst
                 codegen.llvm.staticData.createImmutableBlob(arg)
             }
             IntrinsicType.OBJC_GET_SELECTOR -> {
-                val selector = (callSite.getValueArgument(0) as IrConst<*>).value as String
+                val selector = (callSite.getValueArgument(0) as IrConst).value as String
                 environment.functionGenerationContext.genObjCSelector(selector)
             }
             IntrinsicType.INIT_INSTANCE -> {

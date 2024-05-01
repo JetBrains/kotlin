@@ -392,7 +392,7 @@ open class LiveLiteralTransformer(
         }
     }
 
-    override fun visitConst(expression: IrConst<*>): IrExpression {
+    override fun visitConst(expression: IrConst): IrExpression {
         when (expression.kind) {
             IrConstKind.Null -> return expression
             else -> {

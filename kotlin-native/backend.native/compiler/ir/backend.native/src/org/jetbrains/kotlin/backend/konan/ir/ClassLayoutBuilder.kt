@@ -290,7 +290,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
 
     private fun IrField.toFieldInfo(llvm: CodegenLlvmHelpers): FieldInfo {
         val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
-        require(!isConst || initializer?.expression is IrConst<*>) { "A const val field ${render()} must have constant initializer" }
+        require(!isConst || initializer?.expression is IrConst) { "A const val field ${render()} must have constant initializer" }
         return FieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(llvm))
     }
 

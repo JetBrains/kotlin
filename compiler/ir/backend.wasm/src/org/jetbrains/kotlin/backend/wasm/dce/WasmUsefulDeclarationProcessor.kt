@@ -27,7 +27,7 @@ internal class WasmUsefulDeclarationProcessor(
         context.kotlinClosureToJsConverters.entries.associate { (k, v) -> v to context.closureCallExports[k] }
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
-        override fun visitConst(expression: IrConst<*>, data: IrDeclaration) = when (expression.kind) {
+        override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
             is IrConstKind.String -> context.wasmSymbols.stringGetLiteral.owner
                 .enqueue(data, "String literal intrinsic getter stringGetLiteral")

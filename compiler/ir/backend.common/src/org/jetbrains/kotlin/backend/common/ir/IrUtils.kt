@@ -60,7 +60,7 @@ fun IrExpression?.isPure(
 
     fun IrExpression.isPureImpl(): Boolean {
         return when (this) {
-            is IrConst<*> -> true
+            is IrConst -> true
             is IrGetValue -> {
                 if (anyVariable) return true
                 val valueDeclaration = symbol.owner
@@ -147,7 +147,7 @@ fun IrFunction.getAdapteeFromAdaptedForReferenceFunction() : IrFunction? {
     return call.symbol.owner
 }
 
-fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true
+fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst)?.value == true
 
 fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
     compilationException("${IrSyntheticBody::class.java.simpleName} is not supported here", declaration)

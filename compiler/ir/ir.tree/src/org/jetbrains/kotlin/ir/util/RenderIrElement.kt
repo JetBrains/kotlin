@@ -366,7 +366,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
         "? ${expression::class.java.simpleName} type=${expression.type.render()}"
 
-    override fun visitConst(expression: IrConst<*>, data: Nothing?): String =
+    override fun visitConst(expression: IrConst, data: Nothing?): String =
         "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
 
     private fun Any.escapeIfRequired() =
@@ -894,7 +894,7 @@ private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, rend
     when (irElement) {
         null -> append("<null>")
         is IrConstructorCall -> renderAsAnnotation(irElement, renderer, options)
-        is IrConst<*> -> {
+        is IrConst -> {
             renderIrConstAsAnnotationArgument(irElement)
         }
         is IrVararg -> {
@@ -912,7 +912,7 @@ private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, rend
     }
 }
 
-private fun StringBuilder.renderIrConstAsAnnotationArgument(const: IrConst<*>) {
+private fun StringBuilder.renderIrConstAsAnnotationArgument(const: IrConst) {
     val quotes = when (const.kind) {
         IrConstKind.String -> "\""
         IrConstKind.Char -> "'"

@@ -164,15 +164,15 @@ fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrEx
 }
 
 val IrField.hasNonConstInitializer: Boolean
-    get() = initializer?.expression.let { it != null && it !is IrConst<*> && it !is IrConstantValue }
+    get() = initializer?.expression.let { it != null && it !is IrConst && it !is IrConstantValue }
 
-fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
+fun IrExpression.isNullConst() = this is IrConst && this.kind == IrConstKind.Null
 
-fun IrExpression.isTrueConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == true
+fun IrExpression.isTrueConst() = this is IrConst && this.kind == IrConstKind.Boolean && this.value == true
 
-fun IrExpression.isFalseConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == false
+fun IrExpression.isFalseConst() = this is IrConst && this.kind == IrConstKind.Boolean && this.value == false
 
-fun IrExpression.isIntegerConst(value: Int) = this is IrConst<*> && this.kind == IrConstKind.Int && this.value == value
+fun IrExpression.isIntegerConst(value: Int) = this is IrConst && this.kind == IrConstKind.Int && this.value == value
 
 fun IrExpression.coerceToUnit(builtins: IrBuiltIns, typeSystem: IrTypeSystemContext): IrExpression {
     return coerceToUnitIfNeeded(type, builtins, typeSystem)
@@ -386,11 +386,11 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
         it.symbol.owner.parentAsClass.symbol == symbol
     }
 
-fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrConst<*>)?.value as String?
+fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrConst)?.value as String?
 
 fun IrConstructorCall.getAnnotationStringValue(name: String): String {
     val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
-    return (getValueArgument(parameter.index) as IrConst<*>).value as String
+    return (getValueArgument(parameter.index) as IrConst).value as String
 }
 
 inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? =
@@ -400,7 +400,7 @@ inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String):
 internal fun IrConstructorCall.getAnnotationValueOrNullImpl(name: String): Any? {
     val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
     val argument = parameter?.let { getValueArgument(it.index) }
-    return (argument as IrConst<*>?)?.value
+    return (argument as IrConst?)?.value
 }
 
 inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
@@ -412,7 +412,7 @@ internal fun IrDeclaration.getAnnotationArgumentValueImpl(fqName: FqName, argume
     for (index in 0 until annotation.valueArgumentsCount) {
         val parameter = annotation.symbol.owner.valueParameters[index]
         if (parameter.name.asString() == argumentName) {
-            val actual = annotation.getValueArgument(index) as? IrConst<*>
+            val actual = annotation.getValueArgument(index) as? IrConst
             return actual?.value
         }
     }
@@ -718,13 +718,13 @@ val IrProperty.originalProperty: IrProperty
     get() = attributeOwnerId as? IrProperty ?: this
 
 fun IrExpression.isTrivial() =
-    this is IrConst<*> ||
+    this is IrConst ||
             this is IrGetValue ||
             this is IrGetObjectValue ||
             this is IrErrorExpressionImpl
 
 val IrExpression.isConstantLike: Boolean
-    get() = this is IrConst<*> || this is IrGetSingletonValue
+    get() = this is IrConst || this is IrGetSingletonValue
             || this is IrGetValue && this.symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
 
 fun IrExpression.shallowCopy(): IrExpression =
@@ -733,7 +733,7 @@ fun IrExpression.shallowCopy(): IrExpression =
 
 fun IrExpression.shallowCopyOrNull(): IrExpression? =
     when (this) {
-        is IrConst<*> -> shallowCopy()
+        is IrConst -> shallowCopy()
         is IrGetEnumValue ->
             IrGetEnumValueImpl(
                 startOffset,
@@ -766,7 +766,7 @@ fun IrExpression.shallowCopyOrNull(): IrExpression? =
         else -> null
     }
 
-internal fun <T> IrConst<T>.shallowCopy() = IrConstImpl(
+internal fun <T> IrConst.shallowCopy() = IrConstImpl(
     startOffset,
     endOffset,
     type,
@@ -1204,8 +1204,7 @@ fun IrFactory.createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragmen
         }
     }
 
-@Suppress("UNCHECKED_CAST")
-fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst<Boolean>)?.value == true)
+fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst)?.value == true)
 
 fun IrFunction.isMethodOfAny(): Boolean =
     extensionReceiverParameter == null && dispatchReceiverParameter != null &&
@@ -1543,7 +1542,7 @@ inline fun <reified Symbol : IrSymbol> IrSymbol.unexpectedSymbolKind(): Nothing 
     throw IllegalArgumentException("Unexpected kind of ${Symbol::class.java.typeName}: $this")
 }
 
-private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*>? {
+private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst? {
     if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
 
     val constType = irType.makeNotNull().removeAnnotations()
@@ -1569,11 +1568,11 @@ private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OF
     }
 }
 
-fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*> =
+fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst =
     toIrConstOrNull(irType, startOffset, endOffset)
         ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
 
-fun IrConstImpl.Companion.defaultValueForType(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl<*> {
+fun IrConstImpl.Companion.defaultValueForType(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl {
     if (type.isMarkedNullable()) return constNull(startOffset, endOffset, type)
     return when (type.getPrimitiveType()) {
         PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, type, false)

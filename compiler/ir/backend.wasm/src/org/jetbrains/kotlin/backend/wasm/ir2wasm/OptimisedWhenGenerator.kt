@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-private class ExtractedWhenCondition<T>(val condition: IrCall, val const: IrConst<T>)
+private class ExtractedWhenCondition<T>(val condition: IrCall, val const: IrConst)
 private class ExtractedWhenBranch<T>(val conditions: List<ExtractedWhenCondition<T>>, val expression: IrExpression)
 
 internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols: WasmSymbols): Boolean {
@@ -176,8 +176,7 @@ private fun tryExtractEqEqNumberConditions(symbols: WasmSymbols, conditions: Lis
     val result = mutableListOf<ExtractedWhenCondition<Any>>()
     for (condition in conditions) {
         if (condition.symbol != firstConditionSymbol) return null
-        @Suppress("UNCHECKED_CAST")
-        val conditionConst = condition.getValueArgument(1) as? IrConst<Any> ?: return null
+        val conditionConst = condition.getValueArgument(1) as? IrConst ?: return null
         result.add(ExtractedWhenCondition(condition, conditionConst))
     }
 

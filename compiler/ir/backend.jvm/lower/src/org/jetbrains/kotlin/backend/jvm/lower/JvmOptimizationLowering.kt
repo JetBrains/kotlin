@@ -104,7 +104,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                 if (left.isNullConst() && right.isNullConst())
                     return IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
-                if (left.isNullConst() && right is IrConst<*> || right.isNullConst() && left is IrConst<*>)
+                if (left.isNullConst() && right is IrConst || right.isNullConst() && left is IrConst)
                     return IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
             }
 
@@ -210,7 +210,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             if (variable in dontTouchTemporaryVals) return null
 
             when (val initializer = variable.initializer) {
-                is IrConst<*> ->
+                is IrConst ->
                     return initializer
                 is IrGetValue ->
                     when (val initializerValue = initializer.symbol.owner) {
@@ -414,7 +414,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             // initializer with the constant initializer.
             val variable = expression.symbol.owner
             return when (val replacement = getInlineableValueForTemporaryVal(variable)) {
-                is IrConst<*> ->
+                is IrConst ->
                     replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
                 is IrGetValue ->
                     replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
@@ -473,7 +473,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             value: IrExpression?,
             isMinus: Boolean
         ): IrExpression? {
-            if (value is IrConst<*> && value.kind == IrConstKind.Int) {
+            if (value is IrConst && value.kind == IrConstKind.Int) {
                 val delta = value.value as Int
                 val upperBound = Byte.MAX_VALUE.toInt() + (if (isMinus) 1 else 0)
                 val lowerBound = Byte.MIN_VALUE.toInt() + (if (isMinus) 1 else 0)

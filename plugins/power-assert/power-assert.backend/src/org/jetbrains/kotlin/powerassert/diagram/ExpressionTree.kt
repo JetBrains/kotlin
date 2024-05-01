@@ -221,7 +221,7 @@ fun buildTree(expression: IrExpression): Node? {
                 expression.acceptChildren(this, data)
             }
 
-            override fun visitConst(expression: IrConst<*>, data: Node) {
+            override fun visitConst(expression: IrConst, data: Node) {
                 // Do not include constants
             }
 
@@ -231,11 +231,11 @@ fun buildTree(expression: IrExpression): Node? {
                 for (branch in expression.branches) {
                     // Make sure each branch results in 2 child nodes: condition and result.
                     when (val child = branch.condition) {
-                        is IrConst<*> -> whenNode.addChild(ConstantNode(child))
+                        is IrConst -> whenNode.addChild(ConstantNode(child))
                         else -> child.accept(this, whenNode)
                     }
                     when (val child = branch.result) {
-                        is IrConst<*> -> whenNode.addChild(ConstantNode(child))
+                        is IrConst -> whenNode.addChild(ConstantNode(child))
                         else -> child.accept(this, whenNode)
                     }
                 }

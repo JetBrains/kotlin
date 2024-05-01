@@ -462,9 +462,9 @@ internal fun IrBlock.parseSafeCall(irBuiltIns: IrBuiltIns): SafeCallInfo? {
     val arg0 = ifNullBranchCondition.getValueArgument(0)
     if (arg0 !is IrGetValue || arg0.symbol != tmpVal.symbol) return null
     val arg1 = ifNullBranchCondition.getValueArgument(1)
-    if (arg1 !is IrConst<*> || arg1.value != null) return null
+    if (arg1 !is IrConst || arg1.value != null) return null
     val ifNullBranchResult = ifNullBranch.result
-    if (ifNullBranchResult !is IrConst<*> || ifNullBranchResult.value != null) return null
+    if (ifNullBranchResult !is IrConst || ifNullBranchResult.value != null) return null
 
     val ifNotNullBranch = whenExpr.branches[1]
     return SafeCallInfo(this, tmpVal, ifNullBranch, ifNotNullBranch)
@@ -500,7 +500,7 @@ internal fun IrBlock.parseElvis(irBuiltIns: IrBuiltIns): ElvisInfo? {
     val arg0 = ifNullBranchCondition.getValueArgument(0)
     if (arg0 !is IrGetValue || arg0.symbol != tmpVal.symbol) return null
     val arg1 = ifNullBranchCondition.getValueArgument(1)
-    if (arg1 !is IrConst<*> || arg1.value != null) return null
+    if (arg1 !is IrConst || arg1.value != null) return null
     val elvisRhs = ifNullBranch.result
 
     val ifNonNullBranch = whenExpr.branches[1]

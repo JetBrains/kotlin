@@ -205,7 +205,7 @@ class VersionChecker(val context: IrPluginContext, private val messageCollector:
             ?.backingField
             ?.initializer
             ?.expression
-            as? IrConst<*>
+            as? IrConst
         if (versionExpr == null || versionExpr.kind != IrConstKind.Int) {
             outdatedRuntimeWithUnknownVersionNumber()
         }

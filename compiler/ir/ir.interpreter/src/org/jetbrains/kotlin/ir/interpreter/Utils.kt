@@ -51,7 +51,7 @@ internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?:
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> = when {
+internal fun <T> IrConst.toPrimitive(): Primitive<T> = when {
     type.isByte() -> Primitive((value as Number).toByte() as T, type)
     type.isShort() -> Primitive((value as Number).toShort() as T, type)
     else -> Primitive(value, type)
@@ -73,7 +73,7 @@ fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
 internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
     if (this is IrClass && this.fqName.startsWith("java")) return this.fqName
     if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
-    return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
+    return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst).value.toString()
 }
 
 internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? =
@@ -251,7 +251,7 @@ internal fun IrValueParameter.getDefaultWithActualParameters(
     newParent: IrFunction, actualParameters: List<IrValueDeclaration?>
 ): IrExpression? {
     val expression = this.defaultValue?.expression
-    if (expression is IrConst<*>) return expression
+    if (expression is IrConst) return expression
 
     val parameterOwner = this.parent as IrFunction
     val transformer = object : IrElementTransformerVoid() {

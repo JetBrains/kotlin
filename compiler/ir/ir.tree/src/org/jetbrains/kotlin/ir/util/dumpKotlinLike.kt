@@ -1338,7 +1338,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    override fun visitConst(expression: IrConst<*>, data: IrDeclaration?) = wrap(expression, data) {
+    override fun visitConst(expression: IrConst, data: IrDeclaration?) = wrap(expression, data) {
         val kind = expression.kind
 
         val (prefix, postfix) = when (kind) {
@@ -1425,7 +1425,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         branch.condition.let {
             // Deserialized IR contains no IrElseBranch nodes. They are represented with IrBranch(condition=true)
             // To match Kotlin-like IR dump before serialization, the following logic tried to infer IR node which was before serialization
-            if (options.inferElseBranches && it is IrConst<*> && it.value == true && branch == currentWhenStmt?.branches?.last())
+            if (options.inferElseBranches && it is IrConst && it.value == true && branch == currentWhenStmt?.branches?.last())
                 p.printWithNoIndent("else")
             else
                 it.accept(this, data)
@@ -1437,7 +1437,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) = wrap(branch, data) {
         p.printIndent()
-        if ((branch.condition as? IrConst<*>)?.value == true) {
+        if ((branch.condition as? IrConst)?.value == true) {
             p.printWithNoIndent("else")
         } else {
             p.printWithNoIndent("/* else */ ")

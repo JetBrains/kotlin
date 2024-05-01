@@ -352,7 +352,7 @@ internal class NativeSuspendFunctionsLowering(
 
     private fun IrExpression.isPure(): Boolean {
         return when (this) {
-            is IrConst<*> -> true
+            is IrConst -> true
             is IrCall -> false // TODO: skip builtin operators.
             is IrTypeOperatorCall -> this.argument.isPure() && this.operator != IrTypeOperator.CAST
             is IrGetValue -> !this.symbol.owner.let { it is IrVariable && it.isVar }

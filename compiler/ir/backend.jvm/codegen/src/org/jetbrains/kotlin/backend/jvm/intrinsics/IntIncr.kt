@@ -15,7 +15,7 @@ class IntIncr(private val isPrefix: Boolean) : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val irGetValue = expression.getValueArgument(0) as? IrGetValue
             ?: error("IrGetValue expected as valueArgument #0: ${expression.dump()}")
-        val irDelta = expression.getValueArgument(1) as? IrConst<*>
+        val irDelta = expression.getValueArgument(1) as? IrConst
             ?: error("IrConst expected as valueArgument #1: ${expression.dump()}")
         if (irDelta.kind != IrConstKind.Int)
             error("Int const expected: ${irDelta.dump()}")

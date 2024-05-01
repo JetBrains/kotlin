@@ -82,11 +82,11 @@ class BodyGenerator(
     private fun tryGenerateConstVarargArray(irVararg: IrVararg, wasmArrayType: WasmImmediate.GcType): Boolean {
         if (irVararg.elements.isEmpty()) return false
 
-        val kind = (irVararg.elements[0] as? IrConst<*>)?.kind ?: return false
+        val kind = (irVararg.elements[0] as? IrConst)?.kind ?: return false
         if (kind == IrConstKind.String || kind == IrConstKind.Null) return false
-        if (irVararg.elements.any { it !is IrConst<*> || it.kind != kind }) return false
+        if (irVararg.elements.any { it !is IrConst || it.kind != kind }) return false
 
-        val elementConstValues = irVararg.elements.map { (it as IrConst<*>).value!! }
+        val elementConstValues = irVararg.elements.map { (it as IrConst).value!! }
 
         val resource = when (irVararg.varargElementType) {
             irBuiltIns.byteType -> elementConstValues.map { (it as Byte).toLong() } to WasmI8
@@ -264,7 +264,7 @@ class BodyGenerator(
         }
     }
 
-    override fun visitConst(expression: IrConst<*>): Unit =
+    override fun visitConst(expression: IrConst): Unit =
         generateConstExpression(expression, body, context, expression.getSourceLocation())
 
     override fun visitGetField(expression: IrGetField) {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class ConstTransformer(private val context: JsIrBackendContext) : IrElementTransformerVoid() {
     private fun <C> lowerConst(
-        expression: IrConst<*>,
+        expression: IrConst,
         irClass: IrClassSymbol,
         carrierFactory: (Int, Int, IrType, C) -> IrExpression,
         vararg args: C
@@ -47,10 +47,10 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
         }
     }
 
-    private fun createLong(expression: IrConst<*>, v: Long): IrExpression =
+    private fun createLong(expression: IrConst, v: Long): IrExpression =
         lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
 
-    override fun visitConst(expression: IrConst<*>): IrExpression {
+    override fun visitConst(expression: IrConst): IrExpression {
         with(context.intrinsics) {
             if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
                 return when (expression.type.classifierOrNull) {

@@ -145,37 +145,27 @@ internal interface DecoyTransformBase {
 
     fun IrFunction.getDecoyImplementationName(): String? {
         val annotation = getAnnotation(DecoyFqNames.DecoyImplementation) ?: return null
-
-        @Suppress("UNCHECKED_CAST")
-        val decoyImplName = annotation.getValueArgument(0) as IrConst<String>
-
-        return decoyImplName.value
+        val decoyImplName = annotation.getValueArgument(0) as IrConst
+        return decoyImplName.value as String
     }
 
     fun IrFunction.getDecoyImplementationId(): Long? {
         val annotation = getAnnotation(DecoyFqNames.DecoyImplementation) ?: return null
-
-        @Suppress("UNCHECKED_CAST")
-        val decoyImplName = annotation.getValueArgument(1) as IrConst<Long>
-
-        return decoyImplName.value
+        val decoyImplName = annotation.getValueArgument(1) as IrConst
+        return decoyImplName.value as Long
     }
 
     private fun IrFunction.getDecoyTargetName(): String {
         val annotation = getAnnotation(DecoyFqNames.Decoy)!!
-        @Suppress("UNCHECKED_CAST")
-        val decoyTargetName = annotation.getValueArgument(0) as IrConst<String>
-
-        return decoyTargetName.value
+        val decoyTargetName = annotation.getValueArgument(0) as IrConst
+        return decoyTargetName.value as String
     }
 
     private fun IrFunction.getDecoySignature(): List<String> {
         val annotation = getAnnotation(DecoyFqNames.Decoy)!!
         val decoyVararg = annotation.getValueArgument(1) as IrVararg
-
-        @Suppress("UNCHECKED_CAST")
         return decoyVararg.elements.map {
-            (it as IrConst<String>).value
+            (it as IrConst).value as String
         }
     }
 
@@ -193,11 +183,8 @@ fun IrDeclaration.isDecoyImplementation(): Boolean =
 
 private fun IrFunction.getDecoyImplementationDefaultValuesBitMask(): Int? {
     val annotation = getAnnotation(DecoyFqNames.DecoyImplementationDefaultsBitMask) ?: return null
-
-    @Suppress("UNCHECKED_CAST")
-    val paramsDefaultsBitMask = annotation.getValueArgument(0) as IrConst<Int>
-
-    return paramsDefaultsBitMask.value
+    val paramsDefaultsBitMask = annotation.getValueArgument(0) as IrConst
+    return paramsDefaultsBitMask.value as Int
 }
 
 fun IrFunction.didDecoyHaveDefaultForValueParameter(paramIndex: Int): Boolean {

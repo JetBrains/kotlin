@@ -467,7 +467,7 @@ class DeclarationGenerator(
 
         val initValue: IrExpression? = declaration.initializer?.expression
         if (initValue != null) {
-            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String) {
+            check(initValue is IrConst && initValue.kind !is IrConstKind.String) {
                 "Static field initializer should be string or const"
             }
             generateConstExpression(
@@ -520,7 +520,7 @@ fun IrFunction.isExported(): Boolean =
     isJsExport() || getWasmExportNameIfWasmExport() != null
 
 fun generateConstExpression(
-    expression: IrConst<*>,
+    expression: IrConst,
     body: WasmExpressionBuilder,
     context: WasmModuleCodegenContext,
     location: SourceLocation

@@ -128,7 +128,7 @@ class IrInlineCodegen(
                 ValueKind.METHOD_HANDLE_IN_DEFAULT ->
                     StackValue.constant(null, AsmTypes.OBJECT_TYPE)
                 ValueKind.DEFAULT_MASK ->
-                    StackValue.constant((argumentExpression as IrConst<*>).value, Type.INT_TYPE)
+                    StackValue.constant((argumentExpression as IrConst).value, Type.INT_TYPE)
                 ValueKind.DEFAULT_PARAMETER, ValueKind.DEFAULT_INLINE_PARAMETER ->
                     StackValue.createDefaultValue(parameterType)
                 else -> {

@@ -910,7 +910,7 @@ class ExpressionCodegen(
         // Do not add redundant field initializers that initialize to default values.
         val inClassInit = irFunction.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
         val isFieldInitializer = expression.origin == IrStatementOrigin.INITIALIZE_FIELD
-        val skip = (irFunction is IrConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst<*> &&
+        val skip = (irFunction is IrConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst &&
                 isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
         return if (skip) unitValue else super.visitSetField(expression, data)
     }
@@ -951,7 +951,7 @@ class ExpressionCodegen(
         return unitValue
     }
 
-    override fun visitConst(expression: IrConst<*>, data: BlockInfo): PromisedValue {
+    override fun visitConst(expression: IrConst, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         when (val value = expression.value) {
             is Boolean -> {
@@ -1521,7 +1521,7 @@ class ExpressionCodegen(
         }
         val generator = StringConcatGenerator(context.config.runtimeStringConcat, mv)
         expression.arguments.forEach { arg ->
-            if (arg is IrConst<*>) {
+            if (arg is IrConst) {
                 val type = when (arg.kind) {
                     IrConstKind.Boolean -> Type.BOOLEAN_TYPE
                     IrConstKind.Char -> Type.CHAR_TYPE

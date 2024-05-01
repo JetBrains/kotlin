@@ -376,8 +376,8 @@ abstract class AbstractComposeLowering(
     }
 
     protected fun irOr(lhs: IrExpression, rhs: IrExpression): IrExpression {
-        if (rhs is IrConst<*> && rhs.value == 0) return lhs
-        if (lhs is IrConst<*> && lhs.value == 0) return rhs
+        if (rhs is IrConst && rhs.value == 0) return lhs
+        if (lhs is IrConst && lhs.value == 0) return rhs
         val int = context.irBuiltIns.intType
         return irCall(
             int.binaryOperator(OperatorNameConventions.OR, int),
@@ -527,7 +527,7 @@ abstract class AbstractComposeLowering(
 //        context.irBuiltIns.eqeqSymbol
 //        context.irBuiltIns.greaterFunByOperandType
 
-    protected fun irConst(value: Int): IrConst<Int> = IrConstImpl(
+    protected fun irConst(value: Int): IrConst = IrConstImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.intType,
@@ -535,7 +535,7 @@ abstract class AbstractComposeLowering(
         value
     )
 
-    protected fun irConst(value: Long): IrConst<Long> = IrConstImpl(
+    protected fun irConst(value: Long): IrConst = IrConstImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.longType,
@@ -543,7 +543,7 @@ abstract class AbstractComposeLowering(
         value
     )
 
-    protected fun irConst(value: String): IrConst<String> = IrConstImpl(
+    protected fun irConst(value: String): IrConst = IrConstImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.stringType,
@@ -962,7 +962,7 @@ abstract class AbstractComposeLowering(
     fun IrExpression.isStatic(): Boolean {
         return when (this) {
             // A constant by definition is static
-            is IrConst<*> -> true
+            is IrConst -> true
             // We want to consider all enum values as static
             is IrGetEnumValue -> true
             // Getting a companion object or top level object can be considered static if the

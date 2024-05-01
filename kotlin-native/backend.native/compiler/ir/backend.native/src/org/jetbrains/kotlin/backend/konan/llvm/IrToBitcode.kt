@@ -934,7 +934,7 @@ internal class CodeGeneratorVisitor(
             val globalProperty = (globalPropertyAccess as? GlobalAddressAccess)?.getAddress(null)
             if (globalProperty != null) {
                 LLVMSetInitializer(globalProperty, when (initializer) {
-                    is IrConst<*>, is IrConstantValue -> evaluateExpression(initializer)
+                    is IrConst, is IrConstantValue -> evaluateExpression(initializer)
                     else -> LLVMConstNull(type)
                 })
                 // (Cannot do this before the global is initialized).
@@ -960,7 +960,7 @@ internal class CodeGeneratorVisitor(
             is IrSetValue            -> return evaluateSetValue               (value)
             is IrGetField            -> return evaluateGetField               (value, resultSlot)
             is IrSetField            -> return evaluateSetField               (value)
-            is IrConst<*>            -> return evaluateConst                  (value).llvm
+            is IrConst               -> return evaluateConst                  (value).llvm
             is IrReturn              -> return evaluateReturn                 (value)
             is IrWhen                -> return evaluateWhen                   (value, resultSlot)
             is IrThrow               -> return evaluateThrow                  (value)
@@ -1738,7 +1738,7 @@ internal class CodeGeneratorVisitor(
             }
             value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true -> {
                 // TODO: probably can be removed, as they are inlined.
-                return evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>).llvm
+                return evaluateConst(value.symbol.owner.initializer?.expression as IrConst).llvm
             }
             else -> {
                 fieldAddress = staticFieldPtr(value.symbol.owner, functionGenerationContext)
@@ -1759,7 +1759,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     private fun isZeroConstValue(value: IrExpression): Boolean {
-        if (value !is IrConst<*>) return false
+        if (value !is IrConst) return false
         return when (value.kind) {
             IrConstKind.Null -> true
             IrConstKind.Boolean -> (value.value as Boolean) == false
@@ -1827,8 +1827,8 @@ internal class CodeGeneratorVisitor(
                     .getAddress(context)
 
     //-------------------------------------------------------------------------//
-    private fun evaluateStringConst(value: IrConst<String>) =
-            codegen.staticData.kotlinStringLiteral(value.value)
+    private fun evaluateStringConst(value: String) =
+            codegen.staticData.kotlinStringLiteral(value)
 
     /**
      * Normalizing nans to single value is useful for build reproducibility.
@@ -1849,10 +1849,8 @@ internal class CodeGeneratorVisitor(
     private fun Float.normalizeNan() = if (isNaN()) java.lang.Float.NaN else this
     private fun Double.normalizeNan() = if (isNaN()) java.lang.Double.NaN else this
 
-    private fun evaluateConst(value: IrConst<*>): ConstValue {
+    private fun evaluateConst(value: IrConst): ConstValue {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
-        /* This suppression against IrConst<String> */
-        @Suppress("UNCHECKED_CAST")
         return when (value.kind) {
             IrConstKind.Null -> constPointer(codegen.kNullObjHeaderPtr)
             IrConstKind.Boolean -> llvm.constInt1(value.value as Boolean)
@@ -1861,7 +1859,7 @@ internal class CodeGeneratorVisitor(
             IrConstKind.Short -> llvm.constInt16(value.value as Short)
             IrConstKind.Int -> llvm.constInt32(value.value as Int)
             IrConstKind.Long -> llvm.constInt64(value.value as Long)
-            IrConstKind.String -> evaluateStringConst(value as IrConst<String>)
+            IrConstKind.String -> evaluateStringConst(value.value as String)
             IrConstKind.Float -> llvm.constFloat32((value.value as Float).normalizeNan())
             IrConstKind.Double -> llvm.constFloat64((value.value as Double).normalizeNan())
         }
@@ -1961,7 +1959,7 @@ internal class CodeGeneratorVisitor(
                                 delegatedCallConstants[field.name]
                         }
                         when (init) {
-                            is IrConst<*> -> evaluateConst(init)
+                            is IrConst -> evaluateConst(init)
                             is IrConstantValue -> evaluateConstantValue(init)
                             null -> error("Bad statically initialized object: field ${field.name} value not set in ${constructedClass.name}")
                             else -> error("Unexpected constant initializer type: ${init::class}")

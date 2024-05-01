@@ -106,7 +106,7 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
                 it.type.classOrNull?.owner?.hasEqualFqName(SUPPRESS) == true
             }?.flatMap {
                 buildList {
-                    fun addIfStringConst(irConst: IrConst<*>) {
+                    fun addIfStringConst(irConst: IrConst) {
                         if (irConst.kind == IrConstKind.String) {
                             add((irConst.value as String).lowercase())
                         }
@@ -114,12 +114,12 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
 
                     for (i in 0 until it.valueArgumentsCount) {
                         when (val arg = it.getValueArgument(i)) {
-                            is IrConst<*> -> addIfStringConst(arg)
+                            is IrConst -> addIfStringConst(arg)
                             is IrConstantArray -> arg.elements.filterIsInstance<IrConstantPrimitive>().forEach {
                                 addIfStringConst(it.value)
                             }
                             // TODO: consider leaving only this branch
-                            is IrVararg -> arg.elements.filterIsInstance<IrConst<*>>().forEach {
+                            is IrVararg -> arg.elements.filterIsInstance<IrConst>().forEach {
                                 addIfStringConst(it)
                             }
                         }

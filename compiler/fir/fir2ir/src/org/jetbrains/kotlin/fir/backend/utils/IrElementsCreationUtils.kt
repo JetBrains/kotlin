@@ -193,11 +193,11 @@ private fun createSyntheticFiles(
     }
 }
 
-fun Fir2IrComponents.constTrue(startOffset: Int, endOffset: Int): IrConst<Boolean> {
+fun Fir2IrComponents.constTrue(startOffset: Int, endOffset: Int): IrConst {
     return IrConstImpl.constTrue(startOffset, endOffset, builtins.booleanType)
 }
 
-fun Fir2IrComponents.constFalse(startOffset: Int, endOffset: Int): IrConst<Boolean> {
+fun Fir2IrComponents.constFalse(startOffset: Int, endOffset: Int): IrConst {
     return IrConstImpl.constFalse(startOffset, endOffset, builtins.booleanType)
 }
 

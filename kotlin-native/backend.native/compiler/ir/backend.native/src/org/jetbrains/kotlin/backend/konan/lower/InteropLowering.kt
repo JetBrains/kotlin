@@ -1028,7 +1028,7 @@ private class InteropTransformer(
         val constantProperty = function.correspondingPropertySymbol?.owner?.takeIf { it.isConst } ?: return null
 
         val initializer = constantProperty.backingField?.initializer?.expression
-        require(initializer is IrConst<*>) { renderCompilerError(expression) }
+        require(initializer is IrConst) { renderCompilerError(expression) }
 
         // Avoid node duplication
         return initializer.shallowCopy()
@@ -1104,7 +1104,7 @@ private class InteropTransformer(
             return when (intrinsicType) {
                 IntrinsicType.INTEROP_BITS_TO_FLOAT -> {
                     val argument = expression.getValueArgument(0)
-                    if (argument is IrConst<*> && argument.kind == IrConstKind.Int) {
+                    if (argument is IrConst && argument.kind == IrConstKind.Int) {
                         val floatValue = kotlinx.cinterop.bitsToFloat(argument.value as Int)
                         builder.irFloat(floatValue)
                     } else {
@@ -1113,7 +1113,7 @@ private class InteropTransformer(
                 }
                 IntrinsicType.INTEROP_BITS_TO_DOUBLE -> {
                     val argument = expression.getValueArgument(0)
-                    if (argument is IrConst<*> && argument.kind == IrConstKind.Long) {
+                    if (argument is IrConst && argument.kind == IrConstKind.Long) {
                         val doubleValue = kotlinx.cinterop.bitsToDouble(argument.value as Long)
                         builder.irDouble(doubleValue)
                     } else {

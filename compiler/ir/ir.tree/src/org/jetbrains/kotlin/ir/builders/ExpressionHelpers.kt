@@ -424,7 +424,7 @@ inline fun IrBuilderWithScope.irBlockBody(
         endOffset
     ).blockBody(body)
 
-fun IrBuilderWithScope.irConstantPrimitive(value: IrConst<*>) =
+fun IrBuilderWithScope.irConstantPrimitive(value: IrConst) =
     IrConstantPrimitiveImpl(startOffset, endOffset, value)
 
 fun IrBuilderWithScope.irConstantArray(type: IrType, elements: List<IrConstantValue>) =

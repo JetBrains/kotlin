@@ -306,7 +306,7 @@ internal object StaticInitializersOptimization {
                 override fun visitDeclaration(declaration: IrDeclarationBase, data: BitSet): BitSet = TODO(declaration.render())
 
                 override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BitSet) = expression.argument.accept(this, data)
-                override fun visitConst(expression: IrConst<*>, data: BitSet) = data
+                override fun visitConst(expression: IrConst, data: BitSet) = data
                 override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BitSet) = data
 
                 override fun visitGetValue(expression: IrGetValue, data: BitSet) = data

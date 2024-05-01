@@ -50,7 +50,7 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrGetObjectValue -> unfoldGetObjectValue(element, environment)
         is IrGetEnumValue -> unfoldGetEnumValue(element, environment)
         is IrEnumEntry -> unfoldEnumEntry(element, environment)
-        is IrConst<*> -> callStack.pushSimpleInstruction(element)
+        is IrConst -> callStack.pushSimpleInstruction(element)
         is IrVariable -> unfoldVariable(element, callStack)
         is IrSetValue -> unfoldSetValue(element, callStack)
         is IrTypeOperatorCall -> unfoldTypeOperatorCall(element, callStack)

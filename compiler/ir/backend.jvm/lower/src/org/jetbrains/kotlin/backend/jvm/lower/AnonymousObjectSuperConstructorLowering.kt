@@ -81,7 +81,7 @@ internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCo
 
         fun IrExpression.transform(remapping: Map<IrVariable, IrValueParameter>): IrExpression =
             when (this) {
-                is IrConst<*> -> this
+                is IrConst -> this
                 is IrGetValue -> IrGetValueImpl(startOffset, endOffset, remapping[symbol.owner]?.symbol ?: symbol)
                 is IrTypeOperatorCall ->
                     IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, argument.transform(remapping))

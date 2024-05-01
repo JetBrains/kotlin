@@ -85,7 +85,7 @@ internal abstract class IrConstAnnotationTransformer(
 
     private fun IrExpression.convertToConstIfPossible(type: IrType): IrExpression {
         return when {
-            this !is IrConst<*> || type is IrErrorType -> this
+            this !is IrConst || type is IrErrorType -> this
             type.isArray() -> this.convertToConstIfPossible((type as IrSimpleType).arguments.single().typeOrNull!!)
             type.isPrimitiveArray() -> this.convertToConstIfPossible(this.type)
             else -> this.value.toIrConst(type, this.startOffset, this.endOffset)

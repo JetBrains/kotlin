@@ -227,8 +227,8 @@ private fun IrClass.hasStableMarkedDescendant(): Boolean {
 
 private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
     (annotations.findAnnotation(ComposeFqNames.StabilityInferred)
-        ?.getValueArgument(0) as? IrConst<*>
-        )?.value as? Int
+        ?.getValueArgument(0) as? IrConst
+            )?.value as? Int
 
 private data class SymbolForAnalysis(
     val symbol: IrClassifierSymbol,
@@ -490,7 +490,7 @@ class StabilityInferencer(
         val stability = stabilityOf(expr.type)
         if (stability.knownStable()) return stability
         return when (expr) {
-            is IrConst<*> -> Stability.Stable
+            is IrConst -> Stability.Stable
             is IrCall -> stabilityOf(expr, stability)
             is IrGetValue -> {
                 val owner = expr.symbol.owner

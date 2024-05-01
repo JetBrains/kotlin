@@ -486,7 +486,7 @@ private class BackendChecker(
                     if (elements.any { it is IrSpreadElement })
                         reportError(args, "no spread elements allowed here")
                     elements.forEach {
-                        if (it !is IrConst<*>)
+                        if (it !is IrConst)
                             reportError(args, "all elements of binary blob must be constants")
                         val value = it.value as Short
                         if (value < 0 || value > 0xff)

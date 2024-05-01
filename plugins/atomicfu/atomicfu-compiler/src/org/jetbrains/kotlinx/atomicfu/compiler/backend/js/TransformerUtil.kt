@@ -117,7 +117,7 @@ internal fun buildGetValue(
 
 internal fun IrPluginContext.buildConstNull() = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.anyNType)
 
-internal fun IrExpression.isConstNull() = this is IrConst<*> && this.kind.asString == "Null"
+internal fun IrExpression.isConstNull() = this is IrConst && this.kind.asString == "Null"
 
 internal fun IrField.getterName() = "<get-${name.asString()}>"
 internal fun IrField.setterName() = "<set-${name.asString()}>"
