@@ -1,4 +1,10 @@
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.ExperimentalStdlibApi
 public final class UUID {
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+    public open override fun hashCode(): kotlin.Int
+
     public final fun toByteArray(): kotlin.ByteArray
 
     public final fun toHexString(): kotlin.String

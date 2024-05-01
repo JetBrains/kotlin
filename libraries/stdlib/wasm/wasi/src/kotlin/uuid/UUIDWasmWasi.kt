@@ -10,6 +10,7 @@ import kotlin.wasm.WasiError
 import kotlin.wasm.WasiErrorCode
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
+@ExperimentalStdlibApi
 internal actual fun secureRandomUUID(): UUID {
     withScopedMemoryAllocator { allocator ->
         var memory = allocator.allocate(UUID.SIZE_BYTES)

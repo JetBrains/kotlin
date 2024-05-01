@@ -5,13 +5,9 @@
 
 package kotlin.uuid
 
-// TODO: There is crypto.randomUUID() that requires secure context: https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
-//   And only newer browser versions support it.
-// TODO: crypto.getRandomValues() is supported from Node.js version 17.4.0 (Released 2022-01-18)
-//   Might need to use crypto.randomFillSync() for Node.js: https://nodejs.org/api/crypto.html#cryptorandomfillsyncbuffer-offset-size
+@ExperimentalStdlibApi
 internal actual fun secureRandomUUID(): UUID {
     val randomBytes = ByteArray(16)
     js("crypto.getRandomValues(randomBytes)")
     return uuidFromRandomBytes(randomBytes)
 }
-
