@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -46,7 +47,10 @@ class ResolvedLambdaAtom(
     val parameters: List<ConeKotlinType>,
     var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
-    val coerceFirstParameterToExtensionReceiver: Boolean
+    val coerceFirstParameterToExtensionReceiver: Boolean,
+    // NB: It's not null right now only for lambdas inside the calls
+    // TODO: Handle somehow that kind of lack of information once KT-67961 is fixed
+    val sourceForFunctionExpression: KtSourceElement?,
 ) : PostponedResolvedAtom() {
 
     var typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType? = typeVariableForLambdaReturnType

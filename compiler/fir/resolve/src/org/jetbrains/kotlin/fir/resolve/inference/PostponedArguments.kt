@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -59,8 +60,12 @@ fun Candidate.preprocessLambdaArgument(
             returnTypeVariable,
             context.bodyResolveComponents,
             this,
-            duringCompletion || sink == null
-        ) ?: extractLambdaInfo(expectedType, anonymousFunction, csBuilder, context.session, this)
+            duringCompletion || sink == null,
+            sourceForFunctionExpression = argument.source,
+        ) ?: extractLambdaInfo(
+            expectedType, anonymousFunction, csBuilder, context.session, this,
+            sourceForFunctionExpression = argument.source,
+        )
 
     if (expectedType != null) {
         val parameters = resolvedArgument.parameters
@@ -109,7 +114,8 @@ private fun extractLambdaInfo(
     argument: FirAnonymousFunction,
     csBuilder: ConstraintSystemBuilder,
     session: FirSession,
-    candidate: Candidate?
+    candidate: Candidate?,
+    sourceForFunctionExpression: KtSourceElement?,
 ): ResolvedLambdaAtom {
     require(expectedType?.lowerBoundIfFlexible()?.functionTypeKind(session) == null) {
         "Currently, we only extract lambda info from its shape when expected type is not function, but $expectedType"
@@ -147,7 +153,8 @@ private fun extractLambdaInfo(
         parameters,
         returnType,
         typeVariable.takeIf { newTypeVariableUsed },
-        coerceFirstParameterToExtensionReceiver = false
+        coerceFirstParameterToExtensionReceiver = false,
+        sourceForFunctionExpression,
     ).also {
         candidate?.postponedAtoms?.add(it)
     }

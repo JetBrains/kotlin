@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.*
@@ -25,6 +24,7 @@ fun extractLambdaInfoFromFunctionType(
     components: BodyResolveComponents,
     candidate: Candidate?,
     allowCoercionToExtensionReceiver: Boolean,
+    sourceForFunctionExpression: KtSourceElement?,
 ): ResolvedLambdaAtom? {
     val session = components.session
     if (expectedType == null) return null
@@ -36,6 +36,7 @@ fun extractLambdaInfoFromFunctionType(
             components,
             candidate,
             allowCoercionToExtensionReceiver,
+            sourceForFunctionExpression,
         )
     }
     val expectedFunctionKind = expectedType.functionTypeKind(session) ?: return null
@@ -110,7 +111,8 @@ fun extractLambdaInfoFromFunctionType(
         parameters,
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,
-        coerceFirstParameterToExtensionReceiver
+        coerceFirstParameterToExtensionReceiver,
+        sourceForFunctionExpression,
     ).also {
         candidate?.postponedAtoms?.add(it)
     }

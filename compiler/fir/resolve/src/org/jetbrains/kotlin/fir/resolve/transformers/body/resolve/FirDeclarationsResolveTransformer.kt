@@ -1132,6 +1132,7 @@ open class FirDeclarationsResolveTransformer(
             extractLambdaInfoFromFunctionType(
                 it.type, anonymousFunction, returnTypeVariable = null, components, candidate = null,
                 allowCoercionToExtensionReceiver = true,
+                sourceForFunctionExpression = null,
             )
         }
         var lambda = anonymousFunction
