@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.const]
  */
 abstract class IrConst<T> : IrExpression() {
-    abstract var kind: IrConstKind<T>
+    abstract var kind: IrConstKind
 
     abstract var value: T
 

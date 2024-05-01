@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-fun FirLiteralExpression.getIrConstKind(): IrConstKind<*> = when (kind) {
+fun FirLiteralExpression.getIrConstKind(): IrConstKind = when (kind) {
     ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
         val type = resolvedType as ConeIntegerLiteralType
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
@@ -34,8 +34,7 @@ fun FirLiteralExpression.getIrConstKind(): IrConstKind<*> = when (kind) {
 
 fun <T> FirLiteralExpression.toIrConst(irType: IrType): IrConst<T> {
     return convertWithOffsets { startOffset, endOffset ->
-        @Suppress("UNCHECKED_CAST")
-        val kind = getIrConstKind() as IrConstKind<T>
+        val kind = getIrConstKind()
 
         @Suppress("UNCHECKED_CAST")
         val value = (value as? Long)?.let {
@@ -58,7 +57,7 @@ fun <T> FirLiteralExpression.toIrConst(irType: IrType): IrConst<T> {
     }
 }
 
-private fun ConstantValueKind.toIrConstKind(): IrConstKind<*> = when (this) {
+private fun ConstantValueKind.toIrConstKind(): IrConstKind = when (this) {
     ConstantValueKind.Null -> IrConstKind.Null
     ConstantValueKind.Boolean -> IrConstKind.Boolean
     ConstantValueKind.Char -> IrConstKind.Char

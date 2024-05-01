@@ -184,7 +184,7 @@ fun <T> IrConstImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    kind: IrConstKind<T>,
+    kind: IrConstKind,
     value: T,
 ) = IrConstImpl(
     constructorIndicator = null,

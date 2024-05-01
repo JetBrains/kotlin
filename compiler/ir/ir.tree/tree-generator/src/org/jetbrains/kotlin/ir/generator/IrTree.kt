@@ -861,7 +861,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(expression)
 
-        +field("kind", type(Packages.exprs, "IrConstKind").withArgs(t))
+        +field("kind", type(Packages.exprs, "IrConstKind"))
         +field("value", t)
     }
     val constantValue: Element by element(Expression) {
