@@ -14281,6 +14281,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("emptyLambdaTypeMismatchDiagnostic.kt")
+      public void testEmptyLambdaTypeMismatchDiagnostic() {
+        runTest("compiler/testData/diagnostics/tests/functionLiterals/emptyLambdaTypeMismatchDiagnostic.kt");
+      }
+
+      @Test
       @TestMetadata("ExpectedParameterTypeMismatchVariance.kt")
       public void testExpectedParameterTypeMismatchVariance() {
         runTest("compiler/testData/diagnostics/tests/functionLiterals/ExpectedParameterTypeMismatchVariance.kt");

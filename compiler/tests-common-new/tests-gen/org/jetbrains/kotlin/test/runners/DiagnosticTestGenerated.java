@@ -14287,6 +14287,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("emptyLambdaTypeMismatchDiagnostic.kt")
+      public void testEmptyLambdaTypeMismatchDiagnostic() {
+        runTest("compiler/testData/diagnostics/tests/functionLiterals/emptyLambdaTypeMismatchDiagnostic.kt");
+      }
+
+      @Test
       @TestMetadata("ExpectedParameterTypeMismatchVariance.kt")
       public void testExpectedParameterTypeMismatchVariance() {
         runTest("compiler/testData/diagnostics/tests/functionLiterals/ExpectedParameterTypeMismatchVariance.kt");
