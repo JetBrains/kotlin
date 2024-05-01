@@ -1000,6 +1000,12 @@ class ComposableFunctionBodyTransformer(
         val transformed = nonReturningBody.apply {
             transformChildrenVoid()
         }.let {
+            // Ensure that all group children of composable inline lambda are realized, since the inline
+            // lambda doesn't require a group on its own.
+            if (scope.isInlinedLambda && scope.isComposable) {
+                scope.realizeAllDirectChildren()
+            }
+
             if (isInlineLambda) {
                 it.asSourceOrEarlyExitGroup(scope)
             } else it
@@ -2507,12 +2513,6 @@ class ComposableFunctionBodyTransformer(
                 before = listOf(makeStart()),
                 after = listOf(makeEnd()),
             )
-        }
-
-        // Ensure that all group children of composable inline lambda are realized, since the inline
-        // lambda doesn't require a group on its own.
-        if (scope.isInlinedLambda && scope.isComposable) {
-            scope.realizeAllDirectChildren()
         }
 
         scope.realizeGroup(makeEnd)
