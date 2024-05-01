@@ -145,6 +145,7 @@ class VersionChecker(val context: IrPluginContext, private val messageCollector:
             12500 to "1.7.0-alpha06",
             12600 to "1.7.0-alpha07",
             12700 to "1.7.0-alpha08",
+            12800 to "1.7.0-beta01",
         )
 
         /**
