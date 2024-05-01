@@ -19,14 +19,14 @@ fun test1() {
 fun <R> b(first: () -> List<R>, second: (List<R>) -> Unit) {}
 
 fun test2() {
-    b(
+    <!NEW_INFERENCE_ERROR!>b(
         first = {
-            buildList { add(<!ARGUMENT_TYPE_MISMATCH!>""<!>) }
+            buildList { add("") }
         },
         second = {
-            it.myExt() // Note: must be extension to add constraints
+            it.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>myExt<!>() // Note: must be extension to add constraints
         }
-    )
+    )<!>
 }
 
 fun <Q> select(a: Q, b: Q): Q = a
