@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package test.utils
+package test.uuid
 
 import kotlin.test.*
+import kotlin.uuid.UUID
 
 class UUIDTest {
     private val mostSignificantBits = 0x550e8400e29b41d4uL
@@ -82,8 +83,8 @@ class UUIDTest {
     }
 
     @Test
-    fun randomUUID() {
-        val randomUUID = UUID.randomUUIDv4()
+    fun random() {
+        val randomUUID = UUID.random()
         assertTrue(randomUUID.isIETFVariant)
         assertEquals(4, randomUUID.version)
         println("Random UUID: $randomUUID")

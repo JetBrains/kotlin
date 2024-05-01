@@ -506,28 +506,6 @@ public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/interna
 	public final synthetic fun unbox-impl ()[S
 }
 
-public final class kotlin/UUID {
-	public static final field Companion Lkotlin/UUID$Companion;
-	public static final field SIZE_BITS I
-	public static final field SIZE_BYTES I
-	public final fun getLeastSignificantBits ()J
-	public final fun getMostSignificantBits ()J
-	public final fun toByteArray ()[B
-	public final fun toHexString ()Ljava/lang/String;
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlin/UUID$Companion {
-	public final fun fromByteArray ([B)Lkotlin/UUID;
-	public final fun fromLongs (JJ)Lkotlin/UUID;
-	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/UUID;
-	public final fun getBITWISE_ORDER ()Ljava/util/Comparator;
-	public final fun getNIL ()Lkotlin/UUID;
-	public final fun parse (Ljava/lang/String;)Lkotlin/UUID;
-	public final fun parseHex (Ljava/lang/String;)Lkotlin/UUID;
-	public final fun randomUUIDv4 ()Lkotlin/UUID;
-}
-
 public final class kotlin/UninitializedPropertyAccessException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
@@ -6346,5 +6324,27 @@ public final class kotlin/time/TimedValue {
 	public final fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/uuid/UUID {
+	public static final field Companion Lkotlin/uuid/UUID$Companion;
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
+	public final fun getLeastSignificantBits ()J
+	public final fun getMostSignificantBits ()J
+	public final fun toByteArray ()[B
+	public final fun toHexString ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/uuid/UUID$Companion {
+	public final fun fromByteArray ([B)Lkotlin/uuid/UUID;
+	public final fun fromLongs (JJ)Lkotlin/uuid/UUID;
+	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/uuid/UUID;
+	public final fun getLEXICAL_ORDER ()Ljava/util/Comparator;
+	public final fun getNIL ()Lkotlin/uuid/UUID;
+	public final fun parse (Ljava/lang/String;)Lkotlin/uuid/UUID;
+	public final fun parseHex (Ljava/lang/String;)Lkotlin/uuid/UUID;
+	public final fun random ()Lkotlin/uuid/UUID;
 }
 

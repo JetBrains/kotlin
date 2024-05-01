@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalStdlibApi::class)
 
-package kotlin
+package kotlin.uuid
 
 internal expect fun secureRandomUUID(): UUID
 
@@ -92,7 +92,7 @@ internal fun uuidToByteArray(uuid: UUID): ByteArray {
     }
 }
 
-internal val UUID_BITWISE_ORDER = Comparator<UUID> { a, b ->
+internal val UUID_LEXICAL_ORDER = Comparator<UUID> { a, b ->
     if (a.mostSignificantBits != b.mostSignificantBits)
         a.mostSignificantBits.toULong().compareTo(b.mostSignificantBits.toULong())
     else

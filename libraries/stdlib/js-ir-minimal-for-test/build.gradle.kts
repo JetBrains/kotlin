@@ -66,8 +66,8 @@ val commonMainSources by task<Sync> {
                 "libraries/stdlib/src/kotlin/time/**",
                 "libraries/stdlib/src/kotlin/util/KotlinVersion.kt",
                 "libraries/stdlib/src/kotlin/util/Tuples.kt",
-                "libraries/stdlib/src/kotlin/util/UUID.kt",
-                "libraries/stdlib/src/kotlin/util/UUIDImpl.kt",
+                "libraries/stdlib/src/kotlin/uuid/UUID.kt",
+                "libraries/stdlib/src/kotlin/uuid/UUIDImpl.kt",
                 "libraries/stdlib/src/kotlin/enums/**"
             )
         )
@@ -120,7 +120,7 @@ val jsMainSources by task<Sync> {
             "kotlinx/dom/**",
             "kotlinx/browser/**",
             "kotlin/enums/**",
-            "kotlin/UUIDJs.kt",
+            "kotlin/uuid/UUIDJs.kt",
         )
     }
     from {

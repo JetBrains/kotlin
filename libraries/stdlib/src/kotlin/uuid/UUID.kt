@@ -3,8 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// TODO: decide on package
-package kotlin
+package kotlin.uuid
 
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -145,32 +144,37 @@ public class UUID internal constructor(
         public fun parseHex(hexString: String): UUID =
             uuidFromHexString(hexString)
 
-        // TODO: Decide on naming scheme
-        // v4
-        public fun randomUUIDv4(): UUID {
+        /**
+         * Generates a new random UUID instance.
+         *
+         * The returned UUID is of variant 2 and version 4.
+         * It is generated using a cryptographically secure pseudorandom number generator (CSPRNG) available in the platform.
+         * Thus, if the underlying system has not collected enough entropy, this function may hang until the strong entropy is collected and the CSPRNG is initialized.
+         *
+         * Note that the returned UUID is not recommended for use for cryptographic purposes.
+         * Because version 4 UUID has a partially predictable bit pattern, and utilizes at most 122 bits of entropy, regardless of platform.
+         * Additionally, on platforms that do not provide a CSPRNG, the subsequent calls of this function could return guessable UUIDs.
+         *
+         * @return A randomly generated UUID.
+         */
+        public fun random(): UUID {
             return secureRandomUUID()
         }
-//
-//        // v3
-//        public fun nameBasedUUIDv3(namespace: UUID, nameBytes: ByteArray): UUID {
-//
-//        }
-//
-//        // v5
-//        public fun nameBasedUUIDv5(namespace: UUID, nameBytes: ByteArray): UUID {
-//
-//        }
-//
-//        // v7
-//        public fun timeOrderedUUIDv7(): UUID {
-//
-//        }
 
-        // TODO: Name
-        //   * BIG_ENDIAN_BITWISE_ORDER
-        //   * BITS_ORDER
-        //   * BITWISE_COMPARATOR
-        public val BITWISE_ORDER: Comparator<UUID>
-            get() = UUID_BITWISE_ORDER
+        /**
+         * A Comparator that lexically orders UUIDs.
+         *
+         * This comparator compares the given two 128-bit UUIDs bit by bit starting from the most significant to the least significant bit.
+         * UUID `a` is considered less than `b` iff the first bit in which the two UUIDs differ, the bit in `a` is zero and the bit in `b` is one.
+         * `a` is considered greater than `b` iff the first bit in which the two UUIDs differ, the bit in `a` is one and the bit in `b` is zero.
+         * Otherwise, the two UUIDs are considered equal.
+         *
+         * The result of comparison of UUIDs `a` and `b` by this comparator is equivalent to:
+         * ```kotlin
+         * a.toString().compareTo(b.toString())
+         * ```
+         */
+        public val LEXICAL_ORDER: Comparator<UUID>
+            get() = UUID_LEXICAL_ORDER
     }
 }

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin
+package kotlin.uuid
 
 // TODO: There is crypto.randomUUID() that requires secure context: https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
 //   And only newer browser versions support it.
