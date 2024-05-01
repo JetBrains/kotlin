@@ -185,10 +185,13 @@ private fun FirAnonymousFunctionReturnExpressionInfo.isExplicitEmptyReturn(): Bo
     if (expression !is FirUnitExpression) return false
 
     // For case of empty lambdas, they are not counted as explicit returns, too
-    if (expression.source?.kind == KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda) return false
+    if (expression.isImplicitUnitForEmptyLambda()) return false
 
     return true
 }
+
+fun FirExpression.isImplicitUnitForEmptyLambda(): Boolean =
+    source?.kind == KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda
 
 /**
  * [kind] == null means that [FunctionTypeKind.Function] will be used

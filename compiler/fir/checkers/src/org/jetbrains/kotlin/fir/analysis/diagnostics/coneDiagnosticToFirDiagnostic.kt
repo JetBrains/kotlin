@@ -302,6 +302,15 @@ private fun mapInapplicableCandidateError(
                 )
             }
 
+            is UnitReturnTypeLambdaContradictsExpectedType -> {
+                FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
+                    rootCause.sourceForFunctionExpression ?: rootCause.lambda.source ?: source,
+                    rootCause.wholeLambdaExpectedType.removeTypeVariableTypes(typeContext),
+                    rootCause.lambda.typeRef.coneType.removeTypeVariableTypes(typeContext),
+                    false // not isMismatchDueToNullability
+                )
+            }
+
             // We don't report anything here, because there are already some errors inside the call or declaration
             // And the errors should be reported there
             is ErrorTypeInArguments -> null
