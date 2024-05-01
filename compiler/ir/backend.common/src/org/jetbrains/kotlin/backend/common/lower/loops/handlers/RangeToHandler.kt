@@ -103,35 +103,35 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
         val type = irConst.type
         return when (irConst.kind) {
             IrConstKind.Char -> {
-                val charValue = IrConstKind.Char.valueOf(irConst)
+                val charValue = irConst.value as Char
                 if (charValue != Char.MAX_VALUE)
                     IrConstImpl.char(startOffset, endOffset, type, charValue.inc())
                 else
                     null
             }
             IrConstKind.Byte -> {
-                val byteValue = IrConstKind.Byte.valueOf(irConst)
+                val byteValue = irConst.value as Byte
                 if (byteValue != Byte.MAX_VALUE)
                     IrConstImpl.byte(startOffset, endOffset, type, byteValue.inc())
                 else
                     null
             }
             IrConstKind.Short -> {
-                val shortValue = IrConstKind.Short.valueOf(irConst)
+                val shortValue = irConst.value as Short
                 if (shortValue != Short.MAX_VALUE)
                     IrConstImpl.short(startOffset, endOffset, type, shortValue.inc())
                 else
                     null
             }
             IrConstKind.Int -> {
-                val intValue = IrConstKind.Int.valueOf(irConst)
+                val intValue = irConst.value as Int
                 if (intValue != Int.MAX_VALUE)
                     IrConstImpl.int(startOffset, endOffset, type, intValue.inc())
                 else
                     null
             }
             IrConstKind.Long -> {
-                val longValue = IrConstKind.Long.valueOf(irConst)
+                val longValue = irConst.value as Long
                 if (longValue != Long.MAX_VALUE)
                     IrConstImpl.long(startOffset, endOffset, type, longValue.inc())
                 else

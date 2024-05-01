@@ -67,35 +67,35 @@ internal class DownToHandler(private val context: CommonBackendContext) : Header
         val irConst = this as? IrConst<*> ?: return null
         return when (irConst.kind) {
             IrConstKind.Char -> {
-                val charValue = IrConstKind.Char.valueOf(irConst)
+                val charValue = irConst.value as Char
                 if (charValue != Char.MIN_VALUE)
                     IrConstImpl.char(startOffset, endOffset, type, charValue.dec())
                 else
                     null
             }
             IrConstKind.Byte -> {
-                val byteValue = IrConstKind.Byte.valueOf(irConst)
+                val byteValue = irConst.value as Byte
                 if (byteValue != Byte.MIN_VALUE)
                     IrConstImpl.byte(startOffset, endOffset, type, byteValue.dec())
                 else
                     null
             }
             IrConstKind.Short -> {
-                val shortValue = IrConstKind.Short.valueOf(irConst)
+                val shortValue = irConst.value as Short
                 if (shortValue != Short.MIN_VALUE)
                     IrConstImpl.short(startOffset, endOffset, type, shortValue.dec())
                 else
                     null
             }
             IrConstKind.Int -> {
-                val intValue = IrConstKind.Int.valueOf(irConst)
+                val intValue = irConst.value as Int
                 if (intValue != Int.MIN_VALUE)
                     IrConstImpl.int(startOffset, endOffset, type, intValue.dec())
                 else
                     null
             }
             IrConstKind.Long -> {
-                val longValue = IrConstKind.Long.valueOf(irConst)
+                val longValue = irConst.value as Long
                 if (longValue != Long.MIN_VALUE)
                     IrConstImpl.long(startOffset, endOffset, type, longValue.dec())
                 else

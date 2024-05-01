@@ -324,7 +324,7 @@ internal class StatementGenerator(
                     if (constString.isEmpty()) {
                         constStringStartOffset = entry.startOffset
                     }
-                    constString.append(IrConstKind.String.valueOf(entry))
+                    constString.append(entry.value as String)
                     constStringEndOffset = entry.endOffset
                 } else {
                     if (constString.isNotEmpty()) {

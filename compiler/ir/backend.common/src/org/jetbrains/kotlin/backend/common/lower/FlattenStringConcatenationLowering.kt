@@ -216,13 +216,13 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         if (const.type.isUnsigned()) {
             when (val kind = const.kind) {
                 is IrConstKind.Byte ->
-                    return kind.valueOf(const).toUByte()
+                    return (const.value as Byte).toUByte()
                 is IrConstKind.Short ->
-                    return kind.valueOf(const).toUShort()
+                    return (const.value as Short).toUShort()
                 is IrConstKind.Int ->
-                    return kind.valueOf(const).toUInt()
+                    return (const.value as Int).toUInt()
                 is IrConstKind.Long ->
-                    return kind.valueOf(const).toULong()
+                    return (const.value as Long).toULong()
                 else -> {}
             }
         }

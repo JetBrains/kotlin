@@ -48,7 +48,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
             return
         }
 
-        val jsCodeStr = IrConstKind.String.valueOf(jsCodeExpr)
+        val jsCodeStr = jsCodeExpr.value as String
 
         try {
             val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")

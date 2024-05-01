@@ -474,7 +474,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             isMinus: Boolean
         ): IrExpression? {
             if (value is IrConst<*> && value.kind == IrConstKind.Int) {
-                val delta = IrConstKind.Int.valueOf(value)
+                val delta = value.value as Int
                 val upperBound = Byte.MAX_VALUE.toInt() + (if (isMinus) 1 else 0)
                 val lowerBound = Byte.MIN_VALUE.toInt() + (if (isMinus) 1 else 0)
                 if (delta in lowerBound..upperBound) {

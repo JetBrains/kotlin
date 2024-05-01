@@ -67,12 +67,12 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitConst(expression: IrConst<*>, context: JsGenerationContext): JsExpression {
         val kind = expression.kind
         return when (kind) {
-            is IrConstKind.String -> JsStringLiteral(kind.valueOf(expression))
+            is IrConstKind.String -> JsStringLiteral(expression.value as String)
             is IrConstKind.Null -> JsNullLiteral()
-            is IrConstKind.Boolean -> JsBooleanLiteral(kind.valueOf(expression))
-            is IrConstKind.Byte -> JsIntLiteral(kind.valueOf(expression).toInt())
-            is IrConstKind.Short -> JsIntLiteral(kind.valueOf(expression).toInt())
-            is IrConstKind.Int -> JsIntLiteral(kind.valueOf(expression))
+            is IrConstKind.Boolean -> JsBooleanLiteral(expression.value as Boolean)
+            is IrConstKind.Byte -> JsIntLiteral((expression.value as Byte).toInt())
+            is IrConstKind.Short -> JsIntLiteral((expression.value as Short).toInt())
+            is IrConstKind.Int -> JsIntLiteral(expression.value as Int)
             is IrConstKind.Long -> compilationException(
                 "Long const should have been lowered at this point",
                 expression
@@ -81,8 +81,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 "Char const should have been lowered at this point",
                 expression
             )
-            is IrConstKind.Float -> JsDoubleLiteral(toDoubleConst(kind.valueOf(expression)))
-            is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
+            is IrConstKind.Float -> JsDoubleLiteral(toDoubleConst(expression.value as Float))
+            is IrConstKind.Double -> JsDoubleLiteral(expression.value as Double)
         }.withSource(expression, context)
     }
 

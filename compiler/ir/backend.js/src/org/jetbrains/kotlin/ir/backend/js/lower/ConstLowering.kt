@@ -58,28 +58,28 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
                         expression,
                         uByteClassSymbol,
                         IrConstImpl.Companion::byte,
-                        IrConstKind.Byte.valueOf(expression)
+                        expression.value as Byte
                     )
 
                     uShortClassSymbol -> lowerConst(
                         expression,
                         uShortClassSymbol,
                         IrConstImpl.Companion::short,
-                        IrConstKind.Short.valueOf(expression)
+                        expression.value as Short
                     )
 
                     uIntClassSymbol -> lowerConst(
                         expression,
                         uIntClassSymbol,
                         IrConstImpl.Companion::int,
-                        IrConstKind.Int.valueOf(expression)
+                        expression.value as Int
                     )
 
                     uLongClassSymbol -> lowerConst(
                         expression,
                         uLongClassSymbol,
                         { _, _, _, v -> createLong(expression, v) },
-                        IrConstKind.Long.valueOf(expression)
+                        expression.value as Long
                     )
 
                     else -> compilationException("Unknown unsigned type", expression)
@@ -87,10 +87,10 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
             }
             return when {
                 expression.kind is IrConstKind.Char ->
-                    lowerConst(expression, charClassSymbol, IrConstImpl.Companion::int, IrConstKind.Char.valueOf(expression).code)
+                    lowerConst(expression, charClassSymbol, IrConstImpl.Companion::int, (expression.value as Char).code)
 
                 expression.kind is IrConstKind.Long ->
-                    createLong(expression, IrConstKind.Long.valueOf(expression))
+                    createLong(expression, expression.value as Long)
 
                 else -> super.visitConst(expression)
             }

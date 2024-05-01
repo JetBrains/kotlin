@@ -19,7 +19,7 @@ class IntIncr(private val isPrefix: Boolean) : IntrinsicMethod() {
             ?: error("IrConst expected as valueArgument #1: ${expression.dump()}")
         if (irDelta.kind != IrConstKind.Int)
             error("Int const expected: ${irDelta.dump()}")
-        val delta = IrConstKind.Int.valueOf(irDelta)
+        val delta = irDelta.value as Int
         if (delta > Byte.MAX_VALUE || delta < Byte.MIN_VALUE)
             error("Int const should be in (Byte.MIN_VALUE .. Byte.MAX_VALUE): ${irDelta.dump()}")
         val varIndex = codegen.frameMap.getIndex(irGetValue.symbol)
