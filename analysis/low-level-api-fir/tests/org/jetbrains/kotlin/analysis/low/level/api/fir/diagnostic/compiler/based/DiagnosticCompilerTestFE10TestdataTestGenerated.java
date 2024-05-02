@@ -4024,6 +4024,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         runTest("compiler/testData/diagnostics/tests/builderInference/overloadResolutionByLambdaReturnType.kt");
       }
 
+      @Test
+      @TestMetadata("overloadResolutionWithTypeVariables.kt")
+      public void testOverloadResolutionWithTypeVariables() {
+        runTest("compiler/testData/diagnostics/tests/builderInference/overloadResolutionWithTypeVariables.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/builderInference/additional")
       @TestDataPath("$PROJECT_ROOT")
@@ -4461,6 +4467,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         @TestMetadata("kt66272.kt")
         public void testKt66272() {
           runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt66272.kt");
+        }
+
+        @Test
+        @TestMetadata("kt67875.kt")
+        public void testKt67875() {
+          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt67875.kt");
         }
       }
 
