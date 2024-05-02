@@ -60,11 +60,6 @@ class IrActualizer(
                 // Let's leave to expect class as is for that case, it is probably best effort to make errors reasonable.
                 return symbol
             }
-
-            override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
-                if (symbol !is IrClassSymbol) return symbol
-                return getReferencedClass(symbol)
-            }
         }
         dependentFragments.forEach { it.transform(ActualizerVisitor(classSymbolRemapper), null) }
     }

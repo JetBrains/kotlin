@@ -200,6 +200,7 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getReferenced(symbol)
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getReferenced(symbol)
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
+    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol = valueParameters.getReferenced(symbol)
     override fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol =
         localDelegatedProperties.getReferenced(symbol)
 
@@ -207,30 +208,11 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getReferenced(symbol)
     override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getReferenced(symbol)
     override fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getReferenced(symbol)
-    override fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol =
-        when (symbol) {
-            is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)
-            is IrVariableSymbol -> variables.getReferenced(symbol)
-        }
 
-    override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol =
-        when (symbol) {
-            is IrSimpleFunctionSymbol -> functions.getReferenced(symbol)
-            is IrConstructorSymbol -> constructors.getReferenced(symbol)
-        }
+    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol =
+        returnableBlocks.getReferenced(symbol)
 
-    override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol =
-        when (symbol) {
-            is IrFunctionSymbol -> getReferencedFunction(symbol)
-            is IrReturnableBlockSymbol -> returnableBlocks.getReferenced(symbol)
-        }
-
-    override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
-        when (symbol) {
-            is IrClassSymbol -> classes.getReferenced(symbol)
-            is IrScriptSymbol -> scripts.getReferenced(symbol)
-            is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
-        }
+    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol = typeParameters.getReferenced(symbol)
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getReferenced(symbol)
 }

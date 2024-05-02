@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.AbstractField.SymbolFieldRole
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.*
-import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classifierSymbol
-import org.jetbrains.kotlin.ir.generator.IrSymbolTree.typeAliasSymbol
 import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
@@ -35,6 +33,8 @@ internal abstract class AbstractSymbolRemapperPrinter(
     open val kDoc: String?
         get() = null
 
+    protected open fun shouldPrintMethodForSymbol(symbolClass: Symbol, role: SymbolFieldRole): Boolean = true
+
     private fun ImportCollectingPrinter.printMethod(symbolClass: Symbol, role: SymbolFieldRole) {
         val symbolParameter = FunctionParameter("symbol", symbolClass)
         printFunctionDeclaration(
@@ -43,11 +43,24 @@ internal abstract class AbstractSymbolRemapperPrinter(
             returnType = symbolClass,
             override = symbolRemapperSuperTypes.isNotEmpty(),
         )
-        printMethodImplementation(symbolParameter, role)
+        printMethodImplementation(symbolParameter, symbolClass, role)
     }
 
-    protected open fun ImportCollectingPrinter.printMethodImplementation(symbolParameter: FunctionParameter, role: SymbolFieldRole) {
-        println()
+    protected open fun ImportCollectingPrinter.printMethodImplementation(
+        symbolParameter: FunctionParameter,
+        symbolClass: Symbol,
+        role: SymbolFieldRole
+    ) {
+        if (symbolClass.subElements.isNotEmpty()) {
+            print(" = when (", symbolParameter.name, ")")
+            printBlock {
+                for (subSymbol in symbolClass.subElements) {
+                    println("is ", subSymbol.render(), " -> ", symbolRemapperMethodName(subSymbol, role), "(", symbolParameter.name, ")")
+                }
+            }
+        } else {
+            println()
+        }
     }
 
     protected open fun ImportCollectingPrinter.printAdditionalDeclarations() {}
@@ -71,7 +84,11 @@ internal abstract class AbstractSymbolRemapperPrinter(
             }
             printBlock {
                 for (role in roles) {
-                    for ((symbolType, fields) in findFieldsWithSymbols(elements, role)) {
+                    val fieldsAndSymbols = findFieldsWithSymbols(elements, role)
+                    val symbols = fieldsAndSymbols.keys.flatMap { it.elementDescendantsAndSelfDepthFirst() }.distinct()
+                    for (symbolType in symbols) {
+                        if (!shouldPrintMethodForSymbol(symbolType, role)) continue
+                        val fields = symbolType.elementAncestorsAndSelfDepthFirst().flatMap { fieldsAndSymbols[it].orEmpty() }
                         println()
                         if (symbolRemapperSuperTypes.isEmpty()) {
                             val kDoc = buildString {
@@ -166,9 +183,14 @@ private class EmptySymbolRemapperPrinter(
         get() = "The default implementation of [${org.jetbrains.kotlin.ir.generator.symbolRemapperType.simpleName}]\n" +
                 "that just keeps the old symbols everywhere."
 
+    override fun shouldPrintMethodForSymbol(symbolClass: Symbol, role: SymbolFieldRole): Boolean {
+        return symbolClass.subElements.isEmpty()
+    }
+
     override fun ImportCollectingPrinter.printMethodImplementation(
         symbolParameter: FunctionParameter,
-        role: SymbolFieldRole
+        symbolClass: Symbol,
+        role: SymbolFieldRole,
     ) {
         println(" = ", symbolParameter.name)
     }

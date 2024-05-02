@@ -115,21 +115,18 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                         symbol.owner.findActualForExpected().symbol
                     else super.getReferencedClass(symbol)
 
-            override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol = when (symbol) {
-                is IrClassSymbol -> getReferencedClass(symbol)
-                is IrTypeParameterSymbol -> remapExpectTypeParameter(symbol).symbol
-                is IrScriptSymbol -> symbol.unexpectedSymbolKind<IrClassifierSymbol>()
+            override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol {
+                return remapExpectTypeParameter(symbol).symbol
+            }
+
+            override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol {
+                symbol.unexpectedSymbolKind<IrScriptSymbol>()
             }
 
             override fun getReferencedConstructor(symbol: IrConstructorSymbol) =
                     if (symbol.descriptor.isExpect)
                         symbol.owner.findActualForExpected().symbol
                     else super.getReferencedConstructor(symbol)
-
-            override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol = when (symbol) {
-                is IrSimpleFunctionSymbol -> getReferencedSimpleFunction(symbol)
-                is IrConstructorSymbol -> getReferencedConstructor(symbol)
-            }
 
             override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) = when {
                 symbol.descriptor.isExpect -> symbol.owner.findActualForExpected().symbol
