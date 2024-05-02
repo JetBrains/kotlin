@@ -27,19 +27,19 @@ fun <T2> Controller<T2>.fooExt(x: Inv<T2>) {}
 fun <E> generate(f: Controller<E>.() -> Unit) {}
 
 fun bar(inv: Inv<String>, out: Out<String>, i: In<CharSequence>, cs: CharSequence) {
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo1<!>(inv)
+    generate {
+        foo1(inv)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo2<!>(out)
+    generate {
+        foo2(out)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!>(inv)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo4<!>(i)
     }
 
@@ -49,7 +49,7 @@ fun bar(inv: Inv<String>, out: Out<String>, i: In<CharSequence>, cs: CharSequenc
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo4<!>(i)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>fooExt<!>(inv)
     }
 }
