@@ -19,27 +19,25 @@ class KT67636JvmWithJavaSetSrcDirsTest {
 
     @Test
     fun `resources publication - for jvm withJava target - doesn't fail project evaluation`() {
-        assertFailsWith(MissingValueException::class) {
-            buildProjectWithMPP {
-                kotlin {
-                    assertNotNull(resourcesPublicationExtension).publishResourcesAsKotlinComponent(
-                        target = jvm(),
-                        resourcePathForSourceSet = { _ ->
-                            KotlinTargetResourcesPublication.ResourceRoot(
-                                layout.buildDirectory.dir("foo").map { it.asFile },
-                                emptyList(),
-                                emptyList(),
-                            )
-                        },
-                        relativeResourcePlacement = layout.buildDirectory.dir("bar").map { it.asFile },
-                    )
+        buildProjectWithMPP {
+            kotlin {
+                assertNotNull(resourcesPublicationExtension).publishResourcesAsKotlinComponent(
+                    target = jvm(),
+                    resourcePathForSourceSet = { _ ->
+                        KotlinTargetResourcesPublication.ResourceRoot(
+                            layout.buildDirectory.dir("foo").map { it.asFile },
+                            emptyList(),
+                            emptyList(),
+                        )
+                    },
+                    relativeResourcePlacement = layout.buildDirectory.dir("bar").map { it.asFile },
+                )
 
-                    jvm {
-                        withJava()
-                    }
+                jvm {
+                    withJava()
                 }
-            }.evaluate()
-        }
+            }
+        }.evaluate()
     }
 
     // FIXME: withJava forces providers in resources to be eagerly evaluated. See KT-67636
