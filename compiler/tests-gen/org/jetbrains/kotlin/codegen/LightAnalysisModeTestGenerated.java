@@ -8979,6 +8979,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testWithReturnValueDoWhileContinue() {
           runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueDoWhileContinue.kt");
         }
+
+        @TestMetadata("withReturnValueNested.kt")
+        public void testWithReturnValueNested() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueNested.kt");
+        }
       }
     }
 

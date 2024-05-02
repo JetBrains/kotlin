@@ -11383,6 +11383,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         public void testWithReturnValueDoWhileContinue() {
           runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueDoWhileContinue.kt");
         }
+
+        @Test
+        @TestMetadata("withReturnValueNested.kt")
+        public void testWithReturnValueNested() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueNested.kt");
+        }
       }
     }
 
