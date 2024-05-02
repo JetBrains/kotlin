@@ -33217,6 +33217,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("functionalConstraintDuringCompletion.kt")
+      public void testFunctionalConstraintDuringCompletion() {
+        runTest("compiler/testData/diagnostics/tests/resolve/functionalConstraintDuringCompletion.kt");
+      }
+
+      @Test
       @TestMetadata("HiddenDeclarations.kt")
       public void testHiddenDeclarations() {
         runTest("compiler/testData/diagnostics/tests/resolve/HiddenDeclarations.kt");
@@ -33262,6 +33268,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       @TestMetadata("kt49736.kt")
       public void testKt49736() {
         runTest("compiler/testData/diagnostics/tests/resolve/kt49736.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaAgainstTypeVariableWithConstraint.kt")
+      public void testLambdaAgainstTypeVariableWithConstraint() {
+        runTest("compiler/testData/diagnostics/tests/resolve/lambdaAgainstTypeVariableWithConstraint.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaAgainstTypeVariableWithConstraintAfter.kt")
+      public void testLambdaAgainstTypeVariableWithConstraintAfter() {
+        runTest("compiler/testData/diagnostics/tests/resolve/lambdaAgainstTypeVariableWithConstraintAfter.kt");
       }
 
       @Test

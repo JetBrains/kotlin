@@ -13,12 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.directExpansionType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -31,9 +29,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class ResolutionStage {
@@ -852,5 +854,77 @@ internal object TypeParameterAsCallable : ResolutionStage() {
         if (symbol is FirTypeParameterSymbol && !(callInfo.isUsedAsGetClassReceiver && symbol.isReified)) {
             sink.yieldDiagnostic(TypeParameterAsExpression)
         }
+    }
+}
+
+internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.CheckLambdaAgainstTypeVariableContradictionInResolution)) return
+
+        val csBuilder = candidate.csBuilder
+
+        // No need to report additional errors if we already have a contradiction.
+        if (csBuilder.hasContradiction) {
+            return
+        }
+
+        for (postponedAtom in candidate.postponedAtoms) {
+            if (postponedAtom !is LambdaWithTypeVariableAsExpectedTypeAtom) continue
+            postponedAtom.checkForContradiction(csBuilder, context, sink)
+        }
+    }
+
+    /**
+     * General idea: if we have a lambda argument against a type variable parameter, we can reject some candidates without analyzing the
+     * lambda by checking if _any_ function type can satisfy the constraints of the type variable.
+     * This makes some code green that would otherwise report an overload resolution ambiguity.
+     */
+    private fun LambdaWithTypeVariableAsExpectedTypeAtom.checkForContradiction(
+        csBuilder: NewConstraintSystemImpl,
+        context: ResolutionContext,
+        sink: CheckerSink,
+    ) {
+        // If there's a function type constraint on the type variable,
+        // we can get an incorrect contradiction by adding a constraint on Function<Nothing>.
+        // Example:
+        // Existing constraint `Inv<Function0<Any?>> <: Inv<T>` => `T == Function0<Any?>`
+        // Adding `Function<Nothing> <: T` leads to a contradiction `Function<Nothing> </: Function0<Any?>`.
+        if (hasFunctionTypeConstraint(csBuilder, context)) {
+            return
+        }
+
+        // We use Function<Nothing> as our representative type for "some function type".
+        val lambdaType = StandardClassIds.Function
+            .constructClassLikeType(arrayOf(context.session.builtinTypes.nothingType.type))
+
+        var shouldReportError = false
+
+        // We don't add the constraint to the system in the end, we only check for contradictions and roll back the transaction.
+        // This ensures we don't get any issues if a different function type constraint is added later, e.g., during completion.
+        csBuilder.runTransaction {
+            addSubtypeConstraint(lambdaType, expectedType, ConeArgumentConstraintPosition(atom))
+            shouldReportError = hasContradiction
+            false
+        }
+
+        if (shouldReportError) {
+            sink.reportDiagnostic(
+                ArgumentTypeMismatch(
+                    expectedType,
+                    lambdaType,
+                    atom,
+                    context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType)
+                )
+            )
+        }
+    }
+
+    private fun LambdaWithTypeVariableAsExpectedTypeAtom.hasFunctionTypeConstraint(
+        csBuilder: NewConstraintSystemImpl,
+        context: ResolutionContext,
+    ): Boolean {
+        val typeConstructor = expectedType.typeConstructor(context.typeContext)
+        val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[typeConstructor] ?: return false
+        return variableWithConstraints.constraints.any { (it.type as ConeKotlinType).isSomeFunctionType(context.session) }
     }
 }

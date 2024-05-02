@@ -328,6 +328,7 @@ enum class LanguageFeature(
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_1, kind = BUG_FIX), // KT-11914 Deprecation phase 2
     CorrectSpecificityCheckForSignedAndUnsigned(KOTLIN_2_1, kind = OTHER), // KT-35305
     AllowAccessToProtectedFieldFromSuperCompanion(KOTLIN_2_1), // KT-39868
+    CheckLambdaAgainstTypeVariableContradictionInResolution(KOTLIN_2_1, kind = OTHER), // KT-58310
 
     // End of 2.* language features --------------------------------------------------
 
