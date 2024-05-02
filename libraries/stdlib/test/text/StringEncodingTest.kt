@@ -214,6 +214,10 @@ class StringEncodingTest {
             bytes(0xED, 0xAF, 0xBF, /**/ 0xED, 0xB3, 0x9A)
         ) // surrogate pair chars
         testDecoding(false, "�z", bytes(0xEF, 0x7A)) // 3-byte char, second byte starts with 0 bit, third byte missing
+        testDecoding(false, "�¿", bytes(0xF0, 0xC2, 0xBF)) // 2-byte char preceded with a 4-byte sequence starting byte
+        testDecoding(false, "�ფ", bytes(0xF0, 0xE1, 0x83, 0xA4)) // 3-byte char preceded with a 4-byte sequence starting byte
+        testDecoding(false, "�ფ", bytes(0xC0, 0xE1, 0x83, 0xA4)) // 3-byte char preceded with a 2-byte sequence starting byte
+        testDecoding(false, "�¿", bytes(0xE1, 0xC2, 0xBF)) // 2-byte char preceded with a 3-byte sequence starting byte
 
         testDecoding(false, "�����", bytes(0xF9, 0x94, 0x80, 0x80, 0x80)) // 5-byte code point larger than 0x10FFFF
         testDecoding(false, "������", bytes(0xFD, 0x94, 0x80, 0x80, 0x80, 0x80)) // 6-byte code point larger than 0x10FFFF
@@ -227,12 +231,22 @@ class StringEncodingTest {
         // Truncated Sequences
         testDecoding(false, "����A", bytes(0xE1, 0x80, /**/ 0xE2, /**/ 0xF0, 0x91, 0x92, /**/ 0xF1, 0xBF, /**/ 0x41))
 
+        testDecoding(false, "�", bytes(0xC2)) // 2-byte sequences, the last byte is missing
+
         testDecoding(false, "�", bytes(0xE0, 0xAF)) // 3-byte char, third byte missing
+        testDecoding(false, "�", bytes(0xE0)) // 3-byte sequence, but the last two bytes are missing
 
         testDecoding(true, "\uD83D\uDFDF", bytes(0xF0, 0x9F, 0x9F, 0x9F)) // 4-byte char
         testDecoding(false, "����", bytes(0xF0, 0x8F, 0x9F, 0x9F)) // 3-byte char written in four bytes
         testDecoding(false, "����", bytes(0xF4, 0x9F, 0x9F, 0x9F)) // 4-byte code point larger than 0x10FFFF
         testDecoding(false, "����", bytes(0xF5, 0x80, 0x80, 0x80)) // 4-byte code point larger than 0x10FFFF
+
+        testDecoding(false, "�", bytes(0xF0)) // 4-byte sequence, but the last three bytes are missing
+        testDecoding(false, "�", bytes(0xF0, 0x93)) // 4-byte sequence, but the last two bytes are missing
+        testDecoding(false, "�", bytes(0xF0, 0x93, 0x88)) // 4-byte sequence, but the last byte is missing
+
+        // a sequence consisting of three 4-byte sequence starting bytes
+        testDecoding(false, "���", bytes(0xF0, 0xF0, 0xF0))
 
         // Non-Shortest Form Sequences
         testDecoding(false, "��������A", bytes(0xC0, 0xAF, /**/ 0xE0, 0x80, 0xBF, /**/ 0xF0, 0x81, 0x82, /**/ 0x41))
