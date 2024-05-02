@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractScopeContextForPositionTest;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -193,5 +194,27 @@ public class FirStandaloneNormalAnalysisSourceModuleScopeContextForPositionTestG
   @TestMetadata("syntheticPropertiesScope.kt")
   public void testSyntheticPropertiesScope() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/syntheticPropertiesScope.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector_receiver.kt")
+    public void testCallShapeBasedInjector_receiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled/callShapeBasedInjector_receiver.kt");
+    }
+
+    @Test
+    @TestMetadata("callShapeBasedInjector_variable.kt")
+    public void testCallShapeBasedInjector_variable() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled/callShapeBasedInjector_variable.kt");
+    }
   }
 }
