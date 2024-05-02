@@ -14,5 +14,5 @@ fun box(): String {
         sum += foo { if (i == 3) break else i }
     }
 
-    return if (sum == 3) "OK" else "FAIL"
+    return if (sum == 3) "OK" else "FAIL: $sum"
 }
