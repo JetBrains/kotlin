@@ -12,7 +12,8 @@
 
 package kotlin.internal
 
-internal annotation class ActualizeByJvmBuiltinProvider
+@OptionalExpectation
+internal expect annotation class ActualizeByJvmBuiltinProvider()
 
 // FILE: builtins.kt
 
@@ -25,6 +26,8 @@ internal annotation class ActualizeByJvmBuiltinProvider
 package kotlin
 
 import kotlin.internal.ActualizeByJvmBuiltinProvider
+
+annotation class OptionalExpectation
 
 @ActualizeByJvmBuiltinProvider
 expect interface Annotation
