@@ -46,6 +46,9 @@ KtSimpleNameReference|KtNameReferenceExpression(422,428): 'String'
 KtSimpleNameReference|KtNameReferenceExpression(470,477): 'MyClass'
   pack/MyClass
 
+KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
+  pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
+
 KtSimpleNameReference|KtNameReferenceExpression(497,504): 'MyClass'
   pack/MyClass
 
@@ -82,6 +85,9 @@ KtSimpleNameReference|KtNameReferenceExpression(528,535): 'MyClass'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(528,535): 'MyClass'
   null
 
+KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
+  val memberProperty: kotlin.Int
+
 KtSimpleNameReference|KtNameReferenceExpression(543,550): 'MyClass'
   pack/MyClass
 
@@ -99,6 +105,9 @@ KtSimpleNameReference|KtNameReferenceExpression(567,571): 'name'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(567,571): 'name'
   null
+
+KtCallableReferenceExpression(577,598): 'Child::memberFunction'
+  pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
 
 KtSimpleNameReference|KtNameReferenceExpression(577,582): 'Child'
   pack/Child
@@ -136,6 +145,9 @@ KtSimpleNameReference|KtNameReferenceExpression(606,611): 'Child'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(606,611): 'Child'
   null
 
+KtCallableReferenceExpression(619,640): 'Child::memberProperty'
+  val memberProperty: kotlin.Int
+
 KtSimpleNameReference|KtNameReferenceExpression(619,624): 'Child'
   pack/Child
 
@@ -153,6 +165,9 @@ KtSimpleNameReference|KtNameReferenceExpression(641,645): 'name'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(641,645): 'name'
   null
+
+KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
+  pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
 
 KtSimpleNameReference|KtNameReferenceExpression(659,663): 'pack'
   pack
@@ -172,6 +187,9 @@ KtSimpleNameReference|KtNameReferenceExpression(673,690): 'extensionFunction'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(673,690): 'extensionFunction'
   null
 
+KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
+  val extensionProperty: kotlin.String
+
 KtSimpleNameReference|KtNameReferenceExpression(703,710): 'MyClass'
   pack/MyClass
 
@@ -184,6 +202,9 @@ KtSimpleNameReference|KtNameReferenceExpression(712,729): 'extensionProperty'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(712,729): 'extensionProperty'
   null
 
+KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
+  pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
+
 KtSimpleNameReference|KtNameReferenceExpression(744,749): 'Child'
   pack/Child
 
@@ -195,6 +216,9 @@ KtSimpleNameReference|KtNameReferenceExpression(751,768): 'extensionFunction'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(751,768): 'extensionFunction'
   null
+
+KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
+  val extensionProperty: kotlin.String
 
 KtSimpleNameReference|KtNameReferenceExpression(782,786): 'pack'
   pack
@@ -214,6 +238,9 @@ KtSimpleNameReference|KtNameReferenceExpression(794,811): 'extensionProperty'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(794,811): 'extensionProperty'
   null
 
+KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
+  pack/ChildWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<pack.MyClass>): pack.MyClass?
+
 KtSimpleNameReference|KtNameReferenceExpression(817,830): 'ChildWithType'
   pack/ChildWithType
 
@@ -231,6 +258,9 @@ KtSimpleNameReference|KtNameReferenceExpression(849,853): 'name'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(849,853): 'name'
   null
+
+KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
+  var propertyWithType: pack.MyClass?
 
 KtSimpleNameReference|KtNameReferenceExpression(858,871): 'ChildWithType'
   pack/ChildWithType
@@ -268,17 +298,26 @@ KtSimpleNameReference|KtNameReferenceExpression(897,910): 'ChildWithType'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(897,910): 'ChildWithType'
   null
 
+KtCallableReferenceExpression(919,937): '::topLevelFunction'
+  pack/topLevelFunction(i: kotlin.Int): kotlin.Unit
+
 KtSimpleNameReference|KtNameReferenceExpression(921,937): 'topLevelFunction'
   pack/topLevelFunction(i: kotlin.Int): kotlin.Unit
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(921,937): 'topLevelFunction'
   null
 
+KtCallableReferenceExpression(942,960): '::topLevelVariable'
+  var topLevelVariable: kotlin.Int
+
 KtSimpleNameReference|KtNameReferenceExpression(944,960): 'topLevelVariable'
   var topLevelVariable: kotlin.Int
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(944,960): 'topLevelVariable'
   null
+
+KtCallableReferenceExpression(966,979): '::lateinitVar'
+  var lateinitVar: pack.MyClass
 
 KtSimpleNameReference|KtNameReferenceExpression(968,979): 'lateinitVar'
   var lateinitVar: pack.MyClass
@@ -301,6 +340,9 @@ KtSimpleNameReference|KtNameReferenceExpression(1039,1052): 'ClassWithType'
 KtSimpleNameReference|KtNameReferenceExpression(1053,1054): 'T'
   T
 
+KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
+  pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
+
 KtSimpleNameReference|KtNameReferenceExpression(1063,1076): 'classWithType'
   classWithType: pack.ClassWithType<T>
 
@@ -312,6 +354,9 @@ KtSimpleNameReference|KtNameReferenceExpression(1078,1094): 'functionWithType'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(1078,1094): 'functionWithType'
   null
+
+KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
+  var propertyWithType: T?
 
 KtSimpleNameReference|KtNameReferenceExpression(1099,1112): 'classWithType'
   classWithType: pack.ClassWithType<T>
@@ -331,6 +376,9 @@ KtSimpleNameReference|KtNameReferenceExpression(1143,1156): 'ClassWithType'
 KtSimpleNameReference|KtNameReferenceExpression(1157,1160): 'Int'
   kotlin/Int
 
+KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
+  pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
+
 KtSimpleNameReference|KtNameReferenceExpression(1174,1175): 't'
   val t: pack.ClassWithType<kotlin.Int>?
 
@@ -345,6 +393,9 @@ KtSimpleNameReference|KtNameReferenceExpression(1179,1195): 'functionWithType'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(1179,1195): 'functionWithType'
   null
+
+KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
+  var propertyWithType: T?
 
 KtSimpleNameReference|KtNameReferenceExpression(1200,1201): 't'
   val t: pack.ClassWithType<kotlin.Int>?

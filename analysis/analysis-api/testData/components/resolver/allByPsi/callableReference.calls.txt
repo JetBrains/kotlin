@@ -30,6 +30,21 @@ KtSuperTypeCallEntry(258,282): 'ClassWithType<MyClass>()'
     }
     argumentMapping = {}
 
+KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = pack/MyClass.memberFunction
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
 KtCallExpression(521,538): 'invoke(MyClass())'
   KtSimpleFunctionCall:
     isImplicitInvoke = false
@@ -74,6 +89,36 @@ KtCallExpression(528,537): 'MyClass()'
         symbol = <constructor>(): pack.MyClass
         valueParameters = []
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = memberProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val memberProperty: kotlin.Int
+        callableIdIfNonLocal = pack/MyClass.memberProperty
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(577,598): 'Child::memberFunction'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = pack/MyClass.memberFunction
     typeArgumentsMapping = {}
     argumentMapping = {}
 
@@ -124,6 +169,111 @@ KtCallExpression(606,613): 'Child()'
     typeArgumentsMapping = {}
     argumentMapping = {}
 
+KtCallableReferenceExpression(619,640): 'Child::memberProperty'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = memberProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val memberProperty: kotlin.Int
+        callableIdIfNonLocal = pack/MyClass.memberProperty
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = pack.MyClass
+        returnType = kotlin.String
+        symbol = pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
+        valueParameters = []
+        callableIdIfNonLocal = pack/extensionFunction
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = extensionProperty
+        receiverType = pack.MyClass
+        returnType = kotlin.String
+        symbol = val extensionProperty: kotlin.String
+        callableIdIfNonLocal = pack/extensionProperty
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = pack.MyClass
+        returnType = kotlin.String
+        symbol = pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
+        valueParameters = []
+        callableIdIfNonLocal = pack/extensionFunction
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = extensionProperty
+        receiverType = pack.MyClass
+        returnType = kotlin.String
+        symbol = val extensionProperty: kotlin.String
+        callableIdIfNonLocal = pack/extensionProperty
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = pack.MyClass?
+        symbol = pack/ChildWithType.functionWithType(<dispatch receiver>: pack.ChildWithType): pack.MyClass?
+        valueParameters = []
+        callableIdIfNonLocal = pack/ChildWithType.functionWithType
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = propertyWithType
+        receiverType = null
+        returnType = pack.MyClass?
+        symbol = var propertyWithType: pack.MyClass?
+        callableIdIfNonLocal = pack/ChildWithType.propertyWithType
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
 KtCallExpression(890,913): 'invoke(ChildWithType())'
   KtSimpleFunctionCall:
     isImplicitInvoke = false
@@ -170,4 +320,128 @@ KtCallExpression(897,912): 'ChildWithType()'
         callableIdIfNonLocal = null
     typeArgumentsMapping = {}
     argumentMapping = {}
+
+KtCallableReferenceExpression(919,937): '::topLevelFunction'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/topLevelFunction(i: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = pack/topLevelFunction
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallableReferenceExpression(942,960): '::topLevelVariable'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = topLevelVariable
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var topLevelVariable: kotlin.Int
+        callableIdIfNonLocal = pack/topLevelVariable
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(966,979): '::lateinitVar'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = lateinitVar
+        receiverType = null
+        returnType = pack.MyClass
+        symbol = var lateinitVar: pack.MyClass
+        callableIdIfNonLocal = pack/lateinitVar
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = classWithType
+        isSafeNavigation = false
+        type = pack.ClassWithType<T>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = T?
+        symbol = pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
+        valueParameters = []
+        callableIdIfNonLocal = pack/ClassWithType.functionWithType
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = classWithType
+        isSafeNavigation = false
+        type = pack.ClassWithType<T>
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = propertyWithType
+        receiverType = null
+        returnType = T?
+        symbol = var propertyWithType: T?
+        callableIdIfNonLocal = pack/ClassWithType.propertyWithType
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = t!!
+        isSafeNavigation = false
+        type = pack.ClassWithType<kotlin.Int>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int?
+        symbol = pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
+        valueParameters = []
+        callableIdIfNonLocal = pack/ClassWithType.functionWithType
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = t!!
+        isSafeNavigation = false
+        type = pack.ClassWithType<kotlin.Int>
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = propertyWithType
+        receiverType = null
+        returnType = kotlin.Int?
+        symbol = var propertyWithType: T?
+        callableIdIfNonLocal = pack/ClassWithType.propertyWithType
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
 

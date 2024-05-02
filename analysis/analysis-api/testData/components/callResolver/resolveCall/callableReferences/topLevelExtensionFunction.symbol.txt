@@ -1,0 +1,1 @@
+/foo(<extension receiver>: Foo, a: kotlin.Int): kotlin.Unit

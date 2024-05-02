@@ -12,18 +12,14 @@ import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.KtResolvable
 import org.jetbrains.kotlin.resolve.KtResolvableCall
 
 public abstract class KaResolver : KtAnalysisSessionComponent() {
-    public abstract fun resolveCallElementToSymbol(callElement: KtCallElement): KtCallableSymbol?
-    public abstract fun resolveReferenceExpressionToSymbol(expression: KtReferenceExpression): KtSymbol?
+    public abstract fun resolveKtElementToSymbol(ktElement: KtElement): KtSymbol?
 }
 
 public interface KaResolverMixIn : KtAnalysisSessionMixIn {
@@ -31,9 +27,8 @@ public interface KaResolverMixIn : KtAnalysisSessionMixIn {
 
     public fun KtResolvable.resolveSymbol(): KtSymbol? = withValidityAssertion {
         when (this) {
-            is KtCallElement -> analysisSession.resolver.resolveCallElementToSymbol(this)
+            is KtElement -> analysisSession.resolver.resolveKtElementToSymbol(this)
             is KtReference -> analysisSession.referenceResolveProvider.resolveToSymbols(this).singleOrNull()
-            is KtReferenceExpression -> analysisSession.resolver.resolveReferenceExpressionToSymbol(this)
             else -> null
         }
     }
