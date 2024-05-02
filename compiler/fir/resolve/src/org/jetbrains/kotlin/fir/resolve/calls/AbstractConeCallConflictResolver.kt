@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.UShort
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.requireOrDescribe
+import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -191,16 +192,16 @@ abstract class AbstractConeCallConflictResolver(
     ): List<TypeWithConversion> {
         return buildList {
             val session = inferenceComponents.session
-            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.fullyExpandedType(session)?.let { TypeWithConversion(it) })
+            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.prepareType(session, call)?.let { TypeWithConversion(it) })
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
                 // Return type isn't needed here       v
                 typeForCallableReference.typeArguments.dropLast(1)
                     .mapTo(this) {
-                        TypeWithConversion((it as ConeKotlinType).fullyExpandedType(session).removeTypeVariableTypes(session.typeContext))
+                        TypeWithConversion((it as ConeKotlinType).prepareType(session, call).removeTypeVariableTypes(session.typeContext))
                     }
             } else {
-                called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType.fullyExpandedType(session)) }
+                called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType.prepareType(session, call)) }
                 call.argumentMapping?.mapTo(this) { (_, parameter) ->
                     parameter.toTypeWithConversion(session, call)
                 }
@@ -222,13 +223,32 @@ abstract class AbstractConeCallConflictResolver(
     }
 
     private fun FirValueParameter.toTypeWithConversion(session: FirSession, call: Candidate): TypeWithConversion {
-        val argumentType = argumentType().fullyExpandedType(session)
+        val argumentType = argumentType().prepareType(session, call)
         val functionTypeForSam = toFunctionTypeForSamOrNull(call)
         return if (functionTypeForSam == null) {
             TypeWithConversion(argumentType)
         } else {
             TypeWithConversion(functionTypeForSam, argumentType)
         }
+    }
+
+    private fun ConeKotlinType.prepareType(session: FirSession, candidate: Candidate): ConeKotlinType {
+        val expanded = fullyExpandedType(session)
+        if (!candidate.system.usesOuterCs) return expanded
+        // For resolving overloads in PCLA of the following form:
+        //  fun foo(vararg values: Tv)
+        //  fun foo(x: A<Tv>)
+        // In K1, all Tv variables have been replaced with relevant stub types
+        // Thus, both of the overloads were considered as not less specific than other (stubTypesAreEqualToAnything=true)
+        // And after that the one with A<Tv> is chosen because it was discriminated via [ConeOverloadConflictResolver.exactMaxWith]
+        // as not containing varargs.
+        // Thus we reproduce K1 behavior with stub types (even though we don't like then much, but it's very local)
+        //
+        // But this behavior looks quite hacky because it seems that the second overload should win even without varargs
+        // on the first one.
+        // TODO: Get rid of hacky K1 behavior (KT-67947)
+        return candidate.system.buildNotFixedVariablesToStubTypesSubstitutor()
+            .safeSubstitute(session.typeContext, expanded) as ConeKotlinType
     }
 
     private fun FirValueParameter.toFunctionTypeForSamOrNull(call: Candidate): ConeKotlinType? {
