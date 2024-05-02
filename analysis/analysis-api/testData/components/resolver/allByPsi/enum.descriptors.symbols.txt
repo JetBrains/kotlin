@@ -1,0 +1,147 @@
+KtSimpleNameReference|KtNameReferenceExpression(38,41): 'Int'
+  kotlin/Int
+
+KtSuperTypeCallEntry(54,57): '(1)'
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtSimpleNameReference|KtEnumEntrySuperclassReferenceExpression(54,54): ''
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtSuperTypeCallEntry(76,79): '(2)'
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtSimpleNameReference|KtEnumEntrySuperclassReferenceExpression(76,76): ''
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(114,115): 'i'
+  val i: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(114,115): 'i'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(234,238): 'this'
+  /EnumWithoutConstructor.EntryWithBody
+
+KtCallExpression(239,244): 'baz()'
+  baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(239,244): 'baz()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(239,242): 'baz'
+  baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(239,242): 'baz'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(280,299): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(307,311): 'with'
+  with: EnumWithConstructor
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(307,311): 'with'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(312,319): 'ordinal'
+  val ordinal: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(312,319): 'ordinal'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(325,344): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(325,344): 'EnumWithConstructor'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(345,350): 'Entry'
+  /EnumWithConstructor.Entry
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(345,350): 'Entry'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(355,374): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(355,374): 'EnumWithConstructor'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(375,380): 'Entry'
+  /EnumWithConstructor.Entry
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(375,380): 'Entry'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(381,385): 'name'
+  val name: kotlin.String
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(381,385): 'name'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(390,409): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(390,409): 'EnumWithConstructor'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(410,423): 'EntryWithBody'
+  /EnumWithConstructor.EntryWithBody
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(410,423): 'EntryWithBody'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(428,447): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(428,447): 'EnumWithConstructor'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(448,461): 'EntryWithBody'
+  /EnumWithConstructor.EntryWithBody
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(448,461): 'EntryWithBody'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(462,463): 'i'
+  val i: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(462,463): 'i'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
+  /EnumWithoutConstructor
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(492,499): 'entries'
+  val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(492,499): 'entries'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
+  /EnumWithoutConstructor
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(527,532): 'Entry'
+  /EnumWithoutConstructor.Entry
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(527,532): 'Entry'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
+  /EnumWithoutConstructor
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(560,573): 'EntryWithBody'
+  /EnumWithoutConstructor.EntryWithBody
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(560,573): 'EntryWithBody'
+  null
+

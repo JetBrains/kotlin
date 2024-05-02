@@ -112,6 +112,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveByPsiTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("enum.kt")
+  public void testEnum() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/enum.kt");
+  }
+
+  @Test
   @TestMetadata("infixFunction.kt")
   public void testInfixFunction() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/infixFunction.kt");

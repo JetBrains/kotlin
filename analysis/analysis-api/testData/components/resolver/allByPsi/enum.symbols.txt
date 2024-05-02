@@ -1,0 +1,86 @@
+KtSimpleNameReference|KtNameReferenceExpression(38,41): 'Int'
+  kotlin/Int
+
+KtSuperTypeCallEntry(54,57): '(1)'
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtSimpleNameReference|KtEnumEntrySuperclassReferenceExpression(54,54): ''
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtSuperTypeCallEntry(76,79): '(2)'
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtSimpleNameReference|KtEnumEntrySuperclassReferenceExpression(76,76): ''
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(114,115): 'i'
+  val i: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(234,238): 'this'
+  <anonymous>
+
+KtCallExpression(239,244): 'baz()'
+  baz(<dispatch receiver>: <anonymous>): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(239,244): 'baz()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(239,242): 'baz'
+  baz(<dispatch receiver>: <anonymous>): kotlin.Unit
+
+KtSimpleNameReference|KtNameReferenceExpression(280,299): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(307,311): 'with'
+  with: EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(312,319): 'ordinal'
+  val ordinal: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(325,344): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(345,350): 'Entry'
+  /EnumWithConstructor.Entry
+
+KtSimpleNameReference|KtNameReferenceExpression(355,374): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(375,380): 'Entry'
+  /EnumWithConstructor.Entry
+
+KtSimpleNameReference|KtNameReferenceExpression(381,385): 'name'
+  val name: kotlin.String
+
+KtSimpleNameReference|KtNameReferenceExpression(390,409): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(410,423): 'EntryWithBody'
+  /EnumWithConstructor.EntryWithBody
+
+KtSimpleNameReference|KtNameReferenceExpression(428,447): 'EnumWithConstructor'
+  /EnumWithConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(448,461): 'EntryWithBody'
+  /EnumWithConstructor.EntryWithBody
+
+KtSimpleNameReference|KtNameReferenceExpression(462,463): 'i'
+  val i: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
+  /EnumWithoutConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(492,499): 'entries'
+  val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+
+KtSimpleNameReference|KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
+  /EnumWithoutConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(527,532): 'Entry'
+  /EnumWithoutConstructor.Entry
+
+KtSimpleNameReference|KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
+  /EnumWithoutConstructor
+
+KtSimpleNameReference|KtNameReferenceExpression(560,573): 'EntryWithBody'
+  /EnumWithoutConstructor.EntryWithBody

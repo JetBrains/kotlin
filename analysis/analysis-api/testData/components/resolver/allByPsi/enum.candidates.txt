@@ -1,0 +1,26 @@
+KtSuperTypeCallEntry(54,57): '(1)'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(76,79): '(2)'
+  NO_CANDIDATES
+
+KtCallExpression(239,244): 'baz()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = <anonymous>
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = baz(<dispatch receiver>: <anonymous>): kotlin.Unit
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
