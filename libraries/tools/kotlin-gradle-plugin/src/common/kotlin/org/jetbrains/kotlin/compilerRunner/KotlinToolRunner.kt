@@ -51,7 +51,7 @@ abstract class KotlinToolRunner @Inject constructor(
 
     private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaders.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-        URLClassLoader(arrayOfURLs, null).apply {
+        URLClassLoader(arrayOfURLs).apply {
             setDefaultAssertionStatus(enableAssertions)
         }
     }
