@@ -453,7 +453,7 @@ internal class ReflectiveAccessLowering(
 
     private fun shouldUseAccessor(accessor: IrSimpleFunction): Boolean {
         return (context.generatorExtensions as StubGeneratorExtensions).isAccessorWithExplicitImplementation(accessor)
-                || accessor.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                || accessor.correspondingPropertySymbol?.owner?.isDelegated == true
     }
 
     // Returns a pair of the _type_ containing the field and the _instance_ on
