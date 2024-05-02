@@ -154,6 +154,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             }?.toTypedArray()
             args.contextReceivers = originalArguments.contextReceivers
             args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
+            args.whenGuards = originalArguments.whenGuards
 
         } else {
             args.jvmTarget = JVM_TARGET

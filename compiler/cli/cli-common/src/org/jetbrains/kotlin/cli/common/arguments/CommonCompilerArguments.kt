@@ -778,6 +778,16 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(
+        value = "-Xwhen-guards",
+        description = "Enable language support for when guards."
+    )
+    var whenGuards = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -850,6 +860,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
             if (inferenceCompatibility) {
                 put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
+            }
+
+            if (whenGuards) {
+                put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {

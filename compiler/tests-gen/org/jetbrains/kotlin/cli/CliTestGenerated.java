@@ -1358,6 +1358,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/werrorWithStrongWarning.args");
     }
 
+    @TestMetadata("whenGuardsEnable.args")
+    public void testWhenGuardsEnable() {
+      runTest("compiler/testData/cli/jvm/whenGuardsEnable.args");
+    }
+
+    @TestMetadata("whenGuardsError.args")
+    public void testWhenGuardsError() {
+      runTest("compiler/testData/cli/jvm/whenGuardsError.args");
+    }
+
     @TestMetadata("wrongAbiVersion.args")
     public void testWrongAbiVersion() {
       runTest("compiler/testData/cli/jvm/wrongAbiVersion.args");
