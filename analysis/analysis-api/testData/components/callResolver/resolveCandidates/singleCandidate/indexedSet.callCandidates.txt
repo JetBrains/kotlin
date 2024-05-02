@@ -1,5 +1,4 @@
-KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The floating-point literal does not conform to the expected type Boolean>
+KtApplicableCallCandidateInfo:
   candidate = KtSimpleFunctionCall:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -47,7 +46,7 @@ KtInapplicableCallCandidateInfo:
         returnType = kotlin.String
         symbol = b: kotlin.String
         callableIdIfNonLocal = null),
-      3.14 -> (KtVariableLikeSignature:
+      false -> (KtVariableLikeSignature:
         name = value
         receiverType = null
         returnType = kotlin.Boolean

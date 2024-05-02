@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.KtResolvable
 import org.jetbrains.kotlin.resolve.KtResolvableCall
 
 public abstract class KaResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCallElementToSymbol(callElement: KtCallElement): KtCallableSymbol?
+    public abstract fun resolveReferenceExpressionToSymbol(expression: KtReferenceExpression): KtSymbol?
 }
 
 public interface KaResolverMixIn : KtAnalysisSessionMixIn {
@@ -31,6 +33,7 @@ public interface KaResolverMixIn : KtAnalysisSessionMixIn {
         when (this) {
             is KtCallElement -> analysisSession.resolver.resolveCallElementToSymbol(this)
             is KtReference -> analysisSession.referenceResolveProvider.resolveToSymbols(this).singleOrNull()
+            is KtReferenceExpression -> analysisSession.resolver.resolveReferenceExpressionToSymbol(this)
             else -> null
         }
     }

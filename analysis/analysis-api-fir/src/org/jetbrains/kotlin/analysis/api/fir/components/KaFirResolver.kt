@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 
 internal class KaFirResolver(override val analysisSession: KtFirAnalysisSession) : KaResolver(), KtFirAnalysisSessionComponent {
     override fun resolveCallElementToSymbol(callElement: KtCallElement): KtCallableSymbol? {
@@ -29,4 +31,15 @@ internal class KaFirResolver(override val analysisSession: KtFirAnalysisSession)
 
         return analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(resolvedSymbol)
     }
+
+    override fun resolveReferenceExpressionToSymbol(expression: KtReferenceExpression): KtSymbol? {
+        val originalFir = expression.getOrBuildFir(firResolveSession) ?: return null
+        val resolvedSymbol = when (originalFir) {
+            is FirResolvable -> originalFir.calleeReference.toResolvedBaseSymbol(discardErrorReference = true)
+            else -> null
+        } ?: return null
+
+        return analysisSession.firSymbolBuilder.buildSymbol(resolvedSymbol)
+    }
+
 }

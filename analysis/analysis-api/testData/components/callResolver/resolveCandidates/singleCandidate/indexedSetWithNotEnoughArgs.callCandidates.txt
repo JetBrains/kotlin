@@ -1,5 +1,5 @@
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The floating-point literal does not conform to the expected type Boolean>
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
   candidate = KtSimpleFunctionCall:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -41,13 +41,7 @@ KtInapplicableCallCandidateInfo:
         returnType = kotlin.Int
         symbol = a: kotlin.Int
         callableIdIfNonLocal = null),
-      "foo" -> (KtVariableLikeSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.String
-        symbol = b: kotlin.String
-        callableIdIfNonLocal = null),
-      3.14 -> (KtVariableLikeSignature:
+      false -> (KtVariableLikeSignature:
         name = value
         receiverType = null
         returnType = kotlin.Boolean

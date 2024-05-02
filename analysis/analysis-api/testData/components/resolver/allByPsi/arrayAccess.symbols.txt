@@ -13,6 +13,9 @@ KtSimpleNameReference|KtNameReferenceExpression(40,44): 'list'
 KtSimpleNameReference|KtOperationReferenceExpression(45,47): '+='
   null
 
+KtArrayAccessExpression(74,81): 'list[0]'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+
 KtArrayAccessReference|KtArrayAccessExpression(74,81): 'list[0]'
   kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
 
@@ -57,6 +60,9 @@ KtSimpleNameReference|KtOperationReferenceExpression(183,185): '--'
 
 KtSimpleNameReference|KtOperationReferenceExpression(183,185): '--'
   kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+
+KtArrayAccessExpression(185,192): 'list[i]'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
 
 KtArrayAccessReference|KtArrayAccessExpression(185,192): 'list[i]'
   kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E

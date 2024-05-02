@@ -1,3 +1,35 @@
+KtArrayAccessExpression(74,81): 'list[0]'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/collections/MutableList.get
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      0 -> (KtVariableLikeSignature:
+        name = index
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = index: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
 KtCallExpression(111,129): 'get(implicitIndex)'
   KtSimpleFunctionCall:
     isImplicitInvoke = false
@@ -68,6 +100,38 @@ KtCallExpression(179,199): 'foo(--list[i], list)'
         receiverType = null
         returnType = kotlin.collections.MutableList<kotlin.Int>
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
+        callableIdIfNonLocal = null)
+    }
+
+KtArrayAccessExpression(185,192): 'list[i]'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/collections/MutableList.get
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      i -> (KtVariableLikeSignature:
+        name = index
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = index: kotlin.Int
         callableIdIfNonLocal = null)
     }
 

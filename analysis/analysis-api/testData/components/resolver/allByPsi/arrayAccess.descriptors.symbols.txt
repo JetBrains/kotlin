@@ -16,6 +16,9 @@ SyntheticPropertyAccessorReference|KtNameReferenceExpression(40,44): 'list'
 KtSimpleNameReference|KtOperationReferenceExpression(45,47): '+='
   null
 
+KtArrayAccessExpression(74,81): 'list[0]'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
+
 KtArrayAccessReference|KtArrayAccessExpression(74,81): 'list[0]'
   kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
 
@@ -72,6 +75,9 @@ SyntheticPropertyAccessorReference|KtNameReferenceExpression(179,182): 'foo'
 
 KtSimpleNameReference|KtOperationReferenceExpression(183,185): '--'
   kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtArrayAccessExpression(185,192): 'list[i]'
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
 
 KtArrayAccessReference|KtArrayAccessExpression(185,192): 'list[i]'
   null

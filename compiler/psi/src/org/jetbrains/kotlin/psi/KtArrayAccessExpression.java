@@ -26,11 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
+import org.jetbrains.kotlin.resolve.KtResolvableCall;
 
 import java.util.Collections;
 import java.util.List;
 
-public class KtArrayAccessExpression extends KtExpressionImpl implements KtReferenceExpression {
+public class KtArrayAccessExpression extends KtExpressionImpl implements KtReferenceExpression, KtResolvableCall {
     public KtArrayAccessExpression(@NotNull ASTNode node) {
         super(node);
     }
