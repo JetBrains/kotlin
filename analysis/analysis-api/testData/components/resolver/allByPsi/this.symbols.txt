@@ -25,6 +25,9 @@ KtSimpleNameReference|KtNameReferenceExpression(85,88): 'foo'
 KtSimpleNameReference|KtNameReferenceExpression(99,103): 'this'
   one/MyClass
 
+KtLabelReferenceExpression(103,111): '@MyClass'
+  one/MyClass
+
 KtSimpleNameReference|KtLabelReferenceExpression(103,111): '@MyClass'
   one/MyClass
 
@@ -61,6 +64,9 @@ KtSimpleNameReference|KtNameReferenceExpression(226,229): 'foo'
 KtSimpleNameReference|KtNameReferenceExpression(244,248): 'this'
   one/MyClass.InnerOuter
 
+KtLabelReferenceExpression(248,259): '@InnerOuter'
+  one/MyClass.InnerOuter
+
 KtSimpleNameReference|KtLabelReferenceExpression(248,259): '@InnerOuter'
   one/MyClass.InnerOuter
 
@@ -74,6 +80,9 @@ KtSimpleNameReference|KtNameReferenceExpression(260,263): 'foo'
   one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtSimpleNameReference|KtNameReferenceExpression(278,282): 'this'
+  one/MyClass
+
+KtLabelReferenceExpression(282,290): '@MyClass'
   one/MyClass
 
 KtSimpleNameReference|KtLabelReferenceExpression(282,290): '@MyClass'
@@ -112,6 +121,9 @@ KtSimpleNameReference|KtNameReferenceExpression(430,433): 'foo'
 KtSimpleNameReference|KtNameReferenceExpression(452,456): 'this'
   one/MyClass.InnerOuter.InnerNested
 
+KtLabelReferenceExpression(456,468): '@InnerNested'
+  one/MyClass.InnerOuter.InnerNested
+
 KtSimpleNameReference|KtLabelReferenceExpression(456,468): '@InnerNested'
   one/MyClass.InnerOuter.InnerNested
 
@@ -125,6 +137,9 @@ KtSimpleNameReference|KtNameReferenceExpression(469,472): 'foo'
   one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtSimpleNameReference|KtNameReferenceExpression(491,495): 'this'
+  one/MyClass.InnerOuter
+
+KtLabelReferenceExpression(495,506): '@InnerOuter'
   one/MyClass.InnerOuter
 
 KtSimpleNameReference|KtLabelReferenceExpression(495,506): '@InnerOuter'
@@ -142,6 +157,9 @@ KtSimpleNameReference|KtNameReferenceExpression(507,510): 'foo'
 KtSimpleNameReference|KtNameReferenceExpression(529,533): 'this'
   one/MyClass
 
+KtLabelReferenceExpression(533,541): '@MyClass'
+  one/MyClass
+
 KtSimpleNameReference|KtLabelReferenceExpression(533,541): '@MyClass'
   one/MyClass
 
@@ -153,6 +171,9 @@ KtInvokeFunctionReference|KtCallExpression(542,547): 'foo()'
 
 KtSimpleNameReference|KtNameReferenceExpression(542,545): 'foo'
   one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+
+KtLabelReferenceExpression(573,578): 'anon@'
+  null
 
 KtSimpleNameReference|KtLabelReferenceExpression(573,578): 'anon@'
   null
@@ -187,6 +208,9 @@ KtSimpleNameReference|KtNameReferenceExpression(656,659): 'foo'
 KtSimpleNameReference|KtNameReferenceExpression(682,686): 'this'
   <extension receiver>: one.MyClass
 
+KtLabelReferenceExpression(686,691): '@anon'
+  <anonymous function>(s: kotlin.String): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(686,691): '@anon'
   <anonymous function>(s: kotlin.String): kotlin.Unit
 
@@ -200,6 +224,9 @@ KtSimpleNameReference|KtNameReferenceExpression(692,695): 'foo'
   one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtSimpleNameReference|KtNameReferenceExpression(718,722): 'this'
+  one/MyClass.InnerOuter.InnerNested
+
+KtLabelReferenceExpression(722,734): '@InnerNested'
   one/MyClass.InnerOuter.InnerNested
 
 KtSimpleNameReference|KtLabelReferenceExpression(722,734): '@InnerNested'
@@ -217,6 +244,9 @@ KtSimpleNameReference|KtNameReferenceExpression(735,738): 'foo'
 KtSimpleNameReference|KtNameReferenceExpression(761,765): 'this'
   one/MyClass.InnerOuter
 
+KtLabelReferenceExpression(765,776): '@InnerOuter'
+  one/MyClass.InnerOuter
+
 KtSimpleNameReference|KtLabelReferenceExpression(765,776): '@InnerOuter'
   one/MyClass.InnerOuter
 
@@ -230,6 +260,9 @@ KtSimpleNameReference|KtNameReferenceExpression(777,780): 'foo'
   one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtSimpleNameReference|KtNameReferenceExpression(803,807): 'this'
+  one/MyClass
+
+KtLabelReferenceExpression(807,815): '@MyClass'
   one/MyClass
 
 KtSimpleNameReference|KtLabelReferenceExpression(807,815): '@MyClass'
@@ -277,6 +310,9 @@ KtSimpleNameReference|KtNameReferenceExpression(922,925): 'foo'
 KtSimpleNameReference|KtNameReferenceExpression(948,952): 'this'
   <extension receiver>: one.MyClass.InnerOuter.InnerNested
 
+KtLabelReferenceExpression(952,959): '@myWith'
+  <anonymous function>(t: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(952,959): '@myWith'
   <anonymous function>(t: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
@@ -290,6 +326,9 @@ KtSimpleNameReference|KtNameReferenceExpression(960,963): 'foo'
   one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtSimpleNameReference|KtNameReferenceExpression(986,990): 'this'
+  one/MyClass.InnerOuter.InnerNested
+
+KtLabelReferenceExpression(990,1002): '@InnerNested'
   one/MyClass.InnerOuter.InnerNested
 
 KtSimpleNameReference|KtLabelReferenceExpression(990,1002): '@InnerNested'
@@ -307,6 +346,9 @@ KtSimpleNameReference|KtNameReferenceExpression(1003,1006): 'foo'
 KtSimpleNameReference|KtNameReferenceExpression(1029,1033): 'this'
   one/MyClass.InnerOuter
 
+KtLabelReferenceExpression(1033,1044): '@InnerOuter'
+  one/MyClass.InnerOuter
+
 KtSimpleNameReference|KtLabelReferenceExpression(1033,1044): '@InnerOuter'
   one/MyClass.InnerOuter
 
@@ -320,6 +362,9 @@ KtSimpleNameReference|KtNameReferenceExpression(1045,1048): 'foo'
   one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtSimpleNameReference|KtNameReferenceExpression(1071,1075): 'this'
+  one/MyClass
+
+KtLabelReferenceExpression(1075,1083): '@MyClass'
   one/MyClass
 
 KtSimpleNameReference|KtLabelReferenceExpression(1075,1083): '@MyClass'
@@ -343,11 +388,17 @@ KtInvokeFunctionReference|KtCallExpression(1125,1194): 'myWith label@{'
 KtSimpleNameReference|KtNameReferenceExpression(1125,1131): 'myWith'
   one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
 
+KtLabelReferenceExpression(1132,1138): 'label@'
+  null
+
 KtSimpleNameReference|KtLabelReferenceExpression(1132,1138): 'label@'
   null
 
 KtSimpleNameReference|KtNameReferenceExpression(1160,1164): 'this'
   <extension receiver>: one.MyClass.InnerOuter.InnerNested
+
+KtLabelReferenceExpression(1164,1170): '@label'
+  <anonymous function>(it: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtSimpleNameReference|KtLabelReferenceExpression(1164,1170): '@label'
   <anonymous function>(it: one.MyClass.InnerOuter.InnerNested): kotlin.Unit

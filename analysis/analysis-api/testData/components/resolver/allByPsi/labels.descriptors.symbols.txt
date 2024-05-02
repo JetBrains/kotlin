@@ -25,17 +25,29 @@ KtSimpleNameReference|KtNameReferenceExpression(64,67): 'foo'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(64,67): 'foo'
   null
 
+KtLabelReferenceExpression(68,74): 'label@'
+  null
+
 KtSimpleNameReference|KtLabelReferenceExpression(68,74): 'label@'
   null
 
+KtLabelReferenceExpression(90,96): '@label'
+  <anonymous function>(): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(90,96): '@label'
   <anonymous function>(): kotlin.Unit
+
+KtLabelReferenceExpression(108,114): 'myFor@'
+  null
 
 KtSimpleNameReference|KtLabelReferenceExpression(108,114): 'myFor@'
   null
 
 KtSimpleNameReference|KtOperationReferenceExpression(126,128): '..'
   kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+
+KtLabelReferenceExpression(149,155): '@myFor'
+  null
 
 KtSimpleNameReference|KtLabelReferenceExpression(149,155): '@myFor'
   null

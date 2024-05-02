@@ -67,11 +67,20 @@ KtSimpleNameReference|KtNameReferenceExpression(237,241): 'foo1'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(237,241): 'foo1'
   null
 
+KtLabelReferenceExpression(295,300): '@foo3'
+  <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(295,300): '@foo3'
   <anonymous function>(it: kotlin.Boolean): kotlin.Unit
 
+KtLabelReferenceExpression(331,336): '@foo2'
+  <anonymous function>(it: kotlin.String): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(331,336): '@foo2'
   <anonymous function>(it: kotlin.String): kotlin.Unit
+
+KtLabelReferenceExpression(367,372): '@foo1'
+  <anonymous function>(it: kotlin.Int): kotlin.Unit
 
 KtSimpleNameReference|KtLabelReferenceExpression(367,372): '@foo1'
   <anonymous function>(it: kotlin.Int): kotlin.Unit
@@ -88,29 +97,53 @@ KtSimpleNameReference|KtNameReferenceExpression(431,435): 'foo2'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(431,435): 'foo2'
   null
 
+KtLabelReferenceExpression(436,442): 'label@'
+  null
+
 KtSimpleNameReference|KtLabelReferenceExpression(436,442): 'label@'
   null
 
 KtSimpleNameReference|KtNameReferenceExpression(450,456): 'String'
   kotlin/String
 
+KtLabelReferenceExpression(513,519): '@label'
+  <no name provided>(s: kotlin.String): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(513,519): '@label'
   <no name provided>(s: kotlin.String): kotlin.Unit
+
+KtLabelReferenceExpression(546,551): '@foo3'
+  <anonymous function>(it: kotlin.Boolean): kotlin.Unit
 
 KtSimpleNameReference|KtLabelReferenceExpression(546,551): '@foo3'
   <anonymous function>(it: kotlin.Boolean): kotlin.Unit
 
+KtLabelReferenceExpression(578,583): '@foo2'
+  <anonymous function>(it: kotlin.String): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(578,583): '@foo2'
   <anonymous function>(it: kotlin.String): kotlin.Unit
+
+KtLabelReferenceExpression(610,615): '@foo1'
+  <anonymous function>(it: kotlin.Int): kotlin.Unit
 
 KtSimpleNameReference|KtLabelReferenceExpression(610,615): '@foo1'
   <anonymous function>(it: kotlin.Int): kotlin.Unit
 
+KtLabelReferenceExpression(658,663): '@foo3'
+  <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(658,663): '@foo3'
   <anonymous function>(it: kotlin.Boolean): kotlin.Unit
 
+KtLabelReferenceExpression(686,691): '@foo2'
+  <anonymous function>(it: kotlin.String): kotlin.Unit
+
 KtSimpleNameReference|KtLabelReferenceExpression(686,691): '@foo2'
   <anonymous function>(it: kotlin.String): kotlin.Unit
+
+KtLabelReferenceExpression(714,719): '@foo1'
+  <anonymous function>(it: kotlin.Int): kotlin.Unit
 
 KtSimpleNameReference|KtLabelReferenceExpression(714,719): '@foo1'
   <anonymous function>(it: kotlin.Int): kotlin.Unit

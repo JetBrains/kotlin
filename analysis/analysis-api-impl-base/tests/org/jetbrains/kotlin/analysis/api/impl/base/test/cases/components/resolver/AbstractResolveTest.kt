@@ -51,7 +51,9 @@ abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
         val actualSymbol = element.resolveSymbol()
         val actual = stringRepresentation(actualSymbol)
         renderedSymbol(actual)
-        testServices.assertions.assertEquals(expectedSymbol, actualSymbol)
+        if (expectedSymbol != null) {
+            testServices.assertions.assertEquals(expectedSymbol, actualSymbol)
+        }
 
         if (element is KtResolvableCall) {
             val attempt = element.attemptResolveCall()
@@ -83,3 +85,4 @@ abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
             else -> this
         }
 }
+

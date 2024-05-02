@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 
 internal class KaFe10Resolver(override val analysisSession: KtFe10AnalysisSession) : KaResolver(), Fe10KtAnalysisSessionComponent {
@@ -25,6 +27,12 @@ internal class KaFe10Resolver(override val analysisSession: KtFe10AnalysisSessio
         val resolvedCall = ktElement.getResolvedCall(bindingContext)
         if (resolvedCall != null) {
             return resolvedCall.takeIf { it.status.isSuccess }?.candidateDescriptor?.toKtSymbol(analysisContext)
+        }
+
+        if (ktElement is KtReferenceExpression) {
+            val labeledDeclaration = bindingContext[BindingContext.LABEL_TARGET, ktElement] ?: return null
+            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, labeledDeclaration] ?: return null
+            return descriptor.toKtSymbol(analysisContext)
         }
 
         return null
