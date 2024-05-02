@@ -1489,28 +1489,44 @@ class KotlinTypeMapper @JvmOverloads constructor(
             mode: TypeMappingMode,
             mapType: (KotlinTypeMarker, JvmSignatureWriter, TypeMappingMode) -> Type
         ) {
-            for ((parameter, argument) in parameters.zipWithNulls(arguments)) {
+            processGenericArguments(
+                arguments,
+                parameters,
+                mode,
+                processUnboundedWildcard = {
+                    signatureVisitor.writeUnboundedWildcard()
+                },
+                processTypeArgument = { _, type, projectionKind, parameterVariance, newMode ->
+                    signatureVisitor.writeTypeArgument(projectionKind)
+                    mapType(type, signatureVisitor, newMode)
+                    signatureVisitor.writeTypeArgumentEnd()
+                }
+            )
+        }
+
+        fun TypeSystemCommonBackendContext.processGenericArguments(
+            arguments: List<TypeArgumentMarker>,
+            parameters: List<TypeParameterMarker>,
+            mode: TypeMappingMode,
+            processUnboundedWildcard: () -> Unit,
+            processTypeArgument: (index: Int, type: KotlinTypeMarker, projectionKind: Variance, parameterVariance: Variance, mode: TypeMappingMode) -> Unit,
+        ) {
+            for ((index, pair) in parameters.zipWithNulls(arguments).withIndex()) {
+                val (parameter, argument) = pair
                 if (argument == null) break
                 if (argument.isStarProjection() ||
                     // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
                     argument.getType().isNothing() && parameter?.getVariance() == TypeVariance.IN
                 ) {
-                    signatureVisitor.writeUnboundedWildcard()
+                    processUnboundedWildcard()
                 } else {
                     val argumentMode = mode.updateArgumentModeFromAnnotations(argument.getType(), this)
                     val projectionKind = getVarianceForWildcard(parameter, argument, argumentMode)
-
-                    signatureVisitor.writeTypeArgument(projectionKind)
-
                     val parameterVariance = parameter?.getVariance()?.convertVariance() ?: Variance.INVARIANT
-                    mapType(
-                        argument.getType(), signatureVisitor,
-                        argumentMode.toGenericArgumentMode(
-                            getEffectiveVariance(parameterVariance, argument.getVariance().convertVariance())
-                        )
+                    val newMode = argumentMode.toGenericArgumentMode(
+                        getEffectiveVariance(parameterVariance, argument.getVariance().convertVariance())
                     )
-
-                    signatureVisitor.writeTypeArgumentEnd()
+                    processTypeArgument(index, argument.getType(), projectionKind, parameterVariance, newMode)
                 }
             }
         }

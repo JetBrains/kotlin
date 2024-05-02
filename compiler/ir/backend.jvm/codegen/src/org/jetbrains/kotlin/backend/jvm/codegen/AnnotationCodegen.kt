@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
+import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -282,7 +284,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                             val typeReference = TypeReference.newTypeParameterBoundReference(boundType, index, superIndex)
                             return visitor(typeReference.value, path, descr, visible)
                         }
-                    }.generateTypeAnnotations(typeParameterContainer, superType)
+                    }.generateTypeAnnotations(superType, TypeAnnotationPosition.TypeParameterBoundType)
                 }
             }
         }
@@ -339,14 +341,37 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         val IrConstructorCall.annotationClass: IrClass get() = symbol.owner.parentAsClass
     }
 
-    internal fun generateTypeAnnotations(declaration: IrDeclaration, type: IrType) {
+    internal fun generateTypeAnnotations(type: IrType, position: TypeAnnotationPosition) {
         if (!context.config.emitJvmTypeAnnotations) return
-        for (info in IrTypeAnnotationCollector().collectTypeAnnotations(type)) {
+        val mode = when (position) {
+            is TypeAnnotationPosition.FunctionReturnType ->
+                MethodSignatureMapper.getTypeMappingModeForReturnType(context.typeSystem, position.function, position.function.returnType)
+            is TypeAnnotationPosition.ValueParameterType ->
+                MethodSignatureMapper.getTypeMappingModeForParameter(context.typeSystem, position.parameter.parent as IrDeclaration, type)
+            is TypeAnnotationPosition.FieldType ->
+                // If a field is final, its generic signature is written as if it's a function return type, otherwise as if it's a value
+                // parameter type. See `MethodSignatureMapper.mapFieldSignature`.
+                if (position.field.isFinal) {
+                    MethodSignatureMapper.getTypeMappingModeForReturnType(context.typeSystem, position.field, position.field.type)
+                } else {
+                    MethodSignatureMapper.getTypeMappingModeForParameter(context.typeSystem, position.field, position.field.type)
+                }
+            is TypeAnnotationPosition.TypeParameterBoundType ->
+                TypeMappingMode.GENERIC_ARGUMENT
+        }
+        for (info in IrTypeAnnotationCollector(context).collectTypeAnnotations(type, mode)) {
             for (annotation in info.annotations) {
                 genAnnotation(annotation, info.path, true)
             }
         }
     }
+}
+
+internal sealed class TypeAnnotationPosition {
+    class FunctionReturnType(val function: IrFunction) : TypeAnnotationPosition()
+    class ValueParameterType(val parameter: IrValueParameter) : TypeAnnotationPosition()
+    class FieldType(val field: IrField) : TypeAnnotationPosition()
+    data object TypeParameterBoundType : TypeAnnotationPosition()
 }
 
 private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {

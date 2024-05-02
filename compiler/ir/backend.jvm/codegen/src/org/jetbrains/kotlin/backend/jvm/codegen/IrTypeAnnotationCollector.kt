@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.Companion.processGenericArguments
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -39,15 +42,15 @@ private class State<T>(val path: MutableList<String>) {
     }
 }
 
-internal class IrTypeAnnotationCollector {
+internal class IrTypeAnnotationCollector(private val context: JvmBackendContext) {
     private val state: State<IrConstructorCall> = State(arrayListOf())
 
-    fun collectTypeAnnotations(kotlinType: IrType): List<TypePathInfo<IrConstructorCall>> {
-        kotlinType.gatherTypeAnnotations()
+    fun collectTypeAnnotations(kotlinType: IrType, mode: TypeMappingMode): List<TypePathInfo<IrConstructorCall>> {
+        kotlinType.gatherTypeAnnotations(mode)
         return state.results
     }
 
-    private fun IrType.gatherTypeAnnotations() {
+    private fun IrType.gatherTypeAnnotations(typeMappingMode: TypeMappingMode) {
         if (classOrNull?.owner?.isInner == true) {
             // Skip inner classes for now. It's not clear whether type annotations on outer class should be supported.
             return
@@ -57,22 +60,26 @@ internal class IrTypeAnnotationCollector {
 
         if (this !is IrSimpleType) return
 
-        for ((index, argument) in arguments.withIndex()) {
-            // Skip in/out variance for now. It's not clear whether type annotations on wildcard bound should be supported.
-            if (argument is IrTypeProjection && argument.variance == Variance.INVARIANT) {
+        context.typeSystem.processGenericArguments(
+            arguments,
+            classOrNull?.owner?.typeParameters?.map { it.symbol }.orEmpty(),
+            typeMappingMode,
+            processUnboundedWildcard = {
+                // There's no syntax in Kotlin to annotate a wildcard.
+            },
+            processTypeArgument = { index, type, projectionKind, _, newMode ->
                 if (isArray() || isNullableArray()) {
-                    argument.type.process("[")
+                    state.addStep("[")
                 } else {
-                    argument.type.process("$index;")
+                    state.addStep("$index;")
+                    if (projectionKind != Variance.INVARIANT) {
+                        state.addStep("*")
+                    }
                 }
-            }
-        }
-    }
-
-    private fun IrType.process(step: String) {
-        state.addStep(step)
-        this.gatherTypeAnnotations()
-        state.removeStep()
+                (type as IrType).gatherTypeAnnotations(newMode)
+                state.removeStep()
+            },
+        )
     }
 
     private fun IrType.extractAnnotations(): List<IrConstructorCall> {

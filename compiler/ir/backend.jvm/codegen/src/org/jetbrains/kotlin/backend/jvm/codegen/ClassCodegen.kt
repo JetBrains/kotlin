@@ -365,7 +365,7 @@ class ClassCodegen private constructor(
             ) {
                 annotationCodegen.generateNullabilityAnnotation(field)
             }
-            annotationCodegen.generateTypeAnnotations(field, field.type)
+            annotationCodegen.generateTypeAnnotations(field.type, TypeAnnotationPosition.FieldType(field))
         }
 
         (field.metadata as? MetadataSource.Property)?.let {

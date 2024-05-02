@@ -88,7 +88,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             if (!AsmUtil.isPrimitive(signature.asmMethod.returnType) && generateNullabilityAnnotations) {
                 annotationCodegen.generateNullabilityAnnotation(irFunction)
             }
-            annotationCodegen.generateTypeAnnotations(irFunction, irFunction.returnType)
+            annotationCodegen.generateTypeAnnotations(irFunction.returnType, TypeAnnotationPosition.FunctionReturnType(irFunction))
 
             AnnotationCodegen.genAnnotationsOnTypeParametersAndBounds(
                 context,
@@ -303,7 +303,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             if (generateNullabilityAnnotations && !AsmUtil.isPrimitive(parameterSignature.asmType)) {
                 annotationCodegen.generateNullabilityAnnotation(parameter)
             }
-            annotationCodegen.generateTypeAnnotations(parameter, parameter.type)
+            annotationCodegen.generateTypeAnnotations(parameter.type, TypeAnnotationPosition.ValueParameterType(parameter))
         }
     }
 
