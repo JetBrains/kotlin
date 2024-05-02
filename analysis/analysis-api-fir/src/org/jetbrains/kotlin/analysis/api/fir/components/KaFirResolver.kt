@@ -36,6 +36,7 @@ internal class KaFirResolver(override val analysisSession: KtFirAnalysisSession)
         val originalFir = expression.getOrBuildFir(firResolveSession) ?: return null
         val resolvedSymbol = when (originalFir) {
             is FirResolvable -> originalFir.calleeReference.toResolvedBaseSymbol(discardErrorReference = true)
+            is FirArrayLiteral -> with(analysisSession) { arrayOfSymbol(originalFir)?.firSymbol }
             else -> null
         } ?: return null
 

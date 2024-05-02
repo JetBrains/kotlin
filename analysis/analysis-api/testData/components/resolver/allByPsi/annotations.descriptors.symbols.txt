@@ -55,6 +55,9 @@ KtAnnotationEntry(407,432): '@AnnoWithArray([1, 2, 3])'
 KtSimpleNameReference|KtNameReferenceExpression(408,421): 'AnnoWithArray'
   <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
 
+KtCollectionLiteralExpression(422,431): '[1, 2, 3]'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
 KtCollectionLiteralReference|KtCollectionLiteralExpression(422,431): '[1, 2, 3]'
   kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -69,6 +72,9 @@ KtSimpleNameReference|KtNameReferenceExpression(448,451): 'arr'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(448,451): 'arr'
   null
+
+KtCollectionLiteralExpression(454,463): '[4, 5, 6]'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtCollectionLiteralReference|KtCollectionLiteralExpression(454,463): '[4, 5, 6]'
   kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
@@ -127,6 +133,9 @@ KtAnnotationEntry(585,659): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.
 KtSimpleNameReference|KtNameReferenceExpression(586,607): 'AnnoWithArrayOfKClass'
   <constructor>(a: kotlin.Array<kotlin.reflect.KClass<*>>): one.AnnoWithArrayOfKClass
 
+KtCollectionLiteralExpression(608,658): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+
 KtCollectionLiteralReference|KtCollectionLiteralExpression(608,658): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
 
@@ -183,6 +192,9 @@ KtSimpleNameReference|KtNameReferenceExpression(699,712): 'AnnoWithArray'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(699,712): 'AnnoWithArray'
   null
+
+KtCollectionLiteralExpression(713,725): '[10, 11, 12]'
+  kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtCollectionLiteralReference|KtCollectionLiteralExpression(713,725): '[10, 11, 12]'
   kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray

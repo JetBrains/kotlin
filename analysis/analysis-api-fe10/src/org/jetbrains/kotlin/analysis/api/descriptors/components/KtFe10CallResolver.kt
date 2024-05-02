@@ -203,6 +203,11 @@ internal class KtFe10CallResolver(
                 handleAsFunctionCall(this, unwrappedPsi)?.toKtCallCandidateInfos()?.let { return@with it }
             }
 
+            // KtCollectionLiteralExpression cannot have candidates and the regular mechanism doesn't work
+            if (psi is KtCollectionLiteralExpression) {
+                return@with resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
+            }
+
             val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()
             val call = unwrappedPsi.getCall(this)?.let {
                 if (it is CallTransformer.CallForImplicitInvoke) it.outerCall else it

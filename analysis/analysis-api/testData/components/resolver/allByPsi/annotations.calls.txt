@@ -68,6 +68,47 @@ KtAnnotationEntry(407,432): '@AnnoWithArray([1, 2, 3])'
         callableIdIfNonLocal = null)
     }
 
+KtCollectionLiteralExpression(422,431): '[1, 2, 3]'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/intArrayOf
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
+        callableIdIfNonLocal = null),
+      2 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
+        callableIdIfNonLocal = null),
+      3 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
 KtAnnotationEntry(433,464): '@AnnoWithArray(arr = [4, 5, 6])'
   KtAnnotationCall:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -93,6 +134,47 @@ KtAnnotationEntry(433,464): '@AnnoWithArray(arr = [4, 5, 6])'
         receiverType = null
         returnType = kotlin.IntArray
         symbol = arr: kotlin.IntArray
+        callableIdIfNonLocal = null)
+    }
+
+KtCollectionLiteralExpression(454,463): '[4, 5, 6]'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/intArrayOf
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      4 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
+        callableIdIfNonLocal = null),
+      5 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
+        callableIdIfNonLocal = null),
+      6 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
         callableIdIfNonLocal = null)
     }
 
@@ -249,6 +331,43 @@ KtAnnotationEntry(585,659): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.
         callableIdIfNonLocal = null)
     }
 
+KtCollectionLiteralExpression(608,658): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Array<kotlin.reflect.KClass<*>>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.reflect.KClass<*>
+            symbol = vararg elements: T
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/arrayOf
+    typeArgumentsMapping = {
+      T -> (kotlin.reflect.KClass<*>)
+    }
+    argumentMapping = {
+      AnnoWithKClass::class -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.reflect.KClass<*>
+        symbol = vararg elements: T
+        callableIdIfNonLocal = null),
+      one.AnnoWithKClass::class -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.reflect.KClass<*>
+        symbol = vararg elements: T
+        callableIdIfNonLocal = null)
+    }
+
 KtAnnotationEntry(660,767): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
   KtAnnotationCall:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -340,6 +459,47 @@ KtCallExpression(699,726): 'AnnoWithArray([10, 11, 12])'
         receiverType = null
         returnType = kotlin.IntArray
         symbol = arr: kotlin.IntArray
+        callableIdIfNonLocal = null)
+    }
+
+KtCollectionLiteralExpression(713,725): '[10, 11, 12]'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/intArrayOf
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      10 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
+        callableIdIfNonLocal = null),
+      11 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
+        callableIdIfNonLocal = null),
+      12 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int
         callableIdIfNonLocal = null)
     }
 

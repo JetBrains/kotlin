@@ -24,13 +24,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.resolve.KtResolvableCall;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.getTrailingCommaByClosingElement;
 
-public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinCollectionLiteralExpressionStub> implements KtReferenceExpression {
+public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinCollectionLiteralExpressionStub>
+        implements KtReferenceExpression, KtResolvableCall {
     public KtCollectionLiteralExpression(@NotNull KotlinCollectionLiteralExpressionStub stub) {
         super(stub, KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION);
     }
