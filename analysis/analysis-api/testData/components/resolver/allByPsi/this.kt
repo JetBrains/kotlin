@@ -29,14 +29,32 @@ class MyClass {
                 this@InnerOuter.foo()
                 this@MyClass.foo()
 
-                val f = fun MyClass.(s: String) {
+                val f = anon@ fun MyClass.(s: String) {
                     foo()
                     this.foo()
+                    this@anon.foo()
                     this@InnerNested.foo()
                     this@InnerOuter.foo()
                     this@MyClass.foo()
                 }
+
+                myWith { t ->
+                    foo()
+                    this.foo()
+                    this@myWith.foo()
+                    this@InnerNested.foo()
+                    this@InnerOuter.foo()
+                    this@MyClass.foo()
+                }
+
+                myWith label@{
+                    this@label.foo()
+                }
             }
         }
     }
+}
+
+fun <T> T.myWith(body: T.(T) -> Unit) {
+    body(this)
 }

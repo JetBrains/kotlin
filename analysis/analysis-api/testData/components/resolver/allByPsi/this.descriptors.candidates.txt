@@ -451,18 +451,100 @@ KtCallExpression(857,1107): 'myWith { t ->'
       partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = KtImplicitReceiverValue:
+          symbol = one/MyClass
+          type = one.MyClass
+        signature = KtFunctionLikeSignature:
+          receiverType = one.MyClass
+          returnType = kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = body
+              receiverType = null
+              returnType = kotlin.Function2<one.MyClass, one.MyClass, kotlin.Unit>
+              symbol = body: kotlin.Function2<T, T, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = one/myWith
+      typeArgumentsMapping = {
+        T -> (one.MyClass)
+      }
+      argumentMapping = {
+        { t ->
+                            foo()
+                            this.foo()
+                            this@myWith.foo()
+                            this@InnerNested.foo()
+                            this@InnerOuter.foo()
+                            this@MyClass.foo()
+                        } -> (KtVariableLikeSignature:
+          name = body
+          receiverType = null
+          returnType = kotlin.Function2<one.MyClass, one.MyClass, kotlin.Unit>
+          symbol = body: kotlin.Function2<T, T, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtImplicitReceiverValue:
+          symbol = one/MyClass.InnerOuter
+          type = one.MyClass.InnerOuter
+        signature = KtFunctionLikeSignature:
+          receiverType = one.MyClass.InnerOuter
+          returnType = kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = body
+              receiverType = null
+              returnType = kotlin.Function2<one.MyClass.InnerOuter, one.MyClass.InnerOuter, kotlin.Unit>
+              symbol = body: kotlin.Function2<T, T, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = one/myWith
+      typeArgumentsMapping = {
+        T -> (one.MyClass.InnerOuter)
+      }
+      argumentMapping = {
+        { t ->
+                            foo()
+                            this.foo()
+                            this@myWith.foo()
+                            this@InnerNested.foo()
+                            this@InnerOuter.foo()
+                            this@MyClass.foo()
+                        } -> (KtVariableLikeSignature:
+          name = body
+          receiverType = null
+          returnType = kotlin.Function2<one.MyClass.InnerOuter, one.MyClass.InnerOuter, kotlin.Unit>
+          symbol = body: kotlin.Function2<T, T, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter.InnerNested
           type = one.MyClass.InnerOuter.InnerNested
         signature = KtFunctionLikeSignature:
           receiverType = one.MyClass.InnerOuter.InnerNested
           returnType = kotlin.Unit
-          symbol = one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
           valueParameters = [
             KtVariableLikeSignature:
               name = body
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-              symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              returnType = kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
+              symbol = body: kotlin.Function2<T, T, kotlin.Unit>
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = one/myWith
@@ -480,8 +562,8 @@ KtCallExpression(857,1107): 'myWith { t ->'
                         } -> (KtVariableLikeSignature:
           name = body
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-          symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          returnType = kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
+          symbol = body: kotlin.Function2<T, T, kotlin.Unit>
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
@@ -648,18 +730,90 @@ KtCallExpression(1125,1194): 'myWith label@{'
       partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = KtImplicitReceiverValue:
+          symbol = one/MyClass
+          type = one.MyClass
+        signature = KtFunctionLikeSignature:
+          receiverType = one.MyClass
+          returnType = kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = body
+              receiverType = null
+              returnType = kotlin.Function2<one.MyClass, one.MyClass, kotlin.Unit>
+              symbol = body: kotlin.Function2<T, T, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = one/myWith
+      typeArgumentsMapping = {
+        T -> (one.MyClass)
+      }
+      argumentMapping = {
+        label@{
+                            this@label.foo()
+                        } -> (KtVariableLikeSignature:
+          name = body
+          receiverType = null
+          returnType = kotlin.Function2<one.MyClass, one.MyClass, kotlin.Unit>
+          symbol = body: kotlin.Function2<T, T, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtImplicitReceiverValue:
+          symbol = one/MyClass.InnerOuter
+          type = one.MyClass.InnerOuter
+        signature = KtFunctionLikeSignature:
+          receiverType = one.MyClass.InnerOuter
+          returnType = kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = body
+              receiverType = null
+              returnType = kotlin.Function2<one.MyClass.InnerOuter, one.MyClass.InnerOuter, kotlin.Unit>
+              symbol = body: kotlin.Function2<T, T, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = one/myWith
+      typeArgumentsMapping = {
+        T -> (one.MyClass.InnerOuter)
+      }
+      argumentMapping = {
+        label@{
+                            this@label.foo()
+                        } -> (KtVariableLikeSignature:
+          name = body
+          receiverType = null
+          returnType = kotlin.Function2<one.MyClass.InnerOuter, one.MyClass.InnerOuter, kotlin.Unit>
+          symbol = body: kotlin.Function2<T, T, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtImplicitReceiverValue:
           symbol = one/MyClass.InnerOuter.InnerNested
           type = one.MyClass.InnerOuter.InnerNested
         signature = KtFunctionLikeSignature:
           receiverType = one.MyClass.InnerOuter.InnerNested
           returnType = kotlin.Unit
-          symbol = one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
           valueParameters = [
             KtVariableLikeSignature:
               name = body
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-              symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              returnType = kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
+              symbol = body: kotlin.Function2<T, T, kotlin.Unit>
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = one/myWith
@@ -672,8 +826,8 @@ KtCallExpression(1125,1194): 'myWith label@{'
                         } -> (KtVariableLikeSignature:
           name = body
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-          symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          returnType = kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
+          symbol = body: kotlin.Function2<T, T, kotlin.Unit>
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
@@ -706,10 +860,44 @@ KtCallExpression(1272,1282): 'body(this)'
         dispatchReceiver = KtExplicitReceiverValue:
           expression = body
           isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          type = kotlin.Function2<T, T, kotlin.Unit>
         extensionReceiver = KtImplicitReceiverValue:
           symbol = <extension receiver>: T
           type = T
+        signature = KtFunctionLikeSignature:
+          receiverType = T
+          returnType = kotlin.Unit
+          symbol = kotlin/Function2.invoke(<extension receiver>: P1, <dispatch receiver>: kotlin.Function2<P1, P2, R>, p2: P2): R
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = p2
+              receiverType = null
+              returnType = T
+              symbol = p2: P2
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Function2.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        this -> (KtVariableLikeSignature:
+          name = p2
+          receiverType = null
+          returnType = T
+          symbol = p2: P2
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p2'>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = body
+          isSafeNavigation = false
+          type = kotlin.Function2<T, T, kotlin.Unit>
+        extensionReceiver = null
         signature = KtFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Unit
@@ -732,11 +920,11 @@ KtCallExpression(1272,1282): 'body(this)'
       typeArgumentsMapping = {}
       argumentMapping = {
         this -> (KtVariableLikeSignature:
-          name = p2
+          name = p1
           receiverType = null
           returnType = T
-          symbol = p2: P2
+          symbol = p1: P1
           callableIdIfNonLocal = null)
       }
-    isInBestCandidates = true
+    isInBestCandidates = false
 
