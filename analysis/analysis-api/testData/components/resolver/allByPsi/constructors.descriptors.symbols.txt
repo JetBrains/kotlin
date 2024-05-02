@@ -82,3 +82,18 @@ KtConstructorDelegationCall(339,345): 'this()'
 KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(339,343): 'this'
   <constructor>(): r.ChildWithPrimary
 
+KtSimpleNameReference|KtNameReferenceExpression(380,383): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(405,418): 'ClassWithType'
+  r/ClassWithType
+
+KtSimpleNameReference|KtNameReferenceExpression(419,422): 'Int'
+  kotlin/Int
+
+KtConstructorDelegationCall(446,454): 'super(1)'
+  <constructor>(i: kotlin.Int): r.ClassWithType<T>
+
+KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(446,451): 'super'
+  <constructor>(i: kotlin.Int): r.ClassWithType<T>
+

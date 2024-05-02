@@ -156,7 +156,7 @@ KtConstructorDelegationCall(446,454): 'super(1)'
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null
-        returnType = r.ClassWithType<T>
+        returnType = r.ClassWithType<kotlin.Int>
         symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
         valueParameters = [
           KtVariableLikeSignature:
@@ -167,9 +167,7 @@ KtConstructorDelegationCall(446,454): 'super(1)'
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = null
-    typeArgumentsMapping = {
-      T -> (kotlin.Int)
-    }
+    typeArgumentsMapping = {}
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = i

@@ -21,3 +21,9 @@ class Child : BaseClass {
 class ChildWithPrimary() : BaseClass(42) {
     constructor(s: String) : this()
 }
+
+open class ClassWithType<T>(i: Int)
+
+class TypedChild : ClassWithType<Int> {
+    constructor() : super(1)
+}

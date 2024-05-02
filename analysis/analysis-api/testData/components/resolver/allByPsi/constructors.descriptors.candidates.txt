@@ -279,3 +279,34 @@ KtConstructorDelegationCall(339,345): 'this()'
       argumentMapping = {}
     isInBestCandidates = false
 
+KtConstructorDelegationCall(446,454): 'super(1)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = r.ClassWithType<kotlin.Int>
+          symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
