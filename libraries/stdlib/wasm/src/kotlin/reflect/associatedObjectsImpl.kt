@@ -23,15 +23,3 @@ internal fun tryGetAssociatedObject(
     // ...
     return null
 }
-
-// Remove after bootstrap KT-65322
-@Suppress("UNUSED_PARAMETER")
-internal fun addAssociatedObject(
-    mapToInit: MutableMap<ULong, Any>,
-    klassId: Int,
-    keyId: Int,
-    instance: Any
-): Unit = error("Remove after bootstrap")
-
-// Remove after bootstrap KT-65322
-internal fun initAssociatedObjects(): Unit = error("Remove after bootstrap")

@@ -9,12 +9,9 @@ import kotlin.reflect.*
 
 internal expect fun <T : Any> getKClassForObject(obj: Any): KClass<T>
 
-//TODO(Replace getKClass to intrinsic argument-less implementation after bootstrap KT-65322")
-//@ExcludedFromCodegen
-//internal fun <T : Any> getKClass(): KClass<T> =
-//    implementedAsIntrinsic
-internal fun <T : Any> getKClass(typeInfoData: TypeInfoData): KClass<T> =
-    KClassImpl(typeInfoData)
+@ExcludedFromCodegen
+internal fun <T : Any> getKClass(): KClass<T> =
+    implementedAsIntrinsic
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =

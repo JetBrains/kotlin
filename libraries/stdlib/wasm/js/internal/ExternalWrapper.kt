@@ -137,12 +137,6 @@ private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceTy
     js("lhs === rhs")
 
 
-//TODO Remove after bootstrap (KT-65322)
-private fun tryGetOrSetExternrefBox(
-    ref: ExternalInterfaceType,
-    ifNotCached: JsReference<JsExternalBox>
-): JsReference<JsExternalBox>? = getCachedJsObject(ref, ifNotCached)?.unsafeCast()
-
 @WasmNoOpCast
 @Suppress("unused")
 private fun Any?.asWasmAnyref(): anyref =

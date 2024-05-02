@@ -39,7 +39,6 @@ class AsyncTest {
     }
 
     @Test
-    @Ignore //Remove after bootstrap KT-65322
     fun checkAsyncOrder(): Promise<JsNumber> {
         log += 1
 
@@ -58,13 +57,11 @@ class AsyncTest {
     }
 
     @Test
-    @Ignore //Remove after bootstrap KT-65322
     fun checkCustomPromise(): CustomPromise {
         return promise(10, "") as CustomPromise
     }
 
     @Test
-    @Ignore //Remove after bootstrap KT-65322
     fun asyncPassing() = promise(10).then { assertEquals(10, it.toInt()); it }
 }
 
