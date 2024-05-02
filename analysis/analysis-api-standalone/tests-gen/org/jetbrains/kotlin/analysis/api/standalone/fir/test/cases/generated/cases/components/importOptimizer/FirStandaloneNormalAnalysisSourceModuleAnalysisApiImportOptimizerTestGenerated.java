@@ -269,6 +269,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
   }
 
   @Test
+  @TestMetadata("usedTypeAsTypeArgumentInJavaMethodCall.kt")
+  public void testUsedTypeAsTypeArgumentInJavaMethodCall() {
+    runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAsTypeArgumentInJavaMethodCall.kt");
+  }
+
+  @Test
   @TestMetadata("usedTypeAsTypeParameter.kt")
   public void testUsedTypeAsTypeParameter() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAsTypeParameter.kt");
