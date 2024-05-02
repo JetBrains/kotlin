@@ -130,6 +130,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveByPsiTestGenerated ex
   }
 
   @Test
+  @TestMetadata("return.kt")
+  public void testReturn() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/return.kt");
+  }
+
+  @Test
   @TestMetadata("staticImports.kt")
   public void testStaticImports() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/staticImports.kt");

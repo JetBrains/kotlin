@@ -1,0 +1,101 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,18): 'returnPack'
+  returnPack
+
+KtSimpleNameReference|KtNameReferenceExpression(45,48): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(53,57): 'Unit'
+  kotlin/Unit
+
+KtSimpleNameReference|KtNameReferenceExpression(90,96): 'String'
+  kotlin/String
+
+KtSimpleNameReference|KtNameReferenceExpression(101,105): 'Unit'
+  kotlin/Unit
+
+KtSimpleNameReference|KtNameReferenceExpression(138,145): 'Boolean'
+  kotlin/Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(150,154): 'Unit'
+  kotlin/Unit
+
+KtCallExpression(180,749): 'foo1 {'
+  returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(180,749): 'foo1 {'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(180,184): 'foo1'
+  returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+
+KtCallExpression(195,743): 'foo2 {'
+  returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(195,743): 'foo2 {'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(195,199): 'foo2'
+  returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+
+KtCallExpression(214,733): 'foo3 {'
+  returnPack/foo3(action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(214,733): 'foo3 {'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(214,218): 'foo3'
+  returnPack/foo3(action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+
+KtCallExpression(237,413): 'foo1('
+  returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(237,413): 'foo1('
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(237,241): 'foo1'
+  returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(295,300): '@foo3'
+  <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(331,336): '@foo2'
+  <anonymous function>(it: kotlin.String): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(367,372): '@foo1'
+  <anonymous function>(it: kotlin.Int): kotlin.Unit
+
+KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
+  returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+
+KtInvokeFunctionReference|KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(431,435): 'foo2'
+  returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(436,442): 'label@'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(450,456): 'String'
+  kotlin/String
+
+KtSimpleNameReference|KtLabelReferenceExpression(513,519): '@label'
+  <anonymous function>(s: kotlin.String): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(546,551): '@foo3'
+  <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(578,583): '@foo2'
+  <anonymous function>(it: kotlin.String): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(610,615): '@foo1'
+  <anonymous function>(it: kotlin.Int): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(658,663): '@foo3'
+  <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(686,691): '@foo2'
+  <anonymous function>(it: kotlin.String): kotlin.Unit
+
+KtSimpleNameReference|KtLabelReferenceExpression(714,719): '@foo1'
+  <anonymous function>(it: kotlin.Int): kotlin.Unit

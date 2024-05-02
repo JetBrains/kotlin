@@ -1,0 +1,230 @@
+KtCallExpression(180,749): 'foo1 {'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = returnPack/foo1
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                foo2 {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                }
+            } -> (KtVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(195,743): 'foo2 {'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = returnPack/foo2
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                } -> (KtVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(214,733): 'foo3 {'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo3(action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = returnPack/foo3
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    } -> (KtVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(237,413): 'foo1('
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = returnPack/foo1
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            } -> (KtVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = returnPack/foo2
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        } -> (KtVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
