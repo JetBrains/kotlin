@@ -1,8 +1,126 @@
 KtSuperTypeCallEntry(54,57): '(1)'
-  NO_CANDIDATES
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtEnumEntrySuperclassReferenceExpression(54,54): ''
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
 
 KtSuperTypeCallEntry(76,79): '(2)'
-  NO_CANDIDATES
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtEnumEntrySuperclassReferenceExpression(76,76): ''
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
 
 KtCallExpression(239,244): 'baz()'
   KtApplicableCallCandidateInfo:

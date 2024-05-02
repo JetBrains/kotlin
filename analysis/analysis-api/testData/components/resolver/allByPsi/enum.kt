@@ -28,3 +28,5 @@ fun usage(with: EnumWithConstructor) {
     EnumWithoutConstructor.Entry
     EnumWithoutConstructor.EntryWithBody
 }
+
+// DISABLE_DEPENDED_MODE

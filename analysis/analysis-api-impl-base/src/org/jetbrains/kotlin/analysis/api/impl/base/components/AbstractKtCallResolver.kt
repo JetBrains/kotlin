@@ -57,6 +57,7 @@ abstract class AbstractKtCallResolver : KtCallResolver() {
         is KtCallableReferenceExpression -> true
         is KtCollectionLiteralExpression -> true
         is KtConstructorDelegationReferenceExpression -> true
+        is KtEnumEntrySuperclassReferenceExpression -> true
         else -> false
     }
 

@@ -4,10 +4,16 @@ KtSimpleNameReference|KtNameReferenceExpression(38,41): 'Int'
 KtSuperTypeCallEntry(54,57): '(1)'
   <constructor>(i: kotlin.Int): EnumWithConstructor
 
+KtEnumEntrySuperclassReferenceExpression(54,54): ''
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
 KtSimpleNameReference|KtEnumEntrySuperclassReferenceExpression(54,54): ''
   <constructor>(i: kotlin.Int): EnumWithConstructor
 
 KtSuperTypeCallEntry(76,79): '(2)'
+  <constructor>(i: kotlin.Int): EnumWithConstructor
+
+KtEnumEntrySuperclassReferenceExpression(76,76): ''
   <constructor>(i: kotlin.Int): EnumWithConstructor
 
 KtSimpleNameReference|KtEnumEntrySuperclassReferenceExpression(76,76): ''
