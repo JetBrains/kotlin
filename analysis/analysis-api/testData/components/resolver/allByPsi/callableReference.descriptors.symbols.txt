@@ -292,3 +292,72 @@ KtSimpleNameReference|KtNameReferenceExpression(980,993): 'isInitialized'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(980,993): 'isInitialized'
   null
 
+KtSimpleNameReference|KtNameReferenceExpression(1006,1012): 'Number'
+  kotlin/Number
+
+KtSimpleNameReference|KtNameReferenceExpression(1039,1052): 'ClassWithType'
+  pack/ClassWithType
+
+KtSimpleNameReference|KtNameReferenceExpression(1053,1054): 'T'
+  T
+
+KtSimpleNameReference|KtNameReferenceExpression(1063,1076): 'classWithType'
+  classWithType: pack.ClassWithType<T>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(1063,1076): 'classWithType'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(1078,1094): 'functionWithType'
+  pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(1078,1094): 'functionWithType'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(1099,1112): 'classWithType'
+  classWithType: pack.ClassWithType<T>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(1099,1112): 'classWithType'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(1114,1130): 'propertyWithType'
+  var propertyWithType: T?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(1114,1130): 'propertyWithType'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(1143,1156): 'ClassWithType'
+  pack/ClassWithType
+
+KtSimpleNameReference|KtNameReferenceExpression(1157,1160): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(1174,1175): 't'
+  val t: pack.ClassWithType<kotlin.Int>?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(1174,1175): 't'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(1175,1177): '!!'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(1179,1195): 'functionWithType'
+  pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(1179,1195): 'functionWithType'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(1200,1201): 't'
+  val t: pack.ClassWithType<kotlin.Int>?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(1200,1201): 't'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(1201,1203): '!!'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(1205,1221): 'propertyWithType'
+  var propertyWithType: T?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(1205,1221): 'propertyWithType'
+  null
+

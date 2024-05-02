@@ -44,3 +44,12 @@ fun usage() {
 
     ::lateinitVar.isInitialized
 }
+
+fun <T : Number> typeClass(classWithType: ClassWithType<T>) {
+    classWithType::functionWithType
+    classWithType::propertyWithType
+
+    val t: ClassWithType<Int>? = null
+    t!!::functionWithType
+    t!!::propertyWithType
+}
