@@ -17,6 +17,10 @@ Tower Data Context:
                 FirValueParameterSymbol df: R|DataFrame<*>|
     Element 7
         Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirNamedFunctionSymbol public final fun test_1(df: R|DataFrame<*>|): R|kotlin/Unit|
+                Type: <local>.Scope1
 
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_asReceiver.kt
     public abstract [ResolvedTo(STATUS)] interface DataFrame<[ResolvedTo(STATUS)] out T> : R|kotlin/Any| {

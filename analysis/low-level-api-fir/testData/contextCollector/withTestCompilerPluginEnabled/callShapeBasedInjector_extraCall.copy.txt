@@ -22,6 +22,10 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirPropertySymbol lval df1_toString: R|kotlin/String|
+    Element 8
+        Implicit receiver:
+            FirPropertySymbol lval df1_toString: R|kotlin/String|
+                Type: <local>.Scope1
 
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_extraCall.kt
     public final? [ResolvedTo(RAW_FIR)] interface DataFrame<[ResolvedTo(RAW_FIR)] out T> : R|kotlin/Any| {

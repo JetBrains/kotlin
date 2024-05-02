@@ -18,6 +18,10 @@ Tower Data Context:
                 FirValueParameterSymbol a2: R|A|
     Element 7
         Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirNamedFunctionSymbol public final fun test_1(a1: R|A|, a2: R|A|): R|kotlin/Unit|
+                Type: Algebra<A>
 
 FILE: [ResolvedTo(IMPORTS)] receiverInjection_extraCall.kt
     public abstract [ResolvedTo(STATUS)] interface Algebra<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {

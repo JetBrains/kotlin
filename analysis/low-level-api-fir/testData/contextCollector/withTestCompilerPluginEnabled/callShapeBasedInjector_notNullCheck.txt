@@ -19,6 +19,10 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirPropertySymbol lval df1: R|DataFrame<<local>/DataFrameType>|
+    Element 8
+        Implicit receiver:
+            FirPropertySymbol lval df1: R|DataFrame<<local>/DataFrameType>|
+                Type: <local>.Scope1
 
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_notNullCheck.kt
     public abstract [ResolvedTo(STATUS)] interface DataFrame<[ResolvedTo(STATUS)] out T> : R|kotlin/Any| {
