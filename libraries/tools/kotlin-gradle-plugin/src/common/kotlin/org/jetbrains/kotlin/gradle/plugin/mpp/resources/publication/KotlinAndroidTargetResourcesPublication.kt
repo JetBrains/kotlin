@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.assembleHierarchicalResources
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -158,21 +159,22 @@ internal fun KotlinAndroidTarget.setUpMultiplatformResourcesAndAssets(
     val legacyAgpVariant = compilation.androidVariant
     val legacyAgpVariantName = getVariantName(legacyAgpVariant)
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnPublishResources(this) { resources ->
-        val copyResourcesTask = compilation.assembleHierarchicalResources(
+        val copyResourcesTask = compilation.registerAssembleHierarchicalResourcesTaskProvider(
             disambiguateName("${legacyAgpVariantName}Resources"),
             resources,
         )
 
-        if (AndroidGradlePluginVersion.current < "8.0.0") {
-            // AGP [7.3-8) requires explicit dependsOn
-            legacyAgpVariant.processJavaResourcesProvider.configure {
-                it.dependsOn(copyResourcesTask)
-            }
+        legacyAgpVariant.processJavaResourcesProvider.configure { task ->
+            task.from(copyResourcesTask.flatMap { it.outputDirectory })
         }
 
         project.androidExtension.sourceSets.getByName(
             compilation.defaultSourceSet.androidSourceSetInfo.androidSourceSetName
-        ).resources.srcDir(copyResourcesTask)
+        ).resources.srcDir(
+            copyResourcesTask.flatMap {
+                it.outputDirectory.locationOnly
+            }
+        )
     }
 
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnAndroidPublishAssets(this) { assets ->
