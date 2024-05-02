@@ -225,6 +225,23 @@ KtConstructorDelegationCall(412,412): ''
       argumentMapping = {}
     isInBestCandidates = true
 
+KtConstructorDelegationReferenceExpression(412,412): ''
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
 KtSuperTypeCallEntry(465,603): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
   KtApplicableCallCandidateInfo:
     candidate = KtDelegatedConstructorCall:

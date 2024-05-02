@@ -7,6 +7,9 @@ KtSimpleNameReference|KtNameReferenceExpression(57,60): 'Int'
 KtConstructorDelegationCall(61,61): ''
   <constructor>(): kotlin.Any
 
+KtConstructorDelegationReferenceExpression(61,61): ''
+  <constructor>(): kotlin.Any
+
 KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(61,61): ''
   <constructor>(): kotlin.Any
 
@@ -14,6 +17,9 @@ KtSimpleNameReference|KtNameReferenceExpression(81,87): 'String'
   kotlin/String
 
 KtConstructorDelegationCall(88,88): ''
+  <constructor>(): kotlin.Any
+
+KtConstructorDelegationReferenceExpression(88,88): ''
   <constructor>(): kotlin.Any
 
 KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(88,88): ''
@@ -26,6 +32,9 @@ KtSimpleNameReference|KtNameReferenceExpression(163,166): 'Int'
   kotlin/Int
 
 KtConstructorDelegationCall(170,179): 'super(ci)'
+  <constructor>(i: kotlin.Int): r.BaseClass
+
+KtConstructorDelegationReferenceExpression(170,175): 'super'
   <constructor>(i: kotlin.Int): r.BaseClass
 
 KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(170,175): 'super'
@@ -41,6 +50,9 @@ KtSimpleNameReference|KtNameReferenceExpression(200,206): 'String'
   kotlin/String
 
 KtConstructorDelegationCall(210,219): 'super(cs)'
+  <constructor>(s: kotlin.String): r.BaseClass
+
+KtConstructorDelegationReferenceExpression(210,215): 'super'
   <constructor>(s: kotlin.String): r.BaseClass
 
 KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(210,215): 'super'
@@ -79,6 +91,9 @@ KtSimpleNameReference|KtNameReferenceExpression(329,335): 'String'
 KtConstructorDelegationCall(339,345): 'this()'
   <constructor>(): r.ChildWithPrimary
 
+KtConstructorDelegationReferenceExpression(339,343): 'this'
+  <constructor>(): r.ChildWithPrimary
+
 KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(339,343): 'this'
   <constructor>(): r.ChildWithPrimary
 
@@ -92,6 +107,9 @@ KtSimpleNameReference|KtNameReferenceExpression(419,422): 'Int'
   kotlin/Int
 
 KtConstructorDelegationCall(446,454): 'super(1)'
+  <constructor>(i: kotlin.Int): r.ClassWithType<T>
+
+KtConstructorDelegationReferenceExpression(446,451): 'super'
   <constructor>(i: kotlin.Int): r.ClassWithType<T>
 
 KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(446,451): 'super'

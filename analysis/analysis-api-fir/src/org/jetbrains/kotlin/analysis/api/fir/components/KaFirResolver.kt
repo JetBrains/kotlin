@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -37,6 +38,7 @@ internal class KaFirResolver(override val analysisSession: KtFirAnalysisSession)
         val resolvedSymbol = when (originalFir) {
             is FirResolvable -> originalFir.calleeReference.toResolvedBaseSymbol(discardErrorReference = true)
             is FirArrayLiteral -> with(analysisSession) { arrayOfSymbol(originalFir)?.firSymbol }
+            is FirResolvedNamedReference -> originalFir.toResolvedBaseSymbol(discardErrorReference = true)
             else -> null
         } ?: return null
 

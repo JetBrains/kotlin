@@ -103,6 +103,9 @@ KtSimpleNameReference|KtNameReferenceExpression(405,408): 'Int'
 KtConstructorDelegationCall(412,412): ''
   <constructor>(): kotlin.Any
 
+KtConstructorDelegationReferenceExpression(412,412): ''
+  <constructor>(): kotlin.Any
+
 KtConstructorDelegationReference|KtConstructorDelegationReferenceExpression(412,412): ''
   <constructor>(): kotlin.Any
 

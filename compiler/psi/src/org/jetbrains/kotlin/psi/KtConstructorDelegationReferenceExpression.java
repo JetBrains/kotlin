@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.resolve.KtResolvableCall;
 
-public class KtConstructorDelegationReferenceExpression extends KtExpressionImpl implements KtReferenceExpression {
+public class KtConstructorDelegationReferenceExpression extends KtExpressionImpl implements KtReferenceExpression, KtResolvableCall {
     public KtConstructorDelegationReferenceExpression(@NotNull ASTNode node) {
         super(node);
     }

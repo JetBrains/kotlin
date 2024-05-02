@@ -56,6 +56,7 @@ abstract class AbstractKtCallResolver : KtCallResolver() {
         is KtArrayAccessExpression -> true
         is KtCallableReferenceExpression -> true
         is KtCollectionLiteralExpression -> true
+        is KtConstructorDelegationReferenceExpression -> true
         else -> false
     }
 

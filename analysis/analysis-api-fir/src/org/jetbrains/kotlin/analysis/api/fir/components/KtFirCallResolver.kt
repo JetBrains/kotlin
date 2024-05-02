@@ -123,8 +123,8 @@ internal class KtFirCallResolver(
         getCallInfo: FirElement.(
             psiToResolve: KtElement,
             resolveCalleeExpressionOfFunctionCall: Boolean,
-            resolveFragmentOfCall: Boolean
-        ) -> List<T>
+            resolveFragmentOfCall: Boolean,
+        ) -> List<T>,
     ): List<T> {
         if (!canBeResolvedAsCall(psi)) return emptyList()
 
@@ -135,6 +135,7 @@ internal class KtFirCallResolver(
             ?: containingBinaryExpressionForLhs
             ?: containingUnaryExpressionForIncOrDec
             ?: psi.getContainingDotQualifiedExpressionForSelectorExpression()
+            ?: psi.getConstructorDelegationCallForDelegationReferenceExpression()
             ?: psi
         val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
         if (fir is FirDiagnosticHolder) {
@@ -326,11 +327,19 @@ internal class KtFirCallResolver(
         return null
     }
 
+    /**
+     * When resolving [KtConstructorDelegationReferenceExpression], we instead resolve the containing [KtConstructorDelegationCall].
+     * This way the corresponding FIR element is the [FirDelegatedConstructorCall] instead of the reference
+     */
+    private fun KtElement.getConstructorDelegationCallForDelegationReferenceExpression(): KtConstructorDelegationCall? {
+        return takeIf { it is KtConstructorDelegationReferenceExpression }?.parent as? KtConstructorDelegationCall
+    }
+
     private fun createKtCall(
         psi: KtElement,
         fir: FirResolvable,
         candidate: AbstractCandidate?,
-        resolveFragmentOfCall: Boolean
+        resolveFragmentOfCall: Boolean,
     ): KtCall? {
         return createKtCall(psi, fir, fir.calleeReference, candidate, resolveFragmentOfCall)
     }
@@ -340,7 +349,7 @@ internal class KtFirCallResolver(
         fir: FirElement,
         calleeReference: FirReference,
         candidate: AbstractCandidate?,
-        resolveFragmentOfCall: Boolean
+        resolveFragmentOfCall: Boolean,
     ): KtCall? {
         val targetSymbol = candidate?.symbol
             ?: calleeReference.toResolvedBaseSymbol()
@@ -366,7 +375,7 @@ internal class KtFirCallResolver(
         fun createKtPartiallyAppliedSymbolForImplicitInvoke(
             dispatchReceiver: FirExpression?,
             extensionReceiver: FirExpression?,
-            explicitReceiverKind: ExplicitReceiverKind
+            explicitReceiverKind: ExplicitReceiverKind,
         ): KtPartiallyAppliedSymbol<KtCallableSymbol, KtCallableSignature<KtCallableSymbol>> {
             isImplicitInvoke = true
 
@@ -698,12 +707,12 @@ internal class KtFirCallResolver(
     private data class CompoundArrayAccessPartiallyAppliedSymbols(
         val operationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
         val getPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
-        val setPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>
+        val setPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
     )
 
     private fun getOperationPartiallyAppliedSymbolsForCompoundArrayAssignment(
         fir: FirFunctionCall,
-        arrayAccessExpression: KtArrayAccessExpression
+        arrayAccessExpression: KtArrayAccessExpression,
     ): CompoundArrayAccessPartiallyAppliedSymbols? {
         // The last argument of `set` is the new value to be set. This value should be a call to the respective `plus`, `minus`,
         // `times`, `div`, or `rem` function.
@@ -729,7 +738,7 @@ internal class KtFirCallResolver(
     private fun getOperationPartiallyAppliedSymbolsForIncOrDecOperation(
         fir: FirFunctionCall,
         arrayAccessExpression: KtArrayAccessExpression,
-        incDecPrecedence: KtCompoundAccess.IncOrDecOperation.Precedence
+        incDecPrecedence: KtCompoundAccess.IncOrDecOperation.Precedence,
     ): CompoundArrayAccessPartiallyAppliedSymbols? {
         val lastArg = fir.arguments.lastOrNull() ?: return null
         val setPartiallyAppliedSymbol = fir.toPartiallyAppliedSymbol(arrayAccessExpression.arrayExpression) ?: return null
@@ -774,7 +783,7 @@ internal class KtFirCallResolver(
 
     private fun getOperationPartiallyAppliedSymbolsForCompoundVariableAccess(
         fir: FirVariableAssignment,
-        leftOperandPsi: KtExpression
+        leftOperandPsi: KtExpression,
     ): KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>? {
         // The new value is a call to the appropriate operator function.
         val operationCall = fir.rValue as? FirFunctionCall ?: getInitializerOfReferencedLocalVariable(fir.rValue) ?: return null
@@ -794,7 +803,7 @@ internal class KtFirCallResolver(
     }
 
     private fun FirFunctionCall.toPartiallyAppliedSymbol(
-        explicitReceiverPsiSupplement: KtExpression? = null
+        explicitReceiverPsiSupplement: KtExpression? = null,
     ): KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>? {
         val operationSymbol =
             (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
@@ -872,19 +881,19 @@ internal class KtFirCallResolver(
         firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
 
     private fun FirQualifiedAccessExpression.toTypeArgumentsMapping(
-        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>,
     ): Map<KtTypeParameterSymbol, KtType> {
         return toTypeArgumentsMapping(typeArguments, partiallyAppliedSymbol)
     }
 
     private fun FirResolvedQualifier.toTypeArgumentsMapping(
-        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>,
     ): Map<KtTypeParameterSymbol, KtType> {
         return toTypeArgumentsMapping(typeArguments, partiallyAppliedSymbol)
     }
 
     private fun FirDelegatedConstructorCall.toTypeArgumentsMapping(
-        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>,
     ): Map<KtTypeParameterSymbol, KtType> {
         val typeParameters = partiallyAppliedSymbol.symbol.typeParameters.ifEmpty { return emptyMap() }
         val typeArguments = constructedTypeRef.coneType.typeArguments
@@ -908,7 +917,7 @@ internal class KtFirCallResolver(
      */
     private fun toTypeArgumentsMapping(
         typeArguments: List<FirTypeProjection>,
-        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>,
     ): Map<KtTypeParameterSymbol, KtType> {
         val typeParameters = partiallyAppliedSymbol.symbol.typeParameters
         if (typeParameters.isEmpty()) return emptyMap()
@@ -927,7 +936,7 @@ internal class KtFirCallResolver(
     }
 
     private fun FirArrayLiteral.toTypeArgumentsMapping(
-        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>,
     ): Map<KtTypeParameterSymbol, KtType> {
         val elementType = resolvedType.arrayElementType()?.asKtType() ?: return emptyMap()
         val typeParameter = partiallyAppliedSymbol.symbol.typeParameters.singleOrNull() ?: return emptyMap()
@@ -1024,7 +1033,7 @@ internal class KtFirCallResolver(
 
     private fun FirFunctionCall.collectCallCandidates(
         psi: KtElement,
-        resolveFragmentOfCall: Boolean
+        resolveFragmentOfCall: Boolean,
     ): List<KtCallCandidateInfo> {
         // If a function call is resolved to an implicit invoke call, the FirImplicitInvokeCall will have the `invoke()` function as the
         // callee and the variable as the explicit receiver. To correctly get all candidates, we need to get the original function
@@ -1069,7 +1078,7 @@ internal class KtFirCallResolver(
 
     private fun FirDelegatedConstructorCall.collectCallCandidatesForDelegatedConstructorCall(
         psi: KtElement,
-        resolveFragmentOfCall: Boolean
+        resolveFragmentOfCall: Boolean,
     ): List<KtCallCandidateInfo> {
         fun findDerivedClass(psi: KtElement): KtClassOrObject? {
             val parent = psi.parent
@@ -1110,7 +1119,7 @@ internal class KtFirCallResolver(
         element: KtElement,
         candidate: Candidate,
         isInBestCandidates: Boolean,
-        resolveFragmentOfCall: Boolean
+        resolveFragmentOfCall: Boolean,
     ): KtCallCandidateInfo? {
         val call = createKtCall(element, resolvable, candidate, resolveFragmentOfCall)
             ?: error("expect `createKtCall` to succeed for candidate")
@@ -1282,7 +1291,7 @@ internal class KtFirCallResolver(
     }
 
     private fun Iterable<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
-        signatureOfCallee: KtFunctionLikeSignature<*>
+        signatureOfCallee: KtFunctionLikeSignature<*>,
     ): LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>> {
         val paramSignatureByName = signatureOfCallee.valueParameters.associateBy {
             // We intentionally use `symbol.name` instead of `name` here, since
@@ -1317,7 +1326,7 @@ internal class KtFirCallResolver(
     private fun mapArgumentExpressionToParameter(
         argumentExpression: FirExpression,
         parameterSymbol: KtVariableLikeSignature<KtValueParameterSymbol>,
-        argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>
+        argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
     ) {
         if (argumentExpression is FirVarargArgumentsExpression) {
             for (varargArgument in argumentExpression.arguments) {
