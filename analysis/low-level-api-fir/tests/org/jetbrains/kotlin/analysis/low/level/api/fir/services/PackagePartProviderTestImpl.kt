@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.providers.PackagePartProviderFactory
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.test.services.TestServices
@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 internal class PackagePartProviderTestImpl(
     private val testServices: TestServices,
 ) : PackagePartProviderFactory() {
-    override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
+    override fun createPackagePartProvider(scope: GlobalSearchScope): PackageAndMetadataPartProvider {
         val providers = testServices.moduleStructure.modules.map { module ->
             testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)(scope)
         }
-        return object : PackagePartProvider {
+        return object : PackageAndMetadataPartProvider {
             override fun findPackageParts(packageFqName: String): List<String> {
                 return providers.flatMapTo(mutableSetOf()) { it.findPackageParts(packageFqName) }.toList()
             }
@@ -38,6 +38,10 @@ internal class PackagePartProviderTestImpl(
             }
 
             override fun mayHaveOptionalAnnotationClasses(): Boolean = providers.any { it.mayHaveOptionalAnnotationClasses() }
+
+            override fun findMetadataPackageParts(packageFqName: String): List<String> {
+                return providers.flatMapTo(mutableSetOf()) { it.findMetadataPackageParts(packageFqName) }.toList()
+            }
         }
     }
 }

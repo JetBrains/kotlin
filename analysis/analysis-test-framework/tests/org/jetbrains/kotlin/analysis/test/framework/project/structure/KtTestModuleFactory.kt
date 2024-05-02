@@ -49,6 +49,7 @@ private val TestServices.ktTestModuleFactory: KtTestModuleFactory by TestService
 fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtTestModuleFactory = when (testModule.explicitTestModuleKind) {
     TestModuleKind.Source -> KtSourceTestModuleFactory
     TestModuleKind.LibraryBinary -> KtLibraryBinaryTestModuleFactory
+    TestModuleKind.LibraryBinaryKlib -> KtLibraryBinaryKlibTestModuleFactory
     TestModuleKind.LibraryBinaryDecompiled -> KtLibraryBinaryDecompiledTestModuleFactory
     TestModuleKind.LibrarySource -> KtLibrarySourceTestModuleFactory
     TestModuleKind.ScriptSource -> KtScriptTestModuleFactory

@@ -30,6 +30,11 @@ enum class TestModuleKind(val suffix: String) {
     LibraryBinary("LibraryBinary"),
 
     /**
+     * A binary library compiled as klib
+     */
+    LibraryBinaryKlib("LibraryBinaryKlib"),
+
+    /**
      * A binary library with PSI files decompiled from the library's class files. Instead of building and indexing stubs (if applicable),
      * the test's declaration provider will instead index the decompiled PSI files directly.
      *

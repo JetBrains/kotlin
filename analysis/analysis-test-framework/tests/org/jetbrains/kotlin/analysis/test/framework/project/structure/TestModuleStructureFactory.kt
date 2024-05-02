@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -171,10 +172,14 @@ object TestModuleStructureFactory {
             }
 
             for (libraryRoot in libraryRoots) {
-                check(libraryRoot.extension == "jar")
+                check(libraryRoot.extension == "jar" || libraryRoot.extension == KLIB_FILE_EXTENSION)
 
                 val libraryModule = libraryCache(setOf(libraryRoot)) {
-                    createLibraryModule(project, libraryRoot, JvmPlatforms.defaultJvmPlatform, testServices)
+                    val platform = if (libraryRoot.extension == "jar")
+                        JvmPlatforms.defaultJvmPlatform
+                    else
+                        CommonPlatforms.defaultCommonPlatform
+                    createLibraryModule(project, libraryRoot, platform, testServices)
                 }
 
                 ktModule.directRegularDependencies.add(libraryModule)

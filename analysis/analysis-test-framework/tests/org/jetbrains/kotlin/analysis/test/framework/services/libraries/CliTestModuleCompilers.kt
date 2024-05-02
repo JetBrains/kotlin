@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -145,6 +147,17 @@ class JsKlibTestModuleCompiler : CliTestModuleCompiler() {
     }
 }
 
+class KlibTestModuleCompiler : CliTestModuleCompiler() {
+    override val compilerKind = CompilerExecutor.CompilerKind.Klib
+
+    override fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String> {
+        return listOf(
+            K2MetadataCompilerArguments::classpath.cliArgument,
+            testServices.standardLibrariesPathProvider.runtimeJarForTestsWithCommon().absolutePath,
+        )
+    }
+}
+
 /**
  * [DispatchingTestModuleCompiler] chooses the appropriate compiler for a module based on its platform.
  * In case all tests in a suite should compile libraries for a single platform, one of the underlying [TestModuleCompiler]s
@@ -154,6 +167,7 @@ class DispatchingTestModuleCompiler : TestModuleCompiler() {
     private val compilersByKind = mapOf(
         CompilerExecutor.CompilerKind.JVM to JvmJarTestModuleCompiler(),
         CompilerExecutor.CompilerKind.JS to JsKlibTestModuleCompiler(),
+        CompilerExecutor.CompilerKind.Klib to KlibTestModuleCompiler(),
     )
 
     override fun compile(tmpDir: Path, module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): Path {
@@ -168,6 +182,7 @@ class DispatchingTestModuleCompiler : TestModuleCompiler() {
         val compilerKindForModule = when {
             module.targetPlatform.isJvm() -> CompilerExecutor.CompilerKind.JVM
             module.targetPlatform.isJs() -> CompilerExecutor.CompilerKind.JS
+            module.targetPlatform.isCommon() -> CompilerExecutor.CompilerKind.Klib
             else -> error("DispatchingTestModuleCompiler doesn't support the platform: ${module.targetPlatform}")
         }
 

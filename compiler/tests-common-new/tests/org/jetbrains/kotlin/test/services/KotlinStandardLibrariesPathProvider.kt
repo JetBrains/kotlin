@@ -38,6 +38,11 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
     abstract fun runtimeJarForTests(): File
 
     /**
+     * kotlin-stdlib-common.jar
+     */
+    abstract fun runtimeJarForTestsWithCommon(): File
+
+    /**
      * kotlin-stdlib-jdk8.jar
      */
     abstract fun runtimeJarForTestsWithJdk8(): File
@@ -116,6 +121,7 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
 
 object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPathProvider() {
     override fun runtimeJarForTests(): File = ForTestCompileRuntime.runtimeJarForTests()
+    override fun runtimeJarForTestsWithCommon(): File = ForTestCompileRuntime.stdlibCommonForTests()
     override fun runtimeJarForTestsWithJdk8(): File = ForTestCompileRuntime.runtimeJarForTestsWithJdk8()
     override fun minimalRuntimeJarForTests(): File = ForTestCompileRuntime.minimalRuntimeJarForTests()
     override fun reflectJarForTests(): File = ForTestCompileRuntime.reflectJarForTests()
@@ -140,6 +146,7 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
 
 object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPathProvider() {
     const val KOTLIN_STDLIB_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib"
+    const val KOTLIN_STDLIB_COMMON_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib-common"
     const val KOTLIN_STDLIB_JS_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib-js"
     const val KOTLIN_STDLIB_JDK8_PROP = "org.jetbrains.kotlin.test.kotlin-stdlib-jdk8"
     const val KOTLIN_REFLECT_PROP = "org.jetbrains.kotlin.test.kotlin-reflect"
@@ -156,6 +163,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     }
 
     override fun runtimeJarForTests(): File = getFile(KOTLIN_STDLIB_PROP)
+    override fun runtimeJarForTestsWithCommon(): File = getFile(KOTLIN_STDLIB_COMMON_PROP)
     override fun runtimeJarForTestsWithJdk8(): File = getFile(KOTLIN_STDLIB_JDK8_PROP)
     override fun minimalRuntimeJarForTests(): File = getFile(KOTLIN_STDLIB_PROP)
     override fun reflectJarForTests(): File = getFile(KOTLIN_REFLECT_PROP)

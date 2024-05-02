@@ -76,7 +76,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         // We explicitly exclude decompiled libraries. Their decompiled PSI files are indexed by the declaration provider, so it shouldn't
         // additionally build and index stubs for the library.
         val mainBinaryModules = moduleStructure.mainModules
-            .filter { it.moduleKind == TestModuleKind.LibraryBinary }
+            .filter { it.moduleKind == TestModuleKind.LibraryBinary || it.moduleKind == TestModuleKind.LibraryBinaryKlib }
             .map { it.ktModule as KtBinaryModule }
 
         val sharedBinaryDependencies = moduleStructure.binaryModules.toMutableSet()

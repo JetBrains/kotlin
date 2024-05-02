@@ -139,7 +139,12 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         generateResolveExtensionsTests()
     }
     group(
-        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibraryBinaryDecompiled) and
+        filter = testModuleKindIs(
+            TestModuleKind.Source,
+            TestModuleKind.ScriptSource,
+            TestModuleKind.LibraryBinary,
+            TestModuleKind.LibraryBinaryKlib,
+        ) and
                 analysisApiModeIs(AnalysisApiMode.Standalone)
     ) {
         generateAnalysisApiStandaloneTests()
@@ -294,9 +299,15 @@ private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
         }
 
         test<AbstractPsiDeclarationProviderTest>(
-            filter = testModuleKindIs(TestModuleKind.LibraryBinaryDecompiled)
+            filter = testModuleKindIs(TestModuleKind.LibraryBinary)
         ) {
             model(it, "binary")
+        }
+
+        test<AbstractPsiDeclarationProviderTest>(
+            filter = testModuleKindIs(TestModuleKind.LibraryBinaryKlib)
+        ) {
+            model(it, "klib")
         }
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.configurators
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCodeFragmentTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryKlibTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibrarySourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
@@ -31,6 +32,11 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
             TestModuleKind.LibraryBinary -> {
                 require(data.analysisSessionMode == AnalysisSessionMode.Normal)
                 AnalysisApiFirLibraryBinaryTestConfigurator
+            }
+
+            TestModuleKind.LibraryBinaryKlib -> {
+                require(data.analysisSessionMode == AnalysisSessionMode.Normal)
+                AnalysisApiFirLibraryBinaryKlibTestConfigurator
             }
 
             TestModuleKind.LibraryBinaryDecompiled -> {
@@ -63,6 +69,7 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
                 }
 
                 TestModuleKind.LibraryBinary,
+                TestModuleKind.LibraryBinaryKlib,
                 TestModuleKind.LibraryBinaryDecompiled,
                 TestModuleKind.LibrarySource,
                 TestModuleKind.CodeFragment -> {

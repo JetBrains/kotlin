@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryKlibTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
@@ -68,6 +69,10 @@ abstract class StandaloneModeBinaryTestConfigurator : StandaloneModeConfigurator
 
 object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeBinaryTestConfigurator() {
     override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryTestModuleFactory
+}
+
+object StandaloneModeLibraryBinaryKlibTestConfigurator : StandaloneModeBinaryTestConfigurator() {
+    override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryKlibTestModuleFactory
 }
 
 object StandaloneModeLibraryBinaryDecompiledTestConfigurator : StandaloneModeBinaryTestConfigurator() {

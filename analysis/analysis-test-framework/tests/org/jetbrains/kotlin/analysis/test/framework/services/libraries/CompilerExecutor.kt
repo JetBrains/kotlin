@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -65,7 +66,9 @@ internal object CompilerExecutor {
         val sourceFiles = sourcesPath.toFile().walkBottomUp()
         val library = when (compilerKind) {
             CompilerKind.JVM -> sourcesPath / "$libraryName.jar"
-            CompilerKind.JS -> sourcesPath / "$libraryName.klib"
+            CompilerKind.JS,
+            CompilerKind.Klib
+            -> sourcesPath / "$libraryName.klib"
         }
 
         when (compilerKind) {
@@ -95,13 +98,22 @@ internal object CompilerExecutor {
                 }
                 MockLibraryUtil.runJsCompiler(commands)
             }
+            CompilerKind.Klib -> {
+                val commands = buildList {
+                    add(K2MetadataCompilerArguments::moduleName.cliArgument); add(libraryName)
+                    sourceFiles.mapTo(this) { it.absolutePath }
+                    addAll(options)
+                    add(K2MetadataCompilerArguments::destination.cliArgument); add(library.absolutePathString())
+                }
+                MockLibraryUtil.runMetadataCompiler(commands)
+            }
         }
 
         return library
     }
 
     enum class CompilerKind {
-        JVM, JS
+        JVM, JS, Klib
     }
 }
 

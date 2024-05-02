@@ -14,6 +14,7 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
         return when (data.moduleKind) {
             TestModuleKind.Source -> StandaloneModeConfigurator
             TestModuleKind.LibraryBinary -> StandaloneModeLibraryBinaryTestConfigurator
+            TestModuleKind.LibraryBinaryKlib -> StandaloneModeLibraryBinaryKlibTestConfigurator
             TestModuleKind.LibraryBinaryDecompiled -> StandaloneModeLibraryBinaryDecompiledTestConfigurator
             else -> unsupportedModeError(data)
         }
@@ -27,6 +28,7 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
             else -> when (data.moduleKind) {
                 TestModuleKind.Source,
                 TestModuleKind.LibraryBinary,
+                TestModuleKind.LibraryBinaryKlib,
                 TestModuleKind.LibraryBinaryDecompiled,
                 TestModuleKind.CodeFragment -> {
                     true
