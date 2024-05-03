@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
@@ -131,11 +132,17 @@ fun <Data, Context> dumpToStdout(
 
 val defaultDumper = makeDumpAction(dumpToStdout(::dumpIrElement) + dumpToFile("ir", ::dumpIrElement))
 
-fun validationCallback(context: CommonBackendContext, fragment: IrElement, checkProperties: Boolean = false) {
+fun validationCallback(
+    context: CommonBackendContext,
+    fragment: IrElement,
+    mode: IrVerificationMode = IrVerificationMode.ERROR,
+    checkProperties: Boolean = false,
+    checkTypes: Boolean = false,
+) {
     val validatorConfig = IrValidatorConfig(
-        abortOnError = true,
+        abortOnError = mode == IrVerificationMode.ERROR,
         ensureAllNodesAreDifferent = true,
-        checkTypes = false,
+        checkTypes = checkTypes,
         checkDescriptors = false,
         checkProperties = checkProperties,
     )
