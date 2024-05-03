@@ -169,6 +169,7 @@ private class MismatchesFilter(
     private val k1Resolver: Resolver,
     private val k2Resolver: Resolver,
 ) {
+    @Suppress("IncorrectFormatting")
     fun filter(input: List<Mismatch>): List<Mismatch> {
         return input
             /* --- FILTER OUT: MISMATCHES THAT ARE OK --- */
@@ -201,15 +202,15 @@ private class MismatchesFilter(
             .filter {
                 when {
                     /* already fixed in KT-64743 */ //it.isTypeAliasRecordedInK2TypeAsClass() -> false
-                    /* TODO: KT-65263 (scheduled to 2.0.0-RC) */ it.isAbbreviatedTypeMissingInK1OrK2Type() -> false
+                    /* TODO: KT-65263 (scheduled to 2.0.20) */ it.isAbbreviatedTypeMissingInK1OrK2Type() -> false
                     /* TODO: KT-63871, KT-63852 (both scheduled to 2.1.0) */ it.isNotDefaultPropertyNotMarkedAsNotDefaultInK2() -> false
                     /* TODO: KT-64924 (scheduled to 2.1.0) */ it.isSerializerFunctionWithoutSynthesizedKindInK2() -> false
-                    /* TODO: KT-55446 (scheduled to 2.0.0-Beta5) */ it.isPrivateToThisBecamePrivateInK2() -> false
-                    /* TODO: KT-65757 (scheduled to 2.0.0-Beta5) */ it.isMissingDeprecatedAnnotationOnKotlinxSerializationSynthesizedDeclarationInK2() -> false
+                    /* already fixed in KT-55446 */ // it.isPrivateToThisBecamePrivateInK2() -> false
+                    /* already fixed in KT-65757 */ // it.isMissingDeprecatedAnnotationOnKotlinxSerializationSynthesizedDeclarationInK2() -> false
                     else -> true
                 }
             }
-            /* TODO: KT-65588 (scheduled to 2.0.0-Beta5) */.dropPairedFunctionsWithDifferentlyRecordedPrimitiveArraysInVarargParameterPositionInK1AndK2()
+            /* already fixed in KT-65588 */ //.dropPairedFunctionsWithDifferentlyRecordedPrimitiveArraysInVarargParameterPositionInK1AndK2()
     }
 
     /* --- MISMATCHES THAT ARE OK --- */
@@ -764,6 +765,7 @@ private class MismatchesFilter(
         return false
     }
 
+    @Suppress("unused")
     private fun Mismatch.isPrivateToThisBecamePrivateInK2(): Boolean {
         if (this is Mismatch.DifferentValues && kind is FlagKind && name == "visibility") {
             val visibilityInK1 = valueA as Visibility
@@ -775,6 +777,7 @@ private class MismatchesFilter(
         return false
     }
 
+    @Suppress("unused")
     private fun Mismatch.isMissingDeprecatedAnnotationOnKotlinxSerializationSynthesizedDeclarationInK2(): Boolean {
         return this is Mismatch.MissingEntity
                 && kind is AnnotationKind
@@ -783,6 +786,7 @@ private class MismatchesFilter(
                 && (path.last() as? PathElement.Class)?.clazzB?.name?.endsWith(".\$serializer") == true
     }
 
+    @Suppress("unused")
     private fun List<Mismatch>.dropPairedFunctionsWithDifferentlyRecordedPrimitiveArraysInVarargParameterPositionInK1AndK2(): List<Mismatch> {
         data class ProblematicCase(val properArrayType: String, val invalidArrayType: String)
         class Payload(var missingInK1: Mismatch.MissingEntity? = null, var missingInK2: Mismatch.MissingEntity? = null)
