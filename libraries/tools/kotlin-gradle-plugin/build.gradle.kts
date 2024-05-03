@@ -302,6 +302,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             exclude(group = "*")
         }
         implementation("org.reflections:reflections:0.10.2")
+        implementation(project(":compose-compiler-gradle-plugin"))
     }
 
     tasks.named("check") {
