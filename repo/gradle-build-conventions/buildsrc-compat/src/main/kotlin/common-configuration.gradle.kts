@@ -306,3 +306,13 @@ fun skipJvmDefaultAllForModule(path: String): Boolean =
             //     )V from class kotlin.reflect.jvm.internal.impl.resolve.OverridingUtilTypeSystemContext
             // KT-54749
             path == ":core:descriptors"
+
+
+// Workaround for #KT-65266
+afterEvaluate {
+    val versionString = version.toString()
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        val friendPathsWithoutVersion = friendPaths.filter { !it.name.contains(versionString) }
+        friendPaths.setFrom(friendPathsWithoutVersion)
+    }
+}
