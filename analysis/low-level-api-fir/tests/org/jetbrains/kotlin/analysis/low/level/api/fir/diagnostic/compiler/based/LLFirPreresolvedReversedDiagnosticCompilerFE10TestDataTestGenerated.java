@@ -16631,6 +16631,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("genericWithUnmatchedNullabilityDelegate.kt")
+      public void testGenericWithUnmatchedNullabilityDelegate() {
+        runTest("compiler/testData/diagnostics/tests/inference/genericWithUnmatchedNullabilityDelegate.kt");
+      }
+
+      @Test
+      @TestMetadata("genericsWithUnmatchedNullabilityNested.kt")
+      public void testGenericsWithUnmatchedNullabilityNested() {
+        runTest("compiler/testData/diagnostics/tests/inference/genericsWithUnmatchedNullabilityNested.kt");
+      }
+
+      @Test
       @TestMetadata("hasErrorInConstrainingTypes.kt")
       public void testHasErrorInConstrainingTypes() {
         runTest("compiler/testData/diagnostics/tests/inference/hasErrorInConstrainingTypes.kt");
