@@ -507,6 +507,7 @@ class FirSignatureEnhancement(
                 initialBounds.add(typeParameter.bounds.toList())
                 buildTypeParameterCopy(typeParameter) {
                     // TODO: we should create a new symbol to avoid clashing (KT-60445)
+                    symbol = typeParameter.symbol
                     bounds.clear()
                     typeParameter.bounds.mapTo(bounds) {
                         it.resolveIfJavaType(

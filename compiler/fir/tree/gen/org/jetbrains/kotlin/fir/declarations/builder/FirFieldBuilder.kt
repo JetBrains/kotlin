@@ -133,6 +133,5 @@ inline fun buildFieldCopy(original: FirField, init: FirFieldBuilder.() -> Unit):
     copyBuilder.isVar = original.isVar
     copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.symbol = original.symbol
     return copyBuilder.apply(init).build()
 }

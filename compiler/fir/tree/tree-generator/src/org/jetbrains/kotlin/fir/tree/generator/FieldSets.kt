@@ -48,7 +48,10 @@ object FieldSets {
 
     fun declaredSymbol(name: String, symbolType: ClassRef<*>): Field =
         field(name, symbolType)
-            .apply { symbolFieldRole = AbstractField.SymbolFieldRole.DECLARED }
+            .apply {
+                symbolFieldRole = AbstractField.SymbolFieldRole.DECLARED
+                skippedInCopy = true
+            }
 
     fun declaredSymbol(symbolType: ClassRef<*>): Field = declaredSymbol("symbol", symbolType)
 

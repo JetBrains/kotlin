@@ -53,6 +53,7 @@ sealed class Field : AbstractField<Field>() {
             copy.needTransformInOtherChildren = needTransformInOtherChildren
             copy.useNullableForReplace = useNullableForReplace
             copy.customInitializationCall = customInitializationCall
+            copy.skippedInCopy = skippedInCopy
         }
         copy.parentHasSeparateTransform = parentHasSeparateTransform
     }
@@ -128,6 +129,10 @@ class FieldWithDefault(override val origin: Field) : Field() {
 
     override var useNullableForReplace: Boolean
         get() = origin.useNullableForReplace
+        set(_) {}
+
+    override var skippedInCopy: Boolean
+        get() = origin.skippedInCopy
         set(_) {}
 
     override fun internalCopy(): Field {

@@ -80,7 +80,6 @@ inline fun buildTypeAliasCopy(original: FirTypeAlias, init: FirTypeAliasBuilder.
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.name = original.name
-    copyBuilder.symbol = original.symbol
     copyBuilder.expandedTypeRef = original.expandedTypeRef
     copyBuilder.annotations.addAll(original.annotations)
     return copyBuilder.apply(init).build()

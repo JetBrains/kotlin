@@ -96,7 +96,6 @@ inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClas
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.scopeProvider = original.scopeProvider
     copyBuilder.name = original.name
-    copyBuilder.symbol = original.symbol
     copyBuilder.companionObjectSymbol = original.companionObjectSymbol
     copyBuilder.superTypeRefs.addAll(original.superTypeRefs)
     copyBuilder.contextReceivers.addAll(original.contextReceivers)

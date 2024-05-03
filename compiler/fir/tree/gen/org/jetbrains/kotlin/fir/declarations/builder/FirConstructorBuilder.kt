@@ -113,7 +113,6 @@ inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBu
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.contractDescription = original.contractDescription
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.symbol = original.symbol
     copyBuilder.delegatedConstructor = original.delegatedConstructor
     copyBuilder.body = original.body
     return copyBuilder.apply(init).build()

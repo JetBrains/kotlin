@@ -68,7 +68,6 @@ inline fun buildCodeFragmentCopy(original: FirCodeFragment, init: FirCodeFragmen
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.symbol = original.symbol
     copyBuilder.block = original.block
     return copyBuilder.apply(init).build()
 }

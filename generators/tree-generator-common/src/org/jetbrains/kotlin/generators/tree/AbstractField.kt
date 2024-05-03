@@ -46,6 +46,13 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     var fromParent: Boolean = false
 
     /**
+     * If `true`, this field is skipped in `build%Element%Copy` functions.
+     *
+     *  @see AbstractBuilderPrinter.printDslBuildCopyFunction
+     */
+    open var skippedInCopy: Boolean = false
+
+    /**
      * Whether this field can contain an element either directly or e.g. in a list.
      */
     open val containsElement: Boolean

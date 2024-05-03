@@ -78,7 +78,6 @@ inline fun buildScriptCopy(original: FirScript, init: FirScriptBuilder.() -> Uni
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
-    copyBuilder.symbol = original.symbol
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.contextReceivers.addAll(original.contextReceivers)
     copyBuilder.resultPropertyName = original.resultPropertyName

@@ -102,7 +102,6 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.name = original.name
     copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.symbol = original.symbol
     copyBuilder.defaultValue = original.defaultValue
     copyBuilder.containingFunctionSymbol = original.containingFunctionSymbol
     copyBuilder.isCrossinline = original.isCrossinline
