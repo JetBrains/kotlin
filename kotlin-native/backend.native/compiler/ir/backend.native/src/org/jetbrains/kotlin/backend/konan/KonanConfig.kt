@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.konan.file.File
@@ -27,12 +28,6 @@ import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
-
-enum class IrVerificationMode {
-    NONE,
-    WARNING,
-    ERROR
-}
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
     internal val distribution = run {
