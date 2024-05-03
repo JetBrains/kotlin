@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -152,8 +153,27 @@ fun validationCallback(
 
 val validationAction = makeVerifyAction(::validationCallback)
 
-class IrValidationPhase(private val context: CommonBackendContext) : ModuleLoweringPass {
-    override fun lower(irModule: IrModuleFragment) {
+abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Context) : ModuleLoweringPass {
+
+    final override fun lower(irModule: IrModuleFragment) {
+        if (context.configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE) != IrVerificationMode.NONE) {
+            validate(irModule)
+        }
+    }
+
+    protected open fun validate(irModule: IrModuleFragment) {
         validationCallback(context, irModule)
     }
 }
+
+@PhaseDescription(
+    name = "ValidateIrBeforeLowering",
+    description = "Validate IR before lowering",
+)
+open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context)
+
+@PhaseDescription(
+    name = "ValidateIrAfterLowering",
+    description = "Validate IR after lowering",
+)
+open class IrValidationAfterLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context)

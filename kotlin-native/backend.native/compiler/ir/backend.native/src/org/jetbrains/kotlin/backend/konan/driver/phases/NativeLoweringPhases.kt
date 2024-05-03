@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * Run whole IR lowering pipeline over [irModuleFragment].
  */
 internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment: IrModuleFragment) {
+    runPhase(validateIrBeforeLowering, irModuleFragment)
     val lowerings = getAllLowerings()
     irModuleFragment.files.forEach { file ->
         context.fileLowerState = FileLowerState()
@@ -50,7 +51,20 @@ internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment
             runPhase(lowering, loweredFile)
         }
     }
+    runPhase(validateIrAfterLowering, irModuleFragment)
 }
+
+private val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "ValidateIrBeforeLowering",
+        description = "Validate IR before lowering",
+        op = { context, module -> IrValidationBeforeLoweringPhase(context.context).lower(module) }
+)
+
+private val validateIrAfterLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "ValidateIrAfterLowering",
+        description = "Validate IR after lowering",
+        op = { context, module -> IrValidationAfterLoweringPhase(context.context).lower(module) }
+)
 
 internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<Context, Unit>(
         name = "FunctionsWithoutBoundCheckGenerator",

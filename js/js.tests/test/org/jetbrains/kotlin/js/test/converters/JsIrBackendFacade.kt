@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
@@ -64,6 +65,8 @@ class JsIrBackendFacade(
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+
+        configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
 
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
         // Unless this is a test with the IGNORE_ERRORS directive.

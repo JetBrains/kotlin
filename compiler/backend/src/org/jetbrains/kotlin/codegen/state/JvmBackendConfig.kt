@@ -77,7 +77,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val functionsWithInlineClassReturnTypesMangled: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
 
-    val shouldValidateIr: Boolean = configuration.getNotNull(CommonConfigurationKeys.VERIFY_IR) != IrVerificationMode.NONE
     val shouldValidateBytecode: Boolean = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)
 
     val classFileVersion: Int = run {
