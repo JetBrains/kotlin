@@ -196,6 +196,7 @@ private class MismatchesFilter(
                 }
             }
             .dropPairedMissingFunctionMismatchesDueToMissingNullableKotlinAnyUpperBound()
+            .dropPairedMissingDeprecatedAnnotationsThatDifferInReplaceWith()
 
             /* --- FILTER OUT: MISMATCHES THAT ARE NOT OK --- */
             /* We know about them. But let's skip them all to make sure there is nothing new. */
@@ -561,6 +562,80 @@ private class MismatchesFilter(
             // self annihilation:
             mismatchesToRemove += functionInK1
             mismatchesToRemove += functionInK2
+        }
+
+        return this - mismatchesToRemove
+    }
+
+    private fun List<Mismatch>.dropPairedMissingDeprecatedAnnotationsThatDifferInReplaceWith(): List<Mismatch> {
+        fun groupingKey(mismatch: Mismatch, presentOnlyInK1: Boolean): String? {
+            if (mismatch !is Mismatch.MissingEntity ||
+                mismatch.kind !is AnnotationKind ||
+                mismatch.name != "kotlin/Deprecated" ||
+                presentOnlyInK1 == mismatch.missingInA) {
+                return null
+            }
+
+            val extra = when (mismatch.kind as AnnotationKind) {
+                AnnotationKind.REGULAR -> null
+                AnnotationKind.GETTER -> "getter"
+                AnnotationKind.SETTER -> "setter"
+            }
+
+            val path = mismatch.path.filter { it !is PathElement.Root }.mapTo(mutableListOf()) { it.toString() }
+            path.addIfNotNull(extra)
+
+            return path.joinToString(" -> ")
+        }
+
+        val deprecatedAnnotationsPresentOnlyInK1: Map<String, Mismatch> = mapNotNull { mismatch ->
+            val key = groupingKey(mismatch, presentOnlyInK1 = true) ?: return@mapNotNull null
+            key to mismatch
+        }.toMap()
+
+        val deprecatedAnnotationsPresentOnlyInK2: Map<String, Mismatch> = mapNotNull { mismatch ->
+            val key = groupingKey(mismatch, presentOnlyInK1 = false) ?: return@mapNotNull null
+            key to mismatch
+        }.toMap()
+
+        val mismatchesToRemove = hashSetOf<Mismatch>()
+
+        deprecatedAnnotationsPresentOnlyInK1.keys.forEach { key ->
+            val mismatchInK1 = deprecatedAnnotationsPresentOnlyInK1[key] as? Mismatch.MissingEntity ?: return@forEach
+            val mismatchInK2 = deprecatedAnnotationsPresentOnlyInK2[key] as? Mismatch.MissingEntity ?: return@forEach
+
+            val annotationInK1 = mismatchInK1.existentValue as KmAnnotation
+            val annotationInK2 = mismatchInK2.existentValue as KmAnnotation
+
+            if (annotationInK1.className == annotationInK2.className &&
+                annotationInK1.arguments.size == 3 &&
+                annotationInK2.arguments.size == 2
+            ) {
+                val argumentsInK1 = annotationInK1.arguments
+                val argumentsInK2 = annotationInK2.arguments
+
+                val messageInK1 = argumentsInK1["message"] ?: return@forEach
+                val messageInK2 = argumentsInK2["message"] ?: return@forEach
+                if (messageInK1 != messageInK2) return@forEach
+
+                val levelInK1 = argumentsInK1["level"] ?: return@forEach
+                val levelInK2 = argumentsInK2["level"] ?: return@forEach
+                if (levelInK1 != levelInK2) return@forEach
+
+                val replaceWithInK1 = argumentsInK1["replaceWith"] ?: return@forEach
+                val replaceWithInK2 = argumentsInK2["replaceWith"]
+                if (replaceWithInK1 is KmAnnotationArgument.AnnotationValue &&
+                    replaceWithInK1.annotation.className == "kotlin/ReplaceWith" &&
+                    replaceWithInK1.annotation.arguments == mapOf(
+                        "expression" to KmAnnotationArgument.StringValue(""),
+                        "imports" to KmAnnotationArgument.ArrayValue(emptyList())
+                    ) &&
+                    replaceWithInK2 == null
+                ) {
+                    mismatchesToRemove += mismatchInK1
+                    mismatchesToRemove += mismatchInK2
+                }
+            }
         }
 
         return this - mismatchesToRemove
