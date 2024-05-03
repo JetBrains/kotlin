@@ -25,23 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-@Suppress("unused")
-fun validateIrFile(context: CommonBackendContext, irFile: IrFile) {
-    val visitor = IrValidator(context, IrValidatorConfig(abortOnError = false, ensureAllNodesAreDifferent = false))
-    irFile.acceptVoid(visitor)
-}
-
-@Suppress("unused")
-fun validateIrModule(context: CommonBackendContext, irModule: IrModuleFragment) {
-    val visitor = IrValidator(
-        context,
-        IrValidatorConfig(abortOnError = false, ensureAllNodesAreDifferent = true)
-    ) // TODO: consider taking the boolean from settings.
-    irModule.acceptVoid(visitor)
-
-    // TODO: also check that all referenced symbol targets are reachable.
-}
-
 private fun CommonBackendContext.reportIrValidationError(message: String, irFile: IrFile?, irElement: IrElement) {
     try {
         this.reportWarning("[IR VALIDATION] $message", irFile, irElement)
