@@ -145,9 +145,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<JvmSerializeIrMode> SERIALIZE_IR =
             CompilerConfigurationKey.create("What functions to serialize as IR to class metadata");
 
-    public static final CompilerConfigurationKey<Boolean> VALIDATE_IR =
-            CompilerConfigurationKey.create("Validate IR");
-
     public static final CompilerConfigurationKey<Boolean> VALIDATE_BYTECODE =
             CompilerConfigurationKey.create("Validate generated JVM bytecode");
 

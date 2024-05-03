@@ -733,16 +733,6 @@ See KT-45671 for more details."""
         }
 
     @Argument(
-        value = "-Xvalidate-ir",
-        description = "Validate IR before and after lowering."
-    )
-    var validateIr = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xvalidate-bytecode",
         description = "Validate generated JVM bytecode before and after optimizations."
     )

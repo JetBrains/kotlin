@@ -221,7 +221,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             configuration.putCustomPhaseConfigWithEnabledDump(module)
         }
 
-        configuration.put(JVMConfigurationKeys.VALIDATE_IR, true)
+        configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
         configuration.put(JVMConfigurationKeys.VALIDATE_BYTECODE, true)
         configuration.configureJdkClasspathRoots()
 

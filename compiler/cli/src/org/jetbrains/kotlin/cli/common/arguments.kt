@@ -35,6 +35,17 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
     put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
 
+    put(
+        CommonConfigurationKeys.VERIFY_IR,
+        arguments.verifyIr?.let { verifyIrString ->
+            IrVerificationMode.resolveMode(verifyIrString).also {
+                if (it == null) {
+                    messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
+                }
+            }
+        } ?: IrVerificationMode.NONE
+    )
+
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)

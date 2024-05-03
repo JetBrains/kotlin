@@ -432,6 +432,13 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
+        value = "-Xverify-ir",
+        valueDescription = "{none|warning|error}",
+        description = "IR verification mode (no verification by default)."
+    )
+    var verifyIr: String? = null
+
+    @Argument(
         value = "-Xprofile-phases",
         description = "Profile backend phases."
     )

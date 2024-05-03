@@ -153,7 +153,6 @@ where advanced options include:
                              Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.
   -Xuse-type-table           Use a type table in metadata serialization.
   -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations.
-  -Xvalidate-ir              Validate IR before and after lowering.
   -Xvalue-classes            Enable experimental value classes.
   -Xallow-any-scripts-in-source-roots
                              Allow compiling scripts along with regular Kotlin sources.
@@ -240,6 +239,8 @@ where advanced options include:
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
   -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
   -Xverbose-phases           Be verbose while performing the given backend phases.
+  -Xverify-ir={none|warning|error}
+                             IR verification mode (no verification by default).
   -Xwhen-guards              Enable language support for when guards.
 
 Advanced options are non-standard and may be changed or removed without any notice.
