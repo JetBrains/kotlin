@@ -60,32 +60,32 @@ fun case_3(a: Int?, b: Float?, c: Double?, d: Boolean?) {
         false -> b
         null -> c
     }.apply {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>?")!>this<!>
-        if (this != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>
+        if (<!SENSELESS_COMPARISON!>this != null<!>) {
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>this<!>.funNullableAny()
         }
     }.let {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>?")!>it<!>
-        if (it != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Nothing>? & kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>
+        if (<!SENSELESS_COMPARISON!>it != null<!>) {
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Nothing>")!>it<!>.funNullableAny()
         }
     }
 }
