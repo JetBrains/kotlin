@@ -10942,9 +10942,45 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("inlineFunctionWithMultipleParameters.kt")
+        public void testInlineFunctionWithMultipleParameters() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/inlineFunctionWithMultipleParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaPassedToInlineFunction.kt")
+        public void testLambdaPassedToInlineFunction() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/lambdaPassedToInlineFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("loopWithinInlineFunction.kt")
+        public void testLoopWithinInlineFunction() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/loopWithinInlineFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/simple.kt");
+        }
+
+        @Test
         @TestMetadata("simpleDoWhile.kt")
         public void testSimpleDoWhile() {
           runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/simpleDoWhile.kt");
+        }
+
+        @Test
+        @TestMetadata("stdlibFunctions.kt")
+        public void testStdlibFunctions() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/stdlibFunctions.kt");
+        }
+
+        @Test
+        @TestMetadata("withReturnValue.kt")
+        public void testWithReturnValue() {
+          runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValue.kt");
         }
 
         @Test
