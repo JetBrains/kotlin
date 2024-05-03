@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
-import org.jetbrains.kotlin.konan.file.File
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -315,12 +315,20 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
 }
 
 internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(module: IrModuleFragment) {
-    runAllLowerings(module)
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
-    dependenciesToCompile.reversed().forEach { irModule ->
-        runAllLowerings(irModule)
+    val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
+
+    // We run IR validation before and after lowering _all_ modules because, unfortunately, lowering a module on Native may mutate
+    // dependency modules.
+    // For example, lowering a cross-module inline function call causes the body of that inline function to be lowered.
+    allModulesToLower.forEach {
+        runPhase(validateIrBeforeLowering, it)
+    }
+    allModulesToLower.forEach(this::runAllLowerings)
+    allModulesToLower.forEach {
+        runPhase(validateIrAfterLowering, it)
     }
     mergeDependencies(module, dependenciesToCompile)
 }

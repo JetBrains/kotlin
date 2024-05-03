@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.utilities
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity

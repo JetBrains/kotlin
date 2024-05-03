@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringPhase
+import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.validationCallback
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -18,21 +19,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-internal abstract class JvmIrValidationPhase(protected val context: JvmBackendContext) : ModuleLoweringPass {
-    override fun lower(irModule: IrModuleFragment) {
-        if (context.config.shouldValidateIr) {
-            validate(irModule)
-        }
-    }
-
-    protected abstract fun validate(irModule: IrModuleFragment)
-}
-
 @PhaseDescription(
-    name = "ValidateIrBeforeLowering",
+    name = "JvmValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
-internal class JvmIrValidationBeforeLoweringPhase(context: JvmBackendContext) : JvmIrValidationPhase(context) {
+internal class JvmIrValidationBeforeLoweringPhase(
+    context: JvmBackendContext
+) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
     override fun validate(irModule: IrModuleFragment) {
         validationCallback(context, irModule, checkProperties = true)
     }
@@ -45,10 +38,12 @@ private fun checkAllFileLevelDeclarationsAreClasses(module: IrModuleFragment) {
 }
 
 @PhaseDescription(
-    name = "ValidateIrAfterLowering",
+    name = "JvmValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
-internal class JvmIrValidationAfterLoweringPhase(context: JvmBackendContext) : JvmIrValidationPhase(context) {
+internal class JvmIrValidationAfterLoweringPhase(
+    context: JvmBackendContext
+) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {
     override fun validate(irModule: IrModuleFragment) {
         validationCallback(context, irModule, checkProperties = true)
 
