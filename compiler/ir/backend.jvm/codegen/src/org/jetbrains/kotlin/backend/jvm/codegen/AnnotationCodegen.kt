@@ -255,7 +255,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
             boundType: Int,
             visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor
         ) {
-            typeParameterContainer.typeParameters.forEachIndexed { index, typeParameter ->
+            for ((index, typeParameter) in typeParameterContainer.typeParameters.withIndex()) {
                 object : AnnotationCodegen(classCodegen) {
                     override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                         val typeReference = TypeReference.newTypeParameterReference(referenceType, index)
@@ -267,7 +267,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                     }
                 }.genAnnotations(typeParameter)
 
-                if (!context.config.emitJvmTypeAnnotations) return
+                if (!context.config.emitJvmTypeAnnotations) continue
 
                 var superInterfaceIndex = 1
                 for (superType in typeParameter.superTypes) {

@@ -780,6 +780,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
       }
 
       @Test
+      @TestMetadata("annotationOnSecondParameter.kt")
+      public void testAnnotationOnSecondParameter() {
+        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/annotationOnSecondParameter.kt");
+      }
+
+      @Test
       @TestMetadata("annotationWithTypeParameterOnReturnType.kt")
       public void testAnnotationWithTypeParameterOnReturnType() {
         runTest("compiler/testData/codegen/box/annotations/typeAnnotations/annotationWithTypeParameterOnReturnType.kt");
