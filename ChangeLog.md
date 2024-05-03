@@ -1,3 +1,38 @@
+## 1.9.24
+
+### Backend. Wasm
+
+- [`KT-64890`](https://youtrack.jetbrains.com/issue/KT-64890) K/Wasm compiler crash with external class and Kodein
+
+### Compiler
+
+- [`KT-65235`](https://youtrack.jetbrains.com/issue/KT-65235) JDK 21 might lead to change in overloads resolution
+- [`KT-66768`](https://youtrack.jetbrains.com/issue/KT-66768) K1: False positive UNRESOLVED_REFERENCE in super.getFirst/getLast call
+
+### Native
+
+- [`KT-67218`](https://youtrack.jetbrains.com/issue/KT-67218) Native: nested classes in kx.serialization ProtoBuf produce empty array for release binary
+
+### Tools. Gradle
+
+- [`KT-67139`](https://youtrack.jetbrains.com/issue/KT-67139) Build reports can be overridden
+- [`KT-67138`](https://youtrack.jetbrains.com/issue/KT-67138) Json report is empty for incremental compilation
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-67127`](https://youtrack.jetbrains.com/issue/KT-67127) KMP: IDE Dependency Resolver for CInterops reports errors on linux and windows machines
+- [`KT-66514`](https://youtrack.jetbrains.com/issue/KT-66514) Don't get output file from Cinterop task for IDE Import if host os doesn't support it
+
+### Tools. JPS
+
+- [`KT-65043`](https://youtrack.jetbrains.com/issue/KT-65043) JPS dumb mode should respect maps needed for the compiler
+
+### Tools. Wasm
+
+- [`KT-67785`](https://youtrack.jetbrains.com/issue/KT-67785) Kotlin/Wasm: Node.JS 22 does not need experimental-wasm-gc flag anymore
+- [`KT-65864`](https://youtrack.jetbrains.com/issue/KT-65864) K/Wasm: update Node.js to 22.x
+
+
 ## 1.9.23
 
 ### Apple Ecosystem
