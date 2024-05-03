@@ -577,6 +577,12 @@ public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6
   }
 
   @Test
+  @TestMetadata("unstableIrReproducer")
+  public void testUnstableIrReproducer() {
+    runTest("js/js.translator/testData/incremental/invalidation/unstableIrReproducer/");
+  }
+
+  @Test
   @TestMetadata("updateExports")
   public void testUpdateExports() {
     runTest("js/js.translator/testData/incremental/invalidation/updateExports/");
