@@ -233,7 +233,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val irVerificationMode: IrVerificationMode
-        get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)
+        get() = configuration.getNotNull(CommonConfigurationKeys.VERIFY_IR)
 
     val needCompilerVerification: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER)

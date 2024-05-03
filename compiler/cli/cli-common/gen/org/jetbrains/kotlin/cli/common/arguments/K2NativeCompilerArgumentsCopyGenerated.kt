@@ -98,7 +98,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.testDumpOutputPath = from.testDumpOutputPath
     to.verifyBitCode = from.verifyBitCode
     to.verifyCompiler = from.verifyCompiler
-    to.verifyIr = from.verifyIr
     to.workerExceptionHandling = from.workerExceptionHandling
 
     return to

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.CheckIrElementVisitor
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.ScopeValidator
 import org.jetbrains.kotlin.backend.common.checkDeclarationParents
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -31,9 +32,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-fun validateIr(fragment: IrModuleFragment, irBuiltIns: IrBuiltIns) {
+fun validateIr(fragment: IrModuleFragment, irBuiltIns: IrBuiltIns, mode: IrVerificationMode) {
+    if (mode == IrVerificationMode.NONE) return
     val validatorConfig = IrValidatorConfig(
-        abortOnError = true,
+        abortOnError = mode == IrVerificationMode.ERROR,
         ensureAllNodesAreDifferent = true,
         checkTypes = false, // This should be enabled, the fact this doesn't work is a Compose bug.
         checkDescriptors = false,

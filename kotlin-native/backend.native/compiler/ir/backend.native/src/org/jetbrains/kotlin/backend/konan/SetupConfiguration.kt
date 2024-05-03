@@ -118,18 +118,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     if (arguments.verifyCompiler != null)
         put(VERIFY_COMPILER, arguments.verifyCompiler == "true")
-    put(VERIFY_IR, when (val key = arguments.verifyIr) {
-        null -> IrVerificationMode.NONE
-        else -> {
-            val verificationMode = IrVerificationMode.resolveMode(key)
-            if (verificationMode == null) {
-                report(ERROR, "Unsupported IR verification mode ${arguments.verifyIr}")
-                IrVerificationMode.NONE
-            } else {
-                verificationMode
-            }
-        }
-    })
     put(VERIFY_BITCODE, arguments.verifyBitCode)
 
     put(ENABLE_ASSERTIONS, arguments.enableAssertions)

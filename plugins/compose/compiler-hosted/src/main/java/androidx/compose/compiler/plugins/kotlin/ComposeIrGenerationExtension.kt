@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -61,7 +62,7 @@ class ComposeIrGenerationExtension(
     private val decoysEnabled: Boolean = false,
     private val metricsDestination: String? = null,
     private val reportsDestination: String? = null,
-    private val validateIr: Boolean = false,
+    private val irVerificationMode: IrVerificationMode = IrVerificationMode.NONE,
     private val useK2: Boolean = false,
     private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
     private val moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null,
@@ -85,8 +86,7 @@ class ComposeIrGenerationExtension(
 
         // Input check.  This should always pass, else something is horribly wrong upstream.
         // Necessary because oftentimes the issue is upstream (compiler bug, prior plugin, etc)
-        if (validateIr)
-            validateIr(moduleFragment, pluginContext.irBuiltIns)
+        validateIr(moduleFragment, pluginContext.irBuiltIns, irVerificationMode)
 
         // create a symbol remapper to be used across all transforms
         val symbolRemapper = ComposableSymbolRemapper()
@@ -285,7 +285,6 @@ class ComposeIrGenerationExtension(
         }
 
         // Verify that our transformations didn't break something
-        if (validateIr)
-            validateIr(moduleFragment, pluginContext.irBuiltIns)
+        validateIr(moduleFragment, pluginContext.irBuiltIns, irVerificationMode)
     }
 }

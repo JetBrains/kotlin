@@ -328,13 +328,6 @@ The default value is 1."""
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify LLVM bitcode after each method.")
     var verifyBitCode: Boolean = false
 
-    @Argument(
-        value = "-Xverify-ir",
-        valueDescription = "{none|warning|error}",
-        description = "IR verification mode (no verification by default)."
-    )
-    var verifyIr: String? = null
-
     @Argument(value = "-Xverify-compiler", description = "Verify the compiler.")
     var verifyCompiler: String? = null
 

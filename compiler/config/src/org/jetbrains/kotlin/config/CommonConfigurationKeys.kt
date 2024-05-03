@@ -100,6 +100,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("message collector")
+
+    @JvmField
+    val VERIFY_IR = CompilerConfigurationKey.create<IrVerificationMode>("IR verification mode")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
