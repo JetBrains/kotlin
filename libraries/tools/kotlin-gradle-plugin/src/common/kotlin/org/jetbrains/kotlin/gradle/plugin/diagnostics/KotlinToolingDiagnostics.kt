@@ -961,6 +961,14 @@ object KotlinToolingDiagnostics {
                         " Make sure that the '$kotlinNativeHomeProperty' property points to a valid Kotlin/Native distribution.",
             )
     }
+
+    object NoComposeCompilerPluginAppliedWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build(
+                "The Compose compiler plugin is now a part of Kotlin, please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin " +
+                        "to enable it. Learn more about this at https://kotl.in/compose-plugin"
+            )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
