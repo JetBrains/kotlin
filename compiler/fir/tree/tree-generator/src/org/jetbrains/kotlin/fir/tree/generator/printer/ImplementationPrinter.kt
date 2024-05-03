@@ -298,6 +298,7 @@ internal class ImplementationPrinter(
                         field.implementationDefaultStrategy!!.withGetter -> {}
 
                         field.origin is FieldList && !field.isMutableOrEmptyList -> {
+                            println("if (${field.name} === $newValue) return")
                             println("${field.name}.clear()")
                             println("${field.name}.addAll($newValue)")
                         }

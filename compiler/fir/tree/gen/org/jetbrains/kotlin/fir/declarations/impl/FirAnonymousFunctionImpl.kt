@@ -164,6 +164,7 @@ internal class FirAnonymousFunctionImpl(
     }
 
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
+        if (valueParameters === newValueParameters) return
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
     }

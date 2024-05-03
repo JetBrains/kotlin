@@ -92,6 +92,7 @@ internal class FirScriptImpl(
     }
 
     override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        if (declarations === newDeclarations) return
         declarations.clear()
         declarations.addAll(newDeclarations)
     }

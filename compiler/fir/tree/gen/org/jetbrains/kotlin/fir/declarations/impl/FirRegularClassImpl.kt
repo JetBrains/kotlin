@@ -123,6 +123,7 @@ internal class FirRegularClassImpl(
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
+        if (superTypeRefs === newSuperTypeRefs) return
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)
     }
