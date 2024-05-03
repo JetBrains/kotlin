@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -1194,7 +1194,6 @@ internal class KtFirCallResolver(
         return firSymbolBuilder.typeBuilder.buildSubstitutor(coneSubstitutor)
     }
 
-
     private fun FirEqualityOperatorCall.toKtCallInfo(psi: KtElement): KtCallInfo? {
         val binaryExpression = deparenthesize(psi as? KtExpression) as? KtBinaryExpression ?: return null
         val leftPsi = binaryExpression.left ?: return null
@@ -1203,10 +1202,19 @@ internal class KtFirCallResolver(
             FirOperation.EQ, FirOperation.NOT_EQ -> {
                 val leftOperand = arguments.firstOrNull() ?: return null
                 val session = analysisSession.useSiteSession
-                val leftOperandType = leftOperand.resolvedType
-
-                val classSymbol = leftOperandType.fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
-                val equalsSymbol = classSymbol?.getEqualsSymbol() ?: equalsSymbolInAny ?: return null
+                val leftOperandType = leftOperand.resolvedType.fullyExpandedType(session).upperBoundIfFlexible()
+                val equalsSymbol = when (leftOperandType) {
+                    is ConeTypeParameterType -> {
+                        leftOperandType.collectUpperBounds().firstNotNullOfOrNull { upperBound ->
+                            val upperBoundClassSymbol = upperBound.toSymbol(session) as? FirClassSymbol<*>
+                            upperBoundClassSymbol?.getEqualsSymbol()
+                        }
+                    }
+                    else -> {
+                        val classSymbol = leftOperandType.toSymbol(session) as? FirClassSymbol<*>
+                        classSymbol?.getEqualsSymbol()
+                    }
+                } ?: equalsSymbolInAny ?: return null
                 val ktSignature = equalsSymbol.toKtSignature()
                 KtSuccessCallInfo(
                     KtSimpleFunctionCall(

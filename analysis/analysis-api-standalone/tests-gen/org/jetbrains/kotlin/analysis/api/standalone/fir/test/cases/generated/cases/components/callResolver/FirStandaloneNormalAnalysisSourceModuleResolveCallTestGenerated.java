@@ -413,6 +413,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("eqEqCall_fromSealedClass_genericUpperBound.kt")
+  public void testEqEqCall_fromSealedClass_genericUpperBound() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromSealedClass_genericUpperBound.kt");
+  }
+
+  @Test
   @TestMetadata("eqEqCall_fromSuperType.kt")
   public void testEqEqCall_fromSuperType() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromSuperType.kt");
