@@ -18,37 +18,48 @@ class KotlinNativeLinkTest {
     @Test
     fun `apiFiles - contain api dependencies - when KotlinNativeLink task is configured before compilation's api dependencies`() {
         val parent = buildProject()
-        val a = buildProjectWithMPP(
-            projectBuilder = { withParent(parent).withName("a") }
+        val apiInCommon = buildProjectWithMPP(
+            projectBuilder = { withParent(parent).withName("apiInCommon") }
         ) { kotlin { linuxArm64() } }.evaluate()
 
-        val b = buildProjectWithMPP(
-            projectBuilder = { withParent(parent).withName("b") }
+        val apiInLinux = buildProjectWithMPP(
+            projectBuilder = { withParent(parent).withName("apiInLinux") }
+        ) { kotlin { linuxArm64() } }.evaluate()
+
+        buildProjectWithMPP(
+            projectBuilder = { withParent(parent).withName("apiInIos") }
+        ) { kotlin { linuxArm64() } }.evaluate()
+
+        val exportingProject = buildProjectWithMPP(
+            projectBuilder = { withParent(parent).withName("exportingProject") }
         ) {
             repositories.mavenLocal()
             repositories.mavenCentralCacheRedirector()
             kotlin {
+                iosArm64()
                 linuxArm64 {
                     binaries.staticLib {
-                        export(project(":a"))
+                        export(project(":apiInCommon"))
+                        export(project(":apiInLinux"))
                     }
                 }
 
-                sourceSets.commonMain.dependencies {
-                    api(project(":a"))
-                }
+                sourceSets.commonMain.dependencies { api(project(":apiInCommon")) }
+                sourceSets.linuxMain.dependencies { api(project(":apiInLinux")) }
+                sourceSets.iosMain.dependencies { api(project(":apiInIos")) }
             }
         }
 
         // 1. Configure KotlinNativeLink's apiFiles before compilation's apiConfiguration is wired. Using apiFilesConfiguration directly here because apiFiles is filtered by File.exists check
-        val apiFiles = (b.tasks.getByName("linkReleaseStaticLinuxArm64") as KotlinNativeLink).apiFilesConfiguration
+        val apiFiles = (exportingProject.tasks.getByName("linkReleaseStaticLinuxArm64") as KotlinNativeLink).apiFilesConfiguration
 
         // 2. Set up the compilations
-        b.evaluate()
+        exportingProject.evaluate()
 
         assertEquals(
             hashSetOf(
-                a.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/a.klib").get().asFile
+                apiInCommon.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInCommon.klib").get().asFile,
+                apiInLinux.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInLinux.klib").get().asFile,
             ),
             apiFiles.resolve(),
         )
