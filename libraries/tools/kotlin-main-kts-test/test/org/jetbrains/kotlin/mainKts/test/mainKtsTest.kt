@@ -64,6 +64,12 @@ val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "Hi from m
 class MainKtsTest {
 
     @Test
+    fun testEmptyFile() {
+        val res = evalFile(File("$TEST_DATA_ROOT/empty.main.kts"))
+        assertSucceeded(res)
+    }
+
+    @Test
     fun testResolveJunit() {
         val res = evalFile(File("$TEST_DATA_ROOT/hello-resolve-junit.main.kts"))
         assertSucceeded(res)
