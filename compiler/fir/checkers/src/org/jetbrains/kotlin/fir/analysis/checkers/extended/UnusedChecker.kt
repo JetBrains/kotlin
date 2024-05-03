@@ -62,6 +62,10 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
     private val FirPropertySymbol.ignoreWarnings: Boolean
         get() = name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
                 source == null ||
+                // if <receiver> variable is reported as unused,
+                // then the assignment itself is a dead code because of its RHS expression,
+                // which will be eventually reported
+                source?.kind is KtFakeSourceElementKind.DesugaredAugmentedAssign ||
                 source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION ||
                 initializerSource?.kind == KtFakeSourceElementKind.DesugaredForLoop
 
