@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.utilities
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.phaser.Action
-import org.jetbrains.kotlin.backend.common.phaser.ActionState
-import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
-import org.jetbrains.kotlin.backend.common.phaser.defaultDumper
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -44,12 +41,6 @@ private fun <Context : PhaseContext, Data> findKotlinBackendIr(context: Context,
     context is KotlinBackendIrHolder -> context.kotlinIr
     else -> null
 }
-
-private fun ActionState.isDumpNeeded() =
-        when (beforeOrAfter) {
-            BeforeOrAfter.BEFORE -> config.shouldDumpStateBefore(phase)
-            BeforeOrAfter.AFTER -> config.shouldDumpStateAfter(phase)
-        }
 
 private fun <Context : PhaseContext, Data> getIrValidator(): Action<Data, Context> =
         fun(state: ActionState, data: Data, context: Context) {

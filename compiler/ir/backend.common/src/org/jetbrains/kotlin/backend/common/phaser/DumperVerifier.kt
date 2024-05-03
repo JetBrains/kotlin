@@ -30,7 +30,7 @@ private val IrElement.elementName: String
             this.toString()
     }
 
-private fun ActionState.isDumpNeeded() =
+fun ActionState.isDumpNeeded() =
     when (beforeOrAfter) {
         BeforeOrAfter.BEFORE -> config.shouldDumpStateBefore(phase)
         BeforeOrAfter.AFTER -> config.shouldDumpStateAfter(phase)
