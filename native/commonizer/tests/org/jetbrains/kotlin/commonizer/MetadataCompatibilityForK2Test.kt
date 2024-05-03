@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import kotlinx.metadata.klib.*
 import kotlin.metadata.*
-import kotlinx.metadata.klib.KlibModuleMetadata
-import kotlinx.metadata.klib.annotations
-import kotlinx.metadata.klib.fqName
-import kotlinx.metadata.klib.getterAnnotations
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.*
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.*
@@ -335,8 +332,14 @@ private class MismatchesFilter(
 
             val (nonEmptyAnnotationsInK1, nonEmptyAnnotationsInK2) = when (val lastPathElement = path.last()) {
                 is PathElement.Property -> {
-                    val annotationsInK1 = lastPathElement.propertyA.annotations
-                    val annotationsInK2 = lastPathElement.propertyB.annotations
+                    fun getProperAnnotations(property: KmProperty): List<KmAnnotation> = when (kind as FlagKind) {
+                        FlagKind.REGULAR -> property.annotations
+                        FlagKind.GETTER -> property.getterAnnotations
+                        FlagKind.SETTER -> property.setterAnnotations
+                    }
+
+                    val annotationsInK1 = getProperAnnotations(lastPathElement.propertyA)
+                    val annotationsInK2 = getProperAnnotations(lastPathElement.propertyB)
 
                     annotationsInK1.isNotEmpty() to annotationsInK2.isNotEmpty()
                 }
