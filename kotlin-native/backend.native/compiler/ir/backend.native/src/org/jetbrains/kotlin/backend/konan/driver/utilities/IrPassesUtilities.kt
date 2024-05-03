@@ -44,7 +44,8 @@ private fun <Context : PhaseContext, Data> findKotlinBackendIr(context: Context,
 
 private fun <Context : PhaseContext, Data> getIrValidator(): Action<Data, Context> =
         fun(state: ActionState, data: Data, context: Context) {
-            if (context.config.irVerificationMode == IrVerificationMode.NONE) return
+            val verificationMode = context.config.irVerificationMode
+            if (verificationMode == IrVerificationMode.NONE) return
 
             val backendContext: CommonBackendContext? = findBackendContext(context)
             if (backendContext == null) {
@@ -58,21 +59,7 @@ private fun <Context : PhaseContext, Data> getIrValidator(): Action<Data, Contex
                         "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: IR not found.")
                 return
             }
-            val validatorConfig = IrValidatorConfig(
-                    abortOnError = context.config.irVerificationMode == IrVerificationMode.ERROR,
-                    ensureAllNodesAreDifferent = true,
-                    checkTypes = true,
-                    checkDescriptors = false
-            )
-            try {
-                element.accept(IrValidator(backendContext, validatorConfig), null)
-                element.checkDeclarationParents()
-            } catch (t: Throwable) {
-                // TODO: Add reference to source.
-                if (validatorConfig.abortOnError)
-                    throw IllegalStateException("Failed IR validation ${state.beforeOrAfter} ${state.phase}", t)
-                else context.reportCompilationWarning("[IR VALIDATION] ${state.beforeOrAfter} ${state.phase}: ${t.message}")
-            }
+            validationCallback(backendContext, element, verificationMode, checkTypes = true)
         }
 
 private fun <Data, Context : PhaseContext> getIrDumper(): Action<Data, Context> =
