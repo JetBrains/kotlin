@@ -505,10 +505,10 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
 
             val lowerIntersectedType =
                 intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.lowerBound) ?: return null)
-                    .withNullability(ConeNullability.create(type.lowerBound.isMarkedNullable), this)
+                    .withNullability(ConeNullability.create(type.lowerBound.isNullableType()), this)
             val upperIntersectedType =
                 intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.upperBound) ?: return null)
-                    .withNullability(ConeNullability.create(type.upperBound.isMarkedNullable), this)
+                    .withNullability(ConeNullability.create(type.upperBound.isNullableType()), this)
 
             ConeFlexibleType(lowerIntersectedType.coneLowerBoundIfFlexible(), upperIntersectedType.coneUpperBoundIfFlexible())
         }
@@ -516,7 +516,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
         is ConeSimpleKotlinType -> {
             intersectTypes(
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
-            ).withNullability(type.isMarkedNullable) as ConeKotlinType
+            ).withNullability(type.isNullableType()) as ConeKotlinType
         }
     }
 }
