@@ -1083,7 +1083,7 @@ class CallAndReferenceGenerator(
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 fun IrExpression.freeze(nameHint: String): IrExpression {
                     if (isUnchanging()) return this
-                    val (variable, symbol) = createTemporaryVariable(this, conversionScope, nameHint)
+                    val (variable, symbol) = conversionScope.createTemporaryVariable(this, nameHint)
                     statements.add(variable)
                     return IrGetValueImpl(startOffset, endOffset, symbol, null)
                 }

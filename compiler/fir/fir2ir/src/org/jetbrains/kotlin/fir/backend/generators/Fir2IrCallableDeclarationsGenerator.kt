@@ -834,25 +834,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
     // ------------------------------------ variables ------------------------------------
 
-    // TODO: KT-58686
-    private var lastTemporaryIndex: Int = 0
-    private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
-
-    private fun getNameForTemporary(nameHint: String?): String {
-        val index = nextTemporaryIndex()
-        return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
-    }
-
-    fun declareTemporaryVariable(base: IrExpression, nameHint: String? = null): IrVariable {
-        return declareIrVariable(
-            base.startOffset, base.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-            Name.identifier(getNameForTemporary(nameHint)), base.type,
-            isVar = false, isConst = false, isLateinit = false
-        ).apply {
-            initializer = base
-        }
-    }
-
     fun createIrVariable(
         variable: FirVariable,
         irParent: IrDeclarationParent,

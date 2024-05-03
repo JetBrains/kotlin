@@ -618,9 +618,8 @@ class Fir2IrVisitor(
     ): IrElement = whileAnalysing(session, safeCallExpression) {
         val explicitReceiverExpression = convertToIrExpression(safeCallExpression.receiver)
 
-        val (receiverVariable, variableSymbol) = c.createTemporaryVariableForSafeCallConstruction(
-            explicitReceiverExpression,
-            conversionScope
+        val (receiverVariable, variableSymbol) = conversionScope.createTemporaryVariableForSafeCallConstruction(
+            explicitReceiverExpression
         )
 
         return conversionScope.withSafeCallSubject(receiverVariable) {
@@ -1354,9 +1353,8 @@ class Fir2IrVisitor(
         val subjectExpression = whenExpression.subject
         return when {
             subjectVariable != null -> subjectVariable.accept(this, null) as IrVariable
-            subjectExpression != null -> {
-                applyParentFromStackTo(callablesGenerator.declareTemporaryVariable(convertToIrExpression(subjectExpression), "subject"))
-            }
+            subjectExpression != null ->
+                conversionScope.scope().createTemporaryVariable(convertToIrExpression(subjectExpression), "subject")
             else -> null
         }
     }

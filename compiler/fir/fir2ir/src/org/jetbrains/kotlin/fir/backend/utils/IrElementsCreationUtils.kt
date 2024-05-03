@@ -98,24 +98,20 @@ fun Fir2IrComponents.createSafeCallConstruction(
     }
 }
 
-fun Fir2IrComponents.createTemporaryVariable(
+fun Fir2IrConversionScope.createTemporaryVariable(
     receiverExpression: IrExpression,
-    conversionScope: Fir2IrConversionScope,
     nameHint: String? = null
 ): Pair<IrVariable, IrValueSymbol> {
-    val receiverVariable = callablesGenerator.declareTemporaryVariable(receiverExpression, nameHint).apply {
-        parent = conversionScope.parentFromStack()
-    }
+    val receiverVariable = scope().createTemporaryVariable(receiverExpression, nameHint)
     val variableSymbol = receiverVariable.symbol
 
     return Pair(receiverVariable, variableSymbol)
 }
 
-fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
-    receiverExpression: IrExpression,
-    conversionScope: Fir2IrConversionScope
+fun Fir2IrConversionScope.createTemporaryVariableForSafeCallConstruction(
+    receiverExpression: IrExpression
 ): Pair<IrVariable, IrValueSymbol> =
-    createTemporaryVariable(receiverExpression, conversionScope, "safe_receiver")
+    createTemporaryVariable(receiverExpression, "safe_receiver")
 
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
     require((klass.valueClassRepresentation != null) == klass.isInline) {

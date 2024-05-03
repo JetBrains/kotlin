@@ -310,7 +310,7 @@ internal class OperatorExpressionGenerator(
         }
         return if (operandType.isNullable) {
             val (receiverVariable, receiverVariableSymbol) =
-                c.createTemporaryVariableForSafeCallConstruction(irExpression, conversionScope)
+                conversionScope.createTemporaryVariableForSafeCallConstruction(irExpression)
 
             unsafeIrCall.dispatchReceiver = IrGetValueImpl(irExpression.startOffset, irExpression.endOffset, receiverVariableSymbol)
 
