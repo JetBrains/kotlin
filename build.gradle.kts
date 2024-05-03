@@ -759,7 +759,6 @@ tasks {
     }
 
     register("testsForBootstrapBuildTest") {
-        dependsOn("dist")
         dependsOn(":compiler:tests-common-new:test")
     }
 

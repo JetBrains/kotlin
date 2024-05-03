@@ -16,18 +16,21 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.System.*;
+import static org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.*;
+
 public class ForTestCompileRuntime {
     private static volatile SoftReference<ClassLoader> reflectJarClassLoader = new SoftReference<>(null);
     private static volatile SoftReference<ClassLoader> runtimeJarClassLoader = new SoftReference<>(null);
 
     @NotNull
     public static File runtimeJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib.jar"));
+        return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib.jar");
     }
 
     @NotNull
     public static File runtimeJarForTestsWithJdk8() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar"));
+        return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-jdk8.jar");
     }
 
     @NotNull
@@ -37,27 +40,17 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File kotlinTestJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-test.jar"));
-    }
-
-    @NotNull
-    public static File kotlinTestJUnitJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-test-junit.jar"));
-    }
-
-    @NotNull
-    public static File kotlinTestJsJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-test-js.jar"));
+        return propertyOrDist(KOTLIN_TEST_JAR_PATH, "dist/kotlinc/lib/kotlin-test.jar");
     }
 
     @NotNull
     public static File reflectJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-reflect.jar"));
+        return propertyOrDist(KOTLIN_REFLECT_JAR_PATH, "dist/kotlinc/lib/kotlin-reflect.jar");
     }
 
     @NotNull
     public static File scriptRuntimeJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-script-runtime.jar"));
+        return propertyOrDist(KOTLIN_SCRIPT_RUNTIME_PATH, "dist/kotlinc/lib/kotlin-script-runtime.jar");
     }
 
     @NotNull
@@ -66,33 +59,20 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
-    public static File stdlibMavenSourcesJarForTests() {
-        return assertExists(new File("dist/maven/kotlin-stdlib-sources.jar"));
-    }
-
-    @NotNull
     public static File stdlibCommonForTests() {
-        return assertExists(new File("dist/common/kotlin-stdlib-common.jar"));
+        return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.jar");
     }
 
-    @NotNull
-    public static File stdlibCommonSourcesForTests() {
-        return assertExists(new File("dist/common/kotlin-stdlib-common-sources.jar"));
-    }
-
-    @NotNull
-    public static File stdlibJsForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-js.klib"));
-    }
-
-    @NotNull
-    public static File jetbrainsAnnotationsForTests() {
-        return assertExists(new File("dist/kotlinc/lib/annotations-13.0.jar"));
+    private static File propertyOrDist(String property, String distPath) {
+        String path = getProperty(property, distPath);
+        File file = new File(path);
+        assert(file.exists()) : path + " doesn't exist";
+        return file;
     }
 
     @NotNull
     public static File jvmAnnotationsForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-annotations-jvm.jar"));
+        return propertyOrDist(KOTLIN_ANNOTATIONS_PATH, "dist/kotlinc/lib/kotlin-annotations-jvm.jar");
     }
 
     @NotNull

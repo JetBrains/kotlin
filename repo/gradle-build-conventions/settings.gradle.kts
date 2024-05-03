@@ -31,3 +31,4 @@ dependencyResolutionManagement {
 
 include(":buildsrc-compat")
 include(":prepare-deps")
+include(":compiler-tests-convention")

@@ -16,6 +16,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
@@ -152,6 +153,7 @@ fun Project.projectTest(
     }
     return getOrCreateTask<Test>(taskName) {
         dependsOn(":createIdeaHomeForTests")
+        inputs.dir(File(rootDir, "build/ideaHomeForTests")).withPathSensitivity(PathSensitivity.RELATIVE)
 
         doFirst {
             if (jUnitMode == JUnitMode.JUnit5) return@doFirst

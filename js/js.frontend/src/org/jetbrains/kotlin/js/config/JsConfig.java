@@ -41,12 +41,6 @@ import java.util.*;
 import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
 public class JsConfig {
-    public static final List<String> JS_STDLIB =
-            Collections.singletonList(getKotlinPathsForDistDirectory().getJsStdLibKlibPath().getAbsolutePath());
-
-    public static final List<String> JS_KOTLIN_TEST =
-            Collections.singletonList(getKotlinPathsForDistDirectory().getJsKotlinTestKlibPath().getAbsolutePath());
-
     public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
 
     private final Project project;
