@@ -58,6 +58,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestWithAnalysisAnd
   }
 
   @Test
+  @TestMetadata("interface.kt")
+  public void testInterface() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/bugsFromRealComposeApps/interface.kt");
+  }
+
+  @Test
   @TestMetadata("lazyPropertyBackingField.kt")
   public void testLazyPropertyBackingField() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/bugsFromRealComposeApps/lazyPropertyBackingField.kt");
