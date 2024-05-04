@@ -749,7 +749,6 @@ tasks {
     register("jvmCompilerTest") {
         dependsOn("dist")
         dependsOn(
-            ":compiler:test",
             ":compiler:tests-common-new:test",
             ":compiler:container:test",
             ":compiler:tests-java8:test",
@@ -871,6 +870,7 @@ tasks {
     }
 
     register("miscCompilerTest") {
+        dependsOn(":compiler:test")
         dependsOn("incrementalCompilationTest")
         dependsOn("scriptingTest")
         dependsOn("jvmCompilerIntegrationTest")
