@@ -7,6 +7,7 @@ package org.jetbrains.rhizomedb.fir
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.rhizomedb.fir.checkers.RhizomedbFirCheckersComponent
+import org.jetbrains.rhizomedb.fir.services.RhizomedbEntityPredicateMatcher
 import org.jetbrains.rhizomedb.fir.services.RhizomedbFirAttributesProvider
 
 class RhizomedbFirExtensionRegistrar : FirExtensionRegistrar() {
@@ -17,5 +18,6 @@ class RhizomedbFirExtensionRegistrar : FirExtensionRegistrar() {
 
         // services
         +::RhizomedbFirAttributesProvider
+        +::RhizomedbEntityPredicateMatcher
     }
 }

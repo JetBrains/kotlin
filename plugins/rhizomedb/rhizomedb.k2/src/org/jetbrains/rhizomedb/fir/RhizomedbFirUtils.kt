@@ -5,7 +5,6 @@
 
 package org.jetbrains.rhizomedb.fir
 
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -19,10 +18,6 @@ fun FirClassSymbol<*>.hasEntityTypeAnnotation(session: FirSession): Boolean {
     return entityTypeAnnotation(session) != null
 }
 
-fun FirBasedSymbol<*>.hasAttributeAnnotation(session: FirSession): Boolean {
-    return attributeAnnotation(session) != null
-}
-
 fun FirBasedSymbol<*>.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
     return resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(classId, session) != null
 }
@@ -31,18 +26,6 @@ fun FirBasedSymbol<*>.entityTypeAnnotation(session: FirSession): FirAnnotation? 
     return resolvedCompilerAnnotationsWithClassIds.entityTypeAnnotation(session)
 }
 
-fun FirBasedSymbol<*>.attributeAnnotation(session: FirSession): FirAnnotation? {
-    return resolvedCompilerAnnotationsWithClassIds.attributeAnnotation(session)
-}
-
 fun List<FirAnnotation>.entityTypeAnnotation(session: FirSession): FirAnnotation? {
-    return getAnnotationByClassId(RhizomedbAnnotations.generatedEntityTypeAnnotationClassId, session)
+    return getAnnotationByClassId(RhizomedbAnnotations.generatedEntityTypeClassId, session)
 }
-
-fun List<FirAnnotation>.attributeAnnotation(session: FirSession): FirAnnotation? {
-    return getAnnotationByClassId(RhizomedbAnnotations.attributeAnnotationClassId, session)
-}
-
-// ---------------------- class utils ----------------------
-internal fun FirClassSymbol<*>.shouldHaveGeneratedMethodsInCompanion(session: FirSession): Boolean =
-    classKind == ClassKind.CLASS && hasEntityTypeAnnotation(session)

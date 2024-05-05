@@ -7,11 +7,13 @@ package org.jetbrains.rhizomedb.fir.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassLikeChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 
 class RhizomedbFirCheckersComponent(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
+        override val classLikeCheckers: Set<FirClassLikeChecker> = setOf(RhizomedbFirEntityTypeChecker)
         override val propertyCheckers: Set<FirPropertyChecker> = setOf(RhizomedbFirPropertyChecker)
     }
 }

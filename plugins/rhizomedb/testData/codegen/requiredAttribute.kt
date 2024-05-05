@@ -5,7 +5,7 @@ import com.jetbrains.rhizomedb.*
 
 @GeneratedEntityType
 data class MyEntity(override val eid: EID) : Entity {
-    @Attribute
+    @ValueAttribute
     val string: String = ""
 
     companion object : EntityType<MyEntity>(MyEntity::class, ::MyEntity) {

@@ -1,6 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 description = "Fleet RhizomeDB Compiler Plugin"
 
@@ -13,27 +11,10 @@ plugins {
     id("jps-compatible")
 }
 
-publish {}
-
-val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
-    attributes {
-        attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
-    }
-}
-
-val coreJsIrRuntimeForTests: Configuration by configurations.creating {
-    attributes {
-        attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
-    }
-}
-
 val rhizomedbClasspath by configurations.creating
 
 dependencies {
     embedded(project(":rhizomedb-compiler-plugin.k2")) { isTransitive = false }
-    embedded(project(":rhizomedb-compiler-plugin.cli")) { isTransitive = false }
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
@@ -51,7 +32,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testImplementation(project(":rhizomedb-compiler-plugin.k2"))
-    testImplementation(project(":rhizomedb-compiler-plugin.cli"))
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
@@ -89,38 +69,9 @@ sourceSets {
     }
 }
 
-optInToExperimentalCompilerApi()
-
-val archiveName = "rhizomedb-compiler-plugin"
-val archiveCompatName = "rhizomedb-compiler-plugin"
-
-val runtimeJar = runtimeJar {
-    archiveBaseName.set(archiveName)
-}
-
+runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
-useD8Plugin()
-
-val distCompat by configurations.creating {
-    isCanBeResolved = false
-    isCanBeConsumed = true
-}
-
-val compatJar = tasks.register<Copy>("compatJar") {
-    from(runtimeJar)
-    into(layout.buildDirectory.dir("libsCompat"))
-    rename {
-        it.replace("kotlin-", "kotlinx-")
-    }
-}
-
-artifacts {
-    add(distCompat.name, layout.buildDirectory.dir("libsCompat").map { it.file("$archiveCompatName-$version.jar") }) {
-        builtBy(runtimeJar, compatJar)
-    }
-}
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir

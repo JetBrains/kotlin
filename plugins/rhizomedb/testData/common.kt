@@ -1,4 +1,12 @@
 package com.jetbrains.rhizomedb
 
-annotation class GeneratedEntityType
-annotation class Attribute
+import kotlin.reflect.KClass
+
+annotation class GeneratedEntityType(
+    val baseType: KClass<out EntityType<*>> = EntityType::class
+)
+
+annotation class ValueAttribute(vararg val indexing: Indexing)
+annotation class ReferenceAttribute(vararg val refFlags: RefFlags)
+
+annotation class EntityConstructor

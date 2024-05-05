@@ -5,28 +5,26 @@
 
 package org.jetbrains.rhizomedb.fir.resolve
 
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 object RhizomedbPackages {
     val packageFqName = FqName("com.jetbrains.rhizomedb")
 }
 
 object RhizomedbAnnotations {
-    val indexedFqName = FqName("com.jetbrains.rhizomedb.Indexed")
-    val uniqueFqName = FqName("com.jetbrains.rhizomedb.Unique")
     val manyFqName = FqName("com.jetbrains.rhizomedb.Many")
-    val cascadeDeleteFqName = FqName("com.jetbrains.rhizomedb.CascadeDelete")
-    val cascadeDeleteByFqname = FqName("com.jetbrains.rhizomedb.CascadeDeleteBy")
     val generatedEntityTypeFqName = FqName("com.jetbrains.rhizomedb.GeneratedEntityType")
-    val attributeAnnotationFqName = FqName("com.jetbrains.rhizomedb.Attribute")
+    val valueAttributeFqName = FqName("com.jetbrains.rhizomedb.ValueAttribute")
+    val referenceAttributeFqName = FqName("com.jetbrains.rhizomedb.ReferenceAttribute")
+    val entityConstructorFqName = FqName("com.jetbrains.rhizomedb.EntityConstructor")
 
-    val indexedAnnotationClassId = ClassId.topLevel(indexedFqName)
-    val uniqueAnnotationClassId = ClassId.topLevel(uniqueFqName)
     val manyAnnotationClassId = ClassId.topLevel(manyFqName)
-    val cascadeDeleteAnnotationClassId = ClassId.topLevel(cascadeDeleteFqName)
-    val cascadeDeleteByAnnotationClassId = ClassId.topLevel(cascadeDeleteByFqname)
-    val generatedEntityTypeAnnotationClassId = ClassId.topLevel(generatedEntityTypeFqName)
-    val attributeAnnotationClassId = ClassId.topLevel(attributeAnnotationFqName)
+    val generatedEntityTypeClassId = ClassId.topLevel(generatedEntityTypeFqName)
+    val valueAttributeClassId = ClassId.topLevel(valueAttributeFqName)
+    val referenceAttributeClassId = ClassId.topLevel(referenceAttributeFqName)
+    val entityConstructorClassId = ClassId.topLevel(entityConstructorFqName)
 }
 
 object RhizomedbSymbolNames {
@@ -34,6 +32,7 @@ object RhizomedbSymbolNames {
     val optionalClassId = ClassId(RhizomedbPackages.packageFqName, FqName("Attributes.Optional"), isLocal = false)
     val manyClassId = ClassId(RhizomedbPackages.packageFqName, FqName("Attributes.Many"), isLocal = false)
 
+    val entityClassId = ClassId(RhizomedbPackages.packageFqName, Name.identifier("Entity"))
     val entityTypeClassId = ClassId(RhizomedbPackages.packageFqName, Name.identifier("EntityType"))
 }
 

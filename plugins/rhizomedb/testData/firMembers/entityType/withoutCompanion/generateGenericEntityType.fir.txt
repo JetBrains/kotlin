@@ -1,0 +1,28 @@
+FILE: generateGenericEntityType.kt
+    public abstract class MyEntityType<E : R|com/jetbrains/rhizomedb/Entity|> : R|com/jetbrains/rhizomedb/EntityType<E>| {
+        public constructor<E : R|com/jetbrains/rhizomedb/Entity|>(ident: R|kotlin/String|, cons: R|(com/jetbrains/rhizomedb/EID) -> E|): R|MyEntityType<E>| {
+            super<R|com/jetbrains/rhizomedb/EntityType<E>|>(R|<local>/ident|, R|<local>/cons|)
+        }
+
+    }
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|(baseType = <getClass>(Q|MyEntityType|)) public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
+            public get(): R|com/jetbrains/rhizomedb/EID|
+
+        public final operator fun component1(): R|com/jetbrains/rhizomedb/EID|
+
+        public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
+
+        public final companion object Companion : R|kotlin/Any|, R|MyEntityType<MyEntity>| {
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.all: R|kotlin/collections/Set<MyEntity>|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.single: R|MyEntity|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.singleOrNull: R|MyEntity?|>|()
+    }

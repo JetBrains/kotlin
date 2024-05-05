@@ -22,7 +22,9 @@ import org.jetbrains.rhizomedb.fir.resolve.RhizomedbAnnotations
 object RhizomedbFirPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.hasAnnotation(RhizomedbAnnotations.manyAnnotationClassId, context.session)) return
-        if (!declaration.hasAnnotation(RhizomedbAnnotations.attributeAnnotationClassId, context.session)) return
+        if (!declaration.hasAnnotation(RhizomedbAnnotations.valueAttributeClassId, context.session) &&
+            !declaration.hasAnnotation(RhizomedbAnnotations.referenceAttributeClassId, context.session)
+        ) return
         if (declaration.returnTypeRef.isSet()) return
         reporter.reportOn(declaration.source, RhizomedbFirErrors.MANY_ATTRIBUTE_NOT_A_SET, context)
     }

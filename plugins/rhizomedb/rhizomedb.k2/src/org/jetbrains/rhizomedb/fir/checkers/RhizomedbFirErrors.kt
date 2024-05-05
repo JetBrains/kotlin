@@ -6,11 +6,12 @@
 package org.jetbrains.rhizomedb.fir.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
 object RhizomedbFirErrors {
     val MANY_ATTRIBUTE_NOT_A_SET by error0<PsiElement>()
+    val NOT_ENTITY by error0<PsiElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(RhizomedbDefaultErrorMessages)

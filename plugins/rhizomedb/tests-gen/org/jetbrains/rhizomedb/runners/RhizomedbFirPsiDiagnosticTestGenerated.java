@@ -42,28 +42,170 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @Test
-    @TestMetadata("entityType.kt")
-    public void testEntityType() {
-      runTest("plugins/rhizomedb/testData/firMembers/entityType.kt");
+    @Nested
+    @TestMetadata("plugins/rhizomedb/testData/firMembers/attributes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Attributes {
+      @Test
+      public void testAllFilesPresentInAttributes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/attributes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("manyAttribute.kt")
+      public void testManyAttribute() {
+        runTest("plugins/rhizomedb/testData/firMembers/attributes/manyAttribute.kt");
+      }
+
+      @Test
+      @TestMetadata("optionalAttribute.kt")
+      public void testOptionalAttribute() {
+        runTest("plugins/rhizomedb/testData/firMembers/attributes/optionalAttribute.kt");
+      }
+
+      @Test
+      @TestMetadata("requiredAttribute.kt")
+      public void testRequiredAttribute() {
+        runTest("plugins/rhizomedb/testData/firMembers/attributes/requiredAttribute.kt");
+      }
     }
 
-    @Test
-    @TestMetadata("manyAttribute.kt")
-    public void testManyAttribute() {
-      runTest("plugins/rhizomedb/testData/firMembers/manyAttribute.kt");
-    }
+    @Nested
+    @TestMetadata("plugins/rhizomedb/testData/firMembers/entityType")
+    @TestDataPath("$PROJECT_ROOT")
+    public class EntityType {
+      @Test
+      public void testAllFilesPresentInEntityType() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/entityType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
 
-    @Test
-    @TestMetadata("optionalAttribute.kt")
-    public void testOptionalAttribute() {
-      runTest("plugins/rhizomedb/testData/firMembers/optionalAttribute.kt");
-    }
+      @Nested
+      @TestMetadata("plugins/rhizomedb/testData/firMembers/entityType/withCompanion")
+      @TestDataPath("$PROJECT_ROOT")
+      public class WithCompanion {
+        @Test
+        public void testAllFilesPresentInWithCompanion() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/entityType/withCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
 
-    @Test
-    @TestMetadata("requiredAttribute.kt")
-    public void testRequiredAttribute() {
-      runTest("plugins/rhizomedb/testData/firMembers/requiredAttribute.kt");
+        @Test
+        @TestMetadata("entityHierarchy.kt")
+        public void testEntityHierarchy() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/entityHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("generate.kt")
+        public void testGenerate() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generate.kt");
+        }
+
+        @Test
+        @TestMetadata("generateBasicEntityType.kt")
+        public void testGenerateBasicEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateBasicEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("generateEntityTypeWithNoArgConstructor.kt")
+        public void testGenerateEntityTypeWithNoArgConstructor() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateEntityTypeWithNoArgConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("generateFinalNonGenericEntityType.kt")
+        public void testGenerateFinalNonGenericEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateFinalNonGenericEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("generateGenericEntityType.kt")
+        public void testGenerateGenericEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateGenericEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("generateNonGenericEntityType.kt")
+        public void testGenerateNonGenericEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateNonGenericEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("noAnnotation.kt")
+        public void testNoAnnotation() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/noAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("notEntity.kt")
+        public void testNotEntity() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/notEntity.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion")
+      @TestDataPath("$PROJECT_ROOT")
+      public class WithoutCompanion {
+        @Test
+        public void testAllFilesPresentInWithoutCompanion() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("entityHierarchy.kt")
+        public void testEntityHierarchy() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/entityHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("generate.kt")
+        public void testGenerate() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generate.kt");
+        }
+
+        @Test
+        @TestMetadata("generateBasicEntityType.kt")
+        public void testGenerateBasicEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateBasicEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("generateEntityTypeWithNoArgConstructor.kt")
+        public void testGenerateEntityTypeWithNoArgConstructor() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateEntityTypeWithNoArgConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("generateFinalNonGenericEntityType.kt")
+        public void testGenerateFinalNonGenericEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateFinalNonGenericEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("generateGenericEntityType.kt")
+        public void testGenerateGenericEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateGenericEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("generateNonGenericEntityType.kt")
+        public void testGenerateNonGenericEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateNonGenericEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("noAnnotation.kt")
+        public void testNoAnnotation() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/noAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("notEntity.kt")
+        public void testNotEntity() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/notEntity.kt");
+        }
+      }
     }
   }
 }

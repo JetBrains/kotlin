@@ -14,5 +14,10 @@ object RhizomedbDefaultErrorMessages : BaseDiagnosticRendererFactory() {
             RhizomedbFirErrors.MANY_ATTRIBUTE_NOT_A_SET,
             "Property marked as @Many should be a Set",
         )
+
+        put(
+            RhizomedbFirErrors.NOT_ENTITY,
+            "Not an entity",
+        )
     }
 }

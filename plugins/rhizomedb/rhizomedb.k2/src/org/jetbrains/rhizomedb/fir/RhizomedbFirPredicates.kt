@@ -5,12 +5,17 @@
 
 package org.jetbrains.rhizomedb.fir
 
-import org.jetbrains.kotlin.fir.extensions.predicate.*
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.rhizomedb.fir.resolve.RhizomedbAnnotations
 
 object RhizomedbFirPredicates {
     internal val annotatedWithEntityType = DeclarationPredicate.create {
         annotated(RhizomedbAnnotations.generatedEntityTypeFqName)
+    }
+
+    internal val annotatedWithAttribute = DeclarationPredicate.create {
+        annotated(RhizomedbAnnotations.valueAttributeFqName) or
+                annotated(RhizomedbAnnotations.referenceAttributeFqName)
     }
 
     internal val parentAnnotatedWithEntityType = DeclarationPredicate.create {
