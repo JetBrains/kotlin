@@ -11,7 +11,7 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
@@ -309,7 +309,16 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             ).disallowChanges()
 
             task.kaptClasspath.from(kaptClasspathConfiguration).disallowChanges()
-            task.kaptExternalClasspath.from(kaptClasspathConfiguration.fileCollection { it is ExternalDependency })
+            task.kaptExternalClasspath.from(
+                kaptClasspathConfiguration
+                    .incoming
+                    .artifactView { artifactView ->
+                        artifactView.componentFilter {
+                            it is ModuleComponentIdentifier
+                        }
+                    }
+                    .files
+            )
             task.kaptClasspathConfigurationNames.value(kaptClasspathConfigurations.map { it.name }).disallowChanges()
 
             KaptWithAndroid.androidVariantData(this)?.annotationProcessorOptionProviders?.let {
