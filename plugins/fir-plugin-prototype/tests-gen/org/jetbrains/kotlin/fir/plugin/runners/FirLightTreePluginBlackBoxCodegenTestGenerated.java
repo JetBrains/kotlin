@@ -91,6 +91,12 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   }
 
   @Test
+  @TestMetadata("interface.kt")
+  public void testInterface() {
+    runTest("plugins/fir-plugin-prototype/testData/box/interface.kt");
+  }
+
+  @Test
   @TestMetadata("localClassWithCompanionObject.kt")
   public void testLocalClassWithCompanionObject() {
     runTest("plugins/fir-plugin-prototype/testData/box/localClassWithCompanionObject.kt");

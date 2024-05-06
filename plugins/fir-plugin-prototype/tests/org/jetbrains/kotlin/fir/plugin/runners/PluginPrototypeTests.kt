@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.plugin.runners
 
-import org.jetbrains.kotlin.fir.plugin.services.ExtensionRegistrarConfigurator
-import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.plugin.services.PluginRuntimeAnnotationsProvider
+import org.jetbrains.kotlin.fir.plugin.services.*
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -62,7 +60,9 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
 
     useConfigurators(
         ::PluginAnnotationsProvider,
-        ::ExtensionRegistrarConfigurator
+        ::ExtensionRegistrarConfigurator,
+        ::ComposePluginAnnotationsProvider,
+        ::ComposeExtensionRegistrarConfigurator,
     )
 
     useCustomRuntimeClasspathProviders(

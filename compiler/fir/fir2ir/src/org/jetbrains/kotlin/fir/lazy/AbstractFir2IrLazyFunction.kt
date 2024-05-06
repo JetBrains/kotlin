@@ -88,7 +88,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override var modality: Modality
         get() {
-            fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            // fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return fir.modality!!
         }
         set(_) = mutationNotSupported()

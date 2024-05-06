@@ -9,6 +9,7 @@ val composeVersion = "1.7.0-alpha07"
 repositories {
     google {
         content {
+            includeGroup("androidx.collection")
             includeVersion("androidx.compose.runtime", "runtime", composeVersion)
             includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
         }

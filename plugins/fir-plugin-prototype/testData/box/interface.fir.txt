@@ -1,0 +1,25 @@
+Module: lib
+FILE: repo.kt
+    package core.data
+
+    public abstract interface UserNewsResourceRepository : R|kotlin/Any| {
+        public abstract fun observeAll(): R|kotlin/collections/List<kotlin/Int>|
+
+    }
+Module: main
+FILE: main.kt
+    package home
+
+    public final class MainActivity : R|kotlin/Any| {
+        public constructor(): R|home/MainActivity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final lateinit var userNewsResourceRepository: R|core/data/UserNewsResourceRepository|
+            public get(): R|core/data/UserNewsResourceRepository|
+            public set(value: R|core/data/UserNewsResourceRepository|): R|kotlin/Unit|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
