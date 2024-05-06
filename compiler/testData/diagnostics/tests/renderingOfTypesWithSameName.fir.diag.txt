@@ -1,0 +1,5 @@
+/renderingOfTypesWithSameName.fir.kt:(159,169): error: Argument type mismatch: actual type is 'T', but 'T' was expected.
+
+/renderingOfTypesWithSameName.fir.kt:(276,290): error: Argument type mismatch: actual type is 'CapturedType(in kotlin.String)', but 'CapturedType(in kotlin.String)' was expected.
+
+/renderingOfTypesWithSameName.fir.kt:(285,289): error: Null cannot be a value of a non-null type 'CapturedType(in kotlin.String)'.

@@ -1318,6 +1318,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("renderingOfTypesWithSameName.kt")
+    public void testRenderingOfTypesWithSameName() {
+      runTest("compiler/testData/diagnostics/tests/renderingOfTypesWithSameName.kt");
+    }
+
+    @Test
     @TestMetadata("ReserveYield.kt")
     public void testReserveYield() {
       runTest("compiler/testData/diagnostics/tests/ReserveYield.kt");
