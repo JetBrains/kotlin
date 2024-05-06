@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
 
 abstract class KaBaseAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
     private val lifetimeTracker = KaBaseLifetimeTracker.getInstance(project)
@@ -33,6 +34,11 @@ abstract class KaBaseAnalysisSessionProvider(project: Project) : KtAnalysisSessi
     }
 
     private fun beforeEnteringAnalysis(session: KtAnalysisSession) {
+        val permissionChecker = KaAnalysisPermissionChecker.getInstance(project)
+        if (!permissionChecker.isAnalysisAllowed()) {
+            throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
+        }
+
         lifetimeTracker.beforeEnteringAnalysis(session)
         writeActionStartedChecker.beforeEnteringAnalysis()
     }
@@ -50,3 +56,5 @@ abstract class KaBaseAnalysisSessionProvider(project: Project) : KtAnalysisSessi
         lifetimeTracker.afterLeavingAnalysis(session)
     }
 }
+
+private class ProhibitedAnalysisException(override val message: String) : IllegalStateException()
