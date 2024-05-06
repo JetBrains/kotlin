@@ -84,6 +84,24 @@ class FastJarFSTest : TestCase() {
         // Asserting that core jar FS still behaves the same way as the "emulation" implemented in FastJarFS
         Assert.assertTrue(errFromCoreJarFs.contains("WARN: error in opening zip file"))
     }
+
+    fun testEmptyJar() {
+        val fs = fs ?: return
+        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val emptyJarFile = File(tmpDir, "empty.jar")
+        emptyJarFile.createNewFile()
+
+        val errFromFastJarFs = captureErr {
+            fs.findFileByPath(emptyJarFile.absolutePath + "!/a.class")
+        }
+        Assert.assertTrue(errFromFastJarFs.contains("WARN: Error while reading zip file:"))
+
+        val errFromCoreJarFs = captureErr {
+            coreAppEnv!!.jarFileSystem.findFileByPath(emptyJarFile.absolutePath + "!/a.class")
+        }
+        // Asserting that core jar FS still behaves the same way as the "emulation" implemented in FastJarFS
+        Assert.assertTrue(errFromCoreJarFs.contains("WARN: zip file is empty"))
+    }
 }
 
 private fun captureErr(body: () -> Unit): String {

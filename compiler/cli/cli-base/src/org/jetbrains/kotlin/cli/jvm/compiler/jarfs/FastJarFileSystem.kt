@@ -93,7 +93,7 @@ private fun prepareCleanerCallback(): ((ByteBuffer) -> Unit)? {
             val clean = Class.forName("sun.misc.Cleaner").getMethod("clean")
             clean.isAccessible = true
 
-            { buffer: ByteBuffer -> clean.invoke(cleaner.invoke(buffer)) }
+            { buffer: ByteBuffer -> cleaner.invoke(buffer)?.let { clean.invoke(it) } }
         } else {
             val unsafeClass = try {
                 Class.forName("sun.misc.Unsafe")
