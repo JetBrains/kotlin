@@ -158,13 +158,6 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
 
     val frameworkTaskName = framework.embedAndSignTaskName()
 
-    val swiftExportTask: TaskProvider<*>? =
-        if (project.kotlinPropertiesProvider.swiftExportEnabled && environment.targets.contains(framework.target.konanTarget)) {
-            registerSwiftExportTask(framework)
-        } else {
-            null
-        }
-
     if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null) {
         locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
             task.group = BasePlugin.BUILD_GROUP
@@ -209,16 +202,27 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         }
     }
 
-    val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
-    assembleTask.dependsOn(checkSandboxAndWriteProtectionTask)
+    val swiftExportTask: TaskProvider<*>? =
+        if (project.kotlinPropertiesProvider.swiftExportEnabled && environment.targets.contains(framework.target.konanTarget)) {
+            registerSwiftExportTask(framework).apply {
+                dependsOn(checkSandboxAndWriteProtectionTask)
+            }
+        } else {
+            null
+        }
+
+    val assembleTask = registerAssembleAppleFrameworkTask(framework, environment)?.apply {
+        dependsOn(checkSandboxAndWriteProtectionTask)
+    } ?: return
 
     if (framework.buildType != envBuildType || !envTargets.contains(framework.konanTarget)) return
 
     embedAndSignTask.configure { task ->
         val frameworkFile = framework.outputFile
-        task.dependsOn(assembleTask)
         if (swiftExportTask != null) {
             task.dependsOn(swiftExportTask)
+        } else {
+            task.dependsOn(assembleTask)
         }
         task.sourceFramework.fileProvider(appleFrameworkDir(frameworkTaskName, environment).map { it.resolve(frameworkFile.name) })
         task.destinationDirectory.set(envEmbeddedFrameworksDir)
