@@ -846,6 +846,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
       }
 
       @Test
+      @TestMetadata("supertype.kt")
+      public void testSupertype() {
+        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/supertype.kt");
+      }
+
+      @Test
       @TestMetadata("typeAnnotationTarget6.kt")
       public void testTypeAnnotationTarget6() {
         runTest("compiler/testData/codegen/box/annotations/typeAnnotations/typeAnnotationTarget6.kt");

@@ -1,0 +1,346 @@
+public abstract interface foo/Ann : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+Ljava/lang/Object;Lfoo/Inv<Ljava/lang/Number;>;
+public final class foo/F01 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<Ljava/lang/Number;>;
+public final class foo/F02 : java/lang/Object, foo/In {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<Ljava/lang/Number;>;
+public final class foo/F03 : java/lang/Object, foo/Out {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<Ljava/lang/Number;>;>;
+public final class foo/F04 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;
+public final class foo/F05 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;
+public final class foo/F06 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<Lfoo/Inv<Ljava/lang/Number;>;>;
+public final class foo/F07 : java/lang/Object, foo/In {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<Lfoo/In<-Ljava/lang/Number;>;>;
+public final class foo/F08 : java/lang/Object, foo/In {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<Lfoo/Out<+Ljava/lang/Number;>;>;
+public final class foo/F09 : java/lang/Object, foo/In {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<Lfoo/Inv<Ljava/lang/Number;>;>;
+public final class foo/F10 : java/lang/Object, foo/Out {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<Lfoo/In<-Ljava/lang/Number;>;>;
+public final class foo/F11 : java/lang/Object, foo/Out {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<Lfoo/Out<+Ljava/lang/Number;>;>;
+public final class foo/F12 : java/lang/Object, foo/Out {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<-Lfoo/Inv<Ljava/lang/Number;>;>;>;
+public final class foo/F17 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<-Lfoo/In<-Ljava/lang/Number;>;>;>;
+public final class foo/F18 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<-Lfoo/Out<+Ljava/lang/Number;>;>;>;
+public final class foo/F19 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<+Lfoo/Inv<Ljava/lang/Number;>;>;>;
+public final class foo/F20 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<+Lfoo/In<-Ljava/lang/Number;>;>;>;
+public final class foo/F21 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<+Lfoo/Out<+Ljava/lang/Number;>;>;>;
+public final class foo/F22 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<-Ljava/lang/Number;>;>;
+public final class foo/F23 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;
+public final class foo/F24 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;
+public final class foo/F25 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Inv<+Ljava/lang/Number;>;>;
+public final class foo/F26 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;
+public final class foo/F27 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;
+public final class foo/F28 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Ljava/lang/Number;>;
+public final class foo/F29 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([]) : CLASS_EXTENDS 0, 0; // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<Ljava/lang/Number;>;
+public final class foo/F30 : java/lang/Object, foo/In {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([]) : CLASS_EXTENDS 0, 0; // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<Ljava/lang/Number;>;
+public final class foo/F31 : java/lang/Object, foo/Out {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([]) : CLASS_EXTENDS 0, 0; // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Ljava/lang/Number;>;
+public final class foo/F32 : java/lang/Object, foo/Inv {
+  @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<Ljava/lang/Number;>;
+public final class foo/F33 : java/lang/Object, foo/In {
+  @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<Ljava/lang/Number;>;
+public final class foo/F34 : java/lang/Object, foo/Out {
+  @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Ljava/lang/Number;>;
+public final class foo/F35 : java/lang/Object, foo/Inv {
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : CLASS_EXTENDS 0, null // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<Ljava/lang/Number;>;
+public final class foo/F36 : java/lang/Object, foo/In {
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : CLASS_EXTENDS 0, null // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<Ljava/lang/Number;>;
+public final class foo/F37 : java/lang/Object, foo/Out {
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : CLASS_EXTENDS 0, null // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Ljava/lang/Number;>;
+public final class foo/F38 : java/lang/Object, foo/Inv {
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : CLASS_EXTENDS 0, null // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<Ljava/lang/Number;>;
+public final class foo/F39 : java/lang/Object, foo/In {
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : CLASS_EXTENDS 0, null // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<Ljava/lang/Number;>;
+public final class foo/F40 : java/lang/Object, foo/Out {
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : CLASS_EXTENDS 0, null // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Ljava/lang/Number;>;
+public final class foo/F41 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;
+  @Lkotlin/jvm/JvmWildcard;([]) : CLASS_EXTENDS 0, 0; // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/In<-Ljava/lang/Number;>;
+public final class foo/F42 : java/lang/Object, foo/In {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;*
+  @Lkotlin/jvm/JvmWildcard;([]) : CLASS_EXTENDS 0, 0;* // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Out<+Ljava/lang/Number;>;
+public final class foo/F43 : java/lang/Object, foo/Out {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;*
+  @Lkotlin/jvm/JvmWildcard;([]) : CLASS_EXTENDS 0, 0;* // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;
+public final class foo/F44 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+  @Lkotlin/jvm/JvmWildcard;([]) : CLASS_EXTENDS 0, 0;0;* // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;
+public final class foo/F45 : java/lang/Object, foo/Inv {
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+  @Lkotlin/jvm/JvmWildcard;([]) : CLASS_EXTENDS 0, 0;0;* // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;
+public final class foo/F46 : java/lang/Object, foo/Inv {
+  @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+  @Lkotlin/jvm/JvmWildcard;([]) : CLASS_EXTENDS 0, 0;0;* // invisible
+
+    public void <init>()
+}
+
+Ljava/lang/Object;Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;
+public final class foo/F47 : java/lang/Object, foo/Inv {
+  @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+  @Lfoo/Ann;([]) : CLASS_EXTENDS 0, 0;0;*
+  @Lkotlin/jvm/JvmWildcard;([]) : CLASS_EXTENDS 0, 0;0;* // invisible
+
+    public void <init>()
+}
+
+<U:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/In : java/lang/Object {
+
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Inv : java/lang/Object {
+
+}
+
+<V:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Out : java/lang/Object {
+
+}

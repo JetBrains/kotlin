@@ -207,6 +207,12 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
     }
 
     @Test
+    @TestMetadata("supertype.kt")
+    public void testSupertype() {
+      runTest("compiler/testData/codegen/asmLike/typeAnnotations/supertype.kt");
+    }
+
+    @Test
     @TestMetadata("syntheticAccessors.kt")
     public void testSyntheticAccessors() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/syntheticAccessors.kt");
@@ -237,6 +243,12 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
       @TestMetadata("returnType.kt")
       public void testReturnType() {
         runTest("compiler/testData/codegen/asmLike/typeAnnotations/generics/returnType.kt");
+      }
+
+      @Test
+      @TestMetadata("supertype.kt")
+      public void testSupertype() {
+        runTest("compiler/testData/codegen/asmLike/typeAnnotations/generics/supertype.kt");
       }
 
       @Test

@@ -183,23 +183,7 @@ class ClassCodegen private constructor(
             }
         }
 
-        object : AnnotationCodegen(this@ClassCodegen) {
-            override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
-                return visitor.visitor.visitAnnotation(descr, visible)
-            }
-        }.genAnnotations(irClass)
-
-        AnnotationCodegen.genAnnotationsOnTypeParametersAndBounds(
-            context,
-            irClass,
-            this,
-            TypeReference.CLASS_TYPE_PARAMETER,
-            TypeReference.CLASS_TYPE_PARAMETER_BOUND
-        ) { typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean ->
-            visitor.visitor.visitTypeAnnotation(typeRef, typePath, descriptor, visible)
-        }
-
-        generateKotlinMetadataAnnotation()
+        generateAnnotations()
 
         visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
 
@@ -253,6 +237,39 @@ class ClassCodegen private constructor(
         // Should be initialized first in case some inline function call in `<clinit>` also uses assertions.
         (classInitializer.body as IrBlockBody).statements.add(0, init)
         return null
+    }
+
+    private fun generateAnnotations() {
+        class Codegen(private val superInterfaceIndex: Int) : AnnotationCodegen(this@ClassCodegen) {
+            override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
+                return visitor.visitor.visitAnnotation(descr, visible)
+            }
+
+            override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                val typeReference = TypeReference.newSuperTypeReference(superInterfaceIndex)
+                return visitor.visitor.visitTypeAnnotation(typeReference.value, path, descr, visible)
+            }
+        }
+
+        Codegen(-1).genAnnotations(irClass)
+
+        var superInterfaceIndex = 0
+        for (supertype in irClass.superTypes) {
+            val codegen = Codegen(if (supertype.isInterface()) superInterfaceIndex++ else -1)
+            codegen.generateTypeAnnotations(supertype, TypeAnnotationPosition.Supertype)
+        }
+
+        AnnotationCodegen.genAnnotationsOnTypeParametersAndBounds(
+            context,
+            irClass,
+            this,
+            TypeReference.CLASS_TYPE_PARAMETER,
+            TypeReference.CLASS_TYPE_PARAMETER_BOUND
+        ) { typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean ->
+            visitor.visitor.visitTypeAnnotation(typeRef, typePath, descriptor, visible)
+        }
+
+        generateKotlinMetadataAnnotation()
     }
 
     private fun generateKotlinMetadataAnnotation() {

@@ -1,0 +1,56 @@
+public class foo/A : java/lang/Object {
+    public void <init>()
+}
+
+public final class foo/C1 : foo/A, foo/I1, foo/I2 {
+  @Lfoo/TypeAnn;([name="C1-A"]) : CLASS_EXTENDS -1, null
+  @Lfoo/TypeAnn;([name="C1-I1"]) : CLASS_EXTENDS 0, null
+  @Lfoo/TypeAnn;([name="C1-I2"]) : CLASS_EXTENDS 1, null
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS -1, null // invisible
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS 0, null // invisible
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS 1, null // invisible
+
+    public void <init>()
+}
+
+public final class foo/C2 : foo/A, foo/I1, foo/I2 {
+  @Lfoo/TypeAnn;([name="C1-I1"]) : CLASS_EXTENDS 0, null
+  @Lfoo/TypeAnn;([name="C1-A"]) : CLASS_EXTENDS -1, null
+  @Lfoo/TypeAnn;([name="C1-I2"]) : CLASS_EXTENDS 1, null
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS 0, null // invisible
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS -1, null // invisible
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS 1, null // invisible
+
+    public void <init>()
+}
+
+public final class foo/C3 : foo/A, foo/I1, foo/I2 {
+  @Lfoo/TypeAnn;([name="C1-I1"]) : CLASS_EXTENDS 0, null
+  @Lfoo/TypeAnn;([name="C1-I2"]) : CLASS_EXTENDS 1, null
+  @Lfoo/TypeAnn;([name="C1-A"]) : CLASS_EXTENDS -1, null
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS 0, null // invisible
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS 1, null // invisible
+  @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS -1, null // invisible
+
+    public void <init>()
+}
+
+public abstract interface foo/I1 : java/lang/Object {
+
+}
+
+public abstract interface foo/I2 : java/lang/Object {
+
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeAnnBinary : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeAnnSource : java/lang/Object, java/lang/annotation/Annotation {
+
+}

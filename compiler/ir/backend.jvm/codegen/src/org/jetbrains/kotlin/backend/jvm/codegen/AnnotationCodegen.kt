@@ -358,6 +358,8 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 }
             is TypeAnnotationPosition.TypeParameterBoundType ->
                 TypeMappingMode.GENERIC_ARGUMENT
+            is TypeAnnotationPosition.Supertype ->
+                TypeMappingMode.SUPER_TYPE
         }
         for (info in IrTypeAnnotationCollector(context).collectTypeAnnotations(type, mode)) {
             for (annotation in info.annotations) {
@@ -372,6 +374,7 @@ internal sealed class TypeAnnotationPosition {
     class ValueParameterType(val parameter: IrValueParameter) : TypeAnnotationPosition()
     class FieldType(val field: IrField) : TypeAnnotationPosition()
     data object TypeParameterBoundType : TypeAnnotationPosition()
+    data object Supertype : TypeAnnotationPosition()
 }
 
 private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {

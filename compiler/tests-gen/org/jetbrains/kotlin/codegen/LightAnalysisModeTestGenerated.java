@@ -737,6 +737,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/annotations/typeAnnotations/methodTypeParameters.kt");
       }
 
+      @TestMetadata("supertype.kt")
+      public void testSupertype() {
+        runTest("compiler/testData/codegen/box/annotations/typeAnnotations/supertype.kt");
+      }
+
       @TestMetadata("typeAnnotationTarget6.kt")
       public void testTypeAnnotationTarget6() {
         runTest("compiler/testData/codegen/box/annotations/typeAnnotations/typeAnnotationTarget6.kt");
