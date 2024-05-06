@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 
-@KotlinGradlePluginPublicDsl
 interface KotlinMultiplatformSourceSetConventions {
     // region Common Source Set Accessors
 
