@@ -1010,6 +1010,7 @@ open class PsiRawFirBuilder(
                             delegatedSelfTypeRef?.coneType?.let { arrayOf(it) } ?: emptyArray(),
                             isNullable = false,
                         )
+                        source = container.source?.fakeElement(KtFakeSourceElementKind.EnumSuperTypeRef)
                     }
                     container.superTypeRefs += delegatedSuperTypeRef!!
                 }

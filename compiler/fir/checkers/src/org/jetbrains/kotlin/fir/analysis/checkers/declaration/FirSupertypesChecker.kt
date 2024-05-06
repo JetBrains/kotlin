@@ -50,7 +50,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         val superClassSymbols = hashSetOf<FirRegularClassSymbol>()
         for (superTypeRef in declaration.superTypeRefs) {
             // skip implicit super types like Enum or Any
-            if (superTypeRef.source == null) continue
+            if (superTypeRef.source == null || superTypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
 
             val coneType = superTypeRef.coneType
             if (!nullableSupertypeReported && coneType.nullability == ConeNullability.NULLABLE) {

@@ -524,6 +524,7 @@ class LightTreeRawFirDeclarationBuilder(
                                         arrayOf(selfType.type),
                                         isNullable = false
                                     )
+                                    source =classNode.toFirSourceElement(KtFakeSourceElementKind.EnumSuperTypeRef)
                                 }
                                 superTypeRefs += delegatedSuperTypeRef
                             }

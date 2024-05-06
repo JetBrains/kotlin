@@ -24763,6 +24763,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("protectedEnum.kt")
+      public void testProtectedEnum() {
+        runTest("compiler/testData/diagnostics/tests/modifiers/protectedEnum.kt");
+      }
+
+      @Test
       @TestMetadata("protectedInExpectActual.kt")
       public void testProtectedInExpectActual() {
         runTest("compiler/testData/diagnostics/tests/modifiers/protectedInExpectActual.kt");
