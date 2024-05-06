@@ -19,6 +19,11 @@ internal class BridgeGeneratorImpl : BridgeGenerator {
 
         val cDeclaration = request.createCDeclaration()
         val kotlinBridge = createKotlinBridge(
+            kotlinBridgeType = when (request.callable) {
+                is SirGetter -> KotlinBridgeType.GETTER
+                is SirSetter -> KotlinBridgeType.SETTER
+                else -> KotlinBridgeType.FUNCTION
+            },
             bridgeName = request.bridgeName,
             cName = request.cDeclarationName(),
             functionFqName = request.fqName,
@@ -45,6 +50,7 @@ internal fun BridgeRequest.cDeclarationName(): String {
 }
 
 private fun createKotlinBridge(
+    kotlinBridgeType: KotlinBridgeType,
     bridgeName: String,
     cName: String,
     functionFqName: List<String>,
@@ -53,30 +59,43 @@ private fun createKotlinBridge(
 ): List<String> {
     val declaration = createKotlinDeclarationSignature(bridgeName, returnTypeBridge, parameterBridges)
     val annotation = "@${exportAnnotationFqName.substringAfterLast('.')}(\"${cName}\")"
+    val body = when (kotlinBridgeType) {
+        KotlinBridgeType.FUNCTION -> {
+            val callSite = run {
+                val functionName = functionFqName.joinToString(separator = ".")
+                val parameters = parameterBridges.joinToString(", ") { "__${it.name}" }
+                "$functionName($parameters)"
+            }
 
-    val callSite = run {
-        val functionName = functionFqName.joinToString(separator = ".")
-        val parameters = parameterBridges.joinToString(", ") { "__${it.name}" }
-        "$functionName($parameters)"
-    }
+            val parameters = parameterBridges
+                .map { "val __${it.name} = ${it.bridge.generateSwiftToKotlinConversion(it.name)}" }
+                .takeIf { it.isNotEmpty() }?.joinToString(separator = "") { "\n|    $it" } ?: ""
 
-    val parameters = parameterBridges.map { "val __${it.name} = ${it.bridge.generateSwiftToKotlinConversion(it.name)}" }
+            val resultName = "_result"
+            val result = returnTypeBridge.generateKotlinToSwiftConversion(resultName)
 
-    val resultName = "_result"
-    val result = returnTypeBridge.generateKotlinToSwiftConversion(resultName)
-
-    return """
-        $annotation
-        $declaration {${parameters.takeIf { it.isNotEmpty() }?.joinToString(separator = "") { "\n            $it" } ?: ""}
-            val $resultName = $callSite
-            return $result
+            """$parameters
+            |    val $resultName = $callSite
+            |    return $result"""
         }
-    """.trimIndent().lines()
-}
+        KotlinBridgeType.GETTER -> {
+            val callSite = functionFqName.joinToString(separator = ".")
 
-private fun createCallSite(functionFqName: List<String>, parameterNames: List<String>, resultName: String): String {
-    val functionCall = "${functionFqName.joinToString(separator = ".")}(${parameterNames.joinToString(", ")})"
-    return "val $resultName = $functionCall"
+            """
+            |    return $callSite"""
+        }
+        KotlinBridgeType.SETTER -> {
+            if (parameterBridges.count() != 1) {
+                error("createKotlinBridge received a setter with not single parameter, aborting")
+            }
+            """
+            |    ${functionFqName.joinToString(separator = ".")} = ${parameterBridges.first().name}"""
+        }
+    }
+    return """
+        |$annotation
+        |$declaration {$body
+        |}""".trimMargin().lines()
 }
 
 private fun createKotlinDeclarationSignature(bridgeName: String, returnTypeBridge: Bridge, parameters: List<BridgeParameter>): String {
@@ -101,7 +120,7 @@ private fun bridgeType(type: SirType): Bridge {
     require(type is SirNominalType)
 
     return when (type.type) {
-        SirSwiftModule.void -> Bridge.AsIs(type,KotlinType.Unit, CType.Void)
+        SirSwiftModule.void -> Bridge.AsIs(type, KotlinType.Unit, CType.Void)
 
         SirSwiftModule.bool -> Bridge.AsIs(type, KotlinType.Boolean, CType.Bool)
 
@@ -206,4 +225,8 @@ internal sealed class Bridge(
     abstract fun generateSwiftToKotlinConversion(parameterName: String): String
 
     abstract fun generateKotlinToSwiftConversion(parameterName: String): String
+}
+
+private enum class KotlinBridgeType {
+    FUNCTION, SETTER, GETTER,
 }
