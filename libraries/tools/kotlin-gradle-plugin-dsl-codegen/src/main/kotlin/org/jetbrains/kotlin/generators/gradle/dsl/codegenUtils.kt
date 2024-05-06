@@ -107,4 +107,8 @@ internal fun String.replaceRegion(regionName: String, content: String): String {
     }
 }
 
-internal val outputSourceRoot get() = System.getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot"] as String
+internal val kotlinGradlePluginSourceRoot get() = System
+        .getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.kotlinGradlePluginSourceRoot"] as String
+
+internal val kotlinGradlePluginApiSourceRoot get() = System
+    .getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.kotlinGradlePluginApiSourceRoot"] as String

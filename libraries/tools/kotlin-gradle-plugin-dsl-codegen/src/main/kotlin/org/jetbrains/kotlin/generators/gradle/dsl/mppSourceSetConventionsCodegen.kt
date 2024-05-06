@@ -13,7 +13,7 @@ fun main() {
 }
 
 private fun generateKotlinMultiplatformSourceSetConventionsKt() {
-    val sourceFile = File(outputSourceRoot)
+    val sourceFile = File(kotlinGradlePluginSourceRoot)
         .resolve("org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions.kt")
 
     val oldSource = sourceFile.readText()
@@ -39,7 +39,7 @@ private fun generateKotlinMultiplatformSourceSetConventionsKt() {
 }
 
 private fun generateKotlinMultiplatformSourceSetConventionsImplKt() {
-    val sourceFile = File(outputSourceRoot)
+    val sourceFile = File(kotlinGradlePluginSourceRoot)
         .resolve("org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventionsImpl.kt")
 
     val oldSource = sourceFile.readText()
