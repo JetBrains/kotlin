@@ -8,13 +8,13 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableMppResourcesPublication
 import org.jetbrains.kotlin.gradle.util.kotlin

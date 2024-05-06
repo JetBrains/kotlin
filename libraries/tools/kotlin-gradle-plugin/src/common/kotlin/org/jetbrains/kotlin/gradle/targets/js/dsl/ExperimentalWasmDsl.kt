@@ -7,4 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Deprecated(
+    "Moved to kotlin-gradle-plugin-annotations module",
+    replaceWith = ReplaceWith("org.jetbrains.kotlin.gradle.ExperimentalWasmDsl")
+)
 annotation class ExperimentalWasmDsl

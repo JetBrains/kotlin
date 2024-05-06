@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 
 @KotlinGradlePluginPublicDsl

@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
@@ -15,7 +14,8 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
-import plugins.publishing.*
+import plugins.publishing.configureMultiModuleMavenPublishing
+import plugins.publishing.copyAttributes
 import kotlin.io.path.copyTo
 
 plugins {
@@ -281,11 +281,35 @@ kotlin {
             }
         }
     }
-    @OptIn(ExperimentalWasmDsl::class)
+
+    // Please remove this check after bootstrap and replacing @ExperimentalWasmDsl
+    val newExperimentalWasmDslAvailable = runCatching {
+        Class.forName("org.jetbrains.kotlin.gradle.ExperimentalWasmDsl")
+    }.isSuccess
+
+    if (newExperimentalWasmDslAvailable) {
+        logger.warn(
+            """
+            Apparently kotlin bootstrap just happened. And @ExperimentalWasmDsl annotation was moved to a new FQN.
+            Please replace 'org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl' 
+            with 'org.jetbrains.kotlin.gradle.ExperimentalWasmDsl'
+            and remove this check.
+            
+            Please note that the same check exists in kotlin-test module. Fix it there too.
+            """.trimIndent()
+        )
+    }
+
+    @Suppress("OPT_IN_USAGE")
+    // Remove line above and uncomment line below after bootstrap
+    // @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
         commonWasmTargetConfiguration()
     }
-    @OptIn(ExperimentalWasmDsl::class)
+
+    @Suppress("OPT_IN_USAGE")
+    // Remove line above and uncomment line below after bootstrap
+    // @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmWasi {
         commonWasmTargetConfiguration()
     }
