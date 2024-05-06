@@ -1,5 +1,7 @@
 fun <T> simpleRun(f: (T) -> Unit): Unit = f()
 
+fun <T> functionalTypeWithReceiver(f: (() -> Unit).(T) -> Unit): Unit = f()
+
 fun <T, R> List<T>.simpleMap(f: (T) -> R): R {
 
 }

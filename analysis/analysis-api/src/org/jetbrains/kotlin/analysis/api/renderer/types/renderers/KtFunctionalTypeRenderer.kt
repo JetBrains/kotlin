@@ -47,7 +47,12 @@ public interface KtFunctionalTypeRenderer {
                         }
                     },
                     {
-                        type.receiverType?.let { typeRenderer.renderType(analysisSession, it, printer); printer.append('.') }
+                        type.receiverType?.let {
+                            if (it is KtFunctionalType) printer.append("(")
+                            typeRenderer.renderType(analysisSession, it, printer)
+                            if (it is KtFunctionalType) printer.append(")")
+                            printer.append('.')
+                        }
                         printCollection(type.parameterTypes, prefix = "(", postfix = ")") {
                             typeRenderer.renderType(analysisSession, it, this)
                         }
