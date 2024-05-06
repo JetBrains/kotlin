@@ -38992,6 +38992,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("classDelegationDeprecated.kt")
+        public void testClassDelegationDeprecated() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/classDelegationDeprecated.kt");
+        }
+
+        @Test
+        @TestMetadata("classDelegationError.kt")
+        public void testClassDelegationError() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/classDelegationError.kt");
+        }
+
+        @Test
         @TestMetadata("doWhileWithBreak.kt")
         public void testDoWhileWithBreak() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/doWhileWithBreak.kt");

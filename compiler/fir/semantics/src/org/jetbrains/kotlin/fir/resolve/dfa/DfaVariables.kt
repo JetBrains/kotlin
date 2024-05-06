@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -97,6 +95,11 @@ class RealVariable(
     fun getStability(flow: Flow, session: FirSession): SmartcastStability {
         if (!isThisReference) {
             val stability = propertyStability
+
+            val isUnstableSmartcastOnDelegatedProperties =
+                session.languageVersionSettings.supportsFeature(LanguageFeature.UnstableSmartcastOnDelegatedProperties)
+            if (isUnstableSmartcastOnDelegatedProperties && (identifier.symbol.fir as? FirProperty)?.isDelegated == true) return SmartcastStability.DELEGATED_PROPERTY
+
             stability.inherentInstability?.let { return it }
             val dispatchReceiver = identifier.dispatchReceiver as? RealVariable
             if (stability.checkReceiver && dispatchReceiver?.hasFinalType(flow, session) == false)

@@ -2262,6 +2262,13 @@ internal class SmartcastImpossibleOnImplicitInvokeReceiverImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.SmartcastImpossibleOnImplicitInvokeReceiver
 
+internal class DeprecatedSmartcastOnDelegatedPropertyImpl(
+    override val desiredType: KaType,
+    override val property: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DeprecatedSmartcastOnDelegatedProperty
+
 internal class RedundantNullableImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

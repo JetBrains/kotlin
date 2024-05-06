@@ -333,6 +333,10 @@ enum class LanguageFeature(
     ImprovedCapturedTypeApproximationInInference(KOTLIN_2_1, kind = OTHER), // KT-64515
     ImprovedVarianceInCst(KOTLIN_2_1, kind = OTHER), // KT-68970
 
+    // 2.2
+
+    UnstableSmartcastOnDelegatedProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-57417
+
     // End of 2.* language features --------------------------------------------------
 
     ExpectActualClasses(sinceVersion = null), // KT-62885

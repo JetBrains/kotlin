@@ -218,7 +218,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(smartCastExpression, data)
+        checkers.allSmartCastExpressionCheckers.check(smartCastExpression, data)
     }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: CheckerContext) {

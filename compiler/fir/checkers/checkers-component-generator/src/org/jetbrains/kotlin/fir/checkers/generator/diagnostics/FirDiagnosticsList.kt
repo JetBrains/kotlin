@@ -896,6 +896,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isCastToNotNull")
         }
 
+        val DEPRECATED_SMARTCAST_ON_DELEGATED_PROPERTY by warning<KtExpression> {
+            parameter<ConeKotlinType>("desiredType")
+            parameter<FirCallableSymbol<*>>("property")
+        }
+
         val REDUNDANT_NULLABLE by warning<KtTypeReference>(PositioningStrategy.REDUNDANT_NULLABLE)
 
         val PLATFORM_CLASS_MAPPED_TO_KOTLIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {

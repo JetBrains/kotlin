@@ -216,6 +216,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SMARTCAST_ON_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_ERROR
@@ -1511,6 +1512,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CALLEE_NAME,
             TO_STRING,
             NOT_RENDERED
+        )
+        map.put(
+            DEPRECATED_SMARTCAST_ON_DELEGATED_PROPERTY,
+            "Smart cast to ''{0}'' is impossible, because ''{1}'' is a property inherited by class delegation. " +
+                    "This warning will become an error in future releases. See https://youtrack.jetbrains.com/issue/KT-57417.",
+            RENDER_TYPE, DECLARATION_NAME,
         )
 
         map.put(

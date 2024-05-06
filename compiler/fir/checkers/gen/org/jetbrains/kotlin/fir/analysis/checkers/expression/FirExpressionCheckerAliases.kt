@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -64,6 +65,7 @@ typealias FirCheckNotNullCallChecker = FirExpressionChecker<FirCheckNotNullCall>
 typealias FirElvisExpressionChecker = FirExpressionChecker<FirElvisExpression>
 typealias FirGetClassCallChecker = FirExpressionChecker<FirGetClassCall>
 typealias FirSafeCallExpressionChecker = FirExpressionChecker<FirSafeCallExpression>
+typealias FirSmartCastExpressionChecker = FirExpressionChecker<FirSmartCastExpression>
 typealias FirEqualityOperatorCallChecker = FirExpressionChecker<FirEqualityOperatorCall>
 typealias FirStringConcatenationCallChecker = FirExpressionChecker<FirStringConcatenationCall>
 typealias FirTypeOperatorCallChecker = FirExpressionChecker<FirTypeOperatorCall>

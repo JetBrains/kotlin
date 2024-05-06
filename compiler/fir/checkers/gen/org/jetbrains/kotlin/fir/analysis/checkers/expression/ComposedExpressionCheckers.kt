@@ -57,6 +57,8 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         get() = _getClassCallCheckers
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>
         get() = _safeCallExpressionCheckers
+    override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker>
+        get() = _smartCastExpressionCheckers
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
         get() = _equalityOperatorCallCheckers
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
@@ -104,6 +106,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
     private val _elvisExpressionCheckers: MutableSet<FirElvisExpressionChecker> = mutableSetOf()
     private val _getClassCallCheckers: MutableSet<FirGetClassCallChecker> = mutableSetOf()
     private val _safeCallExpressionCheckers: MutableSet<FirSafeCallExpressionChecker> = mutableSetOf()
+    private val _smartCastExpressionCheckers: MutableSet<FirSmartCastExpressionChecker> = mutableSetOf()
     private val _equalityOperatorCallCheckers: MutableSet<FirEqualityOperatorCallChecker> = mutableSetOf()
     private val _stringConcatenationCallCheckers: MutableSet<FirStringConcatenationCallChecker> = mutableSetOf()
     private val _typeOperatorCallCheckers: MutableSet<FirTypeOperatorCallChecker> = mutableSetOf()
@@ -140,6 +143,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         checkers.elvisExpressionCheckers.filterTo(_elvisExpressionCheckers, predicate)
         checkers.getClassCallCheckers.filterTo(_getClassCallCheckers, predicate)
         checkers.safeCallExpressionCheckers.filterTo(_safeCallExpressionCheckers, predicate)
+        checkers.smartCastExpressionCheckers.filterTo(_smartCastExpressionCheckers, predicate)
         checkers.equalityOperatorCallCheckers.filterTo(_equalityOperatorCallCheckers, predicate)
         checkers.stringConcatenationCallCheckers.filterTo(_stringConcatenationCallCheckers, predicate)
         checkers.typeOperatorCallCheckers.filterTo(_typeOperatorCallCheckers, predicate)

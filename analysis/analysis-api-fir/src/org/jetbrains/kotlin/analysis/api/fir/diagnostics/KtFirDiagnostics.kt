@@ -1882,6 +1882,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val isCastToNotNull: Boolean
     }
 
+    interface DeprecatedSmartcastOnDelegatedProperty : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = DeprecatedSmartcastOnDelegatedProperty::class
+        val desiredType: KaType
+        val property: KaCallableSymbol
+    }
+
     interface RedundantNullable : KaFirDiagnostic<KtTypeReference> {
         override val diagnosticClass get() = RedundantNullable::class
     }

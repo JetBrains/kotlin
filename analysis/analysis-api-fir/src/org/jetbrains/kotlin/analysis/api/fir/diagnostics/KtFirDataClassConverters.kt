@@ -2653,6 +2653,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DEPRECATED_SMARTCAST_ON_DELEGATED_PROPERTY) { firDiagnostic ->
+        DeprecatedSmartcastOnDelegatedPropertyImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REDUNDANT_NULLABLE) { firDiagnostic ->
         RedundantNullableImpl(
             firDiagnostic as KtPsiDiagnostic,

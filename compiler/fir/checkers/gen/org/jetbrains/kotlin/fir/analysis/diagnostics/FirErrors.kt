@@ -509,6 +509,7 @@ object FirErrors {
     val TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE: KtDiagnosticFactory4<FirTypeParameterSymbol, Variance, Variance, ConeKotlinType> by error4<PsiElement, FirTypeParameterSymbol, Variance, Variance, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val SMARTCAST_IMPOSSIBLE: KtDiagnosticFactory4<ConeKotlinType, FirExpression, String, Boolean> by error4<KtExpression, ConeKotlinType, FirExpression, String, Boolean>()
     val SMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER: KtDiagnosticFactory4<ConeKotlinType, FirExpression, String, Boolean> by error4<KtExpression, ConeKotlinType, FirExpression, String, Boolean>()
+    val DEPRECATED_SMARTCAST_ON_DELEGATED_PROPERTY: KtDiagnosticFactory2<ConeKotlinType, FirCallableSymbol<*>> by warning2<KtExpression, ConeKotlinType, FirCallableSymbol<*>>()
     val REDUNDANT_NULLABLE: KtDiagnosticFactory0 by warning0<KtTypeReference>(SourceElementPositioningStrategies.REDUNDANT_NULLABLE)
     val PLATFORM_CLASS_MAPPED_TO_KOTLIN: KtDiagnosticFactory1<ClassId> by warning1<PsiElement, ClassId>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION: KtDiagnosticFactoryForDeprecation4<String, Collection<ConeKotlinType>, String, String> by deprecationError4<PsiElement, String, Collection<ConeKotlinType>, String, String>(ForbidInferringTypeVariablesIntoEmptyIntersection)

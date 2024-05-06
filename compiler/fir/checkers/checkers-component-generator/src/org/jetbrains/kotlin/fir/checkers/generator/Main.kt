@@ -125,6 +125,7 @@ fun main(args: Array<String>) {
             alias<FirElvisExpression>("ElvisExpressionChecker")
             alias<FirGetClassCall>("GetClassCallChecker")
             alias<FirSafeCallExpression>("SafeCallExpressionChecker")
+            alias<FirSmartCastExpression>("SmartCastExpressionChecker")
             alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
             alias<FirStringConcatenationCall>("StringConcatenationCallChecker")
             alias<FirTypeOperatorCall>("TypeOperatorCallChecker")
