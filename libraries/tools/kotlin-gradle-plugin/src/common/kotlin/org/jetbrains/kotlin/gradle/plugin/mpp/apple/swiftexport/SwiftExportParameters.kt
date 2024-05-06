@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
@@ -21,14 +20,19 @@ internal interface SwiftExportParameters : WorkParameters {
     val swiftApiModuleName: Property<String>
 
     @get:Input
-    val debugMode: Property<Boolean>
+    @get:Optional
+    val stableDeclarationsOrder: Property<Boolean>
+
+    @get:Input
+    @get:Optional
+    val renderDocComments: Property<Boolean>
 
     @get:Input
     val konanDistribution: Property<Distribution>
 
-    @get:InputDirectory
+    @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val sourceRoot: DirectoryProperty
+    val kotlinLibraryFile: RegularFileProperty
 
     @get:OutputFile
     val swiftApiPath: RegularFileProperty

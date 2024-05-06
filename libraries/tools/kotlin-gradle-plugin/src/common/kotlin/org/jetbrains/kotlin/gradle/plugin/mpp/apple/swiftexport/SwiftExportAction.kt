@@ -31,14 +31,15 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
     @Suppress("DEPRECATION")
     override fun execute() {
         runSwiftExport(
-            input = InputModule.Source(
+            input = InputModule.Binary(
                 name = parameters.swiftApiModuleName.get(),
-                path = parameters.sourceRoot.getFile().toPath()
+                path = parameters.kotlinLibraryFile.getFile().toPath()
             ),
             config = SwiftExportConfig(
                 settings = mapOf(
-                    SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.debugMode.getOrElse(false).toString(),
+                    SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
                     SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
+                    SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString(),
                 ),
                 logger = Companion,
                 distribution = parameters.konanDistribution.get(),

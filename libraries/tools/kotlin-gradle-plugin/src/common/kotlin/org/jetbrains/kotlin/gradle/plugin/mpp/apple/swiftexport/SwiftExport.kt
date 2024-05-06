@@ -11,15 +11,11 @@ import org.gradle.api.file.Directory
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -50,6 +46,7 @@ private fun Project.registerSwiftExportTask(
     val swiftExportTask = registerSwiftExportRun(
         swiftApiModuleName = swiftApiModuleName,
         taskNamePrefix = taskNamePrefix,
+        mainCompilation = mainCompilation
     )
     val staticLibrary = registerSwiftExportCompilationAndGetBinary(
         buildType = buildType,
@@ -91,32 +88,25 @@ private fun Project.registerSwiftExportTask(
 private fun Project.registerSwiftExportRun(
     swiftApiModuleName: Provider<String>,
     taskNamePrefix: String,
+    mainCompilation: KotlinNativeCompilation,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = taskNamePrefix + "SwiftExport"
 
-    return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
-        val commonMainProvider = project.future {
-            project
-                .multiplatformExtension
-                .awaitSourceSets()
-                .commonMain
-                .get()
-                .kotlin
-                .srcDirs
-                .single()
-        }
+    val outputs = layout.buildDirectory.dir(swiftExportTaskName)
+    val compileTask = mainCompilation.compileTaskProvider
 
-        val outputs = layout.buildDirectory.dir(swiftExportTaskName)
+    return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         val swiftIntermediates = outputs.map { it.dir("swiftIntermediates") }
         val kotlinIntermediates = outputs.map { it.dir("kotlinIntermediates") }
 
         // Input
         task.swiftExportClasspath.from(maybeCreateSwiftExportClasspathResolvableConfiguration())
-        task.parameters.sourceRoot.convention(commonMainProvider.map { objects.directoryProperty(it) }.getOrThrow())
         task.parameters.swiftApiModuleName.convention(swiftApiModuleName)
         task.parameters.bridgeModuleName.convention(swiftApiModuleName.map { "${it}Bridge" })
-        task.parameters.debugMode.convention(true)
         task.parameters.konanDistribution.convention(Distribution(konanDistribution.root.absolutePath))
+        task.parameters.kotlinLibraryFile.set(
+            layout.file(compileTask.map { it.outputFile.get() })
+        )
 
         // Output
         task.parameters.swiftApiPath.convention(swiftIntermediates.map { it.file("KotlinAPI.swift") })
@@ -129,7 +119,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
     buildType: NativeBuildType,
     compilations: NamedDomainObjectContainer<KotlinNativeCompilation>,
     binaries: KotlinNativeBinaryContainer,
-    mainCompilation: KotlinCompilation<*>,
+    mainCompilation: KotlinNativeCompilation,
     swiftExportTask: TaskProvider<SwiftExportTask>,
 ): StaticLibrary {
     val swiftExportCompilationName = "swiftExportMain"
@@ -174,10 +164,8 @@ private fun Project.registerPackageGeneration(
         task.description = "Generates $taskNamePrefix SPM Package"
 
         // Input
-        task.kotlinRuntime.convention(
-            objects.directoryProperty(
-                file(Distribution(konanDistribution.root.absolutePath).kotlinRuntimeForSwiftHome)
-            )
+        task.kotlinRuntime.set(
+            file(Distribution(konanDistribution.root.absolutePath).kotlinRuntimeForSwiftHome)
         )
 
         task.swiftApiPath.convention(swiftExportTask.flatMap { it.parameters.swiftApiPath })

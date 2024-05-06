@@ -33,11 +33,11 @@ internal abstract class SwiftExportTask : DefaultTask() {
         }
 
         workQueue.submit(SwiftExportAction::class.java) { workParameters ->
-            workParameters.debugMode.set(parameters.debugMode)
+            workParameters.stableDeclarationsOrder.set(parameters.stableDeclarationsOrder)
             workParameters.swiftApiModuleName.set(parameters.swiftApiModuleName)
             workParameters.bridgeModuleName.set(parameters.bridgeModuleName)
             workParameters.konanDistribution.set(parameters.konanDistribution)
-            workParameters.sourceRoot.set(parameters.sourceRoot)
+            workParameters.kotlinLibraryFile.set(parameters.kotlinLibraryFile)
 
             workParameters.swiftApiPath.set(parameters.swiftApiPath)
             workParameters.headerBridgePath.set(parameters.headerBridgePath)
