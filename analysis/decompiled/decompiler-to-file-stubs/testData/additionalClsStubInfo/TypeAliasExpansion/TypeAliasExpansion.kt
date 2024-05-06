@@ -1,3 +1,6 @@
+// KNM_K2_IGNORE
+// KT-68007
+
 package test
 
 typealias StringAlias = String
