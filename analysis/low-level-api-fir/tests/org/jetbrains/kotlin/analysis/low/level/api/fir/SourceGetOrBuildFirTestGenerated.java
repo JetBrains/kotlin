@@ -1078,6 +1078,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("longStringTemplateEntryWithTwoExpressions.kt")
+    public void testLongStringTemplateEntryWithTwoExpressions() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/longStringTemplateEntryWithTwoExpressions.kt");
+    }
+
+    @Test
     @TestMetadata("missedTypeArgumentsInAnnotationCall.kt")
     public void testMissedTypeArgumentsInAnnotationCall() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/missedTypeArgumentsInAnnotationCall.kt");

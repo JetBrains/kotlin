@@ -1,0 +1,13 @@
+KT element: KtFunctionLiteral
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] longStringTemplateEntryWithTwoExpressions.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = Int(1)
+        [ResolvedTo(BODY_RESOLVE)] lval b: R|kotlin/String| = <strcat>(R|<local>/a|)
+    }
