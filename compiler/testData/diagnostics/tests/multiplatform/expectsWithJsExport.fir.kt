@@ -13,16 +13,16 @@ expect class <!WRONG_EXPORTED_DECLARATION!>WithExportOnExpect<!> {
 }
 
 expect class WithExportOnActual {
-    <!WRONG_EXPORTED_DECLARATION!>fun foo()<!>
-    <!WRONG_EXPORTED_DECLARATION, WRONG_EXPORTED_DECLARATION!>val bar: Int<!>
+    fun foo()
+    val bar: Int
 }
 
 expect class WithExportTypealiasOnActual {
-    <!WRONG_EXPORTED_DECLARATION!>fun foo()<!>
-    <!WRONG_EXPORTED_DECLARATION, WRONG_EXPORTED_DECLARATION!>val bar: Int<!>
+    fun foo()
+    val bar: Int
 }
 
-expect class <!WRONG_EXPORTED_DECLARATION!>WithFileExportOnActual<!> {
+expect class WithFileExportOnActual {
     fun foo()
     val bar: Int
 }
@@ -30,9 +30,9 @@ expect class <!WRONG_EXPORTED_DECLARATION!>WithFileExportOnActual<!> {
 // FILE: common2.kt
 @file:Export
 
-expect class WithExportOnExpectFile {
-    fun foo()
-    val bar: Int
+expect class <!WRONG_EXPORTED_DECLARATION!>WithExportOnExpectFile<!> {
+    <!WRONG_EXPORTED_DECLARATION!>fun foo()<!>
+    <!WRONG_EXPORTED_DECLARATION, WRONG_EXPORTED_DECLARATION!>val bar: Int<!>
 }
 
 // MODULE: m1-js()()(m1-common)
