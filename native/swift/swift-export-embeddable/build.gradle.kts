@@ -16,6 +16,8 @@ dependencies {
     embedded(project(":native:swift:sir-providers")) { isTransitive = false }
     embedded(project(":native:swift:swift-export-standalone")) { isTransitive = false }
 
+    embedded(project(":native:analysis-api-klib-reader")) { isTransitive = false }
+
     embedded(project(":analysis:analysis-api-standalone")) { isTransitive = false }
     embedded(project(":analysis:analysis-api")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-fir")) { isTransitive = false }
