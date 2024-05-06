@@ -739,12 +739,12 @@ class LightTreeRawFirExpressionBuilder(
         return stringTemplate.getChildrenAsArray().toInterpolatingCall(stringTemplate) { convertShortOrLongStringTemplate(it) }
     }
 
-    private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): FirExpression {
-        var firExpression: FirExpression? = null
-        this?.forEachChildren(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END) {
-            firExpression = getAsFirExpression(it, errorReason)
+    private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): Collection<FirExpression> {
+        val firExpressions = mutableListOf<FirExpression>()
+        this?.forEachChildren(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END, SHORT_TEMPLATE_ENTRY_START) {
+            firExpressions.add(getAsFirExpression(it, errorReason))
         }
-        return firExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic(errorReason))
+        return firExpressions
     }
 
     /**

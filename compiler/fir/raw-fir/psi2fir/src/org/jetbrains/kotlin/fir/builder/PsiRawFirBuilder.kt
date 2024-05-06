@@ -2513,8 +2513,8 @@ open class PsiRawFirBuilder(
                         }
                     }
                 },
-                convertTemplateEntry = {
-                    (this as KtStringTemplateEntryWithExpression).expression.toFirExpression(it)
+                convertTemplateEntry = { errorReason ->
+                    (this as KtStringTemplateEntryWithExpression).getChildrenOfType<KtExpression>().map { it.toFirExpression(errorReason) }
                 },
             )
         }

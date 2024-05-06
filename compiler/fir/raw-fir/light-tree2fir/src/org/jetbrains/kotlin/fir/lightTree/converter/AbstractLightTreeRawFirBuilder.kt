@@ -168,7 +168,11 @@ abstract class AbstractLightTreeRawFirBuilder(
         for (kid in kidsArray) {
             if (kid == null) break
             val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens || tokenType == TokenType.ERROR_ELEMENT) continue
+            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens ||
+                tokenType == TokenType.ERROR_ELEMENT || tokenType == TokenType.BAD_CHARACTER
+            ) {
+                continue
+            }
             f(kid)
         }
     }
