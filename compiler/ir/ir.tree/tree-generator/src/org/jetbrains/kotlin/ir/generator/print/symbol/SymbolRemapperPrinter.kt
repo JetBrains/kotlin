@@ -175,17 +175,6 @@ internal class SymbolRemapperInterfacePrinter(
         printBlock {
             println("val EMPTY: ${symbolRemapperType.render()} = ${emptySymbolRemapperType.simpleName}()")
         }
-        println()
-        println("// This method is left for compatibility with Compose. Do not use it, it will be removed soon.")
-        printFunctionDeclaration(
-            name = "getReferencedClassOrNull",
-            parameters = listOf(FunctionParameter("symbol", classSymbolType.copy(nullable = true))),
-            returnType = classSymbolType.copy(nullable = true),
-        )
-        println(" =")
-        withIndent {
-            println("symbol?.let { getReferencedClass(it) }")
-        }
     }
 }
 
