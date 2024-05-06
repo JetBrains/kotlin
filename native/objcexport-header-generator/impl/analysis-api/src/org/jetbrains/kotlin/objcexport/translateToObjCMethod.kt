@@ -76,10 +76,12 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
         //attributes.addIfNotNull(getDeprecationAttribute(method))
     }
 
+    val isMethodInstance = if (isExtensionOfMappedObjCType) false else bridge.isInstance
+
     return ObjCMethod(
         comment = comment,
         origin = getObjCExportStubOrigin(),
-        isInstanceMethod = bridge.isInstance,
+        isInstanceMethod = isMethodInstance,
         returnType = returnType,
         selectors = selectors,
         parameters = parameters,
