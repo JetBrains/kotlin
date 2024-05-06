@@ -791,7 +791,7 @@ val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull().let { 
 
 fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean {
     if (hasAnnotation(classId, session)) return true
-    val container = getContainingClassSymbol(session) ?: return false
+    val container = getContainingClassSymbol(moduleData.session) ?: return false
     return container.hasAnnotationOrInsideAnnotatedClass(classId, session)
 }
 
