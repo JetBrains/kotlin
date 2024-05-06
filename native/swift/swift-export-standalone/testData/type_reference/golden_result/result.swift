@@ -7,7 +7,7 @@ public class Class_without_package : KotlinRuntime.KotlinBase {
         }
     }
     public class INNER_OBJECT : KotlinRuntime.KotlinBase {
-        public static var shared: Swift.Int32 {
+        public static var shared: main.Class_without_package.INNER_OBJECT {
             get {
                 fatalError()
             }
@@ -27,7 +27,7 @@ public class Demo : KotlinRuntime.KotlinBase {
         }
     }
     public class INNER_OBJECT : KotlinRuntime.KotlinBase {
-        public static var shared: Swift.Int32 {
+        public static var shared: main.Demo.INNER_OBJECT {
             get {
                 fatalError()
             }
@@ -96,7 +96,7 @@ public class Object_without_package : KotlinRuntime.KotlinBase {
         }
     }
     public class INNER_OBJECT : KotlinRuntime.KotlinBase {
-        public static var shared: Swift.Int32 {
+        public static var shared: main.Object_without_package.INNER_OBJECT {
             get {
                 fatalError()
             }
@@ -105,7 +105,7 @@ public class Object_without_package : KotlinRuntime.KotlinBase {
             fatalError()
         }
     }
-    public static var shared: Swift.Int32 {
+    public static var shared: main.Object_without_package {
         get {
             fatalError()
         }
@@ -162,7 +162,7 @@ public extension main.namespace.deeper {
             }
         }
         public class INNER_OBJECT : KotlinRuntime.KotlinBase {
-            public static var shared: Swift.Int32 {
+            public static var shared: main.namespace.deeper.Class_with_package.INNER_OBJECT {
                 get {
                     fatalError()
                 }
@@ -182,7 +182,7 @@ public extension main.namespace.deeper {
             }
         }
         public class INNER_OBJECT : KotlinRuntime.KotlinBase {
-            public static var shared: Swift.Int32 {
+            public static var shared: main.namespace.deeper.Object_with_package.INNER_OBJECT {
                 get {
                     fatalError()
                 }
@@ -191,7 +191,7 @@ public extension main.namespace.deeper {
                 fatalError()
             }
         }
-        public static var shared: Swift.Int32 {
+        public static var shared: main.namespace.deeper.Object_with_package {
             get {
                 fatalError()
             }
