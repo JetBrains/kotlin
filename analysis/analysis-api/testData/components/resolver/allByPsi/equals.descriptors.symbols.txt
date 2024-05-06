@@ -1,0 +1,642 @@
+KtSimpleNameReference|KtNameReferenceExpression(47,50): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(54,61): 'Boolean'
+  kotlin/Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(79,84): 'super'
+  kotlin/Any
+
+KtCallExpression(85,98): 'equals(other)'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(85,98): 'equals(other)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(85,91): 'equals'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(85,91): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(92,97): 'other'
+  other: kotlin.Any?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(92,97): 'other'
+  null
+
+KtSuperTypeCallEntry(142,151): 'Another()'
+  <constructor>(): Another
+
+KtSimpleNameReference|KtNameReferenceExpression(142,149): 'Another'
+  <constructor>(): Another
+
+KtSimpleNameReference|KtNameReferenceExpression(185,188): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(192,199): 'Boolean'
+  kotlin/Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(217,222): 'super'
+  /Another
+
+KtCallExpression(223,236): 'equals(other)'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(223,236): 'equals(other)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(223,229): 'equals'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(223,229): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(230,235): 'other'
+  other: kotlin.Any?
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(230,235): 'other'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(262,269): 'MyClass'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(275,282): 'MyClass'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(290,292): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(290,292): 'm1'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(293,296): '==='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(297,299): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(297,299): 'm2'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(304,306): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(304,306): 'm1'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(307,310): '!=='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(311,313): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(311,313): 'm2'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(318,320): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(318,320): 'm1'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(321,323): '=='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(324,326): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(324,326): 'm2'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(331,333): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(331,333): 'm1'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(334,336): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(337,339): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(337,339): 'm2'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(344,346): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(344,346): 'm1'
+  null
+
+KtCallExpression(347,357): 'equals(m2)'
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(347,357): 'equals(m2)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(347,353): 'equals'
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(347,353): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(354,356): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(354,356): 'm2'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(363,365): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(363,365): 'm2'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(366,369): '==='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(370,372): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(370,372): 'm1'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(377,379): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(377,379): 'm2'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(380,383): '!=='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(384,386): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(384,386): 'm1'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(391,393): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(391,393): 'm2'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(394,396): '=='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(397,399): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(397,399): 'm1'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(404,406): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(404,406): 'm2'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(407,409): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(410,412): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(410,412): 'm1'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(417,419): 'm2'
+  m2: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(417,419): 'm2'
+  null
+
+KtCallExpression(420,430): 'equals(m1)'
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(420,430): 'equals(m1)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(420,426): 'equals'
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(420,426): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(427,429): 'm1'
+  m1: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(427,429): 'm1'
+  null
+
+KtCallExpression(468,477): 'Another()'
+  <constructor>(): Another
+
+KtInvokeFunctionReference|KtCallExpression(468,477): 'Another()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(468,475): 'Another'
+  <constructor>(): Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(468,475): 'Another'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(482,489): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(482,489): 'another'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(490,493): '==='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(494,501): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(494,501): 'another'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(506,513): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(506,513): 'another'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(514,517): '!=='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(518,525): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(518,525): 'another'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(530,537): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(530,537): 'another'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(538,540): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtCallExpression(541,550): 'Another()'
+  <constructor>(): Another
+
+KtInvokeFunctionReference|KtCallExpression(541,550): 'Another()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(541,548): 'Another'
+  <constructor>(): Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(541,548): 'Another'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(555,562): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(555,562): 'another'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(563,565): '!='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtCallExpression(566,575): 'Another()'
+  <constructor>(): Another
+
+KtInvokeFunctionReference|KtCallExpression(566,575): 'Another()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(566,573): 'Another'
+  <constructor>(): Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(566,573): 'Another'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(580,587): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(580,587): 'another'
+  null
+
+KtCallExpression(588,605): 'equals(Another())'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(588,605): 'equals(Another())'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(588,594): 'equals'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(588,594): 'equals'
+  null
+
+KtCallExpression(595,604): 'Another()'
+  <constructor>(): Another
+
+KtInvokeFunctionReference|KtCallExpression(595,604): 'Another()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(595,602): 'Another'
+  <constructor>(): Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(595,602): 'Another'
+  null
+
+KtCallExpression(623,630): 'Child()'
+  <constructor>(): Child
+
+KtInvokeFunctionReference|KtCallExpression(623,630): 'Child()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(623,628): 'Child'
+  <constructor>(): Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(623,628): 'Child'
+  null
+
+KtCallExpression(649,658): 'MyClass()'
+  <constructor>(): MyClass
+
+KtInvokeFunctionReference|KtCallExpression(649,658): 'MyClass()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(649,656): 'MyClass'
+  <constructor>(): MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(649,656): 'MyClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(663,668): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(663,668): 'child'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(669,672): '==='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(673,680): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(673,680): 'another'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(685,692): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(685,692): 'another'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(693,696): '!=='
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(697,702): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(697,702): 'child'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(708,713): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(708,713): 'child'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(714,716): '=='
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(717,724): 'myClass'
+  val myClass: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(717,724): 'myClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(729,734): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(729,734): 'child'
+  null
+
+KtCallExpression(735,750): 'equals(myClass)'
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(735,750): 'equals(myClass)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(735,741): 'equals'
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(735,741): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(742,749): 'myClass'
+  val myClass: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(742,749): 'myClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(755,762): 'myClass'
+  val myClass: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(755,762): 'myClass'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(763,765): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(766,771): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(766,771): 'child'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(776,777): '!'
+  kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(777,784): 'myClass'
+  val myClass: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(777,784): 'myClass'
+  null
+
+KtCallExpression(785,798): 'equals(child)'
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(785,798): 'equals(child)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(785,791): 'equals'
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(785,791): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(792,797): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(792,797): 'child'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(804,811): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(804,811): 'another'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(812,814): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(815,820): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(815,820): 'child'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(825,832): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(825,832): 'another'
+  null
+
+KtCallExpression(833,846): 'equals(child)'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(833,846): 'equals(child)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(833,839): 'equals'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(833,839): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(840,845): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(840,845): 'child'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(851,856): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(851,856): 'child'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(857,859): '=='
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(860,867): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(860,867): 'another'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(872,877): 'child'
+  val child: Child
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(872,877): 'child'
+  null
+
+KtCallExpression(878,893): 'equals(another)'
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(878,893): 'equals(another)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(878,884): 'equals'
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(878,884): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(885,892): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(885,892): 'another'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(899,906): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(899,906): 'another'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(907,909): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(910,917): 'myClass'
+  val myClass: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(910,917): 'myClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(922,929): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(922,929): 'another'
+  null
+
+KtCallExpression(930,945): 'equals(myClass)'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(930,945): 'equals(myClass)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(930,936): 'equals'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(930,936): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(937,944): 'myClass'
+  val myClass: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(937,944): 'myClass'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(950,957): 'myClass'
+  val myClass: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(950,957): 'myClass'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(958,960): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(961,968): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(961,968): 'another'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(973,974): '!'
+  kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(974,981): 'myClass'
+  val myClass: MyClass
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(974,981): 'myClass'
+  null
+
+KtCallExpression(982,997): 'equals(another)'
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(982,997): 'equals(another)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(982,988): 'equals'
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(982,988): 'equals'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(989,996): 'another'
+  val another: Another
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(989,996): 'another'
+  null
+

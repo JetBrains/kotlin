@@ -7,3 +7,5 @@ fun usage(list: MutableList<Int>) {
 fun foo(i: Int, list: MutableList<Int>) {
     foo(--list[i], list)
 }
+
+// WITH_STDLIB

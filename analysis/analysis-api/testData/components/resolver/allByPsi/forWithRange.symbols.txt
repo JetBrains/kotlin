@@ -1,0 +1,5 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,9): 'f'
+  f
+
+KtSimpleNameReference|KtOperationReferenceExpression(40,43): '..<'
+  kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange

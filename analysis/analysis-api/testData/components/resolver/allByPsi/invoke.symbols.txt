@@ -1,0 +1,89 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,9): 'r'
+  r
+
+KtSimpleNameReference|KtNameReferenceExpression(55,59): 'this'
+  r/MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(78,82): 'this'
+  r/MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(97,100): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(114,121): 'MyClass'
+  r/MyClass
+
+KtCallExpression(124,133): 'MyClass()'
+  <constructor>(): r.MyClass
+
+KtInvokeFunctionReference|KtCallExpression(124,133): 'MyClass()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(124,131): 'MyClass'
+  <constructor>(): r.MyClass
+
+KtCallExpression(156,165): 'MyClass()'
+  <constructor>(): r.MyClass
+
+KtInvokeFunctionReference|KtCallExpression(156,165): 'MyClass()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(156,163): 'MyClass'
+  <constructor>(): r.MyClass
+
+KtCallExpression(186,191): 'foo()'
+  r/foo(): kotlin.Int
+
+KtInvokeFunctionReference|KtCallExpression(186,191): 'foo()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(186,189): 'foo'
+  r/foo(): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(196,199): 'foo'
+  val foo: r.MyClass
+
+KtCallExpression(205,216): '((foo)())()'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtInvokeFunctionReference|KtCallExpression(205,216): '((foo)())()'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtCallExpression(206,213): '(foo)()'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtInvokeFunctionReference|KtCallExpression(206,213): '(foo)()'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(207,210): 'foo'
+  val foo: r.MyClass
+
+KtCallExpression(218,226): 'invoke()'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtInvokeFunctionReference|KtCallExpression(218,226): 'invoke()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(218,224): 'invoke'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(231,234): 'foo'
+  val foo: r.MyClass
+
+KtCallExpression(235,243): 'invoke()'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtInvokeFunctionReference|KtCallExpression(235,243): 'invoke()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(235,241): 'invoke'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtCallExpression(248,258): 'property()'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtInvokeFunctionReference|KtCallExpression(248,258): 'property()'
+  r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(248,256): 'property'
+  val property: r.MyClass

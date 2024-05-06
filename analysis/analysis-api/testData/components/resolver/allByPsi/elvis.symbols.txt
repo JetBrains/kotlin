@@ -1,0 +1,59 @@
+KtSimpleNameReference|KtNameReferenceExpression(47,50): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(54,61): 'Boolean'
+  kotlin/Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(79,84): 'other'
+  other: kotlin.Any?
+
+KtCallExpression(86,98): 'equals(this)'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtInvokeFunctionReference|KtCallExpression(86,98): 'equals(this)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(86,92): 'equals'
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+
+KtSimpleNameReference|KtNameReferenceExpression(93,97): 'this'
+  /MyClass
+
+KtSimpleNameReference|KtOperationReferenceExpression(99,101): '?:'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(130,137): 'MyClass'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(144,151): 'MyClass'
+  /MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(168,169): 'm'
+  m: MyClass?
+
+KtSimpleNameReference|KtOperationReferenceExpression(170,172): '?:'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(173,175): 'm2'
+  m2: MyClass?
+
+KtSimpleNameReference|KtOperationReferenceExpression(176,178): '?:'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(188,189): 'f'
+  val f: MyClass?
+
+KtSimpleNameReference|KtOperationReferenceExpression(190,192): '?:'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(193,195): 'm2'
+  m2: MyClass?
+
+KtSimpleNameReference|KtNameReferenceExpression(200,202): 'm2'
+  m2: MyClass?
+
+KtSimpleNameReference|KtOperationReferenceExpression(203,205): '?:'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(206,208): 'm1'
+  null

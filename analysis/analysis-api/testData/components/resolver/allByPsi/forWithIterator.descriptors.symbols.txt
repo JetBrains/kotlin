@@ -1,0 +1,84 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,9): 'f'
+  f
+
+KtSimpleNameReference|KtNameReferenceExpression(43,46): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(57,60): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(76,90): 'IntProgression'
+  f/IntProgression
+
+KtSimpleNameReference|KtNameReferenceExpression(113,121): 'Iterator'
+  kotlin/collections/Iterator
+
+KtSimpleNameReference|KtNameReferenceExpression(122,125): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(147,151): 'this'
+  f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+
+KtLabelReferenceExpression(151,160): '@iterator'
+  f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+
+KtSimpleNameReference|KtLabelReferenceExpression(151,160): '@iterator'
+  f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+
+KtSimpleNameReference|KtNameReferenceExpression(161,166): 'start'
+  val start: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(161,166): 'start'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(196,203): 'current'
+  var current: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(196,203): 'current'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(204,206): '<='
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(207,211): 'this'
+  f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+
+KtLabelReferenceExpression(211,220): '@iterator'
+  f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+
+KtSimpleNameReference|KtLabelReferenceExpression(211,220): '@iterator'
+  f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+
+KtSimpleNameReference|KtNameReferenceExpression(221,224): 'end'
+  val end: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(221,224): 'end'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(250,253): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(256,263): 'current'
+  var current: kotlin.Int
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(256,263): 'current'
+  null
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(256,263): 'current'
+  null
+
+KtSimpleNameReference|KtOperationReferenceExpression(263,265): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtCallExpression(297,318): 'IntProgression(1, 10)'
+  <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+
+KtInvokeFunctionReference|KtCallExpression(297,318): 'IntProgression(1, 10)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(297,311): 'IntProgression'
+  <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(297,311): 'IntProgression'
+  null
+

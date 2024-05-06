@@ -1,0 +1,135 @@
+KtCallExpression(124,133): 'MyClass()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = <constructor>(): r.MyClass
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(156,165): 'MyClass()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = <constructor>(): r.MyClass
+        valueParameters = []
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(186,191): 'foo()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = r/foo(): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = r/foo
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(205,216): '((foo)())()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = ((foo)())
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        callableIdIfNonLocal = r/MyClass.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(206,213): '(foo)()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = (foo)
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        callableIdIfNonLocal = r/MyClass.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(218,226): 'invoke()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = (((foo)())())
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        callableIdIfNonLocal = r/MyClass.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(235,243): 'invoke()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        callableIdIfNonLocal = r/MyClass.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(248,258): 'property()'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = property
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        callableIdIfNonLocal = r/MyClass.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+

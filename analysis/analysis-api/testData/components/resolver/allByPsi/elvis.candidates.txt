@@ -1,0 +1,33 @@
+KtCallExpression(86,98): 'equals(this)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = other
+          isSafeNavigation = true
+          type = kotlin.Any
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        this -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true

@@ -1,0 +1,87 @@
+KtSimpleNameReference|KtNameReferenceExpression(25,31): 'myPack'
+  myPack
+
+KtSimpleNameReference|KtNameReferenceExpression(40,46): 'kotlin'
+  kotlin
+
+KtSimpleNameReference|KtNameReferenceExpression(47,54): 'reflect'
+  kotlin.reflect
+
+KtSimpleNameReference|KtNameReferenceExpression(55,64): 'KProperty'
+  kotlin/reflect/KProperty
+
+KtSimpleNameReference|KtNameReferenceExpression(72,78): 'kotlin'
+  kotlin
+
+KtSimpleNameReference|KtNameReferenceExpression(79,89): 'properties'
+  kotlin.properties
+
+KtSimpleNameReference|KtNameReferenceExpression(90,106): 'ReadOnlyProperty'
+  kotlin/properties/ReadOnlyProperty
+
+KtSimpleNameReference|KtNameReferenceExpression(172,175): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(188,197): 'KProperty'
+  kotlin/reflect/KProperty
+
+KtSimpleNameReference|KtNameReferenceExpression(203,219): 'ReadOnlyProperty'
+  kotlin/properties/ReadOnlyProperty
+
+KtSimpleNameReference|KtNameReferenceExpression(220,223): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(226,227): 'T'
+  T
+
+KtCallExpression(246,258): 'MyDelegate()'
+  <constructor>(): myPack.MyDelegate<T>
+
+KtInvokeFunctionReference|KtCallExpression(246,258): 'MyDelegate()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(246,256): 'MyDelegate'
+  <constructor>(): myPack.MyDelegate<T>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(246,256): 'MyDelegate'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(290,306): 'ReadOnlyProperty'
+  kotlin/properties/ReadOnlyProperty
+
+KtSimpleNameReference|KtNameReferenceExpression(307,310): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(313,314): 'T'
+  T
+
+KtSimpleNameReference|KtNameReferenceExpression(353,356): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(369,378): 'KProperty'
+  kotlin/reflect/KProperty
+
+KtSimpleNameReference|KtNameReferenceExpression(384,385): 'T'
+  T
+
+KtSimpleNameReference|KtOperationReferenceExpression(408,410): 'as'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(411,412): 'T'
+  T
+
+KtCallExpression(446,463): 'ResourceID<Int>()'
+  <constructor>(): myPack.ResourceID<T>
+
+KtInvokeFunctionReference|KtCallExpression(446,463): 'ResourceID<Int>()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(446,456): 'ResourceID'
+  <constructor>(): myPack.ResourceID<T>
+
+SyntheticPropertyAccessorReference|KtNameReferenceExpression(446,456): 'ResourceID'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(457,460): 'Int'
+  kotlin/Int
+

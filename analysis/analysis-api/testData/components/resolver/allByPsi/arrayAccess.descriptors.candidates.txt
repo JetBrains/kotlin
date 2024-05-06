@@ -32,6 +32,77 @@ KtArrayAccessExpression(74,81): 'list[0]'
       }
     isInBestCandidates = true
 
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with get>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.collections.Map<out kotlin.Int, ERROR_TYPE>
+          returnType = ERROR_TYPE?
+          symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = key
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = key: K
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/collections/get
+      typeArgumentsMapping = {
+        K -> (kotlin.Int),
+        V -> (ERROR_TYPE)
+      }
+      argumentMapping = {
+        0 -> (KtVariableLikeSignature:
+          name = key
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = key: K
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.text.MatchGroupCollection
+          returnType = kotlin.text.MatchGroup?
+          symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = name
+              receiverType = null
+              returnType = kotlin.String
+              symbol = name: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/text/get
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        0 -> (KtVariableLikeSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
 KtCallExpression(111,129): 'get(implicitIndex)'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -65,6 +136,77 @@ KtCallExpression(111,129): 'get(implicitIndex)'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with get>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.collections.Map<out kotlin.Int, ERROR_TYPE>
+          returnType = ERROR_TYPE?
+          symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = key
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = key: K
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/collections/get
+      typeArgumentsMapping = {
+        K -> (kotlin.Int),
+        V -> (ERROR_TYPE)
+      }
+      argumentMapping = {
+        implicitIndex -> (KtVariableLikeSignature:
+          name = key
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = key: K
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.text.MatchGroupCollection
+          returnType = kotlin.text.MatchGroup?
+          symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = name
+              receiverType = null
+              returnType = kotlin.String
+              symbol = name: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/text/get
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        implicitIndex -> (KtVariableLikeSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
 
 KtCallExpression(179,199): 'foo(--list[i], list)'
   KtApplicableCallCandidateInfo:
@@ -142,4 +284,75 @@ KtArrayAccessExpression(185,192): 'list[i]'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with get>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.collections.Map<out kotlin.Int, ERROR_TYPE>
+          returnType = ERROR_TYPE?
+          symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = key
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = key: K
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/collections/get
+      typeArgumentsMapping = {
+        K -> (kotlin.Int),
+        V -> (ERROR_TYPE)
+      }
+      argumentMapping = {
+        i -> (KtVariableLikeSignature:
+          name = key
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = key: K
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.text.MatchGroupCollection
+          returnType = kotlin.text.MatchGroup?
+          symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = name
+              receiverType = null
+              returnType = kotlin.String
+              symbol = name: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/text/get
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KtVariableLikeSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
 

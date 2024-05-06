@@ -100,9 +100,21 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveByPsiTestGenerated ex
   }
 
   @Test
+  @TestMetadata("compare.kt")
+  public void testCompare() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/compare.kt");
+  }
+
+  @Test
   @TestMetadata("constructors.kt")
   public void testConstructors() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/constructors.kt");
+  }
+
+  @Test
+  @TestMetadata("contains.kt")
+  public void testContains() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contains.kt");
   }
 
   @Test
@@ -112,9 +124,39 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveByPsiTestGenerated ex
   }
 
   @Test
+  @TestMetadata("delegatedProperty.kt")
+  public void testDelegatedProperty() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/delegatedProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("elvis.kt")
+  public void testElvis() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/elvis.kt");
+  }
+
+  @Test
   @TestMetadata("enum.kt")
   public void testEnum() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/enum.kt");
+  }
+
+  @Test
+  @TestMetadata("equals.kt")
+  public void testEquals() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/equals.kt");
+  }
+
+  @Test
+  @TestMetadata("forWithIterator.kt")
+  public void testForWithIterator() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/forWithIterator.kt");
+  }
+
+  @Test
+  @TestMetadata("forWithRange.kt")
+  public void testForWithRange() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/forWithRange.kt");
   }
 
   @Test
@@ -124,9 +166,33 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveByPsiTestGenerated ex
   }
 
   @Test
+  @TestMetadata("invoke.kt")
+  public void testInvoke() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/invoke.kt");
+  }
+
+  @Test
   @TestMetadata("labels.kt")
   public void testLabels() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/labels.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaParameters.kt")
+  public void testLambdaParameters() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/lambdaParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("multiEquals.kt")
+  public void testMultiEquals() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/multiEquals.kt");
+  }
+
+  @Test
+  @TestMetadata("providedDelegate.kt")
+  public void testProvidedDelegate() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/providedDelegate.kt");
   }
 
   @Test

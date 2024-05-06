@@ -1,0 +1,38 @@
+KtSimpleNameReference|KtNameReferenceExpression(8,14): 'myPack'
+  myPack
+
+KtSimpleNameReference|KtNameReferenceExpression(23,29): 'kotlin'
+  kotlin
+
+KtSimpleNameReference|KtNameReferenceExpression(30,37): 'reflect'
+  kotlin.reflect
+
+KtSimpleNameReference|KtNameReferenceExpression(38,47): 'KProperty'
+  kotlin/reflect/KProperty
+
+KtCallExpression(61,71): 'Delegate()'
+  <constructor>(): myPack.Delegate
+
+KtInvokeFunctionReference|KtCallExpression(61,71): 'Delegate()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(61,69): 'Delegate'
+  <constructor>(): myPack.Delegate
+
+KtSimpleNameReference|KtNameReferenceExpression(125,128): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(141,150): 'KProperty'
+  kotlin/reflect/KProperty
+
+KtSimpleNameReference|KtNameReferenceExpression(156,162): 'String'
+  kotlin/String
+
+KtSimpleNameReference|KtNameReferenceExpression(225,228): 'Any'
+  kotlin/Any
+
+KtSimpleNameReference|KtNameReferenceExpression(241,250): 'KProperty'
+  kotlin/reflect/KProperty
+
+KtSimpleNameReference|KtNameReferenceExpression(262,268): 'String'
+  kotlin/String

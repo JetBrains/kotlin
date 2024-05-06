@@ -1,0 +1,38 @@
+KtCallExpression(246,258): 'MyDelegate()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.MyDelegate<T>
+          symbol = <constructor>(): myPack.MyDelegate<T>
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(446,463): 'ResourceID<Int>()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.ResourceID<kotlin.Int>
+          symbol = <constructor>(): myPack.ResourceID<T>
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {}
+    isInBestCandidates = true
+

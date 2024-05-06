@@ -1,0 +1,59 @@
+KtSimpleNameReference|KtNameReferenceExpression(17,20): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(27,31): 'Unit'
+  kotlin/Unit
+
+KtSimpleNameReference|KtNameReferenceExpression(43,46): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(51,55): 'Unit'
+  kotlin/Unit
+
+KtSimpleNameReference|KtNameReferenceExpression(80,84): 'prop'
+  val prop: kotlin.Int
+
+KtCallExpression(85,94): 'action1()'
+  kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+
+KtInvokeFunctionReference|KtCallExpression(85,94): 'action1()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(85,92): 'action1'
+  action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+
+KtCallExpression(99,112): 'action1(prop)'
+  kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+
+KtInvokeFunctionReference|KtCallExpression(99,112): 'action1(prop)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(99,106): 'action1'
+  action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+
+KtSimpleNameReference|KtNameReferenceExpression(107,111): 'prop'
+  val prop: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(118,122): 'prop'
+  val prop: kotlin.Int
+
+KtCallExpression(123,132): 'action2()'
+  null
+
+KtInvokeFunctionReference|KtCallExpression(123,132): 'action2()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(123,130): 'action2'
+  null
+
+KtCallExpression(151,164): 'action2(prop)'
+  kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+
+KtInvokeFunctionReference|KtCallExpression(151,164): 'action2(prop)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(151,158): 'action2'
+  action2: kotlin.Function1<kotlin.Int, kotlin.Unit>
+
+KtSimpleNameReference|KtNameReferenceExpression(159,163): 'prop'
+  val prop: kotlin.Int

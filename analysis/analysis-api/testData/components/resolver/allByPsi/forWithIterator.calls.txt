@@ -1,0 +1,40 @@
+KtCallExpression(297,318): 'IntProgression(1, 10)'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = f.IntProgression
+        symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = start
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = start: kotlin.Int
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = end
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = end: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = start
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = start: kotlin.Int
+        callableIdIfNonLocal = null),
+      10 -> (KtVariableLikeSignature:
+        name = end
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = end: kotlin.Int
+        callableIdIfNonLocal = null)
+    }

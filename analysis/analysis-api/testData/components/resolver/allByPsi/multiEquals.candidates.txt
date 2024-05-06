@@ -1,0 +1,124 @@
+KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(1004,1013): 'equals(m)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = InterfaceWithEquals
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(1020,1029): 'equals(i)'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MessagePreview
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true

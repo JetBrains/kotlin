@@ -1,0 +1,59 @@
+KtSimpleNameReference|KtOperationReferenceExpression(20,21): '>'
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtCallExpression(30,42): 'compareTo(2)'
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtInvokeFunctionReference|KtCallExpression(30,42): 'compareTo(2)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(30,39): 'compareTo'
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtOperationReferenceExpression(43,44): '>'
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtOperationReferenceExpression(56,57): '<'
+  kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
+
+KtCallExpression(99,108): 'MyClass()'
+  <constructor>(): MyClass
+
+KtInvokeFunctionReference|KtCallExpression(99,108): 'MyClass()'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(99,106): 'MyClass'
+  <constructor>(): MyClass
+
+KtSimpleNameReference|KtNameReferenceExpression(113,120): 'myClass'
+  val myClass: MyClass
+
+KtSimpleNameReference|KtOperationReferenceExpression(121,123): '>='
+  /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(124,130): 'number'
+  val number: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(135,142): 'myClass'
+  val myClass: MyClass
+
+KtCallExpression(143,160): 'compareTo(number)'
+  /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+
+KtInvokeFunctionReference|KtCallExpression(143,160): 'compareTo(number)'
+  null
+
+KtSimpleNameReference|KtNameReferenceExpression(143,152): 'compareTo'
+  /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(153,159): 'number'
+  val number: kotlin.Int
+
+KtSimpleNameReference|KtNameReferenceExpression(210,213): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(216,219): 'Int'
+  kotlin/Int
+
+KtSimpleNameReference|KtNameReferenceExpression(222,223): 'i'
+  i: kotlin.Int
