@@ -145,6 +145,10 @@ fun PromisedValue.coerceToBoolean(): BooleanValue =
             override fun discard() {
                 this@coerceToBoolean.discard()
             }
+
+            override fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
+                this@coerceToBoolean.materializeAt(target, irTarget, castForReified)
+            }
         }
     }
 

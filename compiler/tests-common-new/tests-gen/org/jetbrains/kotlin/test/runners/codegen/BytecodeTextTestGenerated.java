@@ -1321,6 +1321,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("negatedStringCompare.kt")
+    public void testNegatedStringCompare() {
+      runTest("compiler/testData/codegen/bytecodeText/conditions/negatedStringCompare.kt");
+    }
+
+    @Test
     @TestMetadata("negatedZeroCompareInDoWhile.kt")
     public void testNegatedZeroCompareInDoWhile() {
       runTest("compiler/testData/codegen/bytecodeText/conditions/negatedZeroCompareInDoWhile.kt");

@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
-import org.jetbrains.kotlin.backend.jvm.codegen.BooleanValue
-import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.backend.jvm.codegen.coerceToBoolean
+import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.org.objectweb.asm.Label
-import kotlin.math.exp
+import org.jetbrains.org.objectweb.asm.Type
 
 object Not : IntrinsicMethod() {
     class BooleanNegation(val expression: IrFunctionAccessExpression, val value: BooleanValue) : BooleanValue(value.codegen) {
@@ -39,6 +38,13 @@ object Not : IntrinsicMethod() {
         override fun discard() {
             markLineNumber(expression)
             value.discard()
+        }
+
+        override fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
+            value.materializeAt(Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType, false)
+            mv.iconst(1)
+            mv.xor(Type.INT_TYPE)
+            StackValue.coerce(Type.BOOLEAN_TYPE, target, mv)
         }
     }
 
