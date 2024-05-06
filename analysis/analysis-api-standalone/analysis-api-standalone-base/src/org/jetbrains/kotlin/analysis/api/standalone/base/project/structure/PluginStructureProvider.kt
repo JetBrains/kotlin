@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.ide.plugins.ContainerDescriptor
 import com.intellij.ide.plugins.PluginXmlPathResolver
 import com.intellij.ide.plugins.RawPluginDescriptor
 import com.intellij.ide.plugins.ReadModuleContext
+import com.intellij.mock.MockApplication
+import com.intellij.mock.MockComponentManager
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.platform.util.plugins.DataLoader
@@ -50,7 +53,7 @@ object PluginStructureProvider {
     private val pluginDescriptorsCache = ContainerUtil.createConcurrentSoftKeySoftValueMap<PluginDesignation, RawPluginDescriptor>()
 
     private data class PluginDesignation(val relativePath: String, val classLoader: ClassLoader) {
-        constructor(relativePath: String, project: MockProject) : this(
+        constructor(relativePath: String, project: MockComponentManager) : this(
             relativePath,
             project.loadClass<Any>(PluginDesignation::class.java.name, fakePluginDescriptor).classLoader,
         )
@@ -81,18 +84,30 @@ object PluginStructureProvider {
         }
     }
 
+    fun registerApplicationServices(application: MockApplication, pluginRelativePath: String) {
+        registerServices(application, pluginRelativePath, RawPluginDescriptor::appContainerDescriptor)
+    }
+
     fun registerProjectServices(project: MockProject, pluginRelativePath: String) {
-        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, project))
-        for (serviceDescriptor in pluginDescriptor.projectContainerDescriptor.services) {
-            val serviceImplementationClass = project.loadClass<Any>(serviceDescriptor.serviceImplementation, fakePluginDescriptor)
+        registerServices(project, pluginRelativePath, RawPluginDescriptor::projectContainerDescriptor)
+    }
+
+    private inline fun registerServices(
+        componentManager: MockComponentManager,
+        pluginRelativePath: String,
+        containerDescriptor: RawPluginDescriptor.() -> ContainerDescriptor,
+    ) {
+        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager))
+        for (serviceDescriptor in pluginDescriptor.containerDescriptor().services) {
+            val serviceImplementationClass = componentManager.loadClass<Any>(serviceDescriptor.serviceImplementation, fakePluginDescriptor)
             val serviceInterface = serviceDescriptor.serviceInterface
             if (serviceInterface != null) {
-                val serviceInterfaceClass = project.loadClass<Any>(serviceInterface, fakePluginDescriptor)
+                val serviceInterfaceClass = componentManager.loadClass<Any>(serviceInterface, fakePluginDescriptor)
 
                 @Suppress("UNCHECKED_CAST")
-                project.registerServiceWithInterface(serviceInterfaceClass, serviceImplementationClass)
+                componentManager.registerServiceWithInterface(serviceInterfaceClass, serviceImplementationClass)
             } else {
-                project.registerService(serviceImplementationClass)
+                componentManager.registerService(serviceImplementationClass)
             }
         }
     }
@@ -113,7 +128,7 @@ object PluginStructureProvider {
     }
 
     // workaround for ambiguity resolution
-    private fun <T> MockProject.registerServiceWithInterface(interfaceClass: Class<T>, implementationClass: Class<T>) {
+    private fun <T> MockComponentManager.registerServiceWithInterface(interfaceClass: Class<T>, implementationClass: Class<T>) {
         registerService(interfaceClass, implementationClass)
     }
 }
