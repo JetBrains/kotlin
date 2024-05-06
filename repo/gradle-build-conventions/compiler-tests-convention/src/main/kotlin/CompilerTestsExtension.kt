@@ -5,6 +5,8 @@
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
 
@@ -40,45 +42,50 @@ abstract class CompilerTestsExtension(private val project: Project) {
         isTransitive = false
     }
 
+    private val noOp = project.kotlinBuildProperties.isInJpsBuildIdeaSync
+    private fun add(configuration: Configuration, dependency: DependencyHandler.() -> ProjectDependency) {
+        if (!noOp) {
+            project.dependencies { configuration(dependency(this)) }
+        }
+    }
+
     init {
         project.dependencies {
-            stdlibRuntimeForTests(project(":kotlin-stdlib"))
-            stdlibMinimalRuntimeForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
-            kotlinReflectJarForTests(project(":kotlin-reflect"))
+            add(stdlibRuntimeForTests) { project(":kotlin-stdlib") }
+            add(stdlibMinimalRuntimeForTests) { project(":kotlin-stdlib-jvm-minimal-for-test") }
+            add(kotlinReflectJarForTests) { project(":kotlin-reflect") }
         }
     }
 
     fun withStdlibCommon() {
-        project.dependencies { stdlibCommonRuntimeForTests(project(":kotlin-stdlib-common")) }
+        add(stdlibCommonRuntimeForTests) { project(":kotlin-stdlib-common") }
     }
 
     fun withScriptRuntime() {
-        project.dependencies { scriptRuntimeForTests(project(":kotlin-script-runtime")) }
+        add(scriptRuntimeForTests) { project(":kotlin-script-runtime") }
     }
 
     fun withTestJar() {
-        project.dependencies { kotlinTestJarForTests(project(":kotlin-test")) }
+        add(kotlinTestJarForTests) { project(":kotlin-test") }
     }
 
     fun withAnnotations() {
-        project.dependencies { kotlinAnnotationsForTests(project(":kotlin-annotations-jvm")) }
+        add(kotlinAnnotationsForTests) { project(":kotlin-annotations-jvm") }
     }
 
     fun withStdlibJsRuntime() {
-        project.dependencies { stdlibJsRuntimeForTests(project(":kotlin-stdlib", "distJsKlib")) }
+        add(stdlibJsRuntimeForTests) { project(":kotlin-stdlib", "distJsKlib") }
     }
 
     fun withTestJsRuntime() {
-        project.dependencies { testJsRuntimeForTests(project(":kotlin-test", "jsRuntimeElements")) }
+        add(testJsRuntimeForTests) { project(":kotlin-test", "jsRuntimeElements") }
     }
 
     fun withScriptingPlugin() {
-        project.dependencies {
-            scriptingPluginForTests(project(":kotlin-scripting-compiler"))
-            scriptingPluginForTests(project(":kotlin-scripting-compiler-impl"))
-            scriptingPluginForTests(project(":kotlin-scripting-common"))
-            scriptingPluginForTests(project(":kotlin-scripting-jvm"))
-        }
+        add(scriptingPluginForTests) { project(":kotlin-scripting-compiler") }
+        add(scriptingPluginForTests) { project(":kotlin-scripting-compiler-impl") }
+        add(scriptingPluginForTests) { project(":kotlin-scripting-common") }
+        add(scriptingPluginForTests) { project(":kotlin-scripting-jvm") }
         /*
         KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR
         KOTLIN_SCRIPTING_COMPILER_IMPL_JAR
