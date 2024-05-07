@@ -36,7 +36,6 @@ import kotlin.collections.Set
 import kotlin.collections.filterIsInstance
 import kotlin.collections.getOrNull
 import kotlin.collections.mapNotNull
-import kotlin.collections.mapNotNullTo
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.set
@@ -45,7 +44,7 @@ import kotlin.collections.withIndex
 fun FirRegularClass.getIrSymbolsForSealedSubclasses(c: Fir2IrComponents): List<IrClassSymbol> {
     val symbolProvider = c.session.symbolProvider
     return getSealedClassInheritors(c.session).mapNotNull {
-        symbolProvider.getClassLikeSymbolByClassId(it)?.toSymbol(c)
+        symbolProvider.getClassLikeSymbolByClassId(it)?.toIrSymbol(c)
     }.filterIsInstance<IrClassSymbol>()
 }
 

@@ -40,13 +40,12 @@ enum class ConversionTypeOrigin(val forSetter: Boolean) {
     SETTER(forSetter = true);
 }
 
-fun FirClassifierSymbol<*>.toSymbol(
+fun FirClassifierSymbol<*>.toIrSymbol(
     c: Fir2IrComponents,
     typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     handleAnnotations: ((List<FirAnnotation>) -> Unit)? = null
 ): IrClassifierSymbol = with(c) {
-    val symbol = this@toSymbol
-    when (symbol) {
+    when (val symbol = this@toIrSymbol) {
         is FirTypeParameterSymbol -> {
             classifierStorage.getIrTypeParameterSymbol(symbol, typeOrigin)
         }
@@ -55,7 +54,7 @@ fun FirClassifierSymbol<*>.toSymbol(
             handleAnnotations?.invoke(symbol.fir.expandedTypeRef.annotations)
             val coneClassLikeType = symbol.fir.expandedTypeRef.coneType as ConeClassLikeType
             coneClassLikeType.lookupTag.toSymbol(session)
-                ?.toSymbol(c, typeOrigin, handleAnnotations)
+                ?.toIrSymbol(c, typeOrigin, handleAnnotations)
                 ?: classifiersGenerator.createIrClassForNotFoundClass(coneClassLikeType.lookupTag).symbol
         }
 
@@ -67,28 +66,7 @@ fun FirClassifierSymbol<*>.toSymbol(
     }
 }
 
-private fun FirBasedSymbol<*>.toSymbolForCall(
-    c: Fir2IrComponents,
-    dispatchReceiver: FirExpression?,
-    preferGetter: Boolean,
-    explicitReceiver: FirExpression? = null,
-    isDelegate: Boolean = false,
-    isReference: Boolean = false
-): IrSymbol? = when (this) {
-    is FirCallableSymbol<*> -> toSymbolForCall(
-        c,
-        dispatchReceiver,
-        preferGetter,
-        explicitReceiver,
-        isDelegate,
-        isReference
-    )
-
-    is FirClassifierSymbol<*> -> toSymbol(c)
-    else -> error("Unknown symbol: $this")
-}
-
-fun FirReference.extractSymbolForCall(c: Fir2IrComponents): FirBasedSymbol<*>? {
+fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirBasedSymbol<*>? {
     if (this !is FirResolvedNamedReference) {
         return null
     }
@@ -105,7 +83,7 @@ fun FirReference.extractSymbolForCall(c: Fir2IrComponents): FirBasedSymbol<*>? {
 }
 
 @OptIn(ExperimentalContracts::class)
-fun FirReference.toSymbolForCall(
+fun FirReference.toIrSymbolForCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     explicitReceiver: FirExpression?,
@@ -114,27 +92,26 @@ fun FirReference.toSymbolForCall(
     isReference: Boolean = false,
 ): IrSymbol? {
     contract {
-        returnsNotNull() implies (this@toSymbolForCall is FirResolvedNamedReference)
+        returnsNotNull() implies (this@toIrSymbolForCall is FirResolvedNamedReference)
     }
 
-    return extractSymbolForCall(c)?.toSymbolForCall(
-        c,
-        dispatchReceiver,
-        preferGetter,
-        explicitReceiver,
-        isDelegate,
-        isReference
-    )
+    return when (val symbol = extractDeclarationSiteSymbol(c)) {
+        is FirCallableSymbol<*> -> symbol.toIrSymbolForCall(
+            c,
+            dispatchReceiver,
+            preferGetter,
+            explicitReceiver,
+            isDelegate,
+            isReference
+        )
+
+        is FirClassifierSymbol<*> -> symbol.toIrSymbol(c)
+        null -> null
+        else -> error("Unknown symbol: $this")
+    }
 }
 
-private fun FirResolvedQualifier.toLookupTag(session: FirSession): ConeClassLikeLookupTag? =
-    when (val symbol = symbol) {
-        is FirClassSymbol -> symbol.toLookupTag()
-        is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.toLookupTag()
-        else -> null
-    }
-
-fun FirCallableSymbol<*>.toSymbolForCall(
+fun FirCallableSymbol<*>.toIrSymbolForCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     preferGetter: Boolean = true,
@@ -168,7 +145,7 @@ fun FirCallableSymbol<*>.toSymbolForCall(
         }
         else -> null
     }
-    return when (val symbol =  this@toSymbolForCall) {
+    return when (val symbol = this@toIrSymbolForCall) {
         is FirSimpleSyntheticPropertySymbol -> {
             if (isDelegate) {
                 declarationStorage.getIrPropertySymbol(symbol)
@@ -181,10 +158,10 @@ fun FirCallableSymbol<*>.toSymbolForCall(
                             syntheticProperty.getter.delegate.symbol
                         } else {
                             syntheticProperty.setter?.delegate?.symbol
-                                ?: throw AssertionError("Written synthetic property must have a setter")
+                                ?: error("Written synthetic property must have a setter")
                         }
                         delegateSymbol.unwrapCallRepresentative(c)
-                            .toSymbolForCall(c, dispatchReceiver, preferGetter, isDelegate = false)
+                            .toIrSymbolForCall(c, dispatchReceiver, preferGetter, isDelegate = false)
                     }
                 } ?: declarationStorage.getIrPropertySymbol(symbol)
             }
@@ -196,6 +173,14 @@ fun FirCallableSymbol<*>.toSymbolForCall(
         is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(symbol)
         is FirDelegateFieldSymbol -> declarationStorage.getIrDelegateFieldSymbol(symbol)
         is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(symbol)
+        else -> null
+    }
+}
+
+private fun FirResolvedQualifier.toLookupTag(session: FirSession): ConeClassLikeLookupTag? {
+    return when (val symbol = symbol) {
+        is FirClassSymbol -> symbol.toLookupTag()
+        is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.toLookupTag()
         else -> null
     }
 }

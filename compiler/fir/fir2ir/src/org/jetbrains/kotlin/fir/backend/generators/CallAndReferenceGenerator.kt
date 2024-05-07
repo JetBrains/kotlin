@@ -78,7 +78,7 @@ class CallAndReferenceGenerator(
     ): IrExpression {
         val type = approximateFunctionReferenceType(callableReferenceAccess.resolvedType).toIrType()
 
-        val firSymbol = callableReferenceAccess.calleeReference.extractSymbolForCall(c)
+        val firSymbol = callableReferenceAccess.calleeReference.extractDeclarationSiteSymbol(c)
         if (firSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
             assert(explicitReceiverExpression == null) {
                 "Fun interface constructor reference should be unbound: ${explicitReceiverExpression?.dump()}"
@@ -99,7 +99,7 @@ class CallAndReferenceGenerator(
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
 
             fun FirCallableSymbol<*>.toSymbolForCall(): IrSymbol? {
-                return toSymbolForCall(
+                return toIrSymbolForCall(
                     c,
                     callableReferenceAccess.dispatchReceiver,
                     explicitReceiver = callableReferenceAccess.explicitReceiver,
@@ -539,7 +539,7 @@ class CallAndReferenceGenerator(
                     return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
                 }
             }
-            val symbol = calleeReference.toSymbolForCall(
+            val symbol = calleeReference.toIrSymbolForCall(
                 c,
                 dispatchReceiver,
                 explicitReceiver = qualifiedAccess.explicitReceiver
@@ -739,7 +739,7 @@ class CallAndReferenceGenerator(
             )
         }
 
-        val symbol = calleeReference.toSymbolForCall(
+        val symbol = calleeReference.toIrSymbolForCall(
             c,
             extractDispatchReceiverOfAssignment(variableAssignment),
             explicitReceiver = variableAssignment.explicitReceiver,
@@ -960,7 +960,7 @@ class CallAndReferenceGenerator(
             if (classSymbol != null) {
                 IrGetObjectValueImpl(
                     startOffset, endOffset, irType,
-                    classSymbol.toSymbol(c) as IrClassSymbol
+                    classSymbol.toIrSymbol(c) as IrClassSymbol
                 )
             } else {
                 IrErrorCallExpressionImpl(
