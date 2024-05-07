@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.kotlin.sample
 
+import org.jetbrains.dokka.DelicateDokkaApi
 import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
 
 /**
@@ -16,7 +17,7 @@ public interface SampleAnalysisEnvironmentCreator {
     /**
      * Creates and configures the sample analysis environment for a limited-time use.
      *
-     * Configuring sample analysis environment is a rather expensive operation that takes up additional
+     * Configuring a sample analysis environment is a rather expensive operation that takes up additional
      * resources since Dokka needs to configure and analyze source roots additional to the main ones.
      * It's best to limit the scope of use and the lifetime of the created environment
      * so that the resources could be freed as soon as possible.
@@ -35,4 +36,20 @@ public interface SampleAnalysisEnvironmentCreator {
      * ```
      */
     public fun <T> use(block: SampleAnalysisEnvironment.() -> T): T
+
+    /**
+     * Creates a new instance of [SampleAnalysisEnvironment].
+     *
+     * **WARNING**: This function offers a considerable amount of freedom and with it,
+     * the potential to misuse the API.
+     * A [SampleAnalysisEnvironment] once created needs to be manually closed
+     * otherwise it could lead to memory leaks, concurrency issues or other unexpected problems.
+     *
+     * Therefore, it's safest to use it through the [SampleAnalysisEnvironmentCreator.use]
+     * as it provides a controlled environment where everything is taken care of automatically.
+     *
+     * @return a new instance of [SampleAnalysisEnvironment]
+     */
+    @DelicateDokkaApi
+    public fun create(): SampleAnalysisEnvironment
 }
