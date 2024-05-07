@@ -4498,6 +4498,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public void testKt67875() {
           runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt67875.kt");
         }
+
+        @Test
+        @TestMetadata("kt67993.kt")
+        public void testKt67993() {
+          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt67993.kt");
+        }
       }
 
       @Nested

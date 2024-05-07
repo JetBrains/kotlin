@@ -3439,6 +3439,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       public void testKt66243() {
         runTest("compiler/testData/codegen/box/builderInference/issues/kt66243.kt");
       }
+
+      @TestMetadata("kt67993.kt")
+      public void testKt67993() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt67993.kt");
+      }
     }
 
     @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter")

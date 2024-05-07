@@ -3965,6 +3965,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       public void testKt66272() {
         runTest("compiler/testData/codegen/box/builderInference/issues/kt66272.kt");
       }
+
+      @Test
+      @TestMetadata("kt67993.kt")
+      public void testKt67993() {
+        runTest("compiler/testData/codegen/box/builderInference/issues/kt67993.kt");
+      }
     }
 
     @Nested
