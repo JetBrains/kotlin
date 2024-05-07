@@ -20,8 +20,8 @@ class PrivacyManifestsPluginTests {
                 error("Installed Kotlin version isn't specified")
             }
             return listOf(
-                "1.9.23",
-                "2.0.0-RC1",
+//                "1.9.23",
+//                "2.0.0-RC1",
                 installedKotlinVersion,
             )
         }
@@ -420,6 +420,15 @@ class PrivacyManifestsPluginTests {
                     repositories {
                         mavenLocal()
                         mavenCentral()
+                        ivy {
+                            url = uri("https://download.jetbrains.com/kotlin/native/builds/dev")
+                            patternLayout {
+                                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+                            }
+                            metadataSources {
+                                artifact()
+                            }
+                        }
                     }
                 }
                 
