@@ -13,6 +13,9 @@ SyntheticPropertyAccessorReference|KtNameReferenceExpression(40,44): 'list'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(40,44): 'list'
   null
 
+KtOperationReferenceExpression(45,47): '+='
+  kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+
 KtSimpleNameReference|KtOperationReferenceExpression(45,47): '+='
   kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
 
@@ -72,6 +75,9 @@ KtSimpleNameReference|KtNameReferenceExpression(179,182): 'foo'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(179,182): 'foo'
   null
+
+KtOperationReferenceExpression(183,185): '--'
+  kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(183,185): '--'
   kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int

@@ -1,3 +1,38 @@
+KtOperationReferenceExpression(32,33): '+'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      a -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(76,78): '?:'
+  null
+
 KtCallExpression(103,109): 'foo(2)'
   KtSimpleFunctionCall:
     isImplicitInvoke = false
@@ -61,6 +96,9 @@ KtCallExpression(110,116): 'bar(3)'
         symbol = b: kotlin.Int
         callableIdIfNonLocal = null)
     }
+
+KtOperationReferenceExpression(117,120): 'as?'
+  null
 
 KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
   KtSimpleFunctionCall:

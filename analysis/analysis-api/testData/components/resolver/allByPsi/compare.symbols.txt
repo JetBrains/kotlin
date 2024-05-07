@@ -1,3 +1,6 @@
+KtOperationReferenceExpression(20,21): '>'
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(20,21): '>'
   kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -10,8 +13,14 @@ KtInvokeFunctionReference|KtCallExpression(30,42): 'compareTo(2)'
 KtSimpleNameReference|KtNameReferenceExpression(30,39): 'compareTo'
   kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
+KtOperationReferenceExpression(43,44): '>'
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(43,44): '>'
   kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(56,57): '<'
+  kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(56,57): '<'
   kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
@@ -27,6 +36,9 @@ KtSimpleNameReference|KtNameReferenceExpression(99,106): 'MyClass'
 
 KtSimpleNameReference|KtNameReferenceExpression(113,120): 'myClass'
   val myClass: MyClass
+
+KtOperationReferenceExpression(121,123): '>='
+  /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(121,123): '>='
   /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
@@ -57,3 +69,4 @@ KtSimpleNameReference|KtNameReferenceExpression(216,219): 'Int'
 
 KtSimpleNameReference|KtNameReferenceExpression(222,223): 'i'
   i: kotlin.Int
+

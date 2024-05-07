@@ -48,7 +48,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
             firRange.generateContainsOperation(
                 firSubjectExpression,
                 isNegated,
-                this@toFirWhenCondition.toKtPsiSourceElement(KtFakeSourceElementKind.WhenCondition),
+                this@toFirWhenCondition.toKtPsiSourceElement(),
                 operationReference.toKtPsiSourceElement()
             )
         }

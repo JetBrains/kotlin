@@ -30,3 +30,18 @@ KtCallExpression(86,98): 'equals(this)'
         callableIdIfNonLocal = null)
     }
 
+KtOperationReferenceExpression(99,101): '?:'
+  null
+
+KtOperationReferenceExpression(170,172): '?:'
+  null
+
+KtOperationReferenceExpression(176,178): '?:'
+  null
+
+KtOperationReferenceExpression(190,192): '?:'
+  null
+
+KtOperationReferenceExpression(203,205): '?:'
+  null
+

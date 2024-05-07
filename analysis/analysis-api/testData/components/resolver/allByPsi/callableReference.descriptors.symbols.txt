@@ -385,6 +385,9 @@ KtSimpleNameReference|KtNameReferenceExpression(1174,1175): 't'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(1174,1175): 't'
   null
 
+KtOperationReferenceExpression(1175,1177): '!!'
+  /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+
 KtSimpleNameReference|KtOperationReferenceExpression(1175,1177): '!!'
   null
 
@@ -402,6 +405,9 @@ KtSimpleNameReference|KtNameReferenceExpression(1200,1201): 't'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(1200,1201): 't'
   null
+
+KtOperationReferenceExpression(1201,1203): '!!'
+  /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
 
 KtSimpleNameReference|KtOperationReferenceExpression(1201,1203): '!!'
   null

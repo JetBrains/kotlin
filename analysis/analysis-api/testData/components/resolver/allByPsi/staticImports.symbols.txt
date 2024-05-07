@@ -192,5 +192,9 @@ main.kt
   KtSimpleNameReference|KtNameReferenceExpression(899,902): 'doo'
     var doo: kotlin.String
 
+  KtOperationReferenceExpression(903,904): '='
+    var doo: kotlin.String
+
   KtSimpleNameReference|KtOperationReferenceExpression(903,904): '='
     null
+

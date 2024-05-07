@@ -7,6 +7,9 @@ KtSimpleNameReference|KtNameReferenceExpression(28,31): 'Int'
 KtSimpleNameReference|KtNameReferenceExpression(40,44): 'list'
   list: kotlin.collections.MutableList<kotlin.Int>
 
+KtOperationReferenceExpression(45,47): '+='
+  kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+
 KtSimpleNameReference|KtOperationReferenceExpression(45,47): '+='
   kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
 
@@ -51,6 +54,9 @@ KtInvokeFunctionReference|KtCallExpression(179,199): 'foo(--list[i], list)'
 
 KtSimpleNameReference|KtNameReferenceExpression(179,182): 'foo'
   /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+
+KtOperationReferenceExpression(183,185): '--'
+  kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
 
 KtSimpleNameReference|KtOperationReferenceExpression(183,185): '--'
   kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E

@@ -1,8 +1,14 @@
+KtOperationReferenceExpression(49,50): '-'
+  kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(49,50): '-'
   kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtNameReferenceExpression(50,53): 'one'
   val one: kotlin.Int
+
+KtOperationReferenceExpression(73,74): '+'
+  kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(73,74): '+'
   kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -10,11 +16,20 @@ KtSimpleNameReference|KtOperationReferenceExpression(73,74): '+'
 KtSimpleNameReference|KtNameReferenceExpression(74,77): 'one'
   val one: kotlin.Int
 
+KtOperationReferenceExpression(83,84): '!'
+  /MyClass.not(<dispatch receiver>: MyClass): MyClass
+
 KtSimpleNameReference|KtOperationReferenceExpression(83,84): '!'
   /MyClass.not(<dispatch receiver>: MyClass): MyClass
 
+KtOperationReferenceExpression(85,86): '+'
+  /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
+
 KtSimpleNameReference|KtOperationReferenceExpression(85,86): '+'
   /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
+
+KtOperationReferenceExpression(87,88): '-'
+  /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
 
 KtSimpleNameReference|KtOperationReferenceExpression(87,88): '-'
   /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass

@@ -15,6 +15,9 @@ KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
       argumentMapping = {}
     isInBestCandidates = true
 
+KtOperationReferenceExpression(487,489): '=='
+  NO_CANDIDATES
+
 KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
   KtApplicableCallCandidateInfo:
     candidate = KtDelegatedConstructorCall:
@@ -32,6 +35,9 @@ KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
       argumentMapping = {}
     isInBestCandidates = true
 
+KtOperationReferenceExpression(714,716): '=='
+  NO_CANDIDATES
+
 KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
   KtApplicableCallCandidateInfo:
     candidate = KtDelegatedConstructorCall:
@@ -48,6 +54,21 @@ KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
+
+KtOperationReferenceExpression(883,885): '=='
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(958,960): '=='
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(969,971): '!='
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(981,983): '=='
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(992,994): '!='
+  NO_CANDIDATES
 
 KtCallExpression(1004,1013): 'equals(m)'
   KtApplicableCallCandidateInfo:

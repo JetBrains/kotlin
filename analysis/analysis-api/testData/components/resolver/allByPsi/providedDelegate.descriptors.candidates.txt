@@ -16,6 +16,9 @@ KtCallExpression(246,258): 'MyDelegate()'
       argumentMapping = {}
     isInBestCandidates = true
 
+KtOperationReferenceExpression(408,410): 'as'
+  NO_CANDIDATES
+
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:

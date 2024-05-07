@@ -1,3 +1,18 @@
+KtOperationReferenceExpression(49,50): '-'
+  null
+
+KtOperationReferenceExpression(73,74): '+'
+  null
+
+KtOperationReferenceExpression(83,84): '!'
+  null
+
+KtOperationReferenceExpression(85,86): '+'
+  null
+
+KtOperationReferenceExpression(87,88): '-'
+  null
+
 KtCallExpression(88,97): 'MyClass()'
   KtSimpleFunctionCall:
     isImplicitInvoke = false

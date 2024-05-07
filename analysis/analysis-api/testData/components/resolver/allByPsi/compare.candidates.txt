@@ -1,3 +1,37 @@
+KtOperationReferenceExpression(20,21): '>'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = 1
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Int.compareTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
 KtCallExpression(30,42): 'compareTo(2)'
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
@@ -202,6 +236,74 @@ KtCallExpression(30,42): 'compareTo(2)'
       }
     isInBestCandidates = false
 
+KtOperationReferenceExpression(43,44): '>'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = 1.compareTo(2)
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Int.compareTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        0 -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(56,57): '<'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = "3"
+          isSafeNavigation = false
+          type = kotlin.String
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.String
+              symbol = other: kotlin.String
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/String.compareTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "4" -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.String
+          symbol = other: kotlin.String
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
 KtCallExpression(99,108): 'MyClass()'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -217,6 +319,40 @@ KtCallExpression(99,108): 'MyClass()'
           callableIdIfNonLocal = null
       typeArgumentsMapping = {}
       argumentMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(121,123): '>='
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = /MyClass.compareTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        number -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
     isInBestCandidates = true
 
 KtCallExpression(143,160): 'compareTo(number)'
@@ -252,3 +388,4 @@ KtCallExpression(143,160): 'compareTo(number)'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
+

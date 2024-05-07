@@ -1,3 +1,6 @@
+KtOperationReferenceExpression(20,21): '>'
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(20,21): '>'
   kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -13,8 +16,14 @@ KtSimpleNameReference|KtNameReferenceExpression(30,39): 'compareTo'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(30,39): 'compareTo'
   null
 
+KtOperationReferenceExpression(43,44): '>'
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(43,44): '>'
   kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(56,57): '<'
+  kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(56,57): '<'
   kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
@@ -36,6 +45,9 @@ KtSimpleNameReference|KtNameReferenceExpression(113,120): 'myClass'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(113,120): 'myClass'
   null
+
+KtOperationReferenceExpression(121,123): '>='
+  /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(121,123): '>='
   /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int

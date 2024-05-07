@@ -67,6 +67,9 @@ KtSimpleNameReference|KtNameReferenceExpression(479,486): 'oldItem'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(479,486): 'oldItem'
   null
 
+KtOperationReferenceExpression(487,489): '=='
+  /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(487,489): '=='
   /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
 
@@ -124,6 +127,9 @@ KtSimpleNameReference|KtNameReferenceExpression(706,713): 'oldItem'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(706,713): 'oldItem'
   null
 
+KtOperationReferenceExpression(714,716): '=='
+  /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(714,716): '=='
   /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
 
@@ -160,6 +166,9 @@ KtSimpleNameReference|KtNameReferenceExpression(875,882): 'oldItem'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(875,882): 'oldItem'
   null
 
+KtOperationReferenceExpression(883,885): '=='
+  /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(883,885): '=='
   /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
 
@@ -181,6 +190,9 @@ KtSimpleNameReference|KtNameReferenceExpression(956,957): 'i'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(956,957): 'i'
   null
 
+KtOperationReferenceExpression(958,960): '=='
+  /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(958,960): '=='
   /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
 
@@ -195,6 +207,9 @@ KtSimpleNameReference|KtNameReferenceExpression(967,968): 'i'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(967,968): 'i'
   null
+
+KtOperationReferenceExpression(969,971): '!='
+  /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(969,971): '!='
   /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
@@ -211,6 +226,9 @@ KtSimpleNameReference|KtNameReferenceExpression(979,980): 'm'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(979,980): 'm'
   null
 
+KtOperationReferenceExpression(981,983): '=='
+  /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(981,983): '=='
   /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
 
@@ -225,6 +243,9 @@ KtSimpleNameReference|KtNameReferenceExpression(990,991): 'm'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(990,991): 'm'
   null
+
+KtOperationReferenceExpression(992,994): '!='
+  /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(992,994): '!='
   /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean

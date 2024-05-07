@@ -1,3 +1,9 @@
+KtOperationReferenceExpression(204,206): '<='
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(263,265): '++'
+  NO_CANDIDATES
+
 KtCallExpression(297,318): 'IntProgression(1, 10)'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -40,7 +46,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access '<init>': it is internal in 'IntProgression'>
     candidate = KtSimpleFunctionCall:

@@ -265,6 +265,9 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
 KtSimpleNameReference|KtNameReferenceExpression(1174,1175): 't'
   val t: pack.ClassWithType<kotlin.Int>?
 
+KtOperationReferenceExpression(1175,1177): '!!'
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(1175,1177): '!!'
   null
 
@@ -276,6 +279,9 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
 
 KtSimpleNameReference|KtNameReferenceExpression(1200,1201): 't'
   val t: pack.ClassWithType<kotlin.Int>?
+
+KtOperationReferenceExpression(1201,1203): '!!'
+  null
 
 KtSimpleNameReference|KtOperationReferenceExpression(1201,1203): '!!'
   null

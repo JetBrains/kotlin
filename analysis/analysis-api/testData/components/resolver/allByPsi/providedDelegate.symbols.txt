@@ -61,6 +61,9 @@ KtSimpleNameReference|KtNameReferenceExpression(369,378): 'KProperty'
 KtSimpleNameReference|KtNameReferenceExpression(384,385): 'T'
   T
 
+KtOperationReferenceExpression(408,410): 'as'
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(408,410): 'as'
   null
 

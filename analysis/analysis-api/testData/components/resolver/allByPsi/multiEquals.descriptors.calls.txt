@@ -13,6 +13,38 @@ KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
     typeArgumentsMapping = {}
     argumentMapping = {}
 
+KtOperationReferenceExpression(487,489): '=='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /InterfaceWithEquals.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      newItem -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableIdIfNonLocal = null)
+    }
+
 KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
   KtDelegatedConstructorCall:
     kind = SUPER_CALL
@@ -28,6 +60,38 @@ KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
     typeArgumentsMapping = {}
     argumentMapping = {}
 
+KtOperationReferenceExpression(714,716): '=='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /MessagePreview.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      newItem -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableIdIfNonLocal = null)
+    }
+
 KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
   KtDelegatedConstructorCall:
     kind = SUPER_CALL
@@ -42,6 +106,166 @@ KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
         callableIdIfNonLocal = null
     typeArgumentsMapping = {}
     argumentMapping = {}
+
+KtOperationReferenceExpression(883,885): '=='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /MessagePreview.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      newItem -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(958,960): '=='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /InterfaceWithEquals.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      m -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(969,971): '!='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /InterfaceWithEquals.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      m -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(981,983): '=='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /MessagePreview.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      i -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(992,994): '!='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /MessagePreview.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      i -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableIdIfNonLocal = null)
+    }
 
 KtCallExpression(1004,1013): 'equals(m)'
   KtSimpleFunctionCall:

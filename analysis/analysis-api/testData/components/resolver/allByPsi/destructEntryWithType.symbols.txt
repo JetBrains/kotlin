@@ -25,6 +25,9 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
 KtSimpleNameReference|KtNameReferenceExpression(160,164): 'Anno'
   <constructor>(str: kotlin.String): util.Anno
 
+KtOperationReferenceExpression(167,168): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(167,168): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -40,6 +43,9 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
 KtSimpleNameReference|KtNameReferenceExpression(185,189): 'Anno'
   <constructor>(str: kotlin.String): util.Anno
 
+KtOperationReferenceExpression(192,193): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(192,193): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -54,6 +60,9 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
 
 KtSimpleNameReference|KtNameReferenceExpression(210,214): 'Anno'
   <constructor>(str: kotlin.String): util.Anno
+
+KtOperationReferenceExpression(217,218): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(217,218): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int

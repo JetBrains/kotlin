@@ -113,7 +113,7 @@ KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
           symbol = val memberProperty: kotlin.Int
           callableIdIfNonLocal = pack/MyClass.memberProperty
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -198,7 +198,7 @@ KtCallableReferenceExpression(619,640): 'Child::memberProperty'
           symbol = val memberProperty: kotlin.Int
           callableIdIfNonLocal = pack/MyClass.memberProperty
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -232,7 +232,7 @@ KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
           symbol = val extensionProperty: kotlin.String
           callableIdIfNonLocal = pack/extensionProperty
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -266,7 +266,7 @@ KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
           symbol = val extensionProperty: kotlin.String
           callableIdIfNonLocal = pack/extensionProperty
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -300,7 +300,7 @@ KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
           symbol = var propertyWithType: pack.MyClass?
           callableIdIfNonLocal = pack/ChildWithType.propertyWithType
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -392,7 +392,7 @@ KtCallableReferenceExpression(942,960): '::topLevelVariable'
           symbol = var topLevelVariable: kotlin.Int
           callableIdIfNonLocal = pack/topLevelVariable
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -409,7 +409,7 @@ KtCallableReferenceExpression(966,979): '::lateinitVar'
           symbol = var lateinitVar: pack.MyClass
           callableIdIfNonLocal = pack/lateinitVar
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -449,7 +449,7 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
           symbol = var propertyWithType: T?
           callableIdIfNonLocal = pack/ClassWithType.propertyWithType
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -473,6 +473,9 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
       argumentMapping = {}
     isInBestCandidates = true
 
+KtOperationReferenceExpression(1175,1177): '!!'
+  NO_CANDIDATES
+
 KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleVariableAccessCall:
@@ -489,7 +492,10 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
           symbol = var propertyWithType: T?
           callableIdIfNonLocal = pack/ClassWithType.propertyWithType
       simpleAccess = Read:
-
+        
       typeArgumentsMapping = {}
     isInBestCandidates = true
+
+KtOperationReferenceExpression(1201,1203): '!!'
+  NO_CANDIDATES
 

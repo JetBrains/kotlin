@@ -19,6 +19,9 @@ KtSimpleNameReference|KtNameReferenceExpression(86,92): 'equals'
 KtSimpleNameReference|KtNameReferenceExpression(93,97): 'this'
   /MyClass
 
+KtOperationReferenceExpression(99,101): '?:'
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(99,101): '?:'
   null
 
@@ -31,17 +34,26 @@ KtSimpleNameReference|KtNameReferenceExpression(144,151): 'MyClass'
 KtSimpleNameReference|KtNameReferenceExpression(168,169): 'm'
   m: MyClass?
 
+KtOperationReferenceExpression(170,172): '?:'
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(170,172): '?:'
   null
 
 KtSimpleNameReference|KtNameReferenceExpression(173,175): 'm2'
   m2: MyClass?
 
+KtOperationReferenceExpression(176,178): '?:'
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(176,178): '?:'
   null
 
 KtSimpleNameReference|KtNameReferenceExpression(188,189): 'f'
   val f: MyClass?
+
+KtOperationReferenceExpression(190,192): '?:'
+  null
 
 KtSimpleNameReference|KtOperationReferenceExpression(190,192): '?:'
   null
@@ -52,8 +64,12 @@ KtSimpleNameReference|KtNameReferenceExpression(193,195): 'm2'
 KtSimpleNameReference|KtNameReferenceExpression(200,202): 'm2'
   m2: MyClass?
 
+KtOperationReferenceExpression(203,205): '?:'
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(203,205): '?:'
   null
 
 KtSimpleNameReference|KtNameReferenceExpression(206,208): 'm1'
   null
+

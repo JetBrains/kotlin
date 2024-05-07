@@ -193,6 +193,9 @@ KtSimpleNameReference|KtNameReferenceExpression(769,783): 'AnnoWithString'
 KtSimpleNameReference|KtNameReferenceExpression(784,798): 'stringConstant'
   val stringConstant: kotlin.String
 
+KtOperationReferenceExpression(799,800): '+'
+  kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+
 KtSimpleNameReference|KtOperationReferenceExpression(799,800): '+'
   kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
 

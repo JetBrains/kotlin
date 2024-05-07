@@ -55,8 +55,11 @@ KtSimpleNameReference|KtNameReferenceExpression(275,282): 'MyClass'
 KtSimpleNameReference|KtNameReferenceExpression(290,292): 'm1'
   m1: MyClass
 
+KtOperationReferenceExpression(293,296): '==='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(293,296): '==='
-  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+  null
 
 KtSimpleNameReference|KtNameReferenceExpression(297,299): 'm2'
   m2: MyClass
@@ -64,14 +67,20 @@ KtSimpleNameReference|KtNameReferenceExpression(297,299): 'm2'
 KtSimpleNameReference|KtNameReferenceExpression(304,306): 'm1'
   m1: MyClass
 
+KtOperationReferenceExpression(307,310): '!=='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(307,310): '!=='
-  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+  null
 
 KtSimpleNameReference|KtNameReferenceExpression(311,313): 'm2'
   m2: MyClass
 
 KtSimpleNameReference|KtNameReferenceExpression(318,320): 'm1'
   m1: MyClass
+
+KtOperationReferenceExpression(321,323): '=='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(321,323): '=='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -81,6 +90,9 @@ KtSimpleNameReference|KtNameReferenceExpression(324,326): 'm2'
 
 KtSimpleNameReference|KtNameReferenceExpression(331,333): 'm1'
   m1: MyClass
+
+KtOperationReferenceExpression(334,336): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(334,336): '!='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -106,8 +118,11 @@ KtSimpleNameReference|KtNameReferenceExpression(354,356): 'm2'
 KtSimpleNameReference|KtNameReferenceExpression(363,365): 'm2'
   m2: MyClass
 
+KtOperationReferenceExpression(366,369): '==='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(366,369): '==='
-  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+  null
 
 KtSimpleNameReference|KtNameReferenceExpression(370,372): 'm1'
   m1: MyClass
@@ -115,14 +130,20 @@ KtSimpleNameReference|KtNameReferenceExpression(370,372): 'm1'
 KtSimpleNameReference|KtNameReferenceExpression(377,379): 'm2'
   m2: MyClass
 
+KtOperationReferenceExpression(380,383): '!=='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(380,383): '!=='
-  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+  null
 
 KtSimpleNameReference|KtNameReferenceExpression(384,386): 'm1'
   m1: MyClass
 
 KtSimpleNameReference|KtNameReferenceExpression(391,393): 'm2'
   m2: MyClass
+
+KtOperationReferenceExpression(394,396): '=='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(394,396): '=='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -132,6 +153,9 @@ KtSimpleNameReference|KtNameReferenceExpression(397,399): 'm1'
 
 KtSimpleNameReference|KtNameReferenceExpression(404,406): 'm2'
   m2: MyClass
+
+KtOperationReferenceExpression(407,409): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(407,409): '!='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -166,8 +190,11 @@ KtSimpleNameReference|KtNameReferenceExpression(468,475): 'Another'
 KtSimpleNameReference|KtNameReferenceExpression(482,489): 'another'
   val another: Another
 
+KtOperationReferenceExpression(490,493): '==='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(490,493): '==='
-  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+  null
 
 KtSimpleNameReference|KtNameReferenceExpression(494,501): 'another'
   val another: Another
@@ -175,14 +202,20 @@ KtSimpleNameReference|KtNameReferenceExpression(494,501): 'another'
 KtSimpleNameReference|KtNameReferenceExpression(506,513): 'another'
   val another: Another
 
+KtOperationReferenceExpression(514,517): '!=='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(514,517): '!=='
-  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+  null
 
 KtSimpleNameReference|KtNameReferenceExpression(518,525): 'another'
   val another: Another
 
 KtSimpleNameReference|KtNameReferenceExpression(530,537): 'another'
   val another: Another
+
+KtOperationReferenceExpression(538,540): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(538,540): '=='
   kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -198,6 +231,9 @@ KtSimpleNameReference|KtNameReferenceExpression(541,548): 'Another'
 
 KtSimpleNameReference|KtNameReferenceExpression(555,562): 'another'
   val another: Another
+
+KtOperationReferenceExpression(563,565): '!='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(563,565): '!='
   kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -253,8 +289,11 @@ KtSimpleNameReference|KtNameReferenceExpression(649,656): 'MyClass'
 KtSimpleNameReference|KtNameReferenceExpression(663,668): 'child'
   val child: Child
 
+KtOperationReferenceExpression(669,672): '==='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(669,672): '==='
-  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+  null
 
 KtSimpleNameReference|KtNameReferenceExpression(673,680): 'another'
   val another: Another
@@ -262,14 +301,20 @@ KtSimpleNameReference|KtNameReferenceExpression(673,680): 'another'
 KtSimpleNameReference|KtNameReferenceExpression(685,692): 'another'
   val another: Another
 
+KtOperationReferenceExpression(693,696): '!=='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(693,696): '!=='
-  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+  null
 
 KtSimpleNameReference|KtNameReferenceExpression(697,702): 'child'
   val child: Child
 
 KtSimpleNameReference|KtNameReferenceExpression(708,713): 'child'
   val child: Child
+
+KtOperationReferenceExpression(714,716): '=='
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(714,716): '=='
   /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
@@ -295,11 +340,17 @@ KtSimpleNameReference|KtNameReferenceExpression(742,749): 'myClass'
 KtSimpleNameReference|KtNameReferenceExpression(755,762): 'myClass'
   val myClass: MyClass
 
+KtOperationReferenceExpression(763,765): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(763,765): '!='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtNameReferenceExpression(766,771): 'child'
   val child: Child
+
+KtOperationReferenceExpression(776,777): '!'
+  kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(776,777): '!'
   kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
@@ -321,6 +372,9 @@ KtSimpleNameReference|KtNameReferenceExpression(792,797): 'child'
 
 KtSimpleNameReference|KtNameReferenceExpression(804,811): 'another'
   val another: Another
+
+KtOperationReferenceExpression(812,814): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(812,814): '=='
   kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -346,6 +400,9 @@ KtSimpleNameReference|KtNameReferenceExpression(840,845): 'child'
 KtSimpleNameReference|KtNameReferenceExpression(851,856): 'child'
   val child: Child
 
+KtOperationReferenceExpression(857,859): '=='
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(857,859): '=='
   /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
 
@@ -369,6 +426,9 @@ KtSimpleNameReference|KtNameReferenceExpression(885,892): 'another'
 
 KtSimpleNameReference|KtNameReferenceExpression(899,906): 'another'
   val another: Another
+
+KtOperationReferenceExpression(907,909): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(907,909): '=='
   kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -394,11 +454,17 @@ KtSimpleNameReference|KtNameReferenceExpression(937,944): 'myClass'
 KtSimpleNameReference|KtNameReferenceExpression(950,957): 'myClass'
   val myClass: MyClass
 
+KtOperationReferenceExpression(958,960): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(958,960): '!='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtNameReferenceExpression(961,968): 'another'
   val another: Another
+
+KtOperationReferenceExpression(973,974): '!'
+  kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(973,974): '!'
   kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
@@ -417,3 +483,4 @@ KtSimpleNameReference|KtNameReferenceExpression(982,988): 'equals'
 
 KtSimpleNameReference|KtNameReferenceExpression(989,996): 'another'
   val another: Another
+

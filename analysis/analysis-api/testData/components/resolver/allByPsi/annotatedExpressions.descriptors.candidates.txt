@@ -88,6 +88,9 @@ KtAnnotationEntry(157,175): '@Anno(0 + integer)'
       }
     isInBestCandidates = true
 
+KtOperationReferenceExpression(165,166): '+'
+  NO_CANDIDATES
+
 KtAnnotationEntry(177,191): '@Anno(integer)'
   KtApplicableCallCandidateInfo:
     candidate = KtAnnotationCall:

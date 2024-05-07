@@ -1,0 +1,91 @@
+KtOperationReferenceExpression(204,206): '<='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = current
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.compareTo
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      this@iterator.end -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(263,265): '++'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = current
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = kotlin/Int.inc
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtCallExpression(297,318): 'IntProgression(1, 10)'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = f.IntProgression
+        symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = start
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = start: kotlin.Int
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = end
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = end: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = start
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = start: kotlin.Int
+        callableIdIfNonLocal = null),
+      10 -> (KtVariableLikeSignature:
+        name = end
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = end: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+

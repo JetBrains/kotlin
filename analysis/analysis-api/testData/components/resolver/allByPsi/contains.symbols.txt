@@ -19,6 +19,9 @@ KtSimpleNameReference|KtNameReferenceExpression(86,89): 'Int'
 KtSimpleNameReference|KtNameReferenceExpression(92,99): 'Boolean'
   kotlin/Boolean
 
+KtOperationReferenceExpression(128,130): 'in'
+  /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(128,130): 'in'
   /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
 
@@ -49,6 +52,9 @@ KtInvokeFunctionReference|KtCallExpression(155,166): 'contains(2)'
 KtSimpleNameReference|KtNameReferenceExpression(155,163): 'contains'
   /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
 
+KtOperationReferenceExpression(173,176): '!in'
+  /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(173,176): '!in'
   /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
 
@@ -60,6 +66,12 @@ KtInvokeFunctionReference|KtCallExpression(177,186): 'MyClass()'
 
 KtSimpleNameReference|KtNameReferenceExpression(177,184): 'MyClass'
   <constructor>(): MyClass
+
+KtWhenConditionInRange(211,223): 'in MyClass()'
+  /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+
+KtOperationReferenceExpression(211,213): 'in'
+  /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(211,213): 'in'
   /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
@@ -73,15 +85,21 @@ KtInvokeFunctionReference|KtCallExpression(214,223): 'MyClass()'
 KtSimpleNameReference|KtNameReferenceExpression(214,221): 'MyClass'
   <constructor>(): MyClass
 
-KtSimpleNameReference|KtOperationReferenceExpression(270,272): 'in'
+KtWhenConditionInRange(270,283): '!in MyClass()'
   /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
 
-KtCallExpression(273,282): 'MyClass()'
+KtOperationReferenceExpression(270,273): '!in'
+  /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+
+KtSimpleNameReference|KtOperationReferenceExpression(270,273): '!in'
+  /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+
+KtCallExpression(274,283): 'MyClass()'
   <constructor>(): MyClass
 
-KtInvokeFunctionReference|KtCallExpression(273,282): 'MyClass()'
+KtInvokeFunctionReference|KtCallExpression(274,283): 'MyClass()'
   null
 
-KtSimpleNameReference|KtNameReferenceExpression(273,280): 'MyClass'
+KtSimpleNameReference|KtNameReferenceExpression(274,281): 'MyClass'
   <constructor>(): MyClass
 

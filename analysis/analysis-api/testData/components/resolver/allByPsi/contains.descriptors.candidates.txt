@@ -14,7 +14,7 @@ KtConstructorDelegationCall(43,49): 'this()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     candidate = KtDelegatedConstructorCall:
@@ -55,7 +55,7 @@ KtConstructorDelegationReferenceExpression(43,47): 'this'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     candidate = KtDelegatedConstructorCall:
@@ -80,6 +80,9 @@ KtConstructorDelegationReferenceExpression(43,47): 'this'
       argumentMapping = {}
     isInBestCandidates = false
 
+KtOperationReferenceExpression(128,130): 'in'
+  NO_CANDIDATES
+
 KtCallExpression(131,140): 'MyClass()'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -96,7 +99,7 @@ KtCallExpression(131,140): 'MyClass()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     candidate = KtSimpleFunctionCall:
@@ -137,7 +140,7 @@ KtCallExpression(145,154): 'MyClass()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     candidate = KtSimpleFunctionCall:
@@ -198,6 +201,9 @@ KtCallExpression(155,166): 'contains(2)'
       }
     isInBestCandidates = true
 
+KtOperationReferenceExpression(173,176): '!in'
+  NO_CANDIDATES
+
 KtCallExpression(177,186): 'MyClass()'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -214,7 +220,7 @@ KtCallExpression(177,186): 'MyClass()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
     candidate = KtSimpleFunctionCall:
@@ -238,6 +244,45 @@ KtCallExpression(177,186): 'MyClass()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = false
+
+KtWhenConditionInRange(211,223): 'in MyClass()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KtFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(211,213): 'in'
+  NO_CANDIDATES
 
 KtCallExpression(214,223): 'MyClass()'
   KtApplicableCallCandidateInfo:
@@ -280,7 +325,46 @@ KtCallExpression(214,223): 'MyClass()'
       argumentMapping = {}
     isInBestCandidates = false
 
-KtCallExpression(273,282): 'MyClass()'
+KtWhenConditionInRange(270,283): '!in MyClass()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KtFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        f -> (KtVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(270,273): '!in'
+  NO_CANDIDATES
+
+KtCallExpression(274,283): 'MyClass()'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
       isImplicitInvoke = false

@@ -10,6 +10,9 @@ KtSimpleNameReference|KtNameReferenceExpression(31,34): 'Int'
 KtSimpleNameReference|KtNameReferenceExpression(37,41): 'this'
   /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
 
+KtOperationReferenceExpression(42,43): '-'
+  kotlin/Int.minus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(42,43): '-'
   kotlin/Int.minus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -28,6 +31,9 @@ KtSimpleNameReference|KtNameReferenceExpression(98,107): 'parameter'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(98,107): 'parameter'
   null
 
+KtOperationReferenceExpression(108,115): 'myMinus'
+  /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(108,115): 'myMinus'
   /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
 
@@ -37,8 +43,14 @@ KtSimpleNameReference|KtNameReferenceExpression(145,157): 'newParameter'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(145,157): 'newParameter'
   null
 
+KtOperationReferenceExpression(158,159): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(158,159): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(162,169): 'myMinus'
+  /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(162,169): 'myMinus'
   /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int

@@ -10,6 +10,9 @@ KtSimpleNameReference|KtNameReferenceExpression(21,24): 'Int'
 KtSimpleNameReference|KtNameReferenceExpression(27,31): 'this'
   <extension receiver>: kotlin.Int
 
+KtOperationReferenceExpression(32,33): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(32,33): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -30,6 +33,9 @@ KtSimpleNameReference|KtNameReferenceExpression(65,68): 'Int'
 
 KtSimpleNameReference|KtNameReferenceExpression(71,75): 'this'
   <extension receiver>: kotlin.Int?
+
+KtOperationReferenceExpression(76,78): '?:'
+  null
 
 KtSimpleNameReference|KtOperationReferenceExpression(76,78): '?:'
   null
@@ -54,6 +60,9 @@ KtInvokeFunctionReference|KtCallExpression(110,116): 'bar(3)'
 
 KtSimpleNameReference|KtNameReferenceExpression(110,113): 'bar'
   /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(117,120): 'as?'
+  null
 
 KtSimpleNameReference|KtOperationReferenceExpression(117,120): 'as?'
   null

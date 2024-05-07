@@ -25,6 +25,9 @@ SyntheticPropertyAccessorReference|KtNameReferenceExpression(86,92): 'equals'
 KtSimpleNameReference|KtNameReferenceExpression(93,97): 'this'
   /MyClass
 
+KtOperationReferenceExpression(99,101): '?:'
+  /<SPECIAL-FUNCTION-FOR-ELVIS-RESOLVE>(left: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`?, right: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`): `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`
+
 KtSimpleNameReference|KtOperationReferenceExpression(99,101): '?:'
   null
 
@@ -40,6 +43,9 @@ KtSimpleNameReference|KtNameReferenceExpression(168,169): 'm'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(168,169): 'm'
   null
 
+KtOperationReferenceExpression(170,172): '?:'
+  /<SPECIAL-FUNCTION-FOR-ELVIS-RESOLVE>(left: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`?, right: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`): `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`
+
 KtSimpleNameReference|KtOperationReferenceExpression(170,172): '?:'
   null
 
@@ -49,6 +55,9 @@ KtSimpleNameReference|KtNameReferenceExpression(173,175): 'm2'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(173,175): 'm2'
   null
 
+KtOperationReferenceExpression(176,178): '?:'
+  /<SPECIAL-FUNCTION-FOR-ELVIS-RESOLVE>(left: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`?, right: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`): `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`
+
 KtSimpleNameReference|KtOperationReferenceExpression(176,178): '?:'
   null
 
@@ -57,6 +66,9 @@ KtSimpleNameReference|KtNameReferenceExpression(188,189): 'f'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(188,189): 'f'
   null
+
+KtOperationReferenceExpression(190,192): '?:'
+  /<SPECIAL-FUNCTION-FOR-ELVIS-RESOLVE>(left: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`?, right: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`): `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`
 
 KtSimpleNameReference|KtOperationReferenceExpression(190,192): '?:'
   null
@@ -71,6 +83,9 @@ KtSimpleNameReference|KtNameReferenceExpression(200,202): 'm2'
   m2: MyClass?
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(200,202): 'm2'
+  null
+
+KtOperationReferenceExpression(203,205): '?:'
   null
 
 KtSimpleNameReference|KtOperationReferenceExpression(203,205): '?:'

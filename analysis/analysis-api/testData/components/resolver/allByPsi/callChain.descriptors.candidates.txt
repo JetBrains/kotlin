@@ -1,3 +1,9 @@
+KtOperationReferenceExpression(32,33): '+'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(76,78): '?:'
+  NO_CANDIDATES
+
 KtCallExpression(103,109): 'foo(2)'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -65,6 +71,9 @@ KtCallExpression(110,116): 'bar(3)'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
+
+KtOperationReferenceExpression(117,120): 'as?'
+  NO_CANDIDATES
 
 KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
   KtApplicableCallCandidateInfo:

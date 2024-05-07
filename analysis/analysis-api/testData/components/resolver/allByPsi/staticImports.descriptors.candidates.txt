@@ -92,3 +92,6 @@ KtCallExpression(762,767): 'baz()'
       argumentMapping = {}
     isInBestCandidates = true
 
+KtOperationReferenceExpression(903,904): '='
+  NO_CANDIDATES
+

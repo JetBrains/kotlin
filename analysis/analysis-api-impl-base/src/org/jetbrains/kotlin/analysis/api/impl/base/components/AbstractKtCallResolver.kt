@@ -45,6 +45,20 @@ abstract class AbstractKtCallResolver : KtCallResolver() {
         return KtPsiUtil.deparenthesize(safeQualifiedExpression.receiverExpression) == KtPsiUtil.deparenthesize(this)
     }
 
+    /**
+     * When resolving [KtOperationReferenceExpression], we instead resolve the containing [KtWhenConditionInRange] or [KtBinaryExpression].
+     * This way, the corresponding FIR element is a call instead of a reference.
+     */
+    protected fun KtElement.getExpressionForOperationReferenceExpression(): KtElement? {
+        if (this !is KtOperationReferenceExpression) return null
+        return when (val parent = parent) {
+            // Augment assignment resolves into KtCompoundVariableAccessCall, but we should resolve into specific function
+            is KtBinaryExpression -> parent.takeUnless { operationSignTokenType in KtTokens.AUGMENTED_ASSIGNMENTS }
+            is KtWhenConditionInRange -> parent
+            else -> null
+        }
+    }
+
     protected fun canBeResolvedAsCall(ktElement: KtElement): Boolean = when (ktElement) {
         is KtBinaryExpression -> ktElement.operationToken !in nonCallBinaryOperator
         is KtOperationReferenceExpression -> ktElement.operationSignTokenType !in nonCallBinaryOperator
@@ -58,6 +72,7 @@ abstract class AbstractKtCallResolver : KtCallResolver() {
         is KtCollectionLiteralExpression -> true
         is KtConstructorDelegationReferenceExpression -> true
         is KtEnumEntrySuperclassReferenceExpression -> true
+        is KtWhenConditionInRange -> true
         else -> false
     }
 

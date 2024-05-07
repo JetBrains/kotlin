@@ -15,6 +15,9 @@ KtCallExpression(246,258): 'MyDelegate()'
     }
     argumentMapping = {}
 
+KtOperationReferenceExpression(408,410): 'as'
+  null
+
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KtSimpleFunctionCall:
     isImplicitInvoke = false

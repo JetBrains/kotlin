@@ -270,6 +270,9 @@ main.kt
   SyntheticPropertyAccessorReference|KtNameReferenceExpression(899,902): 'doo'
     null
 
+  KtOperationReferenceExpression(903,904): '='
+    null
+
   KtSimpleNameReference|KtOperationReferenceExpression(903,904): '='
     null
 

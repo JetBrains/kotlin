@@ -14,13 +14,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.KtWhenConditionInRange
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 
 internal class KaFe10Resolver(override val analysisSession: KtFe10AnalysisSession) : KaResolver(), Fe10KtAnalysisSessionComponent {
     override fun resolveKtElementToSymbol(ktElement: KtElement): KtSymbol? {
-        if (ktElement is KtCallableReferenceExpression) {
-            return ktElement.callableReference.let(::resolveKtElementToSymbol)
+        when (ktElement) {
+            is KtCallableReferenceExpression -> return ktElement.callableReference.let(::resolveKtElementToSymbol)
+            is KtWhenConditionInRange -> return ktElement.operationReference.let(::resolveKtElementToSymbol)
         }
 
         val bindingContext = analysisContext.analyze(ktElement, AnalysisMode.PARTIAL)

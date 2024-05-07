@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KtConstantValueForAnnotation
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
@@ -19,13 +20,25 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeNullability
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun PsiElement.unwrap(): PsiElement {
     return when (this) {
@@ -92,5 +105,31 @@ internal fun FirExpression.asKtInitializerValue(builder: KtSymbolByFirBuilder, f
             KtNonConstantInitializerValue(ktExpression)
         }
         else -> KtConstantInitializerValue(evaluated, ktExpression)
+    }
+}
+
+internal fun FirEqualityOperatorCall.processEqualsFunctions(
+    session: FirSession,
+    analysisSession: KtFirAnalysisSession,
+    processor: (FirNamedFunctionSymbol) -> Unit,
+) {
+    when (operation) {
+        FirOperation.EQ, FirOperation.NOT_EQ -> {}
+        else -> return
+    }
+
+    val lhs = arguments.firstOrNull() ?: return
+    val scope = lhs.resolvedType.scope(
+        session,
+        analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
+        CallableCopyTypeCalculator.DoNothing,
+        requiredMembersPhase = FirResolvePhase.STATUS,
+    ) ?: return
+
+    scope.processFunctionsByName(OperatorNameConventions.EQUALS) { functionSymbol ->
+        val parameterSymbol = functionSymbol.valueParameterSymbols.singleOrNull()
+        if (parameterSymbol != null && parameterSymbol.fir.returnTypeRef.coneType.fullyExpandedType(session).isNullableAny) {
+            processor(functionSymbol)
+        }
     }
 }

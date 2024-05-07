@@ -97,3 +97,24 @@ KtCallExpression(762,767): 'baz()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
+
+KtOperationReferenceExpression(903,904): '='
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = doo = "str"
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KtVariableLikeSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableIdIfNonLocal = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Write:
+        value = "str"
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+

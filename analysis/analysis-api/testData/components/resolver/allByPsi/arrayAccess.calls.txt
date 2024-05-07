@@ -1,3 +1,37 @@
+KtOperationReferenceExpression(45,47): '+='
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: T
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = element
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = element: T
+        callableIdIfNonLocal = null)
+    }
+
 KtArrayAccessExpression(74,81): 'list[0]'
   KtSimpleFunctionCall:
     isImplicitInvoke = false
@@ -102,6 +136,37 @@ KtCallExpression(179,199): 'foo(--list[i], list)'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         callableIdIfNonLocal = null)
     }
+
+KtOperationReferenceExpression(183,185): '--'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableIdIfNonLocal = null,
+          KtVariableLikeSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: E
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/collections/MutableList.set
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtArrayAccessExpression(185,192): 'list[i]'
   KtSimpleFunctionCall:

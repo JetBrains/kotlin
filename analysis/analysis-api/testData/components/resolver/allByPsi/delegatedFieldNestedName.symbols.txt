@@ -22,6 +22,9 @@ KtAnnotationEntry(210,226): '@Anno(0 + outer)'
 KtSimpleNameReference|KtNameReferenceExpression(211,215): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtOperationReferenceExpression(218,219): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(218,219): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -37,6 +40,9 @@ KtAnnotationEntry(232,248): '@Anno(1 + outer)'
 KtSimpleNameReference|KtNameReferenceExpression(233,237): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtOperationReferenceExpression(240,241): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(240,241): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -51,6 +57,9 @@ KtAnnotationEntry(254,270): '@Anno(2 + outer)'
 
 KtSimpleNameReference|KtNameReferenceExpression(255,259): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtOperationReferenceExpression(262,263): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(262,263): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -70,6 +79,9 @@ KtAnnotationEntry(295,311): '@Anno(4 + outer)'
 KtSimpleNameReference|KtNameReferenceExpression(296,300): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtOperationReferenceExpression(303,304): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(303,304): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -84,6 +96,9 @@ KtAnnotationEntry(319,335): '@Anno(5 + outer)'
 
 KtSimpleNameReference|KtNameReferenceExpression(320,324): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtOperationReferenceExpression(327,328): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(327,328): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -103,6 +118,9 @@ KtAnnotationEntry(385,401): '@Anno(6 + inner)'
 KtSimpleNameReference|KtNameReferenceExpression(386,390): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtOperationReferenceExpression(393,394): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(393,394): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -117,6 +135,9 @@ KtAnnotationEntry(407,423): '@Anno(7 + inner)'
 
 KtSimpleNameReference|KtNameReferenceExpression(408,412): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtOperationReferenceExpression(415,416): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(415,416): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -133,6 +154,9 @@ KtAnnotationEntry(429,445): '@Anno(8 + inner)'
 KtSimpleNameReference|KtNameReferenceExpression(430,434): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtOperationReferenceExpression(437,438): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(437,438): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -148,6 +172,9 @@ KtAnnotationEntry(544,560): '@Anno(9 + inner)'
 KtSimpleNameReference|KtNameReferenceExpression(545,549): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
 
+KtOperationReferenceExpression(552,553): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(552,553): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -162,6 +189,9 @@ KtAnnotationEntry(568,585): '@Anno(10 + inner)'
 
 KtSimpleNameReference|KtNameReferenceExpression(569,573): 'Anno'
   <constructor>(i: kotlin.Int): second.Anno
+
+KtOperationReferenceExpression(577,578): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(577,578): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int

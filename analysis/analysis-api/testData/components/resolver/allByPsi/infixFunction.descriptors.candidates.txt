@@ -1,3 +1,77 @@
+KtOperationReferenceExpression(42,43): '-'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(108,115): 'myMinus'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = parameter
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Int
+          symbol = /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = /myMinus
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        5 -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(158,159): '+'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(162,169): 'myMinus'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = newParameter + 1
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Int
+          symbol = /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = /myMinus
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        4 -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
@@ -32,7 +106,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = false
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
     candidate = KtSimpleFunctionCall:
@@ -66,7 +140,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = false
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
     candidate = KtSimpleFunctionCall:
@@ -100,7 +174,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = false
-
+  
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
       isImplicitInvoke = false
@@ -133,7 +207,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
     candidate = KtSimpleFunctionCall:
@@ -167,7 +241,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = false
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
     candidate = KtSimpleFunctionCall:
@@ -201,7 +275,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = false
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plus>
     candidate = KtSimpleFunctionCall:

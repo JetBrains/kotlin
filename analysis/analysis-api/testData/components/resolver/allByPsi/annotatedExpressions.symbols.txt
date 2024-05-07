@@ -31,6 +31,9 @@ KtAnnotationEntry(157,175): '@Anno(0 + integer)'
 KtSimpleNameReference|KtNameReferenceExpression(158,162): 'Anno'
   <constructor>(number: kotlin.Int): Anno
 
+KtOperationReferenceExpression(165,166): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(165,166): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 

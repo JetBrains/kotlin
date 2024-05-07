@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -48,11 +48,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -137,6 +134,7 @@ internal class KtFirCallResolver(
             ?: containingUnaryExpressionForIncOrDec
             ?: psi.getContainingDotQualifiedExpressionForSelectorExpression()
             ?: psi.getConstructorDelegationCallForDelegationReferenceExpression()
+            ?: psi.getExpressionForOperationReferenceExpression()
             ?: psi
         val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
         if (fir is FirDiagnosticHolder) {
@@ -1228,26 +1226,20 @@ internal class KtFirCallResolver(
     }
 
     private fun FirEqualityOperatorCall.toKtCallInfo(psi: KtElement): KtCallInfo? {
-        val binaryExpression = deparenthesize(psi as? KtExpression) as? KtBinaryExpression ?: return null
+        val binaryExpression = when (psi) {
+            is KtOperationReferenceExpression -> psi.parent
+            is KtExpression -> deparenthesize(psi)
+            else -> null
+        } as? KtBinaryExpression ?: return null
+
         val leftPsi = binaryExpression.left ?: return null
         val rightPsi = binaryExpression.right ?: return null
         return when (operation) {
             FirOperation.EQ, FirOperation.NOT_EQ -> {
                 val leftOperand = arguments.firstOrNull() ?: return null
-                val session = analysisSession.useSiteSession
-                val leftOperandType = leftOperand.resolvedType.fullyExpandedType(session).upperBoundIfFlexible()
-                val equalsSymbol = when (leftOperandType) {
-                    is ConeTypeParameterType -> {
-                        leftOperandType.collectUpperBounds().firstNotNullOfOrNull { upperBound ->
-                            val upperBoundClassSymbol = upperBound.toSymbol(session) as? FirClassSymbol<*>
-                            upperBoundClassSymbol?.getEqualsSymbol()
-                        }
-                    }
-                    else -> {
-                        val classSymbol = leftOperandType.toSymbol(session) as? FirClassSymbol<*>
-                        classSymbol?.getEqualsSymbol()
-                    }
-                } ?: equalsSymbolInAny ?: return null
+                val leftOperandType = leftOperand.resolvedType
+
+                val equalsSymbol = getEqualsSymbol() ?: return null
                 val ktSignature = equalsSymbol.toKtSignature()
                 KtSuccessCallInfo(
                     KtSimpleFunctionCall(
@@ -1268,29 +1260,13 @@ internal class KtFirCallResolver(
         }
     }
 
-    private fun FirClassSymbol<*>.getEqualsSymbol(): FirNamedFunctionSymbol? {
-        val scope = unsubstitutedScope(
-            analysisSession.useSiteSession,
-            analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
-            false,
-            memberRequiredPhase = FirResolvePhase.STATUS,
-        )
-
+    private fun FirEqualityOperatorCall.getEqualsSymbol(): FirNamedFunctionSymbol? {
         var equalsSymbol: FirNamedFunctionSymbol? = null
-        scope.processFunctionsByName(EQUALS) { equalsSymbolFromScope ->
-            if (equalsSymbol != null) return@processFunctionsByName
-            if (equalsSymbolFromScope == equalsSymbolInAny) {
-                equalsSymbol = equalsSymbolFromScope
-            }
-            scope.processOverriddenFunctions(equalsSymbolFromScope) {
-                if (it == equalsSymbolInAny) {
-                    equalsSymbol = equalsSymbolFromScope
-                    ProcessorAction.STOP
-                } else {
-                    ProcessorAction.NEXT
-                }
-            }
+        processEqualsFunctions(analysisSession.useSiteSession, analysisSession) {
+            if (equalsSymbol != null) return@processEqualsFunctions
+            equalsSymbol = it
         }
+
         return equalsSymbol ?: equalsSymbolInAny
     }
 

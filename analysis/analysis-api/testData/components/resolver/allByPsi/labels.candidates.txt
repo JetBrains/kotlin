@@ -51,3 +51,139 @@ KtCallExpression(64,102): 'foo label@{'
       }
     isInBestCandidates = true
 
+KtOperationReferenceExpression(126,128): '..'
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.ranges.IntRange
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = other: kotlin.Byte
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.ranges.IntRange
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = other: kotlin.Short
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.LongRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.ranges.LongRange
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = other: kotlin.Long
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+

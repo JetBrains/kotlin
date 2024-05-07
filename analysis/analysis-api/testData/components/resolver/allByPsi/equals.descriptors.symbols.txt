@@ -70,6 +70,9 @@ KtSimpleNameReference|KtNameReferenceExpression(290,292): 'm1'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(290,292): 'm1'
   null
 
+KtOperationReferenceExpression(293,296): '==='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(293,296): '==='
   null
 
@@ -83,6 +86,9 @@ KtSimpleNameReference|KtNameReferenceExpression(304,306): 'm1'
   m1: MyClass
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(304,306): 'm1'
+  null
+
+KtOperationReferenceExpression(307,310): '!=='
   null
 
 KtSimpleNameReference|KtOperationReferenceExpression(307,310): '!=='
@@ -100,6 +106,9 @@ KtSimpleNameReference|KtNameReferenceExpression(318,320): 'm1'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(318,320): 'm1'
   null
 
+KtOperationReferenceExpression(321,323): '=='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(321,323): '=='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
@@ -114,6 +123,9 @@ KtSimpleNameReference|KtNameReferenceExpression(331,333): 'm1'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(331,333): 'm1'
   null
+
+KtOperationReferenceExpression(334,336): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(334,336): '!='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -154,6 +166,9 @@ KtSimpleNameReference|KtNameReferenceExpression(363,365): 'm2'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(363,365): 'm2'
   null
 
+KtOperationReferenceExpression(366,369): '==='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(366,369): '==='
   null
 
@@ -167,6 +182,9 @@ KtSimpleNameReference|KtNameReferenceExpression(377,379): 'm2'
   m2: MyClass
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(377,379): 'm2'
+  null
+
+KtOperationReferenceExpression(380,383): '!=='
   null
 
 KtSimpleNameReference|KtOperationReferenceExpression(380,383): '!=='
@@ -184,6 +202,9 @@ KtSimpleNameReference|KtNameReferenceExpression(391,393): 'm2'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(391,393): 'm2'
   null
 
+KtOperationReferenceExpression(394,396): '=='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(394,396): '=='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
@@ -198,6 +219,9 @@ KtSimpleNameReference|KtNameReferenceExpression(404,406): 'm2'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(404,406): 'm2'
   null
+
+KtOperationReferenceExpression(407,409): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(407,409): '!='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -250,6 +274,9 @@ KtSimpleNameReference|KtNameReferenceExpression(482,489): 'another'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(482,489): 'another'
   null
 
+KtOperationReferenceExpression(490,493): '==='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(490,493): '==='
   null
 
@@ -263,6 +290,9 @@ KtSimpleNameReference|KtNameReferenceExpression(506,513): 'another'
   val another: Another
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(506,513): 'another'
+  null
+
+KtOperationReferenceExpression(514,517): '!=='
   null
 
 KtSimpleNameReference|KtOperationReferenceExpression(514,517): '!=='
@@ -279,6 +309,9 @@ KtSimpleNameReference|KtNameReferenceExpression(530,537): 'another'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(530,537): 'another'
   null
+
+KtOperationReferenceExpression(538,540): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(538,540): '=='
   kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -300,6 +333,9 @@ KtSimpleNameReference|KtNameReferenceExpression(555,562): 'another'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(555,562): 'another'
   null
+
+KtOperationReferenceExpression(563,565): '!='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(563,565): '!='
   kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -376,6 +412,9 @@ KtSimpleNameReference|KtNameReferenceExpression(663,668): 'child'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(663,668): 'child'
   null
 
+KtOperationReferenceExpression(669,672): '==='
+  null
+
 KtSimpleNameReference|KtOperationReferenceExpression(669,672): '==='
   null
 
@@ -389,6 +428,9 @@ KtSimpleNameReference|KtNameReferenceExpression(685,692): 'another'
   val another: Another
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(685,692): 'another'
+  null
+
+KtOperationReferenceExpression(693,696): '!=='
   null
 
 KtSimpleNameReference|KtOperationReferenceExpression(693,696): '!=='
@@ -405,6 +447,9 @@ KtSimpleNameReference|KtNameReferenceExpression(708,713): 'child'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(708,713): 'child'
   null
+
+KtOperationReferenceExpression(714,716): '=='
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(714,716): '=='
   /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
@@ -445,6 +490,9 @@ KtSimpleNameReference|KtNameReferenceExpression(755,762): 'myClass'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(755,762): 'myClass'
   null
 
+KtOperationReferenceExpression(763,765): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(763,765): '!='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
@@ -453,6 +501,9 @@ KtSimpleNameReference|KtNameReferenceExpression(766,771): 'child'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(766,771): 'child'
   null
+
+KtOperationReferenceExpression(776,777): '!'
+  kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(776,777): '!'
   kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
@@ -486,6 +537,9 @@ KtSimpleNameReference|KtNameReferenceExpression(804,811): 'another'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(804,811): 'another'
   null
+
+KtOperationReferenceExpression(812,814): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(812,814): '=='
   kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -526,6 +580,9 @@ KtSimpleNameReference|KtNameReferenceExpression(851,856): 'child'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(851,856): 'child'
   null
 
+KtOperationReferenceExpression(857,859): '=='
+  /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(857,859): '=='
   /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
 
@@ -564,6 +621,9 @@ KtSimpleNameReference|KtNameReferenceExpression(899,906): 'another'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(899,906): 'another'
   null
+
+KtOperationReferenceExpression(907,909): '=='
+  kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(907,909): '=='
   kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -604,6 +664,9 @@ KtSimpleNameReference|KtNameReferenceExpression(950,957): 'myClass'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(950,957): 'myClass'
   null
 
+KtOperationReferenceExpression(958,960): '!='
+  /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+
 KtSimpleNameReference|KtOperationReferenceExpression(958,960): '!='
   /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
@@ -612,6 +675,9 @@ KtSimpleNameReference|KtNameReferenceExpression(961,968): 'another'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(961,968): 'another'
   null
+
+KtOperationReferenceExpression(973,974): '!'
+  kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
 
 KtSimpleNameReference|KtOperationReferenceExpression(973,974): '!'
   kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean

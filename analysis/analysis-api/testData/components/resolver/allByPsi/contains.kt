@@ -14,6 +14,6 @@ fun usage() {
     }
 
     when (val f = 3) {
-        in MyClass() -> false
+        !in MyClass() -> false
     }
 }

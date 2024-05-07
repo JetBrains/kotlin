@@ -1,0 +1,1108 @@
+KtAnnotationEntry(16,46): '@Target(AnnotationTarget.TYPE)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      AnnotationTarget.TYPE -> (KtVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(210,226): '@Anno(0 + outer)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      0 + outer -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(218,219): '+'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = 0
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      outer -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(232,248): '@Anno(1 + outer)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 + outer -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(240,241): '+'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      outer -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(254,270): '@Anno(2 + outer)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      2 + outer -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(262,263): '+'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = 2
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      outer -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(295,311): '@Anno(4 + outer)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      4 + outer -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(303,304): '+'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = 4
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      outer -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(319,335): '@Anno(5 + outer)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      5 + outer -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(327,328): '+'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = 5
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      outer -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(385,401): '@Anno(6 + inner)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      6 + inner -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(393,394): '+'
+  KaCallResolutionError:
+    candidateCalls = [
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 6
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Double
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Double
+                symbol = other: kotlin.Double
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Double
+            symbol = other: kotlin.Double
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 6
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Float
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Float
+                symbol = other: kotlin.Float
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Float
+            symbol = other: kotlin.Float
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 6
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Byte
+                symbol = other: kotlin.Byte
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Byte
+            symbol = other: kotlin.Byte
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 6
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 6
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Short
+                symbol = other: kotlin.Short
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Short
+            symbol = other: kotlin.Short
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 6
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Long
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Long
+                symbol = other: kotlin.Long
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Long
+            symbol = other: kotlin.Long
+            callableIdIfNonLocal = null)
+        }
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public final operator fun plus(other: Byte): Int defined in kotlin.Int
+    public final operator fun plus(other: Double): Double defined in kotlin.Int
+    public final operator fun plus(other: Float): Float defined in kotlin.Int
+    public final operator fun plus(other: Int): Int defined in kotlin.Int
+    public final operator fun plus(other: Long): Long defined in kotlin.Int
+    public final operator fun plus(other: Short): Int defined in kotlin.Int>
+
+KtAnnotationEntry(407,423): '@Anno(7 + inner)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      7 + inner -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(415,416): '+'
+  KaCallResolutionError:
+    candidateCalls = [
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 7
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Double
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Double
+                symbol = other: kotlin.Double
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Double
+            symbol = other: kotlin.Double
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 7
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Float
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Float
+                symbol = other: kotlin.Float
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Float
+            symbol = other: kotlin.Float
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 7
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Byte
+                symbol = other: kotlin.Byte
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Byte
+            symbol = other: kotlin.Byte
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 7
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 7
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Short
+                symbol = other: kotlin.Short
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Short
+            symbol = other: kotlin.Short
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 7
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Long
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Long
+                symbol = other: kotlin.Long
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Long
+            symbol = other: kotlin.Long
+            callableIdIfNonLocal = null)
+        }
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public final operator fun plus(other: Byte): Int defined in kotlin.Int
+    public final operator fun plus(other: Double): Double defined in kotlin.Int
+    public final operator fun plus(other: Float): Float defined in kotlin.Int
+    public final operator fun plus(other: Int): Int defined in kotlin.Int
+    public final operator fun plus(other: Long): Long defined in kotlin.Int
+    public final operator fun plus(other: Short): Int defined in kotlin.Int>
+
+KtAnnotationEntry(429,445): '@Anno(8 + inner)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      8 + inner -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(437,438): '+'
+  KaCallResolutionError:
+    candidateCalls = [
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 8
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Double
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Double
+                symbol = other: kotlin.Double
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Double
+            symbol = other: kotlin.Double
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 8
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Float
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Float
+                symbol = other: kotlin.Float
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Float
+            symbol = other: kotlin.Float
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 8
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Byte
+                symbol = other: kotlin.Byte
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Byte
+            symbol = other: kotlin.Byte
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 8
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 8
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Short
+                symbol = other: kotlin.Short
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Short
+            symbol = other: kotlin.Short
+            callableIdIfNonLocal = null)
+        },
+      KtSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+          dispatchReceiver = KtExplicitReceiverValue:
+            expression = 8
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KtFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Long
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long
+            valueParameters = [
+              KtVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Long
+                symbol = other: kotlin.Long
+                callableIdIfNonLocal = null
+            ]
+            callableIdIfNonLocal = kotlin/Int.plus
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          inner -> (KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Long
+            symbol = other: kotlin.Long
+            callableIdIfNonLocal = null)
+        }
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public final operator fun plus(other: Byte): Int defined in kotlin.Int
+    public final operator fun plus(other: Double): Double defined in kotlin.Int
+    public final operator fun plus(other: Float): Float defined in kotlin.Int
+    public final operator fun plus(other: Int): Int defined in kotlin.Int
+    public final operator fun plus(other: Long): Long defined in kotlin.Int
+    public final operator fun plus(other: Short): Int defined in kotlin.Int>
+
+KtAnnotationEntry(544,560): '@Anno(9 + inner)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      9 + inner -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(552,553): '+'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = 9
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      inner -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtAnnotationEntry(568,585): '@Anno(10 + inner)'
+  KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      10 + inner -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+
+KtOperationReferenceExpression(577,578): '+'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = 10
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      inner -> (KtVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
+

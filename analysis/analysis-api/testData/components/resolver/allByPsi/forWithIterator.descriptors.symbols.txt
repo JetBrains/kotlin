@@ -37,6 +37,9 @@ KtSimpleNameReference|KtNameReferenceExpression(196,203): 'current'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(196,203): 'current'
   null
 
+KtOperationReferenceExpression(204,206): '<='
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(204,206): '<='
   kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -66,6 +69,9 @@ SyntheticPropertyAccessorReference|KtNameReferenceExpression(256,263): 'current'
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(256,263): 'current'
   null
+
+KtOperationReferenceExpression(263,265): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(263,265): '++'
   kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int

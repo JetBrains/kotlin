@@ -1,3 +1,6 @@
+KtOperationReferenceExpression(45,47): '+='
+  NO_CANDIDATES
+
 KtArrayAccessExpression(74,81): 'list[0]'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -31,7 +34,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with get>
     candidate = KtSimpleFunctionCall:
@@ -68,7 +71,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = false
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     candidate = KtSimpleFunctionCall:
@@ -136,7 +139,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with get>
     candidate = KtSimpleFunctionCall:
@@ -173,7 +176,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = false
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     candidate = KtSimpleFunctionCall:
@@ -251,6 +254,9 @@ KtCallExpression(179,199): 'foo(--list[i], list)'
       }
     isInBestCandidates = true
 
+KtOperationReferenceExpression(183,185): '--'
+  NO_CANDIDATES
+
 KtArrayAccessExpression(185,192): 'list[i]'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -284,7 +290,7 @@ KtArrayAccessExpression(185,192): 'list[i]'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with get>
     candidate = KtSimpleFunctionCall:
@@ -321,7 +327,7 @@ KtArrayAccessExpression(185,192): 'list[i]'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = false
-
+  
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
     candidate = KtSimpleFunctionCall:

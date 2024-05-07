@@ -31,6 +31,9 @@ KtSimpleNameReference|KtNameReferenceExpression(161,166): 'start'
 KtSimpleNameReference|KtNameReferenceExpression(196,203): 'current'
   var current: kotlin.Int
 
+KtOperationReferenceExpression(204,206): '<='
+  kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(204,206): '<='
   kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -55,6 +58,9 @@ KtSimpleNameReference|KtNameReferenceExpression(256,263): 'current'
 KtSimpleNameReference|KtNameReferenceExpression(256,263): 'current'
   var current: kotlin.Int
 
+KtOperationReferenceExpression(263,265): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(263,265): '++'
   kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
 
@@ -69,3 +75,4 @@ KtInvokeFunctionReference|KtCallExpression(297,318): 'IntProgression(1, 10)'
 
 KtSimpleNameReference|KtNameReferenceExpression(297,311): 'IntProgression'
   <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+

@@ -1,3 +1,147 @@
+KtOperationReferenceExpression(45,47): '+='
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = element
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = element: T
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/collections/plusAssign
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: T
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<T>' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.Array<T>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Array<kotlin.Int>
+              symbol = elements: kotlin.Array<T>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/collections/plusAssign
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Array<kotlin.Int>
+          symbol = elements: kotlin.Array<T>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<T>' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.collections.Iterable<T>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.collections.Iterable<kotlin.Int>
+              symbol = elements: kotlin.collections.Iterable<T>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/collections/plusAssign
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.collections.Iterable<kotlin.Int>
+          symbol = elements: kotlin.collections.Iterable<T>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
+  KtInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<T>' was expected.>
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.sequences.Sequence<T>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.sequences.Sequence<kotlin.Int>
+              symbol = elements: kotlin.sequences.Sequence<T>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/collections/plusAssign
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.sequences.Sequence<kotlin.Int>
+          symbol = elements: kotlin.sequences.Sequence<T>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = false
+
 KtArrayAccessExpression(74,81): 'list[0]'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -107,6 +251,39 @@ KtCallExpression(179,199): 'foo(--list[i], list)'
           symbol = list: kotlin.collections.MutableList<kotlin.Int>
           callableIdIfNonLocal = null)
       }
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(183,185): '--'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = index
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = index: kotlin.Int
+              callableIdIfNonLocal = null,
+            KtVariableLikeSignature:
+              name = element
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = element: E
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/collections/MutableList.set
+      typeArgumentsMapping = {}
+      argumentMapping = {}
     isInBestCandidates = true
 
 KtArrayAccessExpression(185,192): 'list[i]'

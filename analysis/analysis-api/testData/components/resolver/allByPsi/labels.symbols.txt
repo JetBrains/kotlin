@@ -37,6 +37,9 @@ KtLabelReferenceExpression(108,114): 'myFor@'
 KtSimpleNameReference|KtLabelReferenceExpression(108,114): 'myFor@'
   null
 
+KtOperationReferenceExpression(126,128): '..'
+  kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+
 KtSimpleNameReference|KtOperationReferenceExpression(126,128): '..'
   kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
 

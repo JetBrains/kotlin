@@ -31,3 +31,19 @@ KtCallExpression(86,98): 'equals(this)'
           callableIdIfNonLocal = null)
       }
     isInBestCandidates = true
+
+KtOperationReferenceExpression(99,101): '?:'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(170,172): '?:'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(176,178): '?:'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(190,192): '?:'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(203,205): '?:'
+  NO_CANDIDATES
+

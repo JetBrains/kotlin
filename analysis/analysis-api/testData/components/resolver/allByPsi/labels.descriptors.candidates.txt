@@ -1,0 +1,56 @@
+KtCallExpression(34,42): 'action()'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = action
+          isSafeNavigation = false
+          type = kotlin.Function0<kotlin.Unit>
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+          valueParameters = []
+          callableIdIfNonLocal = kotlin/Function0.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(64,102): 'foo label@{'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function0<kotlin.Unit>
+              symbol = action: kotlin.Function0<kotlin.Unit>
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = /foo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        label@{
+                return@label
+            } -> (KtVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>
+          symbol = action: kotlin.Function0<kotlin.Unit>
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(126,128): '..'
+  NO_CANDIDATES
+

@@ -102,7 +102,7 @@ KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
         symbol = val memberProperty: kotlin.Int
         callableIdIfNonLocal = pack/MyClass.memberProperty
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(577,598): 'Child::memberFunction'
@@ -179,7 +179,7 @@ KtCallableReferenceExpression(619,640): 'Child::memberProperty'
         symbol = val memberProperty: kotlin.Int
         callableIdIfNonLocal = pack/MyClass.memberProperty
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
@@ -209,7 +209,7 @@ KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
         symbol = val extensionProperty: kotlin.String
         callableIdIfNonLocal = pack/extensionProperty
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
@@ -239,7 +239,7 @@ KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
         symbol = val extensionProperty: kotlin.String
         callableIdIfNonLocal = pack/extensionProperty
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
@@ -269,7 +269,7 @@ KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
         symbol = var propertyWithType: pack.MyClass?
         callableIdIfNonLocal = pack/ChildWithType.propertyWithType
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 KtCallExpression(890,913): 'invoke(ChildWithType())'
@@ -353,7 +353,7 @@ KtCallableReferenceExpression(942,960): '::topLevelVariable'
         symbol = var topLevelVariable: kotlin.Int
         callableIdIfNonLocal = pack/topLevelVariable
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(966,979): '::lateinitVar'
@@ -368,7 +368,7 @@ KtCallableReferenceExpression(966,979): '::lateinitVar'
         symbol = var lateinitVar: pack.MyClass
         callableIdIfNonLocal = pack/lateinitVar
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
@@ -404,7 +404,7 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
         symbol = var propertyWithType: T?
         callableIdIfNonLocal = pack/ClassWithType.propertyWithType
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
@@ -425,6 +425,37 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
     typeArgumentsMapping = {}
     argumentMapping = {}
 
+KtOperationReferenceExpression(1175,1177): '!!'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = pack.ClassWithType<kotlin.Int>
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = pack.ClassWithType<kotlin.Int>?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+    typeArgumentsMapping = {
+      <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
+    }
+    argumentMapping = {
+      t -> (KtVariableLikeSignature:
+        name = baseExpr
+        receiverType = null
+        returnType = pack.ClassWithType<kotlin.Int>?
+        symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+        callableIdIfNonLocal = null)
+    }
+
 KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
   KtSimpleVariableAccessCall:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -440,6 +471,37 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
         symbol = var propertyWithType: T?
         callableIdIfNonLocal = pack/ClassWithType.propertyWithType
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(1201,1203): '!!'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = pack.ClassWithType<kotlin.Int>
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = pack.ClassWithType<kotlin.Int>?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+    typeArgumentsMapping = {
+      <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
+    }
+    argumentMapping = {
+      t -> (KtVariableLikeSignature:
+        name = baseExpr
+        receiverType = null
+        returnType = pack.ClassWithType<kotlin.Int>?
+        symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+        callableIdIfNonLocal = null)
+    }
 

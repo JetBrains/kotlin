@@ -163,12 +163,10 @@ internal class KtFe10CallResolver(
             return resolveCall(parentBinaryExpression)
         }
 
-        if (psi is KtCallableReferenceExpression) {
-            return resolveCall(psi.callableReference)
-        }
-
-        if (psi is KtConstructorDelegationReferenceExpression) {
-            return (psi.parent as? KtElement)?.let(::resolveCall)
+        when (psi) {
+            is KtCallableReferenceExpression -> return resolveCall(psi.callableReference)
+            is KtConstructorDelegationReferenceExpression -> return (psi.parent as? KtElement)?.let(::resolveCall)
+            is KtWhenConditionInRange -> return psi.operationReference.let(::resolveCall)
         }
 
         when (unwrappedPsi) {
@@ -207,9 +205,11 @@ internal class KtFe10CallResolver(
                 handleAsFunctionCall(this, unwrappedPsi)?.toKtCallCandidateInfos()?.let { return@with it }
             }
 
-            // KtCollectionLiteralExpression and KtCallableReferenceExpression cannot have candidates and the regular mechanism doesn't work
-            if (psi is KtCollectionLiteralExpression || psi is KtCallableReferenceExpression) {
-                return@with resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
+            // Cannot have candidates and the regular mechanism doesn't work
+            when (psi) {
+                is KtCollectionLiteralExpression, is KtCallableReferenceExpression, is KtWhenConditionInRange -> {
+                    return@with resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
+                }
             }
 
             val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()

@@ -82,3 +82,6 @@ KtCallExpression(762,767): 'baz()'
     typeArgumentsMapping = {}
     argumentMapping = {}
 
+KtOperationReferenceExpression(903,904): '='
+  null
+

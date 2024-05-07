@@ -1,3 +1,6 @@
+KtOperationReferenceExpression(20,21): '>'
+  NO_CANDIDATES
+
 KtCallExpression(30,42): 'compareTo(2)'
   KtInapplicableCallCandidateInfo:
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
@@ -202,6 +205,12 @@ KtCallExpression(30,42): 'compareTo(2)'
       }
     isInBestCandidates = false
 
+KtOperationReferenceExpression(43,44): '>'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(56,57): '<'
+  NO_CANDIDATES
+
 KtCallExpression(99,108): 'MyClass()'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -218,6 +227,9 @@ KtCallExpression(99,108): 'MyClass()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
+
+KtOperationReferenceExpression(121,123): '>='
+  NO_CANDIDATES
 
 KtCallExpression(143,160): 'compareTo(number)'
   KtApplicableCallCandidateInfo:

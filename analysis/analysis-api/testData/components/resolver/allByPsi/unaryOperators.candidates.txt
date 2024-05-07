@@ -1,3 +1,18 @@
+KtOperationReferenceExpression(49,50): '-'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(73,74): '+'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(83,84): '!'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(85,86): '+'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(87,88): '-'
+  NO_CANDIDATES
+
 KtCallExpression(88,97): 'MyClass()'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:

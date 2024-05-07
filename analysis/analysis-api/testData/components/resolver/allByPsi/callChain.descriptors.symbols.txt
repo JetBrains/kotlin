@@ -10,6 +10,9 @@ KtSimpleNameReference|KtNameReferenceExpression(21,24): 'Int'
 KtSimpleNameReference|KtNameReferenceExpression(27,31): 'this'
   /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
 
+KtOperationReferenceExpression(32,33): '+'
+  kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(32,33): '+'
   kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
@@ -33,6 +36,9 @@ KtSimpleNameReference|KtNameReferenceExpression(65,68): 'Int'
 
 KtSimpleNameReference|KtNameReferenceExpression(71,75): 'this'
   /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(76,78): '?:'
+  /<SPECIAL-FUNCTION-FOR-ELVIS-RESOLVE>(left: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`?, right: `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`): `<TYPE-PARAMETER-FOR-ELVIS-RESOLVE>`
 
 KtSimpleNameReference|KtOperationReferenceExpression(76,78): '?:'
   null
@@ -65,6 +71,9 @@ KtSimpleNameReference|KtNameReferenceExpression(110,113): 'bar'
   /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
 
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(110,113): 'bar'
+  null
+
+KtOperationReferenceExpression(117,120): 'as?'
   null
 
 KtSimpleNameReference|KtOperationReferenceExpression(117,120): 'as?'

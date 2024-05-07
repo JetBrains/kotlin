@@ -25,6 +25,9 @@ KtSimpleNameReference|KtNameReferenceExpression(109,118): 'javaClass'
 KtSimpleNameReference|KtNameReferenceExpression(119,128): 'something'
   var something: kotlin.Int
 
+KtOperationReferenceExpression(129,130): '='
+  var something: kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(129,130): '='
   null
 
@@ -35,6 +38,9 @@ KtSimpleNameReference|KtNameReferenceExpression(147,156): 'something'
   var something: kotlin.Int
 
 KtSimpleNameReference|KtNameReferenceExpression(147,156): 'something'
+  var something: kotlin.Int
+
+KtOperationReferenceExpression(157,159): '+='
   var something: kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(157,159): '+='
@@ -49,11 +55,17 @@ KtSimpleNameReference|KtNameReferenceExpression(176,185): 'something'
 KtSimpleNameReference|KtNameReferenceExpression(176,185): 'something'
   var something: kotlin.Int
 
+KtOperationReferenceExpression(185,187): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(185,187): '++'
   kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(185,187): '++'
   kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(192,194): '--'
+  kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(192,194): '--'
   kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -76,6 +88,9 @@ KtSimpleNameReference|KtNameReferenceExpression(219,228): 'something'
 KtSimpleNameReference|KtNameReferenceExpression(219,228): 'something'
   var something: kotlin.Int
 
+KtOperationReferenceExpression(228,230): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(228,230): '++'
   kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
 
@@ -87,6 +102,9 @@ KtSimpleNameReference|KtNameReferenceExpression(236,245): 'something'
 
 KtSimpleNameReference|KtNameReferenceExpression(236,245): 'something'
   var something: kotlin.Int
+
+KtOperationReferenceExpression(246,248): '++'
+  kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(246,248): '++'
   kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -97,6 +115,9 @@ KtSimpleNameReference|KtOperationReferenceExpression(246,248): '++'
 KtSimpleNameReference|KtNameReferenceExpression(254,263): 'something'
   var something: kotlin.Int
 
+KtOperationReferenceExpression(265,266): '='
+  var something: kotlin.Int
+
 KtSimpleNameReference|KtOperationReferenceExpression(265,266): '='
   null
 
@@ -104,6 +125,9 @@ KtSimpleNameReference|KtNameReferenceExpression(274,283): 'javaClass'
   javaClass: JavaClass
 
 KtSimpleNameReference|KtNameReferenceExpression(284,293): 'something'
+  var something: kotlin.Int
+
+KtOperationReferenceExpression(295,296): '='
   var something: kotlin.Int
 
 KtSimpleNameReference|KtOperationReferenceExpression(295,296): '='

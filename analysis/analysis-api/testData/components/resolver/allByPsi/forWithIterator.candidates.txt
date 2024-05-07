@@ -1,3 +1,57 @@
+KtOperationReferenceExpression(204,206): '<='
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = current
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Int.compareTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        this@iterator.end -> (KtVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableIdIfNonLocal = null)
+      }
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(263,265): '++'
+  KtApplicableCallCandidateInfo:
+    candidate = KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = current++
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          callableIdIfNonLocal = kotlin/Int.inc
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
 KtCallExpression(297,318): 'IntProgression(1, 10)'
   KtApplicableCallCandidateInfo:
     candidate = KtSimpleFunctionCall:
@@ -76,3 +130,4 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = false
+

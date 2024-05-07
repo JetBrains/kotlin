@@ -27,3 +27,146 @@ KtCallExpression(78,104): 'print(javaClass.something)'
         callableIdIfNonLocal = null)
     }
 
+KtOperationReferenceExpression(129,130): '='
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass
+        isSafeNavigation = false
+        type = JavaClass
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableIdIfNonLocal = /JavaClass.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(157,159): '+='
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass
+        isSafeNavigation = false
+        type = JavaClass
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableIdIfNonLocal = /JavaClass.something
+    simpleAccess = Write:
+      value = javaClass.something += 1
+    typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(185,187): '++'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass.something++
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = kotlin/Int.inc
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtOperationReferenceExpression(192,194): '--'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass.something
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = kotlin/Int.dec
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtOperationReferenceExpression(228,230): '++'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = something++
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = kotlin/Int.inc
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtOperationReferenceExpression(246,248): '++'
+  KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = (something)++
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        callableIdIfNonLocal = kotlin/Int.inc
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+
+KtOperationReferenceExpression(265,266): '='
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = <extension receiver>: JavaClass
+        type = JavaClass
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableIdIfNonLocal = /JavaClass.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(295,296): '='
+  KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass
+        isSafeNavigation = false
+        type = JavaClass
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableIdIfNonLocal = /JavaClass.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
+

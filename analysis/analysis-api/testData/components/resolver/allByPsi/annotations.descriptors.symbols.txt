@@ -235,6 +235,9 @@ KtSimpleNameReference|KtNameReferenceExpression(784,798): 'stringConstant'
 SyntheticPropertyAccessorReference|KtNameReferenceExpression(784,798): 'stringConstant'
   null
 
+KtOperationReferenceExpression(799,800): '+'
+  kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+
 KtSimpleNameReference|KtOperationReferenceExpression(799,800): '+'
   kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
 
