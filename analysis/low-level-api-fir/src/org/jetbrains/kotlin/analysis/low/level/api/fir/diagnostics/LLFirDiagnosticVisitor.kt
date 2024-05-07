@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,23 +30,21 @@ internal open class LLFirDiagnosticVisitor(
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
     private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
 
-    protected var useRegularComponents = true
-
     override fun visitNestedElements(element: FirElement) {
         if (element is FirDeclaration) {
             beforeElementDiagnosticCollectionHandler?.beforeGoingNestedDeclaration(element, context)
         }
+
         super.visitNestedElements(element)
     }
 
     override fun checkElement(element: FirElement) {
-        if (useRegularComponents) {
-            beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
-            components.regularComponents.forEach {
-                checkCanceled()
-                element.accept(it, context)
-            }
+        beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
+        components.regularComponents.forEach {
+            checkCanceled()
+            element.accept(it, context)
         }
+
         checkCanceled()
         element.accept(components.reportCommitter, context)
 
