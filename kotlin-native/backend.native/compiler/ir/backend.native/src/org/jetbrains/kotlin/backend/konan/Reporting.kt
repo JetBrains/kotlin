@@ -15,22 +15,18 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
 
 internal fun ErrorReportingContext.reportCompilationError(message: String, irFile: IrFile, irElement: IrElement): Nothing {
-    report(irElement, irFile, message, true)
+    report(CompilerMessageSeverity.ERROR, irElement, irFile, message)
     throw KonanCompilationException()
 }
 
 internal fun ErrorReportingContext.reportCompilationError(message: String): Nothing {
-    report(null, null, message, true)
+    report(CompilerMessageSeverity.ERROR, null, null, message)
     throw KonanCompilationException()
 }
 
 internal fun CompilerConfiguration.reportCompilationError(message: String): Nothing {
     report(CompilerMessageSeverity.ERROR, message)
     throw KonanCompilationException()
-}
-
-internal fun ErrorReportingContext.reportCompilationWarning(message: String) {
-    report(null, null, message, false)
 }
 
 internal fun error(irFile: IrFile?, element: IrElement?, message: String): Nothing {

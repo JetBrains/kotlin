@@ -1,21 +1,17 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.driver.utilities
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.IrValidator
-import org.jetbrains.kotlin.backend.common.IrValidatorConfig
-import org.jetbrains.kotlin.backend.common.checkDeclarationParents
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.phaser.Action
 import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.backend.common.phaser.defaultDumper
 import org.jetbrains.kotlin.backend.konan.IrVerificationMode
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.IrElement
 

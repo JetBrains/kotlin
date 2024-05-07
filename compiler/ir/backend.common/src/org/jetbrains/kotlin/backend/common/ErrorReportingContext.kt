@@ -18,12 +18,17 @@ interface ErrorReportingContext {
     val messageCollector: MessageCollector
 }
 
-fun ErrorReportingContext.report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
-    val location = element?.getCompilerMessageLocation(irFile ?: error("irFile should be not null for $element"))
-    this.messageCollector.report(
-        if (isError) CompilerMessageSeverity.ERROR else CompilerMessageSeverity.WARNING,
-        message, location
-    )
+fun ErrorReportingContext.report(severity: CompilerMessageSeverity, element: IrElement?, irFile: IrFile?, message: String) {
+    val location = if (element != null && irFile != null) element.getCompilerMessageLocation(irFile) else null
+    messageCollector.report(severity, message, location)
+}
+
+fun ErrorReportingContext.reportWarning(message: String, irFile: IrFile?, irElement: IrElement) {
+    report(CompilerMessageSeverity.WARNING, irElement, irFile, message)
+}
+
+fun ErrorReportingContext.reportCompilationWarning(message: String) {
+    report(CompilerMessageSeverity.WARNING, null, null, message)
 }
 
 fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =
