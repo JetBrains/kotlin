@@ -80,6 +80,11 @@ inline fun <T> test11Impl() : String {
 
 fun <T> test11() = test11Impl<T>()
 
+inline val <reified T> T.id: T
+    get() = (this as Any) as T
+
+fun test12(x: (String) -> String) = x("OK")
+
 
 fun box(): String {
     val test1 = test()
@@ -104,6 +109,8 @@ fun box(): String {
     if (test10 != "OKnullabc") return "fail10: $test10"
     val test11 = test11<Int>()
     if (test11 != "OKnulldef") return "fail11: $test11"
+    val test12 = test12(String::id)
+    if (test12 != "OK") return "fail12: $test12"
 
     return "OK"
 }
