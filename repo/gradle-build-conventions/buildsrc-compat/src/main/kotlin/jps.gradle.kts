@@ -75,6 +75,7 @@ fun updateCompilerXml() {
         "plugins/atomicfu/atomicfu-runtime",
         "plugins/fir-plugin-prototype/plugin-annotations",
         "repo/gradle-settings-conventions",
+        "repo/gradle-build-conventions",
     )
 
     val d = '$'
