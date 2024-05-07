@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrElement
 
 
@@ -44,8 +43,7 @@ private fun <Context : PhaseContext, Data> findKotlinBackendIr(context: Context,
 
 private fun <Context : PhaseContext, Data> getIrValidator(): Action<Data, Context> =
         fun(state: ActionState, data: Data, context: Context) {
-            val verificationMode = context.config.irVerificationMode
-            if (verificationMode == IrVerificationMode.NONE) return
+            if (!state.isValidationNeeded()) return
 
             val backendContext: CommonBackendContext? = findBackendContext(context)
             if (backendContext == null) {
@@ -59,7 +57,7 @@ private fun <Context : PhaseContext, Data> getIrValidator(): Action<Data, Contex
                         "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: IR not found.")
                 return
             }
-            validationCallback(backendContext, element, verificationMode, checkTypes = true)
+            validationCallback(backendContext, element, checkTypes = true)
         }
 
 private fun <Data, Context : PhaseContext> getIrDumper(): Action<Data, Context> =
