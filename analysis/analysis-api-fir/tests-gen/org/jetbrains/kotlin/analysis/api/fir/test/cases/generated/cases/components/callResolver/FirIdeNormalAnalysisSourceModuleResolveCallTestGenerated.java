@@ -905,6 +905,72 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("staticFieldFromJavaClassFromSuper.kt")
+  public void testStaticFieldFromJavaClassFromSuper() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticFieldFromJavaClassFromSuper.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportFunction.kt")
+  public void testStaticImportFunction() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportFunctionFromSuper.kt")
+  public void testStaticImportFunctionFromSuper() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportFunctionFromSuper.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportNestedFunction.kt")
+  public void testStaticImportNestedFunction() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportNestedFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportNestedJavaField.kt")
+  public void testStaticImportNestedJavaField() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportNestedJavaField.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportNestedJavaFunction.kt")
+  public void testStaticImportNestedJavaFunction() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportNestedJavaFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportNestedProperty.kt")
+  public void testStaticImportNestedProperty() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportNestedProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportProperty.kt")
+  public void testStaticImportProperty() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportPropertyFromSuper.kt")
+  public void testStaticImportPropertyFromSuper() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticImportPropertyFromSuper.kt");
+  }
+
+  @Test
+  @TestMetadata("staticMethodFromJavaClass.kt")
+  public void testStaticMethodFromJavaClass() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticMethodFromJavaClass.kt");
+  }
+
+  @Test
+  @TestMetadata("staticMethodFromJavaClassFromSuper.kt")
+  public void testStaticMethodFromJavaClassFromSuper() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/staticMethodFromJavaClassFromSuper.kt");
+  }
+
+  @Test
   @TestMetadata("substituteOverrideResolution.kt")
   public void testSubstituteOverrideResolution() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/substituteOverrideResolution.kt");

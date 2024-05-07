@@ -1262,9 +1262,69 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     }
 
     @Test
+    @TestMetadata("staticFieldFromJavaClassFromSuper.kt")
+    public void testStaticFieldFromJavaClassFromSuper() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticFieldFromJavaClassFromSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportFunction.kt")
+    public void testStaticImportFunction() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticImportFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportFunctionFromSuper.kt")
+    public void testStaticImportFunctionFromSuper() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticImportFunctionFromSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportNestedFunction.kt")
+    public void testStaticImportNestedFunction() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticImportNestedFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportNestedJavaField.kt")
+    public void testStaticImportNestedJavaField() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticImportNestedJavaField.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportNestedJavaFunction.kt")
+    public void testStaticImportNestedJavaFunction() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticImportNestedJavaFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportNestedProperty.kt")
+    public void testStaticImportNestedProperty() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticImportNestedProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportProperty.kt")
+    public void testStaticImportProperty() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticImportProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportPropertyFromSuper.kt")
+    public void testStaticImportPropertyFromSuper() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticImportPropertyFromSuper.kt");
+    }
+
+    @Test
     @TestMetadata("staticMethodFromJavaClass.kt")
     public void testStaticMethodFromJavaClass() {
       runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticMethodFromJavaClass.kt");
+    }
+
+    @Test
+    @TestMetadata("staticMethodFromJavaClassFromSuper.kt")
+    public void testStaticMethodFromJavaClassFromSuper() {
+      runTest("analysis/analysis-api/testData/referenceResolve/inImport/staticMethodFromJavaClassFromSuper.kt");
     }
 
     @Test

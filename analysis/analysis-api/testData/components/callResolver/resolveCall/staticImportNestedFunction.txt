@@ -1,0 +1,17 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = foo()
+        isSafeNavigation = false
+        type = one.two.TopLevelObject.Nested
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = one/two/TopLevelObject.Nested.foo
+    typeArgumentsMapping = {}
+    argumentMapping = {}

@@ -317,6 +317,78 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("staticFieldFromJavaClassFromSuper.kt")
+  public void testStaticFieldFromJavaClassFromSuper() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticFieldFromJavaClassFromSuper.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportFunction.kt")
+  public void testStaticImportFunction() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportFunctionFromSuper.kt")
+  public void testStaticImportFunctionFromSuper() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportFunctionFromSuper.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportJavaField.kt")
+  public void testStaticImportJavaField() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportJavaField.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportJavaFunction.kt")
+  public void testStaticImportJavaFunction() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportJavaFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportNestedFunction.kt")
+  public void testStaticImportNestedFunction() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportNestedFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportNestedJavaField.kt")
+  public void testStaticImportNestedJavaField() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportNestedJavaField.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportNestedJavaFunction.kt")
+  public void testStaticImportNestedJavaFunction() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportNestedJavaFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportNestedProperty.kt")
+  public void testStaticImportNestedProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportNestedProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportProperty.kt")
+  public void testStaticImportProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("staticImportPropertyFromSuper.kt")
+  public void testStaticImportPropertyFromSuper() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticImportPropertyFromSuper.kt");
+  }
+
+  @Test
+  @TestMetadata("staticMethodFromJavaClassFromSuper.kt")
+  public void testStaticMethodFromJavaClassFromSuper() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/staticMethodFromJavaClassFromSuper.kt");
+  }
+
+  @Test
   @TestMetadata("syntheticProperty.kt")
   public void testSyntheticProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/syntheticProperty.kt");

@@ -114,6 +114,42 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
     public void testImplicitInvokeWithReceiver() {
       runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/implicitInvokeWithReceiver.kt");
     }
+
+    @Test
+    @TestMetadata("staticImportFunction.kt")
+    public void testStaticImportFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/staticImportFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportFunctionFromSuper.kt")
+    public void testStaticImportFunctionFromSuper() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/staticImportFunctionFromSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportNestedFunction.kt")
+    public void testStaticImportNestedFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/staticImportNestedFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportNestedJavaFunction.kt")
+    public void testStaticImportNestedJavaFunction() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/staticImportNestedJavaFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("staticMethodFromJavaClass.kt")
+    public void testStaticMethodFromJavaClass() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/staticMethodFromJavaClass.kt");
+    }
+
+    @Test
+    @TestMetadata("staticMethodFromJavaClassFromSuper.kt")
+    public void testStaticMethodFromJavaClassFromSuper() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/staticMethodFromJavaClassFromSuper.kt");
+    }
   }
 
   @Nested
@@ -481,6 +517,36 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
     @TestMetadata("smartCastExplicitExtensionReceiver.kt")
     public void testSmartCastExplicitExtensionReceiver() {
       runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/smartCastExplicitExtensionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("staticFieldFromJavaClassFromSuper.kt")
+    public void testStaticFieldFromJavaClassFromSuper() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/staticFieldFromJavaClassFromSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportNestedJavaField.kt")
+    public void testStaticImportNestedJavaField() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/staticImportNestedJavaField.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportNestedProperty.kt")
+    public void testStaticImportNestedProperty() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/staticImportNestedProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportProperty.kt")
+    public void testStaticImportProperty() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/staticImportProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("staticImportPropertyFromSuper.kt")
+    public void testStaticImportPropertyFromSuper() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/staticImportPropertyFromSuper.kt");
     }
 
     @Test

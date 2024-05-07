@@ -1,0 +1,34 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: one/two/TopLevelObject.Nested.foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingFileSymbol: KtFileSymbol(dependency.kt)
+  getContainingJvmClassName: one.two.TopLevelObject.Nested
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
