@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
@@ -27,10 +26,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 interface LoggingContext {
     var inVerbosePhase: Boolean
     fun log(message: () -> String)
-}
-
-interface ErrorReportingContext {
-    fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
 }
 
 interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingContext {
