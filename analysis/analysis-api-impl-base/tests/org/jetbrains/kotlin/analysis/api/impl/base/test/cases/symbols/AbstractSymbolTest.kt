@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.*
@@ -199,14 +198,6 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         k1Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1,
         k2Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2,
     )
-
-    private fun RegisteredDirectives.findSpecificDirective(
-        commonDirective: Directive,
-        k1Directive: Directive,
-        k2Directive: Directive,
-    ): Directive? = commonDirective.takeIf { it in this }
-        ?: k1Directive.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in this }
-        ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
 
     private fun compareResults(
         data: SymbolPointersData,

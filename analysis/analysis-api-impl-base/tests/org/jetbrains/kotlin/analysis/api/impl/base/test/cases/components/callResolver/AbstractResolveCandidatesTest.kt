@@ -7,16 +7,23 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callRe
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableSymbolResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compareCalls
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractResolveCandidatesTest : AbstractResolveTest() {
     override fun doResolutionTest(mainElement: KtElement, testServices: TestServices) {
         val actual = analyseForTest(mainElement) {
             val candidates = collectCallCandidates(mainElement)
+            ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
+                val candidatesAgain = collectCallCandidates(mainElement)
+                assertStableSymbolResult(testServices, candidates, candidatesAgain)
+            }
+
             if (candidates.isEmpty()) {
                 "NO_CANDIDATES"
             } else {

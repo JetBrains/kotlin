@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -364,6 +366,14 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     private fun isFirDisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.IGNORE_FIR in testServices.moduleStructure.allDirectives
+
+    protected fun RegisteredDirectives.findSpecificDirective(
+        commonDirective: Directive,
+        k1Directive: Directive,
+        k2Directive: Directive,
+    ): Directive? = commonDirective.takeIf { it in this }
+        ?: k1Directive.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in this }
+        ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
 
     protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.(KtElement) -> R): R {
         return if (configurator.analyseInDependentSession) {

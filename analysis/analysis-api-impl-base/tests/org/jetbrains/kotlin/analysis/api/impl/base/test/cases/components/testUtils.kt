@@ -8,10 +8,16 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.calls.KtApplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCall
+import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCompoundArrayAccessCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCompoundVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallInfo
+import org.jetbrains.kotlin.analysis.api.calls.KtInapplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.calls.calls
 import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KtChainedSubstitutor
@@ -29,6 +35,8 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
@@ -191,6 +199,77 @@ internal fun KtAnalysisSession.compareCalls(call1: KtCall, call2: KtCall): Int {
     // The order of candidate calls is non-deterministic. Sort by symbol string value.
     if (call1 !is KtCallableMemberCall<*, *> || call2 !is KtCallableMemberCall<*, *>) return 0
     return stringRepresentation(call1.partiallyAppliedSymbol).compareTo(stringRepresentation(call2.partiallyAppliedSymbol))
+}
+
+internal fun KtAnalysisSession.assertStableSymbolResult(
+    testServices: TestServices,
+    firstCandidates: List<KtCallCandidateInfo>,
+    secondCandidates: List<KtCallCandidateInfo>,
+) {
+    val assertions = testServices.assertions
+    assertions.assertEquals(firstCandidates.size, secondCandidates.size)
+
+    for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
+        assertions.assertEquals(firstCandidate::class, secondCandidate::class)
+        assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
+        assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
+
+        when (firstCandidate) {
+            is KtApplicableCallCandidateInfo -> {}
+            is KtInapplicableCallCandidateInfo -> {
+                assertStableResult(
+                    testServices = testServices,
+                    firstDiagnostic = firstCandidate.diagnostic,
+                    secondDiagnostic = (secondCandidate as KtInapplicableCallCandidateInfo).diagnostic,
+                )
+            }
+        }
+    }
+}
+
+internal fun KtAnalysisSession.assertStableResult(testServices: TestServices, firstInfo: KtCallInfo?, secondInfo: KtCallInfo?) {
+    val assertions = testServices.assertions
+    if (firstInfo == null || secondInfo == null) {
+        assertions.assertEquals(firstInfo, secondInfo)
+        return
+    }
+
+    assertions.assertEquals(firstInfo::class, secondInfo::class)
+    if (firstInfo is KtErrorCallInfo) {
+        assertStableResult(
+            testServices = testServices,
+            firstDiagnostic = firstInfo.diagnostic,
+            secondDiagnostic = (secondInfo as KtErrorCallInfo).diagnostic,
+        )
+    }
+
+    val firstCalls = sortedCalls(firstInfo.calls)
+    val secondCalls = sortedCalls(secondInfo.calls)
+    assertions.assertEquals(firstCalls.size, secondCalls.size)
+
+    for ((firstCall, secondCall) in firstCalls.zip(secondCalls)) {
+        assertStableResult(testServices, firstCall, secondCall)
+    }
+}
+
+internal fun KtAnalysisSession.assertStableResult(testServices: TestServices, firstCall: KtCall, secondCall: KtCall) {
+    val assertions = testServices.assertions
+    assertions.assertEquals(firstCall::class, secondCall::class)
+
+    val symbolsFromFirstCall = firstCall.symbols()
+    val symbolsFromSecondCall = secondCall.symbols()
+    assertions.assertEquals(symbolsFromFirstCall, symbolsFromSecondCall)
+}
+
+internal fun KtAnalysisSession.assertStableResult(
+    testServices: TestServices,
+    firstDiagnostic: KtDiagnostic,
+    secondDiagnostic: KtDiagnostic,
+) {
+    val assertions = testServices.assertions
+    assertions.assertEquals(firstDiagnostic.defaultMessage, secondDiagnostic.defaultMessage)
+    assertions.assertEquals(firstDiagnostic.factoryName, secondDiagnostic.factoryName)
+    assertions.assertEquals(firstDiagnostic.severity, secondDiagnostic.severity)
 }
 
 internal fun KtAnalysisSession.renderScopeWithParentDeclarations(scope: KtScope): String = prettyPrint {
