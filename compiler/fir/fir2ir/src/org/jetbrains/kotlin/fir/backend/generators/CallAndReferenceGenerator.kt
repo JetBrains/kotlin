@@ -725,7 +725,7 @@ class CallAndReferenceGenerator(
 
         injectSetValueCall(variableAssignment, calleeReference, assignedValue)?.let { return it }
 
-        val firSymbol = calleeReference.toResolvedBaseSymbol()
+        val firSymbol = calleeReference.extractDeclarationSiteSymbol(c) as FirCallableSymbol<*>?
         val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
         if (isDynamicAccess) {
@@ -739,11 +739,10 @@ class CallAndReferenceGenerator(
             )
         }
 
-        val symbol = calleeReference.toIrSymbolForCall(
+        val symbol = firSymbol?.toIrSymbolForSetCall(
             c,
-            extractDispatchReceiverOfAssignment(variableAssignment),
+            dispatchReceiver = extractDispatchReceiverOfAssignment(variableAssignment),
             explicitReceiver = variableAssignment.explicitReceiver,
-            preferGetter = false,
         )
         val origin = variableAssignment.getIrAssignmentOrigin()
 

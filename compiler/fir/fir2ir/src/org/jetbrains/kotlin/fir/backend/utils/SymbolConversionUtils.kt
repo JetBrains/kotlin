@@ -87,7 +87,6 @@ fun FirReference.toIrSymbolForCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     explicitReceiver: FirExpression?,
-    preferGetter: Boolean = true,
     isDelegate: Boolean = false,
     isReference: Boolean = false,
 ): IrSymbol? {
@@ -99,7 +98,6 @@ fun FirReference.toIrSymbolForCall(
         is FirCallableSymbol<*> -> symbol.toIrSymbolForCall(
             c,
             dispatchReceiver,
-            preferGetter,
             explicitReceiver,
             isDelegate,
             isReference
@@ -112,6 +110,21 @@ fun FirReference.toIrSymbolForCall(
 }
 
 fun FirCallableSymbol<*>.toIrSymbolForCall(
+    c: Fir2IrComponents,
+    dispatchReceiver: FirExpression?,
+    // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
+    explicitReceiver: FirExpression? = null,
+    isDelegate: Boolean = false,
+    isReference: Boolean = false
+): IrSymbol? = toIrSymbolForCall(c, dispatchReceiver, preferGetter = true, explicitReceiver, isDelegate, isReference)
+
+fun FirCallableSymbol<*>.toIrSymbolForSetCall(
+    c: Fir2IrComponents,
+    dispatchReceiver: FirExpression?,
+    explicitReceiver: FirExpression?,
+): IrSymbol? = toIrSymbolForCall(c, dispatchReceiver, preferGetter = false, explicitReceiver, isDelegate = false, isReference = false)
+
+private fun FirCallableSymbol<*>.toIrSymbolForCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     preferGetter: Boolean = true,
