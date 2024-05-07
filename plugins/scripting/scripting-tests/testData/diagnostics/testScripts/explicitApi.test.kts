@@ -1,0 +1,4 @@
+// GRADLE_LIKE_SCRIPT
+// EXPLICIT_API_MODE: STRICT
+
+projectApi { it }

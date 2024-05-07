@@ -30,6 +30,12 @@ public class ScriptWithCustomDefDiagnosticsTestBaseGenerated extends AbstractScr
   }
 
   @Test
+  @TestMetadata("explicitApi.test.kts")
+  public void testExplicitApi_test() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/explicitApi.test.kts");
+  }
+
+  @Test
   @TestMetadata("invokeResolve.test.kts")
   public void testInvokeResolve_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/invokeResolve.test.kts");

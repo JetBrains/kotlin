@@ -104,11 +104,13 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
             is FirCallableDeclaration -> {
                 val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClass
                 // 2, 5
-                if (declaration is FirProperty &&
-                    containingClass != null &&
-                    (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS)
-                ) {
-                    return true
+                if (declaration is FirProperty) {
+                    if (containingClass != null && (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
+                        return true
+                    }
+                    if (declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+                        return true
+                    }
                 }
 
                 // 3, 8
