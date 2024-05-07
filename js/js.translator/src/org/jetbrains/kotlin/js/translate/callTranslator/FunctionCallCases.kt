@@ -243,6 +243,7 @@ object SuperCallCase : FunctionCallCase() {
         val descriptor = callableDescriptor.original
         val shouldCallDefault = descriptor is FunctionDescriptor && TranslationUtils.isOverridableFunctionWithDefaultParameters(descriptor)
 
+        val dispatchReceiver = dispatchReceiver
         val functionRef = if (shouldCallDefault) {
             val defaultArgumentCount = descriptor.valueParameters.size - argumentsInfo.valueArguments.size
             repeat(defaultArgumentCount) {

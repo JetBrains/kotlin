@@ -118,6 +118,7 @@ class Fir2IrTypeConverter(
                         ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifierStorage::getIrClassForNotFoundClass)?.symbol
                         ?: return createErrorType()
 
+                val specialAnnotationsProvider = specialAnnotationsProvider
                 if (specialAnnotationsProvider != null) {
                     fun has(classId: ClassId): Boolean {
                         return annotations.any { it.toAnnotationClassId(session) == classId }
