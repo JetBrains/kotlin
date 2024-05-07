@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 
 object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
@@ -59,8 +58,7 @@ object KotlinUsages {
             platformType in jvmPlatformTypes -> JAVA_API
             platformType == common
                     /** The kotlinExtension check below can be removed when legacy [KotlinPlatformCommonPlugin] is also removed. */
-                    && project.kotlinExtension is KotlinMultiplatformExtension
-                    && !project.isCompatibilityMetadataVariantEnabled -> KOTLIN_METADATA
+                    && project.kotlinExtension is KotlinMultiplatformExtension -> KOTLIN_METADATA
             else -> KOTLIN_API
         }
     )

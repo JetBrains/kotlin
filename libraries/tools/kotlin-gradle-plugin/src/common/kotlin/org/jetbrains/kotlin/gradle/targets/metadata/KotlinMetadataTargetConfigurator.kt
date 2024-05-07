@@ -25,11 +25,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 
-internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
-
-internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
-    get() = false // In K2 and Stable MPP always false
-
 class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinCompilation<*>, KotlinMetadataTarget>(createTestCompilation = false) {
     companion object {
@@ -43,25 +38,15 @@ class KotlinMetadataTargetConfigurator :
             KotlinMetadataConfigurationMetrics.collectMetrics(it)
         }
 
+        // Configure legacy metadata compilation to do nothing.
+        // This compilation should be removed as part of KT-62332
         target.compilations.withType(KotlinCommonCompilation::class.java).getByName(KotlinCompilation.MAIN_COMPILATION_NAME).run {
             // Force the default 'main' compilation to produce *.kotlin_metadata regardless of the klib feature flag.
             forceCompilationToKotlinMetadata = true
 
             // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
-            val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
-            if (isCompatibilityMetadataVariantEnabled) {
-                // Add directly dependsOn sources for Legacy Compatibility Metadata variant
-                // it isn't necessary for KLib compilations
-                // see [KotlinCompilationSourceSetInclusion.AddSourcesWithoutDependsOnClosure]
-                defaultSourceSet.internal.dependsOnClosure.forAll {
-                    @Suppress("DEPRECATION")
-                    addSourceSet(it)
-                }
-            } else {
-                // Clear the dependencies of the compilation so that they don't take time resolving during task graph construction:
-                compileDependencyFiles = target.project.files()
-            }
-            compileTaskProvider.configure { it.onlyIf { isCompatibilityMetadataVariantEnabled } }
+            compileDependencyFiles = target.project.files()
+            compileTaskProvider.configure { it.enabled = false }
         }
 
         createMetadataCompilationsForCommonSourceSets(target)
@@ -98,11 +83,6 @@ class KotlinMetadataTargetConfigurator :
                         compilation.compileTaskProvider.configure { it.enabled = false }
                     }
                 }
-
-            if (project.isCompatibilityMetadataVariantEnabled) {
-                val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                configureMetadataDependenciesForCompilation(mainCompilation)
-            }
 
             sourceSetsWithMetadataCompilations.values.forEach { compilation ->
                 exportDependenciesForPublishing(compilation)

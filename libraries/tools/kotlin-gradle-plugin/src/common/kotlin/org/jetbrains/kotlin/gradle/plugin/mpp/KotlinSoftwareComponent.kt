@@ -32,9 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext.PublishOnlyIf
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.gradle.utils.setProperty
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class KotlinSoftwareComponent(
@@ -68,9 +65,7 @@ abstract class KotlinSoftwareComponent(
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
-            val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
-            }
+            val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar)
 
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
@@ -78,19 +73,6 @@ abstract class KotlinSoftwareComponent(
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
-
-            if (project.isCompatibilityMetadataVariantEnabled) {
-                // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
-                // publish the old metadata artifact:
-                this += run {
-                    DefaultKotlinUsageContext(
-                        metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                        KotlinUsageContext.MavenScope.COMPILE,
-                        /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
-                        COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-                    )
-                }
-            }
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
             if (metadataTarget.isSourcesPublishable) {

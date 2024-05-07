@@ -25,9 +25,6 @@ abstract class KotlinMetadataTarget @Inject constructor(
     override val artifactsTaskName: String
         get() = KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME
 
-    internal val legacyArtifactsTaskName: String
-        get() = super.artifactsTaskName
-
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         /*
         Metadata Target does not have a KotlinTargetComponent on it's own.
