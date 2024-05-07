@@ -81,27 +81,6 @@ fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirCallableS
     return symbol
 }
 
-@OptIn(ExperimentalContracts::class)
-fun FirReference.toIrSymbolForCall(
-    c: Fir2IrComponents,
-    dispatchReceiver: FirExpression?,
-    explicitReceiver: FirExpression?,
-    isDelegate: Boolean = false,
-    isReference: Boolean = false,
-): IrSymbol? {
-    contract {
-        returnsNotNull() implies (this@toIrSymbolForCall is FirResolvedNamedReference)
-    }
-
-    return extractDeclarationSiteSymbol(c)?.toIrSymbolForCall(
-        c,
-        dispatchReceiver,
-        explicitReceiver,
-        isDelegate,
-        isReference
-    )
-}
-
 fun FirCallableSymbol<*>.toIrSymbolForCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
