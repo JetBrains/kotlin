@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.compose.compiler.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compose.compiler.gradle.model.builder.ComposeCompilerModelBuilder
@@ -72,22 +73,24 @@ class ComposeCompilerGradleSubplugin
                 add(composeExtension.reportsDestination.map<SubpluginOption> {
                     FilesSubpluginOption("reportsDestination", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
-                add(composeExtension.enableIntrinsicRemember.map {
-                    SubpluginOption("intrinsicRemember", it.toString())
-                })
-                add(composeExtension.enableNonSkippingGroupOptimization.map {
-                    SubpluginOption("nonSkippingGroupOptimization", it.toString())
-                })
-                add(composeExtension.enableStrongSkippingMode.map {
-                    // Rename once the option in Compose compiler is also renamed
-                    SubpluginOption("strongSkipping", it.toString())
-                })
+
+                val flags = mutableSetOf<ComposeFeatureFlag>()
+
                 add(composeExtension.stabilityConfigurationFile.map<SubpluginOption> {
                     FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
                 add(composeExtension.includeTraceMarkers.map {
                     SubpluginOption("traceMarkersEnabled", it.toString())
                 })
+
+                // Add the flags that have been specified
+                if (composeExtension.featureFlags.isPresent)
+                    flags += composeExtension.featureFlags.get()
+
+                if (flags.isNotEmpty()) {
+                    val value = flags.joinToString(",")
+                    add(SubpluginOption("featureFlags", value))
+                }
             }
 
         return project.objects
