@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCallableMemberCall
+import org.jetbrains.kotlin.analysis.api.calls.KtCompoundArrayAccessCall
+import org.jetbrains.kotlin.analysis.api.calls.KtCompoundVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KtChainedSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
@@ -107,7 +110,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
                     @Suppress("UNCHECKED_CAST")
                     val value = (property as KProperty1<Any, *>).get(this@with)?.let {
                         if (className == "KtErrorCallInfo" && name == "candidateCalls") {
-                            (it as Collection<KtCall>).sortedWith { call1, call2 -> compareCalls(call1, call2) }
+                            sortedCalls(it as Collection<KtCall>)
                         } else it
                     }
                     val valueAsString = value?.let { stringRepresentation(it).indented() }
@@ -169,6 +172,20 @@ internal fun KtAnalysisSession.prettyPrintSignature(signature: KtCallableSignatu
     }
 }
 
+internal fun KtAnalysisSession.sortedCalls(collection: Collection<KtCall>): Collection<KtCall> = collection.sortedWith { call1, call2 ->
+    compareCalls(call1, call2)
+}
+
+internal fun KtCall.symbols(): List<KtSymbol> = when (this) {
+    is KtCompoundVariableAccessCall -> listOfNotNull(symbol, compoundAccess.operationPartiallyAppliedSymbol.symbol)
+    is KtCompoundArrayAccessCall -> listOfNotNull(
+        getPartiallyAppliedSymbol.symbol,
+        setPartiallyAppliedSymbol.symbol,
+        compoundAccess.operationPartiallyAppliedSymbol.symbol,
+    )
+
+    is KtCallableMemberCall<*, *> -> listOf(symbol)
+}
 
 internal fun KtAnalysisSession.compareCalls(call1: KtCall, call2: KtCall): Int {
     // The order of candidate calls is non-deterministic. Sort by symbol string value.

@@ -1,4 +1,3 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE_K2
 // FILE: dependency.kt
 package one.two
 

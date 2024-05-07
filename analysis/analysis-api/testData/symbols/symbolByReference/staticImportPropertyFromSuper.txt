@@ -19,7 +19,7 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: one.two.BaseClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: one/two/TopLevelObject.bar
+  callableIdIfNonLocal: one/two/BaseClass.bar
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
@@ -81,7 +81,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: one/two/BaseClass
   getContainingFileSymbol: KtFileSymbol(dependency.kt)
-  getContainingJvmClassName: one.two.TopLevelObject
+  getContainingJvmClassName: one.two.BaseClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

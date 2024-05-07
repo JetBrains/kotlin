@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: one/two/TopLevelObject.foo
+  callableIdIfNonLocal: one/two/BaseClass.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -33,6 +33,6 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: one/two/BaseClass
   getContainingFileSymbol: KtFileSymbol(dependency.kt)
-  getContainingJvmClassName: one.two.TopLevelObject
+  getContainingJvmClassName: one.two.BaseClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

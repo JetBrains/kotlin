@@ -7,7 +7,7 @@ KtApplicableCallCandidateInfo:
       signature = KtFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
-        symbol = one/two/TopLevelObject.Nested.foo(): kotlin.Unit
+        symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested): kotlin.Unit
         valueParameters = []
         callableIdIfNonLocal = one/two/TopLevelObject.Nested.foo
     typeArgumentsMapping = {}
@@ -24,7 +24,7 @@ KtInapplicableCallCandidateInfo:
       signature = KtFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
-        symbol = one/two/TopLevelObject.Nested.foo(i: kotlin.Int): kotlin.Unit
+        symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested, i: kotlin.Int): kotlin.Unit
         valueParameters = [
           KtVariableLikeSignature:
             name = i

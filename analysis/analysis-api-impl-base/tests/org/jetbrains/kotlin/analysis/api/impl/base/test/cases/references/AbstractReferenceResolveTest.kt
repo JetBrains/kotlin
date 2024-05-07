@@ -86,6 +86,9 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
 
         val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
             val symbols = ktReferences.flatMap { it.resolveToSymbols() }
+            val symbolsAgain = ktReferences.flatMap { it.resolveToSymbols() }
+            testServices.assertions.assertEquals(symbols, symbolsAgain)
+
             val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.testModule.directives
             renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
         }

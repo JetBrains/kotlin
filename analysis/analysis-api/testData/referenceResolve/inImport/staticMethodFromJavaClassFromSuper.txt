@@ -1,2 +1,2 @@
 Resolved to:
-0: (in Child) open fun foo()
+0: (in BaseClass) open fun foo()

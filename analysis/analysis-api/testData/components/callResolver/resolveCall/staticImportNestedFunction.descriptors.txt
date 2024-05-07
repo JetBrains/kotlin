@@ -7,7 +7,7 @@ KtSuccessCallInfo:
       signature = KtFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
-        symbol = one/two/TopLevelObject.Nested.foo(): kotlin.Unit
+        symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested): kotlin.Unit
         valueParameters = []
         callableIdIfNonLocal = one/two/TopLevelObject.Nested.foo
     typeArgumentsMapping = {}

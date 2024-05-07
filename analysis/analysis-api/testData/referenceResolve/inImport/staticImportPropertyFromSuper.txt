@@ -1,2 +1,2 @@
 Resolved to:
-0: (in one.two.TopLevelObject) val bar: kotlin.Int
+0: (in one.two.BaseClass) val bar: kotlin.Int

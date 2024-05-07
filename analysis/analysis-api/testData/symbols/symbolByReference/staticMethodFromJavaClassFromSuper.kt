@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE
+// DO_NOT_CHECK_SYMBOL_RESTORE_K1
 // FILE: BaseClass.java
 public class BaseClass {
     public static void foo() {}

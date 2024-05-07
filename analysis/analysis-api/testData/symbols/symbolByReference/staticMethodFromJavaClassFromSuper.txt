@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Child.foo
+  callableIdIfNonLocal: /BaseClass.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -29,6 +29,6 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: null
-  getContainingJvmClassName: Child
+  getContainingJvmClassName: BaseClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

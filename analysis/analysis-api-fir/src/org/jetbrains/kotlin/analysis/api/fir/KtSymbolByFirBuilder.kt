@@ -222,12 +222,15 @@ internal class KtSymbolByFirBuilder(
             firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let {
                 return buildFunctionSymbol(it.symbol)
             }
+
             if (firSymbol.dispatchReceiverType?.contains { it is ConeStubType } == true) {
                 return buildFunctionSymbol(
                     firSymbol.originalIfFakeOverride()
                         ?: errorWithFirSpecificEntries("Stub type in real declaration", fir = firSymbol.fir)
                 )
             }
+
+            firSymbol.unwrapImportedFromObjectOrStatic(::buildFunctionSymbol)?.let { return it }
 
             check(firSymbol.origin != FirDeclarationOrigin.SamConstructor)
             return symbolsCache.cache(firSymbol) { KtFirFunctionSymbol(firSymbol, analysisSession) }
@@ -307,6 +310,8 @@ internal class KtSymbolByFirBuilder(
                 return buildVariableSymbol(it.symbol)
             }
 
+            firSymbol.unwrapImportedFromObjectOrStatic(::buildPropertySymbol)?.let { return it }
+
             return symbolsCache.cache(firSymbol) {
                 KtFirKotlinPropertySymbol(firSymbol, analysisSession)
             }
@@ -358,9 +363,8 @@ internal class KtSymbolByFirBuilder(
 
 
         fun buildFieldSymbol(firSymbol: FirFieldSymbol): KtFirJavaFieldSymbol {
-            if (firSymbol.origin == FirDeclarationOrigin.ImportedFromObjectOrStatic) {
-                return buildFieldSymbol(firSymbol.fir.importedFromObjectOrStaticData!!.original.symbol)
-            }
+            firSymbol.unwrapImportedFromObjectOrStatic(::buildFieldSymbol)?.let { return it }
+
             checkRequirementForBuildingSymbol<KtFirJavaFieldSymbol>(firSymbol, firSymbol.fir.isJavaFieldOrSubstitutionOverrideOfJavaField())
             return symbolsCache.cache(firSymbol) { KtFirJavaFieldSymbol(firSymbol, analysisSession) }
         }
@@ -513,6 +517,21 @@ internal class KtSymbolByFirBuilder(
     }
 
     /**
+     * We shouldn't expose imported callables as they may have different [org.jetbrains.kotlin.name.CallableId]s
+     * than the original callables.
+     * Resolved FIR has explicitly declared original objects receivers instead of such synthetic callables.
+     */
+    private inline fun <reified T : FirCallableSymbol<*>, R> T.unwrapImportedFromObjectOrStatic(builder: (T) -> R): R? {
+        return if (origin == FirDeclarationOrigin.ImportedFromObjectOrStatic) {
+            val originalSymbol = fir.importedFromObjectOrStaticData!!.original.symbol
+            // The symbol has to be the same type as it is just a copy with possibly different `CallableId`
+            builder(originalSymbol as T)
+        } else {
+            null
+        }
+    }
+
+    /**
      * N.B. This functions lifts only a single layer of SUBSTITUTION_OVERRIDE at a time.
      */
     private inline fun <reified T : FirCallableDeclaration> T.unwrapSubstitutionOverrideIfNeeded(): T? {
@@ -617,7 +636,6 @@ internal class KtSymbolByFirBuilder(
         }
     }
 }
-
 
 private class BuilderCache<From, To : KtSymbol> {
     private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<From, To>()
