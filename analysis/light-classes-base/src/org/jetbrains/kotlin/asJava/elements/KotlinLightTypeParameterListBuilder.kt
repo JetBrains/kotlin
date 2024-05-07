@@ -13,6 +13,7 @@ import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
+// Used by UastFakeSourceLightMethod
 class KotlinLightTypeParameterListBuilder(private val owner: PsiTypeParameterListOwner) :
     LightTypeParameterListBuilder(owner.manager, KotlinLanguage.INSTANCE) {
     override fun processDeclarations(
