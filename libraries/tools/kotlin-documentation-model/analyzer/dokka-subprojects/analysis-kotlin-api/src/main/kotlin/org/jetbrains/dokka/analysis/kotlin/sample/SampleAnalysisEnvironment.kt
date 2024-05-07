@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.analysis.kotlin.sample
 
 import org.jetbrains.dokka.DokkaConfiguration
+import java.io.Closeable
 
 /**
  * Fully-configured and ready-to-use sample analysis environment.
@@ -17,7 +18,7 @@ import org.jetbrains.dokka.DokkaConfiguration
  * in one iteration and at the same time, so that the environment is created once and lives for
  * as little is possible, as opposed to creating it again and again for every individual sample.
  */
-public interface SampleAnalysisEnvironment {
+public interface SampleAnalysisEnvironment : Closeable {
 
     /**
      * Resolves a Kotlin sample function by its fully qualified name, and returns its import statements and body.
