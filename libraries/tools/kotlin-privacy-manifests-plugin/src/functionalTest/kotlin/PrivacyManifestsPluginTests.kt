@@ -15,7 +15,15 @@ class PrivacyManifestsPluginTests {
     companion object {
         @JvmStatic
         fun kotlinVersions(): List<String> {
-            return listOf("1.9.23", "2.0.0-RC1")
+            val installedKotlinVersion = System.getProperty("kotlinVersion")
+            if (installedKotlinVersion.isNullOrEmpty()) {
+                error("Installed Kotlin version isn't specified")
+            }
+            return listOf(
+                "1.9.23",
+                "2.0.0-RC1",
+                installedKotlinVersion,
+            )
         }
     }
 
@@ -410,12 +418,14 @@ class PrivacyManifestsPluginTests {
             """
                 dependencyResolutionManagement {
                     repositories {
+                        mavenLocal()
                         mavenCentral()
                     }
                 }
                 
                 pluginManagement {
                     repositories {
+                        mavenLocal()
                         maven("file://${projectDir.absoluteFile.parentFile.parentFile.parentFile.resolve("build/repo").canonicalPath}")
                         gradlePluginPortal()
                     }

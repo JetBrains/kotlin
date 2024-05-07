@@ -46,6 +46,8 @@ tasks.register<Test>("functionalTest") {
         tasks.named("publishAllPublicationsToBuildDirectoryRepository"),
         cleanFunctionalTest,
     )
+    dependsOnKotlinGradlePluginInstall()
+    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     useJUnitPlatform()
 }
 
