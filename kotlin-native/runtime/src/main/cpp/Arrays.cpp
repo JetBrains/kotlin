@@ -17,6 +17,14 @@
 #include <stdio.h>
 #include <string.h>
 
+#if KONAN_MACOSX || KONAN_IOS || KONAN_TVOS || KONAN_WATCHOS || KONAN_ANDROID
+#include <stdlib.h>
+#elif KONAN_LINUX
+#include <sys/random.h>
+#elif KONAN_WINDOWS
+#include <bcrypt.h>
+#endif
+
 #include "KAssert.h"
 #include "Exceptions.h"
 #include "Memory.h"
@@ -594,72 +602,28 @@ void Kotlin_BooleanArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KBool
   fillImpl<KBoolean>(thiz, fromIndex, toIndex, value);
 }
 
-#if KONAN_LINUX
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/syscall.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <atomic>
-#elif KONAN_WINDOWS
-#pragma comment (lib,"bcrypt.lib")
-#include <bcrypt.h>
-#endif
-
 // Mostly taken from kotlin-native/runtime/src/mimalloc/c/random.c
 void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     ArrayHeader* array = byteArray->array();
     uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, 0));
 
 #if KONAN_MACOSX || KONAN_IOS || KONAN_TVOS || KONAN_WATCHOS || KONAN_ANDROID
     arc4random_buf(address, size);
 #elif KONAN_LINUX
-    #ifdef SYS_getrandom
-        static std::atomic<bool> use_getrandom(true);
-        if (use_getrandom.load(std::memory_order_acquire)) {
-            long count = 0;
-            while (count < size) {
-                long ret = syscall(SYS_getrandom, address + count, size - count, 0); // blocking
-                if (ret >= 0) {
-                    count += ret;
-                }
-                else if (errno == ENOSYS) {
-                    use_getrandom.store(false, std::memory_order_release); // don't call again, and fall back to /dev/[u]random
-                    break;
-                } else {
-                    throw std::runtime_error("SYS_getrandom failed with an unexpected errno");
-                }
-            }
+    long count = 0;
+    while (count < size) {
+        long ret = getrandom(address + count, size - count, 0); // blocking
+        if (ret >= 0) {
+            count += ret;
+        } else {
+            RuntimeFail("getrandom failed with an unexpected errno: %d", errno);
         }
-    #endif
-        int flags = O_RDONLY;
-    #if defined(O_CLOEXEC)
-        flags |= O_CLOEXEC;
-    #endif
-        int fd = open("/dev/urandom", flags);
-        if (fd < 0) {
-            fd = open("/dev/random", flags);
-        }
-        if (fd < 0) {
-            throw std::runtime_error("Failed to open /dev/[u]random");
-        }
-        long count = 0;
-        while(count < size) {
-            long ret = read(fd, address + count, size - count);
-            if (ret >= 0) {
-                count += ret;
-            }
-            else if (errno != EINTR) break;
-        }
-        close(fd);
-        if (count < size) {
-            throw std::runtime_error("Failed to read from /dev/[u]random");
-        }
+    }
 #elif KONAN_WINDOWS
     NTSTATUS status = BCryptGenRandom(NULL, (PUCHAR)address, (ULONG)size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
     if (status != STATUS_SUCCESS) {
-        throw std::runtime_error("Unexpected failure in random bytes generation");
+        RuntimeFail("Unexpected failure in random bytes generation: %d", status);
     }
 #else
 #error "How to Kotlin_ByteArray_fillWithRandomBytes()?"
