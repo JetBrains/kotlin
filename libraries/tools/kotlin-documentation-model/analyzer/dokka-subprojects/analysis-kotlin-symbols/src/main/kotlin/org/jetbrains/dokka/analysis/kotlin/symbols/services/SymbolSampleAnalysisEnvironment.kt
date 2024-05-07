@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.dokka.DelicateDokkaApi
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironment
@@ -44,22 +45,23 @@ internal class SymbolSampleAnalysisEnvironmentCreator(
         rewriters.singleOrNull()
     }
 
-
     override fun <T> use(block: SampleAnalysisEnvironment.() -> T): T {
         return runBlocking(Dispatchers.Default) {
-            SamplesKotlinAnalysis(
+            create().use(block)
+        }
+    }
+
+    @OptIn(DelicateDokkaApi::class)
+    override fun create(): SampleAnalysisEnvironment {
+        return SymbolSampleAnalysisEnvironment(
+            samplesKotlinAnalysis = SamplesKotlinAnalysis(
                 sourceSets = context.configuration.sourceSets,
                 context = context
-            ).use { samplesKotlinAnalysis ->
-                val sampleAnalysisEnvironment = SymbolSampleAnalysisEnvironment(
-                    samplesKotlinAnalysis = samplesKotlinAnalysis,
-                    projectKotlinAnalysis = projectKotlinAnalysis,
-                    sampleRewriter = sampleRewriter,
-                    dokkaLogger = context.logger
-                )
-                block(sampleAnalysisEnvironment)
-            }
-        }
+            ),
+            projectKotlinAnalysis = projectKotlinAnalysis,
+            sampleRewriter = sampleRewriter,
+            dokkaLogger = context.logger
+        )
     }
 }
 
@@ -173,6 +175,10 @@ private class SymbolSampleAnalysisEnvironment(
             dokkaLogger.warn("Exception thrown while sample rewriting at ${containingFile.name}: (${it.loc})\n```\n${it.text}\n```\n$st")
         }
         return textBuilder.toString()
+    }
+
+    override fun close() {
+        samplesKotlinAnalysis.close()
     }
 }
 
