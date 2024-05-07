@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 import java.nio.file.Files
 import kotlin.io.path.createFile
 
@@ -116,7 +114,7 @@ class PrivacyManifestsPluginTests {
                     !embedAndSignOutputs.resolve(expectedInfoPlistPlacement).exists()
                 )
             },
-            afterMutatingPrivacyManifest = { _,_,_ -> }
+            afterMutatingPrivacyManifest = { _, _, _ -> }
         )
     }
 
@@ -245,21 +243,25 @@ class PrivacyManifestsPluginTests {
             beforeMutatingPrivacyManifest = {
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/XCFrameworks/release/${testName}.xcframework/ios-arm64/${testName.replace("-", "_")}.framework/PrivacyInfo.xcprivacy").readText(),
+                    projectDir.resolve("build/XCFrameworks/release/${testName}.xcframework/ios-arm64/${testName}.framework/PrivacyInfo.xcprivacy")
+                        .readText(),
                 )
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/XCFrameworks/release/${testName}.xcframework/watchos-arm64_x86_64-simulator/${testName}.framework/PrivacyInfo.xcprivacy").readText(),
+                    projectDir.resolve("build/XCFrameworks/release/${testName}.xcframework/watchos-arm64_x86_64-simulator/${testName}.framework/PrivacyInfo.xcprivacy")
+                        .readText(),
                 )
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/XCFrameworks/release/${testName}.xcframework/macos-arm64_x86_64/${testName}.framework/Resources/PrivacyInfo.xcprivacy").readText(),
+                    projectDir.resolve("build/XCFrameworks/release/${testName}.xcframework/macos-arm64_x86_64/${testName}.framework/Resources/PrivacyInfo.xcprivacy")
+                        .readText(),
                 )
             },
             afterMutatingPrivacyManifest = {
                 assertEquals(
                     "final",
-                    projectDir.resolve("build/XCFrameworks/release/${testName}.xcframework/ios-arm64/${testName}.framework/PrivacyInfo.xcprivacy").readText(),
+                    projectDir.resolve("build/XCFrameworks/release/${testName}.xcframework/ios-arm64/${testName}.framework/PrivacyInfo.xcprivacy")
+                        .readText(),
                 )
             }
         )
@@ -307,21 +309,25 @@ class PrivacyManifestsPluginTests {
             beforeMutatingPrivacyManifest = {
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/cocoapods/publish/release/${testName}.xcframework/ios-arm64/${testName}.framework/PrivacyInfo.xcprivacy").readText(),
+                    projectDir.resolve("build/cocoapods/publish/release/${testName}.xcframework/ios-arm64/${testName}.framework/PrivacyInfo.xcprivacy")
+                        .readText(),
                 )
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/cocoapods/publish/release/${testName}.xcframework/watchos-arm64_x86_64-simulator/${testName}.framework/PrivacyInfo.xcprivacy").readText(),
+                    projectDir.resolve("build/cocoapods/publish/release/${testName}.xcframework/watchos-arm64_x86_64-simulator/${testName}.framework/PrivacyInfo.xcprivacy")
+                        .readText(),
                 )
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/cocoapods/publish/release/${testName}.xcframework/macos-arm64/${testName}.framework/Resources/PrivacyInfo.xcprivacy").readText(),
+                    projectDir.resolve("build/cocoapods/publish/release/${testName}.xcframework/macos-arm64/${testName}.framework/Resources/PrivacyInfo.xcprivacy")
+                        .readText(),
                 )
             },
             afterMutatingPrivacyManifest = {
                 assertEquals(
                     "final",
-                    projectDir.resolve("build/cocoapods/publish/release/${testName}.xcframework/ios-arm64/${testName}.framework/PrivacyInfo.xcprivacy").readText(),
+                    projectDir.resolve("build/cocoapods/publish/release/${testName}.xcframework/ios-arm64/${testName}.framework/PrivacyInfo.xcprivacy")
+                        .readText(),
                 )
             }
         )
@@ -361,8 +367,11 @@ class PrivacyManifestsPluginTests {
                 }
             """.trimIndent(),
             gradleArguments = arrayOf(
-                ":podspec", ":syncFramework",
-                "-Pkotlin.native.cocoapods.configuration=Debug", "-Pkotlin.native.cocoapods.archs=arm64", "-Pkotlin.native.cocoapods.platform=iphoneos",
+                ":podspec",
+                ":syncFramework",
+                "-Pkotlin.native.cocoapods.configuration=Debug",
+                "-Pkotlin.native.cocoapods.archs=arm64",
+                "-Pkotlin.native.cocoapods.platform=iphoneos",
                 "-Pkotlin.native.cocoapods.generate.wrapper=true",
             ),
             beforeMutatingPrivacyManifest = {
@@ -375,7 +384,8 @@ class PrivacyManifestsPluginTests {
                     { "Privacy manifest shouldn't be copied into framework for syncFramework integration" },
                 )
                 assert(
-                    projectDir.resolve("${testName}.podspec").readText().contains("spec.resource_bundles = {'KotlinMultiplatformPrivacyManifest' => ['PrivacyInfo.xcprivacy']}"),
+                    projectDir.resolve("${testName}.podspec").readText()
+                        .contains("spec.resource_bundles = {'KotlinMultiplatformPrivacyManifest' => ['PrivacyInfo.xcprivacy']}"),
                     { "syncFramework integration is expected to create an resource bundle entry in the local integration podspec" },
                 )
             },
@@ -396,8 +406,7 @@ class PrivacyManifestsPluginTests {
     ) {
         Files.createDirectories(projectDir.toPath())
 
-        writeString(
-            projectDir.resolve("settings.gradle.kts"),
+        projectDir.resolve("settings.gradle.kts").writeText(
             """
                 dependencyResolutionManagement {
                     repositories {
@@ -407,18 +416,17 @@ class PrivacyManifestsPluginTests {
                 
                 pluginManagement {
                     repositories {
-                        maven("file://${projectDir.absoluteFile.parentFile.parentFile.parentFile.resolve("repo").canonicalPath}")
+                        maven("file://${projectDir.absoluteFile.parentFile.parentFile.parentFile.resolve("build/repo").canonicalPath}")
                         gradlePluginPortal()
                     }
                 }
             """.trimIndent()
         )
 
-        writeString(
-            projectDir.resolve("build.gradle.kts"),
+        projectDir.resolve("build.gradle.kts").writeText(
             """
                 plugins {
-                    kotlin("apple-privacy-manifests") version "unspecified"
+                    kotlin("apple-privacy-manifests") version "test"
                     kotlin("multiplatform") version "$kotlinVersion"
                     $otherPlugins
                 }
@@ -428,15 +436,11 @@ class PrivacyManifestsPluginTests {
         )
 
         val privacyManifestFile = File(projectDir, "PrivacyInfo.xcprivacy")
-        writeString(
-            privacyManifestFile,
+        privacyManifestFile.writeText(
             "initial"
         )
         infoPlistFile?.let {
-            writeString(
-                File(projectDir, "Info.plist"),
-                it,
-            )
+            File(projectDir, "Info.plist").writeText(it)
         }
 
         val sources = projectDir.resolve("src/commonMain/kotlin")
@@ -449,7 +453,14 @@ class PrivacyManifestsPluginTests {
             GradleRunner.create()
                 .forwardOutput()
                 .withEnvironment(System.getenv() + environmentVariables)
-                .withArguments(*(gradleArguments + arrayOf("--info", "--stacktrace", "--configuration-cache", "-Dorg.gradle.jvmargs=-XX:MaxMetaspaceSize=1g")))
+                .withArguments(
+                    *(gradleArguments + arrayOf(
+                        "--info",
+                        "--stacktrace",
+                        "--configuration-cache",
+                        "-Dorg.gradle.jvmargs=-XX:MaxMetaspaceSize=1g"
+                    ))
+                )
                 .withProjectDir(projectDir)
                 .build()
         }
@@ -457,8 +468,7 @@ class PrivacyManifestsPluginTests {
         build()
         beforeMutatingPrivacyManifest()
 
-        writeString(
-            privacyManifestFile,
+        privacyManifestFile.writeText(
             "final"
         )
 
@@ -468,10 +478,4 @@ class PrivacyManifestsPluginTests {
 
     private fun String.pathFriendly() = replace("-", "_")
 
-    @Throws(IOException::class)
-    private fun writeString(file: File, string: String) {
-        FileWriter(file).use { writer ->
-            writer.write(string)
-        }
-    }
 }

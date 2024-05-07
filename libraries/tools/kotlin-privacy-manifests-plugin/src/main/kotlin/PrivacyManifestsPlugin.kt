@@ -3,14 +3,17 @@ package org.jetbrains.kotlin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 class PrivacyManifestsPlugin : Plugin<Project> {
@@ -36,10 +39,18 @@ abstract class PrivacyManifest @Inject constructor(
         val resourceBundleName: String,
     )
 
-    var configuration: PrivacyManifestConfiguration? = null
-    var onConfigurationChange: ((PrivacyManifestConfiguration) -> (Unit))? = null
-
+    internal var configuration: PrivacyManifestConfiguration? = null
+    internal var onConfigurationChange: ((PrivacyManifestConfiguration) -> (Unit))? = null
     private var alreadyConfigured = false
+
+
+    /**
+     * Embeds a privacy manifest file into the project.
+     *
+     * @param privacyManifest The privacy manifest file to embed.
+     * @param resourceBundleInfoPlist The Info.plist file for the resource bundle (optional).
+     * @param resourceBundleName The name of the resource bundle (default: "KotlinMultiplatformPrivacyManifest").
+     */
     fun embed(
         privacyManifest: File,
         resourceBundleInfoPlist: File? = null,
@@ -47,6 +58,11 @@ abstract class PrivacyManifest @Inject constructor(
     ) {
         if (alreadyConfigured) error("Only a single privacy manifest may be embedded")
         alreadyConfigured = true
+
+        val runOnceService = project.gradle.sharedServices.registerIfAbsent(
+            "${RunOnceService::class.simpleName}_${RunOnceService::class.java.classLoader.hashCode()}",
+            RunOnceService::class.java,
+        ) {}
 
         // Record configuration to read from KGP
         val configuration = PrivacyManifestConfiguration(
@@ -95,17 +111,17 @@ abstract class PrivacyManifest @Inject constructor(
                 resourceBundleInfoPlist?.let { linkTask.inputs.file(it) }
 
                 val isInXcodeBuild = System.getenv("TARGET_BUILD_DIR") != null
-                // FIXME: These may be out of sync with executesInEmbedAndSignContext?
                 val isInSyncFrameworkCocoaPodsXcodeBuild = System.getenv("PODS_TARGET_SRCROOT") != null
-                val isInEmbedAndSign = isInXcodeBuild && !isInSyncFrameworkCocoaPodsXcodeBuild
-                if (isInEmbedAndSign) {
+                val isLikelyInEmbedAndSign = isInXcodeBuild && !isInSyncFrameworkCocoaPodsXcodeBuild
+                if (isLikelyInEmbedAndSign) {
+                    linkTask.usesService(runOnceService)
                     linkTask.inputs.property("targetBuildDir", targetBuildDir)
                     linkTask.inputs.property("resourcesPath", resourcesPath)
                     linkTask.inputs.property("wrapperExtension", wrapperExtension)
                     linkTask.outputs.dir(resourcesBundlePath)
                 }
 
-                val konanTarget = linkTask.compilation.konanTarget
+                val konanTarget = linkTask.binary.target.konanTarget
                 val frameworkPath = linkTask.outputFile
                 linkTask.doLast {
                     // Skip if running embedAndSign in app extension
@@ -114,27 +130,32 @@ abstract class PrivacyManifest @Inject constructor(
                     if (executesInSyncFrameworkContext.get()) return@doLast
                     // If we are in embedAndSign, create a resources bundle with Info.plist regardless of linkage
                     if (executesInEmbedAndSignContext.get()) {
-                        createResourcesBundleWithPrivacyManifest(
-                            privacyManifest,
-                            resourcesBundlePath,
-                            resourceBundleInfoPlist,
-                            resourceBundleName,
-                            bundlingProvider = { resourcesBundle ->
-                                if (konanTarget in macOSGroup) {
-                                    PrivacyManifestBundling(
-                                        resourcesDirectory = resourcesBundle.resolve("Contents/Resources"),
-                                        infoPlistDirectory = resourcesBundle.resolve("Contents"),
-                                    )
-                                } else {
-                                    PrivacyManifestBundling(
-                                        resourcesDirectory = resourcesBundle,
-                                        infoPlistDirectory = resourcesBundle
-                                    )
-                                }
-                            },
-                        )
+                        if (!isLikelyInEmbedAndSign) {
+                            error("Privacy manifest copying was not configured for embedAndSign integration, but runs with embedAndSign task in the task graph")
+                        }
+
+                        val resourcesBundle = resourcesBundlePath.get()
+                        val resourcesDirectory: File
+                        val infoPlistDirectory: File
+                        if (konanTarget.family == Family.OSX) {
+                            resourcesDirectory = resourcesBundle.resolve("Contents/Resources")
+                            infoPlistDirectory = resourcesBundle.resolve("Contents")
+                        } else {
+                            resourcesDirectory = resourcesBundle
+                            infoPlistDirectory = resourcesBundle
+                        }
+                        // Create resources bundle with privacy manifest only once if KotlinNativeLink tasks run concurrent with CC
+                        runOnceService.get().doOncePerBuild {
+                            createResourcesBundleWithPrivacyManifest(
+                                privacyManifest = privacyManifest,
+                                resourceBundleInfoPlist = resourceBundleInfoPlist,
+                                resourceBundleName = resourceBundleName,
+                                resourcesDirectory = resourcesDirectory,
+                                infoPlistDirectory = infoPlistDirectory,
+                            )
+                        }
                     } else {
-                        // Otherwise we are likely building an XCFramework. Copy the privacy manifest to the .framework
+                        // Otherwise we are likely building an XCFramework. Copy the privacy manifest to the .framework that will be bundled in the .xcframework
                         copyPrivacyManifestToFramework(
                             frameworkPath = frameworkPath.get(),
                             privacyManifest = privacyManifest,
@@ -162,27 +183,27 @@ abstract class PrivacyManifest @Inject constructor(
 
     private fun configureSyncFrameworkTaskResourcesBundle(resourceBundleName: String, privacyManifest: File) {
         project.pluginManager.withPlugin("org.jetbrains.kotlin.native.cocoapods") {
-            // FIXME: Is this going to break existing resource_bundles configurations?
-            ((project.kotlinExtension as ExtensionAware).extensions.getByName("cocoapods") as CocoapodsExtension)
-                .extraSpecAttributes["resource_bundles"] =
-                "{'${resourceBundleName}' => ['${privacyManifest.toRelativeString(project.layout.projectDirectory.asFile)}']}"
+            project.afterEvaluate {
+                project.afterEvaluate {
+                    val cocoapodsExtension = ((project.kotlinExtension as ExtensionAware).extensions.getByName("cocoapods") as CocoapodsExtension)
+                    if (cocoapodsExtension.extraSpecAttributes[resourceBundles].isNullOrEmpty()) {
+                        cocoapodsExtension.extraSpecAttributes[resourceBundles] = "{'${resourceBundleName}' => ['${privacyManifest.toRelativeString(project.layout.projectDirectory.asFile)}']}"
+                    } else {
+                        project.logger.warn("extraSpecAttributes already contains '${resourceBundles}' key. Privacy manifest will not be copied for syncFramework integration")
+                    }
+                }
+            }
         }
     }
 
     companion object {
         private fun createResourcesBundleWithPrivacyManifest(
             privacyManifest: File,
-            resourcesBundlePath: Provider<File>,
             resourceBundleInfoPlist: File?,
             resourceBundleName: String,
-            bundlingProvider: (File) -> (PrivacyManifestBundling),
+            resourcesDirectory: File,
+            infoPlistDirectory: File,
         ) {
-            val resourcesBundle = resourcesBundlePath.get()
-            val bundling = bundlingProvider(resourcesBundle)
-            val resourcesDirectory = bundling.resourcesDirectory
-            val infoPlistDirectory = bundling.infoPlistDirectory
-
-            // FIXME: This may execute multiple times and concurrently? Does this invalidate up-to-dateness?
             privacyManifest.copyTo(
                 resourcesDirectory.resolve(privacyManifestName),
                 overwrite = true,
@@ -208,7 +229,7 @@ abstract class PrivacyManifest @Inject constructor(
             privacyManifest: File,
             target: KonanTarget,
         ) {
-            if (target in macOSGroup) {
+            if (target.family == Family.OSX) {
                 privacyManifest.copyTo(
                     frameworkPath.resolve("Resources").resolve(privacyManifestName),
                     overwrite = true,
@@ -245,19 +266,21 @@ abstract class PrivacyManifest @Inject constructor(
         """.trimIndent()
         }
 
-        val privacyManifestName = "PrivacyInfo.xcprivacy"
-        val infoPlistName = "Info.plist"
+        private val resourceBundles = "resource_bundles"
+
+        private val privacyManifestName = "PrivacyInfo.xcprivacy"
+        private val infoPlistName = "Info.plist"
 
         val disablePrivacyManifestsPluginProperty = "kotlin.mpp.disablePrivacyManifestsPlugin"
-
-        val macOSGroup: Set<KonanTarget> = setOf(
-            KonanTarget.MACOS_ARM64,
-            KonanTarget.MACOS_X64,
-        )
     }
 }
 
-internal class PrivacyManifestBundling(
-    val resourcesDirectory: File,
-    val infoPlistDirectory: File,
-)
+internal abstract class RunOnceService : BuildService<BuildServiceParameters.None> {
+    private var once = AtomicBoolean(false)
+
+    fun doOncePerBuild(action: () -> (Unit)) {
+        if (once.compareAndSet(false, true)) {
+            action()
+        }
+    }
+}

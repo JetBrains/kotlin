@@ -1,29 +1,37 @@
+import plugins.configureDefaultPublishing
+
 plugins {
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm")
     `java-gradle-plugin`
     `maven-publish`
 }
 
 group = "org.jetbrains.kotlin"
+version = findProperty("privacyManifestsPluginDeployVersion") as String? ?: "test"
+
+standardPublicJars()
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:1.9.23")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    compileOnly(project(":kotlin-gradle-plugin"))
+    testApi(platform(libs.junit.bom))
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation(gradleTestKit())
 }
+
+val functionalTest by sourceSets.creating
 
 gradlePlugin {
     plugins {
         create("apple-privacy-manifests") {
             id = "org.jetbrains.kotlin.apple-privacy-manifests"
+            displayName = "Apple privacy manifests copying plugin"
+            description = "Plugin for copying privacy manifests to Kotlin Multiplatform frameworks"
             implementationClass = "org.jetbrains.kotlin.PrivacyManifestsPlugin"
         }
     }
+    testSourceSets(functionalTest)
 }
-
-val functionalTest by sourceSets.creating
-gradlePlugin.testSourceSets(functionalTest)
 
 configurations[functionalTest.implementationConfigurationName].extendsFrom(configurations.testImplementation.get())
 
@@ -31,18 +39,22 @@ val cleanFunctionalTest = tasks.register<Delete>("cleanFunctionalTest") {
     setDelete(layout.buildDirectory.dir("functionalTest"))
 }
 
-val functionalTestTask = tasks.register<Test>("functionalTest") {
+tasks.register<Test>("functionalTest") {
     testClassesDirs = functionalTest.output.classesDirs
     classpath = configurations[functionalTest.runtimeClasspathConfigurationName] + functionalTest.output
     dependsOn(
-        tasks.named("publishAllPublicationsToMavenRepository"),
-        cleanFunctionalTest
+        tasks.named("publishAllPublicationsToBuildDirectoryRepository"),
+        cleanFunctionalTest,
     )
     useJUnitPlatform()
 }
 
+configureDefaultPublishing()
+
 publishing {
     repositories {
-        maven(layout.projectDirectory.dir("repo"))
+        maven(layout.buildDirectory.dir("repo")) {
+            name = "BuildDirectory"
+        }
     }
 }
