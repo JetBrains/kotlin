@@ -1006,7 +1006,6 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             val builder = when {
-                modifiersIfPresent != null && !hasConstructorKeyword -> createErrorConstructorBuilder(ConeMissingConstructorKeyword)
                 isErrorConstructor -> createErrorConstructorBuilder(ConeNoConstructorError)
                 else -> FirPrimaryConstructorBuilder()
             }

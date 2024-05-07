@@ -155,6 +155,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val constructorCheckers: Set<FirConstructorChecker>
         get() = setOf(
             FirConstructorAllowedChecker,
+            FirMissingConstructorKeywordSyntaxChecker,
         )
 
     override val fileCheckers: Set<FirFileChecker>

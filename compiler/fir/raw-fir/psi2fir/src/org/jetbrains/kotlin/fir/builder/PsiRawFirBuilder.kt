@@ -1159,8 +1159,6 @@ open class PsiRawFirBuilder(
                 }
 
                 val builder = when {
-                    this?.modifierList != null &&
-                            getConstructorKeyword() == null -> createErrorConstructorBuilder(ConeMissingConstructorKeyword)
                     isErrorConstructor -> createErrorConstructorBuilder(ConeNoConstructorError)
                     else -> FirPrimaryConstructorBuilder()
                 }
