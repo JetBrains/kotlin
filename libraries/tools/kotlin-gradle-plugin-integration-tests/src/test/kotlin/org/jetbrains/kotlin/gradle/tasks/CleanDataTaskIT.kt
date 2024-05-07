@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 class CleanDataTaskIT : KGPBaseTest() {
 
     @DisplayName("nodejs is deleted from Gradle user home")

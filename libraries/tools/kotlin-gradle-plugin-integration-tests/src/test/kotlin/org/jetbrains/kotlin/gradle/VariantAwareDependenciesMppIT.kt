@@ -25,6 +25,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
     @DisplayName("JVM project could depend on multiplatform project")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testJvmKtAppResolvesMppLib(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             includeOtherProjectAsSubmodule("simpleProject")
@@ -46,6 +47,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
     }
 
     @DisplayName("JS project could depend on multiplatform project")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @GradleTest
     fun testJsKtAppResolvesMppLib(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
@@ -69,6 +71,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
     @DisplayName("Multiplatform project could depend on JVM project")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testMppLibResolvesJvmKtApp(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             includeOtherProjectAsSubmodule("simpleProject")
@@ -86,6 +89,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
     @DisplayName("Multiplatform project could depend on JS project")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testMppLibResolvesJsKtApp(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             includeOtherProjectAsSubmodule("kotlin2JsInternalTest")
@@ -104,6 +108,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
     @DisplayName("Gradle JVM project could depend on multiplatform project")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testNonKotlinJvmAppResolvesMppLib(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             includeOtherProjectAsSubmodule("simpleProject")
@@ -149,6 +154,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
     @DisplayName("Multiplatform project could depend on Kotlin JVM and JS projects")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testMppResolvesJvmAndJsKtLibs(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             includeOtherProjectAsSubmodule("simpleProject")
@@ -180,6 +186,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
     @DisplayName("Kotlin JVM project could depend on multiplatform project in testRuntime configuration")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testJvmKtAppDependsOnMppTestRuntime(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             includeOtherProjectAsSubmodule("simpleProject")
@@ -242,6 +249,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
 
     @DisplayName("Elements configurations could be resolved correctly")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testCompileAndRuntimeResolutionOfElementsConfigurations(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-app", gradleVersion) {
             includeOtherProjectAsSubmodule(

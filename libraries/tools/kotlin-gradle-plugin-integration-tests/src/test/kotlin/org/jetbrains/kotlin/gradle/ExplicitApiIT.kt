@@ -104,6 +104,7 @@ class ExplicitApiIT : KGPBaseTest() {
 
     @DisplayName("MPP: explicit api warning works for MPP tasks")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @MppGradlePluginTests
     fun explicitApiMpp(gradleVersion: GradleVersion) {
         project(

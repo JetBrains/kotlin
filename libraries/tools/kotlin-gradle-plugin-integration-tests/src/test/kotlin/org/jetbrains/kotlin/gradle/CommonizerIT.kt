@@ -417,6 +417,7 @@ open class CommonizerIT : KGPBaseTest() {
 
     @DisplayName("KT-47641 commonizing c-interops does not depend on any source compilation")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testCInteropsDoesNotDependOnAnySourceCompilation(gradleVersion: GradleVersion) {
         nativeProject(
             "commonize-kt-47641-cinterops-compilation-dependency",

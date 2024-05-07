@@ -17,6 +17,7 @@ import java.nio.file.Path
 class KlibResolverInsideCompilerIT : KGPBaseTest() {
     @DisplayName("KLIBs with duplicated unique_name not discriminated, library + composite build, LV=1.9 (KT-63573)")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testKlibsWithDuplicatedUniqueNameNotDiscriminated1(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildLibraryAndCompositeProjectForKT63573(
             baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-and-composite-build",
@@ -27,6 +28,7 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
 
     @DisplayName("KLIBs with duplicated unique_name not discriminated, library + composite build, LV=2.0 (KT-63573)")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testKlibsWithDuplicatedUniqueNameNotDiscriminated2(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildLibraryAndCompositeProjectForKT63573(
             baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-and-composite-build",
@@ -37,6 +39,7 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
 
     @DisplayName("KLIBs with duplicated unique_name not discriminated, library x2 + app, LV=1.9 (KT-63573)")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testKlibsWithDuplicatedUniqueNameNotDiscriminated3(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildTwoLibrariesAndAppForKT63573(
             baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-x2-and-app",
@@ -47,6 +50,7 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
 
     @DisplayName("KLIBs with duplicated unique_name not discriminated, library x2 + app, LV=2.0 (KT-63573)")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testKlibsWithDuplicatedUniqueNameNotDiscriminated4(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildTwoLibrariesAndAppForKT63573(
             baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-x2-and-app",

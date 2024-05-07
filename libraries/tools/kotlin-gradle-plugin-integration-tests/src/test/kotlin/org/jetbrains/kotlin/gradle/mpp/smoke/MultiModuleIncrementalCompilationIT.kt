@@ -26,6 +26,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
      */
     @DisplayName("Verify IC builds on change in lib/commonMain")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
     fun testTouchLibCommon(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")
@@ -97,6 +98,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
      */
     @DisplayName("Verify IC builds on change in lib/platformMain")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
     fun testTouchLibPlatform(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")
@@ -165,6 +167,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
      */
     @DisplayName("Verify IC builds on change in app/commonMain")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
     fun testTouchAppCommon(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")
@@ -202,6 +205,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
      */
     @DisplayName("Verify IC builds on change in app/platformMain")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
     fun testTouchAppPlatform(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")

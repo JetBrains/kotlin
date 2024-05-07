@@ -270,6 +270,7 @@ class TryNextIT : KGPBaseTest() {
     @DisplayName("JS: language version default is changed to next")
     @JsGradlePluginTests
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun jsLanguageVersionK2(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-nodejs-project",
@@ -289,6 +290,7 @@ class TryNextIT : KGPBaseTest() {
     @DisplayName("JS: tryNext report is produced")
     @JsGradlePluginTests
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun jsTryReport(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-nodejs-project",

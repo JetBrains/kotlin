@@ -24,7 +24,7 @@ import kotlin.reflect.KClass
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
  */
-class KotlinProjectNpmResolver(
+internal class KotlinProjectNpmResolver(
     project: Project,
     var resolver: KotlinRootNpmResolver,
 ) : Serializable {
@@ -81,11 +81,12 @@ class KotlinProjectNpmResolver(
     private fun addCompilation(compilation: KotlinJsIrCompilation) {
         check(resolution == null) { resolver.alreadyResolvedMessage("add compilation $compilation") }
 
-        byCompilation[compilation.disambiguatedName] =
-            KotlinCompilationNpmResolver(
-                this,
-                compilation
-            )
+        val npmResolver = KotlinCompilationNpmResolver(
+            this,
+            compilation
+        )
+        byCompilation[npmResolver.compilationDisambiguatedName] =
+            npmResolver
     }
 
     fun close(): KotlinProjectNpmResolution {

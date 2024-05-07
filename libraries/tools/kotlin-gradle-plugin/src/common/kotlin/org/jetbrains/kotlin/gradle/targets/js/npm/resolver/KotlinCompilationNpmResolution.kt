@@ -6,94 +6,105 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Action
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.utils.buildOrNull
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
+import java.io.File
 import java.io.Serializable
 
 class KotlinCompilationNpmResolution(
-    var internalDependencies: Collection<InternalDependency>,
-    var internalCompositeDependencies: Collection<CompositeDependency>,
-    var externalGradleDependencies: Collection<FileExternalGradleDependency>,
-    var externalNpmDependencies: Collection<NpmDependencyDeclaration>,
-    var fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>,
+    val buildPath: String,
+    val npmDependencies: Set<NpmDependencyDeclaration>,
+    val fileDependencies: Set<FileCollectionExternalGradleDependency>,
     val projectPath: String,
     val compilationDisambiguatedName: String,
+    val publicPackageJsonConf: String,
     val npmProjectName: String,
     val npmProjectVersion: String,
     val tasksRequirements: TasksRequirements,
 ) : Serializable {
 
-    val inputs: PackageJsonProducerInputs
-        get() = PackageJsonProducerInputs(
-            internalDependencies.map { it.projectName },
-            externalGradleDependencies.map { it.file },
-            externalNpmDependencies.map { it.uniqueRepresentation() },
-            fileCollectionDependencies.flatMap { it.files }
-        )
-
     private var closed = false
     internal var resolution: PreparedKotlinCompilationNpmResolution? = null
 
     @Synchronized
-    fun prepareWithDependencies(
+    internal fun prepareWithDependencies(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,
+        resolvedConfigurations: Map<String, ProjectResolvedConfiguration>,
     ): PreparedKotlinCompilationNpmResolution {
         check(resolution == null) { "$this already resolved" }
 
         return createPreparedResolution(
             npmResolutionManager,
-            logger
+            logger,
+            resolvedConfigurations
         ).also {
             resolution = it
         }
     }
 
     @Synchronized
-    fun getResolutionOrPrepare(
+    internal fun getResolutionOrPrepare(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,
+        resolvedConfigurations: Map<String, ProjectResolvedConfiguration>,
     ): PreparedKotlinCompilationNpmResolution {
 
         return resolution ?: prepareWithDependencies(
             npmResolutionManager,
-            logger
+            logger,
+            resolvedConfigurations,
         )
     }
 
     @Synchronized
-    fun close(
+    internal fun close(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,
+        resolvedConfigurations: Map<String, ProjectResolvedConfiguration>,
     ): PreparedKotlinCompilationNpmResolution {
         check(!closed) { "$this already closed" }
         closed = true
-        return getResolutionOrPrepare(npmResolutionManager, logger)
+        return getResolutionOrPrepare(npmResolutionManager, logger, resolvedConfigurations)
     }
 
-    fun createPreparedResolution(
+    private fun createPreparedResolution(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,
+        resolvedConfigurations: Map<String, ProjectResolvedConfiguration>,
     ): PreparedKotlinCompilationNpmResolution {
         val rootResolver = npmResolutionManager.parameters.resolution.get()
 
-        val internalNpmDependencies = internalDependencies
+        val visitor = ConfigurationVisitor(rootResolver)
+        val configuration = resolvedConfigurations.getValue(projectPath).getValue(publicPackageJsonConf)
+        visitor.visit(configuration)
+
+        val internalNpmDependencies = visitor.internalDependencies
             .map {
                 val compilationNpmResolution: KotlinCompilationNpmResolution = rootResolver[it.projectPath][it.compilationName]
                 compilationNpmResolution.getResolutionOrPrepare(
                     npmResolutionManager,
-                    logger
+                    logger,
+                    resolvedConfigurations
                 )
             }
             .flatMap { it.externalNpmDependencies }
-        val importedExternalGradleDependencies = externalGradleDependencies.mapNotNull {
-            npmResolutionManager.parameters.gradleNodeModulesProvider.get().get(it.dependencyName, it.dependencyVersion, it.file)
-        } + fileCollectionDependencies.flatMap { dependency ->
+        val importedExternalGradleDependencies = visitor.externalGradleDependencies.mapNotNull {
+            npmResolutionManager.parameters.gradleNodeModulesProvider.get().get(it.module, it.version ?: "0.0.1-SNAPSHOT", it.artifact)
+        } + fileDependencies.flatMap { dependency ->
             dependency.files
                 // Gradle can hash with FileHasher only files and only existed files
                 .filter { it.isFile }
@@ -113,7 +124,7 @@ class KotlinCompilationNpmResolution(
             .getCompilationNpmRequirements(projectPath, compilationDisambiguatedName)
 
         val otherNpmDependencies = toolsNpmDependencies + transitiveNpmDependencies
-        val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies, logger)
+        val allNpmDependencies = disambiguateDependencies(npmDependencies, otherNpmDependencies, logger)
 
         return PreparedKotlinCompilationNpmResolution(
             npmResolutionManager.packagesDir.map { it.dir(npmProjectName) },
@@ -167,5 +178,67 @@ class KotlinCompilationNpmResolution(
                 }
             }
         return direct + unique
+    }
+
+    inner internal class ConfigurationVisitor(val rootResolution: KotlinRootNpmResolution) {
+        val internalDependencies = mutableSetOf<InternalDependency>()
+        val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
+
+        private val visitedDependencies = mutableSetOf<ResolvedVariantResult>()
+
+        fun visit(configuration: LazyResolvedConfiguration) {
+            configuration.root.dependencies.forEach { dependencyResult ->
+                if (dependencyResult is ResolvedDependencyResult) {
+                    val variant = dependencyResult.resolvedVariant.externalVariant.orElse(dependencyResult.resolvedVariant)
+                    configuration.getArtifacts(dependencyResult).forEach { artifactResult ->
+                        visitDependency(variant, artifactResult.file)
+                    }
+                } else {
+                    println("WTF ${dependencyResult}")
+                }
+            }
+        }
+
+        private fun visitDependency(dependency: ResolvedVariantResult, second: File) {
+            if (dependency in visitedDependencies) return
+            visitedDependencies.add(dependency)
+            visitArtifact(dependency, second)
+        }
+
+        private fun visitArtifact(
+            dependency: ResolvedVariantResult,
+            artifact: File,
+        ) {
+
+            val owner = dependency.owner
+            if (buildPath == owner.buildOrNull?.buildPathCompat && owner is ProjectComponentIdentifier) {
+                visitProjectDependency(dependency)
+            }
+
+            if (buildPath != owner.buildOrNull?.buildPathCompat && owner is ProjectComponentIdentifier) {
+                dependency.capabilities.forEach { capability ->
+                    externalGradleDependencies.add(ExternalGradleDependency(capability.name, capability.version, artifact))
+                }
+            }
+
+            if (owner is ModuleComponentIdentifier) {
+                externalGradleDependencies.add(ExternalGradleDependency(owner.module, owner.version, artifact))
+            }
+        }
+
+        private fun visitProjectDependency(
+            componentIdentifier: ResolvedVariantResult,
+        ) {
+            val owner = componentIdentifier.owner as ProjectComponentIdentifier
+            val dependentCompilation = rootResolution[owner.projectPath][componentIdentifier.displayName]
+
+            internalDependencies.add(
+                InternalDependency(
+                    dependentCompilation.projectPath,
+                    dependentCompilation.publicPackageJsonConf,
+                    dependentCompilation.npmProjectName
+                )
+            )
+        }
     }
 }

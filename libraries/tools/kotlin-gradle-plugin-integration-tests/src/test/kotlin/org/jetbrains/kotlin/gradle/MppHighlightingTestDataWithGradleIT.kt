@@ -26,6 +26,7 @@ import kotlin.streams.toList
 internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
 
     @GradleWithMppHighlightingTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun runTest(
         gradleVersion: GradleVersion,
         cliCompiler: CliCompiler,
