@@ -28,22 +28,13 @@ import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
-    get() = with(PropertiesProvider(this)) {
-        mppHierarchicalStructureByDefault || // then we want to use KLIB granular compilation & artifacts even if it's just commonMain
-                hierarchicalStructureSupport ||
-                enableGranularSourceSetsMetadata == true
-    }
+    get() = true // In K2 and Stable MPP always true
 
 internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
-    get() = with(PropertiesProvider(this)) {
-        when {
-            !hierarchicalStructureSupport && mppHierarchicalStructureByDefault -> false
-            else -> true
-        }
-    }
+    get() = true // In K2 and Stable MPP always true
 
 internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
-    get() = PropertiesProvider(this).enableCompatibilityMetadataVariant == true
+    get() = false // In K2 and Stable MPP always false
 
 class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinCompilation<*>, KotlinMetadataTarget>(createTestCompilation = false) {
