@@ -38,90 +38,95 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
         get() = context.irFactory
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildren(object : IrElementTransformer<IrDeclarationParent?> {
-            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
-                super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+        irBody.transformChildren(
+            transformer = Transformer(container),
+            data = container as? IrDeclarationParent
+        )
+    }
 
-            override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent?): IrExpression {
-                expression.transformChildren(this, data)
+    private inner class Transformer(private val container: IrDeclaration) : IrElementTransformer<IrDeclarationParent?> {
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
+            super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 
-                val owner = expression.symbol.owner as? IrSimpleFunction
-                    ?: return expression
+        override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent?): IrExpression {
+            expression.transformChildren(this, data)
 
-                if (!owner.isInlineFunWithReifiedParameter()) {
-                    return expression
-                }
-                @Suppress("UNCHECKED_CAST")
-                val typeSubstitutor = IrTypeSubstitutor(expression.typeSubstitutionMap as Map<IrTypeParameterSymbol, IrTypeArgument>)
+            val owner = expression.symbol.owner as? IrSimpleFunction
+                ?: return expression
 
-                val function = irFactory.buildFun {
-                    name = Name.identifier("${owner.name}${"$"}wrap")
-                    returnType = typeSubstitutor.substitute(owner.returnType)
-                    visibility = DescriptorVisibilities.LOCAL
-                    origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
-                    startOffset = SYNTHETIC_OFFSET
-                    endOffset = SYNTHETIC_OFFSET
-                }.apply {
-                    parent = data ?: error("Unable to get a proper parent while lower ${expression.render()} at ${container.render()}")
-                    val irBuilder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
-                    val forwardExtensionReceiverAsParam = owner.extensionReceiverParameter?.let { extensionReceiver ->
-                        runIf(expression.extensionReceiver == null) {
-                            addValueParameter(
-                                extensionReceiver.name,
-                                typeSubstitutor.substitute(extensionReceiver.type)
-                            )
-                            true
-                        }
-                    } ?: false
-                    owner.valueParameters.forEach { valueParameter ->
+            if (!owner.isInlineFunWithReifiedParameter()) {
+                return expression
+            }
+            @Suppress("UNCHECKED_CAST")
+            val typeSubstitutor = IrTypeSubstitutor(expression.typeSubstitutionMap as Map<IrTypeParameterSymbol, IrTypeArgument>)
+
+            val function = irFactory.buildFun {
+                name = Name.identifier("${owner.name}${"$"}wrap")
+                returnType = typeSubstitutor.substitute(owner.returnType)
+                visibility = DescriptorVisibilities.LOCAL
+                origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
+                startOffset = SYNTHETIC_OFFSET
+                endOffset = SYNTHETIC_OFFSET
+            }.apply {
+                parent = data ?: error("Unable to get a proper parent while lower ${expression.render()} at ${container.render()}")
+                val irBuilder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+                val forwardExtensionReceiverAsParam = owner.extensionReceiverParameter?.let { extensionReceiver ->
+                    runIf(expression.extensionReceiver == null) {
                         addValueParameter(
-                            valueParameter.name,
-                            typeSubstitutor.substitute(valueParameter.type)
+                            extensionReceiver.name,
+                            typeSubstitutor.substitute(extensionReceiver.type)
                         )
+                        true
                     }
-                    body = irFactory.createBlockBody(
-                        expression.startOffset,
-                        expression.endOffset
-                    ) {
-                        statements.add(
-                            irBuilder.irReturn(
-                                irBuilder.irCall(owner.symbol).also { call ->
-                                    expression.extensionReceiver?.setDeclarationsParent(this@apply)
-                                    expression.dispatchReceiver?.setDeclarationsParent(this@apply)
-                                    val (extensionReceiver, forwardedParams) = if (forwardExtensionReceiverAsParam) {
-                                        irBuilder.irGet(valueParameters.first()) to valueParameters.subList(1, valueParameters.size)
-                                    } else {
-                                        expression.extensionReceiver to valueParameters
-                                    }
-                                    call.extensionReceiver = extensionReceiver
-                                    call.dispatchReceiver = expression.dispatchReceiver
-
-                                    forwardedParams.forEachIndexed { index, valueParameter ->
-                                        call.putValueArgument(index, irBuilder.irGet(valueParameter))
-                                    }
-                                    for (i in 0 until expression.typeArgumentsCount) {
-                                        call.putTypeArgument(i, expression.getTypeArgument(i))
-                                    }
-                                },
-                            )
-                        )
-                    }
+                } ?: false
+                owner.valueParameters.forEach { valueParameter ->
+                    addValueParameter(
+                        valueParameter.name,
+                        typeSubstitutor.substitute(valueParameter.type)
+                    )
                 }
-                return context.createIrBuilder(container.symbol).irBlock(
-                    expression,
-                    origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                body = irFactory.createBlockBody(
+                    expression.startOffset,
+                    expression.endOffset
                 ) {
-                    +function
-                    +IrFunctionReferenceImpl.fromSymbolOwner(
-                        expression.startOffset,
-                        expression.endOffset,
-                        expression.type,
-                        function.symbol,
-                        function.typeParameters.size,
-                        expression.reflectionTarget
+                    statements.add(
+                        irBuilder.irReturn(
+                            irBuilder.irCall(owner.symbol).also { call ->
+                                expression.extensionReceiver?.setDeclarationsParent(this@apply)
+                                expression.dispatchReceiver?.setDeclarationsParent(this@apply)
+                                val (extensionReceiver, forwardedParams) = if (forwardExtensionReceiverAsParam) {
+                                    irBuilder.irGet(valueParameters.first()) to valueParameters.subList(1, valueParameters.size)
+                                } else {
+                                    expression.extensionReceiver to valueParameters
+                                }
+                                call.extensionReceiver = extensionReceiver
+                                call.dispatchReceiver = expression.dispatchReceiver
+
+                                forwardedParams.forEachIndexed { index, valueParameter ->
+                                    call.putValueArgument(index, irBuilder.irGet(valueParameter))
+                                }
+                                for (i in 0 until expression.typeArgumentsCount) {
+                                    call.putTypeArgument(i, expression.getTypeArgument(i))
+                                }
+                            },
+                        )
                     )
                 }
             }
-        }, container as? IrDeclarationParent)
+            return context.createIrBuilder(container.symbol).irBlock(
+                expression,
+                origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+            ) {
+                +function
+                +IrFunctionReferenceImpl.fromSymbolOwner(
+                    expression.startOffset,
+                    expression.endOffset,
+                    expression.type,
+                    function.symbol,
+                    function.typeParameters.size,
+                    expression.reflectionTarget
+                )
+            }
+        }
     }
 }
