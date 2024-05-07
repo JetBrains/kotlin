@@ -220,13 +220,6 @@ class JvmBackendContext(
     internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
         symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(descriptor)
 
-    override fun log(message: () -> String) {
-        /*TODO*/
-        if (inVerbosePhase) {
-            print(message())
-        }
-    }
-
     override fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression =
         builder.irBlock {
             +super.throwUninitializedPropertyAccessException(builder, name)

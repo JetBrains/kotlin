@@ -144,11 +144,6 @@ class WasmBackendContext(
 
     override val inlineClassesUtils = WasmInlineClassesUtils(wasmSymbols)
 
-    override fun log(message: () -> String) {
-        /*TODO*/
-        if (inVerbosePhase) print(message())
-    }
-
     //
     // Unit test support, mostly borrowed from the JS implementation
     //

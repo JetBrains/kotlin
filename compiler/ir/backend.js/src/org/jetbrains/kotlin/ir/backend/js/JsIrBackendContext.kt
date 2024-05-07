@@ -400,11 +400,6 @@ class JsIrBackendContext(
     fun getFunctions(fqName: FqName): List<SimpleFunctionDescriptor> =
         findFunctions(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
 
-    override fun log(message: () -> String) {
-        /*TODO*/
-        if (inVerbosePhase) print(message())
-    }
-
     private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
 
     fun addOutlinedJsCode(symbol: IrSimpleFunctionSymbol, outlinedJsCode: JsFunction) {

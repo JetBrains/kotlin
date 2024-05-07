@@ -43,11 +43,6 @@ internal open class BasicPhaseContext(
         override val config: KonanConfig,
 ) : PhaseContext {
     override var inVerbosePhase = false
-    override fun log(message: () -> String) {
-        if (inVerbosePhase) {
-            println(message())
-        }
-    }
 
     override val messageCollector: MessageCollector
         get() = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)

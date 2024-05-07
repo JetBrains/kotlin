@@ -25,11 +25,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-interface LoggingContext {
-    var inVerbosePhase: Boolean
-    fun log(message: () -> String)
-}
-
 interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingContext {
     override val ir: Ir<CommonBackendContext>
 
