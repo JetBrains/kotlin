@@ -18,7 +18,6 @@ class StaticProvidableCompositionLocal2<T> : ProvidableCompositionLocal2<T>() {}
 // ------------------------------------------
 
 public abstract class CompositionLocal2 {
-  PERMITTEDSUBCLASS ProvidableCompositionLocal2
   private <init>()V
   public final getCurrent(Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
   public final foo(Landroidx/compose/runtime/Composer;I)V

@@ -20,7 +20,7 @@ fun KotlinDependencyHandler.implementationArtifactOnly(dependency: String) {
 optInToObsoleteDescriptorBasedAPI()
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
 
     jvm()
 
