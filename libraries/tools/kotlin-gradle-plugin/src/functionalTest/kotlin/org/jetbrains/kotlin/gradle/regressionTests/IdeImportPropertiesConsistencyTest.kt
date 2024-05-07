@@ -41,13 +41,17 @@ class IdeImportPropertiesConsistencyTest {
     }
 
     @Test
-    fun `test HMPP enabled for all projects`() {
+    fun `test HMPP enabled for all projects with multiplatform plugin enabled`() {
         val rootProject = ProjectBuilder.builder().build()
-        val project = ProjectBuilder.builder().withParent(rootProject).build()
+        val project = ProjectBuilder.builder().withParent(rootProject).withName("project1").build()
         project.applyMultiplatformPlugin()
-        project.assertKotlinGranularMetadataEnabled()
+        val project2 = ProjectBuilder.builder().withParent(rootProject).withName("project2").build()
+        project2.applyMultiplatformPlugin()
 
-        rootProject.assertKotlinGranularMetadataEnabled()
+        project.assertKotlinGranularMetadataEnabled()
+        project2.assertKotlinGranularMetadataEnabled()
+        // With Isolated projects it is now not possible to set a flag from subproject to a root project.
+        rootProject.assertKotlinGranularMetadataIsNull()
     }
 
     private fun Project.assertKotlinGranularMetadataEnabled() {
@@ -55,6 +59,14 @@ class IdeImportPropertiesConsistencyTest {
         assertEquals(
             true, granularMetadataEnabled,
             "kotlin.mpp.enableGranularSourceSetsMetadata: $granularMetadataEnabled"
+        )
+    }
+
+    private fun Project.assertKotlinGranularMetadataIsNull() {
+        val granularMetadataEnabled = project.getProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
+        assertEquals(
+            null, granularMetadataEnabled,
+            "kotlin.mpp.enableGranularSourceSetsMetadata was not null"
         )
     }
 }
