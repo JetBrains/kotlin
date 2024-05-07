@@ -20,7 +20,7 @@ import kotlin.test.fail
 class MPPBuildReproducibilityIT : KGPBaseTest() {
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("Check if consecutive builds produce same binaries: Simple Multiplatform project")
     fun `test simpleMultiplatformProject`(gradleVersion: GradleVersion) {
         project("MPPBuildReproducibility/simpleMultiplatformProject", gradleVersion) {

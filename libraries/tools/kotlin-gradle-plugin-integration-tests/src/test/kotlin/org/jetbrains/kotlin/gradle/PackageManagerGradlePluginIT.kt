@@ -76,6 +76,7 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
 }
 
 @JsGradlePluginTests
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     abstract val yarn: Boolean

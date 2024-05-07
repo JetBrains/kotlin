@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.asNodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
 
 @DisableCachingByDefault
@@ -64,23 +66,29 @@ abstract class RootPackageJsonTask :
     val rootPackageJson: File
         get() = rootPackageJsonFile.getFile()
 
+    @get:Internal
+    internal val components by lazy {
+        rootResolver.allResolvedConfigurations
+    }
+
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
-    val packageJsonFiles: List<RegularFile> by lazy {
-        rootResolver.projectResolvers.values
-            .flatMap { it.compilationResolvers }
-            .map { it.compilationNpmResolution }
-            .map { resolution ->
-                val name = resolution.npmProjectName
-                packagesDir.map { it.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
-            }
-    }
+    val packageJsonFiles: ListProperty<RegularFile> = project.objects.listProperty<RegularFile>().value(
+        project.objects.providerWithLazyConvention {
+            rootResolver.projectResolvers.values
+                .flatMap { it.compilationResolvers }
+                .map { it.npmProject.name }
+                .map { name ->
+                    packagesDir.map { dir -> dir.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
+                }
+        }
+    )
 
     @TaskAction
     fun resolve() {
-        npmResolutionManager.get().prepare(logger, nodeJsEnvironment, packageManagerEnv)
+        npmResolutionManager.get().prepare(logger, nodeJsEnvironment, packageManagerEnv, components)
     }
 
     companion object {

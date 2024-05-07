@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 class JsIrConfigurationCacheIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(

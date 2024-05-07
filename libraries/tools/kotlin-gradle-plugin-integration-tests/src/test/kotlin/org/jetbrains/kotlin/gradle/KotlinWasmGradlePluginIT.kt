@@ -54,6 +54,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Check js target")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun jsTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-test", gradleVersion) {
             buildGradleKts.modify {
@@ -101,6 +102,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Check wasi and js target")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun wasiAndJsTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-js-test", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
@@ -141,6 +143,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Check js target with binaryen")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun jsTargetWithBinaryen(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
@@ -165,6 +168,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Check js target with browser")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
@@ -186,6 +190,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Check mix project with wasi only dependency works correctly")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun jsAndWasiTargetsWithDependencyOnWasiOnlyProject(gradleVersion: GradleVersion) {
         project("wasm-wasi-js-with-wasi-only-dependency", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)

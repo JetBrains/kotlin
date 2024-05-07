@@ -46,6 +46,7 @@ class CustomK2Tests : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
 
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("Serialization plugin in common source set. KT-56911")
     fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
         project(
@@ -71,6 +72,7 @@ class CustomK2Tests : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("HMPP compilation with JS target and old stdlib. KT-59151")
     fun testHmppCompilationWithJsAndOldStdlib(gradleVersion: GradleVersion) {
         with(project("k2-mpp-js-old-stdlib", gradleVersion)) {
@@ -169,6 +171,7 @@ class CustomK2Tests : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("Common metadata compilation. KT-60943")
     fun kt60943CommonMetadataCompilation(gradleVersion: GradleVersion) {
         project(

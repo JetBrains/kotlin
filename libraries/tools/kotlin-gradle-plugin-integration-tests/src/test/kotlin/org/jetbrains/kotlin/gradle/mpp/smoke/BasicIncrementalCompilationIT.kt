@@ -20,6 +20,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
     @DisplayName("Base test case - local change, local recompilation")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
     fun testStrictlyLocalChange(gradleVersion: GradleVersion): Unit = withProject(gradleVersion) {
         build("assemble")

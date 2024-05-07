@@ -708,6 +708,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("KT-27170: android lint works with dependency on non-android mpp project")
     @GradleAndroidTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testLintInAndroidProjectsDependingOnMppWithoutAndroid(
         gradleVersion: GradleVersion,
         agpVersion: String,

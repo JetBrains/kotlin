@@ -13,6 +13,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 
 @JsGradlePluginTests
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val defaultProjectName: String = "incrementalMultiproject"
 

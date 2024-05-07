@@ -86,6 +86,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("Verify that the metric for applying the Kotlin JS plugin is being collected")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testMetricCollectingOfApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("simple-js-library", gradleVersion) {
             build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {

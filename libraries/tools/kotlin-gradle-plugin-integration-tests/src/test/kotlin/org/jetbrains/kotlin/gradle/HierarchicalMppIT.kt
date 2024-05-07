@@ -333,6 +333,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("KT-48370: Multiplatform Gradle build fails for Native targets with \"we cannot choose between the following variants of project\"")
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
@@ -739,7 +740,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata")
         }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @GradleTest
     @DisplayName("HMPP dependencies in js tests")
     fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
@@ -807,6 +808,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("Check transitive dependency on self")
     fun testTransitiveDependencyOnSelf(gradleVersion: GradleVersion) =
         with(project("transitive-dep-on-self-hmpp", gradleVersion = gradleVersion)) {
@@ -1143,6 +1145,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("KT-55071: Shared Native Compilations: Use default parameters declared in dependsOn source set")
     fun `test shared native compilation with default parameters declared in dependsOn source set`(gradleVersion: GradleVersion) {
         project(
