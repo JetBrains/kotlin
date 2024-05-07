@@ -1455,9 +1455,9 @@ internal object DevirtualizationAnalysis {
         }
 
         fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall, actualType: IrType,
-                                                   actualCallee: DataFlowIR.FunctionSymbol.Declared,
+                                                   actualCallee: DataFlowIR.FunctionSymbol,
                                                    arguments: List<PossiblyCoercedValue>): IrExpression {
-            return actualCallee.bridgeTarget.let { bridgeTarget ->
+            return (actualCallee as? DataFlowIR.FunctionSymbol.Declared)?.bridgeTarget.let { bridgeTarget ->
                 if (bridgeTarget == null)
                     irDevirtualizedCall(callSite, actualType,
                             actualCallee.irFunction as IrSimpleFunction,
@@ -1492,7 +1492,7 @@ internal object DevirtualizationAnalysis {
                 val devirtualizedCallSite = devirtualizedCallSites[expression] ?: return expression
                 val possibleCallees = devirtualizedCallSite.possibleCallees.groupBy {
                     if (it.receiverType is DataFlowIR.Type.External) return expression
-                    it.callee as? DataFlowIR.FunctionSymbol.Declared ?: return expression
+                    it.callee
                 }.entries.map { entry ->
                     entry.key to entry.value.map { it.receiverType as DataFlowIR.Type.Declared }.distinct()
                 }
@@ -1559,7 +1559,7 @@ internal object DevirtualizationAnalysis {
                              * (since the number of possible callees is small, it is ok in terms of performance).
                              */
 
-                            data class Target(val actualCallee: DataFlowIR.FunctionSymbol.Declared, val possibleReceivers: List<DataFlowIR.Type.Declared>) {
+                            data class Target(val actualCallee: DataFlowIR.FunctionSymbol, val possibleReceivers: List<DataFlowIR.Type.Declared>) {
                                 val declType = actualCallee.irFunction!!.parentAsClass
                                 val weight = when {
                                     possibleReceivers.size == 1 -> 0 // The fastest.
