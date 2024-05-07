@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 
-internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
-    get() = true // In K2 and Stable MPP always true
-
 internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
     get() = false // In K2 and Stable MPP always false
 
@@ -280,9 +277,6 @@ internal fun dependsOnClosureWithInterCompilationDependencies(sourceSet: KotlinS
  * Those compilations will be created but the corresponding tasks will be disabled.
  */
 internal suspend fun getCommonSourceSetsForMetadataCompilation(project: Project): Set<KotlinSourceSet> {
-    if (!project.shouldCompileIntermediateSourceSetsToMetadata)
-        return setOf(project.multiplatformExtension.awaitSourceSets().getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
-
     val compilationsBySourceSet: Map<KotlinSourceSet, Set<KotlinCompilation<*>>> =
         project.kotlinExtension.awaitSourceSets().associateWith { it.internal.awaitPlatformCompilations() }
 
