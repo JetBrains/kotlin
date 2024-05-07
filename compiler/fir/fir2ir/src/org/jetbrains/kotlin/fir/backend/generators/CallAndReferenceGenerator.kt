@@ -99,12 +99,11 @@ class CallAndReferenceGenerator(
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
 
             fun FirCallableSymbol<*>.toSymbolForCall(): IrSymbol? {
-                return toIrSymbolForCall(
+                return toIrSymbolForCallableReference(
                     c,
                     callableReferenceAccess.dispatchReceiver,
-                    explicitReceiver = callableReferenceAccess.explicitReceiver,
-                    isDelegate = isDelegate,
-                    isReference = true
+                    lhs = callableReferenceAccess.explicitReceiver,
+                    isDelegate = isDelegate
                 )
             }
 

@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 enum class ConversionTypeOrigin(val forSetter: Boolean) {
     DEFAULT(forSetter = false),
@@ -84,11 +82,15 @@ fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirCallableS
 fun FirCallableSymbol<*>.toIrSymbolForCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
-    // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
-    explicitReceiver: FirExpression? = null,
-    isDelegate: Boolean = false,
-    isReference: Boolean = false
-): IrSymbol? = toIrSymbolForCall(c, dispatchReceiver, preferGetter = true, explicitReceiver, isDelegate, isReference)
+    explicitReceiver: FirExpression?,
+): IrSymbol? = toIrSymbolForCall(c, dispatchReceiver, preferGetter = true, explicitReceiver, isDelegate = false, isReference = false)
+
+fun FirCallableSymbol<*>.toIrSymbolForCallableReference(
+    c: Fir2IrComponents,
+    dispatchReceiver: FirExpression?,
+    lhs: FirExpression?,
+    isDelegate: Boolean,
+): IrSymbol? = toIrSymbolForCall(c, dispatchReceiver, preferGetter = true, lhs, isDelegate, isReference = true)
 
 fun FirCallableSymbol<*>.toIrSymbolForSetCall(
     c: Fir2IrComponents,
