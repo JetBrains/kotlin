@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 
+/**
+ * Provides static accessors for source set conventions
+ */
 interface KotlinMultiplatformSourceSetConventions {
     // region Common Source Set Accessors
 
@@ -1737,14 +1740,29 @@ interface KotlinMultiplatformSourceSetConventions {
      */
     val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest: NamedDomainObjectProvider<KotlinSourceSet>
 
+    /**
+     * Configure Source Set Provider with [configure] code block.
+     *
+     * @since 1.9.20
+     */
     operator fun NamedDomainObjectProvider<KotlinSourceSet>.invoke(
         configure: KotlinSourceSet.() -> Unit,
     ): Unit = get().run(configure)
 
+    /**
+     * Configure Source Set dependencies with [handler] code block.
+     *
+     * @since 1.9.20
+     */
     fun NamedDomainObjectProvider<KotlinSourceSet>.dependencies(
         handler: KotlinDependencyHandler.() -> Unit,
     ): Unit = get().dependencies(handler)
 
+    /**
+     * Configure Source Set language settings with [configure] code block.
+     *
+     * @since 1.9.20
+     */
     fun NamedDomainObjectProvider<KotlinSourceSet>.languageSettings(
         configure: LanguageSettingsBuilder.() -> Unit,
     ): Unit = this { languageSettings(configure) }
