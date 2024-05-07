@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 internal open class LLFirDiagnosticVisitor(
     context: CheckerContextForProvider,
@@ -40,15 +42,19 @@ internal open class LLFirDiagnosticVisitor(
 
     override fun checkElement(element: FirElement) {
         beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
-        components.regularComponents.forEach {
+        components.regularComponents.forEach { diagnosticVisitor ->
             checkCanceled()
-            element.accept(it, context)
+            suppressAndLogExceptions {
+                element.accept(diagnosticVisitor, context)
+            }
         }
 
         checkCanceled()
-        element.accept(components.reportCommitter, context)
+        suppressAndLogExceptions {
+            element.accept(components.reportCommitter, context)
 
-        commitPendingDiagnosticsOnNestedDeclarations(element)
+            commitPendingDiagnosticsOnNestedDeclarations(element)
+        }
     }
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Nothing?) {
@@ -116,5 +122,26 @@ internal open class LLFirDiagnosticVisitor(
                 declaration.accept(components.reportCommitter, context)
             }
         }
+    }
+}
+
+private val logger: Logger = Logger.getInstance(LLFirDiagnosticVisitor::class.java)
+
+/**
+ * We don't want to throw exceptions right away to not interrupt other checkers there possible.
+ * It is better to report as much as possible and not crash the entire visitor.
+ *
+ * By default [logger] throws exceptions, but it is up to the user code to provide
+ * alternative handler.
+ *
+ * For instance, the IntelliJ plugin reports such exceptions and doesn't interrupt the execution flow.
+ */
+private inline fun suppressAndLogExceptions(block: () -> Unit) {
+    try {
+        block()
+    } catch (e: Throwable) {
+        if (shouldIjPlatformExceptionBeRethrown(e)) throw e
+
+        logger.error(e)
     }
 }
