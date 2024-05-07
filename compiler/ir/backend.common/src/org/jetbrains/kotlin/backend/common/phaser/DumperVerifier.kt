@@ -38,7 +38,7 @@ fun ActionState.isDumpNeeded() =
         BeforeOrAfter.AFTER -> config.shouldDumpStateAfter(phase)
     }
 
-private fun ActionState.isValidationNeeded() =
+fun ActionState.isValidationNeeded() =
     when (beforeOrAfter) {
         BeforeOrAfter.BEFORE -> config.shouldValidateStateBefore(phase)
         BeforeOrAfter.AFTER -> config.shouldValidateStateAfter(phase)

@@ -68,9 +68,8 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         if (freeCompilerArgs.assertionsMode.assertionsEnabledWith(optimizationMode))
             add("-enable-assertions")
-        add(
-            "-Xverify-ir=error"
-        )
+        // Validate IR after each compilation phase
+        add("-Xphases-to-validate-after=all")
         // We use dev distribution for tests as it provides a full set of testing utilities,
         // which might not be available in user distribution.
         add("-Xllvm-variant=dev")
