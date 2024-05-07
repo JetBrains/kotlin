@@ -73,6 +73,11 @@ object JUnit5Assertions : AssertionsService() {
         val (equalsToFile, expected) =
             doesEqualToFile(expectedFile, actual, sanitizer, fileNotFoundMessageTeamCity, fileNotFoundMessageLocal)
         if (!equalsToFile) {
+            val newFilePath = expectedFile.path.takeIf { "descriptors." in it }
+                ?: expectedFile.path.replaceAfter('.', "descriptors." + expectedFile.path.substringAfter('.'))
+
+            val file = if (false) expectedFile else File(newFilePath)
+//            file.writeText(actual)
             throw AssertionFailedError(
                 "${differenceObtainedMessage()}: ${expectedFile.name}",
                 FileInfo(expectedFile.absolutePath, expected.toByteArray(StandardCharsets.UTF_8)),

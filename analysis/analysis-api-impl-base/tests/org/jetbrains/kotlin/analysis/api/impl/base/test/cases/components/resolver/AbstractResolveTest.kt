@@ -52,6 +52,9 @@ abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
         val actual = stringRepresentation(actualSymbol)
         renderedSymbol(actual)
         if (expectedSymbol != null) {
+            if (expectedSymbol != actualSymbol) {
+                Unit
+            }
             testServices.assertions.assertEquals(expectedSymbol, actualSymbol)
         }
 
