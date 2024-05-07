@@ -182,7 +182,9 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration) return
         val propertyVisibility = declaration.effectiveVisibility
 
-        if (propertyVisibility == EffectiveVisibility.Local) return
+        if (propertyVisibility == EffectiveVisibility.Local || declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+            return
+        }
         declaration.returnTypeRef.coneType
             .findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility) ->
                 reporter.reportOn(

@@ -54,6 +54,12 @@ public class LLFirPreresolvedReversedScriptDiagnosticCompilerTestDataTestGenerat
   }
 
   @Test
+  @TestMetadata("resultVisibilityTest.test.kts")
+  public void testResultVisibilityTest_test() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/resultVisibilityTest.test.kts");
+  }
+
+  @Test
   @TestMetadata("simple.test.kts")
   public void testSimple_test() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/simple.test.kts");
