@@ -83,29 +83,50 @@ fun FirCallableSymbol<*>.toIrSymbolForCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     explicitReceiver: FirExpression?,
-): IrSymbol? = toIrSymbolForCall(c, dispatchReceiver, preferGetter = true, explicitReceiver, isDelegate = false, isReference = false)
+): IrSymbol? = toIrSymbol(
+    c,
+    dispatchReceiver,
+    explicitReceiver,
+    preferGetter = true,
+    isDelegate = false,
+    isReference = false
+)
 
 fun FirCallableSymbol<*>.toIrSymbolForCallableReference(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     lhs: FirExpression?,
     isDelegate: Boolean,
-): IrSymbol? = toIrSymbolForCall(c, dispatchReceiver, preferGetter = true, lhs, isDelegate, isReference = true)
+): IrSymbol? = toIrSymbol(
+    c,
+    dispatchReceiver,
+    lhs,
+    preferGetter = true,
+    isDelegate = isDelegate,
+    isReference = true
+)
 
 fun FirCallableSymbol<*>.toIrSymbolForSetCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     explicitReceiver: FirExpression?,
-): IrSymbol? = toIrSymbolForCall(c, dispatchReceiver, preferGetter = false, explicitReceiver, isDelegate = false, isReference = false)
+): IrSymbol? = toIrSymbol(
+    c,
+    dispatchReceiver,
+    explicitReceiver,
+    preferGetter = false,
+    isDelegate = false,
+    isReference = false
+)
 
-private fun FirCallableSymbol<*>.toIrSymbolForCall(
+private fun FirCallableSymbol<*>.toIrSymbol(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
-    preferGetter: Boolean = true,
     // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
-    explicitReceiver: FirExpression? = null,
-    isDelegate: Boolean = false,
-    isReference: Boolean = false
+    explicitReceiver: FirExpression?,
+    preferGetter: Boolean,
+    isDelegate: Boolean,
+    isReference: Boolean
 ): IrSymbol? = with(c) {
     val fakeOverrideOwnerLookupTag = when {
         // Static fake overrides
@@ -132,25 +153,27 @@ private fun FirCallableSymbol<*>.toIrSymbolForCall(
         }
         else -> null
     }
-    return when (val symbol = this@toIrSymbolForCall) {
+    return when (val symbol = this@toIrSymbol) {
         is FirSimpleSyntheticPropertySymbol -> {
-            if (isDelegate) {
-                declarationStorage.getIrPropertySymbol(symbol)
-            } else {
-                (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
-                    if (isReference) {
-                        declarationStorage.getIrPropertySymbol(symbol, fakeOverrideOwnerLookupTag)
+            when {
+                isDelegate -> declarationStorage.getIrPropertySymbol(symbol)
+                isReference -> declarationStorage.getIrPropertySymbol(symbol, fakeOverrideOwnerLookupTag)
+                else -> {
+                    val syntheticProperty = symbol.syntheticProperty
+                    val delegateSymbol = if (preferGetter) {
+                        syntheticProperty.getter.delegate.symbol
                     } else {
-                        val delegateSymbol = if (preferGetter) {
-                            syntheticProperty.getter.delegate.symbol
-                        } else {
-                            syntheticProperty.setter?.delegate?.symbol
-                                ?: error("Written synthetic property must have a setter")
-                        }
-                        delegateSymbol.unwrapCallRepresentative(c)
-                            .toIrSymbolForCall(c, dispatchReceiver, preferGetter, isDelegate = false)
+                        syntheticProperty.setter?.delegate?.symbol ?: error("Written synthetic property must have a setter")
                     }
-                } ?: declarationStorage.getIrPropertySymbol(symbol)
+                    delegateSymbol.unwrapCallRepresentative(c).toIrSymbol(
+                        c,
+                        dispatchReceiver,
+                        explicitReceiver = null,
+                        preferGetter = preferGetter,
+                        isDelegate = false,
+                        isReference = false
+                    )
+                }
             }
         }
         is FirConstructorSymbol -> declarationStorage.getIrConstructorSymbol(symbol.fir.originalConstructorIfTypeAlias?.symbol ?: symbol)
