@@ -58,9 +58,6 @@ class ComposeIT : KGPBaseTest() {
                     ":compileDebugKotlin",
                     "-P plugin:androidx.compose.compiler.plugins.kotlin:generateFunctionKeyMetaClasses=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:nonSkippingGroupOptimization=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:strongSkipping=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=false",
                     LogLevel.INFO
                 )
