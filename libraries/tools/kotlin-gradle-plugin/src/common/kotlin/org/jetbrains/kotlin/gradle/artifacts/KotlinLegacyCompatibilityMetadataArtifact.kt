@@ -19,14 +19,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurati
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val KotlinLegacyCompatibilityMetadataArtifact = KotlinTargetArtifact { target, _, _ ->
     if (target !is KotlinMetadataTarget) return@KotlinTargetArtifact
-    if (!target.project.isKotlinGranularMetadataEnabled) return@KotlinTargetArtifact
     if (!target.project.isCompatibilityMetadataVariantEnabled) return@KotlinTargetArtifact
 
     val legacyJar = target.project.registerTask<Jar>(target.legacyArtifactsTaskName)

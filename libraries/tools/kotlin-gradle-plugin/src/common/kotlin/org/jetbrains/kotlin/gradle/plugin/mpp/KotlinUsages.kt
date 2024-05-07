@@ -218,7 +218,7 @@ object KotlinUsages {
 
     internal fun setupAttributesMatchingStrategy(
         attributesSchema: AttributesSchema,
-        isKotlinGranularMetadata: Boolean,
+        withMetadataCompatibility: Boolean,
         isKotlinResourcesCompatibilityRuleEnabled: Boolean
     ) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
@@ -228,7 +228,7 @@ object KotlinUsages {
             strategy.compatibilityRules.add(KotlinCinteropCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinCinteropDisambiguation::class.java)
 
-            if (isKotlinGranularMetadata) {
+            if (withMetadataCompatibility) {
                 strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
                 strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
             }

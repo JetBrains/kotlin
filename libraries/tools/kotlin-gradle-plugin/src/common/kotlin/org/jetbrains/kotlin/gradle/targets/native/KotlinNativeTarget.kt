@@ -51,9 +51,6 @@ abstract class KotlinNativeTarget @Inject constructor(
     internal val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
-        if (!project.isKotlinGranularMetadataEnabled)
-            return@lazy super.kotlinComponents
-
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         // NB: another usage context for the host-specific metadata may be added to this set below

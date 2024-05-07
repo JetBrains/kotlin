@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -108,9 +107,7 @@ internal class DefaultKotlinSourceSetFactory(
                     extendsFrom(project.configurations.maybeCreateDependencyScope(configurationName))
                 }
 
-                if (project.isKotlinGranularMetadataEnabled) {
-                    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                }
+                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
             }
         }
 

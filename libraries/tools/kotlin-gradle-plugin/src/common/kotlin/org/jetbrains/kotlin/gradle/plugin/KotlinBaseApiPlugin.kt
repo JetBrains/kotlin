@@ -28,7 +28,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
     override fun apply(project: Project) {
         super.apply(project)
         myProject = project
-        setupAttributeMatchingStrategy(project, isKotlinGranularMetadata = false)
+        setupAttributeMatchingStrategy(project, withMetadataCompatibilityRules = false)
     }
 
     override fun addCompilerPluginDependency(dependency: Provider<Any>) {
