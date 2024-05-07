@@ -730,3 +730,22 @@ fun FirErrorTypeRef.wrapIntoArray(): FirResolvedTypeRef {
         delegatedTypeRef = typeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
     }
 }
+
+fun shouldGenerateDelegatedSuperCall(
+    isAnySuperCall: Boolean,
+    isExpectClass: Boolean,
+    isEnumEntry: Boolean,
+    hasExplicitDelegatedCalls: Boolean
+): Boolean {
+    if (isAnySuperCall) {
+        return false
+    }
+
+    if (isExpectClass) {
+        // Generally, an `expect` class cannot inherit from other expect class.
+        // However, for the IDE resolution purposes, we keep invalid explicit delegate calls.
+        return !isEnumEntry && hasExplicitDelegatedCalls
+    }
+
+    return true
+}

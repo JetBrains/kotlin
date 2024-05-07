@@ -209,6 +209,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
   }
 
   @Test
+  @TestMetadata("ExpectSuperClassConstructorArgument.kt")
+  public void testExpectSuperClassConstructorArgument() {
+    runTest("analysis/analysis-api/testData/referenceResolve/ExpectSuperClassConstructorArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("ExpectSuperClassConstructorCall.kt")
+  public void testExpectSuperClassConstructorCall() {
+    runTest("analysis/analysis-api/testData/referenceResolve/ExpectSuperClassConstructorCall.kt");
+  }
+
+  @Test
   @TestMetadata("explicitFunctionalInterfaceInvoke_globalVal.kt")
   public void testExplicitFunctionalInterfaceInvoke_globalVal() {
     runTest("analysis/analysis-api/testData/referenceResolve/explicitFunctionalInterfaceInvoke_globalVal.kt");

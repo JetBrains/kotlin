@@ -949,7 +949,15 @@ class LightTreeRawFirDeclarationBuilder(
             val modifiers = modifiersIfPresent ?: Modifier()
 
             val defaultVisibility = classWrapper.defaultConstructorVisibility()
-            val firDelegatedCall = runUnless(containingClassIsExpectClass || isKotlinAny) {
+
+            val generateDelegatedSuperCall = shouldGenerateDelegatedSuperCall(
+                isAnySuperCall = isKotlinAny,
+                isExpectClass = containingClassIsExpectClass,
+                isEnumEntry = isEnumEntry,
+                hasExplicitDelegatedCalls = classWrapper.delegatedSuperCalls.isNotEmpty()
+            )
+
+            val firDelegatedCall = runIf(generateDelegatedSuperCall) {
                 fun createDelegatedConstructorCall(
                     delegatedConstructorSource: KtLightSourceElement?,
                     delegatedSuperTypeRef: FirTypeRef,

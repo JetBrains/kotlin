@@ -11,3 +11,5 @@ expect class E: B(), C()
 expect fun f()
 
 expect annotation class G
+
+expect class H : E

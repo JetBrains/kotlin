@@ -904,6 +904,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("expectWithSuperClass.kt")
+    public void testExpectWithSuperClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/expectWithSuperClass.kt");
+    }
+
+    @Test
     @TestMetadata("functionInValueClass.kt")
     public void testFunctionInValueClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClass.kt");

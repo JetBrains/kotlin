@@ -14,13 +14,20 @@ FILE: expectClassesAndFunctions.kt
 
     }
     public final? expect class D : B {
-        public? expect error_constructor(): R|D|
+        public? expect error_constructor(): R|D| {
+            LAZY_super<B>
+        }
 
     }
     public final? expect class E : B, C {
-        public? expect error_constructor(): R|E|
+        public? expect error_constructor(): R|E| {
+            LAZY_super<B>
+            LAZY_super<C>
+        }
 
     }
     public? final? expect fun f(): R|kotlin/Unit|
     public final? expect annotation class G : R|kotlin/Annotation| {
+    }
+    public final? expect class H : E {
     }
