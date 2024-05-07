@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.test.sample
 
+import org.jetbrains.dokka.DelicateDokkaApi
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleSnippet
 import org.jetbrains.dokka.analysis.test.api.kotlinJvmTestProject
 import org.jetbrains.dokka.analysis.test.api.mixedJvmTestProject
@@ -13,6 +14,120 @@ import org.jetbrains.dokka.analysis.test.api.util.singleSourceSet
 import kotlin.test.*
 
 class SampleAnalysisTest {
+
+    @OptIn(DelicateDokkaApi::class)
+    @Test
+    fun `should resolve a valid sample if the environment is created manually`() {
+        val testProject = kotlinJvmTestProject {
+            dokkaConfiguration {
+                kotlinSourceSet {
+                    samples = setOf("/samples/collections.kt")
+                }
+            }
+            sampleFile("/samples/collections.kt", fqPackageName = "org.jetbrains.dokka.sample.collections") {
+                +"""
+                    import org.jetbrains.dokka.DokkaConfiguration
+                    import org.jetbrains.dokka.DokkaGenerator
+                    import org.jetbrains.dokka.utilities.DokkaLogger
+                    
+                    fun specificPositionOperations() {
+                        val numbers = mutableListOf(1, 2, 3, 4)
+                        numbers.add(5)
+                        numbers.removeAt(1)
+                        numbers[0] = 0
+                        numbers.shuffle()
+                        if (numbers.size > 0) {
+                            println(numbers)
+                        }
+                    }
+                """
+            }
+        }
+
+        testProject.useServices { context ->
+            val sampleAnalysisEnvironment = sampleAnalysisEnvironmentCreator.create()
+            try {
+                val sample = sampleAnalysisEnvironment.resolveSample(
+                    sourceSet = context.singleSourceSet(),
+                    fullyQualifiedLink = "org.jetbrains.dokka.sample.collections.specificPositionOperations"
+                )
+                assertNotNull(sample)
+
+                val expectedImports = listOf(
+                    "org.jetbrains.dokka.DokkaConfiguration",
+                    "org.jetbrains.dokka.DokkaGenerator",
+                    "org.jetbrains.dokka.utilities.DokkaLogger"
+                )
+
+                val expectedBody = """
+                    val numbers = mutableListOf(1, 2, 3, 4)
+                    numbers.add(5)
+                    numbers.removeAt(1)
+                    numbers[0] = 0
+                    numbers.shuffle()
+                    if (numbers.size > 0) {
+                        println(numbers)
+                    }
+                """.trimIndent()
+
+                assertEquals(expectedImports, sample.imports)
+                assertEquals(expectedBody, sample.body)
+            } finally {
+                sampleAnalysisEnvironment.close()
+            }
+        }
+    }
+
+    @OptIn(DelicateDokkaApi::class)
+    @Test
+    fun `should resolve the same sample by multiple environments`() {
+        val testProject = kotlinJvmTestProject {
+            dokkaConfiguration {
+                kotlinSourceSet {
+                    samples = setOf("/samples/collections.kt")
+                }
+            }
+            sampleFile("/samples/collections.kt", fqPackageName = "org.jetbrains.dokka.sample.collections") {
+                +"""
+                    import org.jetbrains.dokka.DokkaConfiguration
+                    import org.jetbrains.dokka.DokkaGenerator
+                    import org.jetbrains.dokka.utilities.DokkaLogger
+                    
+                    fun specificPositionOperations() {
+                        val numbers = mutableListOf(1, 2, 3, 4)
+                        numbers.add(5)
+                        numbers.removeAt(1)
+                        numbers[0] = 0
+                        numbers.shuffle()
+                        if (numbers.size > 0) {
+                            println(numbers)
+                        }
+                    }
+                """
+            }
+        }
+
+        testProject.useServices { context ->
+            val sampleAnalysisEnvironment1 = sampleAnalysisEnvironmentCreator.create()
+            val sampleAnalysisEnvironment2 = sampleAnalysisEnvironmentCreator.create()
+            try {
+                val sample1 = sampleAnalysisEnvironment1.resolveSample(
+                    sourceSet = context.singleSourceSet(),
+                    fullyQualifiedLink = "org.jetbrains.dokka.sample.collections.specificPositionOperations"
+                )
+                val sample2 = sampleAnalysisEnvironment2.resolveSample(
+                    sourceSet = context.singleSourceSet(),
+                    fullyQualifiedLink = "org.jetbrains.dokka.sample.collections.specificPositionOperations"
+                )
+                assertNotNull(sample1)
+                assertNotNull(sample2)
+                assertEquals(sample1, sample2)
+            } finally {
+                sampleAnalysisEnvironment1.close()
+                sampleAnalysisEnvironment2.close()
+            }
+        }
+    }
 
     @Test
     fun `should resolve a valid sample if set via the samples option`() {
