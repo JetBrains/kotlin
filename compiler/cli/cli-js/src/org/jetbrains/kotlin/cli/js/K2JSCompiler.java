@@ -6,68 +6,29 @@
 package org.jetbrains.kotlin.cli.js;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.SmartList;
-import kotlin.collections.ArraysKt;
-import kotlin.collections.CollectionsKt;
-import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.common.*;
+import org.jetbrains.kotlin.cli.common.CLICompiler;
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager;
+import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArgumentsKt;
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
-import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
-import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.*;
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker;
-import org.jetbrains.kotlin.incremental.components.LookupTracker;
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
-import org.jetbrains.kotlin.incremental.js.TranslationResultValue;
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
-import org.jetbrains.kotlin.js.config.EcmaVersion;
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
-import org.jetbrains.kotlin.js.config.JsConfig;
-import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding;
-import org.jetbrains.kotlin.js.facade.K2JSTranslator;
-import org.jetbrains.kotlin.js.facade.MainCallParameters;
-import org.jetbrains.kotlin.js.facade.TranslationResult;
-import org.jetbrains.kotlin.js.facade.TranslationUnit;
-import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
-import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.CompilerEnvironment;
-import org.jetbrains.kotlin.serialization.js.ModuleKind;
-import org.jetbrains.kotlin.utils.*;
+import org.jetbrains.kotlin.utils.JsMetadataVersion;
+import org.jetbrains.kotlin.utils.KotlinPaths;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
-import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
-import static org.jetbrains.kotlin.cli.common.UtilsKt.getLibraryFromHome;
-import static org.jetbrains.kotlin.cli.common.UtilsKt.incrementalCompilationIsEnabledForJs;
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private K2JsIrCompiler irCompiler = null;
@@ -102,7 +63,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull Disposable rootDisposable,
             @Nullable KotlinPaths paths
     ) {
-        MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        MessageCollector messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
         boolean useFir = Boolean.TRUE.equals(configuration.get(CommonConfigurationKeys.USE_FIR));
         if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments) || useFir) {

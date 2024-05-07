@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.name.FqName
@@ -63,9 +64,6 @@ fun <F> checkKotlinPackageUsage(
     }
     return true
 }
-
-private val CompilerConfiguration.messageCollector: MessageCollector
-    get() = get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
 fun checkKotlinPackageUsageForPsi(
     configuration: CompilerConfiguration,

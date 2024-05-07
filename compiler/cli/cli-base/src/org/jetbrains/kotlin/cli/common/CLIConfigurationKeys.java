@@ -30,9 +30,6 @@ public class CLIConfigurationKeys {
     public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS =
             CompilerConfigurationKey.create("content roots");
 
-    public static final CompilerConfigurationKey<MessageCollector> MESSAGE_COLLECTOR_KEY =
-            CompilerConfigurationKey.create("message collector");
-
     // Used by compiler plugins to access delegated message collector in GroupingMessageCollector
     public static final CompilerConfigurationKey<MessageCollector> ORIGINAL_MESSAGE_COLLECTOR_KEY =
             CompilerConfigurationKey.create("original message collector");

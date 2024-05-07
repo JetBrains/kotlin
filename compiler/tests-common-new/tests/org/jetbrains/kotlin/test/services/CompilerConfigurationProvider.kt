@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
@@ -18,10 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -165,7 +161,7 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
 
         override fun hasErrors(): Boolean = false
     }
-    configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] = messageCollector
+    configuration.messageCollector = messageCollector
     configuration[IrMessageLogger.IR_MESSAGE_LOGGER] = IrMessageCollector(messageCollector)
     configuration.languageVersionSettings = module.languageVersionSettings
 

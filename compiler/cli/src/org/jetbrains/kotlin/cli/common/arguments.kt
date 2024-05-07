@@ -24,7 +24,7 @@ fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
@@ -86,7 +86,7 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
 }
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
-    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
 }
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
@@ -167,7 +167,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     val rawFragmentSources = arguments.fragmentSources
     val rawFragmentRefines = arguments.fragmentRefines
 
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     fun reportError(message: String) {
         messageCollector.report(CompilerMessageSeverity.ERROR, message)

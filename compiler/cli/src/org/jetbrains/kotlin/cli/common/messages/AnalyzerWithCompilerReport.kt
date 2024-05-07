@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -47,7 +44,7 @@ class AnalyzerWithCompilerReport(
     override lateinit var analysisResult: AnalysisResult
 
     constructor(configuration: CompilerConfiguration) : this(
-        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE,
+        configuration.messageCollector,
         configuration.languageVersionSettings,
         configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     )

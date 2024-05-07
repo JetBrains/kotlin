@@ -72,7 +72,7 @@ private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
     configuration.addJvmClasspathRoot(JDK_PATH)
     configuration.addJvmClasspathRoot(RUNTIME_JAR)
     configuration.configureJdkClasspathRoots()
-    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    configuration.messageCollector = MessageCollector.NONE
 
     val newInferenceState = if (useNewInference) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
     configuration.languageVersionSettings = LanguageVersionSettingsImpl(

@@ -13,14 +13,12 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -57,11 +55,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, arguments.pluginConfigurations, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
-
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
         if (!enoughArguments) {
-            messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
+            configuration.messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
         }
         val environment = prepareEnvironment(arguments, configuration, rootDisposable)
 
@@ -133,7 +129,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 parseCommandLineArguments(arguments, spawnedArguments)
                 val spawnedConfiguration = CompilerConfiguration()
 
-                spawnedConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+                spawnedConfiguration.messageCollector =  configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                 spawnedConfiguration.put(IrMessageLogger.IR_MESSAGE_LOGGER, configuration.getNotNull(IrMessageLogger.IR_MESSAGE_LOGGER))
                 spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                 spawnedConfiguration.setupFromArguments(spawnedArguments)

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.extensions
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -18,7 +17,8 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.isStandalone
 
 class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : ProcessSourcesBeforeCompilingExtension {
 
@@ -26,7 +26,7 @@ class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : Pr
         val versionSettings = configuration.languageVersionSettings
         val shouldSkipStandaloneScripts = versionSettings.supportsFeature(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
         val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { ScriptDefinitionProvider.getInstance(project) }
-        val messageCollector = configuration.getNotNull(MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         fun KtFile.isStandaloneScript(): Boolean {
             val scriptDefinition = definitionProvider?.findDefinition(KtFileScriptSource(this))

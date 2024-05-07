@@ -19,7 +19,6 @@
 package org.jetbrains.kotlin.daemon
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -56,7 +55,7 @@ abstract class KotlinJvmReplServiceBase(
     private val log by lazy { Logger.getLogger("replService") }
 
     protected val configuration = CompilerConfiguration().apply {
-        put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+        this.messageCollector = messageCollector
         addJvmClasspathRoots(PathUtil.kotlinPathsForCompiler.let { listOf(it.stdlibPath, it.reflectPath, it.scriptRuntimePath) })
         addJvmClasspathRoots(templateClasspath)
         configureJdkHomeFromSystemProperty() // needed for IdeaJsr223Test in Kotlin plugin

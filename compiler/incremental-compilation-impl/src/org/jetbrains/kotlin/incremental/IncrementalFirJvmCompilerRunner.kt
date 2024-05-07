@@ -107,7 +107,7 @@ open class IncrementalFirJvmCompilerRunner(
             val configuration = CompilerConfiguration().apply {
 
                 put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
-                put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, collector)
+                this.messageCollector = collector
                 put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(collector))
 
                 setupCommonArguments(args) { JvmMetadataVersion(*it) }

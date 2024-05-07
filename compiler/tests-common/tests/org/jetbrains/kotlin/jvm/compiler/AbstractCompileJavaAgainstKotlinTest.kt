@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForMultifileCompilerTests
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
@@ -115,7 +115,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
-        environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        environment.configuration.messageCollector = MessageCollector.NONE
         updateConfiguration(environment.configuration)
         environment.registerJavac(
             javaFiles = javaFiles,

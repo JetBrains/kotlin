@@ -6,18 +6,16 @@
 package org.jetbrains.kotlin.jvm.abi
 
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import java.io.File
 
 class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val outputPath = configuration.getNotNull(JvmAbiConfigurationKeys.OUTPUT_PATH)
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
         val removeDataClassCopy = configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE)
         val builderExtension = JvmAbiClassBuilderInterceptor(
@@ -27,7 +25,7 @@ class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
         )
         val outputExtension = JvmAbiOutputExtension(
             File(outputPath), builderExtension::buildAbiClassInfoAndReleaseResources,
-            messageCollector, configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO),
+            configuration.messageCollector, configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO),
             removeDataClassCopy,
             configuration.getBoolean(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER),
             configuration.getBoolean(JvmAbiConfigurationKeys.TREAT_INTERNAL_AS_PRIVATE),

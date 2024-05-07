@@ -19,30 +19,16 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.k1.ComposableCallChecker
-import androidx.compose.compiler.plugins.kotlin.k1.ComposableDeclarationChecker
-import androidx.compose.compiler.plugins.kotlin.k1.ComposableTargetChecker
-import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
-import androidx.compose.compiler.plugins.kotlin.k1.ComposeDiagnosticSuppressor
-import androidx.compose.compiler.plugins.kotlin.k1.ComposeTypeResolutionInterceptorExtension
+import androidx.compose.compiler.plugins.kotlin.k1.*
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCSerializationPlugin
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.compiler.plugin.*
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
@@ -436,7 +422,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
     }
 
     fun validateFeatureFlags(configuration: CompilerConfiguration) {
-        val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val msgCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         if (msgCollector != null) {
             val reported = mutableSetOf<FeatureFlag>()
             fun report(feature: FeatureFlag, message: String) {
@@ -507,8 +493,7 @@ fun oldOptionDeprecationWarning(
     oldOption: AbstractCliOption,
     feature: FeatureFlag
 ) {
-    val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-    msgCollector?.report(
+    configuration.messageCollector.report(
         CompilerMessageSeverity.WARNING,
         "${oldOption.optionName} is deprecated. ${useFeatureFlagInsteadMessage(feature)}"
     )
@@ -518,17 +503,12 @@ fun validateFeatureFlag(
     configuration: CompilerConfiguration,
     value: String
 ) {
-    val (feature, enabled) = FeatureFlag.fromString(value)
-    if (feature == null || (feature.default == enabled)) {
-        val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        if (msgCollector != null) {
-            if (feature == null) {
-                msgCollector.report(
-                    CompilerMessageSeverity.WARNING,
-                    "${featureFlagName()} contains an unrecognized feature name: $value."
-                )
-            }
-        }
+    val (feature, _) = FeatureFlag.fromString(value)
+    if (feature == null) {
+        configuration.messageCollector.report(
+            CompilerMessageSeverity.WARNING,
+            "${featureFlagName()} contains an unrecognized feature name: $value."
+        )
     }
 }
 
@@ -567,10 +547,10 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
 
     companion object {
         fun checkCompilerVersion(configuration: CompilerConfiguration): Boolean {
-            val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val msgCollector = configuration.messageCollector
             val suppressKotlinVersionCheck = configuration.get(ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK)
             if (suppressKotlinVersionCheck != null) {
-                msgCollector?.report(
+                msgCollector.report(
                     CompilerMessageSeverity.WARNING,
                     "suppressKotlinVersionCompatibilityCheck flag is deprecated for Compose compiler bundled with Kotlin releases."
                 )
@@ -579,7 +559,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             val decoysEnabled =
                 configuration.get(ComposeConfiguration.DECOYS_ENABLED_KEY, false)
             if (decoysEnabled) {
-                msgCollector?.report(
+                msgCollector.report(
                     CompilerMessageSeverity.ERROR,
                     "Decoys generation should be disabled for Compose Multiplatform projects"
                 )
@@ -702,15 +682,13 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 nonSkippingGroupOptimizationEnabled
             )
 
-            val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
             val stableTypeMatchers = mutableSetOf<FqNameMatcher>()
             for (i in stabilityConfigPaths.indices) {
                 val path = stabilityConfigPaths[i]
                 val matchers = try {
                     StabilityConfigParser.fromFile(path).stableTypeMatchers
                 } catch (e: Exception) {
-                    msgCollector?.report(
+                    configuration.messageCollector.report(
                         CompilerMessageSeverity.ERROR,
                         e.message ?: "Error parsing stability configuration at $path"
                     )

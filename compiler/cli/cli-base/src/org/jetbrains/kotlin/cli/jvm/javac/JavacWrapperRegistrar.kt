@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.cli.jvm.javac
 import com.intellij.mock.MockProject
 import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -32,7 +32,7 @@ object JavacWrapperRegistrar {
         lightClassGenerationSupport: LightClassGenerationSupport,
         packagePartsProviders: List<JvmPackagePartProvider>
     ): Boolean {
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         try {
             Class.forName(JAVAC_CONTEXT_CLASS)

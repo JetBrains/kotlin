@@ -45,7 +45,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     @OptIn(KtAnalysisApiInternals::class)
     override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
-        val messageCollector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val logger = MessageCollectorBackedKaptLogger(
             KaptFlag.VERBOSE in optionsBuilder.flags,
             KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,

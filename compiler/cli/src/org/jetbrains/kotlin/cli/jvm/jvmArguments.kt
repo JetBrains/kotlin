@@ -362,8 +362,5 @@ fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) 
     put(JVMConfigurationKeys.KLIB_PATHS, libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty))
 }
 
-private val CompilerConfiguration.messageCollector: MessageCollector
-    get() = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
 private fun getJavaVersion(): Int =
     System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6

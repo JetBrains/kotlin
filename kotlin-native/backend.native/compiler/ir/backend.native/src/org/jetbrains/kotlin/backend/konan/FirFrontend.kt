@@ -7,19 +7,17 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.native.FirNativeOverrideChecker
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
-import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
 @OptIn(SessionConfiguration::class)
 internal inline fun <F> PhaseContext.firFrontend(
@@ -31,7 +29,7 @@ internal inline fun <F> PhaseContext.firFrontend(
         buildResolveAndCheckFir: (FirSession, List<F>, BaseDiagnosticsCollector) -> ModuleCompilerAnalyzedOutput,
 ): FirOutput {
     val configuration = input.configuration
-    val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
 
@@ -90,7 +88,7 @@ internal inline fun <F> PhaseContext.firFrontend(
 
 internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
-    val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR
 
     val ktFiles = input.getSourceFiles()
@@ -110,7 +108,7 @@ internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirO
 
 internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
-    val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR
 
     val groupedSources = collectSources(configuration, input.project, messageCollector)

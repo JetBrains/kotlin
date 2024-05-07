@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -101,6 +102,9 @@ object CommonConfigurationKeys {
     val USE_FIR_BASED_FAKE_OVERRIDE_GENERATOR = CompilerConfigurationKey.create<Boolean>(
         "Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved."
     )
+
+    @JvmField
+    val MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("message collector")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
@@ -114,3 +118,7 @@ val LanguageVersionSettings.areExpectActualClassesStable: Boolean
     get() {
         return getFlag(AnalysisFlags.muteExpectActualClassesWarning) || supportsFeature(LanguageFeature.ExpectActualClasses)
     }
+
+var CompilerConfiguration.messageCollector: MessageCollector
+    get() = get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    set(value) = put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, value)

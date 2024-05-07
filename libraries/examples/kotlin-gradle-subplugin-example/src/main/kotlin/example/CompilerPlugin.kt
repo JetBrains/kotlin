@@ -17,12 +17,11 @@
 package example
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.messageCollector
 
 public object ExampleConfigurationKeys {
     public val EXAMPLE_KEY: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("example argument")
@@ -52,8 +51,7 @@ public class ExampleCommandLineProcessor : CommandLineProcessor {
 public class ExampleComponentRegistrar : ComponentRegistrar {
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val exampleValue = configuration.get(ExampleConfigurationKeys.EXAMPLE_KEY)
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        messageCollector.report(CompilerMessageSeverity.INFO, "Project component registration: $exampleValue")
+        configuration.messageCollector.report(CompilerMessageSeverity.INFO, "Project component registration: $exampleValue")
     }
 
     override val supportsK2: Boolean = true

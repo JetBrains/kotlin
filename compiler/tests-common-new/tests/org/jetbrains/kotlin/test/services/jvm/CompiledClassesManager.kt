@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.test.services.jvm
 
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -39,7 +39,7 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
             }
             val outputFileCollection = SimpleOutputFileCollection(classFileFactory.currentOutput)
             val messageCollector = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-                .getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                .getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             outputFileCollection.writeAll(outputDir, messageCollector, reportOutputFiles = false)
             outputDir
         }

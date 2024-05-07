@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.util.Disposer
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
@@ -371,7 +371,7 @@ class ScriptTemplateTest : TestCase() {
                 *additionalClasspath
             )
             configuration.updateWithBaseCompilerArguments()
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+            configuration.messageCollector = messageCollector
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 ScriptDefinition.FromLegacy(
