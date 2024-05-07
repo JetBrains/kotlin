@@ -15,18 +15,12 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.setDeclarationsParent
-import org.jetbrains.kotlin.ir.util.typeSubstitutionMap
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -51,26 +45,52 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
         override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent?): IrExpression {
             expression.transformChildren(this, data)
 
-            val owner = expression.symbol.owner as? IrSimpleFunction
-                ?: return expression
+            val referencedFunction = expression.symbol.owner as? IrSimpleFunction ?: return expression
+            if (!referencedFunction.isInlineFunWithReifiedParameter()) return expression
 
-            if (!owner.isInlineFunWithReifiedParameter()) {
-                return expression
+            val localFunction = createLocalFunction(expression, referencedFunction, parent = data)
+
+            return context.createIrBuilder(container.symbol).irBlock(
+                expression,
+                origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+            ) {
+                +localFunction
+                +IrFunctionReferenceImpl.fromSymbolOwner(
+                    expression.startOffset,
+                    expression.endOffset,
+                    expression.type,
+                    localFunction.symbol,
+                    localFunction.typeParameters.size,
+                    expression.reflectionTarget
+                )
             }
-            @Suppress("UNCHECKED_CAST")
-            val typeSubstitutor = IrTypeSubstitutor(expression.typeSubstitutionMap as Map<IrTypeParameterSymbol, IrTypeArgument>)
+        }
 
-            val function = irFactory.buildFun {
-                name = Name.identifier("${owner.name}${"$"}wrap")
-                returnType = typeSubstitutor.substitute(owner.returnType)
+        private fun createLocalFunction(
+            expression: IrCallableReference<*>,
+            referencedFunction: IrFunction,
+            parent: IrDeclarationParent?
+        ): IrSimpleFunction {
+            check(parent != null) {
+                "Unable to get a proper parent while lower ${expression.render()} at ${container.render()}"
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            val typeSubstitutor = IrTypeSubstitutor(
+                expression.getTypeSubstitutionMap(referencedFunction) as Map<IrTypeParameterSymbol, IrTypeArgument>
+            )
+
+            return irFactory.buildFun {
+                name = Name.identifier("${referencedFunction.name}${"$"}wrap")
+                returnType = typeSubstitutor.substitute(referencedFunction.returnType)
                 visibility = DescriptorVisibilities.LOCAL
                 origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
             }.apply {
-                parent = data ?: error("Unable to get a proper parent while lower ${expression.render()} at ${container.render()}")
+                this.parent = parent
                 val irBuilder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
-                val forwardExtensionReceiverAsParam = owner.extensionReceiverParameter?.let { extensionReceiver ->
+                val forwardExtensionReceiverAsParam = referencedFunction.extensionReceiverParameter?.let { extensionReceiver ->
                     runIf(expression.extensionReceiver == null) {
                         addValueParameter(
                             extensionReceiver.name,
@@ -79,7 +99,7 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                         true
                     }
                 } ?: false
-                owner.valueParameters.forEach { valueParameter ->
+                referencedFunction.valueParameters.forEach { valueParameter ->
                     addValueParameter(
                         valueParameter.name,
                         typeSubstitutor.substitute(valueParameter.type)
@@ -91,7 +111,7 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                 ) {
                     statements.add(
                         irBuilder.irReturn(
-                            irBuilder.irCall(owner.symbol).also { call ->
+                            irBuilder.irCall(referencedFunction.symbol).also { call ->
                                 expression.extensionReceiver?.setDeclarationsParent(this@apply)
                                 expression.dispatchReceiver?.setDeclarationsParent(this@apply)
                                 val (extensionReceiver, forwardedParams) = if (forwardExtensionReceiverAsParam) {
@@ -112,20 +132,6 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                         )
                     )
                 }
-            }
-            return context.createIrBuilder(container.symbol).irBlock(
-                expression,
-                origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
-            ) {
-                +function
-                +IrFunctionReferenceImpl.fromSymbolOwner(
-                    expression.startOffset,
-                    expression.endOffset,
-                    expression.type,
-                    function.symbol,
-                    function.typeParameters.size,
-                    expression.reflectionTarget
-                )
             }
         }
     }
