@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.resolve.findClassRepresentation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -66,19 +66,18 @@ fun FirClassifierSymbol<*>.toIrSymbol(
     }
 }
 
-fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirBasedSymbol<*>? {
+fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirCallableSymbol<*>? {
     if (this !is FirResolvedNamedReference) {
         return null
     }
-    var symbol = resolvedSymbol
-
-    if (symbol is FirCallableSymbol<*>) {
-        if (symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
-            symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
-        }
-        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-        symbol = (symbol as FirCallableSymbol<*>).unwrapCallRepresentative(c)
+    var symbol = resolvedSymbol as? FirCallableSymbol<*> ?: errorWithAttachment("Non-callable symbol got from call reference") {
+        withEntry("symbol", resolvedSymbol.toString())
     }
+
+    if (symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
+        symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
+    }
+    symbol = symbol.unwrapCallRepresentative(c)
     return symbol
 }
 
@@ -94,19 +93,13 @@ fun FirReference.toIrSymbolForCall(
         returnsNotNull() implies (this@toIrSymbolForCall is FirResolvedNamedReference)
     }
 
-    return when (val symbol = extractDeclarationSiteSymbol(c)) {
-        is FirCallableSymbol<*> -> symbol.toIrSymbolForCall(
-            c,
-            dispatchReceiver,
-            explicitReceiver,
-            isDelegate,
-            isReference
-        )
-
-        is FirClassifierSymbol<*> -> symbol.toIrSymbol(c)
-        null -> null
-        else -> error("Unknown symbol: $this")
-    }
+    return extractDeclarationSiteSymbol(c)?.toIrSymbolForCall(
+        c,
+        dispatchReceiver,
+        explicitReceiver,
+        isDelegate,
+        isReference
+    )
 }
 
 fun FirCallableSymbol<*>.toIrSymbolForCall(

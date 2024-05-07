@@ -725,7 +725,7 @@ class CallAndReferenceGenerator(
 
         injectSetValueCall(variableAssignment, calleeReference, assignedValue)?.let { return it }
 
-        val firSymbol = calleeReference.extractDeclarationSiteSymbol(c) as FirCallableSymbol<*>?
+        val firSymbol = calleeReference.extractDeclarationSiteSymbol(c)
         val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
         if (isDynamicAccess) {
