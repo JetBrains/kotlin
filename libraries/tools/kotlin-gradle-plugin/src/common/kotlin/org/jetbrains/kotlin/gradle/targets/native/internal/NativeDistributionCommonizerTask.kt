@@ -13,6 +13,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
@@ -21,7 +22,9 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -43,7 +46,11 @@ import javax.inject.Inject
 internal abstract class NativeDistributionCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
-) : DefaultTask(), UsesBuildMetricsService, UsesKotlinNativeBundleBuildService {
+    providerFactory: ProviderFactory,
+) : DefaultTask(),
+    UsesBuildMetricsService,
+    UsesKotlinNativeBundleBuildService,
+    UsesClassLoadersCachingBuildService {
 
     private val konanHome = project.file(project.konanHome)
 
@@ -51,11 +58,6 @@ internal abstract class NativeDistributionCommonizerTask
     internal val commonizerTargets: Set<SharedCommonizerTarget> by lazy {
         project.collectAllSharedCommonizerTargetsFromBuild()
     }
-
-    @get:Internal
-    internal val kotlinPluginVersion: Property<String> = objectFactory
-        .property<String>()
-        .chainedFinalizeValueOnRead()
 
     @get:Classpath
     internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
@@ -65,7 +67,8 @@ internal abstract class NativeDistributionCommonizerTask
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
 
-    private val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
+    @get:Internal
+    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
     private val logLevel = project.commonizerLogLevel
 
@@ -114,24 +117,23 @@ internal abstract class NativeDistributionCommonizerTask
                 )
             })
 
+    @get:Internal
+    internal val commonizerToolRunner: Provider<KotlinNativeToolRunner> = providerFactory.provider {
+        objectFactory.KotlinNativeCommonizerToolRunner(
+            metrics,
+            classLoadersCachingService,
+            commonizerClasspath,
+            customJvmArgs
+        )
+    }
+
     @TaskAction
     protected fun run() {
         val metricsReporter = metrics.get()
 
         addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
-            val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(
-                kotlinPluginVersion.get(),
-                commonizerClasspath.files,
-                customJvmArgs.get(),
-                kotlinCompilerArgumentsLogLevel,
-            )
-            val commonizerRunner = objectFactory.KotlinNativeCommonizerToolRunner(
-                settings = runnerSettings,
-                metricsReporter = metricsReporter,
-            )
-
             commonizerCache.writeCacheForUncachedTargets(commonizerTargets) { todoOutputTargets ->
-                val commonizer = GradleCliCommonizer(commonizerRunner)
+                val commonizer = GradleCliCommonizer(commonizerToolRunner.get(), kotlinCompilerArgumentsLogLevel.get())
                 /* Invoke commonizer with only 'to do' targets */
                 commonizer.commonizeNativeDistribution(
                     konanHome,

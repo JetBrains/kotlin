@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -98,9 +97,11 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
                 group = "interop"
                 description = "Invokes the commonizer on c-interop bindings of the project"
 
-                kotlinPluginVersion.set(getKotlinPluginVersion())
                 commonizerClasspath.from(project.maybeCreateCommonizerClasspathConfiguration())
                 customJvmArgs.set(PropertiesProvider(project).commonizerJvmArgs)
+                kotlinCompilerArgumentsLogLevel
+                    .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
+                    .finalizeValueOnRead()
             }
         )
     }
@@ -161,7 +162,6 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
                 group = "interop"
                 description = "Invokes the commonizer on platform libraries provided by the Kotlin/Native distribution"
 
-                kotlinPluginVersion.set(getKotlinPluginVersion())
                 commonizerClasspath.from(rootProject.maybeCreateCommonizerClasspathConfiguration())
                 customJvmArgs.set(PropertiesProvider(rootProject).commonizerJvmArgs)
                 kotlinNativeProvider.set(rootProject.provider {
@@ -172,6 +172,9 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
                         enableDependenciesDownloading = false
                     )
                 })
+                kotlinCompilerArgumentsLogLevel
+                    .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
+                    .finalizeValueOnRead()
             }
         )
     }
