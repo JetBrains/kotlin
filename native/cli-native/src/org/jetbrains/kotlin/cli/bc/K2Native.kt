@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 
-private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
@@ -129,6 +128,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 val spawnedConfiguration = CompilerConfiguration()
 
                 spawnedConfiguration.messageCollector =  configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                spawnedConfiguration.performanceManager = configuration.performanceManager
                 spawnedConfiguration.put(IrMessageLogger.IR_MESSAGE_LOGGER, configuration.getNotNull(IrMessageLogger.IR_MESSAGE_LOGGER))
                 spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                 spawnedConfiguration.setupFromArguments(spawnedArguments)

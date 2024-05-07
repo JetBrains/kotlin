@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -59,6 +60,7 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
     val config = context.config
+    val rootPerformanceManager = backendContext.configuration.performanceManager
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
 
@@ -79,7 +81,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
                         generationStateEngine.runPhase(EntryPointPhase, module)
                     }
-                    generationStateEngine.lowerModuleWithDependencies(module)
+                    rootPerformanceManager.trackIRLowering {
+                        generationStateEngine.lowerModuleWithDependencies(module)
+                    }
                 }
                 return generationState
             } catch (t: Throwable) {
@@ -100,6 +104,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 return
             }
             try {
+                fragment.performanceManager?.notifyIRGenerationStarted()
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
@@ -123,6 +128,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
             } finally {
                 tempFiles.dispose()
+                fragment.performanceManager?.notifyIRGenerationFinished()
             }
         }
 
@@ -160,6 +166,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 thrownFromThread.get()?.let { throw it }
             }
         }
+        (rootPerformanceManager as? K2NativeCompilerPerformanceManager)?.collectChildMeasurements()
     }
 }
 
@@ -189,12 +196,14 @@ private data class BackendJobFragment(
         val cacheDeserializationStrategy: CacheDeserializationStrategy?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
+        val performanceManager: CommonCompilerPerformanceManager?,
 )
 
 private fun PhaseEngine<out Context>.splitIntoFragments(
         input: IrModuleFragment,
 ): Sequence<BackendJobFragment> {
     val config = context.config
+    val performanceManager = config.configuration.performanceManager as? K2NativeCompilerPerformanceManager
     return if (context.config.producePerFileCache) {
         val files = input.files.toList()
         val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
@@ -225,6 +234,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     cacheDeserializationStrategy,
                     dependenciesTracker,
                     llvmModuleSpecification,
+                    performanceManager?.createChild(),
             )
         }
     } else {
@@ -239,7 +249,8 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                         input,
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
-                        llvmModuleSpecification
+                        llvmModuleSpecification,
+                        performanceManager?.createChild(),
                 )
         )
     }
