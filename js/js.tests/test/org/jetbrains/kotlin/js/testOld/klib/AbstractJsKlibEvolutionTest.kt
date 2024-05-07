@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.compatibility.binary.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.compatibility.binary.AbstractKlibBinaryCompatibilityTest
+import org.jetbrains.kotlin.compatibility.binary.TestFile
+import org.jetbrains.kotlin.compatibility.binary.TestModule
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.test.Directives
@@ -151,7 +154,7 @@ abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : Abs
 private class TestMessageCollector : MessageCollector {
     override fun clear() {}
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        if (severity.isError()) error(message)
+        if (severity.isError) error(message)
     }
     override fun hasErrors(): Boolean = error("Unsupported operation")
 }

@@ -1,68 +1,48 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.cli.common.messages
 
-package org.jetbrains.kotlin.cli.common.messages;
+import java.util.*
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumSet;
-
-public enum CompilerMessageSeverity {
+enum class CompilerMessageSeverity {
     EXCEPTION,
     ERROR,
-    // Unlike a normal warning, a strong warning is not discarded when there are compilation errors.
-    // Use it for problems related to configuration, not the diagnostics
+
+    /**
+     * Unlike a normal warning, a strong warning is not discarded when there are compilation errors.
+     * Use it for problems related to configuration, not the diagnostics.
+     */
     STRONG_WARNING,
     WARNING,
     INFO,
     LOGGING,
+
     /**
      * Source to output files mapping messages (e.g A.kt->A.class).
      * It is needed for incremental compilation.
      */
     OUTPUT;
 
-    public static final EnumSet<CompilerMessageSeverity> VERBOSE = EnumSet.of(LOGGING);
+    val isError: Boolean
+        get() = this == EXCEPTION || this == ERROR
 
-    public boolean isError() {
-        return this == EXCEPTION || this == ERROR;
-    }
+    val isWarning: Boolean
+        get() = this == STRONG_WARNING || this == WARNING
 
-    public boolean isWarning() {
-        return this == STRONG_WARNING || this == WARNING;
-    }
-
-    @NotNull
-    public String getPresentableName() {
-        switch (this) {
-            case EXCEPTION:
-                return "exception";
-            case ERROR:
-                return "error";
-            case STRONG_WARNING:
-            case WARNING:
-                return "warning";
-            case INFO:
-                return "info";
-            case LOGGING:
-                return "logging";
-            case OUTPUT:
-                return "output";
-            default:
-                throw new UnsupportedOperationException("Unknown severity: " + this);
+    val presentableName: String
+        get() = when (this) {
+            EXCEPTION -> "exception"
+            ERROR -> "error"
+            STRONG_WARNING, WARNING -> "warning"
+            INFO -> "info"
+            LOGGING -> "logging"
+            OUTPUT -> "output"
         }
+
+    companion object {
+        @JvmField
+        val VERBOSE: EnumSet<CompilerMessageSeverity> = EnumSet.of(LOGGING)
     }
 }
