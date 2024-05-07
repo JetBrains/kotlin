@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.providers.KaCachedService
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.utils.mapToIndex
@@ -40,6 +41,7 @@ abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider
     /**
      * Cache [ProjectStructureProvider] to avoid service access when getting [KtModule]s.
      */
+    @KaCachedService
     private val projectStructureProvider: ProjectStructureProvider = ProjectStructureProvider.getInstance(project)
 
     private val contextualModule = session.llFirModuleData.ktModule
