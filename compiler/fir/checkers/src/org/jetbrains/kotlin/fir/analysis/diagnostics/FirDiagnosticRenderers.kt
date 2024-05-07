@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.rendering.ContextDependentRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.renderReadableWithFqNames
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
@@ -81,9 +84,9 @@ object FirDiagnosticRenderers {
         } + "\n"
     }
 
-    val RENDER_COLLECTION_OF_TYPES = Renderer { types: Collection<ConeKotlinType> ->
+    val RENDER_COLLECTION_OF_TYPES = ContextDependentRenderer { types: Collection<ConeKotlinType>, ctx ->
         types.joinToString(separator = ", ") { type ->
-            RENDER_TYPE.render(type)
+            RENDER_TYPE.render(type, ctx)
         }
     }
 
@@ -147,10 +150,43 @@ object FirDiagnosticRenderers {
         "$prefix '$name'"
     }
 
-    val RENDER_TYPE = Renderer { t: ConeKotlinType ->
+    val RENDER_TYPE = ContextDependentRenderer { t: ConeKotlinType, ctx ->
         // TODO, KT-59811: need a way to tune granuality, e.g., without parameter names in functional types.
-        t.renderReadableWithFqNames()
+        ctx[ADAPTIVE_RENDERED_TYPES].getValue(t)
     }
+
+    private val ADAPTIVE_RENDERED_TYPES: RenderingContext.Key<Map<ConeKotlinType, String>> =
+        object : RenderingContext.Key<Map<ConeKotlinType, String>>("ADAPTIVE_RENDERED_TYPES") {
+            override fun compute(objectsToRender: Collection<Any?>): Map<ConeKotlinType, String> {
+                val coneTypes = objectsToRender.filterIsInstance<ConeKotlinType>() +
+                        objectsToRender.filterIsInstance<Iterable<*>>().flatMap { it.filterIsInstance<ConeKotlinType>() }
+
+                val simpleRepresentationsByType: Map<ConeKotlinType, String> = coneTypes.associateWith { it.renderReadableWithFqNames() }
+                val typesByRepresentation: Map<String, List<ConeKotlinType>> =
+                    simpleRepresentationsByType.entries.groupBy({ it.value }, { it.key })
+
+                return coneTypes.associateWith {
+                    val representation = simpleRepresentationsByType.getValue(it)
+
+                    val typesWithSameRepresentation = typesByRepresentation.getValue(representation)
+                    if (typesWithSameRepresentation.size == 1) return@associateWith representation
+
+                    val index = typesWithSameRepresentation.indexOf(it) + 1
+
+                    buildString {
+                        append(representation)
+                        append('#')
+                        append(index)
+
+                        if (it is ConeTypeParameterType) {
+                            append(" (type parameter of ")
+                            append(SYMBOL.render(it.lookupTag.typeParameterSymbol.containingDeclarationSymbol))
+                            append(')')
+                        }
+                    }
+                }
+            }
+        }
 
     // TODO: properly implement
     val RENDER_TYPE_WITH_ANNOTATIONS = RENDER_TYPE

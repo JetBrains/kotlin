@@ -1,5 +1,5 @@
-/renderingOfTypesWithSameName.fir.kt:(159,169): error: Argument type mismatch: actual type is 'T', but 'T' was expected.
+/renderingOfTypesWithSameName.fir.kt:(159,169): error: Argument type mismatch: actual type is 'T#2 (type parameter of class MutableVector<T> : Any)', but 'T#1 (type parameter of fun <reified T : Any> foo(block: (T) -> Unit): Unit)' was expected.
 
-/renderingOfTypesWithSameName.fir.kt:(276,290): error: Argument type mismatch: actual type is 'CapturedType(in kotlin.String)', but 'CapturedType(in kotlin.String)' was expected.
+/renderingOfTypesWithSameName.fir.kt:(276,290): error: Argument type mismatch: actual type is 'CapturedType(in kotlin.String)#2', but 'CapturedType(in kotlin.String)#1' was expected.
 
 /renderingOfTypesWithSameName.fir.kt:(285,289): error: Null cannot be a value of a non-null type 'CapturedType(in kotlin.String)'.
