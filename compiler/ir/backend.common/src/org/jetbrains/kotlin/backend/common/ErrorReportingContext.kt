@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 
 interface ErrorReportingContext {
     val messageCollector: MessageCollector
+}
 
-    fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
-        val location = element?.getCompilerMessageLocation(irFile ?: error("irFile should be not null for $element"))
-        this.messageCollector.report(
-            if (isError) CompilerMessageSeverity.ERROR else CompilerMessageSeverity.WARNING,
-            message, location
-        )
-    }
+fun ErrorReportingContext.report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
+    val location = element?.getCompilerMessageLocation(irFile ?: error("irFile should be not null for $element"))
+    this.messageCollector.report(
+        if (isError) CompilerMessageSeverity.ERROR else CompilerMessageSeverity.WARNING,
+        message, location
+    )
 }
 
 fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =
