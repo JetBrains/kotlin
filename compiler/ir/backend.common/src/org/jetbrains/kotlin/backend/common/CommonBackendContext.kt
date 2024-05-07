@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingContext {
+interface CommonBackendContext : BackendContext, LoggingContext {
     override val ir: Ir<CommonBackendContext>
 
     val configuration: CompilerConfiguration

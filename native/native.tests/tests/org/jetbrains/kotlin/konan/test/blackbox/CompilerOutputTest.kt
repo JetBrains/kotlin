@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
-import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFrameworkCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
@@ -26,6 +22,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     @Test
@@ -149,6 +146,33 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val goldenData = rootDir.resolve("logging_invalid_error.txt")
 
         KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
+    }
+
+    @Test
+    fun testPhaseVerboseLogging() {
+        val rootDir = File("native/native.tests/testData/compilerOutput/phaseVerboseLogging")
+        val testCase = generateTestCaseWithSingleFile(
+            rootDir.resolve("main.kt"),
+            freeCompilerArgs = TestCompilerArgs("-Xverbose-phases=Linker"),
+            extras = TestCase.NoTestRunnerExtras("main"),
+            testKind = TestKind.STANDALONE_NO_TR,
+        )
+        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("phase_verbose_logging"))
+        val compilation = ExecutableCompilation(
+            testRunSettings,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            sourceModules = testCase.modules,
+            extras = testCase.extras,
+            dependencies = emptyList(),
+            expectedArtifact = expectedArtifact,
+        )
+        val compilationResult = compilation.result
+
+        val output = compilationResult.toOutput()
+        assertTrue(
+            Regex("^info: ", RegexOption.MULTILINE).containsMatchIn(output),
+            "compiler output should contain lines that start with 'info: '.\nActual output:\n$output"
+        )
     }
 
     private fun doBuildObjCFrameworkWithNameCollisions(rootDir: File, additionalOptions: List<String>): TestCompilationResult<out TestCompilationArtifact.ObjCFramework> {

@@ -65,13 +65,13 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
         compileSimpleFile(listOf("-Xllvm-variant=dev", "-Xverbose-phases=ObjectFiles")).let {
             assertFalse(
-                it.stdout.contains("-essentials"),
+                it.stderr.contains("-essentials"),
                 "`-essentials` must not be in stdout of dev LLVM.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
             )
         }
         compileSimpleFile(listOf("-Xllvm-variant=user", "-Xverbose-phases=ObjectFiles")).let {
             assertTrue(
-                it.stdout.contains("-essentials"),
+                it.stderr.contains("-essentials"),
                 "`-essentials` must be in stdout of user LLVM.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
             )
         }

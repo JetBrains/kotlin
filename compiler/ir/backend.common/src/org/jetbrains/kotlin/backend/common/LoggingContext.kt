@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.backend.common
 
-interface LoggingContext {
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+
+interface LoggingContext : ErrorReportingContext {
     var inVerbosePhase: Boolean
 
     fun log(message: () -> String) {
         if (inVerbosePhase) {
-            println(message())
+            // Not CompilerMessageSeverity.LOGGING, because that's only printed if the `-verbose` flag is passed.
+            messageCollector.report(CompilerMessageSeverity.INFO, message())
         }
     }
 }
