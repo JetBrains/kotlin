@@ -6,29 +6,9 @@ plugins {
     kotlin("multiplatform")
 }
 
-val composeVersion = "1.7.0-alpha07"
 repositories {
-    google {
-        content {
-            includeGroup("androidx.collection")
-            includeVersion("androidx.compose.runtime", "runtime", composeVersion)
-            includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
-            includeVersion("androidx.compose.foundation", "foundation-layout", composeVersion)
-            includeVersion("androidx.compose.foundation", "foundation-layout-desktop", composeVersion)
-            includeVersion("androidx.compose.foundation", "foundation", composeVersion)
-            includeVersion("androidx.compose.foundation", "foundation-desktop", composeVersion)
-            includeVersion("androidx.compose.animation", "animation", composeVersion)
-            includeVersion("androidx.compose.animation", "animation-desktop", composeVersion)
-            includeVersion("androidx.compose.ui", "ui", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-desktop", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-graphics", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-graphics-desktop", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-text", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-text-desktop", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-unit", composeVersion)
-            includeVersion("androidx.compose.ui", "ui-unit-desktop", composeVersion)
-        }
-    }
+    composeGoogleMaven()
+    androidxSnapshotRepo()
 }
 
 fun KotlinDependencyHandler.implementationArtifactOnly(dependency: String) {
@@ -87,14 +67,14 @@ kotlin {
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
 
                 // external deps
-                implementation("androidx.compose.runtime:runtime:$composeVersion")
-                implementationArtifactOnly("androidx.compose.foundation:foundation:$composeVersion")
-                implementationArtifactOnly("androidx.compose.foundation:foundation-layout:$composeVersion")
-                implementationArtifactOnly("androidx.compose.animation:animation:$composeVersion")
-                implementationArtifactOnly("androidx.compose.ui:ui:$composeVersion")
-                implementationArtifactOnly("androidx.compose.ui:ui-graphics:$composeVersion")
-                implementationArtifactOnly("androidx.compose.ui:ui-text:$composeVersion")
-                implementationArtifactOnly("androidx.compose.ui:ui-unit:$composeVersion")
+                implementation(composeRuntime())
+                implementationArtifactOnly("androidx.compose.foundation:foundation:$composeStableVersion")
+                implementationArtifactOnly("androidx.compose.foundation:foundation-layout:$composeStableVersion")
+                implementationArtifactOnly("androidx.compose.animation:animation:$composeStableVersion")
+                implementationArtifactOnly("androidx.compose.ui:ui:$composeStableVersion")
+                implementationArtifactOnly("androidx.compose.ui:ui-graphics:$composeStableVersion")
+                implementationArtifactOnly("androidx.compose.ui:ui-text:$composeStableVersion")
+                implementationArtifactOnly("androidx.compose.ui:ui-unit:$composeStableVersion")
                 implementationArtifactOnly("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
                 implementationArtifactOnly("com.google.dagger:dagger:2.40.1")
             }
