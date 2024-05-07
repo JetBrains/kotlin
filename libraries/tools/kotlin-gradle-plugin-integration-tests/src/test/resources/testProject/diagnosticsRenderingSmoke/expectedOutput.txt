@@ -1,11 +1,6 @@
 > Configure project :
 
 > Configure project :subprojectA
-e: [PreHMPPFlagsError | ERROR] The following properties are obsolete and no longer supported:
-kotlin.mpp.enableCompatibilityMetadataVariant, kotlin.mpp.hierarchicalStructureSupport
-Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties
-#diagnostic-end
-
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end
 

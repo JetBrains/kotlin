@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
-import kotlin.io.path.writeText
 
 @MppGradlePluginTests
 class MppDiagnosticsIt : KGPBaseTest() {
@@ -24,27 +22,6 @@ class MppDiagnosticsIt : KGPBaseTest() {
         project("diagnosticsRenderingSmoke", gradleVersion) {
             build {
                 assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
-            }
-        }
-    }
-
-    @GradleTest
-    fun testDeprecatedMppProperties(gradleVersion: GradleVersion) {
-        for (deprecatedProperty in this.deprecatedFlags) {
-            project("mppDeprecatedProperties", gradleVersion) {
-                checkDeprecatedProperties(isDeprecationExpected = false)
-
-                this.gradleProperties.appendText(
-                    "${deprecatedProperty.key}=${deprecatedProperty.value}${System.lineSeparator()}"
-                )
-                checkDeprecatedProperties(isDeprecationExpected = true)
-
-                // remove the MPP plugin from the top-level project and check the warnings are still reported in subproject
-                this.buildGradleKts.writeText("")
-                checkDeprecatedProperties(isDeprecationExpected = true)
-
-                this.gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError${System.lineSeparator()}")
-                checkDeprecatedProperties(isDeprecationExpected = false)
             }
         }
     }
@@ -233,22 +210,4 @@ class MppDiagnosticsIt : KGPBaseTest() {
         val suffixIfAny = if (suffix != null) "-$suffix" else ""
         return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
     }
-
-    private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
-        build {
-            if (isDeprecationExpected)
-                output.assertHasDiagnostic(KotlinToolingDiagnostics.PreHMPPFlagsError)
-            else
-                output.assertNoDiagnostic(KotlinToolingDiagnostics.PreHMPPFlagsError)
-        }
-    }
-
-    private val deprecatedFlags: Map<String, String>
-        get() = mapOf(
-            "kotlin.mpp.enableGranularSourceSetsMetadata" to "true",
-            "kotlin.mpp.enableCompatibilityMetadataVariant" to "false",
-            "kotlin.internal.mpp.hierarchicalStructureByDefault" to "true",
-            "kotlin.mpp.hierarchicalStructureSupport" to "true",
-            "kotlin.native.enableDependencyPropagation" to "false",
-        )
 }

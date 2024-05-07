@@ -261,7 +261,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             build("publish") {
                 assertEquals(
                     setOf(
-                        "my-lib-foo-metadata-1.0-all.jar",
+                        "my-lib-foo-metadata-1.0.jar",
                         "third-party-lib-metadata-1.0.jar",
                         "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
                     ),
@@ -279,8 +279,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
             testDependencyTransformations {
                 assertEquals(
                     setOf(
-                        "my-lib-foo-metadata-1.0-all.jar",
-                        "my-lib-bar-metadata-1.0-all.jar",
+                        "my-lib-foo-metadata-1.0.jar",
+                        "my-lib-bar-metadata-1.0.jar",
                         "third-party-lib-metadata-1.0.jar",
                         "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
                         "kotlin-dom-api-compat-${buildOptions.kotlinVersion}.klib",
@@ -420,7 +420,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
         ZipFile(
             localRepoDir.toFile().resolve(
-                "com/example/foo/my-lib-foo/1.0/my-lib-foo-1.0-all.jar"
+                "com/example/foo/my-lib-foo/1.0/my-lib-foo-1.0.jar"
             )
         ).use { publishedMetadataJar ->
             publishedMetadataJar.checkAllEntryNamesArePresent(
@@ -475,7 +475,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
         ZipFile(
             localRepoDir.toFile().resolve(
-                "com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-all.jar"
+                "com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0.jar"
             )
         ).use { publishedMetadataJar ->
             publishedMetadataJar.checkAllEntryNamesArePresent(
@@ -526,7 +526,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
 
         checkNamesOnCompileClasspath(
-            "$taskPrefix:compileKotlinMetadata",
+            "$taskPrefix:compileCommonMainKotlinMetadata",
             shouldInclude = listOf(
                 "my-lib-foo" to "main"
             ),
@@ -567,7 +567,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         assertTasksExecuted(expectedTasks(subprojectPrefix))
 
         checkNamesOnCompileClasspath(
-            "$taskPrefix:compileKotlinMetadata",
+            "$taskPrefix:compileCommonMainKotlinMetadata",
             shouldInclude = listOf(
                 "my-lib-bar" to "main",
                 "my-lib-foo" to "main"
