@@ -13,14 +13,27 @@ import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.providers.KaCachedService
 import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
 import kotlin.reflect.KClass
 
 public class KtReadActionConfinementLifetimeToken(
-    private val project: Project,
+    project: Project,
     private val modificationTracker: ModificationTracker,
 ) : KaLifetimeToken() {
     private val onCreatedTimeStamp = modificationTracker.modificationCount
+
+    /**
+     * Caches [KaAnalysisPermissionChecker] to avoid repeated [Project.getService] calls in validity assertions.
+     */
+    @KaCachedService
+    private val permissionChecker = KaAnalysisPermissionChecker.getInstance(project)
+
+    /**
+     * Caches [KaLifetimeTracker] to avoid repeated [Project.getService] calls in validity assertions.
+     */
+    @KaCachedService
+    private val lifetimeTracker = KaLifetimeTracker.getInstance(project)
 
     override val factory: KaLifetimeTokenFactory get() = KtReadActionConfinementLifetimeTokenFactory
 
@@ -35,18 +48,17 @@ public class KtReadActionConfinementLifetimeToken(
 
     override fun isAccessible(): Boolean {
         if (!ApplicationManager.getApplication().isReadAccessAllowed) return false
-        if (!KaAnalysisPermissionChecker.getInstance(project).isAnalysisAllowed()) return false
+        if (!permissionChecker.isAnalysisAllowed()) return false
 
-        return KaLifetimeTracker.getInstance(project).currentToken == this
+        return lifetimeTracker.currentToken == this
     }
 
     override fun getInaccessibilityReason(): String {
         if (!ApplicationManager.getApplication().isReadAccessAllowed) return "Called outside a read action."
 
-        val permissionChecker = KaAnalysisPermissionChecker.getInstance(project)
         if (!permissionChecker.isAnalysisAllowed()) return permissionChecker.getRejectionReason()
 
-        val currentToken = KaLifetimeTracker.getInstance(project).currentToken
+        val currentToken = lifetimeTracker.currentToken
         if (currentToken == null) return "Called outside an `analyze` context."
         if (currentToken != this) return "Using a lifetime owner from an old `analyze` context."
 

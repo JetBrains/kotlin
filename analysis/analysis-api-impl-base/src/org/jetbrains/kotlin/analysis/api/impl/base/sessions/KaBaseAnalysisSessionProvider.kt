@@ -12,12 +12,27 @@ import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteAction
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.providers.KaCachedService
 import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
 
 abstract class KaBaseAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
-    private val lifetimeTracker = KaBaseLifetimeTracker.getInstance(project)
+    /**
+     * Caches [KaAnalysisPermissionChecker] to avoid repeated [Project.getService] calls in [analyze].
+     */
+    @KaCachedService
+    private val permissionChecker by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KaAnalysisPermissionChecker.getInstance(project)
+    }
+
+    /**
+     * Caches [KaBaseLifetimeTracker] to avoid repeated [Project.getService] calls in [analyze].
+     */
+    @KaCachedService
+    private val lifetimeTracker by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KaBaseLifetimeTracker.getInstance(project)
+    }
 
     private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
 
@@ -34,7 +49,6 @@ abstract class KaBaseAnalysisSessionProvider(project: Project) : KtAnalysisSessi
     }
 
     private fun beforeEnteringAnalysis(session: KtAnalysisSession) {
-        val permissionChecker = KaAnalysisPermissionChecker.getInstance(project)
         if (!permissionChecker.isAnalysisAllowed()) {
             throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
         }

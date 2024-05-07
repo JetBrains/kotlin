@@ -7,12 +7,21 @@ package org.jetbrains.kotlin.analysis.api.impl.base.permissions
 
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
+import org.jetbrains.kotlin.analysis.providers.KaCachedService
 import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
 
 internal class KaBaseAnalysisPermissionChecker : KaAnalysisPermissionChecker {
+    /**
+     * Caches [KaAnalysisPermissionRegistry] to avoid repeated `getService` calls in [analyze][org.jetbrains.kotlin.analysis.api.analyze]
+     * and validity assertions.
+     */
+    @KaCachedService
+    private val permissionRegistry by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KaAnalysisPermissionRegistry.getInstance()
+    }
+
     override fun isAnalysisAllowed(): Boolean {
         val application = ApplicationManager.getApplication()
-        val permissionRegistry = KaAnalysisPermissionRegistry.getInstance()
 
         if (application.isDispatchThread && !permissionRegistry.isAnalysisAllowedOnEdt) return false
         if (application.isWriteAccessAllowed && !permissionRegistry.isAnalysisAllowedInWriteAction) return false
@@ -23,7 +32,6 @@ internal class KaBaseAnalysisPermissionChecker : KaAnalysisPermissionChecker {
 
     override fun getRejectionReason(): String {
         val application = ApplicationManager.getApplication()
-        val permissionRegistry = KaAnalysisPermissionRegistry.getInstance()
 
         if (application.isDispatchThread && !permissionRegistry.isAnalysisAllowedOnEdt) {
             return "Called in the EDT thread."
