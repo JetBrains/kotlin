@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -476,10 +477,22 @@ internal class KtFe10CallResolver(
         } else {
             return KtPartiallyAppliedSymbol(
                 signature,
-                dispatchReceiver?.toKtReceiverValue(context, this, smartCastDispatchReceiverType),
+                dispatchReceiver?.toKtReceiverValue(context, this, smartCastDispatchReceiverType)
+                    ?: targetDescriptor.dispatchReceiverForImportedCallables(this),
                 extensionReceiver?.toKtReceiverValue(context, this),
             )
         }
+    }
+
+    private fun CallableDescriptor.dispatchReceiverForImportedCallables(resolvedCall: ResolvedCall<*>): KtReceiverValue? {
+        if (this !is ImportedFromObjectCallableDescriptor<*>) return null
+        val expression = resolvedCall.call.callElement as? KtExpression ?: return null
+        return KtExplicitReceiverValue(
+            expression,
+            containingObject.defaultType.toKtType(analysisContext),
+            isSafeNavigation = false,
+            token,
+        )
     }
 
     private fun ReceiverValue.toKtReceiverValue(
