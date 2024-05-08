@@ -248,6 +248,12 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("approximatedCapturedType.kt")
+    public void testApproximatedCapturedType() {
+      runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/approximatedCapturedType.kt");
+    }
+
+    @Test
     @TestMetadata("contextFunctionTypes.kt")
     public void testContextFunctionTypes() {
       runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/contextFunctionTypes.kt");
