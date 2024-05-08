@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import kotlin.collections.set
 
@@ -30,6 +29,9 @@ abstract class InventNamesForLocalClasses(
     protected abstract fun computeTopLevelClassName(clazz: IrClass): String
     protected abstract fun sanitizeNameIfNeeded(name: String): String
 
+    /** Makes it possible to do customizations for [IrClass] */
+    protected open fun customizeNameInventorData(clazz: IrClass, data: NameInventorData): NameInventorData = data
+
     protected abstract fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String)
 
     override fun lower(irFile: IrFile) {
@@ -40,7 +42,7 @@ abstract class InventNamesForLocalClasses(
      * @property enclosingName internal name of the enclosing class (including anonymous classes, local objects and callable references)
      * @property isLocal true if the next declaration to be encountered in the IR tree is local
      */
-    private data class NameInventorData(
+    protected data class NameInventorData(
         val enclosingName: String?,
         val isLocal: Boolean,
         val processingInlinedFunction: Boolean = false
@@ -72,16 +74,10 @@ abstract class InventNamesForLocalClasses(
         }
 
         override fun visitClass(declaration: IrClass, data: NameInventorData) {
-            val parent = declaration.parent
-            val isLocal = parent is IrFile && declaration.isAnonymousObject
-            if (!isLocal) return processClass(declaration, data)
-
-            @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-            val enclosingName = (parent as IrFile).name.removeSuffix(".kt").plus("Kt").capitalizeAsciiOnly()
-            processClass(declaration, data.copy(enclosingName = enclosingName, isLocal = true))
+            visitClassWithCustomizedData(declaration, customizeNameInventorData(declaration, data))
         }
 
-        private fun processClass(declaration: IrClass, data: NameInventorData) {
+        private fun visitClassWithCustomizedData(declaration: IrClass, data: NameInventorData) {
             if (!data.isLocal) {
                 // This is not a local class, so we need not invent a name for it, the type mapper will correctly compute it
                 // by navigating through its containers.
