@@ -142,7 +142,16 @@ class MetadataPackageFragment(
     }
 
     companion object {
-        const val METADATA_FILE_EXTENSION = "kotlin_metadata"
-        const val DOT_METADATA_FILE_EXTENSION = ".$METADATA_FILE_EXTENSION"
+        @Deprecated(
+            "The constant has been moved",
+            ReplaceWith("METADATA_FILE_EXTENSION", "org.jetbrains.kotlin.serialization.deserialization"),
+        )
+        const val METADATA_FILE_EXTENSION = org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
+
+        @Deprecated(
+            "The constant has been moved",
+            ReplaceWith("DOT_METADATA_FILE_EXTENSION", "org.jetbrains.kotlin.serialization.deserialization")
+        )
+        const val DOT_METADATA_FILE_EXTENSION = org.jetbrains.kotlin.serialization.deserialization.DOT_METADATA_FILE_EXTENSION
     }
 }

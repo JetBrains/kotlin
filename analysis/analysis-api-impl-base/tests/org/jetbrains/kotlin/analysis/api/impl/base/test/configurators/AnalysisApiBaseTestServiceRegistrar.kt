@@ -28,11 +28,14 @@ import org.jetbrains.kotlin.analysis.test.framework.services.configuration.libra
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
+import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileClassProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
+import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.NO_RUNTIME
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -134,8 +137,10 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     }
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, "kotlin_builtins")
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, "kotlin_metadata")
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, "knm")
+        testServices.environmentManager.getApplicationEnvironment()
+            .registerFileType(KotlinBuiltInFileType, BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION)
+
+        testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, METADATA_FILE_EXTENSION)
+        testServices.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, KLIB_METADATA_FILE_EXTENSION)
     }
 }

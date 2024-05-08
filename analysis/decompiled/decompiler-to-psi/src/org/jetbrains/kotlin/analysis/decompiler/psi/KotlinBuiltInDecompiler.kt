@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
@@ -15,7 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
+import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.ByteArrayInputStream
@@ -92,12 +95,12 @@ class BuiltInDefinitionFile(
             }
 
             val proto = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-            val result =
-                BuiltInDefinitionFile(
-                    proto, version, file.parent,
-                    file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION,
-                    filterOutClassesExistingAsClassFiles
-                )
+            val result = BuiltInDefinitionFile(
+                proto, version, file.parent,
+                file.extension == METADATA_FILE_EXTENSION,
+                filterOutClassesExistingAsClassFiles
+            )
+
             val packageProto = result.proto.`package`
             if (result.classesToDecompile.isEmpty() &&
                 packageProto.typeAliasCount == 0 && packageProto.functionCount == 0 && packageProto.propertyCount == 0

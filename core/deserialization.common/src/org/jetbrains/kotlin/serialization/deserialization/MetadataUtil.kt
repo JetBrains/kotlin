@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.io.InputStream
 
+const val METADATA_FILE_EXTENSION = "kotlin_metadata"
+const val DOT_METADATA_FILE_EXTENSION = ".$METADATA_FILE_EXTENSION"
+
 class MetadataClassDataFinder(val finder: KotlinMetadataFinder) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
         val topLevelClassId = generateSequence(classId, ClassId::outerClassId).last()
