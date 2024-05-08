@@ -305,7 +305,7 @@ internal class ObjCExportCodeGenerator(
 
     // Caution! Arbitrary methods shouldn't be called from Runnable thread state.
     fun ObjCExportFunctionGenerationContext.genSendMessage(
-            returnType: LlvmParamType,
+            returnType: LlvmRetType,
             parameterTypes: List<LlvmParamType>,
             receiver: LLVMValueRef,
             selector: String,
@@ -1941,11 +1941,11 @@ private fun MethodBridge.ReturnValue.toLlvmRetType(
         MethodBridge.ReturnValue.Void -> LlvmRetType(llvm.voidType)
 
         MethodBridge.ReturnValue.HashCode -> LlvmRetType(if (generationState.is64BitNSInteger()) llvm.int64Type else llvm.int32Type)
-        is MethodBridge.ReturnValue.Mapped -> this.bridge.toLlvmParamType(llvm)
-        MethodBridge.ReturnValue.WithError.Success -> ValueTypeBridge(ObjCValueType.BOOL).toLlvmParamType(llvm)
+        is MethodBridge.ReturnValue.Mapped -> this.bridge.toLlvmRetType(llvm)
+        MethodBridge.ReturnValue.WithError.Success -> ValueTypeBridge(ObjCValueType.BOOL).toLlvmRetType(llvm)
 
         MethodBridge.ReturnValue.Instance.InitResult,
-        MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.toLlvmParamType(llvm)
+        MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.toLlvmRetType(llvm)
 
         is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.toLlvmRetType(generationState)
     }
@@ -1954,6 +1954,11 @@ private fun MethodBridge.ReturnValue.toLlvmRetType(
 private fun TypeBridge.toLlvmParamType(llvm: CodegenLlvmHelpers): LlvmParamType = when (this) {
     is ReferenceBridge, is BlockPointerBridge -> LlvmParamType(llvm.int8PtrType)
     is ValueTypeBridge -> LlvmParamType(this.objCValueType.toLlvmType(llvm), this.objCValueType.defaultParameterAttributes)
+}
+
+private fun TypeBridge.toLlvmRetType(llvm: CodegenLlvmHelpers): LlvmRetType = when (this) {
+    is ReferenceBridge, is BlockPointerBridge -> LlvmRetType(llvm.int8PtrType)
+    is ValueTypeBridge -> LlvmRetType(this.objCValueType.toLlvmType(llvm), this.objCValueType.defaultParameterAttributes)
 }
 
 internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): String {
