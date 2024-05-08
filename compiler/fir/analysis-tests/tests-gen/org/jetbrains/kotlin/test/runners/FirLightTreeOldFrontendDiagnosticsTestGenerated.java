@@ -18050,6 +18050,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("capturedApproximationWithInproperUpperConstraint.kt")
+        public void testCapturedApproximationWithInproperUpperConstraint() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedApproximationWithInproperUpperConstraint.kt");
+        }
+
+        @Test
         @TestMetadata("capturedAssignment.kt")
         public void testCapturedAssignment() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedAssignment.kt");
