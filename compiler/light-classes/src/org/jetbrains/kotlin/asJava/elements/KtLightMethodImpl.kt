@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,12 +10,13 @@ import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.*
 
@@ -168,29 +169,3 @@ abstract class KtLightMethodImpl protected constructor(
 
     abstract override fun findSuperMethods(parentClass: PsiClass?): Array<out PsiMethod>
 }
-
-fun KtLightMethod.isTraitFakeOverride(): Boolean {
-    val methodOrigin = this.kotlinOrigin
-    if (!(methodOrigin is KtNamedFunction || methodOrigin is KtPropertyAccessor || methodOrigin is KtProperty)) {
-        return false
-    }
-
-    val parentOfMethodOrigin = PsiTreeUtil.getParentOfType(methodOrigin, KtClassOrObject::class.java)
-    val thisClassDeclaration = this.containingClass.kotlinOrigin
-
-    // Method was generated from declaration in some other trait
-    return (parentOfMethodOrigin != null && thisClassDeclaration !== parentOfMethodOrigin && KtPsiUtil.isTrait(parentOfMethodOrigin))
-}
-
-fun KtLightMethod.isAccessor(getter: Boolean): Boolean {
-    val origin = kotlinOrigin as? KtCallableDeclaration ?: return false
-    if (origin !is KtProperty && origin !is KtParameter) return false
-    val expectedParametersCount = (if (getter) 0 else 1) + (if (origin.receiverTypeReference != null) 1 else 0)
-    return parameterList.parametersCount == expectedParametersCount
-}
-
-val KtLightMethod.isGetter: Boolean
-    get() = isAccessor(true)
-
-val KtLightMethod.isSetter: Boolean
-    get() = isAccessor(false)
