@@ -238,7 +238,7 @@ class CacheBuilder(
 
         val libraryCacheDirectory = when {
             library.isDefault -> konanConfig.systemCacheDirectory
-            isExternal -> CachedLibraries.computeVersionedCacheDirectory(
+            isExternal -> CachedLibraries.computeLibraryCacheDirectory(
                     konanConfig.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash)
             else -> konanConfig.incrementalCacheDirectory!!
         }
