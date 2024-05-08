@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import kotlin.collections.set
 
-abstract class InventNamesForLocalClasses(
-    private val allowTopLevelCallables: Boolean,
-    private val generateNamesForRegeneratedObjects: Boolean = false
-) : FileLoweringPass {
+abstract class InventNamesForLocalClasses(private val generateNamesForRegeneratedObjects: Boolean = false) : FileLoweringPass {
 
     protected abstract fun computeTopLevelClassName(clazz: IrClass): String
     protected abstract fun sanitizeNameIfNeeded(name: String): String
@@ -199,7 +196,7 @@ abstract class InventNamesForLocalClasses(
                 val newData = data.copy(
                     enclosingName = inventName(
                         declaration.name,
-                        if (data.enclosingName == null && allowTopLevelCallables) data.copy(enclosingName = "") else data
+                        if (data.enclosingName == null) data.copy(enclosingName = "") else data
                     )
                 )
                 val internalName = inventName(null, newData)

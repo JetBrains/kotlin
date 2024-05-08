@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 
-class JsInventNamesForLocalClasses(private val context: JsIrBackendContext) : InventNamesForLocalClasses(allowTopLevelCallables = true) {
+class JsInventNamesForLocalClasses(private val context: JsIrBackendContext) : InventNamesForLocalClasses() {
     override fun computeTopLevelClassName(clazz: IrClass): String = clazz.name.toString()
 
     override fun sanitizeNameIfNeeded(name: String): String = sanitizeName(name, withHash = false)
