@@ -169,6 +169,7 @@ val commonCompilerModules = arrayOf(
     ":kotlin-util-klib-abi",
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
+    ":wasm:wasm.config",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
@@ -243,7 +244,6 @@ val fe10CompilerModules = arrayOf(
     ":native:frontend.native",
     ":native:kotlin-native-utils",
     ":wasm:wasm.frontend",
-    ":wasm:wasm.config",
     ":compiler:backend.common.jvm",
     ":analysis:decompiled:light-classes-for-decompiled-fe10",
 ).also { extra["fe10CompilerModules"] = it }
