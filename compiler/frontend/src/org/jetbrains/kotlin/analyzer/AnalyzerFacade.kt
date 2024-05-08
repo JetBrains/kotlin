@@ -278,24 +278,6 @@ interface PackageOracleFactory {
     }
 }
 
-interface LanguageSettingsProvider {
-    fun getLanguageVersionSettings(
-        moduleInfo: ModuleInfo,
-        project: Project
-    ): LanguageVersionSettings
-
-    fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion
-
-    object Default : LanguageSettingsProvider {
-        override fun getLanguageVersionSettings(
-            moduleInfo: ModuleInfo,
-            project: Project
-        ) = LanguageVersionSettingsImpl.DEFAULT
-
-        override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion = TargetPlatformVersion.NoVersion
-    }
-}
-
 interface ResolverForModuleComputationTracker {
 
     fun onResolverComputed(moduleInfo: ModuleInfo)
