@@ -30968,6 +30968,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("javaFieldAndCompanionProperty.kt")
+        public void testJavaFieldAndCompanionProperty() {
+          runTest("compiler/testData/diagnostics/tests/properties/javaFieldAndKotlinProperty/javaFieldAndCompanionProperty.kt");
+        }
+
+        @Test
         @TestMetadata("javaFieldAndKotlinInvisibleProperty.kt")
         public void testJavaFieldAndKotlinInvisibleProperty() {
           runTest("compiler/testData/diagnostics/tests/properties/javaFieldAndKotlinProperty/javaFieldAndKotlinInvisibleProperty.kt");
