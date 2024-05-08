@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
 import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.test.services.configuration.getDependencies
 
 class FirJsKlibBackendFacade(
     testServices: TestServices,
@@ -86,10 +87,8 @@ class FirJsKlibBackendFacade(
             inputArtifact.irModuleFragment.descriptor.builtIns,
             packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
-        )
-        // TODO: find out why it must be so weird
-        moduleDescriptor.safeAs<ModuleDescriptorImpl>()?.let {
-            it.setDependencies(inputArtifact.irModuleFragment.descriptor.allDependencyModules.filterIsInstance<ModuleDescriptorImpl>() + it)
+        ).apply {
+            setDependencies(inputArtifact.regularDependencyModules + this, module.friendDependencyModules)
         }
 
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
@@ -100,4 +99,18 @@ class FirJsKlibBackendFacade(
 
         return BinaryArtifacts.KLib(outputFile, inputArtifact.diagnosticReporter)
     }
+
+
+    /**
+     * Note: If it is implemented the same way as [friendDependencyModules] (i.e., get regular
+     * dependencies through [getDependencies] call), then important dependencies which do
+     * not exist in the form of [TestModule] such as stdlib & stdlib-test would not be included here.
+     */
+    private val IrBackendInput.regularDependencyModules: List<ModuleDescriptorImpl>
+        get() = irModuleFragment.descriptor.allDependencyModules
+            .filterIsInstance<ModuleDescriptorImpl>()
+
+    private val TestModule.friendDependencyModules: Set<ModuleDescriptorImpl>
+        get() = getDependencies(this, testServices, DependencyRelation.FriendDependency)
+            .filterIsInstanceTo<ModuleDescriptorImpl, MutableSet<ModuleDescriptorImpl>>(mutableSetOf())
 }
