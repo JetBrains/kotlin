@@ -667,6 +667,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("superclassMetaAnnotation.kt")
+  public void testSuperclassMetaAnnotation() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/superclassMetaAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelFunctions.kt")
   public void testTopLevelFunctions() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctions.kt");
