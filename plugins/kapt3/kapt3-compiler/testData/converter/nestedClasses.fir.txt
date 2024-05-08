@@ -21,6 +21,7 @@
  */
 @kotlin.Metadata()
 public final class A {
+
     @org.jetbrains.annotations.Nullable()
     private final A x = null;
 
@@ -65,9 +66,9 @@ public final class A {
          */
         @kotlin.Metadata()
         public static final class DefaultImpls {
-
         }
     }
+
     /**
      * public final object A.C : kotlin/Any {
      *
@@ -81,6 +82,7 @@ public final class A {
      */
     @kotlin.Metadata()
     public static final class C {
+
         @org.jetbrains.annotations.NotNull()
         public static final A.C INSTANCE = null;
 
@@ -174,6 +176,8 @@ public final class A2 {
                     super();
                 }
 
+
+
                 /**
                  * public final class A2.B.C.D.Cme : kotlin/Any {
                  *
@@ -190,6 +194,8 @@ public final class A2 {
                         super();
                     }
                 }
+
+
                 /**
                  * public final class A2.B.C.D.E : kotlin/Any {
                  *
@@ -300,6 +306,7 @@ public final class Test {
             }
         }
     }
+
     /**
      * public final inner class Test.Inner : kotlin/Any {
      *
@@ -316,6 +323,7 @@ public final class Test {
             super();
         }
     }
+
     /**
      * public final object Test.NestedObject : kotlin/Any {
      *
@@ -327,6 +335,7 @@ public final class Test {
      */
     @kotlin.Metadata()
     public static final class NestedObject {
+
         @org.jetbrains.annotations.NotNull()
         public static final Test.NestedObject INSTANCE = null;
 
@@ -334,6 +343,7 @@ public final class Test {
             super();
         }
     }
+
     /**
      * public abstract interface Test.NestedInterface : kotlin/Any {
      *
@@ -343,6 +353,7 @@ public final class Test {
     @kotlin.Metadata()
     public static abstract interface NestedInterface {
     }
+
     /**
      * public final enum class Test.NestedEnum : kotlin/Enum<Test.NestedEnum> {
      *

@@ -50,6 +50,7 @@ package deprecated;
 @Anno()
 @java.lang.Deprecated
 public final class Foo {
+
     @java.lang.Deprecated
     private final int prop = 0;
 
@@ -62,16 +63,6 @@ public final class Foo {
     public final void foo(int a) {
     }
 
-    @java.lang.Deprecated
-    public final int getProp() {
-        return 0;
-    }
-
-    @kotlin.Deprecated(message = "Deprecated property")
-    @java.lang.Deprecated()
-    public static void getProp$annotations() {
-    }
-
     @kotlin.Deprecated(message = "Deprecated getter")
     @java.lang.Deprecated
     public final int getFoo() {
@@ -81,5 +72,15 @@ public final class Foo {
     @kotlin.Deprecated(message = "Deprecated setter")
     @java.lang.Deprecated
     public final void setFoo(int value) {
+    }
+
+    @kotlin.Deprecated(message = "Deprecated property")
+    @java.lang.Deprecated()
+    public static void getProp$annotations() {
+    }
+
+    @java.lang.Deprecated
+    public final int getProp() {
+        return 0;
     }
 }

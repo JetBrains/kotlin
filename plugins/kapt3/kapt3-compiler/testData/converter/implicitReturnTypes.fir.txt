@@ -18,6 +18,7 @@ package test;
  */
 @kotlin.Metadata()
 public final class Cl {
+
     @org.jetbrains.annotations.NotNull()
     private java.lang.String name;
 
@@ -62,6 +63,7 @@ package test;
  */
 @kotlin.Metadata()
 public final class TestKt {
+
     @org.jetbrains.annotations.NotNull()
     private static final lib.Prop<test.Cl> TEST = null;
 

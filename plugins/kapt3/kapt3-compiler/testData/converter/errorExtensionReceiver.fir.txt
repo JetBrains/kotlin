@@ -29,6 +29,7 @@
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class TypeHook {
+
     @org.jetbrains.annotations.NotNull()
     public static final TypeHook.Companion Companion = null;
 

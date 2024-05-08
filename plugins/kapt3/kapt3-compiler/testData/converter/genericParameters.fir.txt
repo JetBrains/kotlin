@@ -25,6 +25,7 @@
  */
 @kotlin.Metadata()
 public final class MappedList<T extends java.lang.Object, R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R>, kotlin.jvm.internal.markers.KMappedMarker {
+
     @org.jetbrains.annotations.NotNull()
     private final java.util.List<T> list = null;
 
@@ -35,11 +36,6 @@ public final class MappedList<T extends java.lang.Object, R extends java.lang.Ob
         super();
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.List<T> getList() {
-        return null;
-    }
-
     @java.lang.Override()
     public R get(int index) {
         return null;
@@ -48,5 +44,10 @@ public final class MappedList<T extends java.lang.Object, R extends java.lang.Ob
     @java.lang.Override()
     public int getSize() {
         return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<T> getList() {
+        return null;
     }
 }

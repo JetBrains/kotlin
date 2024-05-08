@@ -40,8 +40,13 @@ package secondary;
  */
 @kotlin.Metadata()
 public final class Product2 implements secondary.Named {
+
     @org.jetbrains.annotations.Nullable()
     private java.lang.String name = null;
+
+    public Product2(@org.jetbrains.annotations.NotNull() java.lang.String otherName) {
+        super();
+    }
 
     @org.jetbrains.annotations.Nullable()
     @java.lang.Override()
@@ -50,9 +55,5 @@ public final class Product2 implements secondary.Named {
     }
 
     public void setName(@org.jetbrains.annotations.Nullable() java.lang.String p0) {
-    }
-
-    public Product2(@org.jetbrains.annotations.NotNull() java.lang.String otherName) {
-        super();
     }
 }

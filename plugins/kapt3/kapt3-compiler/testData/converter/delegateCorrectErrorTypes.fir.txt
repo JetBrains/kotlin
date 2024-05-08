@@ -16,6 +16,7 @@ package test;
  */
 @kotlin.Metadata()
 public final class Bar {
+
     @org.jetbrains.annotations.NotNull()
     private final test.Delegate unknown$delegate = null;
 

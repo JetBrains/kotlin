@@ -43,6 +43,7 @@ public final class A {
  */
 @kotlin.Metadata()
 public final class Kt66541Kt {
+
     @org.jetbrains.annotations.NotNull()
     private static final kotlin.reflect.KClass<A> ref1 = null;
 

@@ -99,8 +99,6 @@ public final class NonExistentClassWIthoutCorrectionKt {
  */
 @kotlin.Metadata()
 public final class NonExistentType {
-    @org.jetbrains.annotations.NotNull()
-    public static final NonExistentType INSTANCE = null;
 
     @org.jetbrains.annotations.NotNull()
     private static final error.NonExistentClass a = null;
@@ -126,12 +124,25 @@ public final class NonExistentType {
 
     public static error.NonExistentClass coocoo31;
 
+    @org.jetbrains.annotations.NotNull()
+    public static final NonExistentType INSTANCE = null;
+
     private NonExistentType() {
         super();
     }
 
     @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass a(@org.jetbrains.annotations.NotNull() error.NonExistentClass a, @org.jetbrains.annotations.NotNull() java.lang.String s) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
     public final error.NonExistentClass getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull() java.lang.String s) {
         return null;
     }
 
@@ -196,15 +207,5 @@ public final class NonExistentType {
     }
 
     public final void setCoocoo31(@org.jetbrains.annotations.NotNull() error.NonExistentClass p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass a(@org.jetbrains.annotations.NotNull() error.NonExistentClass a, @org.jetbrains.annotations.NotNull() java.lang.String s) {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull() java.lang.String s) {
-        return null;
     }
 }

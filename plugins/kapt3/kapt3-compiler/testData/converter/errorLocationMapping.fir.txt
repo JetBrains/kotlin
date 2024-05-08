@@ -68,6 +68,7 @@ public final class ErrorInAnnotation {
  */
 @kotlin.Metadata()
 public final class ErrorInConstructorParameter {
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
@@ -157,14 +158,15 @@ public final class ErrorInConstructorParameter {
  */
 @kotlin.Metadata()
 public final class ErrorInDeclarations {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final ErrorInDeclarations.Companion Companion = null;
+
     public java.lang.String p1;
 
     public ABC p2;
 
     public BCD<java.lang.String> p3;
-
-    @org.jetbrains.annotations.NotNull()
-    public static final ErrorInDeclarations.Companion Companion = null;
 
     public ErrorInDeclarations() {
         super();
@@ -215,11 +217,11 @@ public final class ErrorInDeclarations {
     }
 
     @kotlin.jvm.JvmOverloads()
-    public final void f5(@org.jetbrains.annotations.NotNull() ABC a) {
+    public final void f5(@org.jetbrains.annotations.NotNull() ABC a, @org.jetbrains.annotations.NotNull() java.lang.String b) {
     }
 
     @kotlin.jvm.JvmOverloads()
-    public final void f5(@org.jetbrains.annotations.NotNull() ABC a, @org.jetbrains.annotations.NotNull() java.lang.String b) {
+    public final void f5(@org.jetbrains.annotations.NotNull() ABC a) {
     }
 
     @kotlin.jvm.JvmStatic()

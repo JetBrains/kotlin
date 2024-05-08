@@ -31,6 +31,7 @@ package kapt;
  */
 @kotlin.Metadata()
 public final class StaticImport {
+
     private final java.util.Collection<java.lang.String> x = null;
 
     private final kapt.StaticMethod<java.lang.String> l = null;

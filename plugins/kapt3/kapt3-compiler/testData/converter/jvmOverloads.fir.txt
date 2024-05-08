@@ -24,6 +24,7 @@
  */
 @kotlin.Metadata()
 public final class State {
+
     private final int someInt = 0;
 
     private final long someLong = 0L;
@@ -32,12 +33,12 @@ public final class State {
     private final java.lang.String someString = null;
 
     @kotlin.jvm.JvmOverloads()
-    public State(int someInt, long someLong) {
+    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
         super();
     }
 
     @kotlin.jvm.JvmOverloads()
-    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+    public State(int someInt, long someLong) {
         super();
     }
 
@@ -90,6 +91,7 @@ public final class State {
  */
 @kotlin.Metadata()
 public final class State2 {
+
     @kotlin.jvm.JvmField()
     public final int someInt = 0;
 
@@ -101,7 +103,7 @@ public final class State2 {
     public final java.lang.String someString = null;
 
     @kotlin.jvm.JvmOverloads()
-    public State2(int someInt) {
+    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
         super();
     }
 
@@ -111,12 +113,12 @@ public final class State2 {
     }
 
     @kotlin.jvm.JvmOverloads()
-    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+    public State2(int someInt) {
         super();
     }
 
     @kotlin.jvm.JvmOverloads()
-    public final int test(int someInt) {
+    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
         return 0;
     }
 
@@ -126,7 +128,7 @@ public final class State2 {
     }
 
     @kotlin.jvm.JvmOverloads()
-    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+    public final int test(int someInt) {
         return 0;
     }
 

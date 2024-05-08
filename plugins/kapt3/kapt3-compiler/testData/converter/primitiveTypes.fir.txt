@@ -141,8 +141,6 @@
  */
 @kotlin.Metadata()
 public final class PrimitiveTypes {
-    @org.jetbrains.annotations.NotNull()
-    public static final PrimitiveTypes INSTANCE = null;
 
     public static final boolean booleanFalse = false;
 
@@ -208,6 +206,9 @@ public final class PrimitiveTypes {
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringRN = "\r\n";
+
+    @org.jetbrains.annotations.NotNull()
+    public static final PrimitiveTypes INSTANCE = null;
 
     private PrimitiveTypes() {
         super();

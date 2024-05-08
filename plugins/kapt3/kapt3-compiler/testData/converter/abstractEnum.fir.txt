@@ -53,6 +53,7 @@ public enum E {
      */
     @kotlin.Metadata()
     public static final class Obj {
+
         @org.jetbrains.annotations.NotNull()
         public static final E.Obj INSTANCE = null;
 
@@ -60,6 +61,7 @@ public enum E {
             super();
         }
     }
+
     /**
      * public final class E.NestedClass : kotlin/Any {
      *
@@ -150,6 +152,7 @@ public enum E3 {
     X,
     Y;
 
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
@@ -157,12 +160,12 @@ public enum E3 {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getA() {
+    public static kotlin.enums.EnumEntries<E3> getEntries() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<E3> getEntries() {
+    public final java.lang.String getA() {
         return null;
     }
 }
@@ -207,6 +210,7 @@ public enum E3 {
 public enum E4 {
     X;
 
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
@@ -217,6 +221,11 @@ public enum E4 {
     private final boolean d = false;
 
     E4(java.lang.String a, int b, long c, boolean d) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<E4> getEntries() {
+        return null;
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -234,10 +243,5 @@ public enum E4 {
 
     public final boolean getD() {
         return false;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<E4> getEntries() {
-        return null;
     }
 }

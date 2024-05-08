@@ -40,8 +40,6 @@
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class NonExistentType {
-    @org.jetbrains.annotations.NotNull()
-    public static final NonExistentType INSTANCE = null;
 
     @org.jetbrains.annotations.NotNull()
     private static final ABCDEF a = null;
@@ -55,12 +53,25 @@ public final class NonExistentType {
     @org.jetbrains.annotations.NotNull()
     private static final ABCDEF<java.lang.String, kotlin.jvm.functions.Function1<java.util.List<? extends ABCDEF>, kotlin.Unit>> d = null;
 
+    @org.jetbrains.annotations.NotNull()
+    public static final NonExistentType INSTANCE = null;
+
     private NonExistentType() {
         super();
     }
 
     @org.jetbrains.annotations.NotNull()
+    public final ABCDEF a(@org.jetbrains.annotations.NotNull() ABCDEF a, @org.jetbrains.annotations.NotNull() java.lang.String s) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
     public final ABCDEF getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABCDEF b(@org.jetbrains.annotations.NotNull() java.lang.String s) {
         return null;
     }
 
@@ -81,16 +92,6 @@ public final class NonExistentType {
 
     @org.jetbrains.annotations.NotNull()
     public final Foo getFoo() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABCDEF a(@org.jetbrains.annotations.NotNull() ABCDEF a, @org.jetbrains.annotations.NotNull() java.lang.String s) {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABCDEF b(@org.jetbrains.annotations.NotNull() java.lang.String s) {
         return null;
     }
 }

@@ -144,11 +144,12 @@ package app;
  */
 @kotlin.Metadata()
 public final class JJ {
-    @org.jetbrains.annotations.NotNull()
-    public static final app.JJ INSTANCE = null;
 
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String b = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final app.JJ INSTANCE = null;
 
     private JJ() {
         super();
@@ -364,6 +365,7 @@ package app;
  */
 @kotlin.Metadata()
 public final class MyActivity {
+
     @BindField(id = 100)
     private final int a = 0;
 
@@ -400,16 +402,12 @@ public final class MyActivity {
         super();
     }
 
-    public final int getA() {
-        return 0;
-    }
-
     @Bind(id = 100)
     @java.lang.Deprecated()
     public static void getA$annotations() {
     }
 
-    public final int getB() {
+    public final int getA() {
         return 0;
     }
 
@@ -418,7 +416,7 @@ public final class MyActivity {
     public static void getB$annotations() {
     }
 
-    public final int getC() {
+    public final int getB() {
         return 0;
     }
 
@@ -427,7 +425,7 @@ public final class MyActivity {
     public static void getC$annotations() {
     }
 
-    public final int getD() {
+    public final int getC() {
         return 0;
     }
 
@@ -436,7 +434,7 @@ public final class MyActivity {
     public static void getD$annotations() {
     }
 
-    public final int getE() {
+    public final int getD() {
         return 0;
     }
 
@@ -446,13 +444,17 @@ public final class MyActivity {
     public static void getE$annotations() {
     }
 
-    public final int getF() {
+    public final int getE() {
         return 0;
     }
 
     @Bind(id = 200)
     @java.lang.Deprecated()
     public static void getF$annotations() {
+    }
+
+    public final int getF() {
+        return 0;
     }
 
     @Bind(id = 100)

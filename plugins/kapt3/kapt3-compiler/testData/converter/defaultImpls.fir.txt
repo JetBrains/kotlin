@@ -14,6 +14,7 @@
  */
 @kotlin.Metadata()
 public abstract interface Intf {
+
     @org.jetbrains.annotations.NotNull()
     public static final Intf.Companion Companion = null;
 
@@ -41,6 +42,7 @@ public abstract interface Intf {
      */
     @kotlin.Metadata()
     public static final class Companion {
+
         private static final int BLACK = 1;
 
         public static final int WHITE = 2;
@@ -53,6 +55,7 @@ public abstract interface Intf {
             return 0;
         }
     }
+
     /**
      * synthetic class
      */

@@ -10,6 +10,7 @@
  */
 @kotlin.Metadata()
 public abstract interface FooComponent {
+
     @org.jetbrains.annotations.NotNull()
     public static final FooComponent.Companion Companion = null;
 
@@ -72,6 +73,7 @@ public abstract interface FooComponent {
  */
 @kotlin.Metadata()
 public final class JvmStaticTest {
+
     @org.jetbrains.annotations.NotNull()
     public static final JvmStaticTest.Companion Companion = null;
 
@@ -120,13 +122,13 @@ public final class JvmStaticTest {
             super();
         }
 
-        public final int getOne() {
-            return 0;
-        }
-
         @kotlin.jvm.JvmStatic()
         @java.lang.Deprecated()
         public static void getOne$annotations() {
+        }
+
+        public final int getOne() {
+            return 0;
         }
     }
 }

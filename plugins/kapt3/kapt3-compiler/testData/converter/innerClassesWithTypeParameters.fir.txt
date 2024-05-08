@@ -16,6 +16,7 @@
  */
 @kotlin.Metadata()
 public final class Test {
+
     @org.jetbrains.annotations.NotNull()
     private Test.FilterValueDelegate<java.lang.Float> a;
 
@@ -80,6 +81,7 @@ public final class Test2 {
      */
     @kotlin.Metadata()
     public final class FilterValueDelegate<T extends java.lang.Object> {
+
         @org.jetbrains.annotations.NotNull()
         private Test2.FilterValueDelegate<T>.Filter2<java.lang.String> a;
 
@@ -127,6 +129,7 @@ public final class Test2 {
  */
 @kotlin.Metadata()
 public final class Test3 {
+
     @org.jetbrains.annotations.NotNull()
     private Test3.FilterValueDelegate<java.lang.Float> a;
 

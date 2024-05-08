@@ -29,6 +29,7 @@ public final class B {
  */
 @kotlin.Metadata()
 public final class BParceler implements Parceler<B> {
+
     @org.jetbrains.annotations.NotNull()
     public static final BParceler INSTANCE = null;
 
@@ -71,6 +72,7 @@ public final class C {
  */
 @kotlin.Metadata()
 public final class CParceler implements Parceler<C> {
+
     @org.jetbrains.annotations.NotNull()
     public static final CParceler INSTANCE = null;
 
@@ -134,6 +136,7 @@ public final class Test {
 @java.lang.annotation.Repeatable(value = TypeParceler.Container.class)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
 public abstract @interface TypeParceler<T extends java.lang.Object, P extends Parceler<? super T>> {
+
     /**
      * public final annotation class TypeParceler<T#0 (* T *), T#1 (* P *) : Parceler<in T#0>> : kotlin/Annotation {
      *

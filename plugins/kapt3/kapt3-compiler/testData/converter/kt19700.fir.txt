@@ -11,6 +11,7 @@ public abstract interface ListUpdateCallback {
 package test;
 
 public final class Test<T extends java.lang.CharSequence, N extends java.lang.Number> {
+
     @org.jetbrains.annotations.NotNull()
     private final test.ListUpdateCallback x = null;
 

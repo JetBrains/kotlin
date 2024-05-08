@@ -240,6 +240,7 @@ package test;
  */
 @kotlin.Metadata()
 public final class TFooBar extends Foo implements Bar, test.Intf {
+
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
@@ -274,6 +275,7 @@ package test;
  */
 @kotlin.Metadata()
 public final class TFooBar2 implements Foo, Bar {
+
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 

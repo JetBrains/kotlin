@@ -40,6 +40,7 @@ public final class GroupedNewsListDelegateAdapter {
  */
 @kotlin.Metadata()
 public final class HomeFragment {
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Unit categoryNewsListPresenter$delegate = null;
 
@@ -50,13 +51,13 @@ public final class HomeFragment {
         super();
     }
 
-    private final error.NonExistentClass getCategoryNewsListPresenter() {
-        return null;
-    }
-
     @kotlin.Suppress(names = {"TOO_MANY_ARGUMENTS", "DELEGATE_SPECIAL_FUNCTION_MISSING"})
     @java.lang.Deprecated()
     private static void getCategoryNewsListPresenter$annotations() {
+    }
+
+    private final error.NonExistentClass getCategoryNewsListPresenter() {
+        return null;
     }
 
     private final GroupedNewsListDelegateAdapter getGroupedNewsListAdapter() {

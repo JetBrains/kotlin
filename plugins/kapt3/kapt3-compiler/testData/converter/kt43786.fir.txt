@@ -21,10 +21,11 @@
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class Application {
-    public DataStore<Preferences> _preferencesDataStore;
 
     @org.jetbrains.annotations.NotNull()
     public static final Application.Companion Companion = null;
+
+    public DataStore<Preferences> _preferencesDataStore;
 
     public Application() {
         super();

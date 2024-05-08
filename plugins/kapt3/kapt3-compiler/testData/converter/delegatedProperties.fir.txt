@@ -42,6 +42,7 @@ package test;
  */
 @kotlin.Metadata()
 public final class A {
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy x$delegate = null;
 
@@ -64,13 +65,13 @@ public final class A {
         super();
     }
 
-    public final error.NonExistentClass getX() {
-        return null;
-    }
-
     @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
     @java.lang.Deprecated()
     public static void getX$annotations() {
+    }
+
+    public final error.NonExistentClass getX() {
+        return null;
     }
 
     @org.jetbrains.annotations.NotNull()

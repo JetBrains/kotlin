@@ -20,6 +20,7 @@
  */
 @kotlin.Metadata()
 public final class Foo {
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String string = null;
 
@@ -58,6 +59,7 @@ public final class Foo {
      */
     @kotlin.Metadata()
     public static final class Bar {
+
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String string = null;
 
@@ -69,12 +71,12 @@ public final class Foo {
         }
 
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getString() {
+        public final java.util.ArrayList<Foo.Bar.Bar> getBars() {
             return null;
         }
 
         @org.jetbrains.annotations.NotNull()
-        public final java.util.ArrayList<Foo.Bar.Bar> getBars() {
+        public final java.lang.String getString() {
             return null;
         }
 

@@ -17,11 +17,12 @@
  */
 @kotlin.Metadata()
 public final class Boo {
-    @org.jetbrains.annotations.NotNull()
-    public static final Boo INSTANCE = null;
 
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String z = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final Boo INSTANCE = null;
 
     private Boo() {
         super();
@@ -133,8 +134,6 @@ public final class Boo {
  */
 @kotlin.Metadata()
 public final class Foo {
-    @org.jetbrains.annotations.NotNull()
-    public static final Foo INSTANCE = null;
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String aString = "foo";
@@ -174,6 +173,9 @@ public final class Foo {
     private static final int aliasedInt = 1;
 
     private static final int aliasedUInt = 1;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final Foo INSTANCE = null;
 
     private Foo() {
         super();
@@ -323,6 +325,7 @@ public final class Foo {
  */
 @kotlin.Metadata()
 public final class HavingState {
+
     @org.jetbrains.annotations.NotNull()
     private final State state = State.START;
 

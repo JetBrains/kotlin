@@ -21,13 +21,6 @@ internal val PsiModifierListOwner.isStatic: Boolean get() = hasModifier(JvmModif
 internal val PsiMethod.signature: String
     get() = ClassUtil.getAsmMethodSignature(this)
 
-internal val PsiField.signature: String
-    get() = getAsmFieldSignature(this)
-
-private fun getAsmFieldSignature(field: PsiField): String {
-    return ClassUtil.getBinaryPresentation(field.type)
-}
-
 internal val PsiType.qualifiedName: String
     get() = canonicalText.replace("""<.*>""".toRegex(), "")
 

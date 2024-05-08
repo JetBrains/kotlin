@@ -730,8 +730,8 @@ open class Kapt3IT : Kapt3BaseIT() {
                 val actual = getErrorMessages()
                 assertEquals(
                     expected = genJavaErrorString(
-                        7,
-                        if (buildOptions.languageVersion?.startsWith("2") ?: (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0)) 18 else 19
+                        if (buildOptions.languageVersion?.startsWith("2") ?: (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0)) 8 else 7,
+                        19
                     ),
                     actual = actual)
             }

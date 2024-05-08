@@ -39,6 +39,7 @@ public abstract interface Callback {
 public enum Foo {
     FOO;
 
+
     @org.jetbrains.annotations.NotNull()
     private final Callback callback = null;
 
@@ -46,12 +47,12 @@ public enum Foo {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Callback getCallback() {
+    public static kotlin.enums.EnumEntries<Foo> getEntries() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<Foo> getEntries() {
+    public final Callback getCallback() {
         return null;
     }
 }

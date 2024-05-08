@@ -87,6 +87,7 @@ package javadoc;
  */
 @kotlin.Metadata()
 public final class B {
+
     /**
      * Nested
      * member

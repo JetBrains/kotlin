@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.kapt3.base.KaptFlag
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
-import org.jetbrains.kotlin.kapt3.stubs.MemberData
 import org.jetbrains.kotlin.kapt3.stubs.extractComment
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
@@ -45,7 +44,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
-import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -208,6 +206,9 @@ private class StubGenerator(
         }
 
         private inner class ClassGenerator(private val psiClass: PsiClass) {
+            private val methods = psiClass.methods
+            private val fields = psiClass.fields
+
             fun Printer.printClass() {
                 val simpleName = psiClass.name ?: return
                 if (!isValidIdentifier(simpleName)) return
@@ -215,8 +216,7 @@ private class StubGenerator(
                 lineMappings.registerClass(psiClass)
 
                 printComment(psiClass)
-
-                calculateMetadata(psiClass)?.let { printMetadata(it) }
+                calculateMetadata()?.let { printMetadata(it) }
                 printModifiers(psiClass)
                 val classWord = when {
                     psiClass.isAnnotationType -> "@interface"
@@ -265,7 +265,7 @@ private class StubGenerator(
                 pushIndent()
 
                 if (psiClass.isEnum) {
-                    val values = psiClass.fields
+                    val values = fields
                         .filterIsInstance<PsiEnumConstant>()
                         .filter { isValidIdentifier(it.name) }
                     values.forEachIndexed { index, value ->
@@ -279,42 +279,25 @@ private class StubGenerator(
                     printlnWithNoIndent()
                 }
 
-                val classPosition = lineMappings.getPosition(psiClass)
-
-                val fieldsPositions = psiClass.fields
-                    .filterNot { it is PsiEnumConstant }
-                    .onEach { lineMappings.registerField(psiClass, it) }
-                    .associateWith { MemberData(it.name, it.signature, lineMappings.getPosition(psiClass, it)) }
-
                 if (!psiClass.isRecord) {
-                    fieldsPositions.keys.sortedWith(MembersPositionComparator(classPosition, fieldsPositions))
-                        .forEachIndexed { index, field ->
-                            if (index > 0) printlnWithNoIndent()
-                            printField(field)
-                        }
+                    for (field in fields) {
+                        if (field is PsiEnumConstant) continue
+                        printField(field)
+                    }
                 }
 
-                val methodsPositions = psiClass.methods
-                    .filterNot {
-                        it.isConstructor && psiClass is PsiEnumConstantInitializer
-                                || psiClass.isEnum && it.isSyntheticStaticEnumMethod()
-                                || it.hasAnnotation("kotlinx.kapt.KaptIgnored")
-                    }
-                    .onEach { lineMappings.registerMethod(psiClass, it) }
-                    .associateWith { MemberData(it.name, it.signature, lineMappings.getPosition(psiClass, it)) }
+                for (method in methods.sortedByDescending { it.isConstructor }) {
+                    if (method.isConstructor && psiClass is PsiEnumConstantInitializer
+                        || psiClass.isEnum && method.isSyntheticStaticEnumMethod()
+                        || method.hasAnnotation("kotlinx.kapt.KaptIgnored")) continue
 
-                methodsPositions.keys.sortedWith(MembersPositionComparator(classPosition, methodsPositions))
-                    .forEach { method ->
-                        lineMappings.registerSignature(javacSignature(method), method)
-                        if (!psiClass.isRecord || method != psiClass.constructors.firstOrNull()) {
-                            printlnWithNoIndent()
-                            printMethod(method)
-                        }
+                    if (!psiClass.isRecord || method != psiClass.constructors.firstOrNull()) {
+                        printMethod(method)
                     }
+                }
 
-                if (psiClass.innerClasses.isNotEmpty() && (fieldsPositions.isNotEmpty() || methodsPositions.isNotEmpty())) println()
-                psiClass.innerClasses.forEachIndexed { i, innerClass ->
-                    if (i > 0) printWithNoIndent()
+                for (innerClass in psiClass.innerClasses) {
+                    printlnWithNoIndent()
                     with(ClassGenerator(innerClass)) { printClass() }
                 }
                 popIndent()
@@ -334,7 +317,8 @@ private class StubGenerator(
 
             private fun Printer.printField(field: PsiField) {
                 if (!isValidIdentifier(field.name) || !checkIfValidTypeName(field.type)) return
-
+                lineMappings.registerField(psiClass, field)
+                printlnWithNoIndent()
                 printComment(field)
                 printModifiers(field)
                 printType(field.type)
@@ -353,6 +337,10 @@ private class StubGenerator(
                 if (method.returnType?.let { checkIfValidTypeName(it) } == false
                     || method.parameterList.parameters.any { !checkIfValidTypeName(it.type) }
                 ) return
+
+                lineMappings.registerSignature(javacSignature(method), method)
+                lineMappings.registerMethod(psiClass, method)
+                printlnWithNoIndent()
 
                 printComment(method)
                 printModifiers(method)
@@ -453,9 +441,9 @@ private class StubGenerator(
                 return false
             }
 
-            private fun elementMapping(lightClass: PsiClass): Multimap<KtElement, PsiElement> =
+            private fun elementMapping(): Multimap<KtElement, PsiElement> =
                 HashMultimap.create<KtElement, PsiElement>().apply {
-                    (lightClass.methods.asSequence() + lightClass.fields.asSequence() + lightClass.constructors.asSequence()).forEach {
+                    (methods.asSequence() + fields.asSequence()).forEach {
                         (it as KtLightElement<*, *>).kotlinOrigin?.let { origin -> put(origin, it) }
                     }
                 }
@@ -632,7 +620,7 @@ private class StubGenerator(
                 printWithNoIndent(name, " = ", value)
             }
 
-            private fun calculateMetadata(lightClass: PsiClass): Metadata? =
+            private fun calculateMetadata(): Metadata? =
                 if (stripMetadata) null
                 else if (psiClass.name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && (psiClass as? SymbolLightClassForNamedClassLike)?.containingClass?.isInterface == true) {
                     Metadata(
@@ -641,14 +629,14 @@ private class StubGenerator(
                         extraInt = METADATA_JVM_IR_FLAG or METADATA_JVM_IR_STABLE_ABI_FLAG
                     )
                 } else with(analysisSession) {
-                    when (lightClass) {
+                    when (psiClass) {
                         is KtLightClassForFacade ->
-                            if (lightClass.multiFileClass)
-                                lightClass.qualifiedName?.let { createMultifileClassMetadata(lightClass, it) }
+                            if (psiClass.multiFileClass)
+                                psiClass.qualifiedName?.let { createMultifileClassMetadata(psiClass, it) }
                             else
-                                lightClass.files.singleOrNull()?.calculateMetadata(elementMapping(lightClass))
+                                psiClass.files.singleOrNull()?.calculateMetadata(elementMapping())
                         is SymbolLightClassForNamedClassLike ->
-                            lightClass.kotlinOrigin?.calculateMetadata(elementMapping(lightClass))
+                            psiClass.kotlinOrigin?.calculateMetadata(elementMapping())
                         else -> null
                     }
                 }

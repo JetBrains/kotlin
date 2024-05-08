@@ -29,6 +29,7 @@
  */
 @kotlin.Metadata()
 public final class Foo {
+
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy<java.lang.Runnable> foo$delegate = null;
 

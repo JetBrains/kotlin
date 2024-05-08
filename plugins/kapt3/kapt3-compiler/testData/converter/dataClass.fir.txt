@@ -45,6 +45,7 @@
  */
 @kotlin.Metadata()
 public final class User {
+
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;
 
@@ -53,31 +54,11 @@ public final class User {
 
     private final int age = 0;
 
-    @org.jetbrains.annotations.NotNull()
-    public final User copy(@org.jetbrains.annotations.NotNull() java.lang.String firstName, @org.jetbrains.annotations.NotNull() java.lang.String secondName, int age) {
-        return null;
-    }
-
-    public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object other) {
-        return false;
-    }
-
-    public int hashCode() {
-        return 0;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public java.lang.String toString() {
-        return null;
-    }
-
     public User(@org.jetbrains.annotations.NotNull() java.lang.String firstName, @org.jetbrains.annotations.NotNull() java.lang.String secondName, int age) {
         super();
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String component1() {
-        return null;
+    public final void procedure() {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -86,12 +67,21 @@ public final class User {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String component2() {
+    public final java.lang.String getSecondName() {
+        return null;
+    }
+
+    public final int getAge() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String component1() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getSecondName() {
+    public final java.lang.String component2() {
         return null;
     }
 
@@ -99,10 +89,21 @@ public final class User {
         return 0;
     }
 
-    public final int getAge() {
+    @org.jetbrains.annotations.NotNull()
+    public final User copy(@org.jetbrains.annotations.NotNull() java.lang.String firstName, @org.jetbrains.annotations.NotNull() java.lang.String secondName, int age) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+
+    public int hashCode() {
         return 0;
     }
 
-    public final void procedure() {
+    public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object other) {
+        return false;
     }
 }
