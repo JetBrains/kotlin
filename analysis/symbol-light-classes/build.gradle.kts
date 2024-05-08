@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:project-structure"))
     implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
+    implementation(project(":analysis:decompiled:decompiler-native"))
     implementation(intellijCore())
     implementation(kotlinxCollectionsImmutable())
 

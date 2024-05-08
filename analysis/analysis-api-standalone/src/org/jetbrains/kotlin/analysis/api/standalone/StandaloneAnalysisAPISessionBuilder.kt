@@ -148,7 +148,10 @@ public class StandaloneAnalysisAPISessionBuilder(
         kotlinCoreProjectEnvironment.project.apply {
             registerService(
                 KotlinPsiDeclarationProviderFactory::class.java,
-                KotlinStaticPsiDeclarationProviderFactory::class.java
+                KotlinStaticPsiDeclarationProviderFactory(
+                    this,
+                    projectStructureProvider.binaryModules,
+                )
             )
         }
     }

@@ -30,10 +30,13 @@ object DecompiledPsiDeclarationProvider {
         project: Project
     ): PsiElement? {
         val classId = constructorSymbol.containingClassIdIfNonLocal ?: return null
-        val psiClass = project.createPsiDeclarationProvider(constructorSymbol.scope(project))
+        val candidates = project.createPsiDeclarationProvider(constructorSymbol.scope(project))
             ?.getClassesByClassId(classId)
-            ?.firstOrNull() ?: return null
-        return psiClass.constructors.find { psiMethod ->
+            ?.firstOrNull()
+            ?.constructors ?: return null
+        return if (candidates.size == 1)
+            candidates.single()
+        else candidates.find { psiMethod ->
             representsTheSameDeclaration(psiMethod, constructorSymbol)
         }
     }

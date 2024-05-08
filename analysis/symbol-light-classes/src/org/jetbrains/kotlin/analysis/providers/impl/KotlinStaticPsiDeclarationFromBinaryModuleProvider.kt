@@ -6,28 +6,43 @@
 package org.jetbrains.kotlin.analysis.providers.impl
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.extension
 
 private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     private val project: Project,
     val scope: GlobalSearchScope,
     private val packagePartProvider: PackagePartProvider,
+    private val binaryModules: Collection<KtBinaryModule>,
 ) : KotlinPsiDeclarationProvider() {
+
+    private val psiManager by lazyPub { project.getService(PsiManager::class.java) }
 
     private val javaFileManager by lazyPub { project.getService(JavaFileManager::class.java) }
 
@@ -51,6 +66,66 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
         }
     }
 
+    private val classesInKlibCache = ConcurrentHashMap<KtBinaryModule, Collection<PsiClass>>()
+
+    private fun getClassesInKlib(
+        fqName: FqName,
+    ): Collection<PsiClass> {
+        val fqNameString = fqName.asString()
+        val fs = StandardFileSystems.local()
+        return binaryModules
+            .filter { it.getBinaryRoots().any { it.extension == "klib" } }
+            .flatMap { binaryModule ->
+                val classes = classesInKlibCache.getOrPut(binaryModule) {
+                    val virtualFiles = binaryModule.getBinaryRoots()
+                        .filter { it.extension == "klib" }
+                        .flatMap { binaryRoot ->
+                            val root = fs.findFileByPath(binaryRoot.toAbsolutePath().toString()) ?: return@flatMap emptyList()
+                            klibMetaFiles(root)
+                        }
+                    virtualFiles.flatMap { virtualFile ->
+                        val fileStub = buildStubByVirtualFile(virtualFile) ?: return@flatMap emptyList()
+                        val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, virtualFile), isCompiled = true) {
+                            override fun getStub() = fileStub
+                            override fun isPhysical() = false
+                        }
+                        fileStub.psi = fakeFile
+
+                        fun processStub(parent: StubElement<*>, stub: StubElement<*>): Iterable<PsiClass> {
+                            return when (stub) {
+                                is KotlinClassStubImpl -> {
+                                    listOfNotNull(buildPsiClassByKotlinClassStub(psiManager, fileStub.psi, stub)) +
+                                            stub.childrenStubs.flatMap { processStub(stub, it) }
+                                }
+                                is KotlinObjectStubImpl -> {
+                                    listOfNotNull(buildPsiClassByKotlinClassStub(psiManager, fileStub.psi, stub)) +
+                                            stub.childrenStubs.flatMap { processStub(stub, it) }
+                                }
+                                is KotlinPlaceHolderStubImpl -> {
+                                    if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
+                                        stub.childrenStubs
+                                            .filterIsInstance<KotlinClassOrObjectStub<*>>()
+                                            .flatMap { processStub(parent, it) }
+                                    } else emptyList()
+                                }
+                                else -> emptyList()
+                            }
+                        }
+
+                        fileStub.childrenStubs.flatMap { processStub(fileStub, it) }
+                    }
+                }
+                classes.filter { psiClass ->
+                    psiClass.qualifiedName == fqNameString
+                }
+            }
+    }
+
+    private class KtClassFileViewProvider(
+        psiManager: PsiManager,
+        virtualFile: VirtualFile,
+    ) : SingleRootFileViewProvider(psiManager, virtualFile, true, KotlinLanguage.INSTANCE)
+
     override fun getClassesByClassId(classId: ClassId): Collection<PsiClass> {
         JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())?.let {
             return getClassesByClassId(it)
@@ -62,7 +137,9 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
                 parentClsClass.innerClasses.find { it.name == innerClassName }
             }
         }
-        return listOfNotNull(javaFileManager.findClass(classId.asFqNameString(), scope))
+        return listOfNotNull(javaFileManager.findClass(classId.asFqNameString(), scope)).ifEmpty {
+            getClassesInKlib(classId.asSingleFqName())
+        }
     }
 
     override fun getProperties(callableId: CallableId): Collection<PsiMember> {
@@ -71,7 +148,9 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
             // property in companion object is actually materialized at the containing class.
             val classFromOuterClassID = classId.outerClassId?.let { getClassesByClassId(it) } ?: emptyList()
             classFromCurrentClassId + classFromOuterClassID
-        } ?: getClassesInPackage(callableId.packageName)
+        } ?: getClassesInPackage(callableId.packageName).ifEmpty {
+            getClassesInKlib(callableId.packageName)
+        }
         return classes.flatMap { psiClass ->
             psiClass.children
                 .filterIsInstance<PsiMember>()
@@ -105,7 +184,9 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     override fun getFunctions(callableId: CallableId): Collection<PsiMethod> {
         val classes = callableId.classId?.let { classId ->
             getClassesByClassId(classId)
-        } ?: getClassesInPackage(callableId.packageName)
+        } ?: getClassesInPackage(callableId.packageName).ifEmpty {
+            getClassesInKlib(callableId.packageName)
+        }
         val id = callableId.callableName.identifier
         return classes.flatMap { psiClass ->
             psiClass.methods.filter { psiMethod ->
@@ -126,6 +207,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
 
 class KotlinStaticPsiDeclarationProviderFactory(
     private val project: Project,
+    private val binaryModules: Collection<KtBinaryModule>,
 ) : KotlinPsiDeclarationProviderFactory() {
     // TODO: For now, [createPsiDeclarationProvider] is always called with the project scope, hence singleton.
     //  If we come up with a better / optimal search scope, we may need a different way to cache scope-to-provider mapping.
@@ -135,6 +217,7 @@ class KotlinStaticPsiDeclarationProviderFactory(
             project,
             searchScope,
             project.createPackagePartProvider(searchScope),
+            binaryModules,
         )
     }
 
@@ -146,6 +229,7 @@ class KotlinStaticPsiDeclarationProviderFactory(
                 project,
                 searchScope,
                 project.createPackagePartProvider(searchScope),
+                binaryModules,
             )
         }
     }

@@ -66,7 +66,7 @@ internal class KtStandaloneProjectStructureProvider(
                 .withAttachment("modules", allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() })
     }
 
-    internal val binaryModules: List<KtBinaryModule> by lazy {
+    override val binaryModules: List<KtBinaryModule> by lazy {
         allKtModules
             .flatMap { it.allDirectDependencies() }
             .filterIsInstance<KtBinaryModule>()

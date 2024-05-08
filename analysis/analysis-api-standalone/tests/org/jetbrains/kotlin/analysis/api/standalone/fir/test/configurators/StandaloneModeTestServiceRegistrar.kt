@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFir
 import org.jetbrains.kotlin.analysis.api.standalone.base.services.LLStandaloneFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.KtTestProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -29,10 +31,15 @@ public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistr
     }
 
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
+        val projectStructureProvider = ProjectStructureProvider.getInstance(project)
+        val binaryModules = (projectStructureProvider as? KtTestProjectStructureProvider)?.binaryModules ?: emptyList()
         project.apply {
             registerService(
                 KotlinPsiDeclarationProviderFactory::class.java,
-                KotlinStaticPsiDeclarationProviderFactory::class.java
+                KotlinStaticPsiDeclarationProviderFactory(
+                    this,
+                    binaryModules,
+                )
             )
         }
     }

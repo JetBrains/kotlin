@@ -1,1 +1,2 @@
 Resolved to:
+PsiMethod:greet(): null

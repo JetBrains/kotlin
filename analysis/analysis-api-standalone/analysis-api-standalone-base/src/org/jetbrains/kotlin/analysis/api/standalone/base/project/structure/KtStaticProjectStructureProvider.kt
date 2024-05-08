@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.psi.PsiFileSystemItem
+import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -23,6 +24,11 @@ public abstract class KtStaticProjectStructureProvider : ProjectStructureProvide
      * [allKtModules] may be used by other services to pre-build caches based on the full module structure.
      */
     public abstract val allKtModules: List<KtModule>
+
+    /**
+     * All [KtBinaryModule]s registered with the project structure provider.
+     */
+    public abstract val binaryModules: List<KtBinaryModule>
 
     public abstract val allSourceFiles: List<PsiFileSystemItem>
 }

@@ -38,36 +38,7 @@ abstract class KtLightClassImpl(
     override fun isDeprecated(): Boolean = _deprecated
 
     protected open fun computeModifiersByPsi(): Set<String> {
-        val psiModifiers = hashSetOf<String>()
-
-        // PUBLIC, PROTECTED, PRIVATE
-        //noinspection unchecked
-
-        for (tokenAndModifier in ktTokenToPsiModifier) {
-            if (classOrObject.hasModifier(tokenAndModifier.first)) {
-                psiModifiers.add(tokenAndModifier.second)
-            }
-        }
-
-        if (classOrObject.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-            // Top-level private class has PACKAGE_LOCAL visibility in Java
-            // Nested private class has PRIVATE visibility
-            psiModifiers.add(if (classOrObject.isTopLevel()) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE)
-        } else if (!psiModifiers.contains(PsiModifier.PROTECTED)) {
-            psiModifiers.add(PsiModifier.PUBLIC)
-        }
-
-        // ABSTRACT
-        if (isAbstract() || isSealed()) {
-            psiModifiers.add(PsiModifier.ABSTRACT)
-        }
-
-        // STATIC
-        if (!classOrObject.isTopLevel() && !classOrObject.hasModifier(KtTokens.INNER_KEYWORD)) {
-            psiModifiers.add(PsiModifier.STATIC)
-        }
-
-        return psiModifiers
+        return classOrObject.computeModifiersByPsi { hasAbstractMember() }
     }
 
     protected open fun computeIsFinal(): Boolean = when {
@@ -221,11 +192,5 @@ abstract class KtLightClassImpl(
 
             return false
         }
-
-        private val ktTokenToPsiModifier = listOf(
-            KtTokens.PUBLIC_KEYWORD to PsiModifier.PUBLIC,
-            KtTokens.INTERNAL_KEYWORD to PsiModifier.PUBLIC,
-            KtTokens.PROTECTED_KEYWORD to PsiModifier.PROTECTED,
-        )
     }
 }
