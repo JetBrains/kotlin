@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isInlineFunWithReifiedParameter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -64,6 +65,15 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                     expression.reflectionTarget
                 )
             }
+        }
+
+        override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclarationParent?): IrElement {
+            expression.transformChildren(this, data)
+
+            val property = expression.symbol.owner as? IrProperty ?: return expression
+            val getter = property.getter ?: return expression
+            if (!getter.isInlineFunWithReifiedParameter()) return expression
+
         }
 
         private fun createLocalFunction(
