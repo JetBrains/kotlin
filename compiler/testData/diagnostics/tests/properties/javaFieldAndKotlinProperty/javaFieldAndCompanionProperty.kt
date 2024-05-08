@@ -1,7 +1,5 @@
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// COMMENTED[LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty] uncomment when KT-52338 is fixed
+// LANGUAGE: -ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
+// ISSUE: KT-52338
 
 // FILE: Base.java
 public class Base {
@@ -28,10 +26,4 @@ class Sub : Base() {
         if (foo() != "12") return "Error writing: ${foo()}"
         return "OK"
     }
-}
-
-fun box(): String {
-    if (Sub().log() != "OK") return Sub().log()
-    if (Sub().logReference() != "OK") return Sub().logReference()
-    return Sub().logAssignment()
 }
