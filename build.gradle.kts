@@ -169,6 +169,7 @@ val commonCompilerModules = arrayOf(
     ":kotlin-util-klib-abi",
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
+    ":js:js.config",
     ":wasm:wasm.config",
 ).also { extra["commonCompilerModules"] = it }
 
@@ -237,7 +238,6 @@ val fe10CompilerModules = arrayOf(
     ":js:js.sourcemap",
     ":js:js.serializer",
     ":js:js.parser",
-    ":js:js.config",
     ":js:js.frontend",
     ":js:js.translator",
     ":js:js.dce",
