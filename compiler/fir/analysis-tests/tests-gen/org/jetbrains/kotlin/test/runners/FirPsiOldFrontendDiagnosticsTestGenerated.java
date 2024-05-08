@@ -41766,6 +41766,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("DiagnosticDefaultMessage.kt")
+        public void testDiagnosticDefaultMessage() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/DiagnosticDefaultMessage.kt");
+        }
+
+        @Test
         @TestMetadata("Experimentality.kt")
         public void testExperimentality() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/Experimentality.kt");
