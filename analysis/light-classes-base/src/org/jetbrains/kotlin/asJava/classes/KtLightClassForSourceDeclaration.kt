@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiImmediateClassType
@@ -16,8 +15,6 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
-import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -171,23 +168,6 @@ fun KtLightClassForSourceDeclaration.isPossiblyAffectedByAllOpen() =
 fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
     return KtPsiUtil.getOutermostClassOrObject(classOrObject)
         ?: throw IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.text)
-}
-
-interface LightClassInheritanceHelper {
-    fun isInheritor(
-        lightClass: KtLightClass,
-        baseClass: PsiClass,
-        checkDeep: Boolean
-    ): ImpreciseResolveResult
-
-    object NoHelp : LightClassInheritanceHelper {
-        override fun isInheritor(lightClass: KtLightClass, baseClass: PsiClass, checkDeep: Boolean) = UNSURE
-    }
-
-    companion object {
-        fun getService(project: Project): LightClassInheritanceHelper =
-            project.getService(LightClassInheritanceHelper::class.java) ?: NoHelp
-    }
 }
 
 fun KtClassOrObject.defaultJavaAncestorQualifiedName(): String? {
