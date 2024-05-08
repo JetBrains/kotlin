@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.utilities.BackendContextHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
