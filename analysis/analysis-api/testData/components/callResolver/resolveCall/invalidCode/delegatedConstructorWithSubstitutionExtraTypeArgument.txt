@@ -1,0 +1,17 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(): kotlin/Any'.>

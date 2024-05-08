@@ -86,6 +86,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
     }
 
     @Test
+    @TestMetadata("delegatedConstructorWithSubstitution.kt")
+    public void testDelegatedConstructorWithSubstitution() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/delegatedConstructorWithSubstitution.kt");
+    }
+
+    @Test
     @TestMetadata("forEach.kt")
     public void testForEach() {
       runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/forEach.kt");

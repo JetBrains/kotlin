@@ -377,6 +377,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("delegatedConstructorWithSubstitution.kt")
+  public void testDelegatedConstructorWithSubstitution() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/delegatedConstructorWithSubstitution.kt");
+  }
+
+  @Test
   @TestMetadata("enumAsAnnotationValue.kt")
   public void testEnumAsAnnotationValue() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/enumAsAnnotationValue.kt");
@@ -1207,6 +1213,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     @TestMetadata("assignementInExpression.kt")
     public void testAssignementInExpression() {
       runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/assignementInExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorWithSubstitutionExtraTypeArgument.kt")
+    public void testDelegatedConstructorWithSubstitutionExtraTypeArgument() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/delegatedConstructorWithSubstitutionExtraTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorWithSubstitutionMissedTypeArgument.kt")
+    public void testDelegatedConstructorWithSubstitutionMissedTypeArgument() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/delegatedConstructorWithSubstitutionMissedTypeArgument.kt");
     }
 
     @Test

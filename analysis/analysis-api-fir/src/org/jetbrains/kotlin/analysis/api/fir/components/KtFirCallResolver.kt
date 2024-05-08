@@ -510,7 +510,8 @@ internal class KtFirCallResolver(
                 KtDelegatedConstructorCall(
                     partiallyAppliedSymbol as KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
                     if (fir.isThis) KtDelegatedConstructorCall.Kind.THIS_CALL else KtDelegatedConstructorCall.Kind.SUPER_CALL,
-                    fir.createArgumentMapping(partiallyAppliedSymbol.signature as KtFunctionLikeSignature<*>)
+                    fir.createArgumentMapping(partiallyAppliedSymbol.signature as KtFunctionLikeSignature<*>),
+                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol)
                 )
             }
             is FirVariableAssignment -> {
@@ -880,6 +881,23 @@ internal class KtFirCallResolver(
         partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
     ): Map<KtTypeParameterSymbol, KtType> {
         return toTypeArgumentsMapping(typeArguments, partiallyAppliedSymbol)
+    }
+
+    private fun FirDelegatedConstructorCall.toTypeArgumentsMapping(
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>,
+    ): Map<KtTypeParameterSymbol, KtType> {
+        val typeParameters = partiallyAppliedSymbol.symbol.typeParameters.ifEmpty { return emptyMap() }
+        val typeArguments = constructedTypeRef.coneType.typeArguments
+        // In all cases, the size of arguments and parameters is the same,
+        // so this check exists just to be sure
+        if (typeArguments.size != typeParameters.size) return emptyMap()
+
+        return buildMap(typeArguments.size) {
+            for ((index, projection) in typeArguments.withIndex()) {
+                if (projection !is ConeKotlinType) return emptyMap()
+                put(typeParameters[index], projection.asKtType())
+            }
+        }
     }
 
     /**
