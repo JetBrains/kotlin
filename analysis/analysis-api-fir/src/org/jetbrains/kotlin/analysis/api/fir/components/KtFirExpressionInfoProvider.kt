@@ -176,6 +176,9 @@ internal class KtFirExpressionInfoProvider(
             is KtFinallySection ->
                 false
 
+            is KtPropertyDelegate ->
+                parent.expression == child
+
             !is KtExpression ->
                 errorWithAttachment("Unhandled Non-KtExpression parent of KtExpression: ${parent::class}") {
                     withPsiEntry("parent", parent)
