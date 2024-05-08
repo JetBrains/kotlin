@@ -19,9 +19,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -56,8 +54,6 @@ constructor(
     @Transient // This property can't be accessed in the execution phase
     val binary: NativeBinary,
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations,
-    private val providerFactory: ProviderFactory,
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     UsesBuildMetricsService,
@@ -205,7 +201,7 @@ constructor(
             .detachedResolvable()
             .apply @Suppress("DEPRECATION") {
                 compilation.internal.configurations.apiConfiguration.allDependencies.all { dependency ->
-                    dependencies.addLater(providerFactory.provider { dependency })
+                    dependencies.add(dependency)
                 }
                 usesPlatformOf(compilation.target)
                 attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
