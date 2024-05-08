@@ -44,7 +44,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline operator fun compareTo(other: Byte): Int =
         wasm_i32_compareTo(this.toInt(), other.toInt())
 
@@ -53,7 +53,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Short): Int =
         this.toShort().compareTo(other)
 
@@ -62,7 +62,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Int): Int =
         this.toInt().compareTo(other)
 
@@ -71,7 +71,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Long): Int =
         this.toLong().compareTo(other)
 
@@ -80,7 +80,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Float): Int =
         this.toFloat().compareTo(other)
 
@@ -89,127 +89,127 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Double): Int =
         this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Byte): Int =
         this.toInt() + other.toInt()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Short): Int =
         this.toInt() + other.toInt()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Int): Int =
         this.toInt() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Long): Long =
         this.toLong() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Float): Float =
         this.toFloat() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Double): Double =
         this.toDouble() + other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Byte): Int =
         this.toInt() - other.toInt()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Short): Int =
         this.toInt() - other.toInt()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Int): Int =
         this.toInt() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Long): Long =
         this.toLong() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Float): Float =
         this.toFloat() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Double): Double =
         this.toDouble() - other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Byte): Int =
         this.toInt() * other.toInt()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Short): Int =
         this.toInt() * other.toInt()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Int): Int =
         this.toInt() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Long): Long =
         this.toLong() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Float): Float =
         this.toFloat() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Double): Double =
         this.toDouble() * other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Byte): Int =
         this.toInt() / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Short): Int =
         this.toInt() / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Int): Int =
         this.toInt() / other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Long): Long =
         this.toLong() / other
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Float): Float =
         this.toFloat() / other
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Double): Double =
         this.toDouble() / other
 
@@ -219,7 +219,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Byte): Int =
         this.toInt() % other.toInt()
 
@@ -229,7 +229,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Short): Int =
         this.toInt() % other.toInt()
 
@@ -239,7 +239,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Int): Int =
         this.toInt() % other
 
@@ -249,7 +249,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Long): Long =
         this.toLong() % other
 
@@ -259,7 +259,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Float): Float =
         this.toFloat() % other
 
@@ -269,7 +269,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
@@ -290,12 +290,12 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
         (this - 1).toByte()
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryPlus(): Int =
         this.toInt()
 
     /** Returns the negative of this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryMinus(): Int =
         -this.toInt()
 
@@ -356,7 +356,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
         this until other
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toByte(): Byte =
         this
 
@@ -370,7 +370,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      */
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toChar(): Char =
         reinterpretAsInt().reinterpretAsChar()
 
@@ -382,7 +382,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The least significant 8 bits of the resulting `Short` value are the same as the bits of this `Byte` value,
      * whereas the most significant 8 bits are filled with the sign bit of this value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toShort(): Short =
         reinterpretAsInt().reinterpretAsShort()
 
@@ -394,7 +394,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The least significant 8 bits of the resulting `Int` value are the same as the bits of this `Byte` value,
      * whereas the most significant 24 bits are filled with the sign bit of this value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toInt(): Int =
         reinterpretAsInt()
 
@@ -406,7 +406,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      * The least significant 8 bits of the resulting `Long` value are the same as the bits of this `Byte` value,
      * whereas the most significant 56 bits are filled with the sign bit of this value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toLong(): Long =
         wasm_i64_extend_i32_s(this.toInt())
 
@@ -415,7 +415,7 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      *
      * The resulting `Float` value represents the same numerical value as this `Byte`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toFloat(): Float =
         wasm_f32_convert_i32_s(this.toInt())
 
@@ -424,15 +424,15 @@ public class Byte private constructor(private val value: Byte) : Number(), Compa
      *
      * The resulting `Double` value represents the same numerical value as this `Byte`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toDouble(): Double =
         wasm_f64_convert_i32_s(this.toInt())
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String =
         this.toInt().toString()
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean =
         other is Byte && wasm_i32_eq(this.toInt(), other.toInt())
 
@@ -477,7 +477,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Byte): Int =
         this.compareTo(other.toShort())
 
@@ -486,7 +486,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline operator fun compareTo(other: Short): Int =
         this.toInt().compareTo(other.toInt())
 
@@ -495,7 +495,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Int): Int =
         this.toInt().compareTo(other)
 
@@ -504,7 +504,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Long): Int =
         this.toLong().compareTo(other)
 
@@ -513,7 +513,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Float): Int =
         this.toFloat().compareTo(other)
 
@@ -522,127 +522,127 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Double): Int =
         this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Byte): Int =
         this.toInt() + other.toInt()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Short): Int =
         this.toInt() + other.toInt()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Int): Int =
         this.toInt() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Long): Long =
         this.toLong() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Float): Float =
         this.toFloat() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Double): Double =
         this.toDouble() + other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Byte): Int =
         this.toInt() - other.toInt()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Short): Int =
         this.toInt() - other.toInt()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Int): Int =
         this.toInt() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Long): Long =
         this.toLong() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Float): Float =
         this.toFloat() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Double): Double =
         this.toDouble() - other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Byte): Int =
         this.toInt() * other.toInt()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Short): Int =
         this.toInt() * other.toInt()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Int): Int =
         this.toInt() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Long): Long =
         this.toLong() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Float): Float =
         this.toFloat() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Double): Double =
         this.toDouble() * other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Byte): Int =
         this.toInt() / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Short): Int =
         this.toInt() / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Int): Int =
         this.toInt() / other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Long): Long =
         this.toLong() / other
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Float): Float =
         this.toFloat() / other
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Double): Double =
         this.toDouble() / other
 
@@ -652,7 +652,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Byte): Int =
         this.toInt() % other.toInt()
 
@@ -662,7 +662,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Short): Int =
         this.toInt() % other.toInt()
 
@@ -672,7 +672,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Int): Int =
         this.toInt() % other
 
@@ -682,7 +682,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Long): Long =
         this.toLong() % other
 
@@ -692,7 +692,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Float): Float =
         this.toFloat() % other
 
@@ -702,7 +702,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
@@ -723,12 +723,12 @@ public class Short private constructor(private val value: Short) : Number(), Com
         (this - 1).toShort()
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryPlus(): Int =
         this.toInt()
 
     /** Returns the negative of this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryMinus(): Int =
         -this.toInt()
 
@@ -796,7 +796,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      *
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Short` value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toByte(): Byte =
         this.toInt().toByte()
 
@@ -808,12 +808,12 @@ public class Short private constructor(private val value: Short) : Number(), Com
      */
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toChar(): Char =
         reinterpretAsInt().reinterpretAsChar()
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toShort(): Short =
         this
 
@@ -825,7 +825,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The least significant 16 bits of the resulting `Int` value are the same as the bits of this `Short` value,
      * whereas the most significant 16 bits are filled with the sign bit of this value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toInt(): Int =
         reinterpretAsInt()
 
@@ -837,7 +837,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      * The least significant 16 bits of the resulting `Long` value are the same as the bits of this `Short` value,
      * whereas the most significant 48 bits are filled with the sign bit of this value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toLong(): Long =
         wasm_i64_extend_i32_s(this.toInt())
 
@@ -846,7 +846,7 @@ public class Short private constructor(private val value: Short) : Number(), Com
      *
      * The resulting `Float` value represents the same numerical value as this `Short`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toFloat(): Float =
         wasm_f32_convert_i32_s(this.toInt())
 
@@ -855,15 +855,15 @@ public class Short private constructor(private val value: Short) : Number(), Com
      *
      * The resulting `Double` value represents the same numerical value as this `Short`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toDouble(): Double =
         wasm_f64_convert_i32_s(this.toInt())
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String =
         this.toInt().toString()
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean =
         other is Short && wasm_i32_eq(this.toInt(), other.toInt())
 
@@ -908,7 +908,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Byte): Int =
         this.compareTo(other.toInt())
 
@@ -917,7 +917,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Short): Int =
         this.compareTo(other.toInt())
 
@@ -926,7 +926,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline operator fun compareTo(other: Int): Int =
         wasm_i32_compareTo(this, other)
 
@@ -935,7 +935,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Long): Int =
         this.toLong().compareTo(other)
 
@@ -944,7 +944,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Float): Int =
         this.toFloat().compareTo(other)
 
@@ -953,130 +953,130 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Double): Int =
         this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Byte): Int =
         this + other.toInt()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Short): Int =
         this + other.toInt()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_ADD)
     public operator fun plus(other: Int): Int =
         implementedAsIntrinsic
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Long): Long =
         this.toLong() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Float): Float =
         this.toFloat() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Double): Double =
         this.toDouble() + other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Byte): Int =
         this - other.toInt()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Short): Int =
         this - other.toInt()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_SUB)
     public operator fun minus(other: Int): Int =
         implementedAsIntrinsic
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Long): Long =
         this.toLong() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Float): Float =
         this.toFloat() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Double): Double =
         this.toDouble() - other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Byte): Int =
         this * other.toInt()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Short): Int =
         this * other.toInt()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_MUL)
     public operator fun times(other: Int): Int =
         implementedAsIntrinsic
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Long): Long =
         this.toLong() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Float): Float =
         this.toFloat() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Double): Double =
         this.toDouble() * other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Byte): Int =
         this / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Short): Int =
         this / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public operator fun div(other: Int): Int =
         if (this == Int.MIN_VALUE && other == -1) Int.MIN_VALUE else wasm_i32_div_s(this, other)
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Long): Long =
         this.toLong() / other
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Float): Float =
         this.toFloat() / other
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Double): Double =
         this.toDouble() / other
 
@@ -1086,7 +1086,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Byte): Int =
         this % other.toInt()
 
@@ -1096,7 +1096,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Short): Int =
         this % other.toInt()
 
@@ -1106,7 +1106,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_REM_S)
     public operator fun rem(other: Int): Int =
         implementedAsIntrinsic
@@ -1117,7 +1117,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Long): Long =
         this.toLong() % other
 
@@ -1127,7 +1127,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Float): Float =
         this.toFloat() % other
 
@@ -1137,7 +1137,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
@@ -1159,12 +1159,12 @@ public class Int private constructor(private val value: Int) : Number(), Compara
         this - 1
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryPlus(): Int =
         this
 
     /** Returns the negative of this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryMinus(): Int =
         0 - this
 
@@ -1230,7 +1230,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_SHL)
     public infix fun shl(bitCount: Int): Int =
         implementedAsIntrinsic
@@ -1241,7 +1241,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_SHR_S)
     public infix fun shr(bitCount: Int): Int =
         implementedAsIntrinsic
@@ -1252,31 +1252,31 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_SHR_U)
     public infix fun ushr(bitCount: Int): Int =
         implementedAsIntrinsic
 
     /** Performs a bitwise AND operation between the two values. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_AND)
     public infix fun and(other: Int): Int =
         implementedAsIntrinsic
 
     /** Performs a bitwise OR operation between the two values. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_OR)
     public infix fun or(other: Int): Int =
         implementedAsIntrinsic
 
     /** Performs a bitwise XOR operation between the two values. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_XOR)
     public infix fun xor(other: Int): Int =
         implementedAsIntrinsic
 
     /** Inverts the bits in this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline fun inv(): Int =
         this.xor(-1)
 
@@ -1288,7 +1288,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      *
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Int` value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toByte(): Byte =
         ((this shl 24) shr 24).reinterpretAsByte()
 
@@ -1301,7 +1301,6 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The resulting `Char` code is represented by the least significant 16 bits of this `Int` value.
      */
     @Suppress("OVERRIDE_DEPRECATION")
-    @kotlin.internal.IntrinsicConstEvaluation
     public override fun toChar(): Char =
         (this and 0xFFFF).reinterpretAsChar()
 
@@ -1313,12 +1312,12 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      *
      * The resulting `Short` value is represented by the least significant 16 bits of this `Int` value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toShort(): Short =
         ((this shl 16) shr 16).reinterpretAsShort()
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toInt(): Int =
         this
 
@@ -1330,7 +1329,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * The least significant 32 bits of the resulting `Long` value are the same as the bits of this `Int` value,
      * whereas the most significant 32 bits are filled with the sign bit of this value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toLong(): Long =
         wasm_i64_extend_i32_s(this)
 
@@ -1341,7 +1340,7 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      * In case when this `Int` value is exactly between two `Float`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toFloat(): Float =
         wasm_f32_convert_i32_s(this)
 
@@ -1350,15 +1349,15 @@ public class Int private constructor(private val value: Int) : Number(), Compara
      *
      * The resulting `Double` value represents the same numerical value as this `Int`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toDouble(): Double =
         wasm_f64_convert_i32_s(this)
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String =
         itoa32(this)
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean =
         other is Int && wasm_i32_eq(this, other)
 
@@ -1418,7 +1417,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Byte): Int =
         this.compareTo(other.toLong())
 
@@ -1427,7 +1426,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Short): Int =
         this.compareTo(other.toLong())
 
@@ -1436,7 +1435,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Int): Int =
         this.compareTo(other.toLong())
 
@@ -1445,7 +1444,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline operator fun compareTo(other: Long): Int =
         wasm_i64_compareTo(this, other)
 
@@ -1454,7 +1453,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Float): Int =
         this.toFloat().compareTo(other)
 
@@ -1463,130 +1462,130 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Double): Int =
         this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Byte): Long =
         this + other.toLong()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Short): Long =
         this + other.toLong()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Int): Long =
         this + other.toLong()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I64_ADD)
     public operator fun plus(other: Long): Long =
         implementedAsIntrinsic
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Float): Float =
         this.toFloat() + other
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Double): Double =
         this.toDouble() + other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Byte): Long =
         this - other.toLong()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Short): Long =
         this - other.toLong()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Int): Long =
         this - other.toLong()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I64_SUB)
     public operator fun minus(other: Long): Long =
         implementedAsIntrinsic
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Float): Float =
         this.toFloat() - other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Double): Double =
         this.toDouble() - other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Byte): Long =
         this * other.toLong()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Short): Long =
         this * other.toLong()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Int): Long =
         this * other.toLong()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I64_MUL)
     public operator fun times(other: Long): Long =
         implementedAsIntrinsic
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Float): Float =
         this.toFloat() * other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Double): Double =
         this.toDouble() * other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Byte): Long =
         this / other.toLong()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Short): Long =
         this / other.toLong()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Int): Long =
         this / other.toLong()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public operator fun div(other: Long): Long =
         if (this == Long.MIN_VALUE && other == -1L) Long.MIN_VALUE else wasm_i64_div_s(this, other)
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Float): Float =
         this.toFloat() / other
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Double): Double =
         this.toDouble() / other
 
@@ -1596,7 +1595,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Byte): Long =
         this % other.toLong()
 
@@ -1606,7 +1605,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Short): Long =
         this % other.toLong()
 
@@ -1616,7 +1615,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Int): Long =
         this % other.toLong()
 
@@ -1626,7 +1625,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I64_REM_S)
     public operator fun rem(other: Long): Long =
         implementedAsIntrinsic
@@ -1637,7 +1636,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Float): Float =
         this.toFloat() % other
 
@@ -1647,7 +1646,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
@@ -1668,12 +1667,12 @@ public class Long private constructor(private val value: Long) : Number(), Compa
         this - 1L
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryPlus(): Long =
         this
 
     /** Returns the negative of this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryMinus(): Long =
         0L - this
 
@@ -1739,7 +1738,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline infix fun shl(bitCount: Int): Long =
         wasm_i64_shl(this, bitCount.toLong())
 
@@ -1749,7 +1748,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline infix fun shr(bitCount: Int): Long =
         wasm_i64_shr_s(this, bitCount.toLong())
 
@@ -1759,30 +1758,30 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline infix fun ushr(bitCount: Int): Long =
         wasm_i64_shr_u(this, bitCount.toLong())
 
     /** Performs a bitwise AND operation between the two values. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I64_AND)
     public infix fun and(other: Long): Long =
         implementedAsIntrinsic
 
     /** Performs a bitwise OR operation between the two values. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I64_OR)
     public infix fun or(other: Long): Long =
         implementedAsIntrinsic
 
     /** Performs a bitwise XOR operation between the two values. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I64_XOR)
     public infix fun xor(other: Long): Long =
         implementedAsIntrinsic
 
     /** Inverts the bits in this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline fun inv(): Long =
         this.xor(-1L)
 
@@ -1794,7 +1793,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      *
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Long` value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toByte(): Byte =
         this.toInt().toByte()
 
@@ -1808,7 +1807,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      */
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toChar(): Char =
         this.toInt().toChar()
 
@@ -1820,7 +1819,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      *
      * The resulting `Short` value is represented by the least significant 16 bits of this `Long` value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toShort(): Short =
         this.toInt().toShort()
 
@@ -1832,12 +1831,12 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      *
      * The resulting `Int` value is represented by the least significant 32 bits of this `Long` value.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toInt(): Int =
         wasm_i32_wrap_i64(this)
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toLong(): Long =
         this
 
@@ -1848,7 +1847,7 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * In case when this `Long` value is exactly between two `Float`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toFloat(): Float =
         wasm_f32_convert_i64_s(this)
 
@@ -1859,15 +1858,15 @@ public class Long private constructor(private val value: Long) : Number(), Compa
      * In case when this `Long` value is exactly between two `Double`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toDouble(): Double =
         wasm_f64_convert_i64_s(this)
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String =
         itoa64(this)
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean =
         other is Long && wasm_i64_eq(this, other)
 
@@ -1925,7 +1924,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Byte): Int =
         this.compareTo(other.toFloat())
 
@@ -1934,7 +1933,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Short): Int =
         this.compareTo(other.toFloat())
 
@@ -1943,7 +1942,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Int): Int =
         this.compareTo(other.toFloat())
 
@@ -1952,7 +1951,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Long): Int =
         this.compareTo(other.toFloat())
 
@@ -1961,7 +1960,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override operator fun compareTo(other: Float): Int {
         // if any of values in NaN both comparisons return false
         if (this > other) return 1
@@ -1979,131 +1978,131 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Double): Int =
         -other.compareTo(this)
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Byte): Float =
         this + other.toFloat()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Short): Float =
         this + other.toFloat()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Int): Float =
         this + other.toFloat()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Long): Float =
         this + other.toFloat()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F32_ADD)
     public operator fun plus(other: Float): Float =
         implementedAsIntrinsic
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Double): Double =
         this.toDouble() + other
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Byte): Float =
         this - other.toFloat()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Short): Float =
         this - other.toFloat()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Int): Float =
         this - other.toFloat()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Long): Float =
         this - other.toFloat()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F32_SUB)
     public operator fun minus(other: Float): Float =
         implementedAsIntrinsic
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Double): Double =
         this.toDouble() - other
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Byte): Float =
         this * other.toFloat()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Short): Float =
         this * other.toFloat()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Int): Float =
         this * other.toFloat()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Long): Float =
         this * other.toFloat()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F32_MUL)
     public operator fun times(other: Float): Float =
         implementedAsIntrinsic
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Double): Double =
         this.toDouble() * other
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Byte): Float =
         this / other.toFloat()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Short): Float =
         this / other.toFloat()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Int): Float =
         this / other.toFloat()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Long): Float =
         this / other.toFloat()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F32_DIV)
     public operator fun div(other: Float): Float =
         implementedAsIntrinsic
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Double): Double =
         this.toDouble() / other
 
@@ -2113,7 +2112,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Byte): Float =
         this % other.toFloat()
 
@@ -2123,7 +2122,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Short): Float =
         this % other.toFloat()
 
@@ -2133,7 +2132,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Int): Float =
         this % other.toFloat()
 
@@ -2143,7 +2142,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Long): Float =
         this % other.toFloat()
 
@@ -2153,7 +2152,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public operator fun rem(other: Float): Float =
         wasm_f32_copysign(this - (wasm_f32_truncate(this / other) * other), this)
 
@@ -2163,7 +2162,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
@@ -2184,12 +2183,12 @@ public class Float private constructor(private val value: Float) : Number(), Com
         this - 1.0f
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryPlus(): Float =
         this
 
     /** Returns the negative of this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F32_NEG)
     public operator fun unaryMinus(): Float =
         implementedAsIntrinsic
@@ -2201,7 +2200,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      */
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toByte(): Byte =
         this.toInt().toByte()
 
@@ -2212,7 +2211,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      */
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toChar(): Char =
         this.toInt().toChar()
 
@@ -2223,7 +2222,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      */
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toShort(): Short =
         this.toInt().toShort()
 
@@ -2234,7 +2233,7 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * Returns zero if this `Float` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toInt(): Int =
         wasm_i32_trunc_sat_f32_s(this)
 
@@ -2245,12 +2244,12 @@ public class Float private constructor(private val value: Float) : Number(), Com
      * Returns zero if this `Float` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toLong(): Long =
         wasm_i64_trunc_sat_f32_s(this)
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toFloat(): Float =
         this
 
@@ -2259,15 +2258,15 @@ public class Float private constructor(private val value: Float) : Number(), Com
      *
      * The resulting `Double` value represents the same numerical value as this `Float`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toDouble(): Double =
         wasm_f64_promote_f32(this)
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String =
         dtoa(this.toDouble())
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean =
         other is Float && this.toBits() == other.toBits()
 
@@ -2325,7 +2324,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Byte): Int =
         this.compareTo(other.toDouble())
 
@@ -2334,7 +2333,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Short): Int =
         this.compareTo(other.toDouble())
 
@@ -2343,7 +2342,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Int): Int =
         this.compareTo(other.toDouble())
 
@@ -2352,7 +2351,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Long): Int =
         this.compareTo(other.toDouble())
 
@@ -2361,7 +2360,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun compareTo(other: Float): Int =
         this.compareTo(other.toDouble())
 
@@ -2370,7 +2369,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override operator fun compareTo(other: Double): Int {
         // if any of values in NaN both comparisons return false
         if (this > other) return 1
@@ -2384,125 +2383,125 @@ public class Double private constructor(private val value: Double) : Number(), C
     }
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Byte): Double =
         this + other.toDouble()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Short): Double =
         this + other.toDouble()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Int): Double =
         this + other.toDouble()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Long): Double =
         this + other.toDouble()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Float): Double =
         this + other.toDouble()
 
     /** Adds the other value to this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F64_ADD)
     public operator fun plus(other: Double): Double =
         implementedAsIntrinsic
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Byte): Double =
         this - other.toDouble()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Short): Double =
         this - other.toDouble()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Int): Double =
         this - other.toDouble()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Long): Double =
         this - other.toDouble()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Float): Double =
         this - other.toDouble()
 
     /** Subtracts the other value from this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F64_SUB)
     public operator fun minus(other: Double): Double =
         implementedAsIntrinsic
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Byte): Double =
         this * other.toDouble()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Short): Double =
         this * other.toDouble()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Int): Double =
         this * other.toDouble()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Long): Double =
         this * other.toDouble()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun times(other: Float): Double =
         this * other.toDouble()
 
     /** Multiplies this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F64_MUL)
     public operator fun times(other: Double): Double =
         implementedAsIntrinsic
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Byte): Double =
         this / other.toDouble()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Short): Double =
         this / other.toDouble()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Int): Double =
         this / other.toDouble()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Long): Double =
         this / other.toDouble()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun div(other: Float): Double =
         this / other.toDouble()
 
     /** Divides this value by the other value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F64_DIV)
     public operator fun div(other: Double): Double =
         implementedAsIntrinsic
@@ -2513,7 +2512,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Byte): Double =
         this % other.toDouble()
 
@@ -2523,7 +2522,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Short): Double =
         this % other.toDouble()
 
@@ -2533,7 +2532,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Int): Double =
         this % other.toDouble()
 
@@ -2543,7 +2542,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Long): Double =
         this % other.toDouble()
 
@@ -2553,7 +2552,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun rem(other: Float): Double =
         this % other.toDouble()
 
@@ -2563,7 +2562,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public operator fun rem(other: Double): Double =
         wasm_f64_copysign(this - (wasm_f64_truncate(this / other) * other), this)
 
@@ -2584,12 +2583,12 @@ public class Double private constructor(private val value: Double) : Number(), C
         this - 1.0
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun unaryPlus(): Double =
         this
 
     /** Returns the negative of this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.F64_NEG)
     public operator fun unaryMinus(): Double =
         implementedAsIntrinsic
@@ -2601,7 +2600,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      */
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toByte(): Byte =
         this.toInt().toByte()
 
@@ -2612,7 +2611,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      */
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toChar(): Char =
         this.toInt().toChar()
 
@@ -2623,7 +2622,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      */
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toShort(): Short =
         this.toInt().toShort()
 
@@ -2634,7 +2633,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * Returns zero if this `Double` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toInt(): Int =
         wasm_i32_trunc_sat_f64_s(this)
 
@@ -2645,7 +2644,7 @@ public class Double private constructor(private val value: Double) : Number(), C
      * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toLong(): Long =
         wasm_i64_trunc_sat_f64_s(this)
 
@@ -2656,20 +2655,20 @@ public class Double private constructor(private val value: Double) : Number(), C
      * In case when this `Double` value is exactly between two `Float`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toFloat(): Float =
         wasm_f32_demote_f64(this)
 
     /** Returns this value. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override inline fun toDouble(): Double =
         this
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String =
         dtoa(this)
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean =
         other is Double && this.toBits() == other.toBits()
 

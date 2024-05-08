@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 class DeclarationGenerator(
     val context: WasmModuleCodegenContext,
     private val allowIncompleteImplementations: Boolean,
-    private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
 ) : IrElementVisitorVoid {
 
     // Shortcuts
@@ -148,7 +147,6 @@ class DeclarationGenerator(
         val bodyBuilder = BodyGenerator(
             context = context,
             functionContext = functionCodegenContext,
-            hierarchyDisjointUnions = hierarchyDisjointUnions,
         )
 
         if (declaration is IrConstructor) {
@@ -194,33 +192,6 @@ class DeclarationGenerator(
                     name = nameIfExported
                 )
             )
-        }
-    }
-
-    private fun createDeclarationByInterface(iFace: IrClassSymbol) {
-        if (context.isAlreadyDefinedClassITableGcType(iFace)) return
-        if (iFace !in hierarchyDisjointUnions) return
-
-        val iFacesUnion = hierarchyDisjointUnions[iFace]
-
-        val fields = iFacesUnion.mapIndexed { index, unionIFace ->
-            context.defineClassITableInterfaceSlot(unionIFace, index)
-            WasmStructFieldDeclaration(
-                name = "${unionIFace.owner.fqNameWhenAvailable.toString()}.itable",
-                type = WasmRefNullType(WasmHeapType.Type(context.referenceVTableGcType(unionIFace))),
-                isMutable = false
-            )
-        }
-
-        val struct = WasmStructDeclaration(
-            name = "classITable",
-            fields = fields,
-            superType = null,
-            isFinal = true,
-        )
-
-        iFacesUnion.forEach {
-            context.defineClassITableGcType(it, struct)
         }
     }
 
@@ -284,28 +255,36 @@ class DeclarationGenerator(
         )
     }
 
+    private fun addClassInterfaceInheritanceStructure(klass: IrClass) {
+        if (klass.isExternal) return
+        if (klass.getWasmArrayAnnotation() != null) return
+        if (klass.isInterface) return
+        if (klass.isAbstractOrSealed) return
+
+        val classMetadata = context.getClassMetadata(klass.symbol)
+        if (classMetadata.interfaces.isNotEmpty()) {
+            context.addInterfaceUnion(classMetadata.interfaces.map { it.symbol })
+        }
+    }
+
     private fun createClassITable(metadata: ClassMetadata) {
         val location = SourceLocation.NoLocation("Create instance of itable struct")
         val klass = metadata.klass
         if (klass.isAbstractOrSealed) return
         val supportedInterface = metadata.interfaces.firstOrNull()?.symbol ?: return
 
-        createDeclarationByInterface(supportedInterface)
+        addClassInterfaceInheritanceStructure(klass)
 
         val classInterfaceType = context.referenceClassITableGcType(supportedInterface)
-        val interfaceList = hierarchyDisjointUnions[supportedInterface]
 
         val initITableGlobal = buildWasmExpression {
-            for (iFace in interfaceList) {
-                val iFaceVTableGcType = context.referenceVTableGcType(iFace)
-                val iFaceVTableGcNullHeapType = WasmHeapType.Type(iFaceVTableGcType)
+            buildInstr(WasmOp.MACRO_TABLE, location, WasmImmediate.SymbolI32(context.referenceClassITableInterfaceTableSize(supportedInterface)))
+            for (iFace in metadata.interfaces) {
+                buildInstr(WasmOp.MACRO_TABLE_INDEX, location, WasmImmediate.SymbolI32(context.referenceClassITableInterfaceSlot(iFace.symbol)))
 
-                if (!metadata.interfaces.contains(iFace.owner)) {
-                    buildRefNull(iFaceVTableGcNullHeapType, location)
-                    continue
-                }
+                val iFaceVTableGcType = context.referenceVTableGcType(iFace.symbol)
 
-                for (method in context.getInterfaceMetadata(iFace).methods) {
+                for (method in context.getInterfaceMetadata(iFace.symbol).methods) {
                     val classMethod: VirtualMethodMetadata? = metadata.virtualMethods
                         .find { it.signature == method.signature && it.function.modality != Modality.ABSTRACT }  // TODO: Use map
 
@@ -323,6 +302,7 @@ class DeclarationGenerator(
                 }
                 buildStructNew(iFaceVTableGcType, location)
             }
+            buildInstr(WasmOp.MACRO_TABLE_END, location)
             buildStructNew(classInterfaceType, location)
         }
 
@@ -358,14 +338,13 @@ class DeclarationGenerator(
         val nameStr = declaration.fqNameWhenAvailable.toString()
 
         if (declaration.isInterface) {
-            if (symbol in hierarchyDisjointUnions) {
-                val vtableStruct = createVirtualTableStruct(
-                    methods = context.getInterfaceMetadata(symbol).methods,
-                    name = "$nameStr.itable",
-                    isFinal = true,
-                )
-                context.defineVTableGcType(symbol, vtableStruct)
-            }
+            context.defineDeclaredInterface(declaration.symbol)
+            val vtableStruct = createVirtualTableStruct(
+                methods = context.getInterfaceMetadata(symbol).methods,
+                name = "$nameStr.itable",
+                isFinal = true,
+            )
+            context.defineVTableGcType(symbol, vtableStruct)
         } else {
             val metadata = context.getClassMetadata(symbol)
 

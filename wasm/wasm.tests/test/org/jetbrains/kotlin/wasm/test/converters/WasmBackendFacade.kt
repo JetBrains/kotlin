@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
@@ -93,11 +95,13 @@ class WasmBackendFacade(
             friendLibraries
         )
 
+        val irFactory = IrFactoryImplForJsIC(WholeWorldStageController())
+
         val testPackage = extractTestPackage(testServices)
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             depsDescriptors = moduleStructure,
             phaseConfig = phaseConfig,
-            irFactory = IrFactoryImpl,
+            irFactory = irFactory,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box"))),
             propertyLazyInitialization = true,
             generateTypeScriptFragment = generateDts
@@ -110,6 +114,7 @@ class WasmBackendFacade(
             backendContext = backendContext,
             typeScriptFragment = typeScriptFragment,
             baseFileName = baseFileName,
+            idSignatureRetriever = irFactory,
             emitNameSection = true,
             allowIncompleteImplementations = false,
             generateWat = generateWat,
@@ -126,6 +131,7 @@ class WasmBackendFacade(
             backendContext = backendContext,
             typeScriptFragment = typeScriptFragment,
             baseFileName = baseFileName,
+            idSignatureRetriever = irFactory,
             emitNameSection = true,
             allowIncompleteImplementations = true,
             generateWat = generateWat,

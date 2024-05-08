@@ -6,54 +6,26 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.utils.DisjointUnions
-import org.jetbrains.kotlin.backend.wasm.utils.getWasmArrayAnnotation
-import org.jetbrains.kotlin.backend.wasm.utils.isAbstractOrSealed
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class WasmModuleFragmentGenerator(
     backendContext: WasmBackendContext,
     wasmModuleFragment: WasmCompiledModuleFragment,
+    idSignatureRetriever: IdSignatureRetriever,
     allowIncompleteImplementations: Boolean,
 ) {
-    private val hierarchyDisjointUnions = DisjointUnions<IrClassSymbol>()
-
-    private val declarationGenerator =
+    val declarationGenerator =
         DeclarationGenerator(
             WasmModuleCodegenContext(
                 backendContext,
+                idSignatureRetriever,
                 wasmModuleFragment,
             ),
             allowIncompleteImplementations,
-            hierarchyDisjointUnions,
         )
-
-    private val interfaceCollector = object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) { }
-
-        override fun visitClass(declaration: IrClass) {
-            if (declaration.isExternal) return
-            if (declaration.getWasmArrayAnnotation() != null) return
-            if (declaration.isInterface) return
-            if (declaration.isAbstractOrSealed) return
-
-            val classMetadata = declarationGenerator.context.getClassMetadata(declaration.symbol)
-            if (classMetadata.interfaces.isNotEmpty()) {
-                hierarchyDisjointUnions.addUnion(classMetadata.interfaces.map { it.symbol })
-            }
-        }
-    }
-
-    fun collectInterfaceTables(irModuleFragment: IrModuleFragment) {
-        acceptVisitor(irModuleFragment, interfaceCollector)
-        hierarchyDisjointUnions.compress()
-    }
 
     fun generateModule(irModuleFragment: IrModuleFragment) {
         acceptVisitor(irModuleFragment, declarationGenerator)

@@ -19,10 +19,21 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
     private val declarationToSignature = WeakHashMap<IrDeclaration, IdSignature>()
 
     private fun <T : IrDeclaration> T.register(): T {
+        when (this) {
+            is IrFunction, is IrProperty, is IrClass, is IrField -> Unit
+            else -> return this
+        }
         val parentSig = stageController.currentDeclaration?.let { declarationSignature(it) } ?: return this
 
-        stageController.createSignature(parentSig)?.let { declarationToSignature[this] = it }
+        if (this in declarationToSignature.keys) {
+            error("Declaration is already registered")
+        }
 
+        val newSignature = stageController.createSignature(parentSig)
+        if (newSignature in declarationToSignature.values) {
+            error("Signature is already registered")
+        }
+        declarationToSignature[this] = newSignature
         return this
     }
 

@@ -6,17 +6,22 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.wasm.ir.*
 
 class WasmModuleCodegenContext(
     val backendContext: WasmBackendContext,
+    val idSignatureRetriever: IdSignatureRetriever,
     private val wasmFragment: WasmCompiledModuleFragment
 ) {
     private val typeTransformer =
@@ -68,7 +73,7 @@ class WasmModuleCodegenContext(
         wasmFragment.constantArrayDataSegmentId.reference(resource)
 
     fun generateTypeInfo(irClass: IrClassSymbol, typeInfo: ConstantDataElement) {
-        wasmFragment.typeInfo.define(irClass, typeInfo)
+        wasmFragment.typeInfo.define(irClass.getReferenceKey(), typeInfo)
     }
 
     fun registerInitFunction(wasmFunction: WasmFunction, priority: String) {
@@ -79,32 +84,44 @@ class WasmModuleCodegenContext(
         wasmFragment.exports += wasmExport
     }
 
+    private fun IrSymbol.getReferenceKey(): ReferenceKey =
+        idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)
+            ?.let { SignatureKey(it) }
+            ?: SymbolKey(this)
+
+    private fun IrClassSymbol.getSignature(): IdSignature =
+        idSignatureRetriever.declarationSignature(this.owner)!!
+
     fun defineFunction(irFunction: IrFunctionSymbol, wasmFunction: WasmFunction) {
-        wasmFragment.functions.define(irFunction, wasmFunction)
+        wasmFragment.functions.define(irFunction.getReferenceKey(), wasmFunction)
     }
 
     fun defineGlobalField(irField: IrFieldSymbol, wasmGlobal: WasmGlobal) {
-        wasmFragment.globalFields.define(irField, wasmGlobal)
+        wasmFragment.globalFields.define(irField.getReferenceKey(), wasmGlobal)
     }
 
     fun defineGlobalVTable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
-        wasmFragment.globalVTables.define(irClass, wasmGlobal)
+        wasmFragment.globalVTables.define(irClass.getReferenceKey(), wasmGlobal)
     }
 
     fun defineGlobalClassITable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
-        wasmFragment.globalClassITables.define(irClass, wasmGlobal)
+        wasmFragment.globalClassITables.define(irClass.getReferenceKey(), wasmGlobal)
+    }
+
+    fun addInterfaceUnion(interfaces: List<IrClassSymbol>) {
+        wasmFragment.interfaceUnions.add(interfaces.map { idSignatureRetriever.declarationSignature(it.owner)!! })
     }
 
     fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
-        wasmFragment.gcTypes.define(irClass, wasmType)
+        wasmFragment.gcTypes.define(irClass.getReferenceKey(), wasmType)
     }
 
     fun defineVTableGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
-        wasmFragment.vTableGcTypes.define(irClass, wasmType)
+        wasmFragment.vTableGcTypes.define(irClass.getReferenceKey(), wasmType)
     }
 
     fun defineFunctionType(irFunction: IrFunctionSymbol, wasmFunctionType: WasmFunctionType) {
-        wasmFragment.functionTypes.define(irFunction, wasmFunctionType)
+        wasmFragment.functionTypes.define(irFunction.getReferenceKey(), wasmFunctionType)
     }
 
     private val classMetadataCache = mutableMapOf<IrClassSymbol, ClassMetadata>()
@@ -125,50 +142,76 @@ class WasmModuleCodegenContext(
         interfaceMetadataCache.getOrPut(irClass) { InterfaceMetadata(irClass.owner, backendContext.irBuiltIns) }
 
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction> =
-        wasmFragment.functions.reference(irFunction)
+        wasmFragment.functions.reference(irFunction.getReferenceKey())
 
     fun referenceGlobalField(irField: IrFieldSymbol): WasmSymbol<WasmGlobal> =
-        wasmFragment.globalFields.reference(irField)
+        wasmFragment.globalFields.reference(irField.getReferenceKey())
 
     fun referenceGlobalVTable(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
-        wasmFragment.globalVTables.reference(irClass)
+        wasmFragment.globalVTables.reference(irClass.getReferenceKey())
 
     fun referenceGlobalClassITable(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
-        wasmFragment.globalClassITables.reference(irClass)
+        wasmFragment.globalClassITables.reference(irClass.getReferenceKey())
 
     fun referenceGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        wasmFragment.gcTypes.reference(irClass)
+        wasmFragment.gcTypes.reference(irClass.getReferenceKey())
 
     fun referenceVTableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        wasmFragment.vTableGcTypes.reference(irClass)
+        wasmFragment.vTableGcTypes.reference(irClass.getReferenceKey())
+
+    fun referenceVTableGcType(iface: IdSignature): WasmSymbol<WasmTypeDeclaration> =
+        wasmFragment.vTableGcTypes.reference(SignatureKey(iface))
 
     fun referenceClassITableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        wasmFragment.classITableGcType.reference(irClass)
+        wasmFragment.classITableGcType.reference(irClass.getSignature())
+
+    fun referenceClassITableInterfaceTableSize(irInterface: IrClassSymbol): WasmSymbol<Int> =
+        wasmFragment.classITableInterfaceTableSize.reference(irInterface.getSignature())
+
+    fun referenceClassITableInterfaceHasImplementors(irInterface: IrClassSymbol): WasmSymbol<Int> =
+        wasmFragment.classITableInterfaceHasImplementors.reference(irInterface.getSignature())
 
     fun defineClassITableGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
-        wasmFragment.classITableGcType.define(irClass, wasmType)
+        wasmFragment.classITableGcType.define(irClass.getSignature(), wasmType)
     }
 
-    fun isAlreadyDefinedClassITableGcType(irClass: IrClassSymbol): Boolean =
-        wasmFragment.classITableGcType.defined.keys.contains(irClass)
+    fun defineClassITableGcType(iface: IdSignature, wasmType: WasmTypeDeclaration) {
+        wasmFragment.classITableGcType.define(iface, wasmType)
+    }
 
     fun referenceClassITableInterfaceSlot(irClass: IrClassSymbol): WasmSymbol<Int> {
         val type = irClass.defaultType
         require(!type.isNothing()) {
             "Can't reference Nothing type"
         }
-        return wasmFragment.classITableInterfaceSlot.reference(irClass)
+        return wasmFragment.classITableInterfaceSlot.reference(irClass.getSignature())
     }
 
-    fun defineClassITableInterfaceSlot(irClass: IrClassSymbol, slot: Int) {
-        wasmFragment.classITableInterfaceSlot.define(irClass, slot)
+    fun defineClassITableInterfaceSlot(iface: IdSignature, slot: Int) {
+        wasmFragment.classITableInterfaceSlot.define(iface, slot)
+    }
+
+    fun defineClassITableInterfaceTableSize(iface: IdSignature, size: Int) {
+        wasmFragment.classITableInterfaceTableSize.define(iface, size)
+    }
+
+    fun defineClassITableInterfaceHasImplementors(iface: IdSignature, hasImplementors: Int) {
+        wasmFragment.classITableInterfaceHasImplementors.define(iface, hasImplementors)
+    }
+
+    fun defineDeclaredInterface(iface: IrClassSymbol) {
+        wasmFragment.declaredInterfaces.add((iface.getReferenceKey() as SignatureKey).signature)
     }
 
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
-        wasmFragment.functionTypes.reference(irFunction)
+        wasmFragment.functionTypes.reference(irFunction.getReferenceKey())
 
     fun referenceTypeId(irClass: IrClassSymbol): WasmSymbol<Int> =
-        wasmFragment.typeIds.reference(irClass)
+        if (irClass.owner.isInterface) {
+            wasmFragment.interfaceIds.reference(irClass.getSignature())
+        } else {
+            wasmFragment.classIds.reference(irClass.getReferenceKey())
+        }
 
     fun getStructFieldRef(field: IrField): WasmSymbol<Int> {
         val klass = field.parentAsClass
@@ -186,4 +229,5 @@ class WasmModuleCodegenContext(
         wasmFragment.jsModuleImports += module
     }
 }
+
 

@@ -9,52 +9,66 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+
+sealed class ReferenceKey
+data class SignatureKey(val signature: IdSignature) : ReferenceKey()
+data class SymbolKey(val symbol: IrSymbol) : ReferenceKey()
 
 class WasmCompiledModuleFragment(
     val irBuiltIns: IrBuiltIns,
     generateTrapsInsteadOfExceptions: Boolean,
 ) {
     val functions =
-        ReferencableAndDefinable<IrFunctionSymbol, WasmFunction>()
+        ReferencableAndDefinable<ReferenceKey, WasmFunction>()
     val globalFields =
-        ReferencableAndDefinable<IrFieldSymbol, WasmGlobal>()
+        ReferencableAndDefinable<ReferenceKey, WasmGlobal>()
     val globalVTables =
-        ReferencableAndDefinable<IrClassSymbol, WasmGlobal>()
+        ReferencableAndDefinable<ReferenceKey, WasmGlobal>()
     val globalClassITables =
-        ReferencableAndDefinable<IrClassSymbol, WasmGlobal>()
+        ReferencableAndDefinable<ReferenceKey, WasmGlobal>()
     val functionTypes =
-        ReferencableAndDefinable<IrFunctionSymbol, WasmFunctionType>()
+        ReferencableAndDefinable<ReferenceKey, WasmFunctionType>()
     val gcTypes =
-        ReferencableAndDefinable<IrClassSymbol, WasmTypeDeclaration>()
+        ReferencableAndDefinable<ReferenceKey, WasmTypeDeclaration>()
     val vTableGcTypes =
-        ReferencableAndDefinable<IrClassSymbol, WasmTypeDeclaration>()
+        ReferencableAndDefinable<ReferenceKey, WasmTypeDeclaration>()
     val classITableGcType =
-        ReferencableAndDefinable<IrClassSymbol, WasmTypeDeclaration>()
+        ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
     val classITableInterfaceSlot =
-        ReferencableAndDefinable<IrClassSymbol, Int>()
-    val typeIds =
-        ReferencableElements<IrClassSymbol, Int>()
+        ReferencableAndDefinable<IdSignature, Int>()
+    val classIds =
+        ReferencableElements<ReferenceKey, Int>()
+    val interfaceIds =
+        ReferencableElements<IdSignature, Int>()
     val stringLiteralAddress =
         ReferencableElements<String, Int>()
     val stringLiteralPoolId =
         ReferencableElements<String, Int>()
     val constantArrayDataSegmentId =
         ReferencableElements<Pair<List<Long>, WasmType>, Int>()
+    val classITableInterfaceTableSize =
+        ReferencableAndDefinable<IdSignature, Int>()
+    val classITableInterfaceHasImplementors =
+        ReferencableAndDefinable<IdSignature, Int>()
+    val interfaceUnions =
+        mutableListOf<List<IdSignature>>()
+    val declaredInterfaces =
+        mutableListOf<IdSignature>()
 
     private val tagFuncType = WasmFunctionType(
         listOf(
-            WasmRefNullType(WasmHeapType.Type(gcTypes.reference(irBuiltIns.throwableClass)))
+            WasmRefNullType(WasmHeapType.Type(gcTypes.reference(SignatureKey(irBuiltIns.throwableClass.signature!!))))
         ),
         emptyList()
     )
     val tags = if (generateTrapsInsteadOfExceptions) emptyList() else listOf(WasmTag(tagFuncType))
 
-    val typeInfo = ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
+    val typeInfo = ReferencableAndDefinable<ReferenceKey, ConstantDataElement>()
 
     val exports = mutableListOf<WasmExport<*>>()
 
@@ -111,6 +125,9 @@ class WasmCompiledModuleFragment(
         bind(classITableInterfaceSlot.unbound, classITableInterfaceSlot.defined)
         bind(globalClassITables.unbound, globalClassITables.defined)
 
+        bind(classITableInterfaceTableSize.unbound, classITableInterfaceTableSize.defined)
+        bind(classITableInterfaceHasImplementors.unbound, classITableInterfaceHasImplementors.defined)
+
         // Associate function types to a single canonical function type
         val canonicalFunctionTypes =
             functionTypes.elements.associateWithTo(LinkedHashMap()) { it }
@@ -122,16 +139,16 @@ class WasmCompiledModuleFragment(
         }
 
         var currentDataSectionAddress = 0
-        var interfaceId = 0
-        typeIds.unbound.forEach { (klassSymbol, wasmSymbol) ->
-            if (klassSymbol.owner.isInterface) {
-                interfaceId--
-                wasmSymbol.bind(interfaceId)
-            } else {
-                wasmSymbol.bind(currentDataSectionAddress)
-                currentDataSectionAddress += typeInfo.defined.getValue(klassSymbol).sizeInBytes
-            }
+
+        interfaceIds.unbound.values.forEachIndexed { interfaceId, wasmSymbol ->
+            wasmSymbol.bind(-interfaceId)
         }
+
+        classIds.unbound.forEach { (referenceKey, wasmSymbol) ->
+            wasmSymbol.bind(currentDataSectionAddress)
+            currentDataSectionAddress += typeInfo.defined.getValue(referenceKey).sizeInBytes
+        }
+
         currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
         scratchMemAddr.bind(currentDataSectionAddress)
 
@@ -163,19 +180,17 @@ class WasmCompiledModuleFragment(
             data.add(WasmData(WasmDataMode.Passive, constData.toBytes()))
         }
 
-        typeIds.unbound.forEach { (klassSymbol, typeId) ->
-            if (!klassSymbol.owner.isInterface) {
-                val instructions = mutableListOf<WasmInstr>()
-                WasmIrExpressionBuilder(instructions).buildConstI32(
-                    typeId.owner,
-                    SourceLocation.NoLocation("Compile time data per class")
-                )
-                val typeData = WasmData(
-                    WasmDataMode.Active(0, instructions),
-                    typeInfo.defined.getValue(klassSymbol).toBytes()
-                )
-                data.add(typeData)
-            }
+        classIds.unbound.forEach { (referenceKey, typeId) ->
+            val instructions = mutableListOf<WasmInstr>()
+            WasmIrExpressionBuilder(instructions).buildConstI32(
+                typeId.owner,
+                SourceLocation.NoLocation("Compile time data per class")
+            )
+            val typeData = WasmData(
+                WasmDataMode.Active(0, instructions),
+                typeInfo.defined.getValue(referenceKey).toBytes()
+            )
+            data.add(typeData)
         }
 
         val masterInitFunctionType = WasmFunctionType(emptyList(), emptyList())
