@@ -46,7 +46,7 @@ object GenerateInRangeExpressionTestData {
         println("// WITH_STDLIB")
         if (rangeExpressions.any { "..<" in it }) {
             println("// DONT_TARGET_EXACT_BACKEND: JVM")
-            println("// !LANGUAGE: +RangeUntilOperator")
+            println("// LANGUAGE: +RangeUntilOperator")
             println("@file:OptIn(ExperimentalStdlibApi::class)")
         }
         println()

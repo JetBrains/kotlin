@@ -186,7 +186,7 @@ object GenerateSteppedRangesCodegenTestData {
                 }
                 if (function == Function.RANGE_UNTIL) { // until 1.8
                     println("// DONT_TARGET_EXACT_BACKEND: JVM")
-                    println("// !LANGUAGE: +RangeUntilOperator")
+                    println("// LANGUAGE: +RangeUntilOperator")
                     println("@file:OptIn(ExperimentalStdlibApi::class)")
                 }
                 println("import kotlin.test.*")
