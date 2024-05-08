@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution
+import java.io.File
 import java.io.Serializable
 
 class KotlinProjectNpmResolution(
-    val byCompilation: Map<String, KotlinCompilationNpmResolution>,
+    val byCompilation: Map<File, KotlinCompilationNpmResolution>,
 ) : Serializable {
     val npmProjects: Collection<KotlinCompilationNpmResolution>
         get() = byCompilation.values
 
-    operator fun get(compilationName: String): KotlinCompilationNpmResolution {
-        return byCompilation.getValue(compilationName)
+    operator fun get(compilationFile: File): KotlinCompilationNpmResolution {
+        return byCompilation.getValue(compilationFile)
     }
 
     companion object {

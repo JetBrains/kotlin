@@ -45,6 +45,7 @@ internal class KotlinCompilationNpmResolver(
     val npmProject = compilation.npmProject
 
     val compilationDisambiguatedName = compilation.publicPackageJsonConfigurationName
+    val packageJsonFileProvider = npmProject.publicPackageJsonFile
 
     val npmVersion by lazy {
         project.version.toString()
@@ -129,7 +130,7 @@ internal class KotlinCompilationNpmResolver(
     }
 
     val resolveDependenciesTask: TaskProvider<KotlinResolveDependenciesTask> =
-        KotlinResolveDependenciesTask.create(compilation, aggregatedConfiguration, compilationDisambiguatedName)
+        KotlinResolveDependenciesTask.create(compilation, aggregatedConfiguration)
 
     val packageJsonTaskHolder: TaskProvider<KotlinPackageJsonTask> =
         KotlinPackageJsonTask.create(compilation, compilationDisambiguatedName, compilationNpmResolution).apply {
@@ -146,7 +147,7 @@ internal class KotlinCompilationNpmResolver(
         ) {
             it.dependsOn(packageJsonTaskHolder)
 
-            it.compilationDisambiguatedName.set(compilationDisambiguatedName)
+            it.packageJson.set(packageJsonFileProvider)
             it.packageJsonHandlers.set(compilation.packageJsonHandlers)
 
             it.npmResolutionManager.value(npmResolutionManager)
@@ -172,7 +173,7 @@ internal class KotlinCompilationNpmResolver(
                         .withType(Zip::class.java)
                         .named(npmProject.target.artifactsTaskName) {
                             it.from(
-                                compilationNpmResolution.zip(packageJsonTask.map { it.packageJsonFile }) { resolution, file ->
+                                compilationNpmResolution.zip(packageJsonTask.flatMap { it.packageJson }) { resolution, file ->
                                     if (resolution.npmDependencies.isNotEmpty()) {
                                         file
                                     } else emptySet<Any>()
@@ -183,7 +184,7 @@ internal class KotlinCompilationNpmResolver(
 
                     val publicPackageJsonConfiguration = createPublicPackageJsonConfiguration()
 
-                    target.project.artifacts.add(publicPackageJsonConfiguration.name, packageJsonTask.map { it.packageJsonFile }) {
+                    target.project.artifacts.add(publicPackageJsonConfiguration.name, packageJsonTask.flatMap { it.packageJson }) {
                         it.builtBy(packageJsonTask)
                     }
                 }

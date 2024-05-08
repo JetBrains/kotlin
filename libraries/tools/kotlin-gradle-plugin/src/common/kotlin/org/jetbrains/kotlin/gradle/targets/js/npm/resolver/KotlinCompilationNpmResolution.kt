@@ -94,7 +94,7 @@ class KotlinCompilationNpmResolution(
 
         val internalNpmDependencies = visitor.internalDependencies
             .map {
-                val compilationNpmResolution: KotlinCompilationNpmResolution = rootResolver[it.projectPath][it.compilationName]
+                val compilationNpmResolution: KotlinCompilationNpmResolution = rootResolver[it.projectPath][it.file]
                 compilationNpmResolution.getResolutionOrPrepare(
                     npmResolutionManager,
                     logger,
@@ -187,15 +187,8 @@ class KotlinCompilationNpmResolution(
         private val visitedDependencies = mutableSetOf<ResolvedVariantResult>()
 
         fun visit(configuration: LazyResolvedConfiguration) {
-            configuration.root.dependencies.forEach { dependencyResult ->
-                if (dependencyResult is ResolvedDependencyResult) {
-                    val variant = dependencyResult.resolvedVariant.externalVariant.orElse(dependencyResult.resolvedVariant)
-                    configuration.getArtifacts(dependencyResult).forEach { artifactResult ->
-                        visitDependency(variant, artifactResult.file)
-                    }
-                } else {
-                    println("WTF ${dependencyResult}")
-                }
+            configuration.resolvedArtifacts.forEach { resolvedArtifact ->
+                visitDependency(resolvedArtifact.variant, resolvedArtifact.file)
             }
         }
 
@@ -212,13 +205,15 @@ class KotlinCompilationNpmResolution(
 
             val owner = dependency.owner
             if (buildPath == owner.buildOrNull?.buildPathCompat && owner is ProjectComponentIdentifier) {
-                visitProjectDependency(dependency)
+                visitProjectDependency(dependency, artifact)
+                return
             }
 
             if (buildPath != owner.buildOrNull?.buildPathCompat && owner is ProjectComponentIdentifier) {
                 dependency.capabilities.forEach { capability ->
                     externalGradleDependencies.add(ExternalGradleDependency(capability.name, capability.version, artifact))
                 }
+                return
             }
 
             if (owner is ModuleComponentIdentifier) {
@@ -228,15 +223,17 @@ class KotlinCompilationNpmResolution(
 
         private fun visitProjectDependency(
             componentIdentifier: ResolvedVariantResult,
+            artifact: File,
         ) {
             val owner = componentIdentifier.owner as ProjectComponentIdentifier
-            val dependentCompilation = rootResolution[owner.projectPath][componentIdentifier.displayName]
+            val dependentCompilation = rootResolution[owner.projectPath][artifact]
 
             internalDependencies.add(
                 InternalDependency(
                     dependentCompilation.projectPath,
                     dependentCompilation.publicPackageJsonConf,
-                    dependentCompilation.npmProjectName
+                    dependentCompilation.npmProjectName,
+                    artifact
                 )
             )
         }

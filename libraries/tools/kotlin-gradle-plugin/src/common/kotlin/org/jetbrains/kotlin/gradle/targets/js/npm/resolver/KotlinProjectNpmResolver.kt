@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.withType
 import java.io.Serializable
 import kotlin.reflect.KClass
@@ -30,15 +33,7 @@ internal class KotlinProjectNpmResolver(
 ) : Serializable {
     val projectPath by lazy { project.path }
 
-    private val byCompilation = mutableMapOf<String, KotlinCompilationNpmResolver>()
-
-    operator fun get(compilation: KotlinJsIrCompilation): KotlinCompilationNpmResolver {
-        return byCompilation[compilation.disambiguatedName] ?: error("$compilation was not registered in $this")
-    }
-
-    operator fun get(compilationName: String): KotlinCompilationNpmResolver {
-        return byCompilation[compilationName] ?: error("$compilationName was not registered in $this")
-    }
+    private val byCompilation = mutableMapOf<Provider<RegularFile>, KotlinCompilationNpmResolver>()
 
     private var resolution: KotlinProjectNpmResolution? = null
 
@@ -85,7 +80,7 @@ internal class KotlinProjectNpmResolver(
             this,
             compilation
         )
-        byCompilation[npmResolver.compilationDisambiguatedName] =
+        byCompilation[npmResolver.packageJsonFileProvider] =
             npmResolver
     }
 
@@ -93,7 +88,7 @@ internal class KotlinProjectNpmResolver(
         return resolution ?: KotlinProjectNpmResolution(
             byCompilation
                 .map { (key, value) ->
-                    value.close()?.let { key to it }
+                    value.close()?.let { key.getFile() to it }
                 }
                 .filterNotNull()
                 .toMap(),

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import java.io.File
@@ -46,6 +48,9 @@ abstract class KotlinPackageJsonTask :
 
     @get:Internal
     abstract val compilationDisambiguatedName: Property<String>
+
+    @get:Internal
+    val compilationFile: Property<RegularFile> = project.objects.fileProperty()
 
     @get:Internal
     abstract val packageJsonHandlers: ListProperty<Action<PackageJson>>
@@ -79,7 +84,7 @@ abstract class KotlinPackageJsonTask :
 
     @TaskAction
     fun resolve() {
-        val resolution = npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
+        val resolution = npmResolutionManager.get().resolution.get()[projectPath][compilationFile.getFile()]
         val preparedResolution = resolution
             .resolution!!
 
@@ -104,6 +109,7 @@ abstract class KotlinPackageJsonTask :
             val gradleNodeModules = GradleNodeModulesCache.registerIfAbsent(project, null, null)
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.compilationDisambiguatedName.set(disambiguatedName)
+                task.compilationFile.set(npmProject.publicPackageJsonFile)
                 task.packageJsonHandlers.set(compilation.packageJsonHandlers)
                 task.description = "Create package.json file for $compilation"
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME

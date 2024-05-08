@@ -44,5 +44,6 @@ data class CompositeDependency(
 data class InternalDependency(
     val projectPath: String,
     val compilationName: String,
-    val projectName: String
+    val projectName: String,
+    val file: File
 ) : Serializable

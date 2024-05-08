@@ -84,6 +84,11 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     val publicPackageJsonTaskName: String
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
 
+    val publicPackageJsonFile: Provider<RegularFile> = project.layout.buildDirectory
+        .dir("tmp")
+        .map { it.dir(publicPackageJsonTaskName) }
+        .map { it.file(PACKAGE_JSON) }
+
     internal val modules by lazy {
         NpmProjectModules(dir.getFile())
     }

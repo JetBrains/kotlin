@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 
 @DisableCachingByDefault
 abstract class KotlinResolveDependenciesTask :
@@ -39,7 +41,7 @@ abstract class KotlinResolveDependenciesTask :
     private val projectPath = project.path
 
     @get:Internal
-    abstract val compilationDisambiguatedName: Property<String>
+    val compilationFile: Property<RegularFile> = project.objects.fileProperty()
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -53,7 +55,7 @@ abstract class KotlinResolveDependenciesTask :
 
     @TaskAction
     fun resolve() {
-        val resolution = npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
+        val resolution = npmResolutionManager.get().resolution.get()[projectPath][compilationFile.getFile()]
         resolution
             .prepareWithDependencies(
                 npmResolutionManager = npmResolutionManager.get(),
@@ -66,7 +68,6 @@ abstract class KotlinResolveDependenciesTask :
         fun create(
             compilation: KotlinJsIrCompilation,
             dependencyConfiguration: Configuration,
-            disambiguatedName: String,
         ): TaskProvider<KotlinResolveDependenciesTask> {
             val project = compilation.target.project
             val npmProject = compilation.npmProject
@@ -78,7 +79,7 @@ abstract class KotlinResolveDependenciesTask :
             val npmResolutionManager = project.kotlinNpmResolutionManager
             val gradleNodeModules = GradleNodeModulesCache.registerIfAbsent(project, null, null)
             val packageJsonTask = project.registerTask<KotlinResolveDependenciesTask>(resolveDependenciesTaskName) { task ->
-                task.compilationDisambiguatedName.set(disambiguatedName)
+                task.compilationFile.set(npmProject.publicPackageJsonFile)
                 task.description = "Resolve dependencies for further package.json gneration in $compilation"
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
 
