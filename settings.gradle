@@ -224,6 +224,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-gradle-plugin-test-utils-embeddable",
         ":kotlin-gradle-plugin-integration-tests",
         ":kotlin-gradle-plugins-bom",
+        ":kotlin-privacy-manifests-plugin",
         ":compiler:build-tools:kotlin-build-statistics",
         ":gradle:android-test-fixes",
         ":gradle:gradle-warnings-detector",
@@ -796,6 +797,7 @@ project(':kotlin-gradle-plugin-model').projectDir = "$rootDir/libraries/tools/ko
 project(':kotlin-gradle-plugin-test-utils-embeddable').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-test-utils-embeddable" as File
 project(':kotlin-gradle-plugin-integration-tests').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests" as File
 project(':kotlin-gradle-plugins-bom').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugins-bom" as File
+project(':kotlin-privacy-manifests-plugin').projectDir = "$rootDir/libraries/tools/kotlin-privacy-manifests-plugin" as File
 project(':gradle:android-test-fixes').projectDir = "$rootDir/libraries/tools/gradle/android-test-fixes" as File
 project(':gradle:gradle-warnings-detector').projectDir = "$rootDir/libraries/tools/gradle/gradle-warnings-detector" as File
 project(':gradle:kotlin-compiler-args-properties').projectDir = "$rootDir/libraries/tools/gradle/kotlin-compiler-args-properties" as File
