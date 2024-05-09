@@ -1,0 +1,26 @@
+final class home/ComposableSingletons$MainKt$lambda-1$1 {
+    // source: 'main.kt'
+    enclosing class home/ComposableSingletons$MainKt
+    public final static field INSTANCE: home.ComposableSingletons$MainKt$lambda-1$1
+    inner (anonymous) class home/ComposableSingletons$MainKt$lambda-1$1
+    static method <clinit>(): void
+    method <init>(): void
+    public final method invoke(p0: androidx.compose.runtime.Composer, p1: int): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+}
+
+public final class home/ComposableSingletons$MainKt {
+    // source: 'main.kt'
+    public final static field INSTANCE: home.ComposableSingletons$MainKt
+    public static field lambda-1: kotlin.jvm.functions.Function2
+    inner (anonymous) class home/ComposableSingletons$MainKt$lambda-1$1
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method getLambda-1$main(): kotlin.jvm.functions.Function2
+}
+
+public final class home/MainKt {
+    // source: 'main.kt'
+    private final static method Home$lambda$1(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    public final static method Home(p0: androidx.compose.runtime.Composer, p1: int): void
+}
